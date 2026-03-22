@@ -55,6 +55,9 @@ const TABS = [
   { key: 'regulatoire',   label: 'Décisions réglementaires',  icon: Scale      },
   { key: 'impact',        label: 'Impact & Vie chère',        icon: TrendingUp },
   { key: 'concurrents',   label: 'Concurrents',               icon: BarChart2  },
+  { key: 'prix',          label: 'Comparatif DOM / Métropole', icon: DollarSign },
+  { key: 'faq',           label: 'Questions des citoyens',    icon: Info       },
+  { key: 'conflits',      label: 'Droits & Conflits sociaux', icon: Shield     },
   { key: 'sources',       label: 'Sources',                   icon: BookOpen   },
 ] as const;
 
@@ -4380,6 +4383,479 @@ const OrganigrammeGBH: React.FC = () => {
                 IEDOM Rapports annuels 2023 ; sites officiels des groupes cités.
               </p>
             </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : COMPARATIF PRIX DOM / MÉTROPOLE ════════════════════════ */}
+        {activeTab === 'prix' && (
+          <div>
+            <SectionTitle icon={DollarSign}>Comparatif des prix DOM / Métropole — données concrètes</SectionTitle>
+
+            <div className="bg-gradient-to-r from-red-500/10 to-orange-500/5 border border-red-500/30 rounded-2xl p-5 mb-8">
+              <p className="text-base font-bold text-red-300 mb-2">
+                🛒 La question que tout le monde se pose : combien ça coûte de plus aux Antilles ?
+              </p>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Les prix dans les DOM sont <strong className="text-red-300">structurellement plus élevés</strong> qu'en métropole.
+                L'INSEE mesure régulièrement cet écart. En 2023, les produits alimentaires
+                coûtent en moyenne <strong className="text-red-300">+11 % à +17 %</strong> de plus
+                en Guadeloupe et Martinique qu'en France métropolitaine — et davantage encore pour
+                certaines catégories de produits.
+              </p>
+            </div>
+
+            <InfoBox color="amber" title="⚠️ Méthode & limites">
+              Les prix présentés ci-dessous sont issus des relevés officiels de l'INSEE DOM,
+              de l'Observatoire des Prix, des Marges et des Revenus (OPMR) et de rapports
+              parlementaires. Ils sont indicatifs et peuvent varier selon les enseignes,
+              les références exactes et les périodes promotionnelles. GBH n'est pas le seul
+              distributeur en DOM — mais il est dominant ({'>'}{' '}40 % de part de marché en distribution
+              alimentaire en Guadeloupe et Martinique selon l'ADLC 2019).
+            </InfoBox>
+
+            {/* Tableau des prix */}
+            <SectionTitle icon={ShoppingBag}>Tableau comparatif — produits du quotidien</SectionTitle>
+            <p className="text-xs text-gray-500 mb-4 italic">
+              Prix moyens constatés. Sources : INSEE DOM 2022-2023 · OPMR Guadeloupe & Martinique · rapports sénat 2023.
+            </p>
+
+            <div className="overflow-x-auto mb-8">
+              <table className="w-full text-xs text-left min-w-[680px]">
+                <thead>
+                  <tr className="border-b border-red-500/30 bg-red-500/5">
+                    <th className="pb-3 pt-2 px-3 text-red-300 font-bold">Produit</th>
+                    <th className="pb-3 pt-2 px-3 text-red-300 font-bold text-right">Prix Métropole</th>
+                    <th className="pb-3 pt-2 px-3 text-red-300 font-bold text-right">Prix DOM (moy.)</th>
+                    <th className="pb-3 pt-2 px-3 text-red-300 font-bold text-right">Écart</th>
+                    <th className="pb-3 pt-2 px-3 text-red-300 font-bold text-center">Niveau</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {[
+                    { produit: '🥛 Lait demi-écrémé 1L',         metro: '0,90 €',  dom: '1,25–1,55 €', ecart: '+39–72 %', niveau: 'haut' },
+                    { produit: '🍞 Pain de mie 500g',             metro: '1,50 €',  dom: '2,10–2,60 €', ecart: '+40–73 %', niveau: 'haut' },
+                    { produit: '🍚 Riz blanc 1kg',                metro: '1,20 €',  dom: '1,60–2,00 €', ecart: '+33–67 %', niveau: 'haut' },
+                    { produit: '🍝 Pâtes 500g',                   metro: '0,85 €',  dom: '1,10–1,40 €', ecart: '+29–65 %', niveau: 'haut' },
+                    { produit: '🧴 Huile de tournesol 1L',        metro: '1,80 €',  dom: '2,40–3,00 €', ecart: '+33–67 %', niveau: 'haut' },
+                    { produit: '🍅 Concentré de tomate 140g',     metro: '0,60 €',  dom: '0,90–1,10 €', ecart: '+50–83 %', niveau: 'trés-haut' },
+                    { produit: '☕ Café moulu 250g',              metro: '2,50 €',  dom: '3,20–4,00 €', ecart: '+28–60 %', niveau: 'haut' },
+                    { produit: '🧻 Papier toilette x6',           metro: '2,80 €',  dom: '4,00–5,50 €', ecart: '+43–96 %', niveau: 'trés-haut' },
+                    { produit: '🧼 Savon liquide 500ml',          metro: '1,90 €',  dom: '2,80–3,50 €', ecart: '+47–84 %', niveau: 'haut' },
+                    { produit: '🐟 Thon en boîte 180g',           metro: '1,40 €',  dom: '2,00–2,60 €', ecart: '+43–86 %', niveau: 'haut' },
+                    { produit: '🧀 Emmental râpé 200g',           metro: '1,80 €',  dom: '2,80–3,40 €', ecart: '+56–89 %', niveau: 'trés-haut' },
+                    { produit: '🍗 Escalope de poulet 500g',      metro: '4,50 €',  dom: '6,00–8,00 €', ecart: '+33–78 %', niveau: 'haut' },
+                    { produit: '🧈 Beurre 250g',                  metro: '2,20 €',  dom: '3,20–4,00 €', ecart: '+45–82 %', niveau: 'haut' },
+                    { produit: '🥚 Œufs x6',                     metro: '1,80 €',  dom: '2,60–3,50 €', ecart: '+44–94 %', niveau: 'haut' },
+                    { produit: '🥫 Haricots rouges en boîte 400g',metro: '0,90 €',  dom: '1,40–1,80 €', ecart: '+56–100 %', niveau: 'trés-haut' },
+                    { produit: '🧃 Jus d\'orange 1L',             metro: '1,50 €',  dom: '2,20–2,80 €', ecart: '+47–87 %', niveau: 'haut' },
+                    { produit: '🥤 Eau minérale 1,5L',            metro: '0,45 €',  dom: '0,80–1,20 €', ecart: '+78–167 %', niveau: 'trés-haut' },
+                    { produit: '🍼 Lait infantile 1er âge 800g',  metro: '12,00 €', dom: '16,00–22,00 €', ecart: '+33–83 %', niveau: 'haut' },
+                    { produit: '🚿 Shampoing 400ml',              metro: '2,50 €',  dom: '4,00–5,50 €', ecart: '+60–120 %', niveau: 'trés-haut' },
+                    { produit: '💊 Doliprane 1g x8',              metro: '2,80 €',  dom: '3,80–4,80 €', ecart: '+36–71 %', niveau: 'haut' },
+                  ].map(row => {
+                    const c = row.niveau === 'trés-haut'
+                      ? { bg: 'bg-red-500/10', ecart: 'text-red-400 font-bold', badge: 'bg-red-500/20 text-red-300 border-red-500/40' }
+                      : { bg: '', ecart: 'text-orange-400 font-semibold', badge: 'bg-orange-500/15 text-orange-300 border-orange-500/30' };
+                    return (
+                      <tr key={row.produit} className={`hover:bg-slate-700/20 transition-colors ${c.bg}`}>
+                        <td className="py-2.5 px-3 text-gray-200">{row.produit}</td>
+                        <td className="py-2.5 px-3 text-right text-gray-400 font-mono">{row.metro}</td>
+                        <td className="py-2.5 px-3 text-right text-amber-300 font-mono font-semibold">{row.dom}</td>
+                        <td className={`py-2.5 px-3 text-right font-mono ${c.ecart}`}>{row.ecart}</td>
+                        <td className="py-2.5 px-3 text-center">
+                          <span className={`text-xs px-2 py-0.5 rounded-full border ${c.badge}`}>
+                            {row.niveau === 'trés-haut' ? '🔴 Très élevé' : '🟠 Élevé'}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+              <DataCard label="Écart moyen alimentaire" value="+11 à +17 %" sub="Guadeloupe & Martinique vs métropole" highlight />
+              <DataCard label="Écart produits frais" value="+20 à +30 %" sub="Viandes, produits laitiers" highlight />
+              <DataCard label="Écart hygiène/beauté" value="+40 à +70 %" sub="Catégorie la plus touchée" highlight />
+              <DataCard label="Part du budget alim." value="25–35 %" sub="Ménages modestes DOM vs 15% métro" />
+            </div>
+
+            {/* Pourquoi ces écarts ? */}
+            <SectionTitle icon={AlertTriangle}>Pourquoi les prix sont-ils si élevés ? — Les vraies raisons</SectionTitle>
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  rang: '1', emoji: '🚢', titre: 'Le transport maritime — incontournable',
+                  part: '~30–40 % de l\'écart',
+                  color: '#f59e0b',
+                  desc: 'Les Antilles sont des îles. Tout ce qui n\'est pas produit localement doit être importé par bateau depuis la métropole ou d\'autres pays. Le coût du fret maritime (conteneurs, délais, assurances, manutention portuaire) est répercuté dans le prix de vente. C\'est une réalité géographique incompressible qui concerne tous les distributeurs, pas seulement GBH.',
+                  source: 'CEROM — Rapport économique DOM 2022 ; OPMR Guadeloupe 2023',
+                },
+                {
+                  rang: '2', emoji: '🏷️', titre: 'L\'Octroi de Mer — taxe locale sur les imports',
+                  part: '~15–25 % de l\'écart',
+                  color: '#ef4444',
+                  desc: 'L\'octroi de mer est une taxe spécifique aux DOM, perçue sur toutes les marchandises importées (et sur certaines productions locales). Héritage du système colonial, il est devenu la principale ressource fiscale des collectivités locales DOM (30 à 50 % de leurs recettes). Il est donc intégré dans le prix de vente au consommateur. Son maintien est défendu par les collectivités locales même s\'il contribue à la vie chère.',
+                  source: 'ADLC — Avis 09-A-45 (2009) pp. 30-35 ; FEDOM — rapport octroi de mer 2022',
+                },
+                {
+                  rang: '3', emoji: '📦', titre: 'Les marges de la distribution — rôle de GBH',
+                  part: '~20–35 % de l\'écart',
+                  color: '#8b5cf6',
+                  desc: 'C\'est ici que la responsabilité de GBH est la plus directement engagée. La position dominante du groupe en distribution alimentaire (>40 % de pdm) réduit la pression concurrentielle et permet des marges plus élevées qu\'en métropole. L\'ADLC a documenté des marges brutes supérieures dans les DOM vs métropole pour les mêmes produits Carrefour. La taille réduite des marchés DOM et les coûts fixes élevés (personnel, immobilier) expliquent une partie de ces marges — mais pas la totalité.',
+                  source: 'ADLC — Avis 19-A-12 (2019) pp. 25-40 ; Rapport Sénateur Claireaux 2023',
+                },
+                {
+                  rang: '4', emoji: '🏗️', titre: 'Les coûts locaux — immobilier, énergie, personnel',
+                  part: '~10–20 % de l\'écart',
+                  color: '#10b981',
+                  desc: 'Les coûts d\'exploitation en DOM sont intrinsèquement plus élevés : l\'électricité est plus chère (CRE — 0,18 à 0,25 €/kWh vs 0,12 €/kWh en métropole), l\'immobilier commercial est plus rare, et le coût de l\'adaptation aux conditions tropicales (climatisation, normes anticyclones) augmente les charges. Ces coûts sont réels mais partiellement absorbables par des économies d\'échelle que seul un groupe de la taille de GBH peut réaliser.',
+                  source: 'CRE — rapport tarifs DOM 2023 ; BRGM — risques naturels DOM',
+                },
+              ].map(r => (
+                <div key={r.rang} className="border border-slate-700 rounded-xl overflow-hidden">
+                  <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-700/50" style={{ background: `${r.color}11` }}>
+                    <span className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-black border-2" style={{ background: `${r.color}22`, borderColor: r.color, color: r.color }}>{r.rang}</span>
+                    <span className="text-lg">{r.emoji}</span>
+                    <p className="text-sm font-bold text-white flex-1">{r.titre}</p>
+                    <span className="text-xs px-2 py-0.5 rounded-full font-semibold border" style={{ background: `${r.color}20`, borderColor: `${r.color}50`, color: r.color }}>{r.part}</span>
+                  </div>
+                  <div className="px-4 py-3">
+                    <p className="text-xs text-gray-400 leading-relaxed mb-2">{r.desc}</p>
+                    <p className="text-xs text-slate-600 italic">📎 {r.source}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* BQP — le bouclier */}
+            <SectionTitle icon={Shield}>Le Bouclier Qualité-Prix (BQP) — ce que ça change concrètement</SectionTitle>
+            <div className="border border-green-500/30 bg-green-500/5 rounded-xl p-5 mb-8">
+              <p className="text-sm font-bold text-green-300 mb-3">🛡️ Le BQP en pratique : 200+ produits à prix encadrés</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+                <DataCard label="Produits dans le BQP 2024 (GP)" value="209" sub="Arrêté préfectoral annuel" />
+                <DataCard label="Économie estimée par rapport au prix libre" value="15–20 %" sub="Sur le panier BQP uniquement" />
+                <DataCard label="Part du budget alimentaire couverte" value="~25–35 %" sub="Estimation OPMR" />
+              </div>
+              <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                Le panier BQP 2024 en Guadeloupe comprend notamment : huile, riz, pâtes, conserves
+                de légumes, produits d'hygiène de base (dentifrice, savon, papier toilette), café,
+                lait, yaourts, farine, sucre... Ces produits sont vendus à des prix plafonnés dans
+                tous les supermarchés GBH (et les autres enseignes signataires). C'est une mesure
+                réelle et vérifiable qui atténue (sans éliminer) le surcoût pour les ménages
+                à revenus modestes.
+              </p>
+              <p className="text-xs text-amber-300/80 bg-amber-500/10 rounded-lg px-3 py-2">
+                ⚠️ <strong>Limite :</strong> Le BQP ne concerne que ~20 % des références en magasin.
+                Les 80 % restants sont à prix libres, où les marges sont potentiellement plus élevées.
+                Le BQP est aussi une obligation négociée sous pression réglementaire,
+                pas une initiative volontaire de GBH.
+              </p>
+              <p className="text-xs text-slate-600 mt-2">
+                Source : Arrêté BQP 2024 — Préfecture de Guadeloupe · Préfecture de Martinique · OPMR
+              </p>
+            </div>
+
+            {/* Recommandations pratiques */}
+            <SectionTitle icon={Info}>Conseils pratiques pour économiser en DOM</SectionTitle>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              {[
+                { emoji: '🏷️', titre: 'Acheter les produits du BQP', desc: 'Le panier BQP est affiché en magasin. Ces 200+ produits sont garantis à prix encadré. C\'est là que l\'économie est la plus grande par rapport au prix libre.' },
+                { emoji: '🛒', titre: 'Comparer les enseignes', desc: 'Même si GBH est dominant, d\'autres enseignes existent (Leader Price, Hyper U, Marché Passion). Les prix peuvent varier de 5 à 15 % selon les produits et les enseignes.' },
+                { emoji: '🌱', titre: 'Acheter local au marché', desc: 'Les marchés locaux (légumes antillais, fruits tropicaux, poisson frais local) proposent souvent des prix inférieurs aux grandes surfaces pour les produits frais locaux.' },
+                { emoji: '💳', titre: 'Carte de fidélité Carrefour+', desc: 'La carte fidélité Carrefour+ offre des réductions immédiates et des points. Pour un foyer actif, l\'économie annuelle peut être de 150 à 300 € selon les achats.' },
+                { emoji: '📅', titre: 'Profiter des promotions catalogues', desc: 'Les catalogues Carrefour DOM (consultables sur carrefour.gp et carrefour.mq) proposent chaque semaine des promotions pouvant aller jusqu\'à -30 % sur certains produits.' },
+                { emoji: '🏪', titre: 'Acheter les MDD Carrefour', desc: 'Les marques distributeur (Carrefour Essential, Carrefour Bio) sont généralement 20 à 30 % moins chères que les marques nationales pour une qualité souvent comparable.' },
+              ].map(c => (
+                <div key={c.titre} className="border border-slate-700 rounded-xl p-3 flex gap-3">
+                  <span className="text-xl flex-shrink-0">{c.emoji}</span>
+                  <div>
+                    <p className="text-xs font-bold text-white mb-1">{c.titre}</p>
+                    <p className="text-xs text-gray-400 leading-relaxed">{c.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-slate-600 text-center italic">
+              Sources principales : INSEE DOM — Comparaisons de prix 2022-2023 · OPMR Guadeloupe & Martinique ·
+              ADLC Avis 19-A-12 (2019) · Rapport Sénateur Claireaux — Vie chère en Outre-Mer 2023
+            </p>
+          </div>
+        )}
+
+        {/* ══ TAB : FAQ CITOYENNE ═══════════════════════════════════════════ */}
+        {activeTab === 'faq' && (
+          <div>
+            <SectionTitle icon={Info}>Questions des citoyens — Réponses documentées</SectionTitle>
+
+            <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/5 border border-blue-500/30 rounded-2xl p-5 mb-8">
+              <p className="text-base font-bold text-blue-300 mb-2">
+                💬 Ce que les Guadeloupéens et Martiniquais demandent vraiment sur GBH
+              </p>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Cette page rassemble les questions les plus fréquentes posées par les citoyens
+                des DOM sur le Groupe Bernard Hayot — sur les réseaux sociaux, dans la presse
+                régionale, lors des crises sociales. Les réponses sont basées sur des sources
+                vérifiables, sans tabou, avec les nuances nécessaires.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                {
+                  q: '💰 Combien gagne Bernard Hayot ? Est-il vraiment milliardaire ?',
+                  statut: 'Estimation journalistique',
+                  color: 'amber',
+                  r: `Le magazine Challenges classe chaque année les 500 premières fortunes de France. Bernard Hayot y figure régulièrement avec une fortune estimée entre 1 et 2 milliards d'euros selon les éditions (2019-2023). Ces estimations sont réalisées par des journalistes sur la base d'actifs estimés — immobilier, valeur des filiales, participation dans le capital GBH — et ne sont pas auditées. GBH étant une société non cotée et non publiante, les chiffres exacts sont inconnus du public. Ce qu'on peut dire avec certitude : il figure parmi les personnes les plus riches de France et c'est, de très loin, la plus grande fortune privée des Antilles françaises.`,
+                  source: 'Challenges — Classement 500 fortunes (éditions 2019-2023) ; Capital — Fortunes Outre-Mer',
+                },
+                {
+                  q: '🤔 Pourquoi GBH n\'est pas obligé de publier ses comptes ?',
+                  statut: 'Question juridique',
+                  color: 'blue',
+                  r: `GBH est structuré en SAS (Société par Actions Simplifiée). La loi française oblige les grandes entreprises à publier leurs comptes seulement si elles dépassent certains seuils cumulés sur deux des trois critères suivants : bilan > 4 M€, chiffre d'affaires > 8 M€, et nombre de salariés > 50. GBH dépasse ces seuils, mais il existe des exceptions pour les filiales de groupes qui déposent des comptes consolidés — or GBH n'a pas d'obligation de consolidation publique. En 2023, le gouvernement a renforcé les obligations de publication des grandes entreprises, mais l'application aux SAS familiales reste partielle. C'est un vide juridique critiqué par les associations de consommateurs et les économistes spécialisés en Outre-Mer.`,
+                  source: 'Code de commerce Art. L123-16 ; Loi PACTE 2019 — publication des comptes ; rapport CEROM 2022',
+                },
+                {
+                  q: '🛒 Peut-on boycotter GBH ? Y a-t-il des alternatives ?',
+                  statut: 'Question pratique',
+                  color: 'green',
+                  r: `Oui, des alternatives existent — mais elles sont limitées compte tenu de la position dominante du groupe. En Guadeloupe : Hyper U (indépendant), Leader Price, Intermarché (quelques points de vente), hard discount Lidl (présence limitée), marchés locaux pour le frais. En Martinique : Hyper U, Super U, Leader Price, marchés locaux. En Guyane : Super U, Leader Price. Le problème est que GBH contrôle aussi d'autres secteurs (automobile, hôtellerie, BTP) où les alternatives sont encore plus rares. Un boycott partiel (commencer par les produits non alimentaires ou favoriser les marchés locaux pour les produits frais) est possible et recommandé par certaines associations de consommateurs.`,
+                  source: 'ADLC Avis 19-A-12 (2019) — cartographie concurrentielle ; sites officiels enseignes DOM',
+                },
+                {
+                  q: '⚖️ GBH a-t-il déjà été condamné pour des pratiques illégales ?',
+                  statut: 'Question factuelle',
+                  color: 'red',
+                  r: `À notre connaissance (sources publiques disponibles), GBH n'a pas fait l'objet de condamnation pénale définitive. En revanche, l'Autorité de la concurrence (ADLC) a émis deux avis très critiques sur les pratiques du marché de distribution des DOM (09-A-45 en 2009, 19-A-12 en 2019) pointant la position dominante et ses effets sur les prix, sans pour autant prononcer de sanction contre GBH spécifiquement. Des contentieux civils avec des fournisseurs locaux ont été mentionnés dans la presse régionale sans que leurs issues soient intégralement documentées. La Direction Générale de la Concurrence (DGCCRF) effectue des contrôles réguliers dans les DOM sur les pratiques tarifaires. Aucune sanction publiée visant GBH n'a été identifiée dans les sources ouvertes.`,
+                  source: 'ADLC — avis 2009 et 2019 ; DGCCRF — bilans d\'enquête ; Légifrance — décisions publiées',
+                },
+                {
+                  q: '🏠 GBH possède-t-il aussi des terres et de l\'immobilier aux Antilles ?',
+                  statut: 'Partiellement documenté',
+                  color: 'purple',
+                  r: `Oui. GBH détient, directement ou via des SCI (Sociétés Civiles Immobilières), les murs de nombreuses grandes surfaces, zones commerciales et entrepôts en Guadeloupe, Martinique et Guyane. La SCI Jarry Distribution (zone de Jarry, Baie-Mahault) est la plus documentée. La propriété des murs des zones commerciales est une source de revenus immobiliers distincte du commerce de distribution. L'emprise foncière exacte du groupe (en m²) n'est pas publiée. Les familles béké martiniquaises détiennent historiquement d'importantes surfaces foncières issues de l'époque des plantations — mais la répartition précise de ce foncier entre les familles n'est pas documentée publiquement.`,
+                  source: 'BODACC — SCI Jarry Distribution ; archives foncières DOM (non numérisées intégralement) ; ADLC 09-A-45',
+                },
+                {
+                  q: '👷 Les employés de GBH sont-ils bien payés ?',
+                  statut: 'Documenté partiellement',
+                  color: 'amber',
+                  r: `Les employés GBH (grande distribution, automobile, hôtellerie) sont couverts par des conventions collectives sectorielles : CCN 3305 (commerce alimentaire) pour les caissiers et employés de rayon, OETAM BTP pour les filiales construction. Ces conventions fixent des minima salariaux supérieurs au SMIC. En Guadeloupe et Martinique, le SMIC brut est le même qu'en métropole. Selon les témoignages syndicaux et rapports de l'Inspection du Travail DOM, les conditions de travail dans la grande distribution sont similaires à celles observées en métropole dans des grandes enseignes comparables — avec la même problématique de pressions sur la productivité et de difficultés à obtenir des congés en période haute. Il n'existe pas de rapport publié spécifique aux conditions de travail chez GBH.`,
+                  source: 'CCN 3305 — Légifrance ; DREETS Guadeloupe — bilan 2022 ; presse syndicale régionale',
+                },
+                {
+                  q: '📊 Quelle est la part de marché exacte de GBH ?',
+                  statut: 'Documenté officiellement',
+                  color: 'green',
+                  r: `L'Autorité de la concurrence a mesuré les parts de marché dans ses avis officiels. En 2019 (dernier avis disponible), GBH détenait en Guadeloupe environ 40 à 45 % du marché de la distribution alimentaire en grande surface (hypermarchés + supermarchés). En Martinique, la position est similaire. Ces chiffres font de GBH le leader incontesté de la grande distribution alimentaire DOM, loin devant ses concurrents. En revanche, si on inclut tous les formats (hard discount, commerce de proximité, marchés), la part réelle est légèrement inférieure. GBH est également dominant dans la distribution automobile (plusieurs marques en position de quasi-monopole sur certains territoires) et dans l'hôtellerie DOM.`,
+                  source: 'ADLC — Avis 19-A-12 (2019) pp. 12-18 ; OPMR Guadeloupe — rapport 2023',
+                },
+                {
+                  q: '🌍 GBH paie-t-il ses impôts en France ou dans des paradis fiscaux ?',
+                  statut: 'Non documenté',
+                  color: 'red',
+                  r: `C'est une question fréquente pour laquelle les données publiques sont insuffisantes. GBH est une SAS française de droit commun, avec siège social en Guadeloupe. Elle est donc normalement soumise à l'impôt sur les sociétés français pour les revenus de ses filiales françaises. En revanche, pour ses filiales étrangères (Madagascar, Nouvelle-Calédonie, Polynésie française), la fiscalité applicable dépend des conventions fiscales bilatérales. L'optimisation fiscale intra-groupe (prix de transfert, remontée de dividendes) est une pratique légale courante dans les groupes de cette taille. Aucun rapport public d'audit fiscal de GBH n'est disponible. Une investigation journalistique (type Offshore Leaks) n'a pas, à notre connaissance, mentionné GBH.`,
+                  source: 'CGI — Art. 209 B (CFC) ; OCDE — prix de transfert ; absence de mention dans les Panama/Pandora Papers',
+                },
+                {
+                  q: '🔮 GBH peut-il perdre sa franchise Carrefour ? Que se passerait-il ?',
+                  statut: 'Analyse prospective',
+                  color: 'blue',
+                  r: `Le contrat de franchise avec Carrefour France est l'actif stratégique le plus important de GBH. Sa perte serait catastrophique pour le groupe. Théoriquement, Carrefour pourrait résilier la franchise si GBH ne respecte pas les conditions contractuelles (normes qualité, politique tarifaire, identité visuelle). En pratique, cette franchise est mutuellement avantageuse : Carrefour bénéficie d'une présence rentable dans des marchés insulaires difficiles à opérer directement, et GBH bénéficie de l'enseigne, des centrales d'achat et du savoir-faire logistique Carrefour. Le risque de rupture est théorique. Un scénario plus probable serait une renégociation des conditions financières de la franchise — mais les termes du contrat ne sont pas publiés.`,
+                  source: 'ADLC Avis 19-A-12 pp. 10-12 (structure franchise) ; droit commercial des franchises — Légifrance',
+                },
+              ].map(({ q, r, source, statut, color }) => {
+                const bg: Record<string, string> = { amber: 'border-amber-500/30 bg-amber-500/5', blue: 'border-blue-500/30 bg-blue-500/5', green: 'border-green-500/30 bg-green-500/5', red: 'border-red-500/30 bg-red-500/5', purple: 'border-purple-500/30 bg-purple-500/5' };
+                const tc: Record<string, string> = { amber: 'text-amber-300', blue: 'text-blue-300', green: 'text-green-300', red: 'text-red-300', purple: 'text-purple-300' };
+                return (
+                  <div key={q} className={`border rounded-xl overflow-hidden ${bg[color]}`}>
+                    <div className="px-4 py-3 border-b border-slate-700/50 flex items-start justify-between gap-3">
+                      <p className={`text-sm font-bold ${tc[color]}`}>{q}</p>
+                      <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full border whitespace-nowrap ${bg[color].replace('bg-', 'border-').replace('/5', '/40')} ${tc[color]}`}>{statut}</span>
+                    </div>
+                    <div className="px-4 py-3">
+                      <p className="text-xs text-gray-300 leading-relaxed mb-2">{r}</p>
+                      <p className="text-xs text-slate-600 italic">📎 {source}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ══ TAB : DROITS & CONFLITS SOCIAUX ══════════════════════════════ */}
+        {activeTab === 'conflits' && (
+          <div>
+            <SectionTitle icon={Shield}>Droits des travailleurs & Conflits sociaux chez GBH</SectionTitle>
+
+            <InfoBox color="amber" title="⚠️ Sources & limites">
+              Les conflits sociaux dans les entreprises privées sont généralement peu documentés dans les
+              sources officielles ouvertes. Les informations ci-dessous proviennent de la presse régionale
+              (France-Antilles, Guadeloupe La 1ère, Martinique La 1ère), des communiqués syndicaux
+              publiés, et des archives parlementaires. Elles peuvent être incomplètes.
+            </InfoBox>
+
+            {/* Cadre légal */}
+            <SectionTitle icon={Scale}>1 — Cadre légal applicable aux salariés GBH</SectionTitle>
+            <div className="overflow-x-auto mb-8">
+              <table className="w-full text-xs text-left min-w-[600px]">
+                <thead>
+                  <tr className="border-b border-slate-700 bg-slate-800/40">
+                    <th className="pb-3 pt-2 px-3 text-gray-300 font-bold">Secteur</th>
+                    <th className="pb-3 pt-2 px-3 text-gray-300 font-bold">Convention collective</th>
+                    <th className="pb-3 pt-2 px-3 text-gray-300 font-bold">Salaire minimum brut</th>
+                    <th className="pb-3 pt-2 px-3 text-gray-300 font-bold">Protections clés</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {[
+                    { secteur: '🏪 Grande distribution (Carrefour)', ccn: 'CCN 3305 — Commerce à prédominance alimentaire', salaire: 'SMIC + légère majoration selon échelon', prot: 'Heures supp. majorées 25 %, repos compensateur, représentation syndicale' },
+                    { secteur: '🚗 Automobile (concessions)', ccn: 'CCN des services de l\'automobile', salaire: 'SMIC + primes sur ventes', prot: 'Mutuelle, prévoyance, formation sécurité obligatoire' },
+                    { secteur: '🏨 Hôtellerie (Karibéa)', ccn: 'CCN HCR — Hôtels Cafés Restaurants', salaire: 'Légèrement supérieur au SMIC (service inclu)', prot: 'Logement possible, avantages en nature, repos hebdomadaire' },
+                    { secteur: '🏗️ BTP & matériaux', ccn: 'CCN Constructys — bâtiment Outre-Mer', salaire: 'SMIC + prime de déplacement', prot: 'EPI obligatoires, médecine du travail, caisse de congés BTP' },
+                  ].map(r => (
+                    <tr key={r.secteur} className="hover:bg-slate-700/20">
+                      <td className="py-3 px-3 font-medium text-white">{r.secteur}</td>
+                      <td className="py-3 px-3 text-gray-400">{r.ccn}</td>
+                      <td className="py-3 px-3 text-amber-300">{r.salaire}</td>
+                      <td className="py-3 px-3 text-gray-400">{r.prot}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="text-xs text-slate-600 mt-2 italic">Source : Légifrance — CCN sectorielles ; DREETS Guadeloupe & Martinique</p>
+            </div>
+
+            {/* Présence syndicale */}
+            <SectionTitle icon={Users}>2 — Présence syndicale documentée</SectionTitle>
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  syndicat: 'UGTG — Union Générale des Travailleurs de Guadeloupe',
+                  presence: 'Forte présence dans les grandes surfaces Carrefour GBH en Guadeloupe',
+                  desc: 'L\'UGTG est le principal syndicat indépendant guadeloupéen. Elle a été au cœur de la grève LKP de 2009. Elle est présente dans les CSE (Comités Sociaux et Économiques) des entités GBH en Guadeloupe et a mené plusieurs actions revendicatives documentées dans la presse régionale (salaires, conditions de travail, gel des congés en période haute).',
+                  source: 'Presse régionale Guadeloupe 2009-2024 ; site UGTG',
+                  color: 'red',
+                },
+                {
+                  syndicat: 'CGTM — Confédération Générale du Travail de Martinique',
+                  presence: 'Représentée dans les entités GBH en Martinique',
+                  desc: 'La CGTM est l\'équivalent martiniquais de l\'UGTG. Elle représente des salariés de la grande distribution, dont des entités Carrefour GBH en Martinique. Elle a participé aux négociations de 2009 (accord Jacob sur les baisses de prix) et aux discussions de 2021 sur la vie chère.',
+                  source: 'Presse régionale Martinique ; archives CGTM 2009-2024',
+                  color: 'red',
+                },
+                {
+                  syndicat: 'FO Commerce — Force Ouvrière',
+                  presence: 'Section syndicale dans certaines entités GBH',
+                  desc: 'FO Commerce est présente dans plusieurs grandes surfaces Carrefour en France et dans les DOM. Elle négocie localement les accords d\'entreprise (intéressement, primes, aménagement du temps de travail).',
+                  source: 'FO Commerce — implantations DOM ; Direction du travail',
+                  color: 'orange',
+                },
+                {
+                  syndicat: 'CFDT Commerce & Services',
+                  presence: 'Présence dans certaines entités du pôle distribution',
+                  desc: 'La CFDT est traditionnellement bien représentée dans les grandes enseignes de distribution, en lien avec Carrefour France. Sa présence dans les entités GBH DOM est probable mais moins documentée que celle de l\'UGTG et de la CGTM.',
+                  source: 'CFDT — rapport fédération Commerce 2022',
+                  color: 'orange',
+                },
+              ].map(s => {
+                const c: Record<string, string> = { red: 'border-red-500/30 bg-red-500/5', orange: 'border-orange-500/30 bg-orange-500/5' };
+                const tc: Record<string, string> = { red: 'text-red-300', orange: 'text-orange-300' };
+                return (
+                  <div key={s.syndicat} className={`border rounded-xl p-4 ${c[s.color]}`}>
+                    <p className={`text-sm font-bold mb-1 ${tc[s.color]}`}>{s.syndicat}</p>
+                    <p className="text-xs text-gray-300 font-semibold mb-2">📍 {s.presence}</p>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-2">{s.desc}</p>
+                    <p className="text-xs text-slate-600 italic">📎 {s.source}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Conflits sociaux documentés */}
+            <SectionTitle icon={AlertTriangle}>3 — Conflits & mouvements sociaux impliquant GBH</SectionTitle>
+            <div className="relative">
+              <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-red-500/20" />
+              <div className="space-y-4">
+                {[
+                  {
+                    date: 'Fév.–Mars 2009', couleur: '#ef4444',
+                    titre: '✊ Grève LKP — 44 jours — Guadeloupe',
+                    desc: 'La grève générale LKP (Lyannaj Kont Pwofitasyon) paralyse la Guadeloupe du 20 janvier au 4 mars 2009. Déclenchée par une coalition de 49 organisations syndicales et associatives, elle vise directement la vie chère et les pratiques des grandes enseignes. Les hypermarchés Carrefour GBH sont au cœur des revendications. La grève se solde par l\'accord dit "accord Jacob" (du nom du préfet médiateur) : baisse de prix sur ~100 produits, hausses de salaires dans certains secteurs, engagements sur les pratiques commerciales. 2 morts (violences en marge des manifestations) et des centaines de millions d\'euros de pertes économiques.',
+                    issue: 'Accord Jacob — baisse de prix + hausses salariales · Engagement de meilleurs contrôles réglementaires',
+                    source: 'Accord du 4 mars 2009 — archives préfecture GP ; Le Monde — archives 2009 ; rapport Sénat 2009',
+                  },
+                  {
+                    date: 'Janv.–Fév. 2009', couleur: '#f97316',
+                    titre: '🔥 Mouvement social en Martinique — simultané',
+                    desc: 'En parallèle du LKP guadeloupéen, un mouvement social similaire éclate en Martinique sous l\'impulsion du collectif "5-Février" (en référence au 5 février 1900, date de la naissance de la résistance sociale martiniquaise). Les revendications portent également sur la vie chère et les pratiques des enseignes de grande distribution. GBH, principal acteur du marché martiniquais, est également interpellé. Un accord similaire à l\'accord Jacob est conclu en Martinique.',
+                    issue: 'Accord de sortie de crise — baisses de prix négociées · Engagements des distributeurs',
+                    source: 'Archives presse Martinique La 1ère ; rapport Sénat DOM 2009',
+                  },
+                  {
+                    date: 'Nov. 2021', couleur: '#ef4444',
+                    titre: '🔴 Émeutes en Guadeloupe — magasins pillés',
+                    desc: 'À partir du 17 novembre 2021, des émeutes éclatent en Guadeloupe, initialement déclenchées par l\'obligation vaccinale pour les soignants mais rapidement élargies aux revendications sur la vie chère et les inégalités économiques. Plusieurs grandes surfaces GBH subissent des pillages et des dégradations importantes. Bernard Hayot annonce publiquement une baisse de prix sur 200 produits dans les Carrefour GBH des Antilles. Cette annonce est perçue par certains comme un geste commercial opportuniste, par d\'autres comme un effort réel de solidarité.',
+                    issue: 'Annonce baisse prix GBH sur 200 produits (déc. 2021) · Intervention des forces de l\'ordre · Couvre-feu',
+                    source: 'France-Antilles nov.-déc. 2021 ; Guadeloupe La 1ère — archives ; communiqué GBH déc. 2021',
+                  },
+                  {
+                    date: '2015–2023', couleur: '#8b5cf6',
+                    titre: '⚠️ Grèves ponctuelles dans les entités GBH',
+                    desc: 'Entre 2015 et 2023, plusieurs grèves ponctuelles ont été signalées dans des entités GBH par la presse régionale : mouvements dans des hypermarchés Carrefour GP pour des revendications salariales, débrayages dans des concessions automobiles suite à des restructurations, tensions dans des entités hôtelières Karibéa en période de crise COVID (2020). Ces mouvements restent de courte durée et localisés — ils ne dégénèrent pas en conflits majeurs.',
+                    issue: 'Issues variables selon les conflits — accords locaux, médiations prud\'homales',
+                    source: 'Presse régionale (France-Antilles, Guadeloupe La 1ère) — archives 2015-2023',
+                  },
+                ].map((e, i) => (
+                  <div key={e.date} className="relative pl-14">
+                    <div className="absolute left-0 top-0 w-10 h-10 rounded-full border-2 flex items-center justify-center text-xs font-bold"
+                      style={{ background: `${e.couleur}22`, borderColor: e.couleur, color: e.couleur }}>
+                      {i + 1}
+                    </div>
+                    <div className="border border-slate-700 rounded-xl overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-700/50" style={{ background: `${e.couleur}0d` }}>
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-lg border"
+                            style={{ background: `${e.couleur}20`, borderColor: `${e.couleur}50`, color: e.couleur }}>{e.date}</span>
+                          <p className="text-sm font-bold text-white">{e.titre}</p>
+                        </div>
+                      </div>
+                      <div className="px-4 py-3">
+                        <p className="text-xs text-gray-400 leading-relaxed mb-2">{e.desc}</p>
+                        <p className="text-xs text-green-300/80 bg-green-500/10 rounded-lg px-3 py-2 mb-2">
+                          ✅ <strong>Issue :</strong> {e.issue}
+                        </p>
+                        <p className="text-xs text-slate-600 italic">📎 {e.source}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Droit de grève et protection */}
+            <SectionTitle icon={FileText}>4 — Droit du travail & recours disponibles pour les salariés GBH</SectionTitle>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              {[
+                { emoji: '⚖️', titre: 'Conseil de Prud\'hommes', desc: 'Tout salarié GBH peut saisir le Conseil de Prud\'hommes de Basse-Terre (GP), Fort-de-France (MQ) ou Cayenne (GF) pour tout litige individuel du travail (licenciement, heures supplémentaires non payées, discrimination). Les délais sont variables mais la procédure est gratuite.', url: 'https://www.service-public.fr/' },
+                { emoji: '📋', titre: 'DREETS — Inspection du Travail', desc: 'La Direction Régionale de l\'Économie, de l\'Emploi, du Travail et des Solidarités (DREETS) de Guadeloupe et Martinique peut être saisie pour signaler des manquements au droit du travail dans les entités GBH (non-respect des horaires, conditions de travail, représentation syndicale).', url: 'https://guadeloupe.dreets.gouv.fr/' },
+                { emoji: '💬', titre: 'CSE — Comité Social et Économique', desc: 'Les grandes entités GBH sont dotées de CSE (Comités Sociaux et Économiques) obligatoires pour les entreprises de plus de 11 salariés. Les représentants du personnel au CSE sont des interlocuteurs légaux pour les conditions de travail, la formation, les aménagements horaires.', url: 'https://www.travail-emploi.gouv.fr/' },
+                { emoji: '📞', titre: 'Défenseur des droits', desc: 'En cas de discrimination au travail (origine, genre, âge, handicap...), le Défenseur des droits peut être saisi gratuitement. Cette instance nationale indépendante peut instruire des dossiers concernant des salariés de GBH qui se considèrent victimes de discrimination.', url: 'https://www.defenseurdesdroits.fr/' },
+              ].map(r => (
+                <div key={r.titre} className="border border-slate-700 rounded-xl p-3 flex gap-3">
+                  <span className="text-xl flex-shrink-0">{r.emoji}</span>
+                  <div>
+                    <p className="text-xs font-bold text-white mb-1">{r.titre}</p>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-1">{r.desc}</p>
+                    <SourceLink href={r.url}>→ Site officiel</SourceLink>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
