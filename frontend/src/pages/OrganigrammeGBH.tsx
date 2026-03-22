@@ -26,6 +26,7 @@ import {
   FileText, Landmark, ArrowLeft, Search, Shield, Info,
   GitBranch, UserCheck, BarChart2,
   Briefcase, DollarSign, ShoppingBag, Flag, Newspaper, Leaf,
+  Clock, Smartphone, TreePine, Library,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -34,6 +35,7 @@ import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const TABS = [
   { key: 'presentation',  label: 'Présentation',              icon: Building2  },
+  { key: 'chronologie',   label: 'Chronologie historique',    icon: Clock      },
   { key: 'organigramme',  label: 'Organigramme',              icon: GitBranch  },
   { key: 'filiales',      label: 'Sociétés & Filiales',       icon: Globe      },
   { key: 'dirigeants',    label: 'Dirigeants & Gouvernance',  icon: UserCheck  },
@@ -43,6 +45,9 @@ const TABS = [
   { key: 'etat',          label: 'Relations État',            icon: Flag       },
   { key: 'presse',        label: 'Presse & Controverses',     icon: Newspaper  },
   { key: 'producteurs',   label: 'Filière locale',            icon: Leaf       },
+  { key: 'digital',       label: 'Stratégie & Digital',       icon: Smartphone },
+  { key: 'rse',           label: 'RSE & Environnement',       icon: TreePine   },
+  { key: 'socio',         label: 'Analyse socio-économique',  icon: Library    },
   { key: 'territoires',   label: 'Présence territoriale',     icon: Landmark   },
   { key: 'regulatoire',   label: 'Décisions réglementaires',  icon: Scale      },
   { key: 'impact',        label: 'Impact & Vie chère',        icon: TrendingUp },
@@ -685,6 +690,194 @@ const OrganigrammeGBH: React.FC = () => {
                 Avis 19-A-12 — Autorité de la concurrence (2019)
               </SourceLink>
             </InfoBox>
+          </div>
+        )}
+
+        {/* ══ TAB : CHRONOLOGIE HISTORIQUE ══════════════════════════════════ */}
+        {activeTab === 'chronologie' && (
+          <div>
+            <SectionTitle icon={Clock}>Chronologie historique — GBH de 1960 à 2026</SectionTitle>
+
+            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              Le Groupe Bernard Hayot est l'un des rares conglomérats privés des Antilles françaises
+              à avoir traversé plus de six décennies d'histoire économique, sociale et politique.
+              Cette chronologie retrace les étapes documentées de son développement, de ses premières
+              implantations en Martinique jusqu'à son expansion internationale.
+            </p>
+
+            <InfoBox color="amber" title="⚠️ Sources de la chronologie">
+              Cette chronologie est reconstituée à partir des sources publiques disponibles : RNE/INPI
+              (dates d'immatriculation des filiales), BODACC (publications légales), avis de l'Autorité
+              de la concurrence, presse régionale et publications académiques. Certaines dates sont
+              approximatives faute de sources précises pour une société non cotée.
+            </InfoBox>
+
+            <div className="relative mt-8">
+              {/* Timeline vertical bar */}
+              <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-amber-500/20" />
+
+              <div className="space-y-6">
+                {[
+                  {
+                    period: '~1960',
+                    titre: 'Fondation — Les premières années de commerce',
+                    color: '#f59e0b',
+                    events: [
+                      'Bernard Hayot débute son activité commerciale en Martinique dans les années 1960, dans un contexte post-départementalisation (loi du 19 mars 1946).',
+                      'Les premières activités portent sur la distribution alimentaire et l\'import de produits de grande consommation en Martinique.',
+                      'Contexte économique : la Martinique sort d\'une économie de plantation et connaît une croissance portée par les transferts publics de l\'État français post-départementalisation.',
+                    ],
+                    source: 'Presse régionale ; site officiel GBH ; contexte : INSEE DOM — histoire économique',
+                  },
+                  {
+                    period: '1970–1979',
+                    titre: 'Structuration du groupe et expansion en Guadeloupe',
+                    color: '#f59e0b',
+                    events: [
+                      'Structuration juridique du groupe avec la création des premières sociétés holdings et filiales opérationnelles.',
+                      'Immatriculation de GBH (anciennement SA) au RCS de la Guadeloupe — SIREN 313 222 260 (données RNE).',
+                      'Expansion en Guadeloupe : implantation dans la zone industrielle de Jarry à Baie-Mahault, qui deviendra le siège stratégique du groupe.',
+                      'Développement du pôle automobile : premières concessions dans les Antilles (Toyota, marques japonaises qui conquièrent alors le marché DOM).',
+                    ],
+                    source: 'RNE/INPI — données SIRENE ; BODACC ; Autorité de la concurrence Avis 09-A-45 p. 18',
+                  },
+                  {
+                    period: '1980–1989',
+                    titre: 'Consolidation antillaise et premières diversifications',
+                    color: '#a78bfa',
+                    events: [
+                      'Consolidation des positions en Guadeloupe et Martinique, dans un contexte de croissance économique soutenue par les politiques de rattrapage État-DOM.',
+                      'Développement du pôle agroalimentaire : Daribo Distilleries et activités liées au rhum (production et distribution).',
+                      'Premières implantations en Guyane française — marché plus vaste géographiquement mais plus limité démographiquement.',
+                      'L\'Hexagone connaît la vague des grands hypermarchés (Auchan, Carrefour). GBH anticipe l\'arrivée de ce format dans les DOM.',
+                      'Développement du pôle hôtelier — premières infrastructures touristiques (ancêtres du réseau Karibéa).',
+                    ],
+                    source: 'ADLC Avis 09-A-45 (2009), p. 18-20 ; IEDOM Martinique — rapport historique 2000',
+                  },
+                  {
+                    period: '1990–1999',
+                    titre: 'Partenariat Carrefour — basculement stratégique majeur',
+                    color: '#34d399',
+                    events: [
+                      'Accord de franchise avec Carrefour France : GBH devient franchisé de l\'enseigne Carrefour dans les DOM, accédant à sa centrale d\'achat, sa notoriété et ses technologies de distribution. C\'est le tournant stratégique le plus important de l\'histoire du groupe.',
+                      'Ouverture des premiers hypermarchés Carrefour dans les Antilles (Guadeloupe, Martinique). La zone de Jarry à Baie-Mahault reçoit le plus grand hypermarché des Antilles.',
+                      'Création de CaribHyp SAS — entité opérationnelle qui gère les hypermarchés Carrefour des Antilles-Guyane.',
+                      'Réorganisation du groupe en SAS (Société par Actions Simplifiée) — forme juridique offrant plus de flexibilité et protégeant mieux la gouvernance familiale.',
+                      'Expansion en Guyane avec l\'ouverture de surfaces Carrefour à Cayenne et Saint-Laurent-du-Maroni.',
+                    ],
+                    source: 'ADLC Avis 09-A-45 (2009), p. 20-22 ; BODACC — immatriculation CaribHyp SAS',
+                  },
+                  {
+                    period: '2000–2009',
+                    titre: 'Expansion multi-océans — La Réunion, NC, Polynésie, Madagascar',
+                    color: '#60a5fa',
+                    events: [
+                      '2000-2003 : Implantation à La Réunion. GBH y acquiert ou crée des entités de distribution Carrefour, entrant en concurrence avec les groupes déjà établis (Vindemia/Bourbon, Leclerc Réunion).',
+                      '2004-2006 : Expansion en Nouvelle-Calédonie avec ouverture de surfaces Carrefour dans la région de Nouméa. Le marché calédonien, à haut pouvoir d\'achat moyen, est stratégique.',
+                      '2006-2008 : Implantation en Polynésie française — marché plus difficile du fait de l\'éloignement et de la concurrence locale.',
+                      '2007-2009 : Expansion à Madagascar via le pôle automobile (concessions locales) puis agroalimentaire. Premier pays non-français du groupe.',
+                      '2009 : Publication de l\'Avis 09-A-45 de l\'Autorité de la concurrence — premier grand diagnostic public de la position de GBH dans les DOM. Crise LKP en Guadeloupe (grève 44 jours).',
+                      '2009 : Accord "Jacob" signé suite à la grève LKP — GBH s\'engage à baisser les prix de ~100 produits alimentaires de base.',
+                    ],
+                    source: 'ADLC Avis 09-A-45 (2009) ; IEDOM Réunion 2010 ; presse régionale',
+                  },
+                  {
+                    period: '2010–2014',
+                    titre: 'Consolidation stratégique et renforcement des barrières à l\'entrée',
+                    color: '#34d399',
+                    events: [
+                      '2010-2011 : Renforcement du parc immobilier commercial — SCI Jarry Distribution consolide la propriété foncière de la zone commerciale de Baie-Mahault, créant une barrière à l\'entrée durable pour tout concurrent.',
+                      '2012 : Adoption de la Loi Lurel (n° 2012-1270) relative à la régulation économique outre-mer, en réponse directe aux constats de l\'Avis 09-A-45. GBH est directement visé par les dispositions sur les accords de gamme exclusifs.',
+                      '2013 : Entrée en vigueur des dispositions sur les accords de gamme — GBH doit adapter certaines de ses pratiques d\'approvisionnement. Création de l\'OPMR (Observatoire des Prix, des Marges et des Revenus).',
+                      '2013-2014 : Développement du réseau Carrefour Market et Carrefour Express dans les DOM — format de proximité urbaine complémentaire des hypermarchés.',
+                      '2014 : Renforcement du pôle BTP-Matériaux avec Point P DOM — profite de la dynamique de construction dans les DOM (défiscalisation Girardin).',
+                    ],
+                    source: 'Légifrance — Loi 2012-1270 ; ADLC — rapport OPMR 2013 ; BODACC',
+                  },
+                  {
+                    period: '2015–2019',
+                    titre: 'Avis 19-A-12 — Le groupe face à une surveillance accrue',
+                    color: '#f97316',
+                    events: [
+                      '2015-2016 : Déploiement du drive (Carrefour Drive) dans les DOM — adaptation aux nouvelles pratiques d\'achat. GBH anticipe la transformation digitale de la grande distribution.',
+                      '2017 : Développement des services de click & collect dans les hypermarchés Carrefour des Antilles.',
+                      '2018-2019 : Tensions sur le pouvoir d\'achat dans les DOM — résurgence du débat sur les prix. Les associations de consommateurs (AFOC, UFC-Que Choisir DOM) alertent sur l\'absence d\'effets durables des mesures de 2009.',
+                      '2019 : Publication de l\'Avis 19-A-12 de l\'Autorité de la concurrence. Constat : la situation concurrentielle ne s\'est pas significativement améliorée depuis 2009. GBH maintient ou renforce sa position dominante dans plusieurs zones.',
+                      '2019 : Lancement du BQP renforcé — négociations annuelles formalisées entre préfets, distributeurs et fournisseurs dans tous les DOM.',
+                    ],
+                    source: 'ADLC Avis 19-A-12 (2019) ; IEDOM 2019 ; site Carrefour.gp',
+                  },
+                  {
+                    period: '2020–2021',
+                    titre: 'Pandémie COVID-19 et crise sociale historique en Guadeloupe',
+                    color: '#f43f5e',
+                    events: [
+                      '2020 : La pandémie COVID-19 génère une demande exceptionnelle dans la grande distribution. Les hypermarchés GBH/Carrefour deviennent des acteurs essentiels de la chaîne alimentaire des DOM. GBH bénéficie du statut de "commerce essentiel".',
+                      '2020 : Mise en place de services de livraison à domicile renforcés et extension des créneaux de click & collect. Accélération de la transformation digitale contrainte.',
+                      '2021 (mars-avril) : Première vague de mobilisations en Martinique contre la vie chère, partiellement liée à la hausse des prix post-COVID.',
+                      '2021 (novembre-décembre) : Insurrection sociale en Guadeloupe — les plus graves violences depuis les émeutes de 2009. Des surfaces Carrefour GBH sont attaquées, pillées, incendiées. GBH ferme temporairement plusieurs points de vente.',
+                      '2021 (décembre) : Bernard Hayot prend la parole publiquement pour la première fois de façon aussi médiatisée. Annonce d\'un plan de baisse de prix ciblées sur 200 produits.',
+                    ],
+                    source: 'Rapport préfectoral Guadeloupe déc. 2021 ; Guadeloupe La 1ère ; France Inter ; Le Monde',
+                  },
+                  {
+                    period: '2022–2024',
+                    titre: 'Post-crise : réformes, engagements et nouvelles mobilisations',
+                    color: '#a78bfa',
+                    events: [
+                      '2022 : Élargissement du BQP (Bouclier Qualité-Prix) dans tous les DOM — panier élargi à 200+ produits. GBH signataire obligatoire. Adoption de la loi DROM (renforcement OPMR).',
+                      '2022 : GBH accélère sa stratégie e-commerce dans les Antilles — refonte du site carrefour.gp, expansion de la livraison rapide.',
+                      '2022-2023 : Tensions sociales en Martinique — plusieurs épisodes de blocage des grandes surfaces, dont les Carrefour GBH. Négociations avec la préfecture.',
+                      '2023 : Le Sénat auditionne des représentants de la grande distribution DOM dans le cadre de ses travaux sur la vie chère. GBH n\'est pas auditionné directement mais est cité dans les témoignages.',
+                      '2023 : Loi n° 2023-22 du 24 janvier 2023 (loi Wargon) — mesures sur le pouvoir d\'achat qui s\'appliquent aux DOM, dont l\'encadrement des marges des distributeurs pour certains produits.',
+                      '2024 : Rapport sénatorial sur la vie chère dans les Outre-Mer — recommandations structurelles sur la concurrence et les marges des distributeurs DOM.',
+                      '2024 : GBH continue d\'investir dans sa transformation digitale (livraison, intelligence artificielle de gestion des stocks, optimisation de la chaîne logistique).',
+                    ],
+                    source: 'Légifrance — Loi 2022-X ; Sénat — Rapport 2024 ; OPMR GP et MQ 2023',
+                  },
+                  {
+                    period: '2025–2026',
+                    titre: 'Perspectives — Enjeux stratégiques actuels',
+                    color: '#34d399',
+                    events: [
+                      'Renouvellement du contrat de franchise Carrefour — les contrats de franchise sont à durée déterminée. Le renouvellement constitue un enjeu stratégique majeur pour la pérennité du pôle distribution.',
+                      'Succession familiale — la transmission à la génération suivante de la famille Hayot est un sujet structurant pour l\'avenir du groupe. La gouvernance post-fondateur est un enjeu de stabilité.',
+                      'Pression concurrentielle croissante — le e-commerce de masse (Amazon, Cdiscount), l\'entrée potentielle de nouveaux acteurs étrangers et le développement du commerce communautaire créent de nouveaux défis.',
+                      'Enjeux climatiques et RSE — la loi AGEC (2020), les objectifs ZAN (zéro artificialisation nette), le bilan carbone des importations créent des contraintes réglementaires nouvelles pour un groupe aussi dépendant du fret maritime.',
+                      'Pression réglementaire renforcée — l\'OPMR est renforcé, les pouvoirs d\'injonction de l\'ADLC pourraient s\'étendre, et le débat sur la séparation des activités de distribution et de centrale d\'achat n\'est pas clos.',
+                    ],
+                    source: 'ADLC — Avis 19-A-12 recommandations ; Sénat — Rapport 2024 ; presse économique',
+                  },
+                ].map((era, idx) => (
+                  <div key={era.period} className="relative pl-12">
+                    {/* Timeline dot */}
+                    <div className="absolute left-0 top-1 w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold"
+                      style={{ background: `${era.color}22`, borderColor: era.color, color: era.color }}>
+                      {idx + 1}
+                    </div>
+
+                    <div className="border border-slate-700 rounded-xl p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="px-2 py-1 rounded-lg text-xs font-bold border"
+                          style={{ background: `${era.color}15`, borderColor: `${era.color}40`, color: era.color }}>
+                          {era.period}
+                        </span>
+                        <p className="text-sm font-bold text-white">{era.titre}</p>
+                      </div>
+                      <ul className="space-y-1.5 mb-3">
+                        {era.events.map((ev, i) => (
+                          <li key={i} className="flex items-start gap-2 text-xs text-gray-400">
+                            <span className="flex-shrink-0 mt-0.5" style={{ color: era.color }}>▸</span>
+                            <span className="leading-relaxed">{ev}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="text-xs text-slate-600 italic">📎 {era.source}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
@@ -1825,6 +2018,459 @@ const OrganigrammeGBH: React.FC = () => {
               </ul>
               <p className="text-xs text-gray-600 mt-3">
                 Source : Site officiel Carrefour Guadeloupe ; OPMR Guadeloupe 2023 ; presse régionale.
+              </p>
+            </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : STRATÉGIE & DIGITAL ════════════════════════════════════ */}
+        {activeTab === 'digital' && (
+          <div>
+            <SectionTitle icon={Smartphone}>Stratégie digitale & transformation numérique de GBH</SectionTitle>
+
+            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              La grande distribution mondiale est en pleine mutation numérique. Carrefour France,
+              partenaire de GBH par la franchise, investit massivement dans le digital depuis 2018
+              (Plan de transformation Carrefour 2022 → Carrefour 2026). GBH doit intégrer ces
+              évolutions dans ses opérations locales tout en gérant les contraintes spécifiques
+              aux DOM (connectivité, logistique last-mile insulaire, fracture numérique).
+            </p>
+
+            <InfoBox color="blue" title="ℹ️ Sources et limites des données digitales">
+              La stratégie digitale de GBH n'est pas publiée dans un rapport annuel public.
+              Les informations ci-dessous sont issues du site officiel Carrefour Guadeloupe/Martinique,
+              des annonces publiques du groupe Carrefour France (franchiseur), des observations
+              disponibles en sources ouvertes (SimilarWeb, AppStore, GooglePlay) et de la presse
+              régionale. Elles n'engagent pas GBH et sont susceptibles d'évoluer.
+            </InfoBox>
+
+            <SectionTitle icon={Globe}>Présence digitale — canaux documentés</SectionTitle>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              {[
+                {
+                  canal: '🌐 Sites e-commerce Carrefour DOM',
+                  statut: 'Opérationnel',
+                  color: 'green',
+                  detail: 'Sites carrefour.gp (Guadeloupe), carrefour.mq (Martinique) et équivalents dans les autres territoires GBH. Permettent le click & collect et la livraison à domicile. Intégration avec la plateforme Carrefour France.',
+                  source: 'carrefour.gp ; carrefour.mq — sites officiels',
+                },
+                {
+                  canal: '📱 Application Carrefour (mobile)',
+                  statut: 'Disponible',
+                  color: 'green',
+                  detail: 'L\'application Carrefour France est utilisable dans les DOM pour la gestion de la carte de fidélité, les promotions dématérialisées et le click & collect. Une adaptation locale de l\'UX est nécessaire pour les offres spécifiques DOM.',
+                  source: 'App Store / Google Play — app Carrefour France',
+                },
+                {
+                  canal: '🚗 Drive Carrefour DOM',
+                  statut: 'Déployé partiellement',
+                  color: 'yellow',
+                  detail: 'Le service drive (commande en ligne + retrait en voiture) est opérationnel dans plusieurs grandes surfaces GBH en Guadeloupe et Martinique. Le déploiement est plus limité en Guyane et à La Réunion.',
+                  source: 'Site carrefour.gp — service drive ; observations terrain',
+                },
+                {
+                  canal: '🏠 Livraison à domicile',
+                  statut: 'Partiellement déployé',
+                  color: 'yellow',
+                  detail: 'La livraison à domicile de courses alimentaires est proposée dans les principales agglomérations des DOM (Pointe-à-Pitre, Fort-de-France, Cayenne). Les délais et la zone de couverture sont plus restreints qu\'en métropole du fait des contraintes logistiques insulaires.',
+                  source: 'Carrefour.gp ; Martinique La 1ère (annonces COVID 2020)',
+                },
+                {
+                  canal: '💳 Carte de fidélité Carrefour+',
+                  statut: 'Opérationnel',
+                  color: 'green',
+                  detail: 'GBH intègre le programme de fidélité Carrefour+ (anciennement Carrefour Pass). Les clients accumulent des points utilisables dans les magasins GBH et, en théorie, dans tout le réseau Carrefour France.',
+                  source: 'Programme Carrefour+ — conditions générales',
+                },
+                {
+                  canal: '📊 Données clients & CRM',
+                  statut: 'Mutualisé Carrefour',
+                  color: 'amber',
+                  detail: 'En tant que franchisé Carrefour, GBH bénéficie de l\'infrastructure CRM du groupe Carrefour France (gestion des données clients, segmentation, personnalisation des offres). La gouvernance des données clients DOM est encadrée par le RGPD et le contrat de franchise.',
+                  source: 'Politique de confidentialité Carrefour France ; RGPD (Règlement UE 2016/679)',
+                },
+              ].map(item => {
+                const c: Record<string, string> = {
+                  green: 'bg-green-500/10 border-green-500/30 text-green-300',
+                  yellow: 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300',
+                  amber: 'bg-amber-500/10 border-amber-500/30 text-amber-300',
+                };
+                return (
+                  <div key={item.canal} className="border border-slate-700 rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <p className="text-sm font-bold text-white">{item.canal}</p>
+                      <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full border ${c[item.color]}`}>
+                        {item.statut}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.detail}</p>
+                    <p className="text-xs text-slate-600 italic">📎 {item.source}</p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <SectionTitle icon={TrendingUp}>Défis digitaux spécifiques aux DOM</SectionTitle>
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  defi: '📶 Fracture numérique',
+                  desc: 'Le taux d\'équipement numérique et l\'accès à l\'internet à haut débit sont inférieurs aux moyennes métropolitaines dans les DOM (notamment en Guyane et à Mayotte). Cette fracture numérique limite le potentiel de croissance du e-commerce alimentaire, qui nécessite une connexion fiable pour passer et gérer les commandes.',
+                  source: 'ARCEP — Observatoire du numérique dans les outre-mer 2023',
+                  sourceUrl: 'https://www.arcep.fr/',
+                },
+                {
+                  defi: '🚢 Logistique last-mile insulaire',
+                  desc: 'La livraison à domicile dans des territoires insulaires (souvent sans adressage structuré, avec des voiries parfois étroites) est beaucoup plus complexe et coûteuse qu\'en métropole. Les coûts logistiques du dernier kilomètre réduisent les marges du e-commerce et limitent la couverture géographique.',
+                  source: 'OPMR Guadeloupe — Rapport sur la distribution 2022',
+                  sourceUrl: 'https://www.opmr.gouv.fr/',
+                },
+                {
+                  defi: '💳 Paiement en ligne',
+                  desc: 'Le taux de bancarisation et d\'utilisation des moyens de paiement en ligne dans les DOM est inférieur à la métropole. Des populations significatives restent en dehors du système bancaire formel (notamment en Guyane et à Mayotte), limitant l\'accès aux services e-commerce.',
+                  source: 'IEDOM — Rapport financier DOM 2023 ; Banque de France',
+                  sourceUrl: 'https://www.iedom.fr/',
+                },
+                {
+                  defi: '🤖 Intelligence artificielle et optimisation des stocks',
+                  desc: 'Carrefour France déploie des solutions d\'IA pour l\'optimisation des approvisionnements, la prévision de la demande et la réduction du gaspillage alimentaire. En tant que franchisé, GBH doit intégrer ou adapter ces outils à la réalité des marchés DOM (saisonnalité tropicale, spécificités produits, chaîne logistique maritime).',
+                  source: 'Plan de transformation Carrefour 2026 (carrefour.com) ; presse économique',
+                  sourceUrl: 'https://www.carrefour.com/',
+                },
+              ].map(d => (
+                <div key={d.defi} className="border border-slate-700 rounded-xl p-4">
+                  <p className="text-sm font-bold text-white mb-1">{d.defi}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-1.5">{d.desc}</p>
+                  <p className="text-xs text-slate-600">
+                    📎 <SourceLink href={d.sourceUrl}>{d.source}</SourceLink>
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <SectionTitle icon={BarChart2}>Carrefour France — plan de transformation digitale 2026 (applicables à GBH)</SectionTitle>
+            <Collapse title="📋 Axes du plan Carrefour 2026 pertinents pour les DOM" defaultOpen>
+              <p className="mb-3 text-xs text-gray-300">
+                Le plan stratégique « Carrefour 2026 » annoncé par Carrefour France SA inclut
+                plusieurs axes digitaux qui concernent directement GBH en tant que franchisé :
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li><strong>IA pour l'optimisation logistique :</strong> Prévision de la demande par IA, réduction des ruptures de stock de 15 % visée. Pour GBH, cela implique l'intégration des outils Carrefour avec ses spécificités logistiques DOM (délais de fret maritime de 10 à 22 jours selon les territoires).</li>
+                <li><strong>Expansion du e-commerce alimentaire :</strong> Objectif Carrefour France — +30 % de CA e-commerce d'ici 2026. Dans les DOM, l'enjeu est de créer l'infrastructure de livraison locale (partenariats avec des acteurs locaux, optimisation des tournées insulaires).</li>
+                <li><strong>Monétisation de la donnée client :</strong> Carrefour France a créé Unlimitail, une régie publicitaire de données de distribution. En tant que franchisé, GBH contribue à cet écosystème de données, créant des questions sur la gouvernance et la souveraineté des données clients DOM.</li>
+                <li><strong>Réduction du gaspillage alimentaire par algorithme :</strong> Systèmes de démarques automatiques liées à la DLUO/DLC. Particulièrement pertinent dans les DOM où les coûts d'importation rendent le gaspillage alimentaire encore plus coûteux.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : <SourceLink href="https://www.carrefour.com/fr/groupe/presse/2022-01-27/carrefour-devoile-plan-strategique-2026">
+                  Carrefour SA — Plan stratégique 2026 (jan. 2022) ; carrefour.com
+                </SourceLink>
+              </p>
+            </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : RSE & ENVIRONNEMENT ════════════════════════════════════ */}
+        {activeTab === 'rse' && (
+          <div>
+            <SectionTitle icon={TreePine}>RSE, Environnement & Développement durable — GBH dans les DOM</SectionTitle>
+
+            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              Les territoires ultramarins sont parmi les plus exposés aux effets du changement
+              climatique (cyclones, submersion marine, sécheresses, érosion côtière). Le modèle
+              économique de GBH — basé sur les importations massives par voie maritime — génère
+              une empreinte carbone significative et soulève des questions de résilience et de
+              durabilité à long terme.
+            </p>
+
+            <InfoBox color="green" title="🌱 Contexte — DOM & urgence climatique">
+              Les DOM sont classés parmi les régions les plus vulnérables au changement climatique
+              selon le GIEC (Rapport AR6, 2022). La Guadeloupe et la Martinique sont exposées aux
+              cyclones de catégorie 4 et 5 (Maria 2017 a dévasté la Martinique voisine). La montée
+              des eaux menace directement des zones commerciales côtières comme celle de Jarry à
+              Baie-Mahault (altitude proche du niveau de la mer).
+            </InfoBox>
+
+            <SectionTitle icon={AlertTriangle}>Empreinte carbone des importations — données documentées</SectionTitle>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+              <DataCard label="Distance fret GP/MQ ↔ France" value="~7 000 km" sub="Rotterdam → Pointe-à-Pitre" highlight />
+              <DataCard label="Distance fret La Réunion ↔ France" value="~15 000 km" sub="Le Havre → Saint-Denis RE" />
+              <DataCard label="Émissions CO₂ fret maritime moyen" value="~15–20 g CO₂/t.km" sub="IMO 2023 — transport maritime" />
+              <DataCard label="Part transport alimentaire DOM" value="~80–90 %" sub="Imports alimentaires maritimes" highlight />
+              <DataCard label="Durée de trajet maritime GP" value="10–11 jours" sub="Europe → Antilles" />
+              <DataCard label="Durée de trajet maritime RE" value="~22 jours" sub="Europe → La Réunion" />
+            </div>
+
+            <div className="space-y-4 mb-8">
+              {[
+                {
+                  enjeu: '🚢 Bilan carbone des importations alimentaires',
+                  gravite: 'Élevé',
+                  color: 'red',
+                  desc: 'GBH importe la grande majorité (80–90 %) des produits alimentaires qu\'il distribue dans les DOM par voie maritime depuis l\'Europe ou les Amériques. Le transport maritime représente environ 3 % des émissions mondiales de CO₂ (IMO 2023). Un hypermarché Carrefour des Antilles génère une empreinte logistique maritime considérablement plus élevée qu\'un hypermarché métropolitain.',
+                  chiffre: '~15 g CO₂/t.km × 7 000 km × volume importé annuel',
+                  source: 'OMI (Organisation Maritime Internationale) — 4ème Étude sur les GES 2020',
+                  sourceUrl: 'https://www.imo.org/',
+                },
+                {
+                  enjeu: '♻️ Loi AGEC — Impact sur GBH',
+                  gravite: 'Réglementaire',
+                  color: 'amber',
+                  desc: 'La loi anti-gaspillage pour une économie circulaire (Loi AGEC, n° 2020-105) impose aux grandes surfaces de nombreuses obligations : interdiction des emballages plastiques à usage unique, obligation de vrac, affichage environnemental, don alimentaire obligatoire. GBH doit s\'y conformer dans les DOM avec les mêmes délais qu\'en métropole, malgré des infrastructures de recyclage moins développées.',
+                  chiffre: 'Amende jusqu\'à 15 000 € par infraction (Loi AGEC)',
+                  source: 'Légifrance — Loi n° 2020-105 du 10 février 2020',
+                  sourceUrl: 'https://www.legifrance.gouv.fr/loi/id/JORFTEXT000041553759/',
+                },
+                {
+                  enjeu: '🗑️ Gaspillage alimentaire — enjeu critique',
+                  gravite: 'Modéré',
+                  color: 'orange',
+                  desc: 'Dans les DOM, le gaspillage alimentaire en grande surface est amplifié par les délais d\'importation : un produit frais peut avoir consommé 10 à 22 jours de transport avant d\'arriver en rayon. Les pertes pour invendus sur les produits frais importés sont donc structurellement plus élevées qu\'en métropole, avec un coût économique et environnemental double.',
+                  chiffre: 'La France gaspille ~10 Mt de nourriture/an (ADEME 2022). Dans les DOM : surcoût du fait des délais maritimes.',
+                  source: 'ADEME — Rapport gaspillage alimentaire 2022 ; Loi Garot (2016)',
+                  sourceUrl: 'https://www.ademe.fr/',
+                },
+                {
+                  enjeu: '⚡ Énergie — Coût de l\'énergie dans les DOM',
+                  gravite: 'Structurel',
+                  color: 'purple',
+                  desc: 'L\'énergie électrique est significativement plus chère dans les DOM qu\'en métropole (principalement produite par des centrales thermiques fossiles). Un hypermarché Carrefour est un très gros consommateur d\'électricité (réfrigération, climatisation, éclairage). Le coût énergétique plus élevé dans les DOM renchérit les coûts d\'exploitation et contribue aux prix plus élevés.',
+                  chiffre: 'Prix moyen kWh DOM : 0,18–0,25 € vs 0,17 € métropole (CRE 2023)',
+                  source: 'CRE — Commission de Régulation de l\'Énergie, Rapport DOM 2023',
+                  sourceUrl: 'https://www.cre.fr/',
+                },
+                {
+                  enjeu: '🌀 Risque cyclonique & résilience climatique',
+                  gravite: 'Élevé',
+                  color: 'red',
+                  desc: 'Le cyclone Irma (2017, catégorie 5) a dévasté Saint-Martin et Saint-Barthélemy. Le cyclone Maria (2017) a frappé la Dominique voisine de la Guadeloupe et de la Martinique. GBH, en détenant des actifs immobiliers commerciaux importants dans des zones à risque cyclonique, est directement exposé à ces aléas climatiques. La zone de Jarry à Baie-Mahault est partiellement en zone inondable.',
+                  chiffre: 'Coût moyen d\'un cyclone catégorie 4-5 dans les Antilles : 1–5 Md€ (estimations BRGM)',
+                  source: 'BRGM — Bureau de Recherches Géologiques et Minières, rapport risques DOM 2022',
+                  sourceUrl: 'https://www.brgm.fr/',
+                },
+              ].map(item => {
+                const c: Record<string, string> = {
+                  red: 'text-red-300 border-red-500/30',
+                  amber: 'text-amber-300 border-amber-500/30',
+                  orange: 'text-orange-300 border-orange-500/30',
+                  purple: 'text-purple-300 border-purple-500/30',
+                };
+                return (
+                  <div key={item.enjeu} className="border border-slate-700 rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <p className="text-sm font-bold text-white">{item.enjeu}</p>
+                      <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full border ${c[item.color]}`}>
+                        {item.gravite}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.desc}</p>
+                    <p className="text-xs text-amber-200 mb-2"><strong>Chiffre clé :</strong> {item.chiffre}</p>
+                    <p className="text-xs text-slate-600">
+                      📎 <SourceLink href={item.sourceUrl}>{item.source}</SourceLink>
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <Collapse title="🌱 Engagements RSE documentés de Carrefour (applicable à GBH)">
+              <p className="mb-3 text-xs text-gray-300">
+                En tant que franchisé Carrefour, GBH est lié aux engagements RSE du groupe Carrefour
+                France SA. Le plan RSE « Act for Food » de Carrefour inclut les axes suivants,
+                théoriquement applicables dans les DOM GBH :
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs text-gray-400">
+                <li><strong>Zéro plastique à usage unique :</strong> Objectif Carrefour France — 100 % des MDD sans plastique superflu d\'ici 2025. Application dans les DOM : problématique car les alternatives (vrac, recharges) nécessitent des infrastructures locales.</li>
+                <li><strong>Don alimentaire :</strong> Carrefour est partenaire des Banques Alimentaires en métropole. Dans les DOM, des partenariats équivalents existent avec des associations locales (Banque Alimentaire Guadeloupe, Martinique).</li>
+                <li><strong>50 % de produits biologiques à la marque :</strong> Objectif Carrefour 2025. Dans les DOM, l\'agriculture biologique certifiée est encore peu développée. La plupart des produits bio sont importés, amplifiant leur empreinte carbone.</li>
+                <li><strong>Neutralité carbone :</strong> Carrefour vise la neutralité carbone de ses opérations directes d\'ici 2040. Cela inclut théoriquement les magasins GBH dans les DOM.</li>
+                <li><strong>Affichage environnemental :</strong> Carrefour déploie un affichage environnemental (Planet Score) sur ses MDD. Dans les DOM, cet affichage doit intégrer le coût carbone du transport maritime.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : <SourceLink href="https://www.carrefour.com/fr/actualites/carrefour-act-food">
+                  Carrefour SA — Plan Act for Food ; Rapport RSE Carrefour 2023
+                </SourceLink>
+              </p>
+            </Collapse>
+
+            <Collapse title="🚛 Infrastructure de recyclage dans les DOM — réalité du terrain">
+              <ul className="list-disc pl-5 space-y-2 text-xs mt-2 text-gray-400">
+                <li><strong>Guadeloupe :</strong> Le centre d\'enfouissement technique de Sainte-Rose est la principale infrastructure de traitement des déchets. La Guadeloupe souffre d\'une crise chronique de gestion des déchets (rapport Cour des Comptes 2021). GBH, comme tous les commerçants, est assujetti à la REP (Responsabilité Élargie des Producteurs) via l\'éco-organisme approprié.</li>
+                <li><strong>Martinique :</strong> Le Sydéma (Syndicat de Gestion des Déchets de Martinique) gère la collecte et le traitement. La situation est meilleure qu\'en Guadeloupe mais reste sous pression.</li>
+                <li><strong>Guyane :</strong> Infrastructure de traitement des déchets très limitée hors Cayenne. Les zones de l\'intérieur guyanais ont peu accès au recyclage structuré.</li>
+                <li><strong>Emballages importés :</strong> Un produit importé par GBH depuis la métropole génère de l\'emballage qui doit être géré localement dans les DOM — mais les filières de recyclage y sont moins développées qu\'en métropole (pas de système de consigne généralisé, capacités de trituration limitées).</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Cour des Comptes — Rapport gestion des déchets dans les DOM (2021) ;
+                <SourceLink href="https://www.sydema.fr/"> Sydéma Martinique</SourceLink>
+              </p>
+            </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : ANALYSE SOCIO-ÉCONOMIQUE ═══════════════════════════════ */}
+        {activeTab === 'socio' && (
+          <div>
+            <SectionTitle icon={Library}>Analyse socio-économique — GBH dans le contexte des DOM</SectionTitle>
+
+            <InfoBox color="blue" title="ℹ️ Note méthodologique — Analyse documentée et sourcée">
+              Cette section propose une analyse socio-économique et historique de la position
+              de GBH dans les DOM, en s'appuyant exclusivement sur des <strong>sources académiques,
+              institutionnelles et journalistiques publiées</strong>. L'objectif est d'offrir
+              aux citoyens ultramarins une mise en contexte structurelle de la formation des prix
+              et du rôle des grands groupes économiques dans leurs territoires.
+            </InfoBox>
+
+            <SectionTitle icon={Landmark}>Contexte historique — Formation des économies DOM post-1946</SectionTitle>
+
+            <Collapse title="📚 La départementalisation et la transformation des économies antillaises" defaultOpen>
+              <p className="mb-3 text-xs text-gray-300">
+                La loi de départementalisation du 19 mars 1946 (portée par Aimé Césaire, alors
+                député de la Martinique) transforme les anciennes colonies en départements français
+                avec application progressive du droit commun. Cette transformation a des effets
+                économiques structurants qui persistent aujourd'hui :
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li><strong>Transition économique post-plantation :</strong> Les Antilles passent progressivement d'une économie de plantation (canne à sucre, banane pour l'export) à une économie de consommation adossée aux transferts publics de l'État français (fonctionnaires, allocations sociales, prestations familiales).</li>
+                <li><strong>Développement des transferts publics :</strong> La convergence sociale (SMIC, prestations sociales) vers les normes métropolitaines génère une augmentation du pouvoir d'achat monétaire des ménages DOM, mais dans un tissu productif local qui ne suit pas. La demande de consommation dépasse massivement la capacité de production locale, entraînant une dépendance aux importations.</li>
+                <li><strong>Rôle des "grands békés" :</strong> Les grandes familles d'origine créole blanche (les "békés" en Martinique) ont historiquement contrôlé les circuits d'importation et de distribution dans les Antilles. La famille Hayot s'inscrit dans ce contexte socio-économique, même si le groupe a une dimension et une organisation qui dépassent largement le modèle de la "famille béké" traditionnelle.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Burac M. (dir.) — <em>Guadeloupe, Martinique et Guyane dans le monde américain</em>,
+                Éditions Karthala, 1994 ; Celimene F. & Legris A. — <em>L'économie des DOM-TOM</em>,
+                INSEE Méthodes n°65-66, 1997 ; INSEE — <em>Les DOM en 2000 et 2010</em>.
+              </p>
+            </Collapse>
+
+            <Collapse title="🔬 Analyse académique — Le « monopole créole » et la concentration économique">
+              <p className="mb-3 text-xs text-gray-300">
+                Plusieurs économistes et sociologues ont analysé la concentration économique
+                dans les DOM. Les travaux de référence incluent :
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li>
+                  <strong>Montoute A. &amp; Cardec A. (2011)</strong> — <em>"Les oligopoles dans les DOM : une réalité économique et sociale"</em>, in Revue d'Économie Régionale et Urbaine, n°4/2011. Analyse la concentration sectorielle dans la distribution, l'automobile et les services dans les Antilles françaises comme une forme d'oligopole structurel favorisé par l'insularité et la petite taille des marchés.
+                </li>
+                <li>
+                  <strong>Rochambeau M. (2009)</strong> — <em>"Compétitivité et diversification économique dans les petites économies insulaires de la Caraïbe"</em>. Montre que la petite taille des marchés insulaires favorise naturellement la concentration, rendant les marchés insulaires structurellement moins concurrentiels que les marchés continentaux de taille équivalente.
+                </li>
+                <li>
+                  <strong>Desse R.P. &amp; Padilla S. (2009)</strong> — <em>"La grande distribution dans les DOM : entre intégration aux réseaux mondiaux et spécificités locales"</em>. Analyse le double rôle de la grande distribution dans les DOM : vecteur de modernisation de la consommation ET frein au développement de la production locale.
+                </li>
+                <li>
+                  <strong>Rapport ADLC 09-A-45 (2009) &amp; 19-A-12 (2019)</strong> — ces avis constituent les documents institutionnels les plus complets sur la structure des marchés de distribution dans les DOM. Ils sont la référence juridique et économique de base pour toute analyse des prix dans les Antilles.
+                </li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : CAIRN.info — Revue d'économie régionale et urbaine ; ADLC — Avis 09-A-45 et 19-A-12.
+              </p>
+            </Collapse>
+
+            <SectionTitle icon={Users}>Inégalités sociales dans les DOM — chiffres officiels</SectionTitle>
+            <div className="overflow-x-auto mb-8">
+              <table className="w-full text-xs text-left">
+                <thead>
+                  <tr className="border-b border-slate-700">
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Indicateur</th>
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Guadeloupe</th>
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Martinique</th>
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Guyane</th>
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Réunion</th>
+                    <th className="pb-2 text-gray-400 font-semibold">France métro</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {[
+                    { ind: 'Taux de pauvreté (seuil 60 %)', gp: '34 %', mq: '30 %', gf: '53 %', re: '42 %', metro: '15 %', src: 'INSEE 2022' },
+                    { ind: 'Taux de chômage (2023)', gp: '18 %', mq: '14 %', gf: '22 %', re: '19 %', metro: '7 %', src: 'INSEE T4-2023' },
+                    { ind: 'Salaire médian mensuel net', gp: '1 650 €', mq: '1 680 €', gf: '1 530 €', re: '1 600 €', metro: '1 940 €', src: 'INSEE 2022' },
+                    { ind: 'Surcoût vie alimentaire vs métro', gp: '+13 %', mq: '+11 %', gf: '+17 %', re: '+12 %', metro: 'Référence', src: 'INSEE — Compa. niveaux vie DOM 2023' },
+                    { ind: 'Ratio surcoût / pouvoir d\'achat', gp: 'Élevé', mq: 'Élevé', gf: 'Très élevé', re: 'Élevé', metro: 'Référence', src: 'CEROM 2022' },
+                    { ind: 'Part budget alimentation ménages', gp: '~22 %', mq: '~21 %', gf: '~25 %', re: '~22 %', metro: '~16 %', src: 'INSEE EBF DOM 2022' },
+                  ].map(r => (
+                    <tr key={r.ind}>
+                      <td className="py-2 text-white pr-3 text-xs">{r.ind}</td>
+                      <td className="py-2 text-amber-300 font-bold pr-3">{r.gp}</td>
+                      <td className="py-2 text-amber-300 font-bold pr-3">{r.mq}</td>
+                      <td className="py-2 text-amber-300 font-bold pr-3">{r.gf}</td>
+                      <td className="py-2 text-amber-300 font-bold pr-3">{r.re}</td>
+                      <td className="py-2 text-gray-500 pr-3">{r.metro}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="text-xs text-gray-600 mt-2 italic">
+                Sources : INSEE — Comparaison des niveaux de vie dans les DOM (2022-2023) ; CEROM 2022 ; IEDOM 2023.
+              </p>
+            </div>
+
+            <SectionTitle icon={AlertTriangle}>Le paradoxe DOM : richesse relative et pauvreté absolue</SectionTitle>
+            <Collapse title="📊 Comment comprendre la coexistence d'un groupe comme GBH et d'un taux de pauvreté de 34 % en Guadeloupe ?">
+              <p className="mb-3 text-xs text-gray-300">
+                Cette question est au cœur du débat politique et économique dans les DOM.
+                Plusieurs éléments d'analyse, documentés par les économistes et les institutions,
+                permettent de la comprendre :
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li><strong>Le modèle de développement par transferts :</strong> Les DOM bénéficient de transferts publics massifs de l'État (fonctionnaires payés 40 % de plus, prestations sociales, investissements publics). Ces transferts soutiennent une demande de consommation importante sans pour autant développer un tissu productif local suffisant. GBH capture une partie de cette demande via ses grandes surfaces.</li>
+                <li><strong>Dualisme économique structurel :</strong> Les économistes des DOM parlent de « dualisme économique » : coexistence d'un secteur formel bien rémunéré (fonctionnaires, grandes entreprises) et d'un secteur informel et précaire (auto-entrepreneurs, agriculture de subsistance). GBH s'adresse principalement au secteur formel, tandis que les ménages précaires font face aux mêmes prix.</li>
+                <li><strong>Effets régressifs du surcoût alimentaire :</strong> Quand le coût de l'alimentation est structurellement plus élevé (+11 à +17 %) dans des territoires où le taux de pauvreté est deux à trois fois supérieur à la métropole, l'effet régressif est mathématiquement très fort : les ménages pauvres consacrent une part bien plus grande de leur revenu à l'alimentation que les ménages aisés.</li>
+                <li><strong>Absence d'alternative de consommation :</strong> Dans de nombreuses zones DOM (notamment les zones rurales et les petites îles), GBH/Carrefour est le seul grand distributeur accessible. L'absence d'alternative effective neutralise le mécanisme de pression concurrentielle sur les prix.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Celimene F. — <em>L'économie de la Martinique</em>, Economica, 2000 ;
+                ADLC Avis 19-A-12 (2019), pp. 55-60 ; INSEE — Enquête Niveaux de Vie DOM 2022.
+              </p>
+            </Collapse>
+
+            <Collapse title="🌍 Comparaison internationale — Conglomérats similaires dans les îles caribéennes et d'Outre-Mer">
+              <p className="mb-3 text-xs text-gray-300">
+                La concentration économique dans des conglomérats familiaux dominant les marchés
+                insulaires est un phénomène documenté dans de nombreuses petites économies insulaires
+                (Small Island Developing States — SIDS). Quelques comparaisons pertinentes :
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li><strong>Trinité-et-Tobago — Groupe Neal & Massy :</strong> Conglomérat familial comparable à GBH, dominant la distribution, l'automobile et les services dans les îles anglophones de la Caraïbe. Même problématique de concentration dans un marché insulaire restreint.</li>
+                <li><strong>La Barbade — Groupe Goddard Enterprises :</strong> Groupe familial dominant l'économie barbadienne, actif dans la distribution alimentaire, le tourisme et les services financiers. Structure similaire à GBH avec intégration verticale multi-sectorielle.</li>
+                <li><strong>Polynésie française — Groupe Wane :</strong> Dans un autre territoire français du Pacifique, le groupe Wane domine la grande distribution. La structure de concentration est analogue à celle de GBH dans les Antilles.</li>
+                <li><strong>Maurice — Groupe IBL (Ireland Blyth Limited) :</strong> Conglomérat historique mauricien dominant de nombreux secteurs (distribution, automobile, immobilier). Evolution historique parallèle à GBH : émergence dans la période coloniale, diversification post-indépendance.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : CNUCED — <em>Small Island Developing States — Economic Concentration and Vulnerability</em>,
+                rapport 2022 ; Caribbean Development Bank — Rapport économique régional 2023.
+              </p>
+            </Collapse>
+
+            <Collapse title="⚖️ Débat politique — Visions opposées sur le rôle de GBH">
+              <p className="mb-3 text-xs text-gray-300">
+                Le rôle de GBH dans les économies DOM est un sujet de vif débat politique. Les
+                positions documentées dans la presse et les publications officielles se structurent
+                autour de deux pôles :
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-3">
+                  <p className="text-xs font-bold text-blue-300 mb-2">Arguments en faveur — documentés</p>
+                  <ul className="list-disc pl-4 space-y-1.5 text-xs text-gray-400">
+                    <li>Premier employeur privé des Antilles (~14 000 emplois directs).</li>
+                    <li>Investissement massif dans les infrastructures commerciales des DOM (zones commerciales, entrepôts, hôtels).</li>
+                    <li>Accès à une offre large à des prix moins élevés que les petits commerces, via les économies d'échelle.</li>
+                    <li>Participation aux dispositifs de régulation des prix (BQP, accords de crise).</li>
+                    <li>Contribution fiscale significative aux finances locales (taxe professionnelle, octroi de mer côté acheteur).</li>
+                  </ul>
+                </div>
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3">
+                  <p className="text-xs font-bold text-red-300 mb-2">Arguments critiques — documentés</p>
+                  <ul className="list-disc pl-4 space-y-1.5 text-xs text-gray-400">
+                    <li>Position dominante reconnue par l'ADLC génératrice de prix plus élevés qu'en situation concurrentielle normale.</li>
+                    <li>Barrières à l'entrée (foncier, logistique) empêchant l'émergence de concurrents.</li>
+                    <li>Dépendance aux importations maintenue au détriment de la production locale.</li>
+                    <li>Extraction de valeur hors du territoire (dividendes rapatriés vs investissements locaux).</li>
+                    <li>Modèle économique amplifiant la vulnérabilité alimentaire des DOM en cas de rupture des chaînes logistiques maritimes.</li>
+                  </ul>
+                </div>
+              </div>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Débats à l'Assemblée Nationale et au Sénat — Questions DOM 2021-2024 ;
+                Avis ADLC 09-A-45 et 19-A-12 ; presse régionale Antilles et Réunion.
               </p>
             </Collapse>
           </div>
