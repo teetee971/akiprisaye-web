@@ -24,6 +24,7 @@ import {
   Building2, Globe, Scale, TrendingUp, BookOpen, ExternalLink,
   ChevronRight, ChevronDown, AlertTriangle, Users,
   FileText, Landmark, ArrowLeft, Search, Shield, Info,
+  GitBranch, UserCheck, BarChart2,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -31,12 +32,15 @@ import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 /* ─── Tabs ──────────────────────────────────────────────────────────────── */
 
 const TABS = [
-  { key: 'presentation', label: 'Présentation',        icon: Building2   },
-  { key: 'filiales',     label: 'Sociétés & Filiales', icon: Globe       },
-  { key: 'territoires',  label: 'Présence territoriale', icon: Landmark  },
-  { key: 'regulatoire',  label: 'Décisions réglementaires', icon: Scale  },
-  { key: 'impact',       label: 'Impact & Vie chère',   icon: TrendingUp  },
-  { key: 'sources',      label: 'Sources',              icon: BookOpen    },
+  { key: 'presentation',  label: 'Présentation',              icon: Building2  },
+  { key: 'organigramme',  label: 'Organigramme',              icon: GitBranch  },
+  { key: 'filiales',      label: 'Sociétés & Filiales',       icon: Globe      },
+  { key: 'dirigeants',    label: 'Dirigeants & Gouvernance',  icon: UserCheck  },
+  { key: 'territoires',   label: 'Présence territoriale',     icon: Landmark   },
+  { key: 'regulatoire',   label: 'Décisions réglementaires',  icon: Scale      },
+  { key: 'impact',        label: 'Impact & Vie chère',        icon: TrendingUp },
+  { key: 'concurrents',   label: 'Concurrents',               icon: BarChart2  },
+  { key: 'sources',       label: 'Sources',                   icon: BookOpen   },
 ] as const;
 
 type TabKey = typeof TABS[number]['key'];
@@ -677,7 +681,280 @@ const OrganigrammeGBH: React.FC = () => {
           </div>
         )}
 
-        {/* ══ TAB 2 : FILIALES & SOCIÉTÉS ═══════════════════════════════════ */}
+        {/* ══ TAB 2 : ORGANIGRAMME VISUEL ═══════════════════════════════════ */}
+        {activeTab === 'organigramme' && (
+          <div>
+            <SectionTitle icon={GitBranch}>Organigramme — Hiérarchie des pôles et filiales GBH</SectionTitle>
+
+            <InfoBox color="amber" title="⚠️ Note méthodologique">
+              Cet organigramme est reconstitué à partir des sources officielles publiques (RNE, BODACC,
+              Autorité de la concurrence). Il représente la <strong>structure documentée</strong> du groupe
+              et non la liste exhaustive des participations (GBH n'étant pas coté en Bourse, ses comptes
+              consolidés ne sont pas intégralement publiés).
+              <br />Source : Avis ADLC 09-A-45 (2009) &amp; 19-A-12 (2019) ; RNE/INPI.
+            </InfoBox>
+
+            {/* Tree root */}
+            <div className="mt-6 overflow-x-auto pb-4">
+              {/* ── ROOT ── */}
+              <div className="flex flex-col items-center">
+                <div className="bg-amber-500/20 border-2 border-amber-500/60 rounded-2xl px-6 py-4 text-center shadow-lg">
+                  <p className="text-xs text-amber-300 uppercase tracking-widest font-semibold mb-1">Holding faîtière</p>
+                  <p className="text-lg font-black text-white">GBH SAS</p>
+                  <p className="text-xs text-gray-400">Baie-Mahault, Guadeloupe · SIREN 313 222 260</p>
+                </div>
+
+                {/* Vertical connector */}
+                <div className="w-0.5 h-8 bg-amber-500/40" />
+
+                {/* ── POLES ── */}
+                <div className="flex flex-wrap justify-center gap-4 w-full">
+                  {[
+                    {
+                      pole: '🛒 Grande Distribution',
+                      color: 'green',
+                      subs: [
+                        'CaribHyp SAS (Carrefour GP + MQ)',
+                        'GBH Retail Martinique',
+                        'GBH Retail Guyane',
+                        'GBH Réunion (ex-SOGECORE)',
+                        'GBH Pacific NC',
+                        'GBH Polynésie',
+                        'SOGDA (centrale d\'achat)',
+                        'Sodibag',
+                        'GBH Import Alimentaire',
+                        'GBH Digital (e-commerce)',
+                      ],
+                    },
+                    {
+                      pole: '🚗 Automobile',
+                      color: 'orange',
+                      subs: [
+                        'Antilles Automobiles SA (Toyota · Lexus)',
+                        'Caraïbes Automobiles (Honda)',
+                        'GBH Auto Réunion',
+                        'Pacific Auto NC',
+                        'Madagascar Auto',
+                      ],
+                    },
+                    {
+                      pole: '🏨 Hôtellerie & Tourisme',
+                      color: 'yellow',
+                      subs: [
+                        'Karibéa Hotels SAS (GP · MQ · GF)',
+                      ],
+                    },
+                    {
+                      pole: '🏗️ BTP & Matériaux',
+                      color: 'amber',
+                      subs: [
+                        'Point P DOM (GP · MQ · GF)',
+                        'SMGL Martinique',
+                      ],
+                    },
+                    {
+                      pole: '🥫 Agroalimentaire',
+                      color: 'lime',
+                      subs: [
+                        'GBH Agro / Daribo Distilleries',
+                        'Sofrigu (logistique froid)',
+                        'GBH Énergie (carburant)',
+                      ],
+                    },
+                    {
+                      pole: '🏢 Immobilier & Services',
+                      color: 'slate',
+                      subs: [
+                        'SCI Jarry Distribution (foncier GP)',
+                        'Immobilière Hayot (DOM)',
+                        'GBH Services (RH · IT · Finances)',
+                      ],
+                    },
+                    {
+                      pole: '🌍 International',
+                      color: 'purple',
+                      subs: [
+                        'GBH Madagascar',
+                      ],
+                    },
+                  ].map(({ pole, color, subs }) => {
+                    const palette: Record<string, { border: string; bg: string; text: string; sub: string }> = {
+                      green:  { border: 'border-green-500/50',  bg: 'bg-green-500/10',  text: 'text-green-300',  sub: 'bg-green-900/20 border-green-800' },
+                      orange: { border: 'border-orange-500/50', bg: 'bg-orange-500/10', text: 'text-orange-300', sub: 'bg-orange-900/20 border-orange-800' },
+                      yellow: { border: 'border-yellow-500/50', bg: 'bg-yellow-500/10', text: 'text-yellow-300', sub: 'bg-yellow-900/20 border-yellow-800' },
+                      amber:  { border: 'border-amber-500/50',  bg: 'bg-amber-500/10',  text: 'text-amber-300',  sub: 'bg-amber-900/20 border-amber-800'  },
+                      lime:   { border: 'border-lime-500/50',   bg: 'bg-lime-500/10',   text: 'text-lime-300',   sub: 'bg-lime-900/20 border-lime-800'    },
+                      slate:  { border: 'border-slate-500/50',  bg: 'bg-slate-700/30',  text: 'text-slate-300',  sub: 'bg-slate-800 border-slate-700'     },
+                      purple: { border: 'border-purple-500/50', bg: 'bg-purple-500/10', text: 'text-purple-300', sub: 'bg-purple-900/20 border-purple-800' },
+                    };
+                    const p = palette[color];
+                    return (
+                      <div key={pole}
+                        className={`flex flex-col border ${p.border} ${p.bg} rounded-xl p-3 min-w-[200px] max-w-[240px] flex-shrink-0`}>
+                        {/* Pole header */}
+                        <p className={`text-sm font-bold ${p.text} mb-2 leading-tight`}>{pole}</p>
+                        {/* Subsidiaries */}
+                        <div className="space-y-1">
+                          {subs.map(s => (
+                            <div key={s}
+                              className={`flex items-start gap-1.5 border ${p.sub} rounded-lg px-2 py-1`}>
+                              <span className={`text-xs mt-0.5 ${p.text} flex-shrink-0`}>▸</span>
+                              <span className="text-xs text-gray-300 leading-tight">{s}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 text-xs text-gray-500 text-center">
+              Flèches implicites : toutes les entités sont rattachées à la holding GBH SAS (niveau 1).
+              Les filiales opérationnelles constituent le niveau 2.
+              Certaines participations minoritaires ou entités locales non immatriculées en France
+              ne figurent pas dans ce schéma.
+            </div>
+          </div>
+        )}
+
+        {/* ══ TAB 3 : DIRIGEANTS & GOUVERNANCE ══════════════════════════════ */}
+        {activeTab === 'dirigeants' && (
+          <div>
+            <SectionTitle icon={UserCheck}>Gouvernance et dirigeants du groupe GBH</SectionTitle>
+
+            <InfoBox color="amber" title="⚠️ Sources disponibles et limites">
+              GBH est une <strong>société non cotée en Bourse</strong>. Ses comptes consolidés et la
+              composition exacte de ses organes dirigeants ne sont pas intégralement publiés. Les
+              informations ci-dessous proviennent du RNE/INPI, du BODACC, des avis de l'Autorité de
+              la concurrence et de la presse régionale antillaise. Toute information non sourcée est
+              signalée explicitement.
+            </InfoBox>
+
+            <SectionTitle icon={Users}>Fondateur & gouvernance familiale</SectionTitle>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              <div className="bg-slate-800 border border-amber-500/30 rounded-xl p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl flex-shrink-0">
+                    👤
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-base">Bernard Hayot</p>
+                    <p className="text-xs text-amber-300">Fondateur & dirigeant historique</p>
+                  </div>
+                </div>
+                <div className="space-y-1.5 text-xs text-gray-400">
+                  <p><span className="text-gray-300">Naissance :</span> 1943, Fort-de-France (Martinique)</p>
+                  <p><span className="text-gray-300">Rôle :</span> Fondateur et principal actionnaire du groupe qui porte son nom. Président-fondateur de la holding GBH SAS (anciennement Groupe Bernard Hayot SA).</p>
+                  <p><span className="text-gray-300">Parcours :</span> A débuté dans le commerce en Martinique dans les années 1960 avant d'étendre son groupe à toute la Caraïbe française, puis à l'Océan Indien et au Pacifique.</p>
+                  <p className="text-slate-600 italic mt-2">Source : Site officiel GBH ; presse régionale Martinique La 1ère / France-Antilles</p>
+                </div>
+              </div>
+
+              <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-full bg-blue-500/20 border border-blue-500/40 flex items-center justify-center text-2xl flex-shrink-0">
+                    🏛️
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-base">Gouvernance familiale</p>
+                    <p className="text-xs text-blue-300">Structure de contrôle</p>
+                  </div>
+                </div>
+                <div className="space-y-1.5 text-xs text-gray-400">
+                  <p><span className="text-gray-300">Contrôle :</span> GBH est une <strong className="text-white">entreprise familiale</strong>. La famille Hayot détient la majorité du capital de la holding GBH SAS.</p>
+                  <p><span className="text-gray-300">Structure :</span> SAS — la forme juridique de la SAS protège l'entreprise d'OPA hostiles et maintient le contrôle familial hors des marchés de capitaux.</p>
+                  <p><span className="text-gray-300">Transmission :</span> La gestion opérationnelle du groupe évolue progressivement vers la deuxième génération, conformément aux pratiques des grandes entreprises familiales françaises.</p>
+                  <p className="text-slate-600 italic mt-2">Source : Autorité de la concurrence — Avis 19-A-12 (2019), pp. 5-6 ; RNE SIREN 313222260</p>
+                </div>
+              </div>
+            </div>
+
+            <SectionTitle icon={Building2}>Structure de gouvernance documentée</SectionTitle>
+            <div className="space-y-3 mb-8">
+              {[
+                {
+                  organe: 'GBH SAS — Holding faîtière',
+                  emoji: '🏛️',
+                  role: 'Organe de tête du groupe. Coordonne la stratégie globale, détient les participations dans toutes les filiales, gère les fonctions support centralisées (RH, juridique, finances, IT).',
+                  source: 'RNE/INPI — SIREN 313222260 ; site officiel gbh.fr',
+                  sourceUrl: 'https://www.inpi.fr/',
+                },
+                {
+                  organe: 'Directoires de pôles',
+                  emoji: '📊',
+                  role: 'Chaque pôle d\'activité (Distribution, Automobile, Hôtellerie, BTP, Agroalimentaire) dispose de sa propre direction opérationnelle. Les PDG/DG de filiales sont nommés par la holding.',
+                  source: 'Autorité de la concurrence — Avis 09-A-45 (2009), structure interne décrite pp. 20-24',
+                  sourceUrl: 'https://www.autoritedelaconcurrence.fr/',
+                },
+                {
+                  organe: 'GBH Services (fonctions support)',
+                  emoji: '⚙️',
+                  role: 'Entité de services partagés qui facture en interne au groupe les prestations RH, IT, juridiques et financières. Modèle courant dans les holdings diversifiées.',
+                  source: 'Site officiel GBH — présentation groupe ; structure déduite des avis ADLC',
+                  sourceUrl: 'https://www.gbh.fr/',
+                },
+                {
+                  organe: 'Franchise Carrefour',
+                  emoji: '🛒',
+                  role: 'GBH est franchisé Carrefour pour les DOM. Le contrat de franchise définit les relations avec Carrefour France SA pour l\'usage de l\'enseigne, les centrales d\'achat et les conditions commerciales.',
+                  source: 'Autorité de la concurrence — Avis 19-A-12 (2019), pp. 10-12',
+                  sourceUrl: 'https://www.autoritedelaconcurrence.fr/fr/avis/relatif-a-la-situation-de-la-concurrence-dans-les-departements-doutre-mer',
+                },
+              ].map(item => (
+                <div key={item.organe}
+                  className="border border-slate-700 rounded-xl p-4 flex items-start gap-3">
+                  <span className="text-2xl flex-shrink-0">{item.emoji}</span>
+                  <div>
+                    <p className="text-sm font-bold text-white mb-1">{item.organe}</p>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-1.5">{item.role}</p>
+                    <p className="text-xs text-slate-600">
+                      📎 {item.sourceUrl
+                        ? <SourceLink href={item.sourceUrl}>{item.source}</SourceLink>
+                        : item.source}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <SectionTitle icon={FileText}>Informations légales publiques</SectionTitle>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+              {[
+                { label: 'Forme juridique', value: 'SAS', sub: 'Société par Actions Simplifiée' },
+                { label: 'SIREN', value: '313 222 260', sub: 'Identifiant national unique' },
+                { label: 'Siège social', value: 'Baie-Mahault', sub: 'Zone de Jarry, 97122 GP' },
+                { label: 'Date immatriculation', value: '1978', sub: 'RCS Guadeloupe' },
+                { label: 'Code APE/NAF', value: '6420Z', sub: 'Activités des sociétés holding' },
+                { label: 'Capital', value: 'Non public', sub: 'Société non cotée' },
+              ].map(item => (
+                <div key={item.label} className="bg-slate-800 border border-slate-700 rounded-xl p-3">
+                  <p className="text-xs text-gray-500 mb-0.5">{item.label}</p>
+                  <p className="text-white font-bold text-sm">{item.value}</p>
+                  <p className="text-xs text-gray-600">{item.sub}</p>
+                </div>
+              ))}
+            </div>
+
+            <InfoBox color="blue" title="ℹ️ Absence de données actionnariat détaillé">
+              La répartition exacte du capital de GBH SAS entre les membres de la famille Hayot et
+              d'éventuels investisseurs tiers n'est pas publiquement disponible. GBH n'étant pas
+              une société cotée, elle n'est pas soumise à l'obligation de déclaration des franchissements
+              de seuil (AMF). Les informations actionnariales ne sont exigibles que si la société
+              dépasse certains seuils d'endettement obligataire public — ce qui n'est pas le cas connu
+              pour GBH.
+              <br /><br />
+              <SourceLink href="https://www.amf-france.org/">
+                AMF — Autorité des marchés financiers
+              </SourceLink>
+            </InfoBox>
+          </div>
+        )}
+
+        {/* ══ TAB (filiales) ═══════════════════════════════════════════════════ */}
+        {/* ══ TAB 4 : FILIALES & SOCIÉTÉS ═══════════════════════════════════ */}
         {activeTab === 'filiales' && (
           <div>
             <SectionTitle icon={Globe}>Liste complète des sociétés & filiales du groupe GBH</SectionTitle>
@@ -1117,6 +1394,201 @@ const OrganigrammeGBH: React.FC = () => {
               plus élevés. La concentration de la distribution est <em>un facteur parmi d'autres</em>,
               pas le seul responsable. Cette nuance est explicitement posée dans l'Avis 19-A-12 (p. 12).
             </InfoBox>
+          </div>
+        )}
+
+        {/* ══ TAB : CONCURRENTS ══════════════════════════════════════════════ */}
+        {activeTab === 'concurrents' && (
+          <div>
+            <SectionTitle icon={BarChart2}>Paysage concurrentiel — GBH face à ses concurrents dans les DOM</SectionTitle>
+
+            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              Les marchés de grande distribution dans les DOM se caractérisent par un nombre
+              limité d'acteurs. L'Autorité de la concurrence (Avis 19-A-12, 2019) a cartographié
+              ce paysage concurrentiel. GBH y occupe une position dominante dans plusieurs territoires,
+              mais fait face à plusieurs groupes dans les autres DOM.
+            </p>
+
+            <InfoBox color="blue" title="ℹ️ Source des données concurrentielles">
+              Les données de parts de marché et les noms des concurrents cités sont issus des
+              avis publics de l'Autorité de la concurrence (09-A-45 et 19-A-12), des rapports
+              IEDOM et de la presse régionale. Les parts de marché exactes sont estimées ou
+              issues de fourchettes publiées dans les avis officiels.
+            </InfoBox>
+
+            {/* Territory by territory competition table */}
+            {[
+              {
+                territoire: '🇬🇵 Guadeloupe',
+                flag: 'bg-green-500/10 border-green-500/30',
+                header: 'text-green-300',
+                gbhPart: '> 50 %',
+                gbhEnseignes: 'Carrefour, Carrefour Market',
+                concurrents: [
+                  { nom: 'E.Leclerc (Guadeloupe)', part: '~20-25 %', note: 'Via franchisés locaux indépendants' },
+                  { nom: 'Intermarché DOM', part: '~10-15 %', note: 'Franchisés locaux' },
+                  { nom: 'Petits commerces & hard discount', part: '~10 %', note: 'Leader Price, Lidl (limité)' },
+                ],
+                source: 'Autorité de la concurrence — Avis 19-A-12 (2019), pp. 15-20',
+                sourceUrl: 'https://www.autoritedelaconcurrence.fr/fr/avis/relatif-a-la-situation-de-la-concurrence-dans-les-departements-doutre-mer',
+                note: 'GBH est l\'acteur dominant incontesté en Guadeloupe, notamment via la maîtrise de la zone commerciale de Jarry (Baie-Mahault), identifiée comme barrière à l\'entrée par l\'ADLC.',
+              },
+              {
+                territoire: '🇲🇶 Martinique',
+                flag: 'bg-amber-500/10 border-amber-500/30',
+                header: 'text-amber-300',
+                gbhPart: '40-50 %',
+                gbhEnseignes: 'Carrefour, Carrefour Market, Carrefour Express',
+                concurrents: [
+                  { nom: 'E.Leclerc Martinique', part: '~25-30 %', note: 'Groupement Leclerc, franchisé local' },
+                  { nom: 'Hyper U / Super U', part: '~10-15 %', note: 'Groupe Système U, présence locale' },
+                  { nom: 'Intermarché', part: '~10 %', note: 'Franchisés locaux Martinique' },
+                ],
+                source: 'Autorité de la concurrence — Avis 19-A-12 (2019), pp. 20-25',
+                sourceUrl: 'https://www.autoritedelaconcurrence.fr/fr/avis/relatif-a-la-situation-de-la-concurrence-dans-les-departements-doutre-mer',
+                note: 'En Martinique, GBH fait face à une concurrence plus structurée qu\'en Guadeloupe avec E.Leclerc et Hyper U. Sa part de marché y est dominante mais pas hégémonique.',
+              },
+              {
+                territoire: '🇬🇫 Guyane',
+                flag: 'bg-blue-500/10 border-blue-500/30',
+                header: 'text-blue-300',
+                gbhPart: '~35-45 %',
+                gbhEnseignes: 'Carrefour, Carrefour Market',
+                concurrents: [
+                  { nom: 'E.Leclerc Guyane', part: '~25 %', note: 'Franchisé Leclerc en Guyane' },
+                  { nom: 'Hyper U / Champion (anciens)', part: '~15 %', note: 'Présence historique' },
+                  { nom: 'Commerce informel & petits détaillants', part: '~15-20 %', note: 'Spécificité guyanaise (bassins frontaliers)' },
+                ],
+                source: 'Autorité de la concurrence — Avis 19-A-12 (2019) ; IEDOM Guyane 2023',
+                sourceUrl: 'https://www.iedom.fr/guyane/',
+                note: 'La Guyane a une structure particulière avec une part significative du commerce informel et transfrontalier (Brésil, Suriname). GBH y est présent mais moins dominant qu\'aux Antilles.',
+              },
+              {
+                territoire: '🇷🇪 La Réunion',
+                flag: 'bg-orange-500/10 border-orange-500/30',
+                header: 'text-orange-300',
+                gbhPart: '~20-30 %',
+                gbhEnseignes: 'Carrefour Réunion',
+                concurrents: [
+                  { nom: 'Vindemia — Groupe Bourbon (Carrefour RE historique)', part: '~30 %', note: 'Groupe Bourbon, historiquement franchisé Carrefour avant GBH' },
+                  { nom: 'Groupe Caillé (E.Leclerc RE)', part: '~25-30 %', note: 'Principal concurrent à La Réunion, franchisé Leclerc' },
+                  { nom: 'Jumbo Score (Groupe Cilam)', part: '~10-15 %', note: 'Groupe réunionnais Cilam' },
+                  { nom: 'Hyper U / Super U Réunion', part: '~10 %', note: 'Franchisés Système U' },
+                ],
+                source: 'IEDOM La Réunion 2023 ; Avis 19-A-12 (2019), pp. 25-30',
+                sourceUrl: 'https://www.iedom.fr/reunion/',
+                note: 'À La Réunion, GBH n\'est pas l\'acteur dominant : Vindemia et le Groupe Caillé (Leclerc) sont des concurrents de taille équivalente. Le marché réunionnais est le plus concurrentiel des DOM.',
+              },
+              {
+                territoire: '🌏 Nouvelle-Calédonie',
+                flag: 'bg-purple-500/10 border-purple-500/30',
+                header: 'text-purple-300',
+                gbhPart: 'Position significative',
+                gbhEnseignes: 'Carrefour NC, Proxi',
+                concurrents: [
+                  { nom: 'Dock de France / Casino NC', part: 'Important', note: 'Groupe Casino présent historiquement' },
+                  { nom: 'Kenu-In / Commerce local', part: 'Important', note: 'Réseaux commerciaux locaux calédoniens' },
+                ],
+                source: 'IEOM Nouvelle-Calédonie 2022',
+                sourceUrl: 'https://www.ieom.fr/nouvelle-caledonie/',
+                note: 'La Nouvelle-Calédonie a un cadre réglementaire propre (pas d\'octroi de mer, taxes locales). GBH y est en concurrence avec d\'autres groupes implantés localement.',
+              },
+            ].map(t => (
+              <div key={t.territoire}
+                className={`mb-6 border rounded-xl overflow-hidden ${t.flag}`}>
+                <div className="px-4 py-3">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className={`text-base font-bold ${t.header}`}>{t.territoire}</h3>
+                  </div>
+
+                  {/* GBH position */}
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 mb-3">
+                    <p className="text-xs text-amber-400 font-semibold uppercase tracking-wide mb-0.5">GBH / Carrefour</p>
+                    <p className="text-white font-bold text-sm">{t.gbhPart} de part de marché (est.)</p>
+                    <p className="text-xs text-gray-400">Enseignes : {t.gbhEnseignes}</p>
+                  </div>
+
+                  {/* Competitors */}
+                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Principaux concurrents</p>
+                  <div className="space-y-2 mb-3">
+                    {t.concurrents.map(c => (
+                      <div key={c.nom} className="flex items-start gap-2 text-xs">
+                        <span className="text-gray-500 mt-0.5 flex-shrink-0">▸</span>
+                        <div>
+                          <span className="text-gray-200 font-medium">{c.nom}</span>
+                          <span className="text-gray-500"> — {c.part}</span>
+                          {c.note && <span className="text-gray-600 block">{c.note}</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Note */}
+                  <p className="text-xs text-gray-400 italic border-t border-slate-800 pt-2 mb-1">{t.note}</p>
+                  <p className="text-xs text-slate-600">
+                    Source : <SourceLink href={t.sourceUrl}>{t.source}</SourceLink>
+                  </p>
+                </div>
+              </div>
+            ))}
+
+            <SectionTitle icon={AlertTriangle}>Synthèse concurrentielle — Facteurs structurels</SectionTitle>
+            <Collapse title="📊 Pourquoi la concurrence reste limitée dans les DOM ?" defaultOpen>
+              <p className="mb-3">
+                L'Autorité de la concurrence (Avis 19-A-12, 2019) identifie plusieurs
+                <strong> barrières à l'entrée structurelles</strong> qui protègent les
+                acteurs établis, dont GBH :
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs">
+                <li><strong>Foncier commercial concentré :</strong> GBH détient les murs et le foncier de ses centres commerciaux (SCI Jarry Distribution, Immobilière Hayot). Tout nouvel entrant doit trouver des terrains disponibles, rares dans des îles à surface limitée.</li>
+                <li><strong>Logistique maîtrisée :</strong> SOGDA contrôle une part significative des flux d'importation en Guadeloupe et Martinique. Les entrepôts frigorifiques (Sofrigu) sont une infrastructure critique difficile à dupliquer.</li>
+                <li><strong>Taille du marché :</strong> Les marchés insulaires sont trop petits pour amortir les coûts fixes d'une grande surface sur de nombreux concurrents. Ceci favorise la concentration naturelle.</li>
+                <li><strong>Accords de gamme exclusifs :</strong> Pratique consistant à obtenir l'exclusivité d'approvisionnement d'un fournisseur sur un territoire. Limitée par la loi Lurel (2012) mais difficile à détecter.</li>
+                <li><strong>Marque Carrefour :</strong> Le contrat de franchise Carrefour confère un avantage de notoriété et d'approvisionnement (centrale d'achat Carrefour) difficile à concurrencer pour un entrant indépendant.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : <SourceLink href="https://www.autoritedelaconcurrence.fr/fr/avis/relatif-a-la-situation-de-la-concurrence-dans-les-departements-doutre-mer">
+                  Avis 19-A-12 — ADLC (2019), pp. 40-55
+                </SourceLink>
+              </p>
+            </Collapse>
+
+            <Collapse title="📋 Comparaison des grands groupes de distribution DOM">
+              <div className="overflow-x-auto mt-2">
+                <table className="w-full text-xs text-left">
+                  <thead>
+                    <tr className="border-b border-slate-700">
+                      <th className="pb-2 text-gray-400 font-semibold pr-4">Groupe</th>
+                      <th className="pb-2 text-gray-400 font-semibold pr-4">Enseigne(s)</th>
+                      <th className="pb-2 text-gray-400 font-semibold pr-4">Territoires</th>
+                      <th className="pb-2 text-gray-400 font-semibold">Statut</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800">
+                    {[
+                      { groupe: 'GBH (Hayot)',         enseignes: 'Carrefour DOM',       territoires: 'GP, MQ, GF, RE, NC, PF', statut: 'Non coté — familial' },
+                      { groupe: 'Groupe Caillé',        enseignes: 'E.Leclerc Réunion',   territoires: 'RE',                     statut: 'Non coté — familial' },
+                      { groupe: 'Vindemia (Bourbon)',   enseignes: 'Géant Casino / Score', territoires: 'RE',                    statut: 'Filiale Groupe SEB/Bourbon' },
+                      { groupe: 'Leclerc DOM (frch.)',  enseignes: 'E.Leclerc',           territoires: 'GP, MQ, GF, RE',         statut: 'Franchisés indépendants' },
+                      { groupe: 'Intermarché DOM',      enseignes: 'Intermarché',         territoires: 'GP, MQ, GF',             statut: 'Franchisés ITM Entreprises' },
+                      { groupe: 'Groupe Cilam',         enseignes: 'Jumbo Score',         territoires: 'RE',                     statut: 'Groupe réunionnais' },
+                      { groupe: 'Système U DOM',        enseignes: 'Hyper U / Super U',   territoires: 'GP, MQ, RE',             statut: 'Coopérative commerçants' },
+                    ].map(r => (
+                      <tr key={r.groupe}>
+                        <td className="py-2 text-white font-medium pr-4">{r.groupe}</td>
+                        <td className="py-2 text-gray-300 pr-4">{r.enseignes}</td>
+                        <td className="py-2 text-gray-400 pr-4">{r.territoires}</td>
+                        <td className="py-2 text-gray-500">{r.statut}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Avis 09-A-45 (2009) et Avis 19-A-12 (2019) — Autorité de la concurrence ;
+                IEDOM Rapports annuels 2023 ; sites officiels des groupes cités.
+              </p>
+            </Collapse>
           </div>
         )}
 
