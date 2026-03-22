@@ -285,35 +285,35 @@ model Price {
 
 /// Product Price Observation (Prix produit)
 model ProductPrice {
-  id                  String              @id @default(cuid())
-  productId           String
-  storeId             String
-  price               Float
-  currency            String              @default("EUR")
-  
+  id        String @id @default(cuid())
+  productId String
+  storeId   String
+  price     Float
+  currency  String @default("EUR")
+
   // Traçabilité
-  source              PriceSource
-  observedAt          DateTime
-  reportedBy          String?
-  proofUrl            String?
-  
+  source     PriceSource
+  observedAt DateTime
+  reportedBy String?
+  proofUrl   String?
+
   // Vérification
-  verificationStatus  VerificationStatus  @default(UNVERIFIED)
-  verificationCount   Int                 @default(0)
-  lastVerifiedAt      DateTime?
-  
+  verificationStatus VerificationStatus @default(UNVERIFIED)
+  verificationCount  Int                @default(0)
+  lastVerifiedAt     DateTime?
+
   // Confiance
-  confidenceScore     Int                 @default(0)
-  confidenceFactors   Json?
-  
+  confidenceScore   Int   @default(0)
+  confidenceFactors Json?
+
   // Métadonnées
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
-  isActive            Boolean             @default(true)
-  
-  verifications       PriceVerification[]
-  anomalies           PriceAnomaly[]
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
+
+  verifications PriceVerification[]
+  anomalies     PriceAnomaly[]
+
   @@index([productId])
   @@index([storeId])
   @@index([observedAt])
@@ -322,43 +322,43 @@ model ProductPrice {
 }
 
 model PriceVerification {
-  id          String              @id @default(cuid())
-  priceId     String
-  userId      String
-  action      VerificationAction
-  comment     String?
-  createdAt   DateTime            @default(now())
-  
-  price       ProductPrice        @relation(fields: [priceId], references: [id], onDelete: Cascade)
-  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id        String             @id @default(cuid())
+  priceId   String
+  userId    String
+  action    VerificationAction
+  comment   String?
+  createdAt DateTime           @default(now())
+
+  price ProductPrice @relation(fields: [priceId], references: [id], onDelete: Cascade)
+  user  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([priceId, userId])
   @@index([priceId])
   @@index([userId])
-  @@unique([priceId, userId])
 }
 
 model PriceAnomaly {
-  id            String        @id @default(cuid())
-  priceId       String
-  productId     String
-  storeId       String
-  anomalyType   AnomalyType
-  severity      Severity
-  
+  id          String      @id @default(cuid())
+  priceId     String
+  productId   String
+  storeId     String
+  anomalyType AnomalyType
+  severity    Severity
+
   reportedPrice Float
   expectedPrice Float
   deviation     Float
-  
-  status        AnomalyStatus @default(PENDING)
-  resolvedAt    DateTime?
-  resolvedBy    String?
-  resolution    String?
-  context       Json?
-  
-  createdAt     DateTime      @default(now())
-  
-  price         ProductPrice  @relation(fields: [priceId], references: [id], onDelete: Cascade)
-  
+
+  status     AnomalyStatus @default(PENDING)
+  resolvedAt DateTime?
+  resolvedBy String?
+  resolution String?
+  context    Json?
+
+  createdAt DateTime @default(now())
+
+  price ProductPrice @relation(fields: [priceId], references: [id], onDelete: Cascade)
+
   @@index([status])
   @@index([severity])
   @@index([productId])
@@ -366,56 +366,56 @@ model PriceAnomaly {
 }
 
 model ProductUpdate {
-  id            String        @id @default(cuid())
-  productId     String
-  field         String
-  oldValue      String?
-  newValue      String
-  source        String
-  autoApplied   Boolean       @default(false)
-  reviewStatus  ReviewStatus  @default(PENDING)
-  reviewedBy    String?
-  reviewedAt    DateTime?
-  createdAt     DateTime      @default(now())
-  
+  id           String       @id @default(cuid())
+  productId    String
+  field        String
+  oldValue     String?
+  newValue     String
+  source       String
+  autoApplied  Boolean      @default(false)
+  reviewStatus ReviewStatus @default(PENDING)
+  reviewedBy   String?
+  reviewedAt   DateTime?
+  createdAt    DateTime     @default(now())
+
   @@index([productId])
   @@index([reviewStatus])
   @@index([createdAt])
 }
 
 model RefreshToken {
-  id         String   @id @default(cuid())
-  tokenHash  String   @unique
-  userId     String
-  expiresAt  DateTime
-  isRevoked  Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  isRevoked Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([expiresAt])
 }
 
 model ApiKey {
-  id               String         @id @default(cuid())
-  key              String         @unique
-  keyHash          String         @unique
-  name             String
-  userId           String
-  permissions      ApiPermission[]
-  isActive         Boolean        @default(true)
-  status           ApiKeyStatus   @default(ACTIVE)
-  expiresAt        DateTime?
-  lastUsedAt       DateTime?
-  rateLimitMinute  Int            @default(60)
-  rateLimitHour    Int            @default(1000)
-  rateLimitDay     Int            @default(10000)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  id              String          @id @default(cuid())
+  key             String          @unique
+  keyHash         String          @unique
+  name            String
+  userId          String
+  permissions     ApiPermission[]
+  isActive        Boolean         @default(true)
+  status          ApiKeyStatus    @default(ACTIVE)
+  expiresAt       DateTime?
+  lastUsedAt      DateTime?
+  rateLimitMinute Int             @default(60)
+  rateLimitHour   Int             @default(1000)
+  rateLimitDay    Int             @default(10000)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([userId])
   @@index([keyHash])
   @@index([isActive])
@@ -427,7 +427,7 @@ model ApiKey {
 /// ===============================
 
 model Store {
-  id             String   @id @default(cuid())
+  id             String  @id @default(cuid())
   normalizedName String
   rawName        String?
   brand          String?
@@ -437,7 +437,7 @@ model Store {
   address        String?
   postalCode     String?
   city           String?
-  territory      String   /// TerritoryCode lowercase (gp, mq, ...)
+  territory      String /// TerritoryCode lowercase (gp, mq, ...)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -504,8 +504,8 @@ model ReceiptItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  receipt      Receipt           @relation(fields: [receiptId], references: [id], onDelete: Cascade)
-  product      Product?          @relation(fields: [productId], references: [id])
+  receipt      Receipt            @relation(fields: [receiptId], references: [id], onDelete: Cascade)
+  product      Product?           @relation(fields: [productId], references: [id])
   observations PriceObservation[]
 
   @@index([receiptId])
@@ -639,7 +639,7 @@ model PriceHistoryYearly {
 
 model ReviewQueueEntry {
   id          String   @id @default(cuid())
-  entityType  String   /// "receipt" | "receipt_item" | "product" | "product_image"
+  entityType  String /// "receipt" | "receipt_item" | "product" | "product_image"
   entityId    String
   reason      String
   payloadJson Json?
@@ -655,7 +655,7 @@ model PriceAlertEvent {
   id          String   @id @default(cuid())
   productId   String
   territory   String
-  eventType   String   /// "new_low" | "significant_drop" | "significant_rise"
+  eventType   String /// "new_low" | "significant_drop" | "significant_rise"
   oldPrice    Float?
   newPrice    Float
   dropPercent Float?
@@ -673,20 +673,20 @@ model PriceAlertEvent {
 /// ===============================
 
 model userGamification {
-  id                String   @id @default(cuid())
-  userId            String   @unique
-  totalPoints       Int      @default(0)
-  level             Int      @default(1)
-  currentStreak     Int      @default(0)
-  longestStreak     Int      @default(0)
-  lastActiveDate    DateTime?
-  priceReportsCount Int      @default(0)
-  verificationsCount Int     @default(0)
-  photosCount       Int      @default(0)
-  receiptsCount     Int      @default(0)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  id                 String    @id @default(cuid())
+  userId             String    @unique
+  totalPoints        Int       @default(0)
+  level              Int       @default(1)
+  currentStreak      Int       @default(0)
+  longestStreak      Int       @default(0)
+  lastActiveDate     DateTime?
+  priceReportsCount  Int       @default(0)
+  verificationsCount Int       @default(0)
+  photosCount        Int       @default(0)
+  receiptsCount      Int       @default(0)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
   @@index([userId])
   @@index([totalPoints])
 }
@@ -699,7 +699,7 @@ model pointsTransaction {
   description String?
   metadata    Json?
   createdAt   DateTime    @default(now())
-  
+
   @@index([userId])
   @@index([createdAt])
 }
@@ -716,7 +716,7 @@ model badge {
   requirement Json?
   isActive    Boolean       @default(true)
   createdAt   DateTime      @default(now())
-  
+
   @@index([category])
   @@index([rarity])
 }
@@ -727,7 +727,7 @@ model userBadge {
   badgeCode String
   badgeType String?
   earnedAt  DateTime @default(now())
-  
+
   @@unique([userId, badgeCode])
   @@index([userId])
 }
@@ -744,21 +744,21 @@ model challenge {
   reward      Int
   isActive    Boolean       @default(true)
   createdAt   DateTime      @default(now())
-  
+
   @@index([type])
   @@index([isActive])
 }
 
 model userChallenge {
-  id           String   @id @default(cuid())
-  userId       String
+  id            String    @id @default(cuid())
+  userId        String
   challengeCode String
-  progress     Int      @default(0)
-  completed    Boolean  @default(false)
-  completedAt  DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  
+  progress      Int       @default(0)
+  completed     Boolean   @default(false)
+  completedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
   @@unique([userId, challengeCode])
   @@index([userId])
 }
@@ -768,32 +768,32 @@ model userChallenge {
 /// ===============================
 
 model brand {
-  id          String      @id @default(cuid())
-  name        String      @unique
-  normalizedName String   @unique
-  description String?
-  logoUrl     String?
-  website     String?
-  status      BrandStatus @default(ACTIVE)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  
+  id             String      @id @default(cuid())
+  name           String      @unique
+  normalizedName String      @unique
+  description    String?
+  logoUrl        String?
+  website        String?
+  status         BrandStatus @default(ACTIVE)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
   @@index([normalizedName])
 }
 
 model legalEntity {
-  id          String       @id @default(cuid())
-  name        String
-  siret       String?      @unique
-  siren       String?
-  address     String?
-  city        String?
-  postalCode  String?
-  country     String       @default("FR")
-  status      EntityStatus @default(ACTIVE)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  
+  id         String       @id @default(cuid())
+  name       String
+  siret      String?      @unique
+  siren      String?
+  address    String?
+  city       String?
+  postalCode String?
+  country    String       @default("FR")
+  status     EntityStatus @default(ACTIVE)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
   @@index([siret])
   @@index([siren])
 }
@@ -803,69 +803,69 @@ model legalEntity {
 /// ===============================
 
 model notification {
-  id          String             @id @default(cuid())
-  userId      String
-  type        NotificationType
-  title       String
-  message     String
-  status      NotificationStatus @default(UNREAD)
-  metadata    Json?
-  createdAt   DateTime           @default(now())
-  readAt      DateTime?
-  
+  id        String             @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  status    NotificationStatus @default(UNREAD)
+  metadata  Json?
+  createdAt DateTime           @default(now())
+  readAt    DateTime?
+
   @@index([userId])
   @@index([status])
   @@index([createdAt])
 }
 
 model notificationPreference {
-  id          String                @id @default(cuid())
-  userId      String                @unique
-  channels    NotificationChannel[]
-  priceAlerts Boolean               @default(true)
-  badges      Boolean               @default(true)
-  challenges  Boolean               @default(true)
-  weekly      Boolean               @default(true)
-  emailEnabled Boolean              @default(true)
-  pushEnabled Boolean               @default(true)
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
-  
+  id           String                @id @default(cuid())
+  userId       String                @unique
+  channels     NotificationChannel[]
+  priceAlerts  Boolean               @default(true)
+  badges       Boolean               @default(true)
+  challenges   Boolean               @default(true)
+  weekly       Boolean               @default(true)
+  emailEnabled Boolean               @default(true)
+  pushEnabled  Boolean               @default(true)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
   @@index([userId])
 }
 
 model pushSubscription {
-  id          String   @id @default(cuid())
-  userId      String
-  endpoint    String   @unique
-  auth        String
-  p256dh      String
-  userAgent   String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  auth      String
+  p256dh    String
+  userAgent String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
   @@index([isActive])
 }
 
 model priceAlert {
-  id          String    @id @default(cuid())
-  userId      String
-  productId   String
-  territory   String
-  alertType   AlertType
-  targetPrice Float?
-  isActive    Boolean   @default(true)
-  triggeredAt DateTime?
-  notifyEmail Boolean   @default(true)
-  notifyPush  Boolean   @default(true)
-  notifySms   Boolean   @default(false)
-  triggeredCount Int    @default(0)
-  expiresAt   DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
+  id             String    @id @default(cuid())
+  userId         String
+  productId      String
+  territory      String
+  alertType      AlertType
+  targetPrice    Float?
+  isActive       Boolean   @default(true)
+  triggeredAt    DateTime?
+  notifyEmail    Boolean   @default(true)
+  notifyPush     Boolean   @default(true)
+  notifySms      Boolean   @default(false)
+  triggeredCount Int       @default(0)
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
   @@index([userId])
   @@index([productId])
   @@index([isActive])
@@ -876,69 +876,73 @@ model priceAlert {
 /// ===============================
 
 model priceIndex {
-  id          String   @id @default(cuid())
-  territory   String
-  category    String
-  year        Int
-  month       Int
-  indexValue  Float
-  baseValue   Float    @default(100)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  @@unique([territory, category, year, month])
+  id            String   @id @default(cuid())
+  territory     String
+  year          Int
+  month         Int
+  indexValue    Float
+  inflationRate Float    @default(0)
+  monthlyChange Float    @default(0)
+  baseValue     Float    @default(100)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([territory, year, month])
   @@index([territory, year, month])
 }
 
 model categoryIndex {
-  id          String   @id @default(cuid())
-  category    String
-  year        Int
-  month       Int
-  indexValue  Float
-  baseValue   Float    @default(100)
-  createdAt   DateTime @default(now())
-  
-  @@unique([category, year, month])
-  @@index([category, year, month])
+  id           String   @id @default(cuid())
+  territory    String
+  category     String
+  year         Int
+  month        Int
+  indexValue   Float
+  weight       Float    @default(0)
+  contribution Float    @default(0)
+  baseValue    Float    @default(100)
+  createdAt    DateTime @default(now())
+
+  @@unique([territory, category, year, month])
+  @@index([territory, category, year, month])
 }
 
 model pricePrediction {
-  id          String   @id @default(cuid())
-  productId   String
-  territory   String
+  id             String   @id @default(cuid())
+  productId      String
+  territory      String
   predictedPrice Float
-  confidence  Float
-  horizon     Int      /// Days ahead
-  createdAt   DateTime @default(now())
-  
+  confidence     Float
+  horizon        Int /// Days ahead
+  createdAt      DateTime @default(now())
+
   @@index([productId, territory])
 }
 
 model inflationReport {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   territory   String
   year        Int
   month       Int
-  category    String?
   rate        Float
-  metadata    Json?
-  createdAt   DateTime @default(now())
-  
-  @@unique([territory, year, month, category])
+  reportData  Json?
+  generatedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@unique([territory, year, month])
   @@index([territory, year, month])
 }
 
 model metroReferencePrice {
-  id          String   @id @default(cuid())
-  productKey  String
-  price       Float
-  observedAt  DateTime
-  source      String
-  createdAt   DateTime @default(now())
-  
-  @@index([productKey])
-  @@index([observedAt])
+  id           String   @id @default(cuid())
+  productCode  String
+  averagePrice Float
+  year         Int
+  month        Int
+  createdAt    DateTime @default(now())
+
+  @@unique([productCode, year, month])
+  @@index([productCode])
 }
 
 /// ===============================
@@ -946,17 +950,17 @@ model metroReferencePrice {
 /// ===============================
 
 model quote {
-  id          String      @id @default(cuid())
-  requestId   String?     @unique
-  requester   String
-  email       String
-  phone       String?
-  details     Json
-  status      QuoteStatus @default(PENDING)
-  validUntil  DateTime?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  
+  id         String      @id @default(cuid())
+  requestId  String?     @unique
+  requester  String
+  email      String
+  phone      String?
+  details    Json
+  status     QuoteStatus @default(PENDING)
+  validUntil DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
   @@index([status])
   @@index([createdAt])
 }
@@ -972,7 +976,7 @@ model quoteRequest {
   status        QuoteStatus   @default(PENDING)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-  
+
   @@index([status])
   @@index([email])
 }
@@ -989,21 +993,21 @@ model marketplaceOffer {
   status      EntityStatus @default(ACTIVE)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  
+
   @@index([sellerId])
   @@index([productId])
   @@index([status])
 }
 
 model marketplacePurchase {
-  id          String   @id @default(cuid())
-  buyerId     String
-  offerId     String
-  quantity    Int
-  totalPrice  Float
-  status      String
-  createdAt   DateTime @default(now())
-  
+  id         String   @id @default(cuid())
+  buyerId    String
+  offerId    String
+  quantity   Int
+  totalPrice Float
+  status     String
+  createdAt  DateTime @default(now())
+
   @@index([buyerId])
   @@index([offerId])
 }
@@ -1013,12 +1017,12 @@ model marketplacePurchase {
 /// ===============================
 
 model creditBalance {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  balance     Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([userId])
 }
 
@@ -1030,24 +1034,24 @@ model creditTransaction {
   description String?
   metadata    Json?
   createdAt   DateTime @default(now())
-  
+
   @@index([userId])
   @@index([createdAt])
 }
 
 model invoice {
-  id          String   @id @default(cuid())
-  userId      String
-  number      String   @unique
-  amount      Float
-  currency    String   @default("EUR")
-  status      String
-  pdfUrl      String?
-  metadata    Json?
-  issuedAt    DateTime
-  paidAt      DateTime?
-  createdAt   DateTime @default(now())
-  
+  id        String    @id @default(cuid())
+  userId    String
+  number    String    @unique
+  amount    Float
+  currency  String    @default("EUR")
+  status    String
+  pdfUrl    String?
+  metadata  Json?
+  issuedAt  DateTime
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+
   @@index([userId])
   @@index([number])
   @@index([status])
@@ -1058,18 +1062,18 @@ model invoice {
 /// ===============================
 
 model auditLog {
-  id          String       @id @default(cuid())
-  userId      String?
-  action      String
-  entityType  String
-  entityId    String?
-  changes     Json?
-  result      AuditResult?
-  userRole    String?
-  ipAddress   String?
-  userAgent   String?
-  createdAt   DateTime     @default(now())
-  
+  id         String       @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  changes    Json?
+  result     AuditResult?
+  userRole   String?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime     @default(now())
+
   @@index([userId])
   @@index([action])
   @@index([entityType])
@@ -1077,30 +1081,30 @@ model auditLog {
 }
 
 model syncLog {
-  id          String   @id @default(cuid())
-  source      String
-  status      String
-  recordsCount Int     @default(0)
+  id           String    @id @default(cuid())
+  source       String
+  status       String
+  recordsCount Int       @default(0)
   errorMessage String?
-  metadata    Json?
-  startedAt   DateTime
-  completedAt DateTime?
-  createdAt   DateTime @default(now())
-  
+  metadata     Json?
+  startedAt    DateTime
+  completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+
   @@index([source])
   @@index([status])
   @@index([startedAt])
 }
 
 model apiUsage {
-  id          String   @id @default(cuid())
-  apiKeyId    String
-  endpoint    String
-  method      String
-  statusCode  Int
+  id           String   @id @default(cuid())
+  apiKeyId     String
+  endpoint     String
+  method       String
+  statusCode   Int
   responseTime Int?
-  timestamp   DateTime @default(now())
-  
+  timestamp    DateTime @default(now())
+
   @@index([apiKeyId])
   @@index([timestamp])
 }

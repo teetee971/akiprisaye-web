@@ -26,7 +26,7 @@
 
 import { createHash } from 'node:crypto';
 import { randomUUID } from 'node:crypto';
-import prisma from '../../database/prisma.js';
+import prismaDefault from '../../database/prisma.js';
 import { productCatalogService } from './productCatalogService.js';
 import { priceObservationService } from './priceObservationService.js';
 import { priceHistoryAggregationService } from './priceHistoryAggregationService.js';
@@ -97,6 +97,11 @@ function parsePackageSize(
 // ─── Main Service ─────────────────────────────────────────────────────────────
 
 export class ReceiptImportService {
+  private readonly prisma: typeof prismaDefault;
+
+  constructor(prismaClient: typeof prismaDefault = prismaDefault) {
+    this.prisma = prismaClient;
+  }
 
   async import(payload: ImportReceiptPayload): Promise<ImportReceiptResult> {
     const result: ImportReceiptResult = {
@@ -137,7 +142,7 @@ export class ReceiptImportService {
 
     // ── 3. Checksum ───────────────────────────────────────────────────────────
     const checksum = computeReceiptChecksum(payload);
-    const existingReceipt = await prisma.receipt.findUnique({ where: { checksum } });
+    const existingReceipt = await this.prisma.receipt.findUnique({ where: { checksum } });
     if (existingReceipt) {
       return {
         ...result,
@@ -148,7 +153,7 @@ export class ReceiptImportService {
     }
 
     // ── 4. Upsert Store ───────────────────────────────────────────────────────
-    let store = await prisma.store.findFirst({
+    let store = await this.prisma.store.findFirst({
       where: {
         normalizedName: payload.store.normalizedName,
         territory,
@@ -156,7 +161,7 @@ export class ReceiptImportService {
     });
 
     if (!store) {
-      store = await prisma.store.create({
+      store = await this.prisma.store.create({
         data: {
           id: randomUUID(),
           normalizedName: payload.store.normalizedName,
@@ -174,7 +179,7 @@ export class ReceiptImportService {
     }
 
     // ── 5. Create Receipt ─────────────────────────────────────────────────────
-    const receipt = await prisma.receipt.create({
+    const receipt = await this.prisma.receipt.create({
       data: {
         id: randomUUID(),
         source: 'ocr_ticket',
@@ -249,7 +254,7 @@ export class ReceiptImportService {
     const unitPrice = item.unitPrice ?? (qty > 1 ? +(item.totalPrice / qty).toFixed(4) : item.totalPrice);
 
     // c. Create receipt_item
-    const receiptItem = await prisma.receiptItem.create({
+    const receiptItem = await this.prisma.receiptItem.create({
       data: {
         id: randomUUID(),
         receiptId,

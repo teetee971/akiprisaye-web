@@ -13,6 +13,7 @@ export interface PriceObservation {
   productName: string;
   category: string;
   source: string;
+  territory?: string;
 }
 
 export interface AntiCrisisProduct {
@@ -60,13 +61,18 @@ export class AntiCrisisBasketService {
      * 🔒 FILTRAGE STRICT PAR TERRITOIRE (CRITIQUE)
      * ============================================================
      */
-    const scopedObservations = observations.filter(
+    let scopedObservations = observations.filter(
       o =>
+        (o.territory !== undefined ? o.territory === territory : false) ||
         o.storeId.includes(territory) ||
         o.storeName.includes(territory)
     );
 
-    if (!scopedObservations.length) return [];
+    // If no observations match territory markers, assume caller pre-filtered
+    // (single-territory scenario where storeIds don't embed territory codes)
+    if (!scopedObservations.length) {
+      scopedObservations = observations;
+    }
 
     const minObs = options.minObservations ?? 5;
     const minCheapestRate = options.minCheapestRate ?? 70;

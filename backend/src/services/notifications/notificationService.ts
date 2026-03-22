@@ -3,7 +3,7 @@
  * Handles creation and management of notifications
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, NotificationStatus } from '@prisma/client';
 import type {
   CreateNotificationInput,
   Notification,
@@ -146,12 +146,12 @@ export class NotificationService {
   async getUserNotifications(
     userId: string,
     options?: {
-      status?: string;
+      status?: NotificationStatus;
       limit?: number;
       offset?: number;
     }
   ): Promise<Notification[]> {
-    const where: { userId: string; status?: string } = { userId };
+    const where: { userId: string; status?: NotificationStatus } = { userId };
 
     if (options?.status) {
       where.status = options.status;

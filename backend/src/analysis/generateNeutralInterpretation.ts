@@ -1,18 +1,15 @@
-export function generateNeutralInterpretation(stats: {
-  observationCount: number;
-  dispersionIndex: number;
-  territoryCount: number;
-}) {
+export function generateNeutralInterpretation(stats: ObservationStats) {
   const { observationCount, dispersionIndex, territoryCount } = stats;
 
-  if (observationCount < 2) {
-    return {
-      signalLevel: 0,
-      method: 'none',
-      interpretation:
-        'Données insuffisantes pour établir une analyse statistique fiable.'
-    };
-
+  // Input validation
+  if (observationCount < 12) {
+    throw new Error('Invalid observation counts');
+  }
+  if (territoryCount < 0) {
+    throw new Error('Invalid territory count');
+  }
+  if (dispersionIndex < 0 || dispersionIndex > 100) {
+    throw new Error('Dispersion index must be between 0 and 100');
   }
 
   // ============================
@@ -48,7 +45,7 @@ export function generateNeutralInterpretation(stats: {
       : 'sampling';
 
   // ============================
-  // TEXTE D’INTERPRÉTATION
+  // TEXTE D'INTERPRÉTATION
   // ============================
 
   let interpretation: string;
@@ -63,13 +60,14 @@ export function generateNeutralInterpretation(stats: {
       `d'évolutions différenciées selon les zones géographiques.`;
   } else if (signalLevel >= 40) {
     interpretation =
-      `L'analyse par échantillonnage stratifié met en évidence une dynamique significative ` +
+      `L'analyse exhaustive par échantillonnage stratifié met en évidence des évolutions modérées ` +
       `reposant sur ${observationCount.toLocaleString('fr-FR')} observations. ` +
       `Les variations observées traduisent des tendances mesurables sans rupture structurelle.`;
   } else {
     interpretation =
-      `Les données disponibles permettent d'observer des variations limitées, ` +
-      `sans indication de dynamique significative à ce stade.`;
+      `Les données disponibles, issues d'un volume limité d'observations, ` +
+      `permettent d'observer des variations limitées. ` +
+      `Ces résultats sont à interpréter avec prudence à ce stade de l'analyse.`;
   }
 
   return {
@@ -98,13 +96,47 @@ export function calculateDispersionIndex(prices: number[]): number {
   const variance = prices.reduce((sum, p) => sum + Math.pow(p - mean, 2), 0) / prices.length;
   const stdDev = Math.sqrt(variance);
   
-  return mean > 0 ? (stdDev / mean) * 100 : 0;
+  return Math.min(mean > 0 ? (stdDev / mean) * 100 : 0, 100);
 }
 
 export function validateNeutralText(text: string): boolean {
   if (!text || text.length < 10) return false;
   if (text.length > 500) return false;
-  
-  const hasSubjectiveWords = /\b(excellent|terrible|mauvais|bon|super|nul)\b/i.test(text);
-  return !hasSubjectiveWords;
+
+  const prohibitedPatterns = [
+    /responsable/i,
+    /hausse abusive/i,
+    /enseigne dominante/i,
+    /surprofit/i,
+    /\babus\b/i,
+    /fraude/i,
+    /\bexcellent\b/i,
+    /\bterrible\b/i,
+    /\bmauvais\b/i,
+    /\bbon\b/i,
+    /\bsuper\b/i,
+    /\bnul\b/i,
+  ];
+
+  if (prohibitedPatterns.some(p => p.test(text))) return false;
+
+  const approvedTerms = [
+    /observati(on|ons)/i,
+    /variation/i,
+    /dynamique/i,
+    /données/i,
+    /analyse/i,
+    /statistique/i,
+    /tendance/i,
+    /stratifié/i,
+    /dispersion/i,
+    /évolution/i,
+    /indicateurs/i,
+    /prudence/i,
+    /volume/i,
+  ];
+
+  if (!approvedTerms.some(p => p.test(text))) return false;
+
+  return true;
 }

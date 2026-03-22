@@ -3,7 +3,7 @@
  * PR E - Export Open-Data Officiel
  */
 
-import { AnomalyDetectionService } from '../AnomalyDetectionService';
+import { AnomalyDetectionService } from '../AnomalyDetectionService.js';
 import { Territory } from '../../comparison/types.js';
 
 // Mock Prisma Client
@@ -33,17 +33,17 @@ describe('AnomalyDetectionService', () => {
       const mockProducts = [
         {
           id: 'prod-1',
-          name: 'Riz blanc 1kg',
-          prices: [
+          displayName: 'Riz blanc 1kg',
+          observations: [
             {
               price: 2.0,
-              effectiveDate: new Date('2026-01-01'),
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.DOM,
             },
             {
-              price: 2.5,
-              effectiveDate: new Date('2026-01-07'),
-              store: { territory: Territory.DOM },
+              price: 2.6,
+              observedAt: new Date('2026-01-07'),
+              territory: Territory.DOM,
             },
           ],
         },
@@ -66,17 +66,17 @@ describe('AnomalyDetectionService', () => {
       const mockProducts = [
         {
           id: 'prod-2',
-          name: 'Lait 1L',
-          prices: [
+          displayName: 'Lait 1L',
+          observations: [
             {
               price: 1.0,
-              effectiveDate: new Date('2026-01-01'),
-              store: { territory: Territory.COM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.COM,
             },
             {
               price: 1.18,
-              effectiveDate: new Date('2026-01-07'),
-              store: { territory: Territory.COM },
+              observedAt: new Date('2026-01-07'),
+              territory: Territory.COM,
             },
           ],
         },
@@ -97,17 +97,17 @@ describe('AnomalyDetectionService', () => {
       const mockProducts = [
         {
           id: 'prod-3',
-          name: 'Pain 500g',
-          prices: [
+          displayName: 'Pain 500g',
+          observations: [
             {
               price: 1.0,
-              effectiveDate: new Date('2026-01-01'),
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.DOM,
             },
             {
               price: 1.05,
-              effectiveDate: new Date('2026-01-07'),
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-07'),
+              territory: Territory.DOM,
             },
           ],
         },
@@ -126,17 +126,17 @@ describe('AnomalyDetectionService', () => {
       const mockProducts = [
         {
           id: 'prod-temporal',
-          name: 'Produit test temporel',
-          prices: [
+          displayName: 'Produit test temporel',
+          observations: [
             {
               price: 1.0,
-              effectiveDate: new Date('2026-01-01'),
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.DOM,
             },
             {
               price: 1.5, // 50% variation
-              effectiveDate: new Date('2026-01-02'), // Seulement 1 jour
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-02'), // Seulement 1 jour
+              territory: Territory.DOM,
             },
           ],
         },
@@ -156,17 +156,17 @@ describe('AnomalyDetectionService', () => {
       const mockProducts = [
         {
           id: 'prod-temporal-ok',
-          name: 'Produit test temporel OK',
-          prices: [
+          displayName: 'Produit test temporel OK',
+          observations: [
             {
               price: 1.0,
-              effectiveDate: new Date('2026-01-01'),
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.DOM,
             },
             {
               price: 1.5, // 50% variation
-              effectiveDate: new Date('2026-01-05'), // 4 jours
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-05'), // 4 jours
+              territory: Territory.DOM,
             },
           ],
         },
@@ -199,15 +199,17 @@ describe('AnomalyDetectionService', () => {
       const mockProducts = [
         {
           id: 'prod-4',
-          name: 'Huile d\'olive 1L',
-          prices: [
+          displayName: 'Huile d\'olive 1L',
+          observations: [
             {
               price: 5.0,
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.DOM,
             },
             {
               price: 7.0,
-              store: { territory: Territory.COM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.COM,
             },
           ],
         },
@@ -229,15 +231,17 @@ describe('AnomalyDetectionService', () => {
       const mockProducts = [
         {
           id: 'prod-5',
-          name: 'Produit test',
-          prices: [
+          displayName: 'Produit test',
+          observations: [
             {
               price: 1.0,
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.DOM,
             },
             {
               price: 2.0,
-              store: { territory: Territory.COM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.COM,
             },
           ],
         },
@@ -283,17 +287,17 @@ describe('AnomalyDetectionService', () => {
       const mockProducts = [
         {
           id: 'prod-6',
-          name: 'Test Product',
-          prices: [
+          displayName: 'Test Product',
+          observations: [
             {
               price: 1.0,
-              effectiveDate: new Date('2026-01-01'),
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-01'),
+              territory: Territory.DOM,
             },
             {
               price: 1.3,
-              effectiveDate: new Date('2026-01-07'),
-              store: { territory: Territory.DOM },
+              observedAt: new Date('2026-01-07'),
+              territory: Territory.DOM,
             },
           ],
         },

@@ -535,7 +535,7 @@ router.get('/leaderboard/stats', async (_req: Request, res: Response): Promise<v
  */
 router.get('/leaderboard/top-contributors', async (req: Request, res: Response): Promise<void> => {
   try {
-    const metric = (req.query.metric as 'prices' | 'verifications' | 'products') || 'prices';
+    const metric = (req.query.metric as 'prices' | 'verifications' | 'photos') || 'prices';
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
 
     const contributors = await gamification.leaderboard.getTopContributors(metric, limit);

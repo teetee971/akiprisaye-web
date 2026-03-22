@@ -8,7 +8,7 @@ import { Router, Request, Response } from 'express';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import { notificationService } from '../../services/notifications/notificationService.js';
 import { pushChannel } from '../../services/notifications/channels/pushChannel.js';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, NotificationStatus } from '@prisma/client';
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -28,7 +28,7 @@ router.get('/', async (req: Request, res: Response): Promise<void> => {
     }
 
     const options = {
-      status: req.query.status as string | undefined,
+      status: req.query.status as NotificationStatus | undefined,
       limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
       offset: req.query.offset ? parseInt(req.query.offset as string) : undefined,
     };

@@ -59,17 +59,6 @@ export interface FuelFilters extends Omit<ServiceFilters, 'specificFilters'> {
   city?: string;
 }
 
-/**
- * Mapping DOM-TOM departments
- * Uses same territory codes as frontend for consistency
- */
-const _TERRITORY_TO_DEPARTMENT: Record<string, string> = {
-  GP: '971', // Guadeloupe
-  MQ: '972', // Martinique  
-  GY: '973', // Guyane
-  RE: '974', // La Réunion
-  YT: '976', // Mayotte
-};
 
 /**
  * Fuel Comparison Service

@@ -5,14 +5,14 @@
 
 import { Request, Response } from 'express';
 import { SimpleOpenDataController } from '../simpleOpendata.controller';
-import { Territory } from '../../../services/comparison/types.js';
+import { Territory } from '../../../../services/comparison/types.js';
 
 // Mock les services
-jest.mock('../../../services/opendata/OpenDataService');
-jest.mock('../../../services/opendata/AnomalyDetectionService');
+jest.mock('../../../../services/opendata/OpenDataService');
+jest.mock('../../../../services/opendata/AnomalyDetectionService');
 
-import { OpenDataService } from '../../../services/opendata/OpenDataService';
-import { AnomalyDetectionService } from '../../../services/opendata/AnomalyDetectionService';
+import { OpenDataService } from '../../../../services/opendata/OpenDataService.js';
+import { AnomalyDetectionService } from '../../../../services/opendata/AnomalyDetectionService.js';
 
 describe('SimpleOpenDataController', () => {
   let mockRequest: Partial<Request>;

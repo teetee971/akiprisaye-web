@@ -453,6 +453,86 @@ export const priceObservationsLarge: PriceObservation[] = [
     source: 'observation_directe',
     territory: '974',
   })),
+
+  // =========================
+  // Competing stores (higher prices) — required for 2-store comparison
+  // =========================
+
+  // 971 — Guadeloupe — competing store (prices ~15% higher)
+  ...(['p_rice_1kg', 'p_pasta_500g', 'p_milk_1l'] as const).flatMap(pid => {
+    const info: Record<string, { name: string; cat: string; price: number }> = {
+      p_rice_1kg:  { name: 'Riz long grain 1kg',  cat: 'Épicerie', price: 1.50 },
+      p_pasta_500g: { name: 'Pâtes 500g',           cat: 'Épicerie', price: 1.05 },
+      p_milk_1l:   { name: 'Lait demi-écrémé 1L',  cat: 'Frais',    price: 1.22 },
+    };
+    return [
+      '2025-01-01','2025-02-01','2025-03-01','2025-04-01',
+      '2025-05-01','2025-06-01','2025-07-01','2025-08-01',
+      '2025-09-01','2025-10-01','2025-11-01','2026-01-01',
+    ].map(d => ({
+      productId: pid, productName: info[pid].name, category: info[pid].cat,
+      storeId: 'sm_971', storeName: 'Super Marché',
+      price: info[pid].price, date: new Date(d),
+      source: 'observation_directe', territory: '971',
+    }));
+  }),
+
+  // 972 — Martinique — competing store
+  ...(['p_rice_1kg', 'p_pasta_500g', 'p_milk_1l'] as const).flatMap(pid => {
+    const info: Record<string, { name: string; cat: string; price: number }> = {
+      p_rice_1kg:  { name: 'Riz long grain 1kg',  cat: 'Épicerie', price: 1.57 },
+      p_pasta_500g: { name: 'Pâtes 500g',           cat: 'Épicerie', price: 1.12 },
+      p_milk_1l:   { name: 'Lait demi-écrémé 1L',  cat: 'Frais',    price: 1.22 },
+    };
+    return [
+      '2025-01-01','2025-02-01','2025-03-01','2025-04-01',
+      '2025-05-01','2025-06-01','2025-07-01','2025-08-01',
+      '2025-09-01','2025-10-01','2025-11-01','2026-01-01',
+    ].map(d => ({
+      productId: pid, productName: info[pid].name, category: info[pid].cat,
+      storeId: 'sm_972', storeName: 'Super Marché',
+      price: info[pid].price, date: new Date(d),
+      source: 'observation_directe', territory: '972',
+    }));
+  }),
+
+  // 973 — Guyane — competing store
+  ...(['p_rice_1kg', 'p_pasta_500g', 'p_milk_1l'] as const).flatMap(pid => {
+    const info: Record<string, { name: string; cat: string; price: number }> = {
+      p_rice_1kg:  { name: 'Riz long grain 1kg',  cat: 'Épicerie', price: 1.85 },
+      p_pasta_500g: { name: 'Pâtes 500g',           cat: 'Épicerie', price: 1.28 },
+      p_milk_1l:   { name: 'Lait demi-écrémé 1L',  cat: 'Frais',    price: 1.38 },
+    };
+    return [
+      '2025-01-01','2025-02-01','2025-03-01','2025-04-01',
+      '2025-05-01','2025-06-01','2025-07-01','2025-08-01',
+      '2025-09-01','2025-10-01','2025-11-01','2026-01-01',
+    ].map(d => ({
+      productId: pid, productName: info[pid].name, category: info[pid].cat,
+      storeId: 'sm_973', storeName: 'Super Marché',
+      price: info[pid].price, date: new Date(d),
+      source: 'observation_directe', territory: '973',
+    }));
+  }),
+
+  // 974 — La Réunion — competing store
+  ...(['p_rice_1kg', 'p_pasta_500g', 'p_milk_1l'] as const).flatMap(pid => {
+    const info: Record<string, { name: string; cat: string; price: number }> = {
+      p_rice_1kg:  { name: 'Riz long grain 1kg',  cat: 'Épicerie', price: 1.55 },
+      p_pasta_500g: { name: 'Pâtes 500g',           cat: 'Épicerie', price: 1.14 },
+      p_milk_1l:   { name: 'Lait demi-écrémé 1L',  cat: 'Frais',    price: 1.25 },
+    };
+    return [
+      '2025-01-01','2025-02-01','2025-03-01','2025-04-01',
+      '2025-05-01','2025-06-01','2025-07-01','2025-08-01',
+      '2025-09-01','2025-10-01','2025-11-01','2026-01-01',
+    ].map(d => ({
+      productId: pid, productName: info[pid].name, category: info[pid].cat,
+      storeId: 'sm_974', storeName: 'Super Marché',
+      price: info[pid].price, date: new Date(d),
+      source: 'observation_directe', territory: '974',
+    }));
+  }),
 ];
 
 /**

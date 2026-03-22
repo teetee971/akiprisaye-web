@@ -47,7 +47,7 @@ export class SubscriptionService {
     return this.mapSubscription(sub, SubscriptionTier.FREE);
   }
   
-  private async createPaidSubscription(user: { id: string; email: string; name?: string | null }, plan: ReturnType<typeof getSubscriptionPlan>, paymentMethodId: string | null, interval: string): Promise<Subscription> {
+  private async createPaidSubscription(user: { id: string; email: string; name?: string | null }, plan: ReturnType<typeof getSubscriptionPlan>, paymentMethodId: string | null, _interval: string): Promise<Subscription> {
     if (!plan) throw new Error('Plan is required');
 
     const customer = await stripe.customers.create({

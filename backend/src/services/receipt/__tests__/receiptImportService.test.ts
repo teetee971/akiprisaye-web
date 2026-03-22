@@ -10,60 +10,70 @@
  * - Support format compact (date/price au lieu de receiptDate/totalPrice)
  */
 
-// ─── Prisma mock ──────────────────────────────────────────────────────────────
+// ─── Sub-service mocks ────────────────────────────────────────────────────────
+// jest.mock factories don't reference outer vars → no ESM hoisting issues.
+
+jest.mock('../productCatalogService.js', () => ({
+  productCatalogService: { upsertProduct: jest.fn() },
+}));
+jest.mock('../priceObservationService.js', () => ({
+  priceObservationService: { create: jest.fn() },
+}));
+jest.mock('../priceHistoryAggregationService.js', () => ({
+  priceHistoryAggregationService: { update: jest.fn() },
+}));
+jest.mock('../priceAlertService.js', () => ({
+  priceAlertService: { evaluate: jest.fn() },
+}));
+jest.mock('../reviewQueueService.js', () => ({
+  reviewQueueService: { enqueue: jest.fn() },
+}));
+
+// Get references to mocked sub-service methods
+const mockProductCatalog   = (jest.requireMock('../productCatalogService.js') as any).productCatalogService;
+const mockObsService       = (jest.requireMock('../priceObservationService.js') as any).priceObservationService;
+const mockHistService      = (jest.requireMock('../priceHistoryAggregationService.js') as any).priceHistoryAggregationService;
+const mockAlertService     = (jest.requireMock('../priceAlertService.js') as any).priceAlertService;
+const mockReviewService    = (jest.requireMock('../reviewQueueService.js') as any).reviewQueueService;
+
+// ─── Prisma mock via dependency injection ─────────────────────────────────────
+// Use DI on ReceiptImportService to avoid ESM module-level prisma issues.
+
+import { ReceiptImportService } from '../receiptImportService.js';
+import type { ImportReceiptPayload } from '../../../types/receipt.types.js';
 
 const mockStore = {
-  findFirst:  jest.fn(),
-  create:     jest.fn(),
+  findFirst: jest.fn(),
+  create:    jest.fn(),
 };
 const mockReceipt = {
   findUnique: jest.fn(),
   create:     jest.fn(),
 };
 const mockReceiptItem = { create: jest.fn() };
-const mockProduct     = { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() };
-const mockPriceObs    = { create: jest.fn(), aggregate: jest.fn() };
-const mockHistMonthly = { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() };
-const mockHistYearly  = { findUnique: jest.fn(), create: jest.fn(), update: jest.fn() };
-const mockAlertEvent  = { create: jest.fn() };
-const mockReviewEntry = { findFirst: jest.fn(), create: jest.fn() };
 
-jest.mock('../../../database/prisma.js', () => ({
-  default: {
-    store:              mockStore,
-    receipt:            mockReceipt,
-    receiptItem:        mockReceiptItem,
-    product:            mockProduct,
-    priceObservation:   mockPriceObs,
-    priceHistoryMonthly: mockHistMonthly,
-    priceHistoryYearly:  mockHistYearly,
-    priceAlertEvent:    mockAlertEvent,
-    reviewQueueEntry:   mockReviewEntry,
-  },
-}));
+const mockPrisma = {
+  store:       mockStore,
+  receipt:     mockReceipt,
+  receiptItem: mockReceiptItem,
+} as never;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function defaultMocks() {
+  // Prisma (direct calls in ReceiptImportService)
   mockStore.findFirst.mockResolvedValue(null);
   mockStore.create.mockResolvedValue({ id: 'store-1', normalizedName: "U Express Horne à l'Eau" });
-  mockReceipt.findUnique.mockResolvedValue(null); // no duplicate
+  mockReceipt.findUnique.mockResolvedValue(null);
   mockReceipt.create.mockResolvedValue({ id: 'receipt-1' });
-  mockProduct.findUnique.mockResolvedValue(null);
-  mockProduct.create.mockResolvedValue({ id: 'prod-1', productKey: 'coca-cola-pet-2l' });
   mockReceiptItem.create.mockResolvedValue({ id: 'item-1' });
-  mockPriceObs.create.mockResolvedValue({ id: 'obs-1' });
-  mockPriceObs.aggregate.mockResolvedValue({ _min: { price: null }, _avg: { price: null } });
-  mockHistMonthly.findUnique.mockResolvedValue(null);
-  mockHistMonthly.create.mockResolvedValue({});
-  mockHistYearly.findUnique.mockResolvedValue(null);
-  mockHistYearly.create.mockResolvedValue({});
-  mockAlertEvent.create.mockResolvedValue({});
-  mockReviewEntry.findFirst.mockResolvedValue(null);
-  mockReviewEntry.create.mockResolvedValue({});
+  // Sub-services
+  mockProductCatalog.upsertProduct.mockResolvedValue({ id: 'prod-1', productKey: 'coca-cola-pet-2l', created: true, imageUpdated: false });
+  mockObsService.create.mockResolvedValue('obs-1');
+  mockHistService.update.mockResolvedValue({ monthlyCreated: true, yearlyCreated: true });
+  mockAlertService.evaluate.mockResolvedValue(0);
+  mockReviewService.enqueue.mockResolvedValue('review-1');
 }
-
-import type { ImportReceiptPayload } from '../../../types/receipt.types.js';
 
 const MINIMAL_PAYLOAD: ImportReceiptPayload = {
   store: {
@@ -89,12 +99,11 @@ const MINIMAL_PAYLOAD: ImportReceiptPayload = {
   ],
 };
 
-let svc: import('../receiptImportService.js').ReceiptImportService;
+let svc: ReceiptImportService;
 
-beforeEach(async () => {
+beforeEach(() => {
   jest.clearAllMocks();
-  const mod = await import('../receiptImportService.js');
-  svc = mod.receiptImportService;
+  svc = new ReceiptImportService(mockPrisma);
 });
 
 // ─── Validation ───────────────────────────────────────────────────────────────
@@ -187,10 +196,10 @@ describe('Review queue', () => {
     const res = await svc.import(payload);
 
     expect(res.reviewItems).toBe(1);
-    expect(mockReviewEntry.create).toHaveBeenCalledTimes(1);
-    const created = mockReviewEntry.create.mock.calls[0][0].data;
-    expect(created.entityType).toBe('receipt_item');
-    expect(created.reason).toMatch(/needsReview/i);
+    expect(mockReviewService.enqueue).toHaveBeenCalledTimes(1);
+    const args = mockReviewService.enqueue.mock.calls[0][0];
+    expect(args.entityType).toBe('receipt_item');
+    expect(args.reason).toMatch(/needsReview/i);
   });
 
   test('enqueue si confidenceScore < 0.70', async () => {
@@ -209,8 +218,8 @@ describe('Review queue', () => {
     const res = await svc.import(payload);
 
     expect(res.reviewItems).toBe(1);
-    const created = mockReviewEntry.create.mock.calls[0][0].data;
-    expect(created.reason).toMatch(/confiance/i);
+    const args = mockReviewService.enqueue.mock.calls[0][0];
+    expect(args.reason).toMatch(/confiance/i);
   });
 
   test('pas d\'enqueue si score élevé et needsReview=false', async () => {
@@ -219,7 +228,7 @@ describe('Review queue', () => {
     const res = await svc.import(MINIMAL_PAYLOAD); // confidenceScore = 0.97
 
     expect(res.reviewItems).toBe(0);
-    expect(mockReviewEntry.create).not.toHaveBeenCalled();
+    expect(mockReviewService.enqueue).not.toHaveBeenCalled();
   });
 });
 
@@ -228,6 +237,9 @@ describe('Review queue', () => {
 describe('Explicit productKey', () => {
   test('utilise le productKey fourni dans l\'item', async () => {
     defaultMocks();
+    mockProductCatalog.upsertProduct.mockResolvedValue({
+      id: 'prod-2', productKey: 'papeco_essuie_tout_2_rouleaux', created: true, imageUpdated: false,
+    });
     const payload: ImportReceiptPayload = {
       ...MINIMAL_PAYLOAD,
       items: [
@@ -244,19 +256,19 @@ describe('Explicit productKey', () => {
 
     const res = await svc.import(payload);
     expect(res.success).toBe(true);
-    // Le service doit avoir passé le productKey à upsertProduct
-    // (vérifié indirectement via mockProduct.create appelé)
-    expect(mockProduct.create).toHaveBeenCalled();
+    expect(mockProductCatalog.upsertProduct).toHaveBeenCalledWith(
+      expect.objectContaining({ productKey: 'papeco_essuie_tout_2_rouleaux' })
+    );
   });
 });
 
 describe('Tolérance erreur par item', () => {
   test('continue les autres items si un item plante', async () => {
     defaultMocks();
-    // Faire planter le create product sur le premier appel
-    mockProduct.create
+    // Faire planter upsertProduct sur le premier appel
+    mockProductCatalog.upsertProduct
       .mockRejectedValueOnce(new Error('DB timeout'))
-      .mockResolvedValue({ id: 'prod-2', productKey: 'sirop-citron-vert-u-75cl' });
+      .mockResolvedValue({ id: 'prod-2', productKey: 'sirop-citron-vert-u-75cl', created: true, imageUpdated: false });
 
     const payload: ImportReceiptPayload = {
       ...MINIMAL_PAYLOAD,

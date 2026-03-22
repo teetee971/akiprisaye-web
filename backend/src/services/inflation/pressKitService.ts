@@ -5,7 +5,6 @@
 
 import { Territory, getInflationColor } from '../../config/inflationConfig.js';
 import { prisma } from '../../app.js';
-import { exportToXLSX, InflationExportData } from './exportService.js';
 import { getTopMovers } from './topMoversService.js';
 import { calculateMetroComparison } from './metroComparisonService.js';
 import { analyzeCategoryTrends } from './categoryAnalysisService.js';
@@ -235,6 +234,7 @@ async function storePressKit(pressKit: PressKitContent): Promise<void> {
         territory: pressKit.territory,
         year: pressKit.year,
         month: pressKit.month,
+        rate: pressKit.summary.inflationRate,
         reportData: pressKit as any,
         generatedAt: pressKit.generatedAt,
       },
