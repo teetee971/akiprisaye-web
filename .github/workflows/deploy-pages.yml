@@ -109,6 +109,9 @@ jobs:
           test -f dist/index.html
           echo "✅ dist/index.html found"
 
+      - name: SPA fallback — copy index.html → 404.html
+        run: cp dist/index.html dist/404.html
+
       - name: Verify build paths
         run: node scripts/verify-pages-build.mjs
 
@@ -133,9 +136,6 @@ jobs:
           SHA256=$(node -e "const v=JSON.parse(require('node:fs').readFileSync('dist/version.json','utf8')); if(!v.sha256||v.sha256==='unknown'){process.stderr.write('sha256 is missing or unknown\n');process.exit(1);} process.stdout.write(v.sha256)")
           echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
           echo "✅ sha256 captured: ${SHA256}"
-
-      - name: SPA fallback — copy index.html → 404.html
-        run: cp dist/index.html dist/404.html
 
       - name: Disable Jekyll
         run: touch dist/.nojekyll

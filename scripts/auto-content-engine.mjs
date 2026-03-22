@@ -334,6 +334,58 @@ function generateSeoPages(product, territory) {
   ];
 }
 
+// ── Exported API (for programmatic use by ai-growth-system.mjs etc.) ─────────
+
+/**
+ * Generate ready-to-use content for a single product.
+ *
+ * @param {{ name: string, bestRetailer: string, bestPrice: number,
+ *            worstRetailer: string, worstPrice: number, delta: number }} product
+ * @returns {{ tiktok: object, facebook: string, whatsapp: string,
+ *             savingsEur: number, savingsPct: number }}
+ */
+export function generateContent({ name, bestRetailer, bestPrice, worstRetailer, worstPrice, delta }) {
+  const save = delta ?? (worstPrice - bestPrice);
+  const pct  = worstPrice > 0 ? Math.round((save / worstPrice) * 100) : 0;
+
+  return {
+    tiktok: {
+      hook:      `${name}: économisez ${save.toFixed(2)}€ en choisissant ${bestRetailer}`,
+      voiceover: [
+        `${name}.`,
+        `Chez ${worstRetailer} : ${(+worstPrice).toFixed(2)} euros.`,
+        `Chez ${bestRetailer} : ${(+bestPrice).toFixed(2)} euros.`,
+        `Même produit. ${save.toFixed(2)} euros d'écart.`,
+        `Vérifiez sur A Ki Pri Sa Yé point fr.`,
+      ].join(' '),
+      textOverlays: [
+        { line: name,                                      style: 'title' },
+        { line: `❌ ${(+worstPrice).toFixed(2)}€`,         style: 'bad'   },
+        { line: `✅ ${(+bestPrice).toFixed(2)}€ chez ${bestRetailer}`, style: 'good' },
+        { line: `Économisez ${save.toFixed(2)}€`,          style: 'cta'   },
+      ],
+      cta:        `👉 ${LANDING_URL}`,
+      savingsEur: save,
+      savingsPct: pct,
+    },
+    facebook: [
+      `Exemple réel en Outre-mer :`,
+      ``,
+      `${name} :`,
+      `❌ ${(+worstPrice).toFixed(2)}€ chez ${worstRetailer}`,
+      `✅ ${(+bestPrice).toFixed(2)}€ chez ${bestRetailer}`,
+      ``,
+      `Même produit. Prix différent.`,
+      ``,
+      `👉 Vérifie pour tes courses :`,
+      LANDING_URL,
+    ].join('\n'),
+    whatsapp:   `🔥 Bon plan : ${name} → -${save.toFixed(2)}€ chez ${bestRetailer} (${(+bestPrice).toFixed(2)}€)\n👉 ${LANDING_URL}`,
+    savingsEur: save,
+    savingsPct: pct,
+  };
+}
+
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 const output = {
