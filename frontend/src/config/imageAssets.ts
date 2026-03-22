@@ -391,6 +391,8 @@ export const PAGE_HERO_IMAGES = {
   newsletter: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Monitoring IA — server room / AI dashboard / futuristic tech */
   monitoringIA: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Organigramme GBH — corporate structure / business hierarchy (office building) */
+  organigrammeGBH: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fm=webp&fit=crop&w=1600&q=80',
 };
 
 /**
