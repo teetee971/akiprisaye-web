@@ -28,7 +28,7 @@ describe('PointAction integrity', () => {
     expect(POINTS_CONFIG.PRICE_VERIFY).toBeGreaterThan(0);
   });
 
-  it('all non-badge actions award non-negative points', () => {
+  it('all non-badge actions award positive points', () => {
     for (const [action, points] of Object.entries(POINTS_CONFIG)) {
       if (action !== 'BADGE_EARNED') {
         expect(points).toBeGreaterThan(0);

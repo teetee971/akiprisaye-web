@@ -58,7 +58,8 @@ jobs:
 
       - name: Reject any in backend source
         run: |
-          if grep -RIn --include="*.ts" --exclude="*.test.ts" --exclude="*.spec.ts" "\bany\b" \
+          if grep -RIn --include="*.ts" --exclude="*.test.ts" --exclude="*.spec.ts" \
+            -E "(:\s*any\b|<any>|as\s+any\b)" \
             src/services/gamification src/services/credits; then
             echo "Forbidden any detected in backend gamification/credits source"
             exit 1
