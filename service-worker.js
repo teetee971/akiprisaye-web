@@ -16,7 +16,8 @@ const ASSET_CACHE = `akiprisaye-assets-${CACHE_VERSION}`;
 const TERRITORY_CACHE = `akiprisaye-territories-${CACHE_VERSION}`;
 
 // Important : ne pas inclure /index.html ici (sinon le test échoue)
-const CORE_ASSETS = ['/', '/manifest.json'];
+const BASE_PATH = '/akiprisaye-web/';
+const CORE_ASSETS = [BASE_PATH, `${BASE_PATH}manifest.webmanifest`];
 
 // Patterns
 const TERRITORY_JSON_PATTERN = /\/data\/territories\/.*\.json$/;

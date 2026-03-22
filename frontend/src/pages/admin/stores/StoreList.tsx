@@ -18,7 +18,7 @@ import {
 } from '@tanstack/react-table';
 import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import toast from 'react-hot-toast';
-import GlassCard from '../../../components/ui/GlassCard';
+import { GlassCard } from '../../../components/ui/glass-card';
 import {
   getStores,
   deleteStore,

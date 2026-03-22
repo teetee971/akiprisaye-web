@@ -8,7 +8,7 @@ import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMes
 import { HeroImage } from "@/components/ui/HeroImage";
 import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
 import SocialLoginButtons from "@/components/SocialLoginButtons";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/authHook";
 
 import { SEOHead } from '../components/ui/SEOHead';
 const DEFAULT_USER_PLAN = "free";

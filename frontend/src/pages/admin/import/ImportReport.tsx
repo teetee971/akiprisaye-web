@@ -4,7 +4,7 @@
  * Display import results and statistics
  */
 import { CheckCircle, XCircle, AlertTriangle, Download, RefreshCw } from 'lucide-react';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { GlassCard } from '@/components/ui/glass-card';
 import { cn } from '@/lib/utils';
 import { stringifyCsv } from '@/utils/csv';
 import type { ImportResult } from '@/services/csvImportService';

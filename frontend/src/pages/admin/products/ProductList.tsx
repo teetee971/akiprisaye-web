@@ -12,7 +12,7 @@ import {
   type ColumnFiltersState,
 } from '@tanstack/react-table';
 import { Package, Edit, Trash2, Plus, Search, Image as ImageIcon } from 'lucide-react';
-import { GlassCard } from '@/components/ui/GlassCard';
+import { GlassCard } from '@/components/ui/glass-card';
 import { getProducts, deleteProduct, type Product } from '@/services/admin/productAdminService';
 import type { ProductCategory } from '@/types/product';
 import toast from 'react-hot-toast';

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/authHook';
 import { Plan, getOrCreateUserPlan } from '../services/freemium';
 
 export function usePlan() {

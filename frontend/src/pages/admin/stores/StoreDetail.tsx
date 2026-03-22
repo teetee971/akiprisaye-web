@@ -10,7 +10,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Edit, Trash2, MapPin, Phone, Building, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
 import 'leaflet/dist/leaflet.css';
-import GlassCard from '../../../components/ui/GlassCard';
+import { GlassCard } from '../../../components/ui/glass-card';
 import {
   getStore,
   deleteStore,

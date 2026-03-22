@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, X, MapPin } from 'lucide-react';
 import toast from 'react-hot-toast';
-import GlassCard from '../../../components/ui/GlassCard';
+import { GlassCard } from '../../../components/ui/glass-card';
 import {
   createStore,
   updateStore,

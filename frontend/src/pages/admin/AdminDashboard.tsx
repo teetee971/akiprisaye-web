@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from 'react';
 import { Store, Package, DollarSign, MapPin } from 'lucide-react';
-import GlassCard from '../../components/ui/GlassCard';
+import { GlassCard } from '../../components/ui/glass-card';
 
 interface DashboardStats {
   storesCount: number;
@@ -141,12 +141,12 @@ export default function AdminDashboard() {
 
       {/* Recent Activity */}
       <GlassCard>
-        <GlassCard.Header>
+        <div className="p-4 border-b border-white/10">
           <h2 className="text-xl font-semibold text-white">
             Dernières modifications
           </h2>
-        </GlassCard.Header>
-        <GlassCard.Content>
+        </div>
+        <div className="p-4">
           <div className="space-y-4">
             {recentActivity.length === 0 ? (
               <p className="text-white/70 text-center py-8">
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
               ))
             )}
           </div>
-        </GlassCard.Content>
+        </div>
       </GlassCard>
 
       {/* Quick Actions */}

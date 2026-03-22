@@ -38,8 +38,7 @@ export default defineConfig({
       abs('./src/services/photoProductSearchService.test.ts'),
       abs('./src/services/observatoirePriceSeries.test.ts'),
       abs('./src/services/__tests__/basketPricingService.test.ts'),
-      // NOTE: si functions/ est à la racine du repo, remplace par ../functions/...
-      abs('./functions/**/__tests__/*.test.ts'),
+      abs('../functions/**/__tests__/*.test.ts'),
       abs('./src/test/alerts.filterActive.test.ts'),
       abs('./src/test/alerts.searchSort.test.ts'),
       abs('./src/test/alerts.serviceFallback.test.ts'),

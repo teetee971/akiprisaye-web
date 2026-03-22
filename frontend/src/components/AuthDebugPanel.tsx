@@ -19,7 +19,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/authHook';
 import { isAuthDebugEnabled, useAuthEvents, subscribeToAuthEvents } from '@/utils/authLogger';
 import { getRedirectPendingFlag, getAuthRetryCount, clearAuthTransientStorage, type RedirectPendingData } from '@/auth/authStorage';
 import { getAuthDiagnosticReport, clearAuthHistory } from '@/utils/authLogger';
