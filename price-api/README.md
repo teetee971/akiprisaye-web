@@ -42,17 +42,17 @@ Configurer CORS en production via `ALLOWED_ORIGINS` (origines Cloudflare Pages e
 
 Le déploiement automatique nécessite un jeton API Cloudflare avec les bonnes permissions.
 
-**Secret GitHub requis :** `CLOUDFLARE_API_TOKEN`
+**Secrets GitHub requis :** `CLOUDFLARE_API_TOKEN` et `CLOUDFLARE_ACCOUNT_ID`
 
 Permissions à sélectionner lors de la création du jeton sur [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens) :
 
-| Scope | Ressource | Accès |
-|-------|-----------|-------|
+| Colonne 1 | Colonne 2 | Colonne 3 |
+|-----------|-----------|-----------|
 | Compte | Workers D1 | Modifier |
 | Compte | Scripts Workers | Modifier |
 | Compte | Cloudflare Pages | Modifier |
 
-> L'`account_id` (`78642e56f72fff94c78e1ef87cb589a7`) est déjà dans `wrangler.toml` — le secret `CLOUDFLARE_ACCOUNT_ID` n'est pas nécessaire.
+> L'`account_id` est dans `wrangler.toml` (utilisé par `wrangler` CLI/d1). Le secret `CLOUDFLARE_ACCOUNT_ID` est en plus requis par le workflow `deploy-cloudflare-pages.yml` qui le valide explicitement.
 
 📄 Guide complet étape par étape : [CLOUDFLARE_SETUP.md](../CLOUDFLARE_SETUP.md)
 
