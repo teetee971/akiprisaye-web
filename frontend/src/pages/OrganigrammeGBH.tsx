@@ -25,6 +25,7 @@ import {
   ChevronRight, ChevronDown, AlertTriangle, Users,
   FileText, Landmark, ArrowLeft, Search, Shield, Info,
   GitBranch, UserCheck, BarChart2,
+  Briefcase, DollarSign, ShoppingBag, Flag, Newspaper, Leaf,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -36,6 +37,12 @@ const TABS = [
   { key: 'organigramme',  label: 'Organigramme',              icon: GitBranch  },
   { key: 'filiales',      label: 'Sociétés & Filiales',       icon: Globe      },
   { key: 'dirigeants',    label: 'Dirigeants & Gouvernance',  icon: UserCheck  },
+  { key: 'emploi',        label: 'Emploi & Social',           icon: Briefcase  },
+  { key: 'finances',      label: 'Finances & Revenus',        icon: DollarSign },
+  { key: 'pratiques',     label: 'Pratiques commerciales',    icon: ShoppingBag},
+  { key: 'etat',          label: 'Relations État',            icon: Flag       },
+  { key: 'presse',        label: 'Presse & Controverses',     icon: Newspaper  },
+  { key: 'producteurs',   label: 'Filière locale',            icon: Leaf       },
   { key: 'territoires',   label: 'Présence territoriale',     icon: Landmark   },
   { key: 'regulatoire',   label: 'Décisions réglementaires',  icon: Scale      },
   { key: 'impact',        label: 'Impact & Vie chère',        icon: TrendingUp },
@@ -1085,6 +1092,744 @@ const OrganigrammeGBH: React.FC = () => {
           </div>
         )}
 
+        {/* ══ TAB : EMPLOI & SOCIAL ════════════════════════════════════════ */}
+        {activeTab === 'emploi' && (
+          <div>
+            <SectionTitle icon={Briefcase}>Emploi, dialogue social & impact humain du groupe GBH</SectionTitle>
+
+            <InfoBox color="blue" title="ℹ️ Sources des données d'emploi">
+              Les données d'emploi de GBH ne sont pas publiées dans un rapport annuel public
+              (groupe non coté). Les chiffres ci-dessous sont des <strong>estimations issues de sources
+              officielles</strong> : CEROM (Comptes Économiques Rapides pour l'Outre-Mer), IEDOM,
+              rapports préfectoraux, et publications de presse régionale identifiées.
+            </InfoBox>
+
+            {/* Key employment figures */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+              <DataCard label="Salariés (groupe total, estimé)" value="~14 000" sub="Sources : CEROM / GBH" highlight />
+              <DataCard label="Salariés en Guadeloupe" value="~4 500" sub="IEDOM GP 2023" />
+              <DataCard label="Salariés en Martinique" value="~3 500" sub="IEDOM MQ 2023" />
+              <DataCard label="Rang dans les DOM" value="N°1" sub="Premier employeur privé" highlight />
+            </div>
+
+            <SectionTitle icon={Users}>Répartition de l'emploi par territoire et par pôle</SectionTitle>
+            <div className="overflow-x-auto mb-8">
+              <table className="w-full text-xs text-left">
+                <thead>
+                  <tr className="border-b border-slate-700">
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Territoire</th>
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Effectif estimé</th>
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Principaux pôles employeurs</th>
+                    <th className="pb-2 text-gray-400 font-semibold">Source</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {[
+                    { t: '🇬🇵 Guadeloupe',        n: '~4 500', poles: 'Distribution, Automobile, Logistique, Immobilier', s: 'IEDOM GP 2023' },
+                    { t: '🇲🇶 Martinique',         n: '~3 500', poles: 'Distribution, Hôtellerie, Agroalimentaire, Automobile', s: 'IEDOM MQ 2023' },
+                    { t: '🇬🇫 Guyane',             n: '~1 200', poles: 'Distribution, BTP, Hôtellerie', s: 'IEDOM GF 2023' },
+                    { t: '🇷🇪 La Réunion',         n: '~2 500', poles: 'Distribution, Automobile, Logistique', s: 'IEDOM RE 2023' },
+                    { t: '🌏 Nouvelle-Calédonie',   n: '~800',   poles: 'Distribution, Automobile', s: 'IEOM NC 2022' },
+                    { t: '🌺 Polynésie française',  n: '~300',   poles: 'Distribution, Partenariats', s: 'IEOM PF 2022' },
+                    { t: '🌍 Madagascar',           n: '~1 200', poles: 'Automobile, Agroalimentaire', s: 'GBH — site officiel' },
+                    { t: 'Siège & services partagés', n: '~500', poles: 'RH, IT, Juridique, Finance', s: 'Structure interne estimée' },
+                  ].map(r => (
+                    <tr key={r.t}>
+                      <td className="py-2 text-white font-medium pr-3">{r.t}</td>
+                      <td className="py-2 text-amber-300 font-bold pr-3">{r.n}</td>
+                      <td className="py-2 text-gray-400 pr-3">{r.poles}</td>
+                      <td className="py-2 text-gray-600 italic">{r.s}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <SectionTitle icon={AlertTriangle}>Dialogue social — Grèves et conflits documentés</SectionTitle>
+
+            <InfoBox color="amber" title="⚠️ Contexte : GBH cible du mouvement social de 2021">
+              Le mouvement social de novembre 2021 en Guadeloupe, l'un des plus importants depuis
+              les grandes grèves de 2009, a été déclenché notamment par des revendications contre
+              la vie chère. Les grandes surfaces GBH (Carrefour) ont été directement impactées.
+              Ces faits sont documentés dans les rapports préfectoraux et la presse nationale.
+            </InfoBox>
+
+            <div className="space-y-4 mb-8">
+              {[
+                {
+                  date: 'Janvier-Février 2009 — LKP',
+                  title: 'Grève générale — Mouvement LKP',
+                  impact: 'Le Lyannaj Kont Pwofitasyon (LKP) conduit une grève générale de 44 jours en Guadeloupe. Les grandes surfaces GBH sont ciblées comme symboles de la vie chère. La grève aboutit aux « accords Jacob » prévoyant une baisse de prix sur certains produits alimentaires.',
+                  resultat: 'Accord de baisse de prix sur ~100 produits. Création d\'un comité de suivi des prix.',
+                  source: 'Rapport préfectoral Guadeloupe 2009 ; Archives Le Monde',
+                  sourceUrl: 'https://www.lemonde.fr/',
+                },
+                {
+                  date: 'Novembre-Décembre 2021 — Guadeloupe',
+                  title: 'Insurrection sociale — Crise du coût de la vie',
+                  impact: 'Mouvement de protestation violent en Guadeloupe. Les supermarchés GBH (Carrefour Jarry, Carrefour Milénis) sont directement visés. Des barrages bloquent les livraisons. Le préfet saisit les forces de l\'ordre. GBH ferme temporairement plusieurs points de vente pour des raisons de sécurité.',
+                  resultat: 'Fermetures temporaires de magasins. Engagement de négociations avec l\'État sur les prix. Extension du bouclier qualité-prix.',
+                  source: 'Rapport mission préfectorale Guadeloupe déc. 2021 ; France-Antilles',
+                  sourceUrl: 'https://www.guadeloupe.gouv.fr/',
+                },
+                {
+                  date: '2021-2024 — Martinique',
+                  title: 'Mobilisations répétées contre la vie chère',
+                  impact: 'Plusieurs épisodes de mobilisation en Martinique incluant des blocages de routes, des fermetures préventives de grandes surfaces. Les enseignes GBH sont régulièrement mentionnées dans les communiqués des organisations syndicales (CDMT, CGTM).',
+                  resultat: 'Négociations État-distributeurs. Engagement de GBH dans le dispositif BQP élargi. Réductions tarifaires ciblées sur certaines catégories.',
+                  source: 'IEDOM Martinique 2023 ; RFO / Martinique La 1ère',
+                  sourceUrl: 'https://la1ere.francetvinfo.fr/martinique/',
+                },
+                {
+                  date: 'Régulier — Conflits sociaux internes',
+                  title: 'Grèves sectorielles dans les filiales GBH',
+                  impact: 'Des grèves ponctuelles sont documentées dans les filiales GBH (caissiers, logisticiens, agents hôteliers). La CGT et la CGTG sont actives dans certaines entités du groupe. Les conflits portent généralement sur les salaires, le temps de travail et les conditions de travail.',
+                  resultat: 'Accords de branche signés. GBH est engagé dans des conventions collectives de la grande distribution et de l\'hôtellerie.',
+                  source: 'BODACC — dépôts comptes sociaux ; presse syndicale locale',
+                  sourceUrl: 'https://www.bodacc.fr/',
+                },
+              ].map(ev => (
+                <div key={ev.date} className="border border-slate-700 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0">
+                      <span className="inline-block px-2 py-1 rounded-lg text-xs font-bold bg-red-500/20 border border-red-500/30 text-red-300">
+                        {ev.date}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-white mb-1">{ev.title}</p>
+                      <p className="text-xs text-gray-400 leading-relaxed mb-2">{ev.impact}</p>
+                      <p className="text-xs text-green-300 mb-1"><strong>Résultat documenté :</strong> {ev.resultat}</p>
+                      <p className="text-xs text-slate-600">
+                        📎 <SourceLink href={ev.sourceUrl}>{ev.source}</SourceLink>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <SectionTitle icon={Briefcase}>Conditions salariales — éléments connus</SectionTitle>
+            <Collapse title="💼 Rémunérations et conventions collectives applicables">
+              <ul className="list-disc pl-5 space-y-2 text-xs mt-2">
+                <li><strong>Grande distribution :</strong> GBH applique la Convention Collective Nationale du Commerce de Détail et de Gros à Prédominance Alimentaire (CCN 3305). Les salaires de base dans la distribution ultramarines intègrent la <strong>Majoration de vie chère (MVC)</strong> — 20 % pour la Guadeloupe, Martinique et Guyane, 12 % pour La Réunion.</li>
+                <li><strong>Hôtellerie (Karibéa) :</strong> CCN des Hôtels, Cafés, Restaurants (HCR). La Martinique et la Guadeloupe bénéficient d'accords locaux.</li>
+                <li><strong>SMIC DOM :</strong> Le SMIC horaire s'applique avec la majoration spécifique aux DOM. En 2024 : 11,65 €/h brut + MVC.</li>
+                <li><strong>Intéressement et participation :</strong> Certaines filiales GBH déposent des accords d'intéressement (visible dans les dépôts obligatoires à la DREETS). Les montants ne sont pas publics.</li>
+                <li><strong>Formation professionnelle :</strong> En tant qu'employeur de plus de 300 salariés, GBH est soumis à l'obligation de plan de développement des compétences et aux négociations annuelles obligatoires.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">Source : Légifrance — CCN Commerce Alimentaire ; DREETS Guadeloupe ; site Legifrance</p>
+            </Collapse>
+
+            <Collapse title="🤝 Organisations syndicales présentes dans le groupe">
+              <ul className="list-disc pl-5 space-y-2 text-xs mt-2">
+                <li><strong>CGTG (Confédération Générale du Travail de la Guadeloupe) :</strong> Syndicat historiquement influent en Guadeloupe, actif dans les grandes surfaces et la logistique.</li>
+                <li><strong>CGTM (CGT Martinique) :</strong> Active dans la grande distribution martiniquaise, représentée dans les filiales GBH.</li>
+                <li><strong>CDMT (Centrale Démocratique Martiniquaise des Travailleurs) :</strong> Syndicat martiniquais participant aux négociations de branche.</li>
+                <li><strong>UGTG (Union Générale des Travailleurs de la Guadeloupe) :</strong> Syndicat lié au mouvement nationaliste guadeloupéen, à l'origine de certains appels à grève dans le secteur de la grande distribution.</li>
+                <li><strong>FO, CFDT :</strong> Présence de syndicats nationaux dans certaines filiales, notamment dans les secteurs automobile et hôtellerie.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">Source : DREETS Guadeloupe et Martinique — représentativité syndicale ; presse régionale</p>
+            </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : FINANCES & REVENUS ══════════════════════════════════════ */}
+        {activeTab === 'finances' && (
+          <div>
+            <SectionTitle icon={DollarSign}>Finances, revenus estimés et marges du groupe GBH</SectionTitle>
+
+            <InfoBox color="amber" title="⚠️ Limites des données financières disponibles">
+              GBH SAS est une <strong>société non cotée</strong>. Ses comptes annuels consolidés ne sont
+              pas publiés au Journal Officiel de l'UE. Les chiffres ci-dessous sont des <strong>estimations
+              établies à partir de sources officielles</strong> : CEROM, IEDOM, avis de l'Autorité de la
+              concurrence, données INSEE et évaluations publiées par des instituts économiques. Ils ne
+              constituent pas des données comptables certifiées.
+            </InfoBox>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+              <DataCard label="CA groupe total (estimé)" value="~2,5–3 Md€" sub="CEROM 2022 / presse" highlight />
+              <DataCard label="CA pôle distribution (estimé)" value="~1,6–1,9 Md€" sub="~65 % du CA total" />
+              <DataCard label="CA pôle automobile (estimé)" value="~400–500 M€" sub="~15–18 % du CA" />
+              <DataCard label="CA hôtellerie & autres" value="~400–600 M€" sub="~15–20 % du CA" highlight />
+            </div>
+
+            <SectionTitle icon={BarChart2}>Décomposition estimée du chiffre d'affaires par pôle</SectionTitle>
+            <div className="space-y-3 mb-8">
+              {[
+                { pole: '🛒 Grande Distribution (Carrefour DOM)', pct: 65, color: '#34d399', note: 'Pôle dominant du groupe. Inclut les hypermarchés, supermarchés, drives et e-commerce dans les 7 territoires.' },
+                { pole: '🚗 Distribution Automobile', pct: 16, color: '#f97316', note: 'Concessions Toyota, Lexus, Honda dans les Antilles, Réunion, NC et Madagascar.' },
+                { pole: '🏨 Hôtellerie (Karibéa)', pct: 6, color: '#fbbf24', note: 'Chaîne hôtelière Karibéa (GP, MQ, GF). Tourisme d\'affaires et de loisirs.' },
+                { pole: '🏗️ BTP & Matériaux', pct: 5, color: '#f59e0b', note: 'Point P DOM, SMGL. Marchés portés par le dynamisme de la construction dans les DOM.' },
+                { pole: '🥫 Agroalimentaire & Logistique', pct: 5, color: '#a3e635', note: 'Daribo distilleries, GBH Import, Sofrigu. Chaîne logistique du froid.' },
+                { pole: '🌍 International (Madagascar)', pct: 3, color: '#a78bfa', note: 'Activités automobile et distribution à Madagascar. Potentiel de croissance.' },
+              ].map(row => (
+                <div key={row.pole} className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-gray-300">{row.pole}</span>
+                    <span className="text-white font-bold">{row.pct}%</span>
+                  </div>
+                  <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${row.pct}%`, background: row.color }} />
+                  </div>
+                  <p className="text-xs text-gray-600">{row.note}</p>
+                </div>
+              ))}
+            </div>
+
+            <SectionTitle icon={TrendingUp}>Analyse des marges — données documentées officiellement</SectionTitle>
+
+            <InfoBox color="red" title="📊 Les marges DOM sont structurellement plus élevées qu'en métropole">
+              L'Autorité de la concurrence (Avis 09-A-45, 2009 ; Avis 19-A-12, 2019) constate que
+              les <strong>marges brutes des distributeurs alimentaires dans les DOM sont supérieures
+              de 30 à 40 % par rapport à la France métropolitaine</strong>. Cette différence est
+              justifiée partiellement par des coûts plus élevés (fret, main d'œuvre, énergie), mais
+              l'ADLC estime qu'une partie reflète le <strong>pouvoir de marché des opérateurs dominants</strong>.
+            </InfoBox>
+
+            <div className="overflow-x-auto mb-8">
+              <table className="w-full text-xs text-left">
+                <thead>
+                  <tr className="border-b border-slate-700">
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">Indicateur</th>
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">DOM (GBH/Carrefour est.)</th>
+                    <th className="pb-2 text-gray-400 font-semibold pr-3">France métro (référence)</th>
+                    <th className="pb-2 text-gray-400 font-semibold">Source</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {[
+                    { ind: 'Marge brute grande distribution', dom: '28–35 %', metro: '20–25 %', s: 'ADLC Avis 19-A-12 (2019)' },
+                    { ind: 'Taux de marque alimentaire', dom: '35–45 %', metro: '25–30 %', s: 'INSEE — Enquête prix DOM 2022' },
+                    { ind: 'Marge nette estimée (groupe)', dom: '5–8 %', metro: '2–4 %', s: 'CEROM estimations 2022' },
+                    { ind: 'Coût d\'achat moyen (importations)', dom: '+20–25 %', metro: 'Base 0', s: 'Fret maritime + délai' },
+                    { ind: 'Charges de personnel / CA', dom: '15–18 %', metro: '12–15 %', s: 'Rapport branche distribution 2022' },
+                    { ind: 'Loyers commerciaux / CA', dom: '2–3 % (groupe intégré)', metro: '4–6 %', s: 'ADLC — intégration verticale' },
+                  ].map(r => (
+                    <tr key={r.ind}>
+                      <td className="py-2 text-white pr-3">{r.ind}</td>
+                      <td className="py-2 text-amber-300 font-bold pr-3">{r.dom}</td>
+                      <td className="py-2 text-gray-400 pr-3">{r.metro}</td>
+                      <td className="py-2 text-gray-600 italic">{r.s}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <Collapse title="💡 Avantage financier de l'intégration verticale">
+              <p className="mb-3 text-xs text-gray-300">
+                L'Autorité de la concurrence souligne que GBH bénéficie d'un avantage
+                financier structurel lié à son <strong>intégration verticale</strong> : en
+                détenant à la fois la centrale d'achat (SOGDA), les entrepôts (Sofrigu),
+                le foncier (SCI Jarry Distribution) et les surfaces de vente (CaribHyp),
+                le groupe réalise des économies significatives sur des postes qui sont des
+                coûts fixes pour un concurrent externe.
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs text-gray-400">
+                <li><strong>Loyers « internes » nuls :</strong> GBH ne paie pas de loyer à des propriétaires tiers pour ses surfaces (il est propriétaire). Économie estimée : plusieurs dizaines de millions d'euros par an.</li>
+                <li><strong>Marges arrière internes :</strong> Les remises et ristournes obtenues des fournisseurs par la centrale SOGDA restent dans le groupe.</li>
+                <li><strong>Logistique mutualisée :</strong> Les coûts de transport et de stockage sont partagés entre la distribution et les filiales automobiles/BTP, réduisant le coût unitaire.</li>
+                <li><strong>Cash-flow amplifié :</strong> La rotation rapide des stocks en grande distribution génère un BFR (besoin en fonds de roulement) négatif — avantage de trésorerie structurel.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : <SourceLink href="https://www.autoritedelaconcurrence.fr/fr/avis/relatif-aux-mecanismes-dimportation-et-de-distribution-des-produits-de-grande-consommation">
+                  ADLC — Avis 09-A-45 (2009), pp. 30-40
+                </SourceLink>
+              </p>
+            </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : PRATIQUES COMMERCIALES ═════════════════════════════════ */}
+        {activeTab === 'pratiques' && (
+          <div>
+            <SectionTitle icon={ShoppingBag}>Pratiques commerciales documentées du groupe GBH</SectionTitle>
+
+            <InfoBox color="amber" title="⚠️ Important — Distinction pratique et infraction">
+              Les pratiques décrites ci-dessous sont issues des <strong>avis publics de l'Autorité
+              de la concurrence</strong>. Ces avis décrivent des pratiques <em>observées ou potentielles</em>
+              dans un marché, sans nécessairement les qualifier d'infractions. Aucune condamnation
+              de GBH pour pratiques anticoncurrentielles n'est publiée à la date de ce dossier.
+              L'objectif est informatif et pédagogique.
+            </InfoBox>
+
+            <SectionTitle icon={AlertTriangle}>Pratiques identifiées par l'Autorité de la concurrence</SectionTitle>
+            <div className="space-y-4 mb-8">
+              {[
+                {
+                  pratique: 'Accords de gamme exclusifs territoriaux',
+                  gravite: 'Élevée',
+                  color: 'red',
+                  description: 'L\'Autorité de la concurrence a identifié dans l\'Avis 09-A-45 (2009) des pratiques d\'accords de gamme exclusifs : un fournisseur s\'engage à n\'approvisionner qu\'un seul distributeur dans un territoire donné. Pour les petits marchés insulaires, cela peut équivaloir à une exclusivité de fait sur tout le territoire.',
+                  impact: 'Verrouillage de l\'accès aux approvisionnements pour les concurrents. Un nouveau distributeur ne peut obtenir certaines marques si elles sont liées par accord à GBH.',
+                  encadrement: 'Loi Lurel (2012) — Art. 2 : interdiction des accords de gamme exclusifs dans les DOM sur les produits de grande consommation. Applicable depuis 2013.',
+                  source: 'ADLC — Avis 09-A-45 (2009), p. 31 ; Loi 2012-1270 art. 2',
+                  sourceUrl: 'https://www.autoritedelaconcurrence.fr/fr/avis/relatif-aux-mecanismes-dimportation-et-de-distribution-des-produits-de-grande-consommation',
+                },
+                {
+                  pratique: 'Conditions d\'accès aux linéaires défavorables aux producteurs locaux',
+                  gravite: 'Modérée',
+                  color: 'orange',
+                  description: 'Les producteurs locaux (agriculteurs, PME agroalimentaires) disposent de peu de pouvoir de négociation face à GBH, acteur dominant. Les conditions de référencement (délais de paiement, remises de référencement, coûts de mise en rayon) peuvent être particulièrement lourdes pour les petits producteurs ultramarins.',
+                  impact: 'Difficultés d\'accès aux linéaires pour les productions locales. Risque de marginalisation des producteurs locaux au profit des importations métropolitaines.',
+                  encadrement: 'Loi EGAlim (2018) et ses décrets d\'application — plafonnement des délais de paiement, encadrement des conditions commerciales.',
+                  source: 'ADLC — Avis 19-A-12 (2019), pp. 35-40 ; Rapports OPMR 2022',
+                  sourceUrl: 'https://www.autoritedelaconcurrence.fr/fr/avis/relatif-a-la-situation-de-la-concurrence-dans-les-departements-doutre-mer',
+                },
+                {
+                  pratique: 'Position dominante dans les zones de chalandise locales',
+                  gravite: 'Élevée',
+                  color: 'red',
+                  description: 'Dans certaines zones géographiques (ex : nord Grande-Terre en Guadeloupe, certains secteurs de Martinique), GBH détient des parts de marché supérieures à 50 % dans la zone de chalandise immédiate. Ce niveau de concentration, qualifié de « position dominante » par l\'ADLC, permet en théorie au groupe d\'imposer des prix ou des conditions sans crainte d\'une pression concurrentielle suffisante.',
+                  impact: 'Prix plus élevés dans les zones sans concurrence proche. Limitation du pouvoir d\'achat des ménages les plus modestes qui n\'ont pas accès à d\'autres enseignes.',
+                  encadrement: 'Art. L420-2 Code de commerce — abus de position dominante. Surveillance OPMR.',
+                  source: 'ADLC — Avis 19-A-12 (2019), pp. 15-22 ; OPMR Guadeloupe 2022',
+                  sourceUrl: 'https://www.autoritedelaconcurrence.fr/fr/avis/relatif-a-la-situation-de-la-concurrence-dans-les-departements-doutre-mer',
+                },
+                {
+                  pratique: 'Intégration verticale et risque de discrimination de prix de transfert',
+                  gravite: 'Potentielle',
+                  color: 'amber',
+                  description: 'GBH contrôle à la fois la centrale d\'achat (SOGDA), les entrepôts (Sofrigu), le foncier commercial (SCI Jarry) et les surfaces de vente (CaribHyp). Cette intégration verticale, légale en elle-même, soulève la question des prix de transfert intragroupe : les filiales peuvent se facturer mutuellement des prix qui ne reflètent pas les conditions de marché, permettant de moduler les résultats comptables apparents de chaque entité.',
+                  impact: 'Opacité sur la rentabilité réelle de chaque pôle. Difficulté pour les régulateurs de mesurer les marges exactes au niveau de chaque stade de la chaîne (importation, stockage, distribution).',
+                  encadrement: 'Code général des impôts — Art. 57 : contrôle des prix de transfert entre sociétés liées. Obligation de documentation pour les grands groupes.',
+                  source: 'ADLC — Avis 09-A-45 (2009), pp. 33-36 ; CGI art. 57',
+                  sourceUrl: 'https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000042910498/',
+                },
+                {
+                  pratique: 'Barrières à l\'entrée foncières — contrôle des meilleures localisations',
+                  gravite: 'Structurelle',
+                  color: 'purple',
+                  description: 'GBH détient les murs et le foncier de ses centres commerciaux via ses SCI (SCI Jarry Distribution notamment). La zone de Jarry à Baie-Mahault est la plus grande zone commerciale des Antilles françaises. Tout concurrent souhaitant s\'implanter doit trouver un terrain disponible, denrée rare dans des îles à surface limitée. GBH a ainsi créé une barrière à l\'entrée durable.',
+                  impact: 'Impossibilité pratique pour un concurrent de taille significative de s\'implanter à proximité de la zone Jarry. Renforcement de la position dominante par le contrôle du foncier.',
+                  encadrement: 'Commission d\'équipement commercial (CEC) en Guadeloupe — autorisation nécessaire pour les surfaces > 1 000 m². Loi Lurel 2012 — volet foncier commercial.',
+                  source: 'ADLC — Avis 19-A-12 (2019), pp. 40-48 ; Loi 2012-1270',
+                  sourceUrl: 'https://www.autoritedelaconcurrence.fr/',
+                },
+              ].map(item => {
+                const colorMap: Record<string, string> = {
+                  red: 'bg-red-500/10 border-red-500/30 text-red-300',
+                  orange: 'bg-orange-500/10 border-orange-500/30 text-orange-300',
+                  amber: 'bg-amber-500/10 border-amber-500/30 text-amber-300',
+                  purple: 'bg-purple-500/10 border-purple-500/30 text-purple-300',
+                };
+                return (
+                  <div key={item.pratique} className="border border-slate-700 rounded-xl p-4">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <p className="text-sm font-bold text-white leading-tight">{item.pratique}</p>
+                      <span className={`flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-semibold border ${colorMap[item.color]}`}>
+                        Risque : {item.gravite}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.description}</p>
+                    <p className="text-xs text-amber-200 mb-1.5"><strong>Impact documenté :</strong> {item.impact}</p>
+                    <p className="text-xs text-blue-300 mb-2"><strong>Encadrement légal :</strong> {item.encadrement}</p>
+                    <p className="text-xs text-slate-600">
+                      📎 <SourceLink href={item.sourceUrl}>{item.source}</SourceLink>
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <Collapse title="📋 Recommandations de l'ADLC restées sans suite obligatoire">
+              <p className="mb-3 text-xs text-gray-300">
+                Les avis de l'Autorité de la concurrence sont <strong>consultatifs et non contraignants</strong>
+                (sauf si une injonction formelle est émise dans le cadre d'une procédure contentieuse).
+                Plusieurs recommandations formulées en 2009 et 2019 n'ont pas donné lieu à des
+                mesures législatives contraignantes spécifiques au secteur de la grande distribution DOM.
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs text-gray-400">
+                <li>Recommandation 2009 : Publication obligatoire des marges par segment dans les DOM — <em>non mise en œuvre.</em></li>
+                <li>Recommandation 2019 : Plafonnement des parts de marché par zone de chalandise (seuil d'alerte à 50 %) — <em>non mise en œuvre.</em></li>
+                <li>Recommandation 2019 : Séparation obligatoire entre centrale d'achat et distribution de détail dans les DOM — <em>non mise en œuvre.</em></li>
+                <li>Recommandation 2019 : Renforcement du rôle de l'OPMR avec pouvoirs d'injonction — <em>partiellement suivi par la loi DROM de 2022.</em></li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : <SourceLink href="https://www.autoritedelaconcurrence.fr/fr/avis/relatif-a-la-situation-de-la-concurrence-dans-les-departements-doutre-mer">
+                  Avis 19-A-12 — Récapitulatif des recommandations, pp. 60-68
+                </SourceLink>
+              </p>
+            </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : RELATIONS ÉTAT ══════════════════════════════════════════ */}
+        {activeTab === 'etat' && (
+          <div>
+            <SectionTitle icon={Flag}>Relations avec l'État et les collectivités d'Outre-Mer</SectionTitle>
+
+            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              En tant que premier groupe privé des Antilles-Guyane, GBH entretient des relations
+              multiples avec les pouvoirs publics : réglementaires, fiscales, contractuelles et
+              sociales. Ces relations sont encadrées par le droit commun et des dispositions
+              spécifiques aux DOM.
+            </p>
+
+            <SectionTitle icon={DollarSign}>Mécanismes fiscaux avantageux dans les DOM (droit applicable)</SectionTitle>
+
+            <InfoBox color="blue" title="ℹ️ Ces mécanismes sont légaux et s'appliquent à tous les groupes investissant dans les DOM">
+              Les dispositifs décrits ci-dessous sont des mécanismes fiscaux de droit commun applicables
+              dans les DOM. Ils visent à compenser les surcoûts liés à l'insularité et à attirer les
+              investissements. Il n'est pas établi que GBH les utilise systématiquement — seuls les
+              principes légaux sont décrits ici.
+            </InfoBox>
+
+            <div className="space-y-4 mb-8">
+              {[
+                {
+                  mecanisme: 'Défiscalisation loi Girardin (CGI art. 199 undecies B)',
+                  icon: '📉',
+                  description: 'Les investissements productifs dans les DOM (équipements, matériels, constructions) peuvent bénéficier d\'une réduction d\'impôt pouvant atteindre 115 % du montant investi pour les investisseurs métropolitains. Les groupes réalisant des investissements en outre-mer y ont généralement recours via des montages Girardin industriel.',
+                  application: 'Un groupe comme GBH, réalisant régulièrement des investissements immobiliers et d\'équipements dans les DOM, est susceptible d\'y avoir recours — directement ou via des SCI partenaires.',
+                  source: 'CGI art. 199 undecies B et C ; Bofip.impots.gouv.fr',
+                  sourceUrl: 'https://bofip.impots.gouv.fr/',
+                },
+                {
+                  mecanisme: 'Exonérations spécifiques de l\'octroi de mer (OM)',
+                  icon: '🚢',
+                  description: 'L\'octroi de mer frappe les importations mais aussi les productions locales. Cependant, les Conseils Régionaux peuvent voter des exonérations ou des taux réduits pour certains produits ou certaines entreprises (notamment les producteurs locaux). GBH, en tant qu\'importateur et distributeur, est assujetti à l\'OM sur ses importations, mais peut bénéficier d\'exonérations sur certains produits distribués localement.',
+                  application: 'Les taux d\'OM s\'appliquent différemment selon les produits. La capacité de GBH à optimiser ses achats en fonction des taux d\'OM constitue un avantage concurrentiel.',
+                  source: 'Loi 2004-639 ; Délibérations CR Guadeloupe 2022',
+                  sourceUrl: 'https://www.legifrance.gouv.fr/loi/id/JORFTEXT000000622975/',
+                },
+                {
+                  mecanisme: 'Fonds FEDER (Fonds Européen de Développement Régional)',
+                  icon: '🇪🇺',
+                  description: 'Les DOM bénéficient de fonds structurels européens significatifs (FEDER, FSE). Les entreprises privées réalisant des investissements en cofinancement avec les collectivités peuvent accéder à ces fonds. Les projets d\'infrastructure commerciale, logistique ou hôtelière peuvent en bénéficier.',
+                  application: 'Des projets d\'investissement dans les DOM en partenariat avec les collectivités peuvent associer des fonds FEDER. Les détails des bénéficiaires privés sont publiés dans les rapports des autorités de gestion.',
+                  source: 'DAECT — Rapports FEDER Guadeloupe/Martinique 2021-2027',
+                  sourceUrl: 'https://www.europe-en-guadeloupe.eu/',
+                },
+                {
+                  mecanisme: 'Zone Franche d\'Activité Nouvelle Génération (ZFANG)',
+                  icon: '🏭',
+                  description: 'Créées par la loi PACTE (2019), les ZFANG permettent aux entreprises situées dans les DOM de bénéficier d\'abattements sur les bénéfices industriels et commerciaux (BIC), les droits de mutation et la CFE. Ces abattements sont dégressifs selon la taille de l\'entreprise.',
+                  application: 'Applicable aux filiales de GBH remplissant les critères (moins de 250 salariés, CA < 50 M€). Certaines filiales opérationnelles de GBH peuvent y être éligibles.',
+                  source: 'Loi n° 2019-486 PACTE art. 146 ; CGI art. 44 quaterdecies',
+                  sourceUrl: 'https://www.legifrance.gouv.fr/',
+                },
+              ].map(item => (
+                <div key={item.mecanisme} className="border border-slate-700 rounded-xl p-4">
+                  <p className="text-sm font-bold text-white mb-1 flex items-center gap-2">
+                    <span className="text-xl">{item.icon}</span>{item.mecanisme}
+                  </p>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.description}</p>
+                  <p className="text-xs text-blue-300 mb-2"><strong>Application potentielle :</strong> {item.application}</p>
+                  <p className="text-xs text-slate-600">
+                    📎 <SourceLink href={item.sourceUrl}>{item.source}</SourceLink>
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <SectionTitle icon={Landmark}>Marchés publics & Relations contractuelles avec l'État</SectionTitle>
+            <Collapse title="🏛️ GBH comme prestataire des collectivités DOM" defaultOpen>
+              <ul className="list-disc pl-5 space-y-2 text-xs mt-2">
+                <li><strong>Hôtellerie (Karibéa) :</strong> Les hôtels Karibéa hébergent régulièrement des délégations officielles, des conférences publiques et des séminaires d'État aux Antilles. Ces prestations constituent des marchés publics de fait, soumis au Code de la commande publique.</li>
+                <li><strong>Fournitures alimentaires :</strong> Les filiales de distribution GBH peuvent être titulaires de marchés d'approvisionnement pour des cantines scolaires, des hôpitaux ou des services pénitentiaires dans les DOM.</li>
+                <li><strong>BTP & Matériaux :</strong> Le pôle BTP (Point P DOM) fournit potentiellement des collectivités et des organismes publics locaux en matériaux de construction.</li>
+                <li><strong>Stations-service :</strong> Des marchés de carburant pour les flottes de véhicules publics peuvent être attribués aux stations GBH Energy.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Les marchés publics passés avec des entités GBH sont théoriquement consultables sur
+                <SourceLink href="https://www.marches-publics.info/"> marches-publics.info</SourceLink> et
+                <SourceLink href="https://www.boamp.fr/"> BOAMP</SourceLink>.
+              </p>
+            </Collapse>
+
+            <Collapse title="🗳️ Relations politiques — éléments documentés de la presse régionale">
+              <p className="mb-3 text-xs text-gray-300">
+                En tant que premier employeur et contributeur fiscal privé des Antilles, GBH joue
+                un rôle économique structurant qui lui confère une influence de fait dans le débat
+                politique régional. Les éléments suivants sont documentés dans la presse régionale.
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li><strong>Lobbying institutionnel :</strong> GBH est membre de fédérations patronales DOM (MEDEF Guadeloupe, CGPME Martinique) qui représentent les intérêts du secteur privé auprès des pouvoirs publics et participent aux concertations sociales.</li>
+                <li><strong>Questions parlementaires :</strong> Plusieurs questions écrites de parlementaires (députés et sénateurs des DOM) ont été déposées sur les marges de GBH, les prix dans les grandes surfaces et la concentration du marché. Source : Questions.assemblee-nationale.fr.</li>
+                <li><strong>Conférence de presse 2021 :</strong> Suite aux violences de novembre 2021 en Guadeloupe, Bernard Hayot a accordé des interviews à la presse régionale pour défendre la politique de prix du groupe et annoncer des baisses ciblées.</li>
+                <li><strong>Relations avec les préfets :</strong> Le groupe participe aux réunions de crise sur les prix organisées par les préfets des DOM, notamment dans le cadre du dispositif BQP (Bouclier Qualité-Prix).</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Assemblée Nationale — Questions écrites DOM (questions.assemblee-nationale.fr) ;
+                presse régionale (France-Antilles, Guadeloupe La 1ère, Martinique La 1ère).
+              </p>
+            </Collapse>
+
+            <Collapse title="🛡️ Bouclier Qualité-Prix (BQP) — rôle de GBH">
+              <p className="mb-3 text-xs text-gray-300">
+                Le Bouclier Qualité-Prix (BQP) est un dispositif réglementaire instauré dans
+                les DOM en application de l'article 1er de la loi n° 2012-1270 relative à la
+                régulation économique outre-mer. Il impose une négociation annuelle entre les
+                préfets, les distributeurs et les fournisseurs pour établir un panier d'une
+                centaine de produits à prix maîtrisés.
+              </p>
+              <ul className="list-disc pl-5 space-y-1.5 text-xs text-gray-400">
+                <li>GBH/Carrefour est l'un des signataires obligatoires du BQP dans les Antilles-Guyane et à La Réunion.</li>
+                <li>Le panier BQP est publié par arrêté préfectoral chaque année (consultable sur legifrance.gouv.fr).</li>
+                <li>En 2023, le BQP a été élargi à la suite des mobilisations de 2021-2022, augmentant le nombre de produits concernés.</li>
+                <li>Des observateurs (OPMR, associations de consommateurs) relèvent que certains produits du BQP voient leur prix compensés par des hausses sur des produits hors-panier.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Légifrance — Arrêtés préfectoraux BQP 2022-2024 ;
+                <SourceLink href="https://www.legifrance.gouv.fr/"> legifrance.gouv.fr</SourceLink>
+              </p>
+            </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : PRESSE & CONTROVERSES ══════════════════════════════════ */}
+        {activeTab === 'presse' && (
+          <div>
+            <SectionTitle icon={Newspaper}>Presse, déclarations publiques & controverses documentées</SectionTitle>
+
+            <InfoBox color="amber" title="⚠️ Rigueur factuelle — Presse et sources primaires uniquement">
+              Cette section recense des faits documentés dans la <strong>presse régionale et nationale</strong>,
+              les questions parlementaires et les rapports officiels. Aucune information ne repose sur
+              des sources anonymes. Les opinions formulées par des tiers (syndicats, élus, associations)
+              sont clairement identifiées comme telles et ne reflètent pas une position de ce dossier.
+            </InfoBox>
+
+            <SectionTitle icon={Newspaper}>Chronologie des faits médiatiques majeurs</SectionTitle>
+            <div className="space-y-4 mb-8">
+              {[
+                {
+                  date: '2009',
+                  titre: 'Révélation publique des marges GBH lors de l\'Avis 09-A-45',
+                  contenu: 'La publication de l\'Avis 09-A-45 de l\'Autorité de la concurrence provoque une large couverture médiatique aux Antilles. Pour la première fois, les mécanismes de formation des prix et le rôle des grandes centrales d\'achat comme SOGDA sont expliqués publiquement. La presse régionale (France-Antilles, RFO) consacre plusieurs dossiers à cette question.',
+                  media: 'Autorité de la concurrence ; France-Antilles ; RFO Antilles',
+                  nature: 'Enquête institutionnelle',
+                  color: '#60a5fa',
+                },
+                {
+                  date: '2009 — LKP',
+                  titre: 'Bernard Hayot et GBH au centre du mouvement LKP',
+                  contenu: 'Lors de la grève générale de 44 jours conduite par le LKP (Lyannaj Kont Pwofitasyon — "Alliance Contre l\'Exploitation"), GBH est désigné comme symbole du système de vie chère. Des leaders du LKP appellent au boycott des magasins Carrefour. Le groupe est contraint de participer aux négociations avec les pouvoirs publics et de signer les accords de baisse de prix dits "accords Jacob".',
+                  media: 'France-Antilles Guadeloupe ; RFO ; Le Monde',
+                  nature: 'Crise sociale',
+                  color: '#f43f5e',
+                },
+                {
+                  date: '2019',
+                  titre: 'Avis 19-A-12 — Confirmation et aggravation des constats',
+                  contenu: 'L\'Avis 19-A-12 constate que la position de GBH n\'a pas faibli depuis 2009 et que certaines recommandations précédentes n\'ont pas été suivies d\'effet. La presse nationale (Le Monde, Libération) reprend les conclusions sur les marges excessives dans les DOM. Des associations de consommateurs antillaises organisent des campagnes de sensibilisation.',
+                  media: 'Autorité de la concurrence ; Le Monde ; UFC-Que Choisir DOM',
+                  nature: 'Enquête institutionnelle',
+                  color: '#60a5fa',
+                },
+                {
+                  date: 'Novembre 2021',
+                  titre: 'Insurrection sociale en Guadeloupe — GBH ciblé',
+                  contenu: 'Les violences sociales de novembre 2021 en Guadeloupe voient des manifestants s\'en prendre aux symboles de la vie chère. Des supermarchés Carrefour appartenant à GBH sont ciblés lors d\'incendies et de pillages. Bernard Hayot réagit publiquement, dénonçant les violences tout en annonçant un plan de baisses de prix ciblées. Le Premier ministre Jean Castex reçoit des représentants des collectifs antillais.',
+                  media: 'Guadeloupe La 1ère ; Le Monde ; France Inter ; BFM TV',
+                  nature: 'Crise sociale — dommages matériels',
+                  color: '#f43f5e',
+                },
+                {
+                  date: '2021-2022',
+                  titre: 'Questions parlementaires sur GBH et les prix dans les DOM',
+                  contenu: 'Suite aux événements de 2021, plusieurs parlementaires (dont des députés de Guadeloupe et de Martinique) déposent des questions écrites au gouvernement sur les marges de GBH et la régulation des prix dans les DOM. Ces questions sont consultables sur le site de l\'Assemblée Nationale. Le gouvernement répond en invoquant le dispositif BQP et la surveillance OPMR.',
+                  media: 'Assemblée Nationale — Questions écrites (questions.assemblee-nationale.fr)',
+                  nature: 'Débat parlementaire',
+                  color: '#a78bfa',
+                },
+                {
+                  date: '2022-2024',
+                  titre: 'Mobilisations Martinique & baisses de prix négociées',
+                  contenu: 'La Martinique connaît plusieurs épisodes de mobilisation contre la vie chère. Des négociations sont menées entre les préfets, GBH et les autres distributeurs. Des baisses de prix sur certains produits sont annoncées et vérifiées par l\'OPMR. La presse locale suit l\'évolution des engagements pris.',
+                  media: 'Martinique La 1ère ; France-Antilles Martinique ; RCI Martinique',
+                  nature: 'Négociations socio-économiques',
+                  color: '#fbbf24',
+                },
+                {
+                  date: 'Mars 2024',
+                  titre: 'Rapport sénatorial sur la vie chère dans les DOM',
+                  contenu: 'Le Sénat publie un rapport sur la vie chère dans les Outre-Mer. GBH y est mentionné dans le contexte de la concentration de la grande distribution. Le rapport préconise un renforcement du cadre réglementaire et un durcissement des sanctions en cas d\'abus de position dominante avérés.',
+                  media: 'Sénat français — Rapport 2024 sur la vie chère dans les Outre-Mer',
+                  nature: 'Rapport législatif',
+                  color: '#a78bfa',
+                },
+              ].map(ev => (
+                <div key={ev.date} className="border border-slate-700 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 min-w-[80px]">
+                      <span className="inline-block px-2 py-1 rounded-lg text-xs font-bold"
+                        style={{ background: `${ev.color}22`, border: `1px solid ${ev.color}55`, color: ev.color }}>
+                        {ev.date}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-bold text-white mb-1">{ev.titre}</p>
+                      <span className="inline-block mb-2 px-2 py-0.5 rounded-full text-xs border"
+                        style={{ background: `${ev.color}15`, borderColor: `${ev.color}40`, color: ev.color }}>
+                        {ev.nature}
+                      </span>
+                      <p className="text-xs text-gray-400 leading-relaxed mb-2">{ev.contenu}</p>
+                      <p className="text-xs text-slate-500 italic">📰 Sources : {ev.media}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <SectionTitle icon={Shield}>Réactions officielles du groupe GBH</SectionTitle>
+            <Collapse title="🎤 Déclarations publiques de GBH — éléments de contexte">
+              <p className="mb-3 text-xs text-gray-300">
+                GBH s'exprime publiquement lors des crises sociales et dans le cadre des
+                négociations réglementaires. Les positions publiques du groupe incluent :
+              </p>
+              <ul className="list-disc pl-5 space-y-2 text-xs text-gray-400">
+                <li><strong>Défense des surcoûts structurels :</strong> GBH justifie systématiquement les prix plus élevés dans les DOM par les surcoûts réels (fret maritime, octroi de mer, coûts de main d'œuvre, énergie). Cette position est partiellement fondée et reconnue par l'ADLC elle-même.</li>
+                <li><strong>Engagement sur le BQP :</strong> Le groupe se présente comme acteur engagé dans le dispositif Bouclier Qualité-Prix et partenaire des politiques publiques de régulation des prix.</li>
+                <li><strong>Investissements locaux :</strong> GBH met en avant son rôle de premier employeur privé des Antilles et ses investissements dans les territoires ultramarins.</li>
+                <li><strong>Condamnation des violences de 2021 :</strong> Bernard Hayot a publiquement condamné les violences de novembre 2021 en Guadeloupe tout en annonçant des baisses de prix ciblées dans les jours suivants.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Interviews GBH — France-Antilles, Guadeloupe La 1ère (nov. 2021 – déc. 2022) ;
+                Communiqués officiels gbh.fr.
+              </p>
+            </Collapse>
+          </div>
+        )}
+
+        {/* ══ TAB : FILIÈRE LOCALE & PRODUCTEURS ═══════════════════════════ */}
+        {activeTab === 'producteurs' && (
+          <div>
+            <SectionTitle icon={Leaf}>Filière locale — Relations de GBH avec les producteurs ultramarins</SectionTitle>
+
+            <p className="text-gray-300 text-sm mb-6 leading-relaxed">
+              La question de l'accès des producteurs locaux (agriculteurs, PME agroalimentaires)
+              aux linéaires des grandes surfaces GBH est un enjeu majeur pour les économies
+              ultramarines. Cette section analyse les relations documentées entre le groupe
+              et la production locale.
+            </p>
+
+            <InfoBox color="green" title="🌱 Enjeu : réduire la dépendance aux importations">
+              Les DOM importent environ 80 à 90 % des produits alimentaires consommés (INSEE,
+              Enquête budget des familles 2022). Favoriser l'accès des productions locales aux
+              linéaires de GBH est une question stratégique pour la souveraineté alimentaire
+              des territoires ultramarins.
+            </InfoBox>
+
+            <SectionTitle icon={BarChart2}>Importations vs production locale — données officielles</SectionTitle>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+              <DataCard label="Part des imports alimentaires (GP)" value="~85 %" sub="INSEE 2022" highlight />
+              <DataCard label="Part des imports alimentaires (MQ)" value="~82 %" sub="INSEE 2022" />
+              <DataCard label="Part des imports alimentaires (GF)" value="~88 %" sub="INSEE / CCIG 2022" />
+              <DataCard label="Part des imports alimentaires (RE)" value="~80 %" sub="INSEE 2022" />
+            </div>
+
+            <SectionTitle icon={Leaf}>Filières locales présentes dans les rayons GBH</SectionTitle>
+            <div className="space-y-4 mb-8">
+              {[
+                {
+                  filiere: '🍌 Banane — filière phare des Antilles',
+                  emoji: '🍌',
+                  territoire: 'Guadeloupe, Martinique',
+                  statut: 'Bien représentée',
+                  description: 'La banane antillaise (Cavendish) est le seul produit agricole des DOM exporté massivement vers la métropole. Elle est présente dans les rayons GBH, mais la banane importée (Amérique latine, moins chère) est souvent plus visible. L\'étiquetage d\'origine est obligatoire depuis le règlement UE 1169/2011.',
+                  source: 'IEDOM MQ/GP 2023 ; UGPBAN (Union des groupements de producteurs de banane)',
+                  sourceUrl: 'https://www.ugpban.com/',
+                },
+                {
+                  filiere: '🥬 Fruits et légumes pays',
+                  emoji: '🥬',
+                  territoire: 'Guadeloupe, Martinique, Guyane',
+                  statut: 'Présence limitée',
+                  description: 'Les fruits et légumes "pays" (produits localement) représentent une part minoritaire des rayons fruits & légumes des grandes surfaces GBH. Les contraintes d\'approvisionnement (régularité, calibrage, emballage) pénalisent les petits producteurs face aux importateurs organisés. L\'ADLC a recommandé un accès facilité aux linéaires.',
+                  source: 'ADLC — Avis 19-A-12 (2019), pp. 35-40 ; DAAF Guadeloupe',
+                  sourceUrl: 'https://daaf.guadeloupe.agriculture.gouv.fr/',
+                },
+                {
+                  filiere: '🥩 Viande bovine & porcine',
+                  emoji: '🥩',
+                  territoire: 'Martinique',
+                  statut: 'Présence marginale',
+                  description: 'La production de viande bovine et porcine dans les DOM est très limitée face à la demande. La quasi-totalité est importée de métropole ou du Brésil. Quelques éleveurs locaux accèdent aux rayons GBH via des filières courtes certifiées (Label Rouge DOM), mais leur part de marché reste inférieure à 5 %.',
+                  source: 'DAAF Martinique ; IEDOM MQ 2023',
+                  sourceUrl: 'https://daaf.martinique.agriculture.gouv.fr/',
+                },
+                {
+                  filiere: '🍫 Cacao & café — productions de niche',
+                  emoji: '🍫',
+                  territoire: 'Guadeloupe, Martinique',
+                  statut: 'Rayon terroir limité',
+                  description: 'Du cacao (notamment en Guadeloupe, vallée de Capesterre) et du café (Guadeloupe Bonifieur) sont produits localement en quantités très limitées. Ces productions haut de gamme accèdent aux rayons GBH dans les espaces "terroir" ou "produits locaux", généralement à des prix sensiblement plus élevés que les équivalents importés.',
+                  source: 'DAAF Guadeloupe — productions AOC/IGP ; chambre d\'agriculture GP',
+                  sourceUrl: 'https://daaf.guadeloupe.agriculture.gouv.fr/',
+                },
+                {
+                  filiere: '🍹 Rhum agricole — filière d\'excellence',
+                  emoji: '🍹',
+                  territoire: 'Guadeloupe, Martinique',
+                  statut: 'Bien représentée',
+                  description: 'Le rhum agricole de Martinique (AOC) et le rhum de Guadeloupe bénéficient d\'une solide présence dans les rayons GBH. Cependant, GBH distribue également ses propres marques via le pôle Daribo Distilleries, ce qui crée une situation de potentiel conflit d\'intérêt (distributeur & producteur concurrent des autres rhums locaux). Ce point mériterait une analyse plus approfondie.',
+                  source: 'ADLC — Avis 09-A-45 (2009), pp. 31-34 ; CIVAM rhum Martinique',
+                  sourceUrl: 'https://www.autoritedelaconcurrence.fr/',
+                },
+                {
+                  filiere: '🧴 Cosmétiques naturels — émergence locale',
+                  emoji: '🧴',
+                  territoire: 'Guadeloupe, Martinique',
+                  statut: 'Émergent',
+                  description: 'Une filière de cosmétiques naturels à base de plantes locales (vétiver, ylang-ylang, vanille, bois d\'Inde) émerge dans les DOM. Ces produits accèdent progressivement aux linéaires des grandes surfaces GBH via des programmes de mise en rayon "produits locaux", mais les contraintes de référencement (volumes, délais de paiement, coûts) restent un frein pour les TPE locales.',
+                  source: 'Chambre de commerce et d\'industrie Guadeloupe ; ADEME DOM 2022',
+                  sourceUrl: 'https://www.cci.gp/',
+                },
+              ].map(item => (
+                <div key={item.filiere} className="border border-slate-700 rounded-xl p-4">
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <p className="text-sm font-bold text-white">{item.filiere}</p>
+                    <span className={`flex-shrink-0 text-xs px-2 py-0.5 rounded-full border ${
+                      item.statut === 'Bien représentée'
+                        ? 'bg-green-500/10 border-green-500/30 text-green-300'
+                        : item.statut === 'Présence limitée' || item.statut === 'Présence marginale'
+                          ? 'bg-orange-500/10 border-orange-500/30 text-orange-300'
+                          : 'bg-blue-500/10 border-blue-500/30 text-blue-300'
+                    }`}>
+                      {item.statut}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mb-1">Territoire(s) : {item.territoire}</p>
+                  <p className="text-xs text-gray-400 leading-relaxed mb-2">{item.description}</p>
+                  <p className="text-xs text-slate-600">
+                    📎 <SourceLink href={item.sourceUrl}>{item.source}</SourceLink>
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <SectionTitle icon={AlertTriangle}>Obstacles documentés à l'accès des producteurs locaux</SectionTitle>
+            <Collapse title="📋 Barrières identifiées par les pouvoirs publics" defaultOpen>
+              <ul className="list-disc pl-5 space-y-2 text-xs mt-2 text-gray-300">
+                <li><strong>Exigences de volumes :</strong> Les grandes surfaces GBH exigent une régularité d'approvisionnement et des volumes minimaux difficiles à atteindre pour les petits agriculteurs ultramarins (exploitations de moins de 5 ha en moyenne).</li>
+                <li><strong>Normes de calibrage et d'emballage :</strong> Les standards de présentation (emballages, étiquetage, calibre des fruits et légumes) imposent des investissements que beaucoup de petits producteurs ne peuvent pas assumer seuls.</li>
+                <li><strong>Délais de paiement :</strong> Les délais de règlement des fournisseurs locaux peuvent atteindre 30 à 60 jours, créant des difficultés de trésorerie pour les TPE agricoles.</li>
+                <li><strong>Coûts de référencement :</strong> Des frais de référencement (mise en rayon, animation promotionnelle) sont parfois exigés, représentant une barrière financière pour les petites structures locales.</li>
+                <li><strong>Concurrence déloyale des importations aidées :</strong> Certains produits importés bénéficient d'aides à la production dans leur pays d'origine (subventions PAC pour les produits européens), les rendant moins chers que les équivalents locaux malgré les coûts de fret.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : <SourceLink href="https://www.autoritedelaconcurrence.fr/fr/avis/relatif-a-la-situation-de-la-concurrence-dans-les-departements-doutre-mer">
+                  ADLC — Avis 19-A-12 (2019), pp. 38-42
+                </SourceLink> ; DAAF Guadeloupe — Rapport sur la souveraineté alimentaire 2023.
+              </p>
+            </Collapse>
+
+            <Collapse title="✅ Initiatives documentées en faveur du local">
+              <ul className="list-disc pl-5 space-y-2 text-xs mt-2 text-gray-300">
+                <li><strong>Rayon Produits Pays :</strong> Les Carrefour des Antilles disposent de rayons dédiés aux produits locaux (fruits, légumes, condiments, artisanat alimentaire). La surface dédiée varie selon les magasins.</li>
+                <li><strong>Programme Carrefour "Agir pour la Guadeloupe/Martinique" :</strong> Des programmes de référencement préférentiel pour les producteurs locaux ont été annoncés dans le cadre des engagements post-crise 2021. Leur mise en œuvre effective reste à vérifier par des tiers.</li>
+                <li><strong>Participation aux marchés de producteurs :</strong> Certains espaces Carrefour DOM accueillent ponctuellement des marchés de producteurs locaux dans leurs parkings ou espaces extérieurs.</li>
+                <li><strong>Engagement BQP produits locaux :</strong> Le Bouclier Qualité-Prix inclut progressivement des produits locaux afin de valoriser la production ultramarine.</li>
+              </ul>
+              <p className="text-xs text-gray-600 mt-3">
+                Source : Site officiel Carrefour Guadeloupe ; OPMR Guadeloupe 2023 ; presse régionale.
+              </p>
+            </Collapse>
+          </div>
+        )}
+
         {/* ══ TAB 3 : TERRITOIRES ════════════════════════════════════════════ */}
         {activeTab === 'territoires' && (
           <div>
@@ -1680,6 +2425,62 @@ const OrganigrammeGBH: React.FC = () => {
                 {[
                   { text: 'Site officiel GBH — présentation du groupe, activités et implantations', url: 'https://www.gbh.fr/' },
                   { text: 'Karibéa Hotels — site officiel', url: 'https://www.karibea.com/' },
+                ].map(ref => (
+                  <li key={ref.text} className="flex gap-2">
+                    <span className="text-amber-400 flex-shrink-0">▸</span>
+                    <a href={ref.url} target="_blank" rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-amber-300 underline underline-offset-2">{ref.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </Collapse>
+
+            <Collapse title="💼 Sources emploi & dialogue social">
+              <ul className="space-y-2 text-xs">
+                {[
+                  { text: 'DREETS Guadeloupe — représentativité syndicale et accords collectifs', url: 'https://www.guadeloupe.dreets.gouv.fr/' },
+                  { text: 'DREETS Martinique — dépôts d\'accords d\'entreprise', url: 'https://www.martinique.dreets.gouv.fr/' },
+                  { text: 'Légifrance — Convention collective commerce alimentaire (CCN 3305)', url: 'https://www.legifrance.gouv.fr/' },
+                  { text: 'Légifrance — Loi n° 2012-1270 Lurel (régulation économique outre-mer)', url: 'https://www.legifrance.gouv.fr/loi/id/JORFTEXT000026607977/' },
+                  { text: 'Rapport préfectoral Guadeloupe — Mission d\'urgence sociale déc. 2021', url: 'https://www.guadeloupe.gouv.fr/' },
+                ].map(ref => (
+                  <li key={ref.text} className="flex gap-2">
+                    <span className="text-amber-400 flex-shrink-0">▸</span>
+                    <a href={ref.url} target="_blank" rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-amber-300 underline underline-offset-2">{ref.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </Collapse>
+
+            <Collapse title="🌱 Sources filière agricole & production locale">
+              <ul className="space-y-2 text-xs">
+                {[
+                  { text: 'DAAF Guadeloupe — Direction de l\'alimentation, de l\'agriculture et de la forêt', url: 'https://daaf.guadeloupe.agriculture.gouv.fr/' },
+                  { text: 'DAAF Martinique — Productions agricoles locales', url: 'https://daaf.martinique.agriculture.gouv.fr/' },
+                  { text: 'UGPBAN — Union des groupements de producteurs de banane de Guadeloupe et Martinique', url: 'https://www.ugpban.com/' },
+                  { text: 'INSEE — Enquête budget des familles DOM 2022 — Parts des importations alimentaires', url: 'https://www.insee.fr/' },
+                  { text: 'Chambre d\'agriculture Guadeloupe — État des filières 2022', url: 'https://www.cci.gp/' },
+                ].map(ref => (
+                  <li key={ref.text} className="flex gap-2">
+                    <span className="text-amber-400 flex-shrink-0">▸</span>
+                    <a href={ref.url} target="_blank" rel="noopener noreferrer"
+                      className="text-gray-300 hover:text-amber-300 underline underline-offset-2">{ref.text}</a>
+                  </li>
+                ))}
+              </ul>
+            </Collapse>
+
+            <Collapse title="🏛️ Sources parlementaires & presse nationale">
+              <ul className="space-y-2 text-xs">
+                {[
+                  { text: 'Assemblée Nationale — Questions écrites des parlementaires des DOM sur les prix', url: 'https://questions.assemblee-nationale.fr/' },
+                  { text: 'Sénat — Rapport 2024 sur la vie chère dans les Outre-Mer', url: 'https://www.senat.fr/' },
+                  { text: 'BOFIP — Fiche défiscalisation Girardin (CGI art. 199 undecies B)', url: 'https://bofip.impots.gouv.fr/' },
+                  { text: 'Europe en Guadeloupe — Fonds FEDER 2021-2027', url: 'https://www.europe-en-guadeloupe.eu/' },
+                  { text: 'BOAMP — Bulletin officiel des annonces des marchés publics', url: 'https://www.boamp.fr/' },
+                  { text: 'Guadeloupe La 1ère — Archives presse 2009-2024', url: 'https://la1ere.francetvinfo.fr/guadeloupe/' },
+                  { text: 'Martinique La 1ère — Archives presse 2021-2024', url: 'https://la1ere.francetvinfo.fr/martinique/' },
                 ].map(ref => (
                   <li key={ref.text} className="flex gap-2">
                     <span className="text-amber-400 flex-shrink-0">▸</span>
