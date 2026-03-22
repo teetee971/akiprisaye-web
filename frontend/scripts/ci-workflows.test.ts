@@ -233,17 +233,22 @@ describe('deploy-cloudflare-pages.yml — lighthouse on real preview URL', () =>
 describe('ci.yml — Lighthouse CI V2', () => {
   const ciYml = readWorkflow('ci.yml');
 
-  it('must have pull-requests:write permission at workflow level', () => {
-    // Required for future PR comment steps; declared globally so all jobs inherit it.
-    expect(ciYml).toMatch(/pull-requests:\s*write/);
+  it('must have pull-requests:read permission at workflow level (least privilege)', () => {
+    // write scope must only be added per-job when a step actually posts to the PR.
+    expect(ciYml).toMatch(/pull-requests:\s*read/);
   });
 
-  it('all jobs must use Node 22', () => {
-    expect(ciYml).toMatch(/node-version:\s*22/);
+  it('all Node-based jobs must use Node 22', () => {
+    // Verify each known Node-based job explicitly pins Node 22.
+    const jobsRequiringNode = ['build', 'lint', 'typecheck', 'lighthouse'];
+    for (const job of jobsRequiringNode) {
+      const jobHasNode22 = new RegExp(`${job}:[\\s\\S]*?node-version:\\s*22`);
+      expect(ciYml).toMatch(jobHasNode22);
+    }
   });
 
-  it('lighthouse job must run lhci autorun with lighthouserc.cjs', () => {
-    expect(ciYml).toMatch(/lhci autorun.*lighthouserc\.cjs/);
+  it('lighthouse job must run @lhci/cli autorun with lighthouserc.cjs (pinned version)', () => {
+    expect(ciYml).toMatch(/@lhci\/cli@\d+\.\d+\.\d+ autorun.*lighthouserc\.cjs/);
   });
 
   it('lighthouse job must upload reports with if-no-files-found: warn (non-blocking)', () => {

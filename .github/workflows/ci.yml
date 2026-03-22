@@ -16,24 +16,25 @@
 name: CI
 
 on:
+  # workflow_dispatch intentionally removed in V2 — ad-hoc audits on preview URLs were
+  # handled by the old lighthouse-guard.mjs --url flow which is no longer present.
+  # Re-add if a dedicated on-demand audit step is introduced.
   push:
     branches: [main]
     paths:
       - 'frontend/**'
-      - 'price-api/**'
       - '.github/workflows/ci.yml'
       - 'frontend/lighthouserc.cjs'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - 'frontend/**'
-      - 'price-api/**'
       - '.github/workflows/ci.yml'
       - 'frontend/lighthouserc.cjs'
 
 permissions:
   contents: read        # actions/checkout
-  pull-requests: write  # reserved for future PR comment steps (e.g. lhci score summary)
+  pull-requests: read   # least privilege; escalate to write per-job only when a step writes to PRs
   # actions: read intentionally absent — V2 no longer downloads baseline artifacts via API.
   # The old lighthouse-guard.mjs --compare flow (which needed actions:read) has been
   # removed. If artifact download is re-introduced, add actions: read here.
@@ -90,7 +91,7 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint --if-present
+        run: npm run lint
 
   # ─── 3. Typecheck ───────────────────────────────────────────────
   typecheck:
@@ -114,7 +115,7 @@ jobs:
         run: npm ci
 
       - name: Typecheck
-        run: npm run typecheck --if-present
+        run: npm run typecheck
 
   # ─── 4. Lighthouse CI ──────────────────────────────────────────────
   # Mesure performance + accessibilité + best-practices + SEO sur le build de preview.
@@ -149,10 +150,10 @@ jobs:
           echo $! > /tmp/lh-preview.pid
 
       - name: Wait for preview server
-        run: npx wait-on http://127.0.0.1:4173
+        run: npx wait-on@8.0.1 http://127.0.0.1:4173
 
       - name: Run Lighthouse CI
-        run: npx lhci autorun --config=./lighthouserc.cjs
+        run: npx @lhci/cli@0.15.1 autorun --config=./lighthouserc.cjs
 
       - name: Upload Lighthouse reports
         if: always()
