@@ -38,6 +38,18 @@ jobs:
             npm ci || npm install
           fi
 
+      - name: Vérifier le token Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
+            echo "❌ CLOUDFLARE_API_TOKEN absent — déploiement impossible."
+            echo "   📄 Guide de configuration : CLOUDFLARE_SETUP.md"
+            echo "   Permissions requises : Compte | Workers D1 + Scripts Workers + Pages | Modifier"
+            exit 1
+          fi
+          echo "✅ CLOUDFLARE_API_TOKEN présent"
+
       - name: Apply D1 migrations (remote)
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

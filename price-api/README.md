@@ -38,6 +38,24 @@ npx wrangler secret put PRICE_ADMIN_TOKEN
 
 Configurer CORS en production via `ALLOWED_ORIGINS` (origines Cloudflare Pages exactes, séparées par virgule).
 
+## Configuration CI / Déploiement GitHub Actions
+
+Le déploiement automatique nécessite un jeton API Cloudflare avec les bonnes permissions.
+
+**Secret GitHub requis :** `CLOUDFLARE_API_TOKEN`
+
+Permissions à sélectionner lors de la création du jeton sur [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens) :
+
+| Scope | Ressource | Accès |
+|-------|-----------|-------|
+| Compte | Workers D1 | Modifier |
+| Compte | Scripts Workers | Modifier |
+| Compte | Cloudflare Pages | Modifier |
+
+> L'`account_id` (`78642e56f72fff94c78e1ef87cb589a7`) est déjà dans `wrangler.toml` — le secret `CLOUDFLARE_ACCOUNT_ID` n'est pas nécessaire.
+
+📄 Guide complet étape par étape : [CLOUDFLARE_SETUP.md](../CLOUDFLARE_SETUP.md)
+
 Lancer en dev :
 
 ```bash
