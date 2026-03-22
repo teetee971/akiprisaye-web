@@ -230,58 +230,46 @@ describe('deploy-cloudflare-pages.yml — lighthouse on real preview URL', () =>
   });
 });
 
-describe('ci.yml — Lighthouse regression guard and PR comment', () => {
+describe('ci.yml — Lighthouse CI V2', () => {
   const ciYml = readWorkflow('ci.yml');
 
-  it('lighthouse job must have pull-requests:write permission for PR comments', () => {
+  it('must have pull-requests:write permission at workflow level', () => {
+    // Required for future PR comment steps; declared globally so all jobs inherit it.
     expect(ciYml).toMatch(/pull-requests:\s*write/);
   });
 
-  it('lighthouse job must have actions:read permission for artifact download', () => {
-    expect(ciYml).toMatch(/actions:\s*read/);
+  it('all jobs must use Node 22', () => {
+    expect(ciYml).toMatch(/node-version:\s*22/);
   });
 
-  it('lighthouse job must run lighthouse-guard.mjs --write after LHCI', () => {
-    expect(ciYml).toMatch(/lighthouse-guard\.mjs.*--write/);
+  it('lighthouse job must run lhci autorun with lighthouserc.cjs', () => {
+    expect(ciYml).toMatch(/lhci autorun.*lighthouserc\.cjs/);
   });
 
-  it('lighthouse job must run regression guard --compare on pull_request events', () => {
-    expect(ciYml).toMatch(/lighthouse-guard\.mjs.*--compare/);
+  it('lighthouse job must upload reports with if-no-files-found: warn (non-blocking)', () => {
+    // Prevents CI failure when .lighthouseci dir is absent (e.g. lhci not run).
+    expect(ciYml).toMatch(/if-no-files-found:\s*warn/);
+  });
+
+  it('lighthouse job must stop preview server cleanly on if: always()', () => {
+    // Ensures the server process is cleaned up even when lhci or wait-on fails.
+    expect(ciYml).toMatch(/Stop preview server/);
+    expect(ciYml).toMatch(/lh-preview\.pid/);
+  });
+
+  it('build, lint and typecheck jobs must only run on pull_request events', () => {
+    // Avoids redundant full builds on push:main; lighthouse covers push:main.
     expect(ciYml).toMatch(/github\.event_name\s*==\s*['"]pull_request['"]/);
   });
 
-  it('lighthouse job must post a PR comment with Lighthouse scores', () => {
-    expect(ciYml).toMatch(/lighthouse-pr-comment\.mjs/);
+  it('must have a ci-summary job that aggregates all job results', () => {
+    expect(ciYml).toMatch(/ci-summary:/);
+    // ci-summary must declare needs so GitHub marks it as a required check.
+    expect(ciYml).toMatch(/needs:/);
   });
 
-  it('PR comment step must have continue-on-error to never block CI', () => {
-    expect(ciYml).toMatch(/continue-on-error:\s*true/);
-  });
-
-  it('lighthouse job must upload separate lighthouse-scores artifact (90-day baseline)', () => {
-    expect(ciYml).toMatch(/name:\s*lighthouse-scores/);
-    expect(ciYml).toMatch(/retention-days:\s*90/);
-  });
-
-  it('lighthouse job must detect override label ci:override-lighthouse', () => {
-    // The override label converts FAIL → WARN (never PASS, never silent).
-    // This prevents a FAIL from blocking merge when explicitly overridden.
-    expect(ciYml).toMatch(/ci:override-lighthouse/);
-    expect(ciYml).toMatch(/LH_OVERRIDE_LABEL/);
-  });
-
-  it('lighthouse job override check must set an output variable for downstream steps', () => {
-    // The override label detection must produce a step output (override_check.outputs.active)
-    // consumed by the quality gate step via LH_OVERRIDE_LABEL env var.
-    expect(ciYml).toMatch(/override_check/);
-    expect(ciYml).toMatch(/steps\.override_check\.outputs\.active/);
-  });
-
-  it('lighthouse job must propagate URL metadata (LH_AUDITED_URL, LH_SOURCE_TYPE, LH_WAS_FALLBACK)', () => {
-    // prepare-lighthouse-config.mjs writes these to $GITHUB_ENV; downstream steps must read them.
-    expect(ciYml).toMatch(/LH_AUDITED_URL/);
-    expect(ciYml).toMatch(/LH_SOURCE_TYPE/);
-    expect(ciYml).toMatch(/LH_WAS_FALLBACK/);
+  it('lighthouse job must have concurrency cancel-in-progress to drop stale runs', () => {
+    expect(ciYml).toMatch(/cancel-in-progress:\s*true/);
   });
 });
 
