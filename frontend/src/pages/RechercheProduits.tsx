@@ -1112,7 +1112,7 @@ export default function RechercheProduits() {
                 disabled={!canSearch}
                 className="flex-1 sm:flex-none sm:px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:text-slate-500 rounded-xl font-semibold text-sm transition-colors"
               >
-                {loading ? '⏳ Recherche…' : '🔍 Comparer les prix'}
+                {loading ? 'Recherche…' : 'Comparer les prix'}
               </button>
               {shouldShowReset && !loading && (
                 <button
@@ -1124,11 +1124,7 @@ export default function RechercheProduits() {
               )}
             </div>
 
-            {!hasSearchInput && (
-              <p className="text-xs text-slate-500">
-                💡 Tapez un nom de produit ou scannez un code-barres. Choisissez votre île pour des prix locaux.
-              </p>
-            )}
+
           </form>
         </section>
 
@@ -1138,28 +1134,6 @@ export default function RechercheProduits() {
             <div className="h-4 rounded-full bg-slate-800/60 w-5/6" />
           </div>
         )}
-
-        <SearchHistoryPanel
-          entries={history}
-          onReplay={handleReplayHistory}
-          onRemove={removeEntry}
-          onClear={clearHistory}
-        />
-
-        <FavoritesPanel favorites={favorites} onView={handleViewFavorite} onRemove={handleRemoveFavorite} />
-
-        <p className="text-xs text-slate-400">
-          🔒 Les données restent sur votre appareil.
-        </p>
-
-        <section className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 text-sm text-slate-300 space-y-2">
-          <h2 className="font-semibold text-white">💡 Conseils</h2>
-          <ul className="list-disc list-inside space-y-1 text-slate-400">
-            <li>Tapez juste <strong className="text-slate-300">« coca »</strong> pour trouver le Coca-Cola — la recherche comprend les variantes.</li>
-            <li>Sélectionnez <strong className="text-slate-300">votre île</strong> pour voir les prix locaux réellement relevés.</li>
-            <li>Scannez le code-barres depuis la page <strong className="text-slate-300">Scan</strong> pour identifier instantanément un produit.</li>
-          </ul>
-        </section>
 
         {cachedAt && !loading && (
           <div className="bg-emerald-900/20 border border-emerald-700 rounded-2xl p-4 text-sm text-emerald-200">
@@ -1195,6 +1169,22 @@ export default function RechercheProduits() {
             onFavoriteToast={showToast}
           />
         )}
+        {(history.length > 0 || favorites.length > 0) && (
+          <div className="space-y-3">
+            {history.length > 0 && (
+              <SearchHistoryPanel
+                entries={history}
+                onReplay={handleReplayHistory}
+                onRemove={removeEntry}
+                onClear={clearHistory}
+              />
+            )}
+            {favorites.length > 0 && (
+              <FavoritesPanel favorites={favorites} onView={handleViewFavorite} onRemove={handleRemoveFavorite} />
+            )}
+          </div>
+        )}
+
         {toastMessage && (
           <div
             className="fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/90 border border-slate-700 text-slate-100 text-sm px-4 py-2 rounded-full shadow-lg"
