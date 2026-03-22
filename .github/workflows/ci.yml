@@ -32,8 +32,11 @@ on:
       - 'frontend/lighthouserc.cjs'
 
 permissions:
-  contents: read
-  pull-requests: write
+  contents: read        # actions/checkout
+  pull-requests: write  # reserved for future PR comment steps (e.g. lhci score summary)
+  # actions: read intentionally absent — V2 no longer downloads baseline artifacts via API.
+  # The old lighthouse-guard.mjs --compare flow (which needed actions:read) has been
+  # removed. If artifact download is re-introduced, add actions: read here.
 
 concurrency:
   group: ci-${{ github.ref }}
