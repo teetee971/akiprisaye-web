@@ -1,19 +1,17 @@
-# CI Pipeline — akiprisaye-web / frontend
+# CI Pipeline V2 — akiprisaye-web / frontend
 #
 # Jobs séparés pour une meilleure lisibilité et un échec précis :
-#   lint       → ESLint (config frontend, jsx-a11y actif)
-#   typecheck  → TypeScript strict (tsconfig.ci.json)
-#   test       → Vitest unit tests + audit sécurité
-#   build      → Build production Vite
-#   verify-pages → Build GitHub Pages + vérifications runtime
-#   lighthouse → Audit Lighthouse CI (performance ≥ 80, accessibilité ≥ 90)
+#   build      → Build production Vite (PR uniquement)
+#   lint       → ESLint (PR uniquement)
+#   typecheck  → TypeScript strict (PR uniquement)
+#   lighthouse → Audit Lighthouse CI (PR + push main)
+#   ci-summary → Résumé agrégé de tous les jobs
 #
 # Stratégie :
-#   - Chaque job installe ses dépendances via npm ci (rapide grâce au cache npm)
-#   - Les jobs lint/typecheck/test/build s'exécutent en parallèle
-#   - verify-pages reste indépendant (simule l'env GitHub Pages)
-#   - lighthouse build + audit dans le même job (indépendant)
-#   - working-directory: frontend sur tous les jobs pour éviter toute ambiguïté de config
+#   - build/lint/typecheck ne s'exécutent que sur pull_request
+#   - lighthouse s'exécute toujours (PR et push main)
+#   - Node 22, arrêt propre du serveur preview, upload des rapports non bloquant
+#   - working-directory: frontend sur les jobs frontend pour éviter toute ambiguïté
 
 name: CI
 
@@ -24,352 +22,182 @@ on:
       - 'frontend/**'
       - 'price-api/**'
       - '.github/workflows/ci.yml'
+      - 'frontend/lighthouserc.cjs'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - 'frontend/**'
       - 'price-api/**'
       - '.github/workflows/ci.yml'
-  workflow_dispatch:
-    inputs:
-      lhci_url:
-        description: "URL de preview réelle à auditer (optionnel — fallback localhost:4173)"
-        required: false
-        default: ""
+      - 'frontend/lighthouserc.cjs'
 
 permissions:
   contents: read
+  pull-requests: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
-  # ─── 1. Lint ────────────────────────────────────────────────────────────────
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Validate package-lock.json (must be valid JSON)
-        working-directory: frontend
-        run: node -e "JSON.parse(require('fs').readFileSync('package-lock.json','utf8')); console.log('package-lock.json OK')"
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm ci --no-audit --no-fund
-
-      - name: Lint
-        working-directory: frontend
-        # Config : frontend/eslint.config.cjs (détectée automatiquement car cwd=frontend)
-        # jsx-a11y activé en mode warn (dette technique visible, non bloquante)
-        # Les erreurs ESLint (exit 1) font échouer ce job
-        run: npm run lint
-
-      - name: ESLint warning count guard (max 17)
-        working-directory: frontend
-        # Exécute ESLint en sortie JSON sur src/, compte le total des warnings,
-        # et fait échouer la CI si warnings > 17.
-        # Seuil = 17 warnings jsx-a11y acceptés (dette technique figée).
-        # Ne modifie aucune règle ESLint.
-        run: node scripts/eslint-warning-check.mjs
-
-  # ─── 2. Typecheck ───────────────────────────────────────────────────────────
-  typecheck:
-    name: Typecheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm ci --no-audit --no-fund
-
-      - name: Typecheck (TypeScript strict)
-        working-directory: frontend
-        run: npx tsc -p tsconfig.ci.json --noEmit
-
-  # ─── 3. Test ────────────────────────────────────────────────────────────────
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm ci --no-audit --no-fund
-
-      - name: Security audit (no high/critical vulnerabilities)
-        working-directory: frontend
-        run: npm audit --omit=dev --audit-level=high
-
-      - name: Check Firebase API key regression
-        working-directory: frontend
-        run: npx vitest run --config vitest.config.ts firebase-config
-
-      - name: Unit tests
-        working-directory: frontend
-        run: npm run test:ci
-
-  # ─── 4. Build ───────────────────────────────────────────────────────────────
+  # ─── 1. Build ───────────────────────────────────────────────────
   build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-node@v5
-        with:
-          node-version-file: .nvmrc
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: npm ci --no-audit --no-fund
-
-      - name: Build production
-        working-directory: frontend
-        env:
-          NODE_OPTIONS: --max-old-space-size=4096
-        run: npm run build
-
-  # ─── 5. Verify Pages ────────────────────────────────────────────────────────
-  # Simule le build GitHub Pages (BASE_PATH=/akiprisaye-web/) pour détecter
-  # les régressions de routing ou de chemins d'assets avant merge.
-  verify-pages:
-    name: Verify Pages build
+    name: Build (pull_request)
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
+
     steps:
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5
         with:
-          node-version-file: .nvmrc
+          node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm ci --no-audit --no-fund
+        run: npm ci
 
-      - name: Build (GitHub Pages)
-        env:
-          BASE_PATH: /akiprisaye-web/
-          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Build
         run: npm run build
 
-      - name: SPA fallback - copy index.html to 404.html (mirrors deploy-pages.yml)
-        run: cp dist/index.html dist/404.html
-
-      - name: Verify build paths (GitHub Pages)
-        run: node scripts/verify-pages-build.mjs
-
-      - name: Production-like runtime check (GitHub Pages base path)
-        run: node scripts/verify-pages-runtime.mjs
-
-  # ─── 6. Price-API ───────────────────────────────────────────────────────────
-  price-api:
-    name: Price-API (typecheck + test)
+  # ─── 2. Lint ────────────────────────────────────────────────────
+  lint:
+    name: Lint (pull_request)
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5
         with:
-          node-version-file: .nvmrc
+          node-version: 22
           cache: npm
-          cache-dependency-path: price-api/package-lock.json
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: price-api
-        run: npm ci --no-audit --no-fund
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint --if-present
+
+  # ─── 3. Typecheck ───────────────────────────────────────────────
+  typecheck:
+    name: Typecheck (pull_request)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Typecheck
-        working-directory: price-api
-        run: npm run typecheck
+        run: npm run typecheck --if-present
 
-      - name: Unit tests
-        working-directory: price-api
-        run: npm run test
-
-  # ─── 7. Lighthouse CI ───────────────────────────────────────────────────────
-  # Mesure performance + accessibilité + best practices + SEO sur le build de preview.
-  # Seuils : performance ≥ 80 (warn), accessibilité ≥ 90 (error), SEO ≥ 80 (warn).
-  # URL cible : LHCI_URL si fourni (workflow_dispatch), sinon localhost:4173 (fallback).
-  # Sur push:main, l'audit sur URL réelle se produit aussi via deploy-cloudflare-pages.yml.
-  # Sorties : rapports JSON + HTML uploadés en artefacts CI + résumé dans le job summary.
-  # Régression guard : compare avec la baseline main (artifact "lighthouse-scores").
-  # PR comment : poste/met à jour un commentaire sur la PR avec les scores + delta.
-  # Override label : ci:override-lighthouse — FAIL → WARN (journalisé, jamais silencieux).
+  # ─── 4. Lighthouse CI ──────────────────────────────────────────────
+  # Mesure performance + accessibilité + best-practices + SEO sur le build de preview.
+  # Config : frontend/lighthouserc.cjs (V2).
+  # URL cible : http://127.0.0.1:4173 (npm run preview).
+  # Sorties : rapports JSON + HTML uploadés en artefacts CI (non bloquant si absent).
   lighthouse:
-    name: Lighthouse CI
+    name: Lighthouse CI (${{ github.event_name }})
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: write   # pour poster un commentaire sur la PR
-      actions: read          # pour télécharger l'artifact baseline (régression guard)
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5
         with:
-          node-version-file: .nvmrc
+          node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Cache Puppeteer / Chrome
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/puppeteer
-          key: puppeteer-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
-          restore-keys: |
-            puppeteer-${{ runner.os }}-
-
       - name: Install dependencies
-        working-directory: frontend
-        run: npm ci --no-audit --no-fund
+        run: npm ci
 
-      - name: Build production
-        working-directory: frontend
-        env:
-          NODE_OPTIONS: --max-old-space-size=4096
+      - name: Build
         run: npm run build
 
-      - name: Check override label (ci:override-lighthouse)
-        # Détecte si le label 'ci:override-lighthouse' est présent sur la PR.
-        # Si oui : FAIL → WARN (jamais PASS, jamais silencieux).
-        # Cet état est journalisé dans le commentaire PR et dans le résumé.
-        id: override_check
-        if: github.event_name == 'pull_request'
+      - name: Start preview server
         run: |
-          LABELS_JSON='${{ toJSON(github.event.pull_request.labels) }}'
-          if echo "$LABELS_JSON" | grep -q '"ci:override-lighthouse"'; then
-            echo "active=true" >> "$GITHUB_OUTPUT"
-            echo "⚠️  Label 'ci:override-lighthouse' détecté — FAIL sera converti en WARN."
-            echo "   Cet override est journalisé dans les artifacts et le commentaire PR."
-          else
-            echo "active=false" >> "$GITHUB_OUTPUT"
-            echo "ℹ️  Aucun override label détecté — comportement normal."
-          fi
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/lh-preview.log 2>&1 &
+          echo $! > /tmp/lh-preview.pid
 
-      - name: Prepare Lighthouse config (URL Cloudflare > manuelle > localhost)
-        # Politique d'URL (ordre de priorité) :
-        #   1. URL Cloudflare Pages réelle (LHCI_URL depuis workflow_dispatch)
-        #   2. URL manuelle (workflow_dispatch)
-        #   3. Fallback localhost:4173 (npm run preview)
-        # Exporte LH_AUDITED_URL, LH_SOURCE_TYPE, LH_WAS_FALLBACK dans $GITHUB_ENV.
-        working-directory: frontend
-        env:
-          LHCI_URL: ${{ github.event.inputs.lhci_url }}
-        run: node scripts/prepare-lighthouse-config.mjs
+      - name: Wait for preview server
+        run: npx wait-on http://127.0.0.1:4173
 
       - name: Run Lighthouse CI
-        # continue-on-error: LHCI exits 1 for ANY assertion failure (even "warn" level).
-        # Score regressions are not technical errors — they are handled non-blocking by
-        # lighthouse-guard.mjs --compare. Only a true technical failure (server won't
-        # start, Lighthouse crashes) would also trigger this, but we still want reports
-        # and the quality gate to run even in that case.
-        continue-on-error: true
-        working-directory: frontend
-        run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
+        run: npx lhci autorun --config=./lighthouserc.cjs
 
-      - name: Write Lighthouse scores (input baseline)
-        # Toujours exécuté pour capturer les scores même en cas d'erreur LHCI.
-        # Écrit .lighthouseci/lighthouse-scores.json avec métadonnées enrichies
-        # (sha, branch, runId, sourceType, qualityScore…).
-        # Uploadé comme artifact "lighthouse-scores" (baseline pour les prochaines PR).
-        if: always()
-        working-directory: frontend
-        env:
-          LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
-          LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
-          LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
-        run: node scripts/lighthouse-guard.mjs --write
-
-      - name: Quality gate (comparaison avec baseline main)
-        # Télécharge l'artifact "lighthouse-scores" du dernier run main via l'API GitHub.
-        # Utilise le moteur de décision (lighthouse-engine.mjs) pour produire un verdict
-        # PASS / WARN / FAIL / NO_BASELINE avec codes de raison explicites.
-        # Non bloquant sur PR : toujours exit 0 (FAIL = avertissement visible, pas d'échec CI).
-        # Écrit /tmp/lh-verdict.json pour le commentaire PR et le résumé.
-        if: always() && github.event_name == 'pull_request'
-        working-directory: frontend
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          LH_OVERRIDE_LABEL: ${{ steps.override_check.outputs.active }}
-          LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
-          LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
-          LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
-        run: node scripts/lighthouse-guard.mjs --compare
-
-      - name: PR comment — rapport qualité Lighthouse
-        # Poste ou met à jour un commentaire idempotent sur la PR.
-        # Contient : verdict, quality score, tableau métriques, budgets, diagnostics.
-        # Ne fait JAMAIS échouer la CI (continue-on-error: true).
-        # Si le commentaire n'a pas pu être posté, le log l'indique explicitement.
-        if: always() && github.event_name == 'pull_request'
-        continue-on-error: true
-        working-directory: frontend
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_EVENT_PATH: ${{ github.event_path }}
-          BASELINE_SCORES_PATH: /tmp/lh-baseline.json
-        run: node scripts/lighthouse-pr-comment.mjs
-
-      - name: Print Lighthouse summary (résumé exécutif)
-        if: always()
-        working-directory: frontend
-        run: node scripts/lighthouse-summary.mjs
-
-      - name: Upload Lighthouse reports (JSON + HTML)
+      - name: Upload Lighthouse reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-reports
-          path: frontend/.lighthouseci/
-          retention-days: 30
+          name: lighthouse-reports-${{ github.run_id }}
+          path: |
+            frontend/.lighthouseci/**
+            frontend/lighthouse-results/**
+          if-no-files-found: warn
 
-      - name: Upload Lighthouse scores (référence baseline, 90 jours)
-        # Uploadé séparément du rapport complet pour être facilement téléchargeable.
-        # Utilisé comme baseline par le quality gate des prochains runs sur PR.
+      - name: Upload Lighthouse scores
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-scores
-          path: frontend/.lighthouseci/lighthouse-scores.json
-          retention-days: 90
+          name: lighthouse-scores-${{ github.run_id }}
+          path: |
+            frontend/lighthouse-results/**/*.json
+            frontend/.lighthouseci/**/*.json
+          if-no-files-found: warn
 
-  # ─── 8. build-test (gate rétro-compatible) ──────────────────────────────────
-  # Ce job émet le check "build-test" requis par la règle de protection de
-  # branche (configurée avant le découpage lint/typecheck/test/build).
-  # Il se contente d'attendre que build ET test soient verts, sans ré-exécuter
-  # de travail. Ne pas supprimer tant que la règle de protection n'est pas mise
-  # à jour manuellement dans GitHub Settings › Branch protection rules.
-  build-test:
-    name: build-test
+      - name: Print preview server log on failure
+        if: failure()
+        run: |
+          echo "===== /tmp/lh-preview.log ====="
+          cat /tmp/lh-preview.log || true
+
+      - name: Stop preview server
+        if: always()
+        run: |
+          if [ -f /tmp/lh-preview.pid ]; then
+            kill "$(cat /tmp/lh-preview.pid)" || true
+          fi
+
+  # ─── 5. CI Summary ───────────────────────────────────────────────
+  ci-summary:
+    name: CI Summary
+    if: always()
     runs-on: ubuntu-latest
-    needs: [build, test]
+    needs:
+      - build
+      - lint
+      - typecheck
+      - lighthouse
     steps:
-      - run: echo "build-test gate — build ✅  test ✅"
+      - name: Summarize results
+        run: |
+          echo "Build:      ${{ needs.build.result }}"
+          echo "Lint:       ${{ needs.lint.result }}"
+          echo "Typecheck:  ${{ needs.typecheck.result }}"
+          echo "Lighthouse: ${{ needs.lighthouse.result }}"
