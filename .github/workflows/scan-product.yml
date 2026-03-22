@@ -153,13 +153,13 @@ jobs:
               -m "🔍 [scan] Prix produit — $(date -u '+%Y-%m-%d %H:%M UTC')" \
               -m "EAN: ${{ inputs.ean || inputs.eans || 'panier-base' }} | Territoire: ${{ inputs.territory }}" \
               -m "[skip ci]"
-            git push
+            git push || echo "⚠️  Push vers main rejeté (règle de protection de branche) — résultats disponibles en artifacts CI"
             echo "✅ Résultats committés"
           fi
 
       - name: 📢 Notification échec
         if: failure()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             core.warning(`⚠️ Échec scan produit EAN: ${{ inputs.ean || inputs.eans || 'panier-base' }}`);

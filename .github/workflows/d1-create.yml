@@ -24,6 +24,24 @@ jobs:
 
       - run: npm ci
 
+      - name: Vérifier les secrets Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "${CLOUDFLARE_API_TOKEN}" ]; then
+            echo "❌ Le secret CLOUDFLARE_API_TOKEN est absent ou vide."
+            echo "   → Configurez-le dans Settings › Secrets and variables › Actions"
+            exit 1
+          fi
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID}" ]; then
+            echo "❌ Le secret CLOUDFLARE_ACCOUNT_ID est absent ou vide."
+            echo "   → Trouvez votre Account ID sur https://dash.cloudflare.com (barre latérale droite)"
+            echo "   → Configurez-le dans Settings › Secrets and variables › Actions"
+            exit 1
+          fi
+          echo "✅ Secrets Cloudflare présents"
+
       - name: Create D1
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
