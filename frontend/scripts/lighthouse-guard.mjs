@@ -78,15 +78,6 @@ const THRESHOLD_ACCESSIBILITY  = Number(process.env.THRESHOLD_ACCESSIBILITY  ?? 
 const THRESHOLD_SEO            = Number(process.env.THRESHOLD_SEO            ?? 3);
 const THRESHOLD_BEST_PRACTICES = Number(process.env.THRESHOLD_BEST_PRACTICES ?? 3);
 
-// Seuils minimaux absolus (hard fail si en-dessous — indépendant de la baseline).
-// Contrairement aux seuils de régression, ces seuils bloquent la CI même sans baseline.
-// MIN_PERFORMANCE set to 60 — realistic step-up from current baseline (~52-54).
-// Raise to 75 once the score has been sustained above 70 for two releases.
-const MIN_PERFORMANCE    = Number(process.env.MIN_PERFORMANCE    ?? 60);
-const MIN_ACCESSIBILITY  = Number(process.env.MIN_ACCESSIBILITY  ?? 90);
-const MIN_SEO            = Number(process.env.MIN_SEO            ?? 90);
-const MIN_BEST_PRACTICES = Number(process.env.MIN_BEST_PRACTICES ?? 90);
-
 // Surchages transmises au moteur si différentes des défauts.
 const overrideThresholds = {
   performance:   { failDrop: THRESHOLD_PERFORMANCE   },
@@ -380,46 +371,6 @@ async function compareScores() {
 }
 
 // ─── Helpers internes ──────────────────────────────────────────────────────────
-
-/**
- * Vérifie les seuils minimaux absolus (indépendants de la baseline).
- * Termine le processus avec code 1 si un score est en-dessous du minimum.
- * Appelé à la fin de compareScores(), après l'écriture du verdict JSON.
- */
-function enforceAbsoluteThresholds(scores) {
-  const thresholds = {
-    performance:   MIN_PERFORMANCE,
-    accessibility: MIN_ACCESSIBILITY,
-    bestPractices: MIN_BEST_PRACTICES,
-    seo:           MIN_SEO,
-  };
-
-  const failures = [];
-
-  if (scores.performance < thresholds.performance) {
-    failures.push(`Performance ${scores.performance} < ${thresholds.performance}`);
-  }
-
-  if (scores.accessibility < thresholds.accessibility) {
-    failures.push(`Accessibility ${scores.accessibility} < ${thresholds.accessibility}`);
-  }
-
-  if (scores.bestPractices < thresholds.bestPractices) {
-    failures.push(`BestPractices ${scores.bestPractices} < ${thresholds.bestPractices}`);
-  }
-
-  if (scores.seo < thresholds.seo) {
-    failures.push(`SEO ${scores.seo} < ${thresholds.seo}`);
-  }
-
-  if (failures.length > 0) {
-    console.error('\n❌ LIGHTHOUSE HARD FAIL — seuils minimaux absolus non atteints :');
-    for (const f of failures) console.error(`   — ${f}`);
-    process.exit(1);
-  }
-
-  console.log('✅ Lighthouse thresholds passed');
-}
 
 /**
  * Écrit un verdict NO_BASELINE dans /tmp/lh-verdict.json.

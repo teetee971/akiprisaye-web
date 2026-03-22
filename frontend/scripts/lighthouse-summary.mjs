@@ -67,7 +67,12 @@ for (const file of reports) {
   const a11y = Math.round(data.categories.accessibility.score * 100);
   const bp   = Math.round(data.categories['best-practices'].score * 100);
   const seo  = Math.round(data.categories.seo.score * 100);
-  const ok   = (v, t) => v >= t ? '✅' : '❌';
+  // Statut par rapport au seuil absolu (METRIC_CONFIG.absoluteMin — source unique de vérité).
+  // Si absoluteMin est null, pas de seuil absolu → toujours affiché sans icône de statut.
+  const okAbsolute = (v, key) => {
+    const min = METRIC_CONFIG[key]?.absoluteMin;
+    return min !== null && min !== undefined ? (v >= min ? '✅' : '❌') : null;
+  };
 
   // Verdict et Quality Score depuis le moteur ou affichage simple
   const verdict      = verdictData?.verdict ?? null;
@@ -89,10 +94,10 @@ for (const file of reports) {
   if (urlInfo.crossContext) console.log('  ⚠️  Comparaison cross-context');
   if (hasOverride) console.log('  ⚠️  Override label ci:override-lighthouse actif');
   console.log('');
-  console.log('  Performance    : ' + ok(perf, 80) + '  ' + perf + ' / 100  (seuil ≥ 80)');
-  console.log('  Accessibilité  : ' + ok(a11y, 90) + '  ' + a11y + ' / 100  (seuil ≥ 90)');
-  console.log('  Best Practices : ' + bp + ' / 100');
-  console.log('  SEO            : ' + ok(seo, 80) + '  ' + seo + ' / 100  (seuil ≥ 80)');
+  console.log('  Performance    : ' + (okAbsolute(perf, 'performance')  ?? '·') + '  ' + perf + ' / 100  (seuil absolu : ' + (METRIC_CONFIG.performance.absoluteMin  !== null ? `≥ ${METRIC_CONFIG.performance.absoluteMin}`  : '—') + ')');
+  console.log('  Accessibilité  : ' + (okAbsolute(a11y, 'accessibility') ?? '·') + '  ' + a11y + ' / 100  (seuil absolu : ' + (METRIC_CONFIG.accessibility.absoluteMin !== null ? `≥ ${METRIC_CONFIG.accessibility.absoluteMin}` : '—') + ')');
+  console.log('  Best Practices : ' + (okAbsolute(bp,   'bestPractices') ?? '·') + '  ' + bp   + ' / 100  (seuil absolu : ' + (METRIC_CONFIG.bestPractices.absoluteMin  !== null ? `≥ ${METRIC_CONFIG.bestPractices.absoluteMin}`  : '—') + ')');
+  console.log('  SEO            : ' + (okAbsolute(seo,  'seo')           ?? '·') + '  ' + seo  + ' / 100  (seuil absolu : ' + (METRIC_CONFIG.seo.absoluteMin           !== null ? `≥ ${METRIC_CONFIG.seo.absoluteMin}`           : '—') + ')');
 
   if (trendInfo?.trends) {
     console.log('');
@@ -136,12 +141,12 @@ for (const file of reports) {
   summaryLines.push(
     '### Métriques',
     '',
-    '| Métrique | Score | Seuil | Statut |',
+    '| Métrique | Score | Seuil absolu | Statut |',
     '|---|---|---|---|',
-    `| **Performance** | ${perf} / 100 | ≥ 80 | ${ok(perf, 80)} |`,
-    `| **Accessibilité** | ${a11y} / 100 | ≥ 90 | ${ok(a11y, 90)} |`,
-    `| **Best Practices** | ${bp} / 100 | — | — |`,
-    `| **SEO** | ${seo} / 100 | ≥ 80 | ${ok(seo, 80)} |`,
+    `| **Performance** | ${perf} / 100 | ${METRIC_CONFIG.performance.absoluteMin  !== null ? `≥ ${METRIC_CONFIG.performance.absoluteMin}`  : '—'} | ${okAbsolute(perf, 'performance')  ?? '—'} |`,
+    `| **Accessibilité** | ${a11y} / 100 | ${METRIC_CONFIG.accessibility.absoluteMin !== null ? `≥ ${METRIC_CONFIG.accessibility.absoluteMin}` : '—'} | ${okAbsolute(a11y, 'accessibility') ?? '—'} |`,
+    `| **Best Practices** | ${bp} / 100 | ${METRIC_CONFIG.bestPractices.absoluteMin  !== null ? `≥ ${METRIC_CONFIG.bestPractices.absoluteMin}`  : '—'} | ${okAbsolute(bp,   'bestPractices') ?? '—'} |`,
+    `| **SEO** | ${seo} / 100 | ${METRIC_CONFIG.seo.absoluteMin !== null ? `≥ ${METRIC_CONFIG.seo.absoluteMin}` : '—'} | ${okAbsolute(seo, 'seo') ?? '—'} |`,
     '',
     `**URL testée :** \`${urlInfo.auditedUrl || url}\``,
     '',

@@ -605,3 +605,49 @@ describe('deploy-cloudflare-pages.yml — pre-build Firebase key guard', () => {
     expect(cloudflareYml).not.toContain(p.join(''));
   });
 });
+
+describe('lighthouse-summary.mjs — single source of truth for thresholds', () => {
+  const src = readFileSync(path.join(HERE, 'lighthouse-summary.mjs'), 'utf8');
+
+  it('must import METRIC_CONFIG from lighthouse-engine.mjs', () => {
+    // The summary must derive display thresholds from METRIC_CONFIG, not hardcode them.
+    expect(src).toMatch(/METRIC_CONFIG/);
+    expect(src).toMatch(/lighthouse-engine\.mjs/);
+  });
+
+  it('must NOT hardcode performance threshold as a magic number (e.g. ok(perf, 80))', () => {
+    // Performance absoluteMin is null — showing "≥ 80" would be misleading.
+    // The threshold must be read from METRIC_CONFIG.performance.absoluteMin.
+    expect(src).not.toMatch(/ok\s*\(\s*perf\s*,\s*\d/);
+  });
+
+  it('must NOT hardcode accessibility threshold as a magic number (e.g. ok(a11y, 90))', () => {
+    // Accessibility absoluteMin must come from METRIC_CONFIG, not be hardcoded.
+    expect(src).not.toMatch(/ok\s*\(\s*a11y\s*,\s*\d/);
+  });
+
+  it('must reference METRIC_CONFIG.absoluteMin to determine per-metric thresholds', () => {
+    // The absoluteMin field drives the "Seuil absolu" column; null → "—".
+    expect(src).toMatch(/absoluteMin/);
+  });
+});
+
+describe('lighthouse-guard.mjs — no dead-code absolute-threshold enforcement', () => {
+  const src = readFileSync(path.join(HERE, 'lighthouse-guard.mjs'), 'utf8');
+
+  it('must NOT define enforceAbsoluteThresholds (dead code — never called, violates non-blocking contract)', () => {
+    // This function was defined but never invoked. It called process.exit(1) which
+    // would violate the "Mode --compare toujours non bloquant" contract. Removing it
+    // prevents accidental re-introduction and keeps the exit-code contract clear.
+    expect(src).not.toMatch(/enforceAbsoluteThresholds/);
+  });
+
+  it('must NOT declare MIN_PERFORMANCE / MIN_ACCESSIBILITY / MIN_SEO / MIN_BEST_PRACTICES constants', () => {
+    // These constants were only used by the dead enforceAbsoluteThresholds function.
+    // Absolute minimums are enforced by METRIC_CONFIG.absoluteMin in lighthouse-engine.mjs.
+    expect(src).not.toMatch(/\bMIN_PERFORMANCE\b/);
+    expect(src).not.toMatch(/\bMIN_ACCESSIBILITY\b/);
+    expect(src).not.toMatch(/\bMIN_SEO\b/);
+    expect(src).not.toMatch(/\bMIN_BEST_PRACTICES\b/);
+  });
+});
