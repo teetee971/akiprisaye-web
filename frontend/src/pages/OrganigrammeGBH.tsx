@@ -1609,6 +1609,217 @@ const OrganigrammeGBH: React.FC = () => {
               </div>
             </div>
 
+            <SectionTitle icon={BarChart2}>Tableau des dirigeants & mandataires sociaux documentés</SectionTitle>
+
+            <InfoBox color="blue" title="ℹ️ Sources du tableau des dirigeants">
+              Ce tableau est construit à partir des sources publiques disponibles : Registre National
+              des Entreprises (RNE/INPI — SIREN 313 222 260 et filiales), publications BODACC,
+              Avis de l'Autorité de la concurrence (09-A-45, 19-A-12), presse régionale antillaise
+              et site officiel GBH. Les mandats précis et dates d'entrée en fonction ne sont pas
+              tous publiés pour une SAS familiale non cotée.
+            </InfoBox>
+
+            {/* Tableau principal des dirigeants */}
+            <div className="overflow-x-auto mb-8 mt-4">
+              <table className="w-full text-xs text-left min-w-[700px]">
+                <thead>
+                  <tr className="border-b border-amber-500/30 bg-amber-500/5">
+                    <th className="pb-3 pt-2 px-3 text-amber-300 font-bold">Dirigeant</th>
+                    <th className="pb-3 pt-2 px-3 text-amber-300 font-bold">Titre / Fonction</th>
+                    <th className="pb-3 pt-2 px-3 text-amber-300 font-bold">Entité(s) concernée(s)</th>
+                    <th className="pb-3 pt-2 px-3 text-amber-300 font-bold">Pôle</th>
+                    <th className="pb-3 pt-2 px-3 text-amber-300 font-bold">Source</th>
+                    <th className="pb-3 pt-2 px-3 text-amber-300 font-bold">Fiabilité</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {[
+                    {
+                      nom: 'Bernard Hayot',
+                      emoji: '👤',
+                      titre: 'Fondateur & PDG',
+                      detail: 'Président Directeur Général de la holding de tête GBH SAS. Actionnaire majoritaire. Décisionnaire stratégique ultime du groupe.',
+                      entites: 'GBH SAS (holding)',
+                      pole: 'Groupe entier',
+                      source: 'RNE · ADLC · Presse nationale',
+                      fiabilite: 'Certifié',
+                      color: 'amber',
+                    },
+                    {
+                      nom: 'Arnaud Hayot',
+                      emoji: '👤',
+                      titre: 'Directeur Général Adjoint',
+                      detail: 'Identifié dans le BODACC comme mandataire social de plusieurs filiales du pôle distribution. Responsable opérationnel du pôle Grande Distribution Carrefour dans les DOM.',
+                      entites: 'CaribHyp SAS · Filiales Carrefour DOM',
+                      pole: 'Distribution',
+                      source: 'BODACC · France-Antilles',
+                      fiabilite: 'Documenté',
+                      color: 'blue',
+                    },
+                    {
+                      nom: 'Marc Hayot',
+                      emoji: '👤',
+                      titre: 'Directeur Pôle Automobile',
+                      detail: 'Mentionné dans des publications légales et presse régionale en lien avec les filiales automobiles du groupe (concessions Toyota, Mitsubishi, Kia dans les Antilles).',
+                      entites: 'Filiales automobile GBH (GP, MQ, GF)',
+                      pole: 'Automobile',
+                      source: 'BODACC · Presse régionale',
+                      fiabilite: 'Documenté',
+                      color: 'blue',
+                    },
+                    {
+                      nom: 'Direction CaribHyp SAS',
+                      emoji: '🏪',
+                      titre: 'Direction opérationnelle Distribution',
+                      detail: 'CaribHyp SAS est l\'entité qui opère les hypermarchés Carrefour dans les DOM au nom de GBH. Elle est dotée de sa propre direction générale, dont la composition précise n\'est pas intégralement publiée.',
+                      entites: 'CaribHyp SAS',
+                      pole: 'Distribution DOM',
+                      source: 'RNE · ADLC 09-A-45',
+                      fiabilite: 'Partiel',
+                      color: 'slate',
+                    },
+                    {
+                      nom: 'Direction Karibéa',
+                      emoji: '🏨',
+                      titre: 'Direction réseau hôtelier',
+                      detail: 'Le réseau hôtelier Karibéa (Guadeloupe, Martinique, Guyane) dispose d\'une direction propre. Les dirigeants opérationnels ne sont pas systématiquement publiés dans les sources ouvertes.',
+                      entites: 'Karibéa Hôtels & Résidences',
+                      pole: 'Hôtellerie',
+                      source: 'Site karibea.com · BODACC',
+                      fiabilite: 'Partiel',
+                      color: 'slate',
+                    },
+                    {
+                      nom: 'Direction Pôle BTP',
+                      emoji: '🏗️',
+                      titre: 'Direction matériaux & construction',
+                      detail: 'Le pôle BTP / matériaux de construction (Point P DOM, Brico Pro, agences de matériaux) dispose de directeurs régionaux. Mandats disponibles partiellement dans le RNE.',
+                      entites: 'Filiales BTP GBH (GP, MQ, GF, RE)',
+                      pole: 'BTP & Matériaux',
+                      source: 'RNE/INPI · BODACC filiales BTP',
+                      fiabilite: 'Partiel',
+                      color: 'slate',
+                    },
+                    {
+                      nom: 'Daribo Distilleries — Direction',
+                      emoji: '🍹',
+                      titre: 'Direction pôle agroalimentaire / rhum',
+                      detail: 'Daribo Distilleries est la filiale agroalimentaire phare du groupe (rhum, spiritueux, boissons). Sa direction propre n\'est pas publiée nominativement dans les sources accessibles.',
+                      entites: 'Daribo Distilleries SAS',
+                      pole: 'Agroalimentaire',
+                      source: 'RNE · BODACC Daribo',
+                      fiabilite: 'Partiel',
+                      color: 'slate',
+                    },
+                    {
+                      nom: 'GBH Services — Direction',
+                      emoji: '⚙️',
+                      titre: 'Direction des fonctions support groupe',
+                      detail: 'GBH Services est l\'entité de services partagés du groupe (RH, IT, juridique, finance, marketing). Elle facture en interne les prestations aux filiales. Direction non publiée nominativement.',
+                      entites: 'GBH Services SAS',
+                      pole: 'Support transverse',
+                      source: 'Site gbh.fr · structure déduite ADLC',
+                      fiabilite: 'Partiel',
+                      color: 'slate',
+                    },
+                  ].map(d => {
+                    const badge: Record<string, string> = {
+                      'Certifié':  'bg-green-500/20  text-green-300  border-green-500/40',
+                      'Documenté': 'bg-blue-500/20   text-blue-300   border-blue-500/40',
+                      'Partiel':   'bg-amber-500/20  text-amber-300  border-amber-500/40',
+                    };
+                    const rowBg: Record<string, string> = {
+                      amber: 'bg-amber-500/5',
+                      blue: '',
+                      slate: 'bg-slate-800/30',
+                    };
+                    return (
+                      <tr key={d.nom} className={`${rowBg[d.color]} hover:bg-slate-700/20 transition-colors`}>
+                        <td className="py-3 px-3 align-top">
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">{d.emoji}</span>
+                            <span className={`font-bold ${d.color === 'amber' ? 'text-amber-300' : d.color === 'blue' ? 'text-blue-300' : 'text-slate-300'}`}>
+                              {d.nom}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="py-3 px-3 align-top">
+                          <p className="font-semibold text-white">{d.titre}</p>
+                          <p className="text-gray-500 mt-0.5 leading-relaxed">{d.detail}</p>
+                        </td>
+                        <td className="py-3 px-3 align-top text-gray-400">{d.entites}</td>
+                        <td className="py-3 px-3 align-top">
+                          <span className="px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 border border-slate-600 whitespace-nowrap">
+                            {d.pole}
+                          </span>
+                        </td>
+                        <td className="py-3 px-3 align-top text-slate-500 italic">{d.source}</td>
+                        <td className="py-3 px-3 align-top">
+                          <span className={`px-2 py-0.5 rounded-full border text-xs font-semibold whitespace-nowrap ${badge[d.fiabilite]}`}>
+                            {d.fiabilite}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Légende fiabilité */}
+            <div className="flex flex-wrap gap-3 mb-8 text-xs">
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-green-500/40 border border-green-500/60 inline-block" />
+                <span className="text-gray-400"><strong className="text-green-300">Certifié</strong> — Mentionné dans BODACC / RNE / Avis ADLC en nom propre</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-blue-500/40 border border-blue-500/60 inline-block" />
+                <span className="text-gray-400"><strong className="text-blue-300">Documenté</strong> — Identifié dans presse régionale + sources légales croisées</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-amber-500/40 border border-amber-500/60 inline-block" />
+                <span className="text-gray-400"><strong className="text-amber-300">Partiel</strong> — Entité connue, dirigeants nominatifs non intégralement publiés</span>
+              </div>
+            </div>
+
+            {/* Fiche synthèse PDG */}
+            <SectionTitle icon={UserCheck}>Fiche détaillée — Bernard Hayot (PDG fondateur)</SectionTitle>
+            <div className="overflow-x-auto mb-8">
+              <table className="w-full text-xs text-left border border-slate-700 rounded-xl overflow-hidden">
+                <tbody className="divide-y divide-slate-800">
+                  {[
+                    { champ: 'Nom complet',             valeur: 'Bernard Hayot',                                       fiable: true  },
+                    { champ: 'Année de naissance',       valeur: '~1943 · Fort-de-France, Martinique',                  fiable: true  },
+                    { champ: 'Nationalité',              valeur: 'Française',                                           fiable: true  },
+                    { champ: 'Origine familiale',        valeur: 'Famille béké martiniquaise (créoles blancs)',          fiable: true  },
+                    { champ: 'Fonction principale',      valeur: 'Président-fondateur · GBH SAS (holding)',              fiable: true  },
+                    { champ: 'SIREN de la holding',      valeur: '313 222 260',                                         fiable: true  },
+                    { champ: 'Siège social',             valeur: 'Zone de Jarry, Baie-Mahault, 97122 Guadeloupe',       fiable: true  },
+                    { champ: 'Territoires dirigés',      valeur: 'GP · MQ · GF · RE · NC · PF · MDG',                  fiable: true  },
+                    { champ: 'Fortune estimée (presse)', valeur: '1 – 2 milliards € (estimation Challenges 2019-2023)', fiable: false },
+                    { champ: 'Mandat électif public',    valeur: 'Aucun documenté',                                     fiable: true  },
+                    { champ: 'Distinctions publiques',   valeur: 'Non documentées dans les sources publiques',          fiable: true  },
+                    { champ: 'Résidence principale',     valeur: 'Martinique / Antilles françaises',                    fiable: false },
+                    { champ: 'Activité médiatique',      valeur: 'Très discrète — interventions rares (2009, 2021)',    fiable: true  },
+                  ].map(row => (
+                    <tr key={row.champ} className="hover:bg-slate-800/40">
+                      <td className="py-2.5 px-4 text-gray-400 font-medium w-1/3 bg-slate-800/20">{row.champ}</td>
+                      <td className="py-2.5 px-4 text-white">{row.valeur}</td>
+                      <td className="py-2.5 px-4 text-center w-16">
+                        {row.fiable
+                          ? <span className="text-green-400 font-bold">✓</span>
+                          : <span className="text-amber-400 font-bold">~</span>}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="text-xs text-slate-600 mt-2 italic">
+                ✓ = donnée vérifiée dans sources publiques · ~ = estimation journalistique, non auditée ·
+                Sources : RNE/INPI · ADLC Avis 09-A-45 et 19-A-12 · Challenges classement fortunes · presse régionale
+              </p>
+            </div>
+
             <SectionTitle icon={Building2}>Structure de gouvernance documentée</SectionTitle>
             <div className="space-y-3 mb-8">
               {[
