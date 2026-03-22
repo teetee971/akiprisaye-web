@@ -22,6 +22,10 @@ on:
     branches: [main]
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - 'frontend/**'
+      - 'price-api/**'
+      - '.github/workflows/ci.yml'
   workflow_dispatch:
     inputs:
       lhci_url:

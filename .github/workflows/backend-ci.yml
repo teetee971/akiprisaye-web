@@ -19,6 +19,12 @@ jobs:
     name: Lint · Build · Test
     runs-on: ubuntu-latest
 
+    # Prisma schema uses env("DATABASE_URL"). A valid-format URL is required for
+    # `prisma format`, `prisma validate`, and `prisma generate` even though none
+    # of those commands open a real database connection.
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/ci_db
+
     defaults:
       run:
         working-directory: backend
