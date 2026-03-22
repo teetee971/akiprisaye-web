@@ -308,6 +308,7 @@ const PortailDeveloppeurs = lazyPage(() => import('./pages/PortailDeveloppeurs')
 const ChocsPrixPage = lazyPage(() => import('./pages/ChocsPrixPage'));
 const NewsletterHubPage = lazyPage(() => import('./pages/NewsletterHubPage'));
 const MonitoringIAPage = lazyPage(() => import('./pages/MonitoringIAPage'));
+const OrganigrammeGBH = lazyPage(() => import('./pages/OrganigrammeGBH'));
 
 // ── SEO & Growth Pages ───────────────────────────────────────────────────────
 const SEOProductPage = lazyPage(() => import('./pages/SEOProductPage'));
@@ -770,6 +771,7 @@ export default function App() {
                           <Route path="chocs-prix" element={<ChocsPrixPage />} />
                           <Route path="newsletter" element={<NewsletterHubPage />} />
                           <Route path="monitoring-ia" element={<MonitoringIAPage />} />
+                          <Route path="organigrame-gbh" element={<OrganigrammeGBH />} />
 
                           {/* ── SEO & Growth Pages ── */}
                           <Route path="produit/:slug" element={<SEOProductPage />} />
