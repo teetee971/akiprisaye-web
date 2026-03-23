@@ -119,6 +119,7 @@ export default defineConfig({
       // Booking links — UTM params et statut commissions
       abs('./src/test/bookingLinks.test.ts'),
       abs('./src/test/home.page.test.tsx'),
+      abs('./src/test/roadmap.page.test.tsx'),
       // SEO content engine — determinism, angles, FAQ generation, similar products
       abs('./src/test/seoContentEngine.test.ts'),
       // SEO stats tracker — localStorage-based SEO analytics (RGPD compliant)

@@ -803,6 +803,26 @@ export default function RoadmapPage() {
           {/* ── ROADMAP ────────────────────────────────────────────────── */}
           {activeTab === 'roadmap' && (
             <div id="panel-roadmap" role="tabpanel" aria-labelledby="tab-roadmap" className="space-y-6">
+              <div className="bg-white border border-gray-200 rounded-2xl p-5">
+                <h2 className="text-sm font-semibold text-gray-900 mb-2">
+                  État d&apos;avancement global
+                </h2>
+                <p className="text-sm text-gray-700">
+                  Non, toutes les feuilles de route ne sont pas encore finalisées :{' '}
+                  <span className="font-semibold text-indigo-700">
+                    {completionStats.done} fonctionnalités sur {completionStats.total}
+                  </span>{' '}
+                  sont livrées, et{' '}
+                  <span className="font-semibold text-amber-700">
+                    {completionStats.total - completionStats.done} restent à mettre en ligne
+                  </span>
+                  .
+                </p>
+                <p className="text-xs text-gray-500 mt-2">
+                  Détail complet dans l&apos;onglet <span className="font-medium">Modules</span> (opérationnel,
+                  partiel, planifié).
+                </p>
+              </div>
               {PHASES.map((phase) => (
                 <div
                   key={phase.key}
