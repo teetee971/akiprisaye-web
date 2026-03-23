@@ -8,6 +8,7 @@ import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { SEOHead } from '../components/ui/SEOHead';
+import OptimizedImage from '../components/OptimizedImage';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import {
   SkeletonSection,
@@ -248,7 +249,7 @@ function InlineComparisonPanel({ loading, product, prices, summary, query }: Inl
           {/* Product identity */}
           <div className="relative overflow-hidden rounded-[24px] border border-white/10 bg-white/[0.03]">
             {product?.image ? (
-              <img
+              <OptimizedImage
                 src={product.image}
                 alt={product.name}
                 width={240} height={160}

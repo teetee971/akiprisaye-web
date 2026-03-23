@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import compression from 'vite-plugin-compression'
 import { fileURLToPath, URL } from 'node:url'
 import { execSync } from 'node:child_process'
 import { resolveBasePath } from './scripts/basePath'
@@ -31,6 +32,9 @@ const buildEnv = process.env.CF_PAGES === '1'
 export default defineConfig({
   plugins: [
     react(),
+    compression({
+      algorithm: 'gzip',
+    }),
     // ── Google Search Console ownership verification ──────────────────────────
     // Injects <meta name="google-site-verification"> when the env var is set.
     // Set VITE_GOOGLE_SITE_VERIFICATION as a repo secret and pass it in the
@@ -129,10 +133,9 @@ export default defineConfig({
             return 'vendor-web-vitals';
           }
           // ── Charts (recharts + d3 ecosystem + chart.js / react-chartjs-2) ──
-          // NOTE: intentionally NOT in manualChunks — Rollup auto-splits these
-          // as lazy shared chunks since they're only used in dynamic-imported pages.
-          // A forced 'vendor-charts' chunk was causing a static modulepreload in the
-          // main entry, adding 538 kB to the critical path. Let Rollup decide.
+          if (id.includes('/recharts/') || id.includes('/d3-')) {
+            return 'vendor-charts';
+          }
           // ── Maps ──────────────────────────────────────────────────────────
           // NOTE: intentionally NOT in manualChunks — same rationale as vendor-charts
           // and vendor-i18n below.  Forcing leaflet into a named chunk caused Vite's

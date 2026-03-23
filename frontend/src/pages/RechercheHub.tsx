@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './RechercheHub.module.css';
 import { HeroImage } from '../components/ui/HeroImage';
+import OptimizedImage from '../components/OptimizedImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const suggestedQueries = [
@@ -64,7 +65,7 @@ export default function RechercheHub() {
 
       <section className={styles.searchSection} aria-label="Habillage visuel professionnel">
         <h2 className={styles.cardTitle}>Visualisation professionnelle 2D / 3D</h2>
-        <img
+        <OptimizedImage
           src={PAGE_HERO_IMAGES.sectionProfessional3d}
           alt="Visualisation professionnelle de données pour la recherche"
           loading="lazy"

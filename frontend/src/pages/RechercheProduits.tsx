@@ -15,6 +15,7 @@ import type { TipContext } from '../features/tips';
 import { getProductImageFallback } from '../utils/productImageFallback';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { HeroImage } from '../components/ui/HeroImage';
+import OptimizedImage from '../components/OptimizedImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { getPreferredTerritory } from '../utils/userPreferences';
 
@@ -580,7 +581,7 @@ export function PriceResults({
         {productImages.length > 0 ? (
           <div className="grid grid-cols-2 gap-2">
             {productImages.map((img) => (
-              <img
+              <OptimizedImage
                 key={img.url}
                 src={img.url}
                 alt={productTitle}
@@ -593,7 +594,7 @@ export function PriceResults({
             ))}
           </div>
         ) : (
-          <img
+          <OptimizedImage
             src={getProductImageFallback({ productName: productTitle })}
             alt={productTitle}
             className="rounded-xl object-cover w-full h-40 bg-slate-800"
@@ -1026,7 +1027,7 @@ export default function RechercheProduits() {
       </HeroImage>
 
       <section className="max-w-4xl mx-auto mt-4">
-        <img
+        <OptimizedImage
           src={PAGE_HERO_IMAGES.sectionProfessional3d}
           alt="Section premium de recherche de produits"
           loading="lazy"

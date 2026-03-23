@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { HeroImage } from '../components/ui/HeroImage';
+import OptimizedImage from '../components/OptimizedImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { newsFallback } from '../data/newsFallback';
 
@@ -136,7 +137,7 @@ export default function Actualites() {
       <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur">
         <h2 className="text-sm sm:text-base font-semibold text-white mb-2">Média à la une</h2>
         <div className="grid gap-3 md:grid-cols-2">
-            <img
+            <OptimizedImage
             src={PAGE_HERO_IMAGES.articleDefault}
             alt="Illustration éditoriale des actualités consommateurs"
             loading="lazy"
@@ -144,11 +145,10 @@ export default function Actualites() {
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
           <video
-            autoPlay
             muted
-            loop
             playsInline
-            preload="none"
+            controls
+            preload="metadata"
             poster={PAGE_HERO_IMAGES.heroActualites}
             className="w-full h-44 rounded-xl object-cover border border-white/10 bg-slate-900"
             aria-label="Ambiance éditoriale de veille marché"
@@ -166,7 +166,7 @@ export default function Actualites() {
           return (
             <article key={item.id} className={`rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden border-l-4 ${impactColor}`}>
               {(item.imageUrl || PAGE_HERO_IMAGES.articleDefault) && (
-                <img
+                <OptimizedImage
                   src={item.imageUrl ?? PAGE_HERO_IMAGES.articleDefault}
                   alt={item.title}
                   loading="lazy"

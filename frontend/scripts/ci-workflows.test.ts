@@ -290,7 +290,7 @@ describe('ci.yml — Lighthouse regression guard and PR comment', () => {
     // This prevents "Timed out waiting for the server to start listening" from LHCI.
     expect(ciYml).toMatch(/npm run preview.*--host 127\.0\.0\.1/);
     expect(ciYml).toMatch(/preview-server\.pid/);
-    expect(ciYml).toMatch(/curl.*127\.0\.0\.1:4173/);
+    expect(ciYml).toMatch(/(wait-on|curl).*127\.0\.0\.1:4173/);
   });
 
   it('lighthouse job must stop the preview server cleanly (if: always())', () => {

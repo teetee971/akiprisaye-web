@@ -268,15 +268,8 @@ jobs:
           npm run preview -- --host 127.0.0.1 --port 4173 &
           echo $! > /tmp/preview-server.pid
           echo "🚀 Preview server démarré (PID: $!)"
-
-      - name: Wait for preview server
-        # Attend que le serveur réponde avant de lancer LHCI.
-        # Sans cette attente, LHCI échoue avec "Timed out waiting for the server".
-        run: |
-          echo "⏳ Attente du preview server sur http://127.0.0.1:4173 ..."
-          timeout 60 bash -c 'until curl -sf http://127.0.0.1:4173/ > /dev/null 2>&1; do sleep 2; done' \
-            || { echo '❌ Preview server non disponible après 60s — vérifier vite preview'; exit 1; }
-          echo "✅ Preview server prêt."
+          npx wait-on http://127.0.0.1:4173
+          echo "✅ Preview server prêt (wait-on)."
 
       - name: Check override label (ci:override-lighthouse)
         # Détecte si le label 'ci:override-lighthouse' est présent sur la PR.
