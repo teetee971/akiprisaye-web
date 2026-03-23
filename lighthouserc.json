@@ -4,6 +4,7 @@
       "url": ["http://127.0.0.1:4173"],
       "numberOfRuns": 1,
       "settings": {
+        "preset": "desktop",
         "budgets": [
           {
             "resourceSizes": [
@@ -29,7 +30,7 @@
       }
     },
     "upload": {
-      "target": "filesystem",
+      "target": "temporary-public-storage",
       "outputDir": ".lighthouseci"
     }
   }

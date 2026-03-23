@@ -222,6 +222,9 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Cache Puppeteer / Chrome
+        run: mkdir -p ~/.cache/puppeteer
+
+      - name: Restore Puppeteer / Chrome cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/puppeteer
@@ -253,6 +256,10 @@ jobs:
         working-directory: frontend
         run: node scripts/lighthouse-summary.mjs
 
+      - name: Ensure Lighthouse artifact directory exists
+        if: always()
+        run: mkdir -p frontend/.lighthouseci
+
       - name: Upload Lighthouse reports (JSON + HTML)
         if: always()
         uses: actions/upload-artifact@v4
@@ -260,6 +267,7 @@ jobs:
           name: lighthouse-cloudflare-reports
           path: frontend/.lighthouseci/
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload Lighthouse scores Cloudflare (référence baseline URL réelle, 90 jours)
         # Artifact distinct de "lighthouse-scores" (ci.yml, localhost) pour séparer les baselines :
@@ -272,3 +280,4 @@ jobs:
           name: lighthouse-scores-cloudflare
           path: frontend/.lighthouseci/lighthouse-scores.json
           retention-days: 90
+          if-no-files-found: warn
