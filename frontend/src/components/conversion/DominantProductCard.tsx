@@ -32,7 +32,7 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
   // Track product view for CTR denominator
   useEffect(() => {
     logEvent('view_product', { id: product.id, price: product.price });
-  }, [product.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [product.id]);
 
   const oldPrice =
     product.price != null && (product.priceDrop ?? 0) > 0

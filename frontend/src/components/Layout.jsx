@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import Header from './layout/Header';
 import FabActions from './ui/FabActions';
 import MetaPixel from './MetaPixel';
@@ -28,6 +28,42 @@ function AlertEvaluatorSideEffect() {
   return null;
 }
 
+
+function HashScrollManager() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!location.hash) return undefined;
+
+    const targetId = decodeURIComponent(location.hash.slice(1));
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let timeoutId;
+    let attempts = 0;
+
+    const scrollToHash = () => {
+      const element = document.getElementById(targetId);
+      if (element) {
+        element.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
+        return;
+      }
+
+      if (attempts >= 10) return;
+      attempts += 1;
+      timeoutId = window.setTimeout(scrollToHash, 120);
+    };
+
+    scrollToHash();
+    return () => {
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [location.hash, location.pathname]);
+
+  return null;
+}
+
 export default function Layout() {
   useEffect(() => {
     hydrateShoppingList();
@@ -38,6 +74,7 @@ export default function Layout() {
       <SkipLinks />
       <Header />
       <AlertEvaluatorSideEffect />
+      <HashScrollManager />
       <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-2 md:pb-4">
         <Outlet />
       </main>

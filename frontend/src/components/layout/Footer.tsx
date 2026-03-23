@@ -117,6 +117,7 @@ export default function Footer() {
               <li><Link to="/inscription-pro" className="text-slate-400 hover:text-blue-300 transition-colors"><Briefcase className="inline-block w-3.5 h-3.5 mr-1" /> Espace Pro</Link></li>
               <li><Link to="/licence-institution" className="text-slate-400 hover:text-white transition-colors">Licence institution</Link></li>
               <li><Link to="/pricing#partners" className="text-slate-400 hover:text-white transition-colors">Partenariats</Link></li>
+              <li><Link to="/contact#pro" className="text-slate-400 hover:text-white transition-colors">Parler à l’équipe</Link></li>
               <li><Link to="/contact" className="text-slate-400 hover:text-white transition-colors">Parler à l’équipe</Link></li>
             </ul>
           </div>

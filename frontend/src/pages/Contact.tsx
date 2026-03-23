@@ -34,11 +34,17 @@ export default function Contact() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const trimmedName = formData.name.trim();
+    const trimmedEmail = formData.email.trim();
+    const trimmedMessage = formData.message.trim();
+
+    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
     if (!formData.name || !formData.email || !formData.message) {
       toast.error('Veuillez remplir les champs obligatoires.');
       return;
     }
 
+    if (!trimmedEmail.includes('@')) {
     if (!formData.email.includes('@')) {
       toast.error('Veuillez entrer une adresse email valide.');
       return;
@@ -46,6 +52,10 @@ export default function Contact() {
 
     const subject = formData.subject.trim() || 'Demande via le site A KI PRI SA YÉ';
     const body = [
+      `Nom : ${trimmedName}`,
+      `Email : ${trimmedEmail}`,
+      '',
+      trimmedMessage,
       `Nom : ${formData.name}`,
       `Email : ${formData.email}`,
       '',
@@ -161,6 +171,7 @@ export default function Contact() {
             </form>
           </section>
 
+          <aside id="pro" className="space-y-4">
           <aside className="space-y-4">
             <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
               <div className="flex items-center gap-3">

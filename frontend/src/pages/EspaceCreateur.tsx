@@ -7,7 +7,7 @@
  * Route : /espace-createur
  */
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import {
@@ -15,10 +15,12 @@ import {
   Settings, Lock, CheckCircle, AlertCircle, Copy, ExternalLink,
   Terminal, BookOpen, Sparkles, Globe, Key, ChevronDown, ChevronUp,
   TrendingUp, Bell, Download, FileText, Wrench, RefreshCw,
-  LogOut, Star, Building2, Smartphone,
+  LogOut, Star, Building2, Smartphone, BrainCircuit, Activity, Clock3, Eye, MapPinned,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
+import { useUserStats } from '../hooks/useUserStats';
+import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
 
 /* ─── Admin shortcut ─────────────────────────────────────────────────── */
 
@@ -28,19 +30,21 @@ interface AdminLink {
   to: string;
   description: string;
   color: string;
+  requiresAdmin: boolean;
+  helpHref?: string;
 }
 
 const ADMIN_LINKS: AdminLink[] = [
-  { label: 'Dashboard Admin',       icon: BarChart3,   to: '/admin',                description: 'Vue d\'ensemble et métriques', color: 'text-blue-400' },
-  { label: 'Gestion utilisateurs',  icon: Users,       to: '/admin/users',          description: 'Rôles, plans, accès', color: 'text-purple-400' },
-  { label: 'Sync / Import',         icon: RefreshCw,   to: '/admin/sync',           description: 'Synchronisation des données', color: 'text-green-400' },
-  { label: 'Gestion Magasins',      icon: Building2,   to: '/admin/stores',         description: 'Référentiel enseigne', color: 'text-amber-400' },
-  { label: 'Gestion Produits',      icon: Database,    to: '/admin/products',       description: 'Catalogue EAN', color: 'text-cyan-400' },
-  { label: 'Import Prix',           icon: Download,    to: '/admin/import',         description: 'Import CSV / JSON', color: 'text-orange-400' },
-  { label: 'Modération',            icon: Shield,      to: '/admin/moderation',     description: 'Signalements citoyens', color: 'text-red-400' },
-  { label: 'Marketplace Admin',     icon: Globe,       to: '/admin/marketplace',    description: 'Gestion des annonces', color: 'text-pink-400' },
-  { label: 'Devis Institutionnels', icon: FileText,    to: '/admin/devis',          description: 'Licences & contrats B2B', color: 'text-indigo-400' },
-  { label: 'Calculs Bâtiment',      icon: Wrench,      to: '/admin/calculs-batiment', description: 'Module BTP admin', color: 'text-slate-400' },
+  { label: 'Dashboard Admin',       icon: BarChart3,   to: '/admin',                  description: 'Vue d\'ensemble et métriques', color: 'text-blue-400',   requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion utilisateurs',  icon: Users,       to: '/admin/users',            description: 'Rôles, plans, accès', color: 'text-purple-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Sync / Import',         icon: RefreshCw,   to: '/admin/sync',             description: 'Synchronisation des données', color: 'text-green-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion Magasins',      icon: Building2,   to: '/admin/stores',           description: 'Référentiel enseigne', color: 'text-amber-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion Produits',      icon: Database,    to: '/admin/products',         description: 'Catalogue EAN', color: 'text-cyan-400',  requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Import Prix',           icon: Download,    to: '/admin/import',           description: 'Import CSV / JSON', color: 'text-orange-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Modération',            icon: Shield,      to: '/admin/moderation',       description: 'Signalements citoyens', color: 'text-red-400',   requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Marketplace Admin',     icon: Globe,       to: '/admin/marketplace',      description: 'Gestion des annonces', color: 'text-pink-400',  requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Devis Institutionnels', icon: FileText,    to: '/admin/devis',            description: 'Licences & contrats B2B', color: 'text-indigo-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Calculs Bâtiment',      icon: Wrench,      to: '/admin/calculs-batiment', description: 'Module BTP admin', color: 'text-slate-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
 ];
 
 /* ─── Feature grid ───────────────────────────────────────────────────── */
@@ -183,6 +187,87 @@ VITE_PLAN_OVERRIDE=CREATOR
 # VITE_PLAN_OVERRIDE=PRO
 # VITE_PLAN_OVERRIDE=INSTITUTION`;
 
+type InsightTone = 'emerald' | 'cyan' | 'amber' | 'violet';
+
+interface DashboardInsight {
+  title: string;
+  value: string;
+  detail: string;
+  tone: InsightTone;
+}
+
+const INSIGHT_TONE_STYLES: Record<InsightTone, string> = {
+  emerald: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
+  cyan: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200',
+  amber: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
+  violet: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
+};
+
+function formatDateTime(date: Date | null): string {
+  if (!date) return 'En attente de données';
+  return new Intl.DateTimeFormat('fr-FR', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date);
+}
+
+function formatFreshness(date: Date | null): string {
+  if (!date) return 'Aucune remontée récente';
+  const deltaMs = Date.now() - date.getTime();
+  if (deltaMs < 60_000) return 'À l’instant';
+  const deltaMinutes = Math.round(deltaMs / 60_000);
+  if (deltaMinutes < 60) return `Il y a ${deltaMinutes} min`;
+  const deltaHours = Math.round(deltaMinutes / 60);
+  if (deltaHours < 24) return `Il y a ${deltaHours} h`;
+  const deltaDays = Math.round(deltaHours / 24);
+  return `Il y a ${deltaDays} j`;
+}
+
+function classifyAudienceFocus(topInterest: InterestStats | undefined): DashboardInsight {
+  if (!topInterest) {
+    return {
+      title: 'Lecture IA',
+      value: 'Signal faible',
+      detail: 'Aucune tendance nette pour le moment. Les insights s’enrichissent dès les premières visites.',
+      tone: 'violet',
+    };
+  }
+
+  if (['comparateur', 'scanner', 'scan', 'alertes', 'liste'].includes(topInterest.key)) {
+    return {
+      title: 'Profil dominant',
+      value: 'Acheteurs tactiques',
+      detail: `Le trafic se concentre sur ${topInterest.name.toLowerCase()} : vos utilisateurs cherchent un gain prix immédiat.`,
+      tone: 'emerald',
+    };
+  }
+
+  if (['observatoire', 'actualites', 'methodologie', 'vie-chere'].includes(topInterest.key)) {
+    return {
+      title: 'Profil dominant',
+      value: 'Veille citoyenne',
+      detail: `Le sujet ${topInterest.name.toLowerCase()} domine : ils veulent comprendre les écarts, pas seulement acheter.`,
+      tone: 'cyan',
+    };
+  }
+
+  if (['assistant', 'devis', 'espace-pro', 'marketplace'].includes(topInterest.key)) {
+    return {
+      title: 'Profil dominant',
+      value: 'Usage IA / pro',
+      detail: `Les visiteurs se dirigent vers ${topInterest.name.toLowerCase()} : forte attente d’accompagnement expert et de productivité.`,
+      tone: 'amber',
+    };
+  }
+
+  return {
+    title: 'Profil dominant',
+    value: 'Communauté active',
+    detail: `Le pôle ${topInterest.name.toLowerCase()} prend l’avantage : privilégier les usages d’échange, d’entraide et d’engagement.`,
+    tone: 'violet',
+  };
+}
+
 /* ─── Copy to clipboard helper ──────────────────────────────────────── */
 
 function CopyButton({ text }: { text: string }) {
@@ -207,10 +292,29 @@ function CopyButton({ text }: { text: string }) {
 
 const EspaceCreateur: React.FC = () => {
   const { user, userRole, isCreator, loading, signOutUser, refreshClaims } = useAuth();
+  const {
+    totalUsers,
+    onlineUsers,
+    lastAuthenticatedSeenAt,
+    loading: userStatsLoading,
+  } = useUserStats();
+  const {
+    totalOnline,
+    byTerritory,
+    byInterest,
+    interestByTerritory,
+    loading: visitorStatsLoading,
+    myTerritory,
+    myInterest,
+    lastPresenceAt,
+    lastVisitAt,
+    lastInterestViewAt,
+  } = useVisitorStats();
   const [guideOpen, setGuideOpen] = useState(!isCreator);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [envOpen, setEnvOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedAdminLink, setSelectedAdminLink] = useState<AdminLink | null>(ADMIN_LINKS[0]);
 
   // Wait for auth to resolve before checking role — avoids redirect during bootstrap
   if (loading) {
@@ -233,6 +337,68 @@ const EspaceCreateur: React.FC = () => {
   };
 
   const creatorPlan = PLAN_DEFINITIONS['CREATOR'];
+  const audienceLoading = userStatsLoading || visitorStatsLoading;
+
+  const topTerritory = byTerritory[0];
+  const topInterest = byInterest[0];
+  const activeTerritoriesCount = byTerritory.length;
+  const activeInterestCount = byInterest.length;
+  const accountPresenceRate = totalUsers > 0 ? Math.round((onlineUsers / totalUsers) * 100) : 0;
+  const mostDormantTerritory = [...byTerritory]
+    .sort((a, b) => (b.totalVisits - b.online * 8) - (a.totalVisits - a.online * 8))[0];
+  const detectedTerritory = byTerritory.find((territory) => territory.code.toLowerCase() === myTerritory.toLowerCase());
+  const topTerritoryHistoricalInterest = topTerritory ? interestByTerritory[topTerritory.code]?.[0] : undefined;
+
+  const dashboardInsights = useMemo<DashboardInsight[]>(() => {
+    const focusInsight = classifyAudienceFocus(topInterest);
+    return [
+      {
+        title: 'Territoire moteur',
+        value: topTerritory ? `${topTerritory.flag} ${topTerritory.name}` : 'En attente',
+        detail: topTerritory
+          ? `${topTerritory.online} visiteur(s) en ligne · ${topTerritory.totalVisits.toLocaleString('fr-FR')} visites cumulées.`
+          : 'Les remontées temps réel apparaîtront dès qu’un territoire deviendra actif.',
+        tone: 'emerald',
+      },
+      {
+        title: 'Sujet chaud',
+        value: topInterest ? `${topInterest.emoji} ${topInterest.name}` : 'En attente',
+        detail: topInterest
+          ? `${topInterest.online} actif(s) maintenant · ${topInterest.totalViews.toLocaleString('fr-FR')} vues totales.`
+          : 'Aucun centre d’intérêt ne ressort encore clairement.',
+        tone: 'cyan',
+      },
+      focusInsight,
+      {
+        title: 'Territoire à relancer',
+        value: mostDormantTerritory ? `${mostDormantTerritory.flag} ${mostDormantTerritory.name}` : 'À qualifier',
+        detail: mostDormantTerritory
+          ? `${mostDormantTerritory.totalVisits.toLocaleString('fr-FR')} visites historiques pour seulement ${mostDormantTerritory.online} personne(s) en direct.`
+          : 'Il faut davantage d’historique pour isoler un territoire à réactiver.',
+        tone: 'amber',
+      },
+    ];
+  }, [mostDormantTerritory, topInterest, topTerritory]);
+
+  const creatorBriefing = useMemo(() => {
+    if (!topTerritory && !topInterest) {
+      return 'Le tableau de bord IA attend les premières remontées de présence et de navigation pour construire un briefing comportemental fiable.';
+    }
+
+    const leadTerritory = topTerritory
+      ? `${topTerritory.flag} ${topTerritory.name}`
+      : 'un territoire encore non identifié';
+    const leadInterest = topInterest
+      ? `${topInterest.emoji} ${topInterest.name.toLowerCase()}`
+      : 'un usage encore diffus';
+    const leadHistoricalAngle = topTerritoryHistoricalInterest
+      ? `${topTerritoryHistoricalInterest.emoji} ${topTerritoryHistoricalInterest.name.toLowerCase()}`
+      : 'aucun historique dominant';
+
+    return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, tandis que le meilleur signal historique sur ce territoire reste ${leadHistoricalAngle}. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
+  }, [topInterest, topTerritory, topTerritoryHistoricalInterest]);
+
+  const topInterestMax = Math.max(...byInterest.map((interest) => interest.totalViews), 1);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -302,6 +468,247 @@ const EspaceCreateur: React.FC = () => {
           )}
         </div>
 
+        {/* ── IA audience dashboard ─────────────────────────────────── */}
+        <section className="mb-8">
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <BrainCircuit className="h-5 w-5 text-fuchsia-400" />
+                Tableau de bord IA — audience & comportement
+              </h2>
+              <p className="mt-1 text-sm text-slate-400">
+                Dates des dernières mises à jour, comptes connectés, audience live, territoires, centres d’intérêt et lecture IA du trafic.
+              </p>
+            </div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-fuchsia-500/30 bg-fuchsia-500/10 px-3 py-1.5 text-xs font-semibold text-fuchsia-200">
+              <Activity className="h-3.5 w-3.5" />
+              {audienceLoading ? 'Synchronisation des signaux…' : `${totalOnline} visiteur(s) live · ${onlineUsers} compte(s) authentifié(s)`}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {[
+              {
+                icon: Users,
+                label: 'Comptes enregistrés',
+                value: totalUsers.toLocaleString('fr-FR'),
+                detail: 'Base utilisateurs Firebase',
+                tone: 'text-cyan-300',
+              },
+              {
+                icon: Activity,
+                label: 'Comptes connectés',
+                value: onlineUsers.toLocaleString('fr-FR'),
+                detail: `${accountPresenceRate}% de la base actuellement active`,
+                tone: 'text-emerald-300',
+              },
+              {
+                icon: Eye,
+                label: 'Visiteurs live site',
+                value: totalOnline.toLocaleString('fr-FR'),
+                detail: 'Présence web observée sur 5 min',
+                tone: 'text-fuchsia-300',
+              },
+              {
+                icon: Globe,
+                label: 'Territoires actifs',
+                value: activeTerritoriesCount.toLocaleString('fr-FR'),
+                detail: `${activeInterestCount} centres d’intérêt actuellement détectés`,
+                tone: 'text-amber-300',
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.label} className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+                  <Icon className={`mb-3 h-5 w-5 ${item.tone}`} />
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500">{item.label}</p>
+                  <p className={`mt-1 text-2xl font-black ${item.tone}`}>{item.value}</p>
+                  <p className="mt-1 text-xs text-slate-400">{item.detail}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              {
+                icon: Clock3,
+                label: 'Dernier heartbeat visiteur',
+                timestamp: lastPresenceAt,
+                helper: 'Collection presence',
+                iconClassName: 'text-cyan-300',
+              },
+              {
+                icon: RefreshCw,
+                label: 'Dernière visite comptée',
+                timestamp: lastVisitAt,
+                helper: 'Compteur visit_stats',
+                iconClassName: 'text-emerald-300',
+              },
+              {
+                icon: TrendingUp,
+                label: 'Dernière vue de section',
+                timestamp: lastInterestViewAt,
+                helper: 'Compteur page_stats',
+                iconClassName: 'text-amber-300',
+              },
+              {
+                icon: Shield,
+                label: 'Dernière présence authentifiée',
+                timestamp: lastAuthenticatedSeenAt,
+                helper: 'Collection user_presence',
+                iconClassName: 'text-violet-300',
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.label} className="rounded-2xl border border-slate-700/50 bg-slate-900/50 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-white">{item.label}</p>
+                      <p className="mt-1 text-xs text-slate-400">{item.helper}</p>
+                    </div>
+                    <Icon className={`h-5 w-5 ${item.iconClassName}`} />
+                  </div>
+                  <p className="mt-3 text-sm font-semibold text-slate-200">{formatDateTime(item.timestamp)}</p>
+                  <p className="mt-1 text-xs text-slate-500">{formatFreshness(item.timestamp)}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-fuchsia-500/20 bg-gradient-to-br from-fuchsia-950/20 via-slate-900/80 to-slate-950 p-5">
+            <div className="flex items-start gap-3">
+              <BrainCircuit className="mt-0.5 h-5 w-5 text-fuchsia-300" />
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-fuchsia-300">Briefing IA créateur</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-200">{creatorBriefing}</p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-400">
+                  <span className="rounded-full border border-slate-700/60 bg-slate-900/60 px-2.5 py-1">
+                    Mon territoire détecté : <strong className="text-white">{detectedTerritory ? `${detectedTerritory.flag} ${detectedTerritory.name}` : myTerritory.toUpperCase()}</strong>
+                  </span>
+                  <span className="rounded-full border border-slate-700/60 bg-slate-900/60 px-2.5 py-1">
+                    Intérêt local détecté : <strong className="text-white">{myInterest ? `${myInterest.emoji} ${myInterest.name}` : 'Accueil / non classé'}</strong>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 xl:grid-cols-4">
+            {dashboardInsights.map((insight) => (
+              <div
+                key={insight.title}
+                className={`rounded-2xl border p-4 ${INSIGHT_TONE_STYLES[insight.tone]}`}
+              >
+                <p className="text-xs uppercase tracking-[0.18em] opacity-75">{insight.title}</p>
+                <p className="mt-2 text-lg font-bold">{insight.value}</p>
+                <p className="mt-2 text-sm opacity-85">{insight.detail}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-4 grid gap-4 xl:grid-cols-[1.25fr_0.75fr]">
+            <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-5">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <MapPinned className="h-4 w-4 text-blue-300" />
+                Territoires et départements les plus actifs
+              </h3>
+              <p className="mt-1 text-xs text-slate-400">
+                Vue combinée temps réel + historique. Idéal pour voir où se concentre l’attention et quel territoire décroche.
+              </p>
+              <div className="mt-4 space-y-3">
+                {byTerritory.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
+                    Aucun territoire actif pour le moment.
+                  </div>
+                ) : byTerritory.slice(0, 6).map((territory) => {
+                  const historicLeader = interestByTerritory[territory.code]?.[0];
+                  return (
+                    <div key={territory.code} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-white">
+                            {territory.flag} {territory.name}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {territory.code} · {territory.online} en direct · {territory.totalVisits.toLocaleString('fr-FR')} visites
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-xs">
+                          <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-emerald-200">
+                            Live {territory.online}
+                          </span>
+                          <span className="rounded-full border border-blue-500/20 bg-blue-500/10 px-2.5 py-1 text-blue-200">
+                            Historique {territory.totalVisits.toLocaleString('fr-FR')}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-3 grid gap-2 md:grid-cols-2">
+                        <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+                          <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Top intérêts live</p>
+                          <p className="mt-2 text-sm text-slate-200">
+                            {territory.topInterests.length > 0
+                              ? territory.topInterests.slice(0, 3).map((interest) => `${interest.emoji} ${interest.name} (${interest.online})`).join(' · ')
+                              : 'Aucun focus live dominant'}
+                          </p>
+                        </div>
+                        <div className="rounded-lg border border-slate-800 bg-slate-900/70 p-3">
+                          <p className="text-[11px] uppercase tracking-[0.18em] text-slate-500">Lecture IA locale</p>
+                          <p className="mt-2 text-sm text-slate-200">
+                            {historicLeader
+                              ? `${historicLeader.emoji} ${historicLeader.name} reste le meilleur aimant historique sur ce territoire.`
+                              : 'Pas encore assez d’historique pour une recommandation locale.'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-5">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Eye className="h-4 w-4 text-fuchsia-300" />
+                Radar centres d’intérêt
+              </h3>
+              <p className="mt-1 text-xs text-slate-400">
+                Où vont les utilisateurs maintenant, et quels thèmes gardent un poids historique.
+              </p>
+              <div className="mt-4 space-y-3">
+                {byInterest.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
+                    Aucun centre d’intérêt détecté pour le moment.
+                  </div>
+                ) : byInterest.slice(0, 8).map((interest) => {
+                  const width = Math.max(10, Math.round((interest.totalViews / topInterestMax) * 100));
+                  return (
+                    <div key={interest.key} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-white">{interest.emoji} {interest.name}</p>
+                          <p className="mt-1 text-xs text-slate-500">{interest.description || 'Axe comportemental détecté par navigation.'}</p>
+                        </div>
+                        <div className="text-right text-xs text-slate-400">
+                          <p className="font-semibold text-emerald-300">{interest.online} live</p>
+                          <p>{interest.totalViews.toLocaleString('fr-FR')} vues</p>
+                        </div>
+                      </div>
+                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-800">
+                        <div
+                          className="h-2 rounded-full bg-gradient-to-r from-fuchsia-500 via-cyan-400 to-emerald-400"
+                          style={{ width: `${width}%` }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── Feature grid ─────────────────────────────────────────── */}
         <section className="mb-8">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -328,26 +735,138 @@ const EspaceCreateur: React.FC = () => {
             <Shield className="w-5 h-5 text-blue-400" />
             Outils d'administration
           </h2>
+          <div className="mb-4 rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-white">
+                  {userRole === 'admin'
+                    ? 'Votre rôle admin ouvre tous les modules ci-dessous.'
+                    : 'Votre rôle actuel est CREATOR : ces modules système restent protégés jusqu’à promotion admin.'}
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                  {userRole === 'admin'
+                    ? 'Chaque pavé ouvre directement le bon écran d’administration.'
+                    : 'Les pavés ne redirigent plus vers une impasse : touchez-en un pour voir à quoi il sert, puis utilisez “Actualiser le rôle” après promotion admin ou lancez le workflow GitHub prévu.'}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${
+                  userRole === 'admin'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                    : 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                }`}>
+                  {userRole === 'admin' ? 'Admin actif' : 'Admin requis'}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleRefreshClaims}
+                  disabled={refreshing}
+                  className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                  {refreshing ? 'Actualisation…' : 'Actualiser le rôle'}
+                </button>
+              </div>
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {ADMIN_LINKS.map(l => {
               const Icon = l.icon;
+              const isLocked = l.requiresAdmin && userRole !== 'admin';
+              const cardClassName = `flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all group ${
+                isLocked
+                  ? 'bg-slate-800/40 border-slate-700/40 hover:border-amber-500/40 hover:bg-amber-950/20'
+                  : 'bg-slate-800/60 border-slate-700/50 hover:border-slate-500/60'
+              }`;
+
+              const content = (
+                <>
+                  <div className="p-2 bg-slate-700/50 rounded-lg flex-shrink-0">
+                    <Icon className={`w-4 h-4 ${l.color}`} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">{l.label}</p>
+                      <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                        isLocked
+                          ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                          : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                      }`}>
+                        {isLocked ? 'Admin requis' : 'Ouvrir'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 truncate">{l.description}</p>
+                  </div>
+                  <ExternalLink className={`h-4 w-4 flex-shrink-0 transition-colors ${
+                    isLocked ? 'text-amber-300/80' : 'text-slate-500 group-hover:text-white'
+                  }`} />
+                </>
+              );
+
+              if (isLocked) {
+                return (
+                  <button
+                    key={l.to}
+                    type="button"
+                    onClick={() => setSelectedAdminLink(l)}
+                    className={cardClassName}
+                    aria-pressed={selectedAdminLink?.to === l.to}
+                  >
+                    {content}
+                  </button>
+                );
+              }
+
               return (
                 <Link
                   key={l.to}
                   to={l.to}
-                  className="flex items-center gap-3 bg-slate-800/60 border border-slate-700/50 hover:border-slate-500/60 rounded-xl p-4 transition-all group"
+                  className={cardClassName}
                 >
-                  <div className="p-2 bg-slate-700/50 rounded-lg flex-shrink-0">
-                    <Icon className={`w-4 h-4 ${l.color}`} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">{l.label}</p>
-                    <p className="text-xs text-slate-500 truncate">{l.description}</p>
-                  </div>
+                  {content}
                 </Link>
               );
             })}
           </div>
+          {userRole !== 'admin' && selectedAdminLink && (
+            <div className="mt-4 rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/30 to-slate-900/80 p-5">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">
+                    Accès protégé
+                  </p>
+                  <h3 className="mt-1 text-lg font-bold text-white">
+                    {selectedAdminLink.label}
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-300">
+                    {selectedAdminLink.description}. Ce module pointe bien vers <code className="rounded bg-slate-950/70 px-1.5 py-0.5 text-xs text-amber-200">{selectedAdminLink.to}</code>, mais la route est volontairement réservée au rôle <strong>admin</strong>.
+                  </p>
+                  <ul className="mt-3 space-y-1 text-xs text-slate-400">
+                    <li>• Rôle actuel : <span className="font-semibold text-amber-200">{userRole}</span></li>
+                    <li>• Action recommandée : promouvoir le compte en <span className="font-semibold text-emerald-300">admin</span> via GitHub Actions ou script local.</li>
+                    <li>• Ensuite : revenir ici puis cliquer sur <span className="font-semibold text-cyan-300">Actualiser le rôle</span>.</li>
+                  </ul>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={selectedAdminLink.helpHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-500/20"
+                  >
+                    GitHub Actions
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                  <Link
+                    to="/activation-createur"
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-600/60 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-white transition hover:border-slate-500"
+                  >
+                    Guide d’activation
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* ── Quick navigation ─────────────────────────────────────── */}

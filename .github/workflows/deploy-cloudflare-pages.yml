@@ -162,7 +162,24 @@ jobs:
       - name: Wait for CDN propagation
         run: sleep 30
 
+      - name: Warm up deployment validation (non-blocking preflight)
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            echo "🔄 Preflight validation attempt $attempt/6..."
+            if node scripts/validate-deployment.mjs "$SITE_URL"; then
+              echo "✅ Preflight validation succeeded."
+              exit 0
+            fi
+            if [ "$attempt" -lt 6 ]; then
+              echo "⏳ Preview not ready yet, waiting 15s before retry..."
+              sleep 15
+            fi
+          done
+          echo "❌ Preflight validation failed after 6 attempts."
+          exit 1
+
       - name: Validation round 1/3
+        id: validation_round_1
         run: node scripts/validate-deployment.mjs "$SITE_URL"
 
       - name: Wait before round 2
@@ -171,6 +188,7 @@ jobs:
           sleep 30
 
       - name: Validation round 2/3
+        id: validation_round_2
         run: node scripts/validate-deployment.mjs "$SITE_URL"
 
       - name: Wait before round 3
@@ -179,9 +197,11 @@ jobs:
           sleep 30
 
       - name: Validation round 3/3
+        id: validation_round_3
         run: node scripts/validate-deployment.mjs "$SITE_URL"
 
       - name: Final proof — 3/3 validations passed ✅
+        if: steps.validation_round_1.conclusion == 'success' && steps.validation_round_2.conclusion == 'success' && steps.validation_round_3.conclusion == 'success'
         run: |
           echo ""
           echo "🏆 ============================================"

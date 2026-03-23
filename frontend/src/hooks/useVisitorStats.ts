@@ -166,6 +166,12 @@ export interface VisitorStats {
   myTerritory: string;
   /** Current page category detected for this session */
   myInterest: PageCategory | null;
+  /** Latest visitor presence heartbeat seen in Firestore */
+  lastPresenceAt: Date | null;
+  /** Latest territory visit counter update */
+  lastVisitAt: Date | null;
+  /** Latest page/interest view counter update */
+  lastInterestViewAt: Date | null;
 }
 
 // ── Hook ──────────────────────────────────────────────────────────────────────
@@ -176,6 +182,9 @@ export function useVisitorStats(): VisitorStats {
   const [visitsByTerritory, setVisitsByTerritory] = useState<Record<string, number>>({});
   const [onlineByInterest, setOnlineByInterest] = useState<Record<string, number>>({});
   const [viewsByInterest, setViewsByInterest] = useState<Record<string, number>>({});
+  const [lastPresenceAt, setLastPresenceAt] = useState<Date | null>(null);
+  const [lastVisitAt, setLastVisitAt] = useState<Date | null>(null);
+  const [lastInterestViewAt, setLastInterestViewAt] = useState<Date | null>(null);
   /** real-time: territory → { interestKey → count } */
   const [onlineInterestByTerritory, setOnlineInterestByTerritory] = useState<
     Record<string, Record<string, number>>
@@ -289,6 +298,7 @@ export function useVisitorStats(): VisitorStats {
         const intCounts: Record<string, number> = {};
         const territInterest: Record<string, Record<string, number>> = {};
         let total = 0;
+        let latestPresence: Date | null = null;
 
         snap.forEach((d) => {
           const data = d.data();
@@ -304,6 +314,9 @@ export function useVisitorStats(): VisitorStats {
               if (!territInterest[t]) territInterest[t] = {};
               territInterest[t][iKey] = (territInterest[t][iKey] ?? 0) + 1;
             }
+            if (!latestPresence || lastSeen.toMillis() > latestPresence.getTime()) {
+              latestPresence = lastSeen.toDate();
+            }
             total++;
           }
         });
@@ -312,6 +325,7 @@ export function useVisitorStats(): VisitorStats {
         setOnlineByInterest(intCounts);
         setOnlineInterestByTerritory(territInterest);
         setTotalOnline(total);
+        setLastPresenceAt(latestPresence);
         setLoading(false);
       },
       () => setLoading(false),
@@ -322,10 +336,16 @@ export function useVisitorStats(): VisitorStats {
       collection(db, 'visit_stats'),
       (snap) => {
         const visits: Record<string, number> = {};
+        let latestVisit: Date | null = null;
         snap.forEach((d) => {
           visits[d.id] = (d.data().totalVisits as number) ?? 0;
+          const lastVisit = d.data().lastVisit as Timestamp | null;
+          if (lastVisit && (!latestVisit || lastVisit.toMillis() > latestVisit.getTime())) {
+            latestVisit = lastVisit.toDate();
+          }
         });
         setVisitsByTerritory(visits);
+        setLastVisitAt(latestVisit);
       },
       () => {},
     );
@@ -335,10 +355,16 @@ export function useVisitorStats(): VisitorStats {
       collection(db, 'page_stats'),
       (snap) => {
         const views: Record<string, number> = {};
+        let latestView: Date | null = null;
         snap.forEach((d) => {
           views[d.id] = (d.data().totalViews as number) ?? 0;
+          const lastView = d.data().lastView as Timestamp | null;
+          if (lastView && (!latestView || lastView.toMillis() > latestView.getTime())) {
+            latestView = lastView.toDate();
+          }
         });
         setViewsByInterest(views);
+        setLastInterestViewAt(latestView);
       },
       () => {},
     );
@@ -491,5 +517,8 @@ export function useVisitorStats(): VisitorStats {
     loading,
     myTerritory: myTerritory.current,
     myInterest: myInterest.current,
+    lastPresenceAt,
+    lastVisitAt,
+    lastInterestViewAt,
   };
 }
