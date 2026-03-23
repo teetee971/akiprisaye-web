@@ -264,7 +264,7 @@ jobs:
           if [ ! -f .lighthouseci/infra-metadata.json ]; then
             cat > .lighthouseci/infra-metadata.json <<'JSON'
           {
-            "status": "ok",
+            "status": "placeholder",
             "generatedBy": "deploy-cloudflare-pages.yml safety step"
           }
           JSON

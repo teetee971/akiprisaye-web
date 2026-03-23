@@ -264,13 +264,15 @@ jobs:
         # --host 127.0.0.1 pour éviter d'exposer le serveur sur toutes les interfaces.
         # $! est disponible immédiatement après & dans bash.
         working-directory: frontend
+        env:
+          PREVIEW_URL: http://127.0.0.1:4173
         run: |
           npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/preview-server.log 2>&1 &
           echo $! > /tmp/preview-server.pid
           echo "🚀 Preview server démarré (PID: $!)"
           # 180000ms (3 min) absorbe les pics de latence npm/IO en runners GitHub partagés.
-          npx wait-on --timeout 180000 http://127.0.0.1:4173
-          curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused http://127.0.0.1:4173 >/dev/null
+          npx wait-on --timeout 180000 "$PREVIEW_URL"
+          curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused "$PREVIEW_URL" >/dev/null
           echo "✅ Preview server prêt (wait-on + curl)."
 
       - name: Dump preview server log on failure
@@ -347,7 +349,7 @@ jobs:
           if [ ! -f .lighthouseci/infra-metadata.json ]; then
             cat > .lighthouseci/infra-metadata.json <<'JSON'
           {
-            "status": "ok",
+            "status": "placeholder",
             "generatedBy": "ci.yml safety step"
           }
           JSON
