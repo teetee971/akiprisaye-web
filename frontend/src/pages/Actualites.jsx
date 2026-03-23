@@ -154,6 +154,7 @@ export default function Actualites() {
             aria-label="Ambiance éditoriale de veille marché"
           >
             <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+            <track kind="captions" srcLang="fr" label="Français" src="data:text/vtt,WEBVTT" default />
           </video>
         </div>
       </section>
@@ -176,6 +177,7 @@ export default function Actualites() {
               {item.videoUrl && (
                 <video controls preload="none" className="w-full h-44 object-cover border-t border-white/10" poster={item.imageUrl ?? PAGE_HERO_IMAGES.articleDefault}>
                   <source src={item.videoUrl} type="video/mp4" />
+                  <track kind="captions" srcLang="fr" label="Français" src="data:text/vtt,WEBVTT" default />
                 </video>
               )}
               <div className="p-3 sm:p-4">
