@@ -324,7 +324,7 @@ export default function HomeV5() {
   const [selectedTerritory, setSelectedTerritory] = useState('GP');
   const [selectedRetailer, setSelectedRetailer] = useState('');
   const [showMobileCTA, setShowMobileCTA] = useState(false);
-  const [showExtended, setShowExtended] = useState(false);
+  const [showExtended, setShowExtended] = useState(true);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [comparison] = useState<PriceComparison>(getComparisonOfDay());
   const statsRef = useRef<HTMLElement | null>(null);
@@ -409,8 +409,7 @@ export default function HomeV5() {
             {/* Hero panel */}
             <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:p-8 lg:min-h-[420px] lg:p-10">
               <img
-                src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80"
-                srcSet="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=800&q=80 800w, https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fm=webp&fit=crop&w=1200&q=80 1200w"
+                src="https://github.com/user-attachments/assets/04b47573-4355-4639-bdb0-06250bf27329"
                 sizes="(max-width:1024px) 100vw, 58vw"
                 alt=""
                 aria-hidden="true"
