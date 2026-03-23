@@ -256,6 +256,25 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
+      - name: Start preview server
+        # Démarre vite preview en arrière-plan et sauvegarde le PID pour l'arrêt propre.
+        # --host 127.0.0.1 pour éviter d'exposer le serveur sur toutes les interfaces.
+        # $! est disponible immédiatement après & dans bash.
+        working-directory: frontend
+        run: |
+          npm run preview -- --host 127.0.0.1 &
+          echo $! > /tmp/preview-server.pid
+          echo "🚀 Preview server démarré (PID: $!)"
+
+      - name: Wait for preview server
+        # Attend que le serveur réponde avant de lancer LHCI.
+        # Sans cette attente, LHCI échoue avec "Timed out waiting for the server".
+        run: |
+          echo "⏳ Attente du preview server sur http://127.0.0.1:4173 ..."
+          timeout 60 bash -c 'until curl -sf http://127.0.0.1:4173/ > /dev/null 2>&1; do sleep 2; done' \
+            || { echo '❌ Preview server non disponible après 60s — vérifier vite preview'; exit 1; }
+          echo "✅ Preview server prêt."
+
       - name: Check override label (ci:override-lighthouse)
         # Détecte si le label 'ci:override-lighthouse' est présent sur la PR.
         # Si oui : FAIL → WARN (jamais PASS, jamais silencieux).
@@ -286,13 +305,24 @@ jobs:
 
       - name: Run Lighthouse CI
         # continue-on-error: LHCI exits 1 for ANY assertion failure (even "warn" level).
-        # Score regressions are not technical errors — they are handled non-blocking by
-        # lighthouse-guard.mjs --compare. Only a true technical failure (server won't
-        # start, Lighthouse crashes) would also trigger this, but we still want reports
-        # and the quality gate to run even in that case.
+        # Score regressions are not technical errors — they are handled by
+        # lighthouse-guard.mjs --compare. We still want reports and the quality gate
+        # to run even if LHCI assertions fail.
         continue-on-error: true
         working-directory: frontend
         run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
+
+      - name: Stop preview server
+        # Arrêt propre du serveur preview quelle que soit l'issue de LHCI.
+        # SIGTERM (signal par défaut de kill) permet à vite preview de se fermer proprement.
+        if: always()
+        run: |
+          if [ -f /tmp/preview-server.pid ]; then
+            PID=$(cat /tmp/preview-server.pid)
+            kill -TERM "$PID" 2>/dev/null || true
+            rm -f /tmp/preview-server.pid
+            echo "🛑 Preview server (PID: $PID) arrêté."
+          fi
 
       - name: Write Lighthouse scores (input baseline)
         # Toujours exécuté pour capturer les scores même en cas d'erreur LHCI.
@@ -307,11 +337,11 @@ jobs:
           LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
         run: node scripts/lighthouse-guard.mjs --write
 
-      - name: Quality gate (comparaison avec baseline main)
-        # Télécharge l'artifact "lighthouse-scores" du dernier run main via l'API GitHub.
-        # Utilise le moteur de décision (lighthouse-engine.mjs) pour produire un verdict
-        # PASS / WARN / FAIL / NO_BASELINE avec codes de raison explicites.
-        # Non bloquant sur PR : toujours exit 0 (FAIL = avertissement visible, pas d'échec CI).
+      - name: Quality gate — warning-only (PR)
+        # Sur PR : télécharge la baseline main, compare les scores, produit un verdict.
+        # POLITIQUE : warning-only — FAIL = avertissement visible dans PR comment + summary,
+        # le merge n'est PAS bloqué (exit 0 quelle que soit la sévérité).
+        # Le label ci:override-lighthouse est pris en compte (FAIL → WARN journalisé).
         # Écrit /tmp/lh-verdict.json pour le commentaire PR et le résumé.
         if: always() && github.event_name == 'pull_request'
         working-directory: frontend
@@ -322,6 +352,25 @@ jobs:
           LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
           LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
           LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
+          # LH_BLOCKING non défini → mode warning-only → exit 0 sur FAIL
+        run: node scripts/lighthouse-guard.mjs --compare
+
+      - name: Quality gate — bloquant (push:main)
+        # Sur push main : compare avec la baseline du run main précédent.
+        # POLITIQUE : bloquant — FAIL (sans override) → exit 1 → CI bloquée.
+        # Cela garantit que la branche main ne régresse pas silencieusement.
+        # Le label ci:override-lighthouse est supporté mais actif uniquement sur PR ;
+        # LH_OVERRIDE_LABEL='false' sur main pour empêcher tout contournement silencieux.
+        if: always() && github.event_name == 'push'
+        working-directory: frontend
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          LH_OVERRIDE_LABEL: 'false'
+          LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
+          LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
+          LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
+          LH_BLOCKING: '1'
         run: node scripts/lighthouse-guard.mjs --compare
 
       - name: PR comment — rapport qualité Lighthouse
@@ -351,6 +400,7 @@ jobs:
           name: lighthouse-reports
           path: frontend/.lighthouseci/
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload Lighthouse scores (référence baseline, 90 jours)
         # Uploadé séparément du rapport complet pour être facilement téléchargeable.
@@ -361,6 +411,7 @@ jobs:
           name: lighthouse-scores
           path: frontend/.lighthouseci/lighthouse-scores.json
           retention-days: 90
+          if-no-files-found: warn
 
   # ─── 8. build-test (gate rétro-compatible) ──────────────────────────────────
   # Ce job émet le check "build-test" requis par la règle de protection de

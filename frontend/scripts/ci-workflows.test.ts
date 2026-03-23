@@ -283,6 +283,34 @@ describe('ci.yml — Lighthouse regression guard and PR comment', () => {
     expect(ciYml).toMatch(/LH_SOURCE_TYPE/);
     expect(ciYml).toMatch(/LH_WAS_FALLBACK/);
   });
+
+  it('lighthouse job must start the preview server explicitly before LHCI runs', () => {
+    // The server must be started as a background process with PID tracking,
+    // and a wait step must confirm it is ready before LHCI audits it.
+    // This prevents "Timed out waiting for the server to start listening" from LHCI.
+    expect(ciYml).toMatch(/npm run preview.*--host 127\.0\.0\.1/);
+    expect(ciYml).toMatch(/preview-server\.pid/);
+    expect(ciYml).toMatch(/curl.*127\.0\.0\.1:4173/);
+  });
+
+  it('lighthouse job must stop the preview server cleanly (if: always())', () => {
+    // The server must be stopped even if LHCI or other steps fail.
+    expect(ciYml).toMatch(/Stop preview server/);
+    expect(ciYml).toMatch(/preview-server\.pid/);
+  });
+
+  it('lighthouse job must run --compare with LH_BLOCKING=1 on push:main (blocking gate)', () => {
+    // On push:main, FAIL must block the CI (exit 1) to prevent silent regressions on main.
+    // This eliminates the ambiguity between "GitHub job passed" and "quality guard FAIL".
+    expect(ciYml).toMatch(/LH_BLOCKING.*'1'|LH_BLOCKING.*"1"/);
+    expect(ciYml).toMatch(/github\.event_name\s*==\s*['"]push['"]/);
+  });
+
+  it('lighthouse job must have explicit if-no-files-found on artifact uploads', () => {
+    // Prevents ambiguous implicit behavior — warn explicitly when reports are missing.
+    const warnCount = (ciYml.match(/if-no-files-found:\s*warn/g) || []).length;
+    expect(warnCount).toBeGreaterThanOrEqual(2);
+  });
 });
 
 describe('lighthouse-guard.mjs — per-metric regression thresholds', () => {
@@ -320,11 +348,13 @@ describe('lighthouse-guard.mjs — per-metric regression thresholds', () => {
 describe('lighthouse-guard.mjs — exit code contract', () => {
   const src = readFileSync(path.join(HERE, 'lighthouse-guard.mjs'), 'utf8');
 
-  it('business verdict FAIL in --compare mode must exit 0 (non-blocking)', () => {
-    // The nominal end of compareScores() must always be process.exit(0)
-    // regardless of business verdict (PASS/WARN/FAIL/NO_BASELINE are all non-blocking).
-    // Look for the guard comment followed by exit(0) at the end of compareScores.
-    expect(src).toMatch(/Mode --compare toujours non bloquant[\s\S]*?process\.exit\(0\)/);
+  it('must exit 0 by default (non-blocking) and support LH_BLOCKING=1 for strict blocking on FAIL', () => {
+    // Default (PR mode): non-blocking — exit 0 for all business verdicts (PASS/WARN/FAIL/NO_BASELINE).
+    // Strict mode (push:main): LH_BLOCKING=1 → FAIL without override → exit 1 (CI blocked).
+    // This eliminates the ambiguity between "GitHub job passed" and "quality guard FAIL".
+    expect(src).toMatch(/LH_BLOCKING/);
+    expect(src).toMatch(/process\.exit\(0\)/);
+    expect(src).toMatch(/process\.exit\(1\)/);
   });
 
   it('unexpected technical exception in --compare must exit 1 (blocking)', () => {
@@ -425,8 +455,11 @@ describe('lighthouserc.json — governance assertions guard (no preset, no indiv
     expect(opts.minScore).toBe(0.8);
   });
 
-  it('startServerReadyTimeout must be at least 30000ms', () => {
-    expect(lhrc.ci.collect.startServerReadyTimeout).toBeGreaterThanOrEqual(30000);
+  it('must NOT have startServerCommand (server started explicitly by the workflow)', () => {
+    // The preview server is started explicitly by the CI workflow (with PID tracking)
+    // before LHCI runs. If startServerCommand were present, LHCI would attempt to
+    // start a second server, causing "Timed out waiting for the server" warnings.
+    expect(lhrc.ci.collect.startServerCommand).toBeUndefined();
   });
 });
 
@@ -649,5 +682,51 @@ describe('lighthouse-guard.mjs — no dead-code absolute-threshold enforcement',
     expect(src).not.toMatch(/\bMIN_ACCESSIBILITY\b/);
     expect(src).not.toMatch(/\bMIN_SEO\b/);
     expect(src).not.toMatch(/\bMIN_BEST_PRACTICES\b/);
+  });
+});
+
+describe('lighthouse-guard.mjs — LH_BLOCKING strict mode', () => {
+  const src = readFileSync(path.join(HERE, 'lighthouse-guard.mjs'), 'utf8');
+
+  it('must read LH_BLOCKING env var to determine strict mode', () => {
+    // LH_BLOCKING=1 activates strict mode: FAIL without override → exit 1.
+    // Default (LH_BLOCKING unset): non-blocking, exit 0 for all business verdicts.
+    expect(src).toMatch(/LH_BLOCKING/);
+    expect(src).toMatch(/isBlocking/);
+  });
+
+  it('must call process.exit(1) in strict mode on FAIL (blocking)', () => {
+    // When LH_BLOCKING=1 and verdict is FAIL without override, the script must exit 1
+    // so the GitHub Actions step — and therefore the whole job — fails.
+    expect(src).toMatch(/isBlocking[\s\S]*?process\.exit\(1\)/);
+  });
+
+  it('must still call process.exit(0) in non-blocking mode (default PR policy)', () => {
+    // Without LH_BLOCKING=1, all business verdicts (including FAIL) exit 0.
+    // This is the correct policy for PR warning-only mode.
+    expect(src).toMatch(/process\.exit\(0\)/);
+  });
+
+  it('must NOT block when LH_BLOCKING=1 and override is active', () => {
+    // If the ci:override-lighthouse label is active, FAIL → WARN even in strict mode.
+    // The condition must check both isBlocking AND !hasOverride before exit(1).
+    expect(src).toMatch(/isBlocking[\s\S]{0,100}!hasOverride/);
+  });
+});
+
+describe('prepare-lighthouse-config.mjs — server management', () => {
+  const src = readFileSync(path.join(HERE, 'prepare-lighthouse-config.mjs'), 'utf8');
+
+  it('must delete startServerCommand for localhost mode (server managed by workflow)', () => {
+    // The preview server is started by the CI workflow; LHCI must not attempt to
+    // start a second one. Deleting startServerCommand ensures LHCI assumes the
+    // server is already running when auditing http://127.0.0.1:4173.
+    expect(src).toMatch(/delete cfg\.ci\.collect\.startServerCommand/);
+  });
+
+  it('must delete startServerReadyTimeout for localhost mode', () => {
+    // Without startServerCommand, startServerReadyTimeout has no effect.
+    // Removing it avoids confusion and keeps the config clean.
+    expect(src).toMatch(/delete cfg\.ci\.collect\.startServerReadyTimeout/);
   });
 });

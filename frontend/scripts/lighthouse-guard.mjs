@@ -97,6 +97,11 @@ const urlInfo = {
 // Override label actif ?
 const hasOverride = process.env.LH_OVERRIDE_LABEL === 'true';
 
+// Mode bloquant : LH_BLOCKING=1 → FAIL fait échouer la CI (exit 1).
+// Par défaut (sans LH_BLOCKING) : FAIL = avertissement visible, non bloquant (exit 0).
+// Usage : LH_BLOCKING=1 est activé uniquement sur push:main dans ci.yml.
+const isBlocking = process.env.LH_BLOCKING === '1';
+
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
 function readReports() {
@@ -358,15 +363,27 @@ async function compareScores() {
 
   // ── Exit code ─────────────────────────────────────────────────────────────
 
-  if (verdict === VERDICT.FAIL) {
-    console.warn('\n⚠️  Régression Lighthouse détectée — avertissement (voir /tmp/lh-verdict.json).');
-    console.warn('   → CI non bloquée : le suivi des régressions reste actif, aucun merge bloqué.');
-  }
-
   console.log(`\n${verdictIcon} Seuils: perf -${THRESHOLD_PERFORMANCE}, a11y -${THRESHOLD_ACCESSIBILITY}, seo -${THRESHOLD_SEO}, bp -${THRESHOLD_BEST_PRACTICES}.`);
 
-  // Mode --compare toujours non bloquant : exit 0 quel que soit le verdict.
-  // Seule une vraie erreur technique (catch global) peut sortir en erreur.
+  // Mode bloquant (LH_BLOCKING=1, sans override) : FAIL → exit 1.
+  // Activé sur push:main dans ci.yml pour bloquer la CI sur régression réelle.
+  if (verdict === VERDICT.FAIL && isBlocking && !hasOverride) {
+    console.error('\n❌  Régression Lighthouse bloquante — CI bloquée (LH_BLOCKING=1, pas d\'override).');
+    console.error('   → Corrigez la régression ou ajoutez le label ci:override-lighthouse.');
+    process.exit(1);
+  }
+
+  if (verdict === VERDICT.FAIL) {
+    console.warn('\n⚠️  Régression Lighthouse détectée — avertissement (voir /tmp/lh-verdict.json).');
+    if (isBlocking && hasOverride) {
+      console.warn('   → Override actif : FAIL converti en WARN, CI non bloquée.');
+    } else {
+      console.warn('   → Mode warning-only (défaut PR) : CI non bloquée, régression journalisée.');
+    }
+  }
+
+  // Mode non bloquant par défaut : exit 0 pour tous les verdicts business.
+  // Mode bloquant (LH_BLOCKING=1) sans FAIL ou avec override : exit 0 aussi.
   process.exit(0);
 }
 

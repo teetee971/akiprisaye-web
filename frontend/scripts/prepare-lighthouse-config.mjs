@@ -71,12 +71,19 @@ if (targetUrl && targetUrl.startsWith('http')) {
   console.log(`🌐 Lighthouse → URL ${urlSource} : ${auditedUrl}`);
 } else {
   // Priorité 3 : fallback localhost
-  const localUrl = (cfg.ci.collect.url && cfg.ci.collect.url[0]) || 'http://localhost:4173';
+  const localUrl = (cfg.ci.collect.url && cfg.ci.collect.url[0]) || 'http://127.0.0.1:4173';
   auditedUrl  = localUrl;
   urlSource   = 'localhost';
   wasFallback = expectCDN; // fallback non attendu si CDN était requis
 
   cfg.ci.collect.url = [auditedUrl];
+
+  // Le serveur preview est démarré explicitement par le workflow avant LHCI.
+  // Supprimer startServerCommand/startServerReadyTimeout pour éviter que LHCI
+  // tente de démarrer un second serveur ("Timed out waiting for server" warning).
+  delete cfg.ci.collect.startServerCommand;
+  delete cfg.ci.collect.startServerReadyTimeout;
+
   console.log(`🖥️  Lighthouse → serveur local : ${auditedUrl}`);
 
   if (expectCDN) {
