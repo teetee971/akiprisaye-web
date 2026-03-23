@@ -65,6 +65,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
   actions: read
 
 concurrency:
@@ -137,25 +138,31 @@ jobs:
             node scrape-product.mjs --ean "${{ inputs.ean }}" --territory "${{ inputs.territory }}" --output "$OUTPUT_MODE"
           fi
 
-      - name: 💾 Commit des résultats JSON
+      - name: Configure Git
         if: ${{ inputs.save_json == 'true' }}
         run: |
-          git config user.name  "akiprisaye-bot[scan]"
-          git config user.email "bot-scan@akiprisaye.fr"
+          git config user.name "github-actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      - name: Create and push branch
+        if: ${{ inputs.save_json == 'true' }}
+        run: |
           if git diff --quiet frontend/public/data/; then
             echo "ℹ️  Aucun fichier JSON modifié"
           else
-            CHANGED=$(git diff --name-only frontend/public/data/ | tr '\n' ' ')
-            echo "📝 Fichiers : $CHANGED"
-            git add frontend/public/data/product-scan-*.json
-            git commit \
-              -m "🔍 [scan] Prix produit — $(date -u '+%Y-%m-%d %H:%M UTC')" \
-              -m "EAN: ${{ inputs.ean || inputs.eans || 'panier-base' }} | Territoire: ${{ inputs.territory }}" \
-              -m "[skip ci]"
-            git push || echo "⚠️  Push vers main rejeté (règle de protection de branche) — résultats disponibles en artifacts CI"
-            echo "✅ Résultats committés"
+            git checkout -B auto-data-update
+            git add frontend/public/data/*
+            git commit -m "Auto-update product scan data"
+            git push origin auto-data-update
           fi
+
+      - name: Create Pull Request
+        if: ${{ inputs.save_json == 'true' }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: auto-data-update
+          title: "Auto-update product scan data"
+          body: "Pull request automatique suite au scraping"
 
       - name: 📢 Notification échec
         if: failure()
