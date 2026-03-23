@@ -2,6 +2,7 @@ name: Repo Guard — Anti fichiers inutiles
 
 on:
   pull_request:
+  pull_request_target:
   push:
     branches: [main]
 
@@ -11,8 +12,11 @@ permissions:
 jobs:
   repo-guard:
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       # Prévention Git LFS (hérité des commits précédents)
       - name: Disable Git LFS

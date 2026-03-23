@@ -3,6 +3,8 @@ name: Security Audit Guard
 on:
   pull_request:
     branches: [ main ]
+  pull_request_target:
+    branches: [ main ]
   push:
     branches: [ main ]
 
@@ -12,10 +14,13 @@ permissions:
 jobs:
   security-audit:
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Ensure SECURITY_AUDIT.md exists
         run: |

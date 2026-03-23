@@ -3,6 +3,8 @@ name: 🔍 Revue de Code Automatique
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
@@ -12,10 +14,12 @@ jobs:
   analyse-pr:
     name: Analyse automatique de la PR
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Vérification @ts-nocheck
         id: ts-nocheck
