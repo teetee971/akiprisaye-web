@@ -268,9 +268,18 @@ jobs:
           npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/preview-server.log 2>&1 &
           echo $! > /tmp/preview-server.pid
           echo "🚀 Preview server démarré (PID: $!)"
+          # 180000ms (3 min) absorbe les pics de latence npm/IO en runners GitHub partagés.
           npx wait-on --timeout 180000 http://127.0.0.1:4173
           curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused http://127.0.0.1:4173 >/dev/null
           echo "✅ Preview server prêt (wait-on + curl)."
+
+      - name: Dump preview server log on failure
+        if: failure()
+        run: |
+          if [ -f /tmp/preview-server.log ]; then
+            echo "----- /tmp/preview-server.log (tail) -----"
+            tail -n 200 /tmp/preview-server.log || true
+          fi
 
       - name: Check override label (ci:override-lighthouse)
         # Détecte si le label 'ci:override-lighthouse' est présent sur la PR.
