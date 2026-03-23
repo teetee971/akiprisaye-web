@@ -273,8 +273,9 @@ describe('ci.yml — Lighthouse pipeline guardrails', () => {
     expect(ciYml).toMatch(/frontend\/\.lighthouseci\/\*\*/);
   });
 
-  it('test job should run npm test with --runInBand flag', () => {
-    expect(ciYml).toMatch(/npm test -- --runInBand/);
+  it('test job should run npm run test (Vitest-compatible)', () => {
+    expect(ciYml).toMatch(/npm run test/);
+    expect(ciYml).not.toMatch(/runInBand/);
   });
 });
 
