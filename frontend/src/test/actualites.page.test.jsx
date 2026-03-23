@@ -3,6 +3,7 @@ import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 import Actualites from '../pages/Actualites';
+import { DEFAULT_NEWS_LIMIT } from '../constants/news';
 
 describe('Actualites page', () => {
   let container;
@@ -54,6 +55,7 @@ describe('Actualites page', () => {
     expect(latest).toContain('type=bons_plans');
     expect(latest).toContain('impact=fort');
     expect(latest).toContain('limit=12');
+    expect(latest).toContain(`limit=${DEFAULT_NEWS_LIMIT}`);
     expect(latest).not.toContain('&q=');
   });
 
