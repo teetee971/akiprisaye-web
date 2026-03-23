@@ -30,6 +30,12 @@ on:
       - 'frontend/**'
       - 'price-api/**'
       - '.github/workflows/**'
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'frontend/**'
+      - 'price-api/**'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       lhci_url:
@@ -46,6 +52,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     steps:
       - uses: actions/checkout@v5
 
@@ -82,6 +89,7 @@ jobs:
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     steps:
       - uses: actions/checkout@v5
 
@@ -103,6 +111,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     steps:
       - uses: actions/checkout@v5
 
@@ -132,6 +141,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     steps:
       - uses: actions/checkout@v5
 
@@ -157,6 +167,7 @@ jobs:
   verify-pages:
     name: Verify Pages build
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     defaults:
       run:
         working-directory: frontend
@@ -192,6 +203,7 @@ jobs:
   price-api:
     name: Price-API (typecheck + test)
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     steps:
       - uses: actions/checkout@v5
 
@@ -225,6 +237,7 @@ jobs:
   lighthouse:
     name: Lighthouse CI
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     permissions:
       contents: read
       pull-requests: write   # pour poster un commentaire sur la PR
@@ -422,6 +435,7 @@ jobs:
   build-test:
     name: build-test
     runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     needs: [build, test]
     steps:
       - run: echo "build-test gate — build ✅  test ✅"
