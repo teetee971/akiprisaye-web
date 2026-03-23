@@ -181,7 +181,7 @@ describe('EspaceCreateur creator guard', () => {
       isAuthenticated: true,
       email: fakeUser.email,
       displayName: fakeUser.displayName,
-      isAdmin: true,
+      isAdmin: false,
       isCreator: true,
     });
 
@@ -213,5 +213,27 @@ describe('EspaceCreateur creator guard', () => {
     // Admin users can also access the creator space
     expect(screen.queryByTestId('home-page')).toBeNull();
     expect(screen.getByRole('heading', { name: /Espace Créateur/i })).toBeTruthy();
+  });
+
+  it('shows admin-required guidance instead of broken redirects for creator-only users', () => {
+    const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
+    authState = makeAuthMock({
+      loading: false,
+      authResolved: true,
+      user: fakeUser,
+      userRole: 'creator',
+      isGuest: false,
+      isAuthenticated: true,
+      email: fakeUser.email,
+      displayName: fakeUser.displayName,
+      isAdmin: false,
+      isCreator: true,
+    });
+
+    renderCreateur();
+
+    expect(screen.getAllByText(/Admin requis/i).length).toBeGreaterThan(0);
+    expect(screen.getByRole('heading', { name: /Dashboard Admin/i })).toBeTruthy();
+    expect(screen.getByRole('link', { name: /Guide d’activation/i })).toHaveAttribute('href', '/activation-createur');
   });
 });

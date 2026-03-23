@@ -28,19 +28,21 @@ interface AdminLink {
   to: string;
   description: string;
   color: string;
+  requiresAdmin: boolean;
+  helpHref?: string;
 }
 
 const ADMIN_LINKS: AdminLink[] = [
-  { label: 'Dashboard Admin',       icon: BarChart3,   to: '/admin',                description: 'Vue d\'ensemble et métriques', color: 'text-blue-400' },
-  { label: 'Gestion utilisateurs',  icon: Users,       to: '/admin/users',          description: 'Rôles, plans, accès', color: 'text-purple-400' },
-  { label: 'Sync / Import',         icon: RefreshCw,   to: '/admin/sync',           description: 'Synchronisation des données', color: 'text-green-400' },
-  { label: 'Gestion Magasins',      icon: Building2,   to: '/admin/stores',         description: 'Référentiel enseigne', color: 'text-amber-400' },
-  { label: 'Gestion Produits',      icon: Database,    to: '/admin/products',       description: 'Catalogue EAN', color: 'text-cyan-400' },
-  { label: 'Import Prix',           icon: Download,    to: '/admin/import',         description: 'Import CSV / JSON', color: 'text-orange-400' },
-  { label: 'Modération',            icon: Shield,      to: '/admin/moderation',     description: 'Signalements citoyens', color: 'text-red-400' },
-  { label: 'Marketplace Admin',     icon: Globe,       to: '/admin/marketplace',    description: 'Gestion des annonces', color: 'text-pink-400' },
-  { label: 'Devis Institutionnels', icon: FileText,    to: '/admin/devis',          description: 'Licences & contrats B2B', color: 'text-indigo-400' },
-  { label: 'Calculs Bâtiment',      icon: Wrench,      to: '/admin/calculs-batiment', description: 'Module BTP admin', color: 'text-slate-400' },
+  { label: 'Dashboard Admin',       icon: BarChart3,   to: '/admin',                  description: 'Vue d\'ensemble et métriques', color: 'text-blue-400',   requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion utilisateurs',  icon: Users,       to: '/admin/users',            description: 'Rôles, plans, accès', color: 'text-purple-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Sync / Import',         icon: RefreshCw,   to: '/admin/sync',             description: 'Synchronisation des données', color: 'text-green-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion Magasins',      icon: Building2,   to: '/admin/stores',           description: 'Référentiel enseigne', color: 'text-amber-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion Produits',      icon: Database,    to: '/admin/products',         description: 'Catalogue EAN', color: 'text-cyan-400',  requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Import Prix',           icon: Download,    to: '/admin/import',           description: 'Import CSV / JSON', color: 'text-orange-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Modération',            icon: Shield,      to: '/admin/moderation',       description: 'Signalements citoyens', color: 'text-red-400',   requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Marketplace Admin',     icon: Globe,       to: '/admin/marketplace',      description: 'Gestion des annonces', color: 'text-pink-400',  requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Devis Institutionnels', icon: FileText,    to: '/admin/devis',            description: 'Licences & contrats B2B', color: 'text-indigo-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Calculs Bâtiment',      icon: Wrench,      to: '/admin/calculs-batiment', description: 'Module BTP admin', color: 'text-slate-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
 ];
 
 /* ─── Feature grid ───────────────────────────────────────────────────── */
@@ -211,6 +213,7 @@ const EspaceCreateur: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [envOpen, setEnvOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedAdminLink, setSelectedAdminLink] = useState<AdminLink | null>(ADMIN_LINKS[0]);
 
   // Wait for auth to resolve before checking role — avoids redirect during bootstrap
   if (loading) {
@@ -328,26 +331,138 @@ const EspaceCreateur: React.FC = () => {
             <Shield className="w-5 h-5 text-blue-400" />
             Outils d'administration
           </h2>
+          <div className="mb-4 rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-white">
+                  {userRole === 'admin'
+                    ? 'Votre rôle admin ouvre tous les modules ci-dessous.'
+                    : 'Votre rôle actuel est CREATOR : ces modules système restent protégés jusqu’à promotion admin.'}
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                  {userRole === 'admin'
+                    ? 'Chaque pavé ouvre directement le bon écran d’administration.'
+                    : 'Les pavés ne redirigent plus vers une impasse : touchez-en un pour voir à quoi il sert, puis utilisez “Actualiser le rôle” après promotion admin ou lancez le workflow GitHub prévu.'}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${
+                  userRole === 'admin'
+                    ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                    : 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                }`}>
+                  {userRole === 'admin' ? 'Admin actif' : 'Admin requis'}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleRefreshClaims}
+                  disabled={refreshing}
+                  className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                  {refreshing ? 'Actualisation…' : 'Actualiser le rôle'}
+                </button>
+              </div>
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {ADMIN_LINKS.map(l => {
               const Icon = l.icon;
+              const isLocked = l.requiresAdmin && userRole !== 'admin';
+              const cardClassName = `flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all group ${
+                isLocked
+                  ? 'bg-slate-800/40 border-slate-700/40 hover:border-amber-500/40 hover:bg-amber-950/20'
+                  : 'bg-slate-800/60 border-slate-700/50 hover:border-slate-500/60'
+              }`;
+
+              const content = (
+                <>
+                  <div className="p-2 bg-slate-700/50 rounded-lg flex-shrink-0">
+                    <Icon className={`w-4 h-4 ${l.color}`} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">{l.label}</p>
+                      <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                        isLocked
+                          ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                          : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
+                      }`}>
+                        {isLocked ? 'Admin requis' : 'Ouvrir'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 truncate">{l.description}</p>
+                  </div>
+                  <ExternalLink className={`h-4 w-4 flex-shrink-0 transition-colors ${
+                    isLocked ? 'text-amber-300/80' : 'text-slate-500 group-hover:text-white'
+                  }`} />
+                </>
+              );
+
+              if (isLocked) {
+                return (
+                  <button
+                    key={l.to}
+                    type="button"
+                    onClick={() => setSelectedAdminLink(l)}
+                    className={cardClassName}
+                    aria-pressed={selectedAdminLink?.to === l.to}
+                  >
+                    {content}
+                  </button>
+                );
+              }
+
               return (
                 <Link
                   key={l.to}
                   to={l.to}
-                  className="flex items-center gap-3 bg-slate-800/60 border border-slate-700/50 hover:border-slate-500/60 rounded-xl p-4 transition-all group"
+                  className={cardClassName}
                 >
-                  <div className="p-2 bg-slate-700/50 rounded-lg flex-shrink-0">
-                    <Icon className={`w-4 h-4 ${l.color}`} />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">{l.label}</p>
-                    <p className="text-xs text-slate-500 truncate">{l.description}</p>
-                  </div>
+                  {content}
                 </Link>
               );
             })}
           </div>
+          {userRole !== 'admin' && selectedAdminLink && (
+            <div className="mt-4 rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/30 to-slate-900/80 p-5">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-300">
+                    Accès protégé
+                  </p>
+                  <h3 className="mt-1 text-lg font-bold text-white">
+                    {selectedAdminLink.label}
+                  </h3>
+                  <p className="mt-1 text-sm text-slate-300">
+                    {selectedAdminLink.description}. Ce module pointe bien vers <code className="rounded bg-slate-950/70 px-1.5 py-0.5 text-xs text-amber-200">{selectedAdminLink.to}</code>, mais la route est volontairement réservée au rôle <strong>admin</strong>.
+                  </p>
+                  <ul className="mt-3 space-y-1 text-xs text-slate-400">
+                    <li>• Rôle actuel : <span className="font-semibold text-amber-200">{userRole}</span></li>
+                    <li>• Action recommandée : promouvoir le compte en <span className="font-semibold text-emerald-300">admin</span> via GitHub Actions ou script local.</li>
+                    <li>• Ensuite : revenir ici puis cliquer sur <span className="font-semibold text-cyan-300">Actualiser le rôle</span>.</li>
+                  </ul>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <a
+                    href={selectedAdminLink.helpHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-100 transition hover:bg-amber-500/20"
+                  >
+                    GitHub Actions
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                  <Link
+                    to="/activation-createur"
+                    className="inline-flex items-center gap-2 rounded-xl border border-slate-600/60 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-white transition hover:border-slate-500"
+                  >
+                    Guide d’activation
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* ── Quick navigation ─────────────────────────────────────── */}
