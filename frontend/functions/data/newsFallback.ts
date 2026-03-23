@@ -2,6 +2,13 @@ import type { NewsItem } from '../types/news';
 
 export const serverNewsFallback: NewsItem[] = [
   {
+    id: 'fallback-dossier-gp-000', type: 'dossiers', territory: 'gp', title: 'Enquête : groupe GBH et impact sur les prix en Guadeloupe',
+    summary: 'Dossier de synthèse sur les écarts de prix, la structure du marché local et les points de vigilance pour les consommateurs.',
+    source_name: 'Observatoire AKPSY', source_url: 'https://akiprisaye.fr/methodologie', canonical_url: 'https://akiprisaye.fr/dossiers/enquete-gbh-guadeloupe',
+    published_at: '2026-01-22T09:00:00.000Z', impact: 'fort', isSponsored: false, confidence: 'partner', verified: true,
+    tags: ['enquête', 'gbh', 'vie-chère'], evidence: { scope: 'Guadeloupe', confidence: 'partner' },
+  },
+  {
     id: 'fallback-rappel-gp-001', type: 'rappels', territory: 'gp', title: 'Rappel conso : lot de sardines en conserve',
     summary: 'Présence possible d’histamine au-delà du seuil réglementaire. Vérifiez le lot avant consommation.',
     source_name: 'RappelConso', source_url: 'https://rappel.conso.gouv.fr', canonical_url: 'https://rappel.conso.gouv.fr/fiche-rappel/12345/Interne',
