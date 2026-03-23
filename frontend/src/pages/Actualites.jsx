@@ -5,6 +5,7 @@ import OptimizedImage from '../components/OptimizedImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { newsFallback } from '../data/newsFallback';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { DEFAULT_NEWS_LIMIT } from '../constants/news';
 
 const TERRITORY_LABELS = {
   all: 'Tous territoires',
@@ -36,7 +37,7 @@ export default function Actualites() {
   const [type, setType] = useState('');
   const [impact, setImpact] = useState('');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
-  const [limit, setLimit] = useState(30);
+  const [limit, setLimit] = useState(DEFAULT_NEWS_LIMIT);
   const [state, setState] = useState({ status: 'loading', items: [], mode: 'mock' });
   const [openEvidence, setOpenEvidence] = useState({});
   const [showFeaturedMedia, setShowFeaturedMedia] = useState(false);

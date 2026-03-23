@@ -8,3 +8,6 @@ export const MULTI_TERRITORY_VALUES = ['Tous territoires', 'DROM-COM'];
 
 // Category filter constants
 export const ALL_CATEGORIES = 'ALL';
+
+// API defaults
+export const DEFAULT_NEWS_LIMIT = 30;
