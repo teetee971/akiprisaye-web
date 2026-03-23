@@ -736,7 +736,7 @@ pour les applications web exploitant des API navigateur.
 
 | Élément | Statut |
 |---------|--------|
-| Version | **3.1.1** |
+| Version | **3.3.0** |
 | CI/CD | ✅ Opérationnel |
 | Architecture | ✅ Validée |
 | Déploiement | ✅ GitHub Pages |

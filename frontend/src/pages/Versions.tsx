@@ -13,6 +13,7 @@ const APP_VERSIONS = [
     version: 'v3.3.0',
     date: 'mars 2026',
     label: 'latest',
+    title: 'Calculateur BTP complet & outillage terrain',
     description: 'Calculateur Bâtiment BTP complet — 6 catégories, 20 calculateurs couvrant tous les corps de métier (FFB/ONISEP) : maçonnerie, dalle, fondations, chape, carrelage, peinture, enduit, tôles, terrassement, clôture, électricité (NF C 15-100), plomberie, isolation thermique (RT2020), charpente bois, plâtrerie BA13, parquet, gouttières/zinguerie, menuiserie extérieure. Images Unsplash réalistes sur toutes les tuiles catégories et calculateurs.',
     changelog: null,
   },
@@ -20,6 +21,7 @@ const APP_VERSIONS = [
     version: 'v3.2.0',
     date: 'mars 2026',
     label: null,
+    title: 'Groupes de parole citoyens & versionnage public',
     description: 'Groupes de Parole Citoyens (Issue #7) : groupes de discussion par territoire, messagerie temps réel Firestore, partage de photos, modération IA automatique par filtre de mots-clés, signalement manuel. Affichage de la version, de l\'environnement et du hash Git dans le pied de page (Issue #0.2).',
     changelog: null,
   },
@@ -27,6 +29,7 @@ const APP_VERSIONS = [
     version: 'v3.1.1',
     date: 'mars 2026',
     label: null,
+    title: 'ComparateursHub, sitemap étendu & cohérence monorepo',
     description: 'ComparateursHub exhaustif (34+ liens), nouvelle section Ressources & Comprendre. Alignement de toutes les versions package.json du monorepo (root, frontend, backend, functions, price-api). Sitemap étendu à 60+ URLs. Footer multi-colonnes. manifest.webmanifest PWA corrigé.',
     changelog: '/CHANGELOG.md',
   },
@@ -34,6 +37,7 @@ const APP_VERSIONS = [
     version: 'v3.1.0',
     date: 'mars 2026',
     label: null,
+    title: 'Messagerie, IEVR & gamification',
     description: 'Messagerie interne Firebase (Firestore + onSnapshot). Indice Panier Vital (minutes de SMIC pour panier de 6 produits essentiels). Comparaison internationale Eurostat 2024 / OECD PPP 2024 / INSEE DOM 2023. Gamification (points, badges, classement). 32 snapshots Observatoire (nov. 2025 → mars 2026, 11 territoires). Validation EAN GS1. France métropolitaine ajoutée comme territoire de référence.',
     changelog: '/CHANGELOG.md',
   },
@@ -41,6 +45,7 @@ const APP_VERSIONS = [
     version: 'v3.0.1',
     date: 'février 2026',
     label: null,
+    title: 'Stabilité CI/CD & robustesse déploiement',
     description: 'Correction timeout readiness Vite preview. Stabilisation pipeline CI/CD avec validation post-déploiement bloquante.',
     changelog: null,
   },
@@ -48,6 +53,7 @@ const APP_VERSIONS = [
     version: 'v2.1.0',
     date: 'janvier 2026',
     label: null,
+    title: 'Product Insight System & IEVR DOM-COM',
     description: 'Product Insight System (OCR + analyse ingrédients). Product Dossier longitudinal. Ingredient Evolution. Export Open Data CSV/JSON. Cost of Living IEVR pour DOM-COM. Feature flags pour toutes les nouvelles fonctionnalités.',
     changelog: null,
   },
@@ -55,6 +61,7 @@ const APP_VERSIONS = [
     version: 'v2.0.0',
     date: 'décembre 2025',
     label: null,
+    title: 'Comparateurs spécialisés & observatoire temps réel',
     description: 'Comparateurs spécialisés (vols, bateaux, fret, carburants, assurances, formations, location voiture, matériaux BTP, télécoms, cosmétiques). Carte interactive multi-territoire. Assistant IA local. Gamification v1. Observatoire temps réel.',
     changelog: null,
   },
@@ -62,6 +69,7 @@ const APP_VERSIONS = [
     version: 'v1.9.0',
     date: 'novembre 2025',
     label: null,
+    title: 'Snapshots observatoire multi-territoires',
     description: "Snapshots observatoire novembre 2025 : Guadeloupe, Martinique, Guyane, La Réunion, Mayotte, Polynésie, Nouvelle-Calédonie. Comparaison inter-territoires. Tableau de bord inflation multi-territoires.",
     changelog: null,
   },
@@ -69,6 +77,7 @@ const APP_VERSIONS = [
     version: 'v1.5.0',
     date: 'septembre 2025',
     label: null,
+    title: 'Alertes prix & liste de courses intelligente',
     description: 'Alertes prix automatiques. Liste de courses intelligente avec GPS. Comparateur citoyen participatif. Historique des prix avec courbes.',
     changelog: null,
   },
@@ -76,6 +85,7 @@ const APP_VERSIONS = [
     version: 'v1.2.0',
     date: 'mai 2025',
     label: null,
+    title: 'Scan EAN, OCR tickets & extension territoriale',
     description: 'Système de scan EAN-13/EAN-8 (Tesseract.js local). OCR tickets de caisse. Détection shrinkflation. Extension Martinique et Guyane.',
     changelog: null,
   },
@@ -83,6 +93,7 @@ const APP_VERSIONS = [
     version: 'v1.1',
     date: 'février 2025',
     label: null,
+    title: 'Clarification éditoriale & sources publiques',
     description: 'Ajustement des libellés et clarification des sources publiques. Aucune extension territoriale.',
     changelog: null,
   },
@@ -90,6 +101,7 @@ const APP_VERSIONS = [
     version: 'v1.0',
     date: 'janvier 2025',
     label: null,
+    title: 'Première mise en ligne publique',
     description: 'Première mise en ligne du panier alimentaire citoyen. Données terrain Guadeloupe. Fichier statique vérifié manuellement.',
     changelog: null,
   },
@@ -136,6 +148,7 @@ export default function Versions() {
                 )}
               </div>
               <div className="flex-1 space-y-2">
+                <h2 className="text-lg font-semibold text-white">{item.title}</h2>
                 <p className="text-slate-200 text-sm leading-relaxed">{item.description}</p>
                 {item.changelog && (
                   <a
