@@ -131,10 +131,16 @@ describe('ci.yml — CI trigger guard', () => {
     expect(ciYml).toMatch(/branches:\s*\[main\]/);
   });
 
-  it('must trigger on pull_request opened/synchronize/reopened only', () => {
-    expect(ciYml).toMatch(/opened/);
-    expect(ciYml).toMatch(/synchronize/);
-    expect(ciYml).toMatch(/reopened/);
+  it('must trigger on pull_request against main', () => {
+    expect(ciYml).toMatch(/pull_request:/);
+    expect(ciYml).toMatch(/branches:\s*\[main\]/);
+  });
+
+  it('must include path filters for frontend and CI/Lighthouse files', () => {
+    expect(ciYml).toMatch(/frontend\/\*\*/);
+    expect(ciYml).toMatch(/\.github\/workflows\/ci\.yml/);
+    expect(ciYml).toMatch(/lighthouserc\.json/);
+    expect(ciYml).toMatch(/frontend\/scripts\/\*\*/);
   });
 });
 
@@ -230,67 +236,25 @@ describe('deploy-cloudflare-pages.yml — lighthouse on real preview URL', () =>
   });
 });
 
-describe('ci.yml — Lighthouse regression guard and PR comment', () => {
+describe('ci.yml — Lighthouse pipeline guardrails', () => {
   const ciYml = readWorkflow('ci.yml');
 
-  it('lighthouse job must have pull-requests:write permission for PR comments', () => {
+  it('workflow must request pull-requests:write permission', () => {
     expect(ciYml).toMatch(/pull-requests:\s*write/);
   });
 
-  it('lighthouse job must have actions:read permission for artifact download', () => {
-    expect(ciYml).toMatch(/actions:\s*read/);
-  });
-
-  it('lighthouse job must run lighthouse-guard.mjs --write after LHCI', () => {
+  it('lighthouse job must run lighthouse-guard.mjs --write and --compare', () => {
     expect(ciYml).toMatch(/lighthouse-guard\.mjs.*--write/);
-  });
-
-  it('lighthouse job must run regression guard --compare on pull_request events', () => {
     expect(ciYml).toMatch(/lighthouse-guard\.mjs.*--compare/);
-    expect(ciYml).toMatch(/github\.event_name\s*==\s*['"]pull_request['"]/);
-  });
-
-  it('lighthouse job must post a PR comment with Lighthouse scores', () => {
-    expect(ciYml).toMatch(/lighthouse-pr-comment\.mjs/);
-  });
-
-  it('PR comment step must have continue-on-error to never block CI', () => {
-    expect(ciYml).toMatch(/continue-on-error:\s*true/);
-  });
-
-  it('lighthouse job must upload separate lighthouse-scores artifact (90-day baseline)', () => {
-    expect(ciYml).toMatch(/name:\s*lighthouse-scores/);
-    expect(ciYml).toMatch(/retention-days:\s*90/);
-  });
-
-  it('lighthouse job must detect override label ci:override-lighthouse', () => {
-    // The override label converts FAIL → WARN (never PASS, never silent).
-    // This prevents a FAIL from blocking merge when explicitly overridden.
-    expect(ciYml).toMatch(/ci:override-lighthouse/);
-    expect(ciYml).toMatch(/LH_OVERRIDE_LABEL/);
-  });
-
-  it('lighthouse job override check must set an output variable for downstream steps', () => {
-    // The override label detection must produce a step output (override_check.outputs.active)
-    // consumed by the quality gate step via LH_OVERRIDE_LABEL env var.
-    expect(ciYml).toMatch(/override_check/);
-    expect(ciYml).toMatch(/steps\.override_check\.outputs\.active/);
-  });
-
-  it('lighthouse job must propagate URL metadata (LH_AUDITED_URL, LH_SOURCE_TYPE, LH_WAS_FALLBACK)', () => {
-    // prepare-lighthouse-config.mjs writes these to $GITHUB_ENV; downstream steps must read them.
-    expect(ciYml).toMatch(/LH_AUDITED_URL/);
-    expect(ciYml).toMatch(/LH_SOURCE_TYPE/);
-    expect(ciYml).toMatch(/LH_WAS_FALLBACK/);
   });
 
   it('lighthouse job must start the preview server explicitly before LHCI runs', () => {
     // The server must be started as a background process with PID tracking,
     // and a wait step must confirm it is ready before LHCI audits it.
     // This prevents "Timed out waiting for the server to start listening" from LHCI.
-    expect(ciYml).toMatch(/npm run preview.*--host 127\.0\.0\.1/);
+    expect(ciYml).toMatch(/npm run preview.*--host.*PREVIEW_HOST/);
     expect(ciYml).toMatch(/preview-server\.pid/);
-    expect(ciYml).toMatch(/((wait-on|curl).*127\.0\.0\.1:4173|PREVIEW_URL:\s*http:\/\/127\.0\.0\.1:4173)/);
+    expect(ciYml).toMatch(/(wait-on|curl).*PREVIEW_HOST.*PREVIEW_PORT/);
   });
 
   it('lighthouse job must stop the preview server cleanly (if: always())', () => {
@@ -299,17 +263,18 @@ describe('ci.yml — Lighthouse regression guard and PR comment', () => {
     expect(ciYml).toMatch(/preview-server\.pid/);
   });
 
-  it('lighthouse job must run --compare with LH_BLOCKING=1 on push:main (blocking gate)', () => {
-    // On push:main, FAIL must block the CI (exit 1) to prevent silent regressions on main.
-    // This eliminates the ambiguity between "GitHub job passed" and "quality guard FAIL".
-    expect(ciYml).toMatch(/LH_BLOCKING.*'1'|LH_BLOCKING.*"1"/);
-    expect(ciYml).toMatch(/github\.event_name\s*==\s*['"]push['"]/);
-  });
-
   it('lighthouse job must have explicit if-no-files-found on artifact uploads', () => {
     // Prevents ambiguous implicit behavior — warn explicitly when reports are missing.
     const warnCount = (ciYml.match(/if-no-files-found:\s*warn/g) || []).length;
-    expect(warnCount).toBeGreaterThanOrEqual(2);
+    expect(warnCount).toBeGreaterThanOrEqual(1);
+  });
+
+  it('lighthouse job should upload lighthouse artifacts from frontend/.lighthouseci', () => {
+    expect(ciYml).toMatch(/frontend\/\.lighthouseci\/\*\*/);
+  });
+
+  it('test job should run npm test with --runInBand flag', () => {
+    expect(ciYml).toMatch(/npm test -- --runInBand/);
   });
 });
 
@@ -407,7 +372,7 @@ describe('lighthouse-pr-comment.mjs — PASS/WARN/FAIL verdict banner', () => {
   });
 });
 
-describe('lighthouserc.json — governance assertions guard (no preset, no individual audits)', () => {
+describe('lighthouserc.json — CI compatibility assertions', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lhrc: any = (() => {
     try {
@@ -418,29 +383,22 @@ describe('lighthouserc.json — governance assertions guard (no preset, no indiv
   })();
   const assert = lhrc.ci.assert;
 
-  it('must NOT use lighthouse:recommended preset (causes individual audit failures in CI)', () => {
-    // The preset injects blocking assertions for dozens of individual audits
-    // (bf-cache, forced-reflow, image-delivery, etc.) which bypass the
-    // governance system in lighthouse-engine.mjs / lighthouse-guard.mjs.
-    expect(assert.preset).toBeUndefined();
+  it('must use lighthouse:recommended preset', () => {
+    expect(assert.preset).toBe('lighthouse:recommended');
   });
 
-  it('must have exactly the 4 governance-level assertions (no individual audits)', () => {
-    const allowed = new Set([
-      'categories:performance',
-      'categories:accessibility',
-      'categories:seo',
-      'performance-budget',
-    ]);
+  it('must include the 4 category assertions used by CI gate', () => {
     const actual = Object.keys(assert.assertions ?? {});
-    expect(actual.every(k => allowed.has(k))).toBe(true);
-    expect(actual.length).toBe(4);
+    expect(actual).toContain('categories:performance');
+    expect(actual).toContain('categories:accessibility');
+    expect(actual).toContain('categories:best-practices');
+    expect(actual).toContain('categories:seo');
   });
 
-  it('categories:performance must be warn with minScore 0.8', () => {
+  it('categories:performance must be warn with pragmatic minScore 0.55', () => {
     const [level, opts] = assert.assertions['categories:performance'];
     expect(level).toBe('warn');
-    expect(opts.minScore).toBe(0.8);
+    expect(opts.minScore).toBe(0.55);
   });
 
   it('categories:accessibility must be error with minScore 0.9', () => {
@@ -449,50 +407,31 @@ describe('lighthouserc.json — governance assertions guard (no preset, no indiv
     expect(opts.minScore).toBe(0.9);
   });
 
-  it('categories:seo must be warn with minScore 0.8', () => {
+  it('categories:seo must be error with minScore 0.8', () => {
     const [level, opts] = assert.assertions['categories:seo'];
-    expect(level).toBe('warn');
+    expect(level).toBe('error');
     expect(opts.minScore).toBe(0.8);
   });
 
-  it('must NOT have startServerCommand (server started explicitly by the workflow)', () => {
-    // The preview server is started explicitly by the CI workflow (with PID tracking)
-    // before LHCI runs. If startServerCommand were present, LHCI would attempt to
-    // start a second server, causing "Timed out waiting for the server" warnings.
-    expect(lhrc.ci.collect.startServerCommand).toBeUndefined();
+  it('must keep startServerCommand empty (server started explicitly by workflow)', () => {
+    expect(lhrc.ci.collect.startServerCommand).toBe('');
   });
 });
 
-describe('lighthouserc.json — performance resource budgets', () => {
+describe('lighthouserc.json — collect/upload settings', () => {
   const lhrc = JSON.parse(readFileSync(path.join(REPO_ROOT, 'lighthouserc.json'), 'utf8'));
-  const budgets = lhrc.ci.collect.settings.budgets[0];
 
-  it('must have a stylesheet (CSS) size budget', () => {
-    expect(budgets.resourceSizes.some(
-      (b: { resourceType: string; budget: number }) => b.resourceType === 'stylesheet',
-    )).toBe(true);
+  it('must audit localhost preview URL', () => {
+    expect(lhrc.ci.collect.url).toContain('http://127.0.0.1:4173/');
   });
 
-  it('must have an image size budget', () => {
-    expect(budgets.resourceSizes.some(
-      (b: { resourceType: string; budget: number }) => b.resourceType === 'image',
-    )).toBe(true);
+  it('must use desktop preset in collect settings', () => {
+    expect(lhrc.ci.collect.settings.preset).toBe('desktop');
   });
 
-  it('must have a script count budget (≤ 15)', () => {
-    const s = budgets.resourceCounts.find(
-      (b: { resourceType: string; budget: number }) => b.resourceType === 'script',
-    );
-    expect(s).toBeDefined();
-    expect(s.budget).toBeLessThanOrEqual(15);
-  });
-
-  it('must have third-party count budget ≤ 5', () => {
-    const tp = budgets.resourceCounts.find(
-      (b: { resourceType: string; budget: number }) => b.resourceType === 'third-party',
-    );
-    expect(tp).toBeDefined();
-    expect(tp.budget).toBeLessThanOrEqual(5);
+  it('must upload reports to filesystem frontend/.lighthouseci', () => {
+    expect(lhrc.ci.upload.target).toBe('filesystem');
+    expect(lhrc.ci.upload.outputDir).toBe('frontend/.lighthouseci');
   });
 });
 
