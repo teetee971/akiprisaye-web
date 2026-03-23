@@ -7,7 +7,7 @@ import { SkeletonBadge } from '../SkeletonWidgets';
 // appear in the initial critical-path bundle via the Layout → Footer chain.
 const LiveOnlineBadge = lazy(() => import('../analytics/LiveOnlineBadge'));
 
-const VERSION = '3.2.0';
+const VERSION = '3.3.0';
 
 // Build-time metadata injected by Vite (Issue #0.2)
 const BUILD_SHA: string = import.meta.env.VITE_BUILD_SHA ?? 'dev';
