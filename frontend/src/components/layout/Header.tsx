@@ -12,7 +12,7 @@ const NotificationCenter = lazy(() =>
 );
 
 const links = [
-  { to: '/top-deals-du-jour', label: '🔥 Top deals' },
+  { to: '/top-deals-du-jour', label: 'Top deals' },
   { to: '/search', label: 'Recherche' },
   { to: '/scanner', label: 'Scan' },
   { to: '/comparateurs', label: 'Comparateurs' },
@@ -177,7 +177,7 @@ export default function Header() {
                     isAdmin   ? 'bg-blue-600 text-white' :
                                 'bg-slate-600 text-white'
                   }`}>
-                    {isCreator ? '✨' : initials}
+                    {initials}
                   </span>
                   <ChevronDown size={12} className={`transition-transform ${accountOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
                 </button>
@@ -219,7 +219,7 @@ export default function Header() {
                         onClick={() => setAccountOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-emerald-300 hover:bg-emerald-900/30 transition-colors"
                       >
-                        ❤️ Mon espace
+                          Mon espace
                       </Link>
 
                       {isCreator && (
