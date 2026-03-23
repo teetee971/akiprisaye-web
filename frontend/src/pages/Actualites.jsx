@@ -33,7 +33,6 @@ export default function Actualites() {
   const [territory, setTerritory] = useState('all');
   const [type, setType] = useState('');
   const [impact, setImpact] = useState('');
-  const [q, setQ] = useState('');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [limit, setLimit] = useState(30);
   const [state, setState] = useState({ status: 'loading', items: [], mode: 'mock' });
@@ -48,7 +47,6 @@ export default function Actualites() {
       const params = new URLSearchParams({ territory, limit: String(limit) });
       if (type) params.set('type', type);
       if (impact) params.set('impact', impact);
-      if (q.trim()) params.set('q', q.trim());
 
       try {
         const response = await fetch(`/api/news?${params.toString()}`, { signal: controller.signal });
@@ -68,7 +66,7 @@ export default function Actualites() {
       mounted = false;
       controller.abort();
     };
-  }, [territory, type, impact, q, limit]);
+  }, [territory, type, impact, limit]);
 
   const displayedItems = useMemo(() => {
     const sorted = [...state.items].sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at));
@@ -84,23 +82,23 @@ export default function Actualites() {
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-6 backdrop-blur animate-fade-in">
         <HeroImage
-          src={PAGE_HERO_IMAGES.contact}
+          src={PAGE_HERO_IMAGES.actualites}
           alt="Actualités consommateurs"
           gradient="from-slate-900 to-teal-950"
           height="h-24 sm:h-44"
         >
-          <h1 className="text-xl sm:text-2xl font-bold text-white drop-shadow">📰 Actualités &amp; Bons plans</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-white drop-shadow">Actualités &amp; Bons plans</h1>
           <p className="text-slate-200 text-xs sm:text-sm drop-shadow">Rappels sanitaires, bons plans vérifiés et signaux conso</p>
         </HeroImage>
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur space-y-3">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="🔍 Rechercher un mot-clé"
-          className="w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm"
-        />
+        <a
+          href="/recherche-hub"
+          className="block w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800 transition-colors"
+        >
+          Ouvrir la recherche globale du site
+        </a>
 
         <div className="grid gap-2 grid-cols-2">
           <select value={territory} onChange={(e) => setTerritory(e.target.value)} className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs sm:text-sm">
@@ -135,20 +133,50 @@ export default function Actualites() {
       {state.status === 'error' && <p className="text-sm text-amber-300 px-1">API indisponible : fallback embarqué affiché.</p>}
       {displayedItems.length === 0 && state.status !== 'loading' && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}
 
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur">
+        <h2 className="text-sm sm:text-base font-semibold text-white mb-2">Média à la une</h2>
+        <div className="grid gap-3 md:grid-cols-2">
+          <img
+            src={PAGE_HERO_IMAGES.actualites}
+            alt="Illustration éditoriale des actualités consommateurs"
+            loading="lazy"
+            className="w-full h-44 rounded-xl object-cover border border-white/10"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            poster={PAGE_HERO_IMAGES.actualites}
+            className="w-full h-44 rounded-xl object-cover border border-white/10 bg-slate-900"
+            aria-label="Ambiance éditoriale de veille marché"
+          >
+            <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </section>
+
       <section className="grid gap-3">
         {displayedItems.map((item) => {
           const evidenceOpen = Boolean(openEvidence[item.id]);
           const impactColor = item.impact === 'fort' ? 'border-l-red-500' : item.impact === 'moyen' ? 'border-l-amber-500' : 'border-l-blue-500';
           return (
             <article key={item.id} className={`rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden border-l-4 ${impactColor}`}>
-              {item.imageUrl && (
+              {(item.imageUrl || PAGE_HERO_IMAGES.actualites) && (
                 <img
-                  src={item.imageUrl}
+                  src={item.imageUrl ?? PAGE_HERO_IMAGES.actualites}
                   alt={item.title}
                   loading="lazy"
                   className="w-full h-28 sm:h-40 object-cover"
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />
+              )}
+              {item.videoUrl && (
+                <video controls preload="none" className="w-full h-44 object-cover border-t border-white/10" poster={item.imageUrl ?? PAGE_HERO_IMAGES.actualites}>
+                  <source src={item.videoUrl} type="video/mp4" />
+                </video>
               )}
               <div className="p-3 sm:p-4">
                 <div className="mb-2 flex flex-wrap gap-1.5 text-xs">
@@ -156,7 +184,7 @@ export default function Actualites() {
                   <span className={`rounded px-2 py-0.5 font-medium ${item.impact === 'fort' ? 'bg-red-900/60 text-red-300' : item.impact === 'moyen' ? 'bg-amber-900/60 text-amber-300' : 'bg-blue-900/60 text-blue-300'}`}>
                     {IMPACT_LABELS[item.impact] ?? item.impact}
                   </span>
-                  {item.verified && <span className="rounded bg-emerald-700/70 px-2 py-0.5 text-emerald-200">✓ Vérifié</span>}
+                  {item.verified && <span className="rounded bg-emerald-700/70 px-2 py-0.5 text-emerald-200">Vérifié</span>}
                   {item.isSponsored && <span className="rounded bg-amber-700/70 px-2 py-0.5">Sponsorisé</span>}
                 </div>
                 <h2 className="text-sm sm:text-base font-semibold leading-snug">{item.title}</h2>
@@ -171,7 +199,7 @@ export default function Actualites() {
                 {item.evidence && (
                   <div className="mt-2">
                     <button className="text-xs text-blue-400 underline" onClick={() => setOpenEvidence((prev) => ({ ...prev, [item.id]: !prev[item.id] }))}>
-                      {evidenceOpen ? '▲ Masquer' : '▼ Preuves'}
+                      {evidenceOpen ? 'Masquer les preuves' : 'Afficher les preuves'}
                     </button>
                     {evidenceOpen && (
                       <ul className="mt-2 list-disc pl-4 text-xs text-slate-300 space-y-0.5">

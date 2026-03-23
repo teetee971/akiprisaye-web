@@ -24,6 +24,7 @@ export interface NewsItem {
   expires_at?: string;
   verified: boolean;
   imageUrl?: string;
+  videoUrl?: string;
 }
 
 // Legacy civic exports kept for compatibility with existing components

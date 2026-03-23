@@ -46,6 +46,7 @@ describe('Actualites page', () => {
     expect(latest).toContain('type=bons_plans');
     expect(latest).toContain('impact=fort');
     expect(latest).toContain('limit=30');
+    expect(latest).not.toContain('&q=');
   });
 
   it('shows fallback when fetch fails', async () => {
@@ -61,5 +62,6 @@ describe('Actualites page', () => {
 
     expect(container.textContent).toContain('fallback embarqué affiché');
     expect(container.textContent).toContain('Rappel conso : lot de sardines en conserve');
+    expect(container.textContent).toContain('Ouvrir la recherche globale du site');
   });
 });

@@ -315,6 +315,8 @@ export const PAGE_HERO_IMAGES = {
   rechercheHub: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Recherche produits */
   rechercheProduits: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Actualités */
+  actualites: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Paramètres */
   settings: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** S'abonner */
