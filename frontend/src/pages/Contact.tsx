@@ -39,13 +39,11 @@ export default function Contact() {
     const trimmedMessage = formData.message.trim();
 
     if (!trimmedName || !trimmedEmail || !trimmedMessage) {
-    if (!formData.name || !formData.email || !formData.message) {
       toast.error('Veuillez remplir les champs obligatoires.');
       return;
     }
 
     if (!trimmedEmail.includes('@')) {
-    if (!formData.email.includes('@')) {
       toast.error('Veuillez entrer une adresse email valide.');
       return;
     }
@@ -56,10 +54,6 @@ export default function Contact() {
       `Email : ${trimmedEmail}`,
       '',
       trimmedMessage,
-      `Nom : ${formData.name}`,
-      `Email : ${formData.email}`,
-      '',
-      formData.message,
     ].join('\n');
 
     const mailtoUrl = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -172,7 +166,6 @@ export default function Contact() {
           </section>
 
           <aside id="pro" className="space-y-4">
-          <aside className="space-y-4">
             <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
               <div className="flex items-center gap-3">
                 <div className="rounded-xl bg-blue-950/70 p-2 text-blue-300">
