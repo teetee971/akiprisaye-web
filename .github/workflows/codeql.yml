@@ -16,7 +16,6 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-  pull_request_target:
     branches: [ "main" ]
   schedule:
     - cron: '32 21 * * 1'
@@ -31,7 +30,6 @@ jobs:
     #   - https://gh.io/using-larger-runners (GitHub.com only)
     # Consider using larger runners or machines with greater resources for possible analysis time improvements.
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
-    if: github.event_name != 'pull_request_target' || github.actor == 'Copilot'
     permissions:
       # required for all workflows
       security-events: write
@@ -62,8 +60,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v5
-      with:
-        ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL

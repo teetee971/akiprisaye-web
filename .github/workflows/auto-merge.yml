@@ -18,6 +18,7 @@ jobs:
     # We now require the actor to be an official bot identity.
     if: >
       !github.event.pull_request.draft && (
+        github.actor == 'copilot[bot]' ||
         github.actor == 'Copilot' ||
         github.actor == 'copilot-swe-agent[bot]' ||
         github.actor == 'github-actions[bot]' ||
