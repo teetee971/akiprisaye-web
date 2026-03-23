@@ -13,6 +13,11 @@ interface HeroImageProps {
   alt: string;
   gradient?: string; // tailwind gradient classes e.g. "from-blue-900 to-slate-900"
   height?: string;   // tailwind height class e.g. "h-56"
+  loading?: 'eager' | 'lazy';
+  fetchPriority?: 'high' | 'low' | 'auto';
+  sizes?: string;
+  width?: number;
+  heightPx?: number;
   children?: React.ReactNode;
   className?: string;
 }
@@ -29,6 +34,11 @@ export function HeroImage({
   alt,
   gradient = 'from-slate-900 to-slate-800',
   height = 'h-44 sm:h-56',
+  loading = 'lazy',
+  fetchPriority = 'auto',
+  sizes = '100vw',
+  width = 1600,
+  heightPx = 900,
   children,
   className = '',
 }: HeroImageProps) {
@@ -51,8 +61,12 @@ export function HeroImage({
           <img
             src={src}
             alt={alt}
-            loading="lazy"
+            loading={loading}
             decoding="async"
+            fetchPriority={fetchPriority}
+            sizes={sizes}
+            width={width}
+            height={heightPx}
             crossOrigin={src.includes('images.unsplash.com') ? 'anonymous' : undefined}
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgFailed(true)}

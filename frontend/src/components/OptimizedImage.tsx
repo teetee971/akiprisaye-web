@@ -6,6 +6,7 @@ export default function OptimizedImage({
   className = '',
   loading = 'lazy',
   decoding = 'async',
+  fetchPriority = 'auto',
   onLoad,
   alt,
   ...props
@@ -18,6 +19,7 @@ export default function OptimizedImage({
       alt={alt ?? ''}
       loading={loading}
       decoding={decoding}
+      {...{ fetchpriority: fetchPriority }}
       onLoad={(event) => {
         setLoaded(true);
         onLoad?.(event);

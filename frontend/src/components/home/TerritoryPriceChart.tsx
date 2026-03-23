@@ -98,7 +98,7 @@ export default function TerritoryPriceChart() {
     <section className="price-chart-section section-reveal" aria-labelledby="price-chart-heading">
       <div className="price-chart-header">
         <h2 id="price-chart-heading" className="section-title slide-up">
-          📊 Comparatif de prix — données mars 2026
+          Comparatif de prix — données mars 2026
         </h2>
         <p className="price-chart-sub slide-up">
           Moyennes observées sur le terrain par nos contributeurs citoyens.{' '}

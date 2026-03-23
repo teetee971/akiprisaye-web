@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
  * Detects when an element enters the viewport
  * 
  * @param {Object} options - Intersection Observer options
- * @param {string} options.threshold - Visibility threshold (0-1)
+ * @param {number} options.threshold - Visibility threshold (0-1)
  * @param {string} options.rootMargin - Margin around root
  * @returns {[React.Ref, boolean]} - [ref to attach, isVisible state]
  */

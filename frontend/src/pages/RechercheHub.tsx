@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import styles from './RechercheHub.module.css';
 import { HeroImage } from '../components/ui/HeroImage';
@@ -35,6 +36,8 @@ const destinations = [
 ];
 
 export default function RechercheHub() {
+  const visualRef = useRef<HTMLElement | null>(null);
+  const [showVisual, setShowVisual] = useState(false);
   const currencyFormatter = useMemo(
     () =>
       new Intl.NumberFormat('fr-FR', {
@@ -47,30 +50,65 @@ export default function RechercheHub() {
 
   const formatSuggestedPrice = (index: number) => currencyFormatter.format(1.8 + index * 0.7);
 
+  useEffect(() => {
+    const node = visualRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowVisual(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     // ⚠️ A11y contract – do not alter without accessibility review.
     // Focus initial volontaire sur le champ de recherche; ordre de tabulation: champ → suggestions → destinations.
     // Choix sémantiques natifs (label/input, nav/ul/li, button/link) pour des noms accessibles sans ARIA superflu.
     // TODO(a11y): ajouter un test automatisé Lighthouse/axe en CI.
     <main className={styles.page}>
+      <Helmet>
+        <link rel="preload" as="image" href={PAGE_HERO_IMAGES.heroRecherche} />
+      </Helmet>
       <HeroImage
         src={PAGE_HERO_IMAGES.heroRecherche}
         alt="Recherche"
         gradient="from-slate-950 to-blue-900"
         height="h-40 sm:h-52"
+        loading="eager"
+        fetchPriority="high"
+        width={1200}
+        heightPx={624}
+        sizes="100vw"
       >
         <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>Recherche unifiée</h1>
         <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Point d’entrée unique pour rechercher un produit, un prix ou un magasin.</p>
       </HeroImage>
 
-      <section className={styles.searchSection} aria-label="Habillage visuel professionnel">
+      <section ref={visualRef} className={styles.searchSection} aria-label="Habillage visuel professionnel">
         <h2 className={styles.cardTitle}>Visualisation professionnelle 2D / 3D</h2>
-        <OptimizedImage
-          src={PAGE_HERO_IMAGES.sectionProfessional3d}
-          alt="Visualisation professionnelle de données pour la recherche"
-          loading="lazy"
-          className="w-full h-44 sm:h-56 rounded-xl object-cover border border-white/10"
-        />
+        {showVisual ? (
+          <OptimizedImage
+            src={PAGE_HERO_IMAGES.sectionProfessional3d}
+            alt="Visualisation professionnelle de données pour la recherche"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+            className="w-full h-44 sm:h-56 rounded-xl object-cover border border-white/10"
+          />
+        ) : (
+          <div
+            className="w-full h-44 sm:h-56 rounded-xl border border-white/10 bg-slate-900/50"
+            aria-hidden="true"
+          />
+        )}
       </section>
 
       <section className={styles.searchSection} aria-label="Recherche">

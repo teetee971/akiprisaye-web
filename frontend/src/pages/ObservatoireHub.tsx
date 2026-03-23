@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { BarChart3, Search, Award, Database, TrendingUp, BarChart2, Store, Globe, Download, FileText, ShoppingCart, ChevronUp, ChevronDown, Minus, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../components/ui/glass-card';
 import { HeroImage } from '../components/ui/HeroImage';
-import Observatoire from './Observatoire';
 import { TERRITORIES, type TerritoryCode } from '../constants/territories';
 import { getPalmaresForTerritory, OBSERVATOIRE_PALMARES } from '../data/observatoirePalmares';
 
+const Observatoire = lazy(() => import('./Observatoire'));
 
 // Real Unsplash photo: data analytics dashboard
 const HERO_IMG = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80';
@@ -135,7 +135,11 @@ export default function ObservatoireHub() {
           
           {/* Dynamic Content */}
           <div>
-            {activeTab === 'dashboard' && <Observatoire />}
+            {activeTab === 'dashboard' && (
+              <Suspense fallback={<div className="h-96 rounded-2xl border border-white/10 bg-slate-900/50" aria-hidden="true" />}>
+                <Observatoire />
+              </Suspense>
+            )}
             
             {activeTab === 'diagnostic' && (
               <GlassCard>
