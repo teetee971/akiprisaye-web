@@ -356,7 +356,7 @@ const FAQ_ITEMS: FaqItem[] = [
 
 export default function PricingPage() {
   const [cycle, setCycle] = useState<'monthly' | 'yearly'>('monthly')
-  const [marketOpen, setMarketOpen] = useState(true)
+  const [marketOpen, setMarketOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
   function formatPrice(n: number): string {
@@ -391,7 +391,7 @@ export default function PricingPage() {
                 Abonnements &amp; Tarifs
               </h1>
               <p className="text-slate-200 text-sm drop-shadow max-w-2xl mt-1">
-                L'essentiel est gratuit. Le premium libère tout le potentiel.
+                Choisissez d’abord le bon parcours : découvrir gratuitement, suivre vos économies ou équiper une organisation.
               </p>
             </HeroImage>
 
@@ -412,6 +412,32 @@ export default function PricingPage() {
             </div>
           </div>
 
+          <section className="mb-10 grid gap-4 lg:grid-cols-3">
+            {[
+              {
+                title: 'Je découvre',
+                description: 'Comparer les prix, comprendre le service et tester sans friction.',
+                cta: 'Le plan Gratuit est le bon point de départ.',
+              },
+              {
+                title: 'Je veux aller plus loin',
+                description: 'Alertes, historique et suivi plus poussé pour gagner du temps et de l’argent.',
+                cta: 'Le plan Citoyen concentre l’essentiel premium.',
+              },
+              {
+                title: 'Je représente une structure',
+                description: 'Besoin d’accès multi-utilisateurs, de données ou d’un cadre institutionnel.',
+                cta: 'Les offres Pro, Business et Institution sont dédiées à cet usage.',
+              },
+            ].map((item) => (
+              <div key={item.title} className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+                <h2 className="text-base font-bold text-white">{item.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-400">{item.description}</p>
+                <p className="mt-3 text-sm font-medium text-indigo-300">{item.cta}</p>
+              </div>
+            ))}
+          </section>
+
           {/* ====================================================== */}
           {/* 2. Mini étude de marché (collapsible)                  */}
           {/* ====================================================== */}
@@ -422,7 +448,7 @@ export default function PricingPage() {
               aria-expanded={marketOpen}
             >
               <span className="text-base font-bold text-white">
-                📊 Pourquoi ces prix ? — Étude de marché
+                📊 Pourquoi ces prix ? — contexte et positionnement
               </span>
               {marketOpen
                 ? <ChevronUp className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
@@ -734,10 +760,10 @@ export default function PricingPage() {
           <section className="mt-16" aria-labelledby="addons-heading">
             <div className="text-center mb-8">
               <h2 id="addons-heading" className="text-2xl font-extrabold text-white">
-                🧩 Modules à la carte (add-ons)
+                🧩 Options complémentaires
               </h2>
               <p className="mt-2 text-slate-400 text-sm">
-                Ajoutez exactement ce dont vous avez besoin.
+                À consulter après avoir choisi votre plan principal.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -833,17 +859,17 @@ export default function PricingPage() {
           {/* ====================================================== */}
           {/* 9. Revenue options                                     */}
           {/* ====================================================== */}
-          <section className="mt-16" aria-labelledby="revenus-heading">
+          <section id="partners" className="mt-16" aria-labelledby="revenus-heading">
             <div className="text-center mb-10">
               <span className="inline-block text-xs font-semibold tracking-widest uppercase text-emerald-500 mb-3">
-                Soutien &amp; Partenariats
+                Hors abonnements
               </span>
               <h2 id="revenus-heading" className="text-2xl sm:text-3xl font-extrabold text-white">
-                D'autres façons de participer
+                Partenariats, soutien et demandes spécifiques
               </h2>
               <p className="mt-3 text-slate-400 max-w-2xl mx-auto text-sm leading-relaxed">
-                Au-delà des abonnements, voici toutes les options pour soutenir la mission, collaborer ou
-                générer des économies supplémentaires.
+                Cette section ne remplace pas les offres grand public. Elle regroupe les demandes particulières :
+                partenariats locaux, accompagnement, dons et besoins B2B.
               </p>
             </div>
 
