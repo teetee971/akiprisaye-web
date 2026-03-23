@@ -147,13 +147,13 @@ jobs:
       - name: Create and push branch
         if: ${{ inputs.save_json == 'true' }}
         run: |
-          if git diff --quiet frontend/public/data/; then
+          if [ -z "$(git status --porcelain -- frontend/public/data/)" ]; then
             echo "ℹ️  Aucun fichier JSON modifié"
           else
             git checkout -B auto-data-update
             git add frontend/public/data/*
             git commit -m "Auto-update product scan data"
-            git push origin auto-data-update
+            git push --force-with-lease origin auto-data-update
           fi
 
       - name: Create Pull Request
@@ -161,6 +161,7 @@ jobs:
         uses: peter-evans/create-pull-request@v6
         with:
           branch: auto-data-update
+          base: main
           title: "Auto-update product scan data"
           body: "Pull request automatique suite au scraping"
 
