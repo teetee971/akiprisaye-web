@@ -243,9 +243,28 @@ describe('ci.yml — Lighthouse pipeline guardrails', () => {
     expect(ciYml).toMatch(/pull-requests:\s*write/);
   });
 
+  it('workflow must request actions:read permission for baseline artifact download', () => {
+    expect(ciYml).toMatch(/actions:\s*read/);
+  });
+
   it('lighthouse job must run lighthouse-guard.mjs --write and --compare', () => {
     expect(ciYml).toMatch(/lighthouse-guard\.mjs.*--write/);
     expect(ciYml).toMatch(/lighthouse-guard\.mjs.*--compare/);
+  });
+
+  it('lighthouse job must continue even if LHCI assertions fail', () => {
+    expect(ciYml).toMatch(/Run Lighthouse CI[\s\S]*continue-on-error:\s*true/);
+  });
+
+  it('write/compare/summary steps must run with if: always()', () => {
+    expect(ciYml).toMatch(/Write Lighthouse scores[\s\S]*if:\s*always\(\)/);
+    expect(ciYml).toMatch(/Compare Lighthouse baseline[\s\S]*if:\s*always\(\)\s*&&\s*github\.event_name\s*==\s*['"]pull_request['"]/);
+    expect(ciYml).toMatch(/Write Lighthouse summary[\s\S]*if:\s*always\(\)/);
+  });
+
+  it('compare step must provide GitHub token and repository env vars', () => {
+    expect(ciYml).toMatch(/Compare Lighthouse baseline[\s\S]*GITHUB_TOKEN:\s*\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}/);
+    expect(ciYml).toMatch(/Compare Lighthouse baseline[\s\S]*GITHUB_REPOSITORY:\s*\$\{\{\s*github\.repository\s*\}\}/);
   });
 
   it('lighthouse job must start the preview server explicitly before LHCI runs', () => {
@@ -420,8 +439,8 @@ describe('lighthouserc.json — CI compatibility assertions', () => {
     expect(opts.minScore).toBe(0.9);
   });
 
-  it('must keep startServerCommand empty (server started explicitly by workflow)', () => {
-    expect(lhrc.ci.collect.startServerCommand).toBe('');
+  it('must not define startServerCommand (server started explicitly by workflow)', () => {
+    expect(lhrc.ci.collect.startServerCommand).toBeUndefined();
   });
 });
 
@@ -436,9 +455,9 @@ describe('lighthouserc.json — collect/upload settings', () => {
     expect(lhrc.ci.collect.settings.preset).toBe('desktop');
   });
 
-  it('must upload reports to filesystem frontend/.lighthouseci', () => {
+  it('must upload reports to filesystem .lighthouseci (from frontend cwd)', () => {
     expect(lhrc.ci.upload.target).toBe('filesystem');
-    expect(lhrc.ci.upload.outputDir).toBe('frontend/.lighthouseci');
+    expect(lhrc.ci.upload.outputDir).toBe('.lighthouseci');
   });
 });
 

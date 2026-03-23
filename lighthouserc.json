@@ -5,7 +5,6 @@
         "http://127.0.0.1:4173/"
       ],
       "numberOfRuns": 1,
-      "startServerCommand": "",
       "settings": {
         "preset": "desktop"
       }
@@ -40,7 +39,7 @@
     },
     "upload": {
       "target": "filesystem",
-      "outputDir": "frontend/.lighthouseci"
+      "outputDir": ".lighthouseci"
     }
   }
 }

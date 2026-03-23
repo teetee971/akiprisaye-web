@@ -19,6 +19,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  actions: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -32,7 +33,7 @@ env:
 
 jobs:
   build-test:
-    name: build-test (pull_request)
+    name: Build (pull_request)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -175,15 +176,22 @@ jobs:
         run: node scripts/prepare-lighthouse-config.mjs
 
       - name: Run Lighthouse CI
+        continue-on-error: true
         run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
 
       - name: Write Lighthouse scores
+        if: always()
         run: node scripts/lighthouse-guard.mjs --write
 
       - name: Compare Lighthouse baseline
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: node scripts/lighthouse-guard.mjs --compare
 
       - name: Write Lighthouse summary
+        if: always()
         run: node scripts/lighthouse-summary.mjs
 
       - name: Ensure fallback score files exist
