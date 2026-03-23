@@ -1016,14 +1016,23 @@ export default function RechercheProduits() {
       </Helmet>
 
       <HeroImage
-        src={PAGE_HERO_IMAGES.rechercheProduits}
+        src={PAGE_HERO_IMAGES.heroRecherche}
         alt="Recherche de produits"
         gradient="from-slate-950 to-blue-900"
         height="h-40 sm:h-52"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🔍 Recherche de produits</h1>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>Recherche de produits</h1>
         <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Trouvez et comparez les prix de vos produits</p>
       </HeroImage>
+
+      <section className="max-w-4xl mx-auto mt-4">
+        <img
+          src={PAGE_HERO_IMAGES.sectionProfessional3d}
+          alt="Section premium de recherche de produits"
+          loading="lazy"
+          className="w-full h-40 sm:h-52 rounded-2xl object-cover border border-white/10"
+        />
+      </section>
 
       <div className="max-w-4xl mx-auto space-y-6">
         {/* ── Search card ─────────────────────────────────────────────── */}

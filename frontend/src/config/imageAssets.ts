@@ -162,6 +162,11 @@ export function getTerritoryGradient(code: string): string {
 
 // Hero images for specific pages
 export const PAGE_HERO_IMAGES = {
+  // ── Custom 4-visual media pack (provided by product) ──────────────────────
+  heroActualites: '/media/images/hero-actualites.webp',
+  heroRecherche: '/media/images/hero-recherche.webp',
+  articleDefault: '/media/images/article-default.webp',
+  sectionProfessional3d: '/media/images/section-professional-3d.webp',
   // ── Pages already enriched ───────────────────────────────────────────────
   priceHistory: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   crossTerritory: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',

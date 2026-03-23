@@ -82,7 +82,7 @@ export default function Actualites() {
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-6 backdrop-blur animate-fade-in">
         <HeroImage
-          src={PAGE_HERO_IMAGES.actualites}
+          src={PAGE_HERO_IMAGES.heroActualites}
           alt="Actualités consommateurs"
           gradient="from-slate-900 to-teal-950"
           height="h-24 sm:h-44"
@@ -136,8 +136,8 @@ export default function Actualites() {
       <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur">
         <h2 className="text-sm sm:text-base font-semibold text-white mb-2">Média à la une</h2>
         <div className="grid gap-3 md:grid-cols-2">
-          <img
-            src={PAGE_HERO_IMAGES.actualites}
+            <img
+            src={PAGE_HERO_IMAGES.articleDefault}
             alt="Illustration éditoriale des actualités consommateurs"
             loading="lazy"
             className="w-full h-44 rounded-xl object-cover border border-white/10"
@@ -149,7 +149,7 @@ export default function Actualites() {
             loop
             playsInline
             preload="none"
-            poster={PAGE_HERO_IMAGES.actualites}
+            poster={PAGE_HERO_IMAGES.heroActualites}
             className="w-full h-44 rounded-xl object-cover border border-white/10 bg-slate-900"
             aria-label="Ambiance éditoriale de veille marché"
           >
@@ -164,9 +164,9 @@ export default function Actualites() {
           const impactColor = item.impact === 'fort' ? 'border-l-red-500' : item.impact === 'moyen' ? 'border-l-amber-500' : 'border-l-blue-500';
           return (
             <article key={item.id} className={`rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden border-l-4 ${impactColor}`}>
-              {(item.imageUrl || PAGE_HERO_IMAGES.actualites) && (
+              {(item.imageUrl || PAGE_HERO_IMAGES.articleDefault) && (
                 <img
-                  src={item.imageUrl ?? PAGE_HERO_IMAGES.actualites}
+                  src={item.imageUrl ?? PAGE_HERO_IMAGES.articleDefault}
                   alt={item.title}
                   loading="lazy"
                   className="w-full h-28 sm:h-40 object-cover"
@@ -174,7 +174,7 @@ export default function Actualites() {
                 />
               )}
               {item.videoUrl && (
-                <video controls preload="none" className="w-full h-44 object-cover border-t border-white/10" poster={item.imageUrl ?? PAGE_HERO_IMAGES.actualites}>
+                <video controls preload="none" className="w-full h-44 object-cover border-t border-white/10" poster={item.imageUrl ?? PAGE_HERO_IMAGES.articleDefault}>
                   <source src={item.videoUrl} type="video/mp4" />
                 </video>
               )}

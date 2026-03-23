@@ -53,7 +53,7 @@ export default function RechercheHub() {
     // TODO(a11y): ajouter un test automatisé Lighthouse/axe en CI.
     <main className={styles.page}>
       <HeroImage
-        src={PAGE_HERO_IMAGES.rechercheHub}
+        src={PAGE_HERO_IMAGES.heroRecherche}
         alt="Recherche"
         gradient="from-slate-950 to-blue-900"
         height="h-40 sm:h-52"
@@ -65,10 +65,10 @@ export default function RechercheHub() {
       <section className={styles.searchSection} aria-label="Habillage visuel professionnel">
         <h2 className={styles.cardTitle}>Visualisation professionnelle 2D / 3D</h2>
         <img
-          src={PAGE_HERO_IMAGES.innovationLab}
+          src={PAGE_HERO_IMAGES.sectionProfessional3d}
           alt="Visualisation professionnelle de données pour la recherche"
           loading="lazy"
-          className={styles.input}
+          className="w-full h-44 sm:h-56 rounded-xl object-cover border border-white/10"
         />
       </section>
 
