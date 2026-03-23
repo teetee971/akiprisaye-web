@@ -68,6 +68,7 @@ export default defineConfig({
       abs('./src/test/upgradeUpsell.test.ts'),
       abs('./src/test/observatoire.unavailable.test.ts'),
       abs('./src/test/observatory.mapping.test.ts'),
+      abs('./src/test/smsUpdatePreferences.test.ts'),
       // Temporal aggregation — real observatoire JSON data (no mocks)
       abs('./src/test/temporalAggregation.test.ts'),
       // Inflation barometer — basket computation from real observatoire JSON data

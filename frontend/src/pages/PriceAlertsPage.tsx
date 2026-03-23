@@ -15,6 +15,12 @@ import {
   loadAlerts,
   persistAlerts,
 } from '../services/priceAlertsStorage';
+import {
+  isValidSmsPhoneNumber,
+  loadSmsUpdatePreferences,
+  normalizeSmsPhoneNumber,
+  saveSmsUpdatePreferences,
+} from '../services/smsUpdatePreferences';
 import { getLatestSnapshotStats } from '../services/observatoirePriceSeries';
 
 // Real Unsplash photo: shopping price tags
@@ -98,9 +104,15 @@ export default function PriceAlertsPage() {
   const [checkResults, setCheckResults] = useState<Record<string, AlertCheckResult>>({});
   const [checking, setChecking] = useState(false);
   const [lastChecked, setLastChecked] = useState<string | null>(null);
+  const [smsEnabled, setSmsEnabled] = useState(false);
+  const [smsPhoneNumber, setSmsPhoneNumber] = useState('');
+  const [smsStatus, setSmsStatus] = useState<string | null>(null);
 
   useEffect(() => {
     setAlerts(loadAlerts());
+    const smsPrefs = loadSmsUpdatePreferences();
+    setSmsEnabled(smsPrefs.enabled);
+    setSmsPhoneNumber(smsPrefs.phoneNumber);
   }, []);
 
   /** Run all alert checks against observatoire data */
@@ -233,6 +245,64 @@ export default function PriceAlertsPage() {
               <p className="text-sm text-blue-800 dark:text-blue-200">
                 Les alertes sont vérifiées en temps réel contre les snapshots mensuels de l'Observatoire citoyen.
               </p>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 mb-6">
+            <h2 className="text-base font-semibold text-slate-900 dark:text-white">
+              Notifications des mises à jour via SMS
+            </h2>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
+              Recevez un SMS lors des mises à jour importantes liées à vos alertes prix.
+            </p>
+            <div className="mt-3 space-y-3">
+              <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={smsEnabled}
+                  onChange={(e) => setSmsEnabled(e.target.checked)}
+                />
+                Activer les notifications SMS
+              </label>
+              <div>
+                <label htmlFor="alerts-sms-phone" className="block text-sm text-slate-600 dark:text-slate-300 mb-1">
+                  Numéro de téléphone
+                </label>
+                <input
+                  id="alerts-sms-phone"
+                  type="tel"
+                  placeholder="+590690123456"
+                  value={smsPhoneNumber}
+                  onChange={(e) => setSmsPhoneNumber(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const normalized = normalizeSmsPhoneNumber(smsPhoneNumber);
+                  if (smsEnabled && !isValidSmsPhoneNumber(normalized)) {
+                    setSmsStatus('Format invalide. Exemple : +590690123456');
+                    return;
+                  }
+                  const ok = saveSmsUpdatePreferences({
+                    enabled: smsEnabled,
+                    phoneNumber: normalized,
+                  });
+                  if (ok) {
+                    setSmsPhoneNumber(normalized);
+                  }
+                  setSmsStatus(ok ? 'Préférences SMS enregistrées.' : 'Impossible d’enregistrer les préférences SMS.');
+                }}
+                className="inline-flex items-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2"
+              >
+                Enregistrer les notifications SMS
+              </button>
+              {smsStatus && (
+                <p className={`text-sm ${smsStatus.includes('invalide') || smsStatus.includes('Impossible') ? 'text-amber-600 dark:text-amber-300' : 'text-emerald-600 dark:text-emerald-300'}`}>
+                  {smsStatus}
+                </p>
+              )}
             </div>
           </div>
 

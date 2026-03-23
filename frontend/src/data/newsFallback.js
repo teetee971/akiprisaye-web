@@ -1,5 +1,23 @@
 export const newsFallback = [
   {
+    id: 'fallback-dossier-gp-000',
+    type: 'dossiers',
+    territory: 'gp',
+    title: 'Enquête : groupe GBH et impact sur les prix en Guadeloupe',
+    summary: 'Dossier de synthèse sur les écarts de prix, la structure du marché local et les points de vigilance pour les consommateurs.',
+    source_name: 'Observatoire AKPSY',
+    source_url: 'https://akiprisaye.fr/methodologie',
+    canonical_url: 'https://akiprisaye.fr/dossiers/enquete-gbh-guadeloupe',
+    published_at: '2026-01-22T09:00:00.000Z',
+    impact: 'fort',
+    isSponsored: false,
+    confidence: 'partner',
+    verified: true,
+    tags: ['enquête', 'gbh', 'vie-chère'],
+    evidence: { scope: 'Guadeloupe', confidence: 'partner' },
+    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=75',
+  },
+  {
     id: 'fallback-rappel-gp-001',
     type: 'rappels',
     territory: 'gp',

@@ -13,6 +13,14 @@ describe('Actualites page', () => {
     document.body.appendChild(container);
     root = createRoot(container);
     vi.restoreAllMocks();
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        observe() {}
+        disconnect() {}
+        unobserve() {}
+      },
+    );
   });
 
   afterEach(() => {
@@ -61,6 +69,7 @@ describe('Actualites page', () => {
     });
 
     expect(container.textContent).toContain('fallback embarqué affiché');
+    expect(container.textContent).toContain('Enquête : groupe GBH et impact sur les prix en Guadeloupe');
     expect(container.textContent).toContain('Rappel conso : lot de sardines en conserve');
     expect(container.textContent).toContain('Ouvrir la recherche globale du site');
   });
