@@ -20,6 +20,8 @@ concurrency:
 jobs:
   check-credentials:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       configured: ${{ steps.check.outputs.configured }}
     steps:
@@ -55,6 +57,8 @@ jobs:
     needs: check-credentials
     if: needs.check-credentials.outputs.configured == 'true'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     defaults:
       run:
         working-directory: frontend
@@ -122,7 +126,7 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         id: cloudflare_deploy
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@da0e0dfe58b7a431659754fdf3f186c529afbe65 # v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -133,6 +137,8 @@ jobs:
     if: needs.deploy.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
     steps:
       - name: Resolve deployment URL
         # The 'env' context is not in the allowed list for jobs.<job_id>.env:
@@ -199,6 +205,9 @@ jobs:
     needs: [deploy, validate]
     if: needs.deploy.result == 'success' && needs.validate.result == 'success'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     steps:
       - name: Resolve deployment URL
         # The 'env' context is not in the allowed list for jobs.<job_id>.env:
