@@ -1,5 +1,49 @@
 import { afterEach, vi } from 'vitest';
 
+class IntersectionObserverMock {
+  callback: IntersectionObserverCallback | null;
+
+  constructor(callback?: IntersectionObserverCallback) {
+    this.callback = callback ?? null;
+  }
+
+  observe(target?: Element) {
+    if (this.callback) {
+      this.callback(
+        [
+          {
+            isIntersecting: true,
+            target: (target ?? document.body) as Element,
+            intersectionRatio: 1,
+            boundingClientRect: {} as DOMRectReadOnly,
+            intersectionRect: {} as DOMRectReadOnly,
+            rootBounds: null,
+            time: Date.now(),
+          } as IntersectionObserverEntry,
+        ],
+        this as unknown as IntersectionObserver,
+      );
+    }
+  }
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+}
+
+Object.defineProperty(window, 'IntersectionObserver', {
+  value: IntersectionObserverMock,
+  writable: true,
+  configurable: true,
+});
+
+Object.defineProperty(globalThis, 'IntersectionObserver', {
+  value: IntersectionObserverMock,
+  writable: true,
+  configurable: true,
+});
+
 /**
  * On utilise l'objet localStorage fourni par JSDOM,
  * mais on remplace SES MÉTHODES.

@@ -45,7 +45,7 @@ describe('Actualites page', () => {
     expect(latest).toContain('territory=gp');
     expect(latest).toContain('type=bons_plans');
     expect(latest).toContain('impact=fort');
-    expect(latest).toContain('limit=30');
+    expect(latest).toContain('limit=12');
     expect(latest).not.toContain('&q=');
   });
 
