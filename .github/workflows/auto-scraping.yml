@@ -129,10 +129,11 @@ jobs:
           git config user.email "bot-scraper@akiprisaye.fr"
 
           # Vérifier s'il y a des changements dans les fichiers de données
-          if git diff --quiet frontend/public/data/; then
+          # git status --porcelain détecte aussi les nouveaux fichiers non suivis (ex: product-scan-*.json)
+          if [ -z "$(git status --porcelain -- frontend/public/data/)" ]; then
             echo "ℹ️  Aucune modification de données — pas de commit"
           else
-            CHANGED=$(git diff --name-only frontend/public/data/ | tr '\n' ' ')
+            CHANGED=$(git status --porcelain -- frontend/public/data/ | awk '{print $2}' | tr '\n' ' ')
             echo "📝 Fichiers modifiés : $CHANGED"
 
             git add frontend/public/data/fuel-prices.json \
