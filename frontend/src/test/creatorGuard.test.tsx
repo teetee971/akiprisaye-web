@@ -190,6 +190,7 @@ describe('EspaceCreateur creator guard', () => {
     // The creator dashboard heading is rendered — no redirect occurred
     expect(screen.queryByTestId('home-page')).toBeNull();
     expect(screen.getByRole('heading', { name: /Espace Créateur/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Tableau de bord IA — audience & comportement/i })).toBeTruthy();
   });
 
   it('renders the creator dashboard when the user has the "admin" role (isAdmin=true)', () => {

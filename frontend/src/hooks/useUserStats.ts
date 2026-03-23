@@ -16,6 +16,7 @@ export interface UserStats {
   totalUsers: number;
   onlineUsers: number;
   onlineUids: Set<string>;
+  lastAuthenticatedSeenAt: Date | null;
   loading: boolean;
 }
 
@@ -23,6 +24,7 @@ export function useUserStats(): UserStats {
   const [totalUsers, setTotalUsers] = useState(0);
   const [onlineUsers, setOnlineUsers] = useState(0);
   const [onlineUids, setOnlineUids] = useState<Set<string>>(new Set());
+  const [lastAuthenticatedSeenAt, setLastAuthenticatedSeenAt] = useState<Date | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,10 +41,11 @@ export function useUserStats(): UserStats {
       });
 
     // Real-time subscription for authenticated online users
-    const unsubscribe = subscribeOnlineUsers(({ count, uids }) => {
+    const unsubscribe = subscribeOnlineUsers(({ count, uids, lastSeenAt }) => {
       if (!cancelled) {
         setOnlineUsers(count);
         setOnlineUids(uids);
+        setLastAuthenticatedSeenAt(lastSeenAt);
       }
     });
 
@@ -52,5 +55,5 @@ export function useUserStats(): UserStats {
     };
   }, []);
 
-  return { totalUsers, onlineUsers, onlineUids, loading };
+  return { totalUsers, onlineUsers, onlineUids, lastAuthenticatedSeenAt, loading };
 }

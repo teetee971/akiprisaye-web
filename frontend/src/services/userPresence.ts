@@ -68,6 +68,7 @@ export async function getTotalUsersCount(): Promise<number> {
 export interface OnlineUsersSnapshot {
   count: number;
   uids: Set<string>;
+  lastSeenAt: Date | null;
 }
 
 /**
@@ -78,7 +79,7 @@ export function subscribeOnlineUsers(
   callback: (snapshot: OnlineUsersSnapshot) => void,
 ): Unsubscribe {
   if (!db) {
-    callback({ count: 0, uids: new Set() });
+    callback({ count: 0, uids: new Set(), lastSeenAt: null });
     return () => {};
   }
 
@@ -87,16 +88,20 @@ export function subscribeOnlineUsers(
     (snap) => {
       const cutoff = Date.now() - PRESENCE_TTL_MS;
       const uids = new Set<string>();
+      let lastSeenAt: Date | null = null;
 
       snap.forEach((d) => {
         const lastSeen = d.data().lastSeen as Timestamp | null;
         if (lastSeen && lastSeen.toMillis() > cutoff) {
           uids.add(d.id); // document ID == uid
+          if (!lastSeenAt || lastSeen.toMillis() > lastSeenAt.getTime()) {
+            lastSeenAt = lastSeen.toDate();
+          }
         }
       });
 
-      callback({ count: uids.size, uids });
+      callback({ count: uids.size, uids, lastSeenAt });
     },
-    () => callback({ count: 0, uids: new Set() }),
+    () => callback({ count: 0, uids: new Set(), lastSeenAt: null }),
   );
 }
