@@ -229,12 +229,12 @@ jobs:
     steps:
       - name: Job summary
         run: |
-          echo "## CI Summary" > "$GITHUB_STEP_SUMMARY"
-          echo "" > "$GITHUB_STEP_SUMMARY"
-          echo "| Job | Result |" > "$GITHUB_STEP_SUMMARY"
-          echo "|---|---|" > "$GITHUB_STEP_SUMMARY"
-          echo "| build-test | ${{ needs.build-test.result }} |" > "$GITHUB_STEP_SUMMARY"
-          echo "| lint | ${{ needs.lint.result }} |" > "$GITHUB_STEP_SUMMARY"
-          echo "| typecheck | ${{ needs.typecheck.result }} |" > "$GITHUB_STEP_SUMMARY"
-          echo "| test | ${{ needs.test.result }} |" > "$GITHUB_STEP_SUMMARY"
-          echo "| lighthouse | ${{ needs.lighthouse.result }} |" > "$GITHUB_STEP_SUMMARY"
+          echo "## CI Summary" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Job | Result |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| build-test | ${{ needs.build-test.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| lint | ${{ needs.lint.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| typecheck | ${{ needs.typecheck.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| test | ${{ needs.test.result }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| lighthouse | ${{ needs.lighthouse.result }} |" >> "$GITHUB_STEP_SUMMARY"
