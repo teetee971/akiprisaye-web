@@ -36,7 +36,7 @@ export default function Actualites() {
   const [type, setType] = useState('');
   const [impact, setImpact] = useState('');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
-  const [limit, setLimit] = useState(12);
+  const [limit, setLimit] = useState(30);
   const [state, setState] = useState({ status: 'loading', items: [], mode: 'mock' });
   const [openEvidence, setOpenEvidence] = useState({});
   const [showFeaturedMedia, setShowFeaturedMedia] = useState(false);
@@ -86,6 +86,8 @@ export default function Actualites() {
     const sorted = [...state.items].sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at));
     return verifiedOnly ? sorted.filter((item) => item.verified) : sorted;
   }, [state.items, verifiedOnly]);
+
+  const shouldRenderNewsList = newsListVisible || state.status !== 'loading' || displayedItems.length > 0;
 
   return (
     <div className="space-y-4">
@@ -192,7 +194,7 @@ export default function Actualites() {
       </section>
 
       <section ref={newsListRef} className="grid gap-3">
-        {newsListVisible ? displayedItems.map((item) => {
+        {shouldRenderNewsList ? displayedItems.map((item) => {
           const evidenceOpen = Boolean(openEvidence[item.id]);
           const impactColor = item.impact === 'fort' ? 'border-l-red-500' : item.impact === 'moyen' ? 'border-l-amber-500' : 'border-l-blue-500';
           return (

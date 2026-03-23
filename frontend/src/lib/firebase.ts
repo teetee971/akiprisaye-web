@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
-import { getAnalytics, type Analytics } from "firebase/analytics";
+import type { Analytics } from "firebase/analytics";
 import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 
@@ -59,11 +59,18 @@ try {
   app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  // Analytics requires a browser environment and a valid measurementId.
-  // Guard against SSR / Node contexts (e.g. Vitest with jsdom) where
-  // window may be defined but the Measurement API is unavailable.
-  if (typeof window !== "undefined" && firebaseConfig.measurementId) {
-    analytics = getAnalytics(app);
+  // Analytics requires a real browser environment and a valid measurementId.
+  // Load the analytics module lazily so Node/Vitest contexts never evaluate
+  // firebase/analytics internals that assume window/document are available.
+  if (typeof window !== "undefined" && typeof document !== "undefined" && firebaseConfig.measurementId) {
+    void import("firebase/analytics")
+      .then(({ getAnalytics }) => {
+        if (!app) return;
+        analytics = getAnalytics(app);
+      })
+      .catch((error) => {
+        console.warn("Firebase analytics unavailable:", error);
+      });
   }
 } catch (error) {
   firebaseError = error instanceof Error ? error.message : "Unknown Firebase initialization error";
