@@ -23,13 +23,13 @@ on:
     paths:
       - 'frontend/**'
       - 'price-api/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/**'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - 'frontend/**'
       - 'price-api/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       lhci_url:
