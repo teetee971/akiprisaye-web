@@ -107,7 +107,10 @@ const isBlocking = process.env.LH_BLOCKING === '1';
 function readReports() {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir).filter(
-    f => f.endsWith('.report.json') && f !== 'lighthouse-scores.json',
+    f => (
+      f.endsWith('.report.json')
+      || /^lhr-.*\.json$/.test(f)
+    ) && f !== 'lighthouse-scores.json',
   );
 }
 

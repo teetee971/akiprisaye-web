@@ -221,13 +221,13 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Cache Puppeteer / Chrome
-        run: mkdir -p ~/.cache/puppeteer
+      - name: Create Puppeteer cache directory
+        run: mkdir -p /home/runner/.cache/puppeteer
 
       - name: Restore Puppeteer / Chrome cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/puppeteer
+          path: /home/runner/.cache/puppeteer
           key: puppeteer-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
           restore-keys: |
             puppeteer-${{ runner.os }}-
@@ -256,16 +256,26 @@ jobs:
         working-directory: frontend
         run: node scripts/lighthouse-summary.mjs
 
-      - name: Ensure Lighthouse artifact directory exists
+      - name: Ensure Lighthouse artifact files exist
         if: always()
-        run: mkdir -p frontend/.lighthouseci
+        working-directory: frontend
+        run: |
+          mkdir -p .lighthouseci
+          if [ ! -f .lighthouseci/infra-metadata.json ]; then
+            cat > .lighthouseci/infra-metadata.json <<'JSON'
+          {
+            "status": "ok",
+            "generatedBy": "deploy-cloudflare-pages.yml safety step"
+          }
+          JSON
+          fi
 
       - name: Upload Lighthouse reports (JSON + HTML)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-cloudflare-reports
-          path: frontend/.lighthouseci/
+          path: frontend/.lighthouseci/**
           retention-days: 30
           if-no-files-found: warn
 

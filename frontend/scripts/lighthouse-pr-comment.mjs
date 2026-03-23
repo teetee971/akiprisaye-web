@@ -53,7 +53,12 @@ const THRESHOLDS = Object.fromEntries(
 
 // Scores actuels (depuis les rapports .report.json)
 const reports = fs.existsSync(dir)
-  ? fs.readdirSync(dir).filter(f => f.endsWith('.report.json') && f !== 'lighthouse-scores.json')
+  ? fs.readdirSync(dir).filter(
+    (f) => (
+      f.endsWith('.report.json')
+      || /^lhr-.*\.json$/.test(f)
+    ) && f !== 'lighthouse-scores.json',
+  )
   : [];
 
 if (!reports.length) {

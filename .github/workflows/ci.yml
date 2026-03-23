@@ -238,13 +238,13 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Cache Puppeteer / Chrome
-        run: mkdir -p ~/.cache/puppeteer
+      - name: Create Puppeteer cache directory
+        run: mkdir -p /home/runner/.cache/puppeteer
 
       - name: Restore Puppeteer / Chrome cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/puppeteer
+          path: /home/runner/.cache/puppeteer
           key: puppeteer-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
           restore-keys: |
             puppeteer-${{ runner.os }}-
@@ -265,11 +265,12 @@ jobs:
         # $! est disponible immédiatement après & dans bash.
         working-directory: frontend
         run: |
-          npm run preview -- --host 127.0.0.1 --port 4173 &
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/preview-server.log 2>&1 &
           echo $! > /tmp/preview-server.pid
           echo "🚀 Preview server démarré (PID: $!)"
-          npx wait-on http://127.0.0.1:4173
-          echo "✅ Preview server prêt (wait-on)."
+          npx wait-on --timeout 180000 http://127.0.0.1:4173
+          curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused http://127.0.0.1:4173 >/dev/null
+          echo "✅ Preview server prêt (wait-on + curl)."
 
       - name: Check override label (ci:override-lighthouse)
         # Détecte si le label 'ci:override-lighthouse' est présent sur la PR.
@@ -318,6 +319,29 @@ jobs:
             kill -TERM "$PID" 2>/dev/null || true
             rm -f /tmp/preview-server.pid
             echo "🛑 Preview server (PID: $PID) arrêté."
+          fi
+
+      - name: Ensure Lighthouse report files exist for artifact upload
+        if: always()
+        working-directory: frontend
+        run: |
+          mkdir -p .lighthouseci
+          if [ ! -f .lighthouseci/lighthouse-scores.json ]; then
+            cat > .lighthouseci/lighthouse-scores.json <<'JSON'
+          {
+            "status": "missing",
+            "reason": "lighthouse-scores.json not produced by previous steps",
+            "generatedBy": "ci.yml safety step"
+          }
+          JSON
+          fi
+          if [ ! -f .lighthouseci/infra-metadata.json ]; then
+            cat > .lighthouseci/infra-metadata.json <<'JSON'
+          {
+            "status": "ok",
+            "generatedBy": "ci.yml safety step"
+          }
+          JSON
           fi
 
       - name: Write Lighthouse scores (input baseline)
@@ -389,16 +413,12 @@ jobs:
         working-directory: frontend
         run: node scripts/lighthouse-summary.mjs
 
-      - name: Ensure Lighthouse artifact directory exists
-        if: always()
-        run: mkdir -p frontend/.lighthouseci
-
       - name: Upload Lighthouse reports (JSON + HTML)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-reports
-          path: frontend/.lighthouseci/
+          path: frontend/.lighthouseci/**
           retention-days: 30
           if-no-files-found: warn
 

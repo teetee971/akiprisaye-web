@@ -37,9 +37,11 @@ if (!fs.existsSync(dir)) {
   process.exit(0);
 }
 
-const reports = fs.readdirSync(dir).filter(f => /report\.json$/.test(f));
+const reports = fs.readdirSync(dir).filter(
+  (f) => /report\.json$/.test(f) || /^lhr-.*\.json$/.test(f),
+);
 if (!reports.length) {
-  console.log('Aucun fichier .report.json trouvé dans .lighthouseci/');
+  console.log('Aucun fichier Lighthouse JSON trouvé dans .lighthouseci/');
   process.exit(0);
 }
 
