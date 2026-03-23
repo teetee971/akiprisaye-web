@@ -12,16 +12,11 @@ const NotificationCenter = lazy(() =>
 );
 
 const links = [
-  { to: '/top-deals-du-jour', label: 'Top deals' },
   { to: '/search', label: 'Recherche' },
-  { to: '/scanner', label: 'Scan' },
-  { to: '/comparateurs', label: 'Comparateurs' },
-  { to: '/pricing', label: 'Offres' },
-  { to: '/liste', label: 'Liste' },
+  { to: '/comparateur', label: 'Comparer' },
+  { to: '/scanner', label: 'Scanner' },
   { to: '/observatoire', label: 'Observatoire' },
-  { to: '/actualites', label: 'Actualités' },
-  { to: '/faq', label: 'FAQ' },
-  { to: '/methodologie', label: 'Méthodologie' },
+  { to: '/pricing', label: 'Offres' },
   { to: '/transparence', label: 'Transparence' },
   { to: '/contact', label: 'Contact' },
 ];
