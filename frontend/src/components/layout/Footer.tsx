@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Scale, BarChart2, Wrench, Info, Heart, MessageCircle, Users, Briefcase, Search, Clock } from 'lucide-react';
+import { Scale, BarChart2, Wrench, Info, Briefcase } from 'lucide-react';
 import { SkeletonBadge } from '../SkeletonWidgets';
 
 // LiveOnlineBadge uses Firestore (lib/firebase) — lazy so Firebase SDK doesn't
@@ -74,61 +74,50 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm">
 
-          {/* Col 1 – Comparateurs */}
+          {/* Col 1 – Commencer */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Scale className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Comparateurs</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Scale className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Commencer</p>
             <ul className="space-y-2">
-              <li><Link to="/comparateurs" className="text-slate-400 hover:text-white transition-colors">Tous les comparateurs</Link></li>
               <li><Link to="/comparateur" className="text-slate-400 hover:text-white transition-colors">Comparateur prix</Link></li>
-              <li><Link to="/comparateur-vols" className="text-slate-400 hover:text-white transition-colors">Billets avion</Link></li>
-              <li><Link to="/comparateur-carburants" className="text-slate-400 hover:text-white transition-colors">Carburants</Link></li>
-              <li><Link to="/comparateur-services" className="text-slate-400 hover:text-white transition-colors">Télécoms</Link></li>
-              <li><Link to="/tableau-inflation" className="text-slate-400 hover:text-white transition-colors">Inflation</Link></li>
+              <li><Link to="/search" className="text-slate-400 hover:text-white transition-colors">Recherche</Link></li>
+              <li><Link to="/scanner" className="text-slate-400 hover:text-white transition-colors">Scanner</Link></li>
+              <li><Link to="/liste" className="text-slate-400 hover:text-white transition-colors">Liste de courses</Link></li>
+              <li><Link to="/pricing" className="text-slate-400 hover:text-white transition-colors">Offres</Link></li>
             </ul>
           </div>
 
-          {/* Col 2 – Données */}
+          {/* Col 2 – Confiance */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><BarChart2 className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Données</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><BarChart2 className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Confiance</p>
             <ul className="space-y-2">
               <li><Link to="/observatoire" className="text-slate-400 hover:text-white transition-colors">Observatoire</Link></li>
-              <li><Link to="/donnees-publiques" className="text-slate-400 hover:text-white transition-colors">Données publiques</Link></li>
+              <li><Link to="/transparence" className="text-slate-400 hover:text-white transition-colors">Transparence</Link></li>
               <li><Link to="/methodologie" className="text-slate-400 hover:text-white transition-colors">Méthodologie</Link></li>
-              <li><Link to="/comprendre-prix" className="text-slate-400 hover:text-white transition-colors">Comprendre les prix</Link></li>
-              <li><Link to="/ievr" className="text-slate-400 hover:text-white transition-colors">Indice IEVR</Link></li>
-              <li><Link to="/ti-panie" className="text-slate-400 hover:text-white transition-colors">Ti Panié vital</Link></li>
-              <li><Link to="/enquete-eau" className="text-slate-400 hover:text-cyan-300 transition-colors">💧 Enquête eau</Link></li>
-            </ul>
-          </div>
-
-          {/* Col 3 – Outils */}
-          <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Wrench className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Outils</p>
-            <ul className="space-y-2">
-              <li><Link to="/scanner" className="text-slate-400 hover:text-white transition-colors">Scanner</Link></li>
-              <li><Link to="/assistant-ia" className="text-slate-400 hover:text-white transition-colors">Assistant IA</Link></li>
-              <li><Link to="/liste" className="text-slate-400 hover:text-white transition-colors">Liste de courses</Link></li>
-              <li><Link to="/alertes-prix" className="text-slate-400 hover:text-white transition-colors">Alertes prix</Link></li>
-              <li><Link to="/contribuer-prix" className="text-slate-400 hover:text-white transition-colors">Contribuer</Link></li>
-              <li><Link to="/evaluation-magasins" className="text-slate-400 hover:text-amber-300 transition-colors">⭐ Évaluer les magasins</Link></li>
-              <li><Link to="/messagerie" className="text-slate-400 hover:text-indigo-300 transition-colors"><MessageCircle className="inline-block w-3.5 h-3.5 mr-1" /> Messagerie</Link></li>
-              <li><Link to="/groupes-parole" className="text-slate-400 hover:text-purple-300 transition-colors"><Users className="inline-block w-3.5 h-3.5 mr-1" /> Groupes de Parole</Link></li>
-            </ul>
-          </div>
-
-          {/* Col 4 – À propos */}
-          <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Info className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> À propos</p>
-            <ul className="space-y-2">
+              <li><Link to="/donnees-publiques" className="text-slate-400 hover:text-white transition-colors">Données publiques</Link></li>
               <li><Link to="/faq" className="text-slate-400 hover:text-white transition-colors">FAQ</Link></li>
+            </ul>
+          </div>
+
+          {/* Col 3 – Ressources */}
+          <div>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Wrench className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Ressources</p>
+            <ul className="space-y-2">
+              <li><Link to="/actualites" className="text-slate-400 hover:text-white transition-colors">Actualités</Link></li>
+              <li><Link to="/comparateurs" className="text-slate-400 hover:text-white transition-colors">Tous les comparateurs</Link></li>
+              <li><Link to="/comprendre-prix" className="text-slate-400 hover:text-white transition-colors">Comprendre les prix</Link></li>
+              <li><Link to="/contribuer-prix" className="text-slate-400 hover:text-white transition-colors">Contribuer</Link></li>
               <li><Link to="/contact" className="text-slate-400 hover:text-white transition-colors">Contact</Link></li>
-              <li><Link to="/solidarite" className="text-slate-400 hover:text-orange-300 transition-colors"><Heart className="inline-block w-3.5 h-3.5 mr-1" /> Entraide</Link></li>
-              <li><Link to="/gouvernance" className="text-slate-400 hover:text-slate-200 transition-colors">Gouvernance</Link></li>
-              <li><Link to="/presse" className="text-slate-400 hover:text-slate-200 transition-colors">Presse</Link></li>
+            </ul>
+          </div>
+
+          {/* Col 4 – Pro & institutionnels */}
+          <div>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Info className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Pro &amp; institutions</p>
+            <ul className="space-y-2">
               <li><Link to="/inscription-pro" className="text-slate-400 hover:text-blue-300 transition-colors"><Briefcase className="inline-block w-3.5 h-3.5 mr-1" /> Espace Pro</Link></li>
-              <li><Link to="/module-audit" className="text-slate-400 hover:text-indigo-300 transition-colors"><Search className="inline-block w-3.5 h-3.5 mr-1" /> Audit modules</Link></li>
-              <li><Link to="/audience" className="text-slate-400 hover:text-emerald-300 transition-colors"><Users className="inline-block w-3.5 h-3.5 mr-1" /> Audience en direct</Link></li>
-              <li><Link to="/statut" className="text-slate-400 hover:text-cyan-300 transition-colors"><Clock className="inline-block w-3.5 h-3.5 mr-1" /> Horloges & Statut</Link></li>
+              <li><Link to="/licence-institution" className="text-slate-400 hover:text-white transition-colors">Licence institution</Link></li>
+              <li><Link to="/pricing#partners" className="text-slate-400 hover:text-white transition-colors">Partenariats</Link></li>
+              <li><Link to="/contact" className="text-slate-400 hover:text-white transition-colors">Parler à l’équipe</Link></li>
             </ul>
           </div>
 
