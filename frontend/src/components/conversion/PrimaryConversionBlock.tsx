@@ -49,7 +49,7 @@ export function PrimaryConversionBlock({ products = [] }: PrimaryConversionBlock
     if (best) {
       logEvent('view_product', { id: best.id, price: best.price });
     }
-  }, [best?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [best?.id]);
 
   // Nothing to show → render nothing (never crash without data)
   if (!best) {
