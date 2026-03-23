@@ -520,9 +520,11 @@ describe('auto-merge.yml — pull_request_target guard', () => {
     // could push a branch named 'copilot/malicious' from a fork and trigger
     // auto-merge without being an official GitHub Copilot bot.
     // We verify that:
-    //   1. The workflow gates on 'github-actions[bot]' and 'dependabot[bot]'.
+    //   1. The workflow gates on trusted bot actors (Copilot/Copilot SWE, GitHub Actions, Dependabot).
     //   2. The insecure branch-prefix condition 'startsWith(github.head_ref, ''copilot/'')'
     //      is NOT present.
+    expect(autoMergeYml).toMatch(/Copilot/);
+    expect(autoMergeYml).toMatch(/copilot-swe-agent\[bot\]/);
     expect(autoMergeYml).toMatch(/github-actions\[bot\]/);
     expect(autoMergeYml).toMatch(/dependabot\[bot\]/);
     expect(autoMergeYml).not.toMatch(/startsWith.*copilot/);
