@@ -384,8 +384,8 @@ describe('lighthouserc.json — CI compatibility assertions', () => {
   })();
   const assert = lhrc.ci.assert;
 
-  it('must use lighthouse:recommended preset', () => {
-    expect(assert.preset).toBe('lighthouse:recommended');
+  it('must not force lighthouse:recommended preset (category-level assertions only)', () => {
+    expect(assert.preset).toBeUndefined();
   });
 
   it('must include the 4 category assertions used by CI gate', () => {
@@ -396,22 +396,28 @@ describe('lighthouserc.json — CI compatibility assertions', () => {
     expect(actual).toContain('categories:seo');
   });
 
-  it('categories:performance must be warn with pragmatic minScore 0.55', () => {
+  it('categories:performance must be warn with realistic minScore 0.6', () => {
     const [level, opts] = assert.assertions['categories:performance'];
     expect(level).toBe('warn');
-    expect(opts.minScore).toBe(0.55);
+    expect(opts.minScore).toBe(0.6);
   });
 
-  it('categories:accessibility must be error with minScore 0.9', () => {
+  it('categories:accessibility must be warn with minScore 0.9', () => {
     const [level, opts] = assert.assertions['categories:accessibility'];
-    expect(level).toBe('error');
+    expect(level).toBe('warn');
     expect(opts.minScore).toBe(0.9);
   });
 
-  it('categories:seo must be error with minScore 0.8', () => {
+  it('categories:best-practices must be warn with minScore 0.9', () => {
+    const [level, opts] = assert.assertions['categories:best-practices'];
+    expect(level).toBe('warn');
+    expect(opts.minScore).toBe(0.9);
+  });
+
+  it('categories:seo must be warn with minScore 0.9', () => {
     const [level, opts] = assert.assertions['categories:seo'];
-    expect(level).toBe('error');
-    expect(opts.minScore).toBe(0.8);
+    expect(level).toBe('warn');
+    expect(opts.minScore).toBe(0.9);
   });
 
   it('must keep startServerCommand empty (server started explicitly by workflow)', () => {
