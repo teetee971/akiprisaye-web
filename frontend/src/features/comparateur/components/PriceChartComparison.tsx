@@ -68,7 +68,10 @@ export function PriceChart({ data, type = 'bar' }: PriceChartProps) {
               borderRadius: '8px',
               padding: '12px'
             }}
-            formatter={(value: number | undefined) => [`${(value ?? 0).toFixed(2)}€`, 'Prix']}
+            formatter={(value) => {
+              const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
+              return [`${numericValue.toFixed(2)}€`, 'Prix'];
+            }}
             labelFormatter={(label) => `Territoire: ${label}`}
             labelStyle={{ color: '#f1f5f9', fontWeight: 'bold' }}
             itemStyle={{ color: '#cbd5e1' }}

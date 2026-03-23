@@ -44,7 +44,10 @@ export function PriceBreakdownPieChart({ breakdown }: PriceBreakdownPieChartProp
             ))}
           </Pie>
           <Tooltip 
-            formatter={(value: number | undefined) => `${(value ?? 0).toFixed(2)}€`}
+            formatter={(value) => {
+              const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
+              return `${numericValue.toFixed(2)}€`;
+            }}
             contentStyle={{
               backgroundColor: 'rgba(0, 0, 0, 0.8)',
               border: 'none',

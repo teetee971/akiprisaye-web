@@ -124,10 +124,11 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
                   color: '#fff',
                   fontSize: '12px'
                 }}
-                formatter={(value: number | undefined, name: string | undefined) => [
-                  `${(value ?? 0).toFixed(2)}€`,
-                  name === 'average' ? 'Prix moyen' : (name ?? '')
-                ]}
+                formatter={(value, name) => {
+                  const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
+                  const label = typeof name === 'string' && name === 'average' ? 'Prix moyen' : String(name ?? '');
+                  return [`${numericValue.toFixed(2)}€`, label];
+                }}
                 labelFormatter={(label) => `Date: ${label}`}
               />
               <Legend 

@@ -472,7 +472,10 @@ export default function ObservatoireVivant() {
                         borderRadius: '12px',
                         color: '#e2e8f0',
                       }}
-                      formatter={(value: number | undefined) => [`${(value ?? 0).toFixed(2)} ${currency}`, 'Prix']}
+                      formatter={(value) => {
+                        const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
+                        return [`${numericValue.toFixed(2)} ${currency}`, 'Prix'];
+                      }}
                       labelFormatter={(label) => formatDate(label)}
                     />
                     <Line

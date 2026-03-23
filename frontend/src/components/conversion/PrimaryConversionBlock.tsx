@@ -72,6 +72,9 @@ export function PrimaryConversionBlock({ products = [] }: PrimaryConversionBlock
       : null;
 
   function handleClick() {
+    if (!best) {
+      return;
+    }
     const pageUrl = typeof window !== 'undefined' ? window.location.href : '/';
     const routerVariant = getVariantForPage(pageUrl);
 

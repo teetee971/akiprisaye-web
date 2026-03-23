@@ -152,9 +152,9 @@ export default function SEOComparateurSlugPage() {
   const saving      = +(worstPrice.price - bestPrice.price).toFixed(2);
 
   const angle  = getPageAngle(slug);
-  const intro  = generatePageIntro(slug, territory);
-  const tip    = generatePriceTip(slug, territory);
-  const faqs   = generateFaqItems(slug, territory);
+  const intro  = generatePageIntro(productName, territory, angle);
+  const tip    = generatePriceTip(productName, territory, angle);
+  const faqs   = generateFaqItems(productName, territory, angle);
   const deals  = useMemo(() => makeSeedDeals(productSlug, territory), [productSlug, territory]);
 
   const enseigneNote = LOCAL_ENSEIGNE_NOTES[territory] ?? LOCAL_ENSEIGNE_NOTES.GP;
@@ -334,9 +334,9 @@ export default function SEOComparateurSlugPage() {
             <h2 className="mb-4 text-base font-bold text-white">Questions fréquentes</h2>
             <div className="space-y-4">
               {faqs.slice(0, 3).map((faq) => (
-                <div key={faq.question} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-                  <p className="mb-1 text-sm font-semibold text-white">{faq.question}</p>
-                  <p className="text-sm text-zinc-400">{faq.answer}</p>
+                <div key={faq.q} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                  <p className="mb-1 text-sm font-semibold text-white">{faq.q}</p>
+                  <p className="text-sm text-zinc-400">{faq.a}</p>
                 </div>
               ))}
             </div>
