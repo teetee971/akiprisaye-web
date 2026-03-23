@@ -33,7 +33,7 @@ jobs:
 
       - name: Install dependencies with npm ci
         working-directory: frontend
-        run: npm ci --no-audit --no-fund
+        run: npm ci --no-audit --no-fund --ignore-scripts
 
       - name: Run npm audit (JSON)
         working-directory: frontend
