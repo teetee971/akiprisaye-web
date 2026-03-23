@@ -7,8 +7,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: "pages"
@@ -17,6 +15,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
     # Defense-in-depth: if this workflow is ever triggered on a non-main branch
     # (e.g. via workflow_dispatch from a feature branch, or via an old copy of
     # this file that still had a pull_request trigger), the build job is skipped

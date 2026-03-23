@@ -31,9 +31,9 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies (lockfile only)
+      - name: Install dependencies with npm ci
         working-directory: frontend
-        run: npm install --package-lock-only
+        run: npm ci --no-audit --no-fund --ignore-scripts
 
       - name: Run npm audit (JSON)
         working-directory: frontend

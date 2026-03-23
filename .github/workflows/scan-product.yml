@@ -158,7 +158,7 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ inputs.save_json == 'true' }}
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c # v6
         with:
           branch: auto-data-update
           base: main
