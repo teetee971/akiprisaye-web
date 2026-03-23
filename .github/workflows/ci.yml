@@ -265,12 +265,14 @@ jobs:
         # $! est disponible immédiatement après & dans bash.
         working-directory: frontend
         env:
+          PREVIEW_PORT: "4173"
           PREVIEW_URL: http://127.0.0.1:4173
         run: |
-          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/preview-server.log 2>&1 &
+          npm run preview -- --host 127.0.0.1 --port "$PREVIEW_PORT" > /tmp/preview-server.log 2>&1 &
           echo $! > /tmp/preview-server.pid
           echo "🚀 Preview server démarré (PID: $!)"
           # 180000ms (3 min) absorbe les pics de latence npm/IO en runners GitHub partagés.
+          # wait-on valide la disponibilité du service; curl confirme une réponse HTTP effective.
           npx wait-on --timeout 180000 "$PREVIEW_URL"
           curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused "$PREVIEW_URL" >/dev/null
           echo "✅ Preview server prêt (wait-on + curl)."
