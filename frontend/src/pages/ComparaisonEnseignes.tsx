@@ -3,7 +3,6 @@
 // Phase 2 - Strictly factual data, no predictions or recommendations
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import React, { useEffect, useMemo, useState } from 'react'
 import { Check, ChevronDown, Copy, Lock, Search, Share2, X } from 'lucide-react'
 import { GlassCard } from '../components/ui/glass-card'
 import { HeroImage } from '../components/ui/HeroImage'
@@ -106,7 +105,6 @@ function SelectorSheet({
       window.removeEventListener('keydown', onKeyDown)
     }
   }, [enableSearch, isOpen])
-  }, [isOpen])
 
   return (
     <>
