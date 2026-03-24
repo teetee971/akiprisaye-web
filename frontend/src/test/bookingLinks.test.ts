@@ -7,6 +7,8 @@
 
 import { describe, it, expect } from 'vitest';
 import { buildBookingUrl, getCommissionStatus, BOOKING_CONFIG } from '../utils/bookingLinks';
+import { FAQ_DATA } from '../data/faq';
+import { generateAssistantResponse } from '../services/assistantService';
 
 describe('buildBookingUrl — UTM params', () => {
   it('injects utm_source, utm_medium and utm_campaign on a clean URL', () => {
@@ -79,5 +81,33 @@ describe('getCommissionStatus — no affiliate', () => {
   it('detail mentions no commission', () => {
     const detail = getCommissionStatus().detail.toLowerCase();
     expect(detail).toContain('aucune commission');
+  });
+
+  it('keeps commissions disabled by default even when using click tracking', () => {
+    const status = getCommissionStatus();
+    const trackedUrl = buildBookingUrl('https://example.com/', 'comparateur-vols');
+    const tracked = new URL(trackedUrl);
+
+    expect(status.active).toBe(false);
+    expect(tracked.searchParams.get('utm_campaign')).toBe('comparateur-vols');
+    expect(tracked.searchParams.get('ref')).toBeNull();
+  });
+});
+
+describe('payment messaging clarity (SumUp)', () => {
+  it('mentions SumUp in FAQ activation answer', () => {
+    const faqItem = FAQ_DATA.find((item) => item.id === 'faq-010');
+    expect(faqItem?.answer).toContain('SumUp');
+    expect(faqItem?.answer).toContain('activé publiquement');
+    expect(faqItem?.answer).toContain('Pour connecter SumUp');
+    expect(faqItem?.answer).toContain('checkout');
+  });
+
+  it('mentions SumUp in assistant pricing fallback', () => {
+    const response = generateAssistantResponse('Quels sont les tarifs ?');
+    expect(response.message).toContain('SumUp');
+    expect(response.message).toContain('sont activés publiquement');
+    expect(response.message).toContain('Pour connecter SumUp');
+    expect(response.message).not.toContain('ne sont pas encore activés publiquement');
   });
 });

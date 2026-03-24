@@ -197,8 +197,8 @@ export const FAQ = [
     a: 'Non. Les options servent à débloquer des capacités (API/OCR/exports/support) selon tes besoins.',
   },
   {
-    q: 'Paiement plus tard : ça casse la page ?',
-    a: 'Non. Les boutons pointent déjà vers /checkout. Tu brancheras Stripe/PayPal ensuite sans refaire l’UI.',
+    q: 'Le paiement est-il déjà disponible ?',
+    a: 'Oui. Les boutons mènent vers /checkout avec paiement en ligne activé (dont Stripe/PayPal, selon options disponibles).',
   },
 ];
 
