@@ -7,7 +7,7 @@ export const newsFallback = [
     summary: 'Dossier de synthèse sur les écarts de prix, la structure du marché local et les points de vigilance pour les consommateurs.',
     source_name: 'Observatoire AKPSY',
     source_url: '/methodologie',
-    canonical_url: '/organigrame-gbh',
+    canonical_url: '/organigramme-gbh',
     published_at: '2026-01-22T09:00:00.000Z',
     impact: 'fort',
     isSponsored: false,

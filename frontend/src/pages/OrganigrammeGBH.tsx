@@ -1,6 +1,6 @@
 /**
  * OrganigrammeGBH — Dossier d'enquête parlementaire : Groupe Bernard Hayot (GBH)
- * Route : /organigrame-gbh
+ * Routes : /organigramme-gbh (principal) + /organigrame-gbh (alias rétrocompatibilité)
  *
  * Dossier complet sur la structure, les filiales et l'impact économique du GBH.
  * Toutes les données sont issues de sources officielles et publiques.
@@ -505,7 +505,7 @@ const OrganigrammeGBH: React.FC = () => {
           name="description"
           content="Dossier d'enquête complet sur le Groupe Bernard Hayot (GBH) : histoire, liste complète des filiales et sociétés rattachées, présence territoriale dans les DOM-TOM, décisions de l'Autorité de la concurrence, impact sur les prix."
         />
-        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/organigrame-gbh" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/organigramme-gbh" />
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-4 pb-16 pt-6">
