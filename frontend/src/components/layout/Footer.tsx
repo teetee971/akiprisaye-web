@@ -118,7 +118,7 @@ export default function Footer() {
               <li><Link to="/licence-institution" className="text-slate-400 hover:text-white transition-colors">Licence institution</Link></li>
               <li><Link to="/pricing#partners" className="text-slate-400 hover:text-white transition-colors">Partenariats</Link></li>
               <li><Link to="/contact#pro" className="text-slate-400 hover:text-white transition-colors">Parler à l’équipe</Link></li>
-              <li><Link to="/contact" className="text-slate-400 hover:text-white transition-colors">Parler à l’équipe</Link></li>
+              <li><Link to="/gouvernance" className="text-slate-400 hover:text-white transition-colors">Gouvernance</Link></li>
             </ul>
           </div>
 

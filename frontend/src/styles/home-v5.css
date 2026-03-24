@@ -12,24 +12,7 @@
 /* ============================================
    ACCESSIBILITY
    ============================================ */
-
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: #1d4ed8;
-  color: white;
-  padding: 8px 16px;
-  text-decoration: none;
-  border-radius: 0 0 4px 0;
-  z-index: 100;
-}
-
-.skip-link:focus {
-  top: 0;
-  outline: 3px solid #60a5fa;
-  outline-offset: 2px;
-}
+/* Skip-link styles are centralized in styles/a11y.css to avoid cascade conflicts. */
 
 /* Enhanced focus indicators */
 .home-v5 a:focus,
