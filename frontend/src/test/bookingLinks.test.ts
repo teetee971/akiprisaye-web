@@ -45,15 +45,20 @@ describe('buildBookingUrl — UTM params', () => {
     expect(buildBookingUrl(relative, 'comparateur-assurances')).toBe(relative);
   });
 
-  it('does NOT inject a "ref" param when affiliateEnabled is false', () => {
+  it('injects a "ref" param when affiliateEnabled is true', () => {
     const result = buildBookingUrl('https://www.allianz.fr/', 'comparateur-assurances');
-    expect(result).not.toContain('ref=');
+    const url = new URL(result);
+    expect(url.searchParams.get('ref')).toBe(BOOKING_CONFIG.affiliateRef);
   });
 });
 
 describe('BOOKING_CONFIG defaults', () => {
-  it('affiliateEnabled is false by default (no commissions)', () => {
-    expect(BOOKING_CONFIG.affiliateEnabled).toBe(false);
+  it('affiliateEnabled is true by default', () => {
+    expect(BOOKING_CONFIG.affiliateEnabled).toBe(true);
+  });
+
+  it('affiliateRef is configured by default', () => {
+    expect(BOOKING_CONFIG.affiliateRef).toBeTruthy();
   });
 
   it('utmEnabled is true by default', () => {
@@ -65,22 +70,22 @@ describe('BOOKING_CONFIG defaults', () => {
   });
 });
 
-describe('getCommissionStatus — no affiliate', () => {
-  it('returns active=false', () => {
-    expect(getCommissionStatus().active).toBe(false);
+describe('getCommissionStatus — affiliate active', () => {
+  it('returns active=true', () => {
+    expect(getCommissionStatus().active).toBe(true);
   });
 
-  it('returns green color', () => {
-    expect(getCommissionStatus().color).toBe('green');
+  it('returns yellow color', () => {
+    expect(getCommissionStatus().color).toBe('yellow');
   });
 
-  it('label mentions "Lien direct"', () => {
-    expect(getCommissionStatus().label).toContain('Lien direct');
+  it('label mentions "Lien partenaire"', () => {
+    expect(getCommissionStatus().label).toContain('Lien partenaire');
   });
 
-  it('detail mentions no commission', () => {
+  it('detail mentions technical tracking', () => {
     const detail = getCommissionStatus().detail.toLowerCase();
-    expect(detail).toContain('aucune commission');
+    expect(detail).toContain('suivi technique');
   });
 
   it('keeps commissions disabled by default even when using click tracking', () => {
@@ -88,9 +93,9 @@ describe('getCommissionStatus — no affiliate', () => {
     const trackedUrl = buildBookingUrl('https://example.com/', 'comparateur-vols');
     const tracked = new URL(trackedUrl);
 
-    expect(status.active).toBe(false);
+    expect(status.active).toBe(true);
     expect(tracked.searchParams.get('utm_campaign')).toBe('comparateur-vols');
-    expect(tracked.searchParams.get('ref')).toBeNull();
+    expect(tracked.searchParams.get('ref')).toBe(BOOKING_CONFIG.affiliateRef);
   });
 });
 

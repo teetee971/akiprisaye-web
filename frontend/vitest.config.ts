@@ -81,6 +81,7 @@ export default defineConfig({
       abs('./scripts/lighthouse-engine.test.ts'),
       // Firebase API key integrity — prevents re-introducing the wrong hardcoded key
       abs('./scripts/firebase-config.test.ts'),
+      abs('./scripts/auto-scraper-robots.test.ts'),
       // Aggregation utilities — normalizeRetailer, deduplicateObservations, discardOutliers
       abs('./src/test/compareAggregation.test.ts'),
       // Retailer link builder — UTM-enriched URLs + deep-links by retailer
@@ -123,6 +124,7 @@ export default defineConfig({
       abs('./src/test/home.page.test.tsx'),
       abs('./src/test/roadmap.page.test.tsx'),
       abs('./src/test/checklistProduction.page.test.tsx'),
+      abs('./src/test/pricing.page.test.tsx'),
       // SEO content engine — determinism, angles, FAQ generation, similar products
       abs('./src/test/seoContentEngine.test.ts'),
       // SEO stats tracker — localStorage-based SEO analytics (RGPD compliant)
@@ -163,6 +165,8 @@ export default defineConfig({
       abs('./src/components/comparateur/__tests__/ComparateurCitoyen.test.tsx'),
       // Creator guard — loading spinner, redirect non-creator, allow creator/admin access
       abs('./src/test/creatorGuard.test.tsx'),
+      // Creator IA briefing — deduplicate live/historical dominant interest wording
+      abs('./src/test/espaceCreateurBriefing.test.ts'),
       // RBAC module — hasRole, hasPermission, isCreator, isAdmin, roleFromClaims pure functions
       abs('./src/test/rbac.test.ts'),
       // RequireRole / RequireCreator / RequireAdmin guards — loading, redirect, access control

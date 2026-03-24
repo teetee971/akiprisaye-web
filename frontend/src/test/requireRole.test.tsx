@@ -11,7 +11,7 @@
  *  5. RequireCreator allows creator and admin
  *  6. RequireCreator blocks citoyen/guest
  *  7. RequireAdmin allows only admin
- *  8. RequireAdmin blocks creator role
+ *  8. RequireAdmin blocks creator/citoyen/guest
  */
 /* eslint-disable jsx-a11y/aria-role -- "role" is a custom RequireRole/RequireCreator/RequireAdmin prop, not an ARIA attribute */
 

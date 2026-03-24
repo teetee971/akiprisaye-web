@@ -10,9 +10,9 @@ interface BookingLinkBadgeProps {
 }
 
 /**
- * Badge transparent indiquant l'état des commissions par clic.
- * - Lien direct (vert) → aucune commission
- * - Lien partenaire (jaune) → commission possible, clairement indiqué
+ * Badge transparent indiquant le type de lien sortant.
+ * - Lien direct (vert)
+ * - Lien partenaire (jaune)
  */
 const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
   showTooltip = true,
@@ -42,7 +42,7 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
         {showTooltip && (
           <button
             type="button"
-            aria-label="En savoir plus sur les commissions"
+            aria-label="En savoir plus sur les liens"
             onClick={() => setOpen((v) => !v)}
             className="ml-0.5 opacity-70 hover:opacity-100 focus:outline-none"
           >
@@ -58,7 +58,7 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
         >
           <p className="font-semibold text-gray-100 mb-1 flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-green-400" />
-            Transparence sur les liens
+            Informations sur les liens
           </p>
           <p>{status.detail}</p>
           <p className="mt-2 text-gray-400 flex items-center gap-1">

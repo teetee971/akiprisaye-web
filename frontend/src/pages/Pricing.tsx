@@ -325,6 +325,10 @@ const FAQ_ITEMS: FaqItem[] = [
     a: 'La remise de 30 % est automatiquement appliquée aux plans Pro et Business pour les résidents des territoires DOM·ROM·COM. Elle est activée lors de votre abonnement dès que vous indiquez votre territoire.',
   },
   {
+    q: 'Comment fonctionnent les liens vers les opérateurs ?',
+    a: "Les liens « Voir l'offre » ouvrent toujours le site officiel de l'opérateur dans un nouvel onglet, afin que vous finalisiez directement votre choix sur la plateforme concernée.",
+  },
+  {
     q: 'Est-ce que mes données sont partagées avec des tiers ?',
     a: 'Non. Vos données personnelles et vos listes de prix ne sont jamais vendues ni partagées. Les données B2B proposées dans la section "Revenus additionnels" sont exclusivement des agrégats anonymisés.',
   },

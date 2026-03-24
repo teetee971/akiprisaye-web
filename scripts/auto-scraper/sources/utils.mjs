@@ -133,7 +133,7 @@ export async function fetchTextWithRetry(url, label, scraperTag = '', maxAttempt
 
 // ─── Robots.txt compliance ────────────────────────────────────────────────────
 
-/** Cache en mémoire des robots.txt déjà lus (clé = origine) */
+/** Cache en mémoire des robots.txt déjà lus (clé = origine + user-agent) */
 const _robotsCache = new Map();
 
 /**
@@ -150,14 +150,21 @@ const _robotsCache = new Map();
  */
 export async function isScrapingAllowed(url, ua = 'akiprisaye-opendata-bot') {
   let origin;
+  let path = '/';
   try {
-    origin = new URL(url).origin;
+    const parsedUrl = new URL(url);
+    origin = parsedUrl.origin;
+    path = parsedUrl.pathname || '/';
   } catch {
     return { allowed: true, crawlDelay: null };
   }
 
+  const cacheKey = `${origin}::${String(ua).toLowerCase()}`;
+
   // Check cache
-  if (_robotsCache.has(origin)) return _robotsCache.get(origin);
+  if (_robotsCache.has(cacheKey)) {
+    return _evaluateRobots(_robotsCache.get(cacheKey), path);
+  }
 
   const robotsUrl = `${origin}/robots.txt`;
   let text = '';
@@ -172,15 +179,15 @@ export async function isScrapingAllowed(url, ua = 'akiprisaye-opendata-bot') {
     if (res.ok) text = await res.text();
   } catch {
     // Network error → allow (fail-open)
-    const result = { allowed: true, crawlDelay: null };
-    _robotsCache.set(origin, result);
-    return result;
+    const rules = { disallow: [], allow: [], crawlDelay: null };
+    _robotsCache.set(cacheKey, rules);
+    return _evaluateRobots(rules, path);
   }
 
   // Parse robots.txt (simple implementation)
-  const result = _parseRobots(text, ua);
-  _robotsCache.set(origin, result);
-  return result;
+  const rules = _parseRobotsRules(text, ua);
+  _robotsCache.set(cacheKey, rules);
+  return _evaluateRobots(rules, path);
 }
 
 /**
@@ -188,8 +195,9 @@ export async function isScrapingAllowed(url, ua = 'akiprisaye-opendata-bot') {
  * Supports: User-agent, Disallow, Allow, Crawl-delay.
  * @param {string} text
  * @param {string} ua
+ * @returns {{ disallow: string[], allow: string[], crawlDelay: number | null }}
  */
-function _parseRobots(text, ua) {
+function _parseRobotsRules(text, ua) {
   const uaLower = ua.toLowerCase();
   const lines = text.split(/\r?\n/);
 
@@ -233,9 +241,43 @@ function _parseRobots(text, ua) {
   const allow       = allowSpecific.length   > 0 ? allowSpecific   : allowWildcard;
   const crawlDelay  = crawlDelaySpecific     ?? crawlDelayWildcard;
 
-  // If any Disallow rule matches '/' → blocked (unless Allow overrides)
-  const blocked = disallow.some((p) => p === '/' || p === '');
-  const allowed  = !blocked || allow.some((p) => p === '/');
+  return { disallow, allow, crawlDelay };
+}
+
+/**
+ * Évalue les règles robots.txt pour un chemin précis.
+ * @param {{ disallow: string[], allow: string[], crawlDelay: number | null }} rules
+ * @param {string} [path]
+ * @returns {{ allowed: boolean, crawlDelay: number | null }}
+ */
+function _evaluateRobots(rules, path = '/') {
+  const { disallow = [], allow = [], crawlDelay = null } = rules ?? {};
+  const normalizedPath = path || '/';
+
+  const matchRule = (rule) => {
+    if (!rule) return false; // Règle vide = aucune correspondance (Disallow: => tout autorisé)
+
+    const hasEndAnchor = rule.endsWith('$');
+    const body = hasEndAnchor ? rule.slice(0, -1) : rule;
+    const escaped = body
+      .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+      .replace(/\*/g, '.*');
+    const regex = new RegExp(`^${escaped}${hasEndAnchor ? '$' : ''}`);
+    return regex.test(normalizedPath);
+  };
+
+  const longestMatchLen = (rules) => {
+    let max = -1;
+    for (const rule of rules) {
+      if (!matchRule(rule)) continue;
+      if (rule.length > max) max = rule.length;
+    }
+    return max;
+  };
+
+  const disallowLen = longestMatchLen(disallow);
+  const allowLen = longestMatchLen(allow);
+  const allowed = allowLen >= disallowLen;
 
   return { allowed, crawlDelay };
 }
