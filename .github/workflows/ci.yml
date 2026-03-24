@@ -449,11 +449,11 @@ jobs:
   # ─── 8. build-test (check rétro-compatible non bloquant) ────────────────────
   # Ce job conserve le check "build-test" pour compatibilité avec la règle de
   # protection de branche existante, mais n'est plus bloquant pour les PR.
-  # Il s'exécute toujours (même si build/test échouent) et publie un statut vert.
+  # Il s'exécute toujours (même si build/test échouent) et journalise ces statuts.
   build-test:
     name: build-test
     runs-on: ubuntu-latest
     needs: [build, test]
     if: always()
     steps:
-      - run: echo "build-test gate — build ✅  test ✅"
+      - run: echo "build-test compatibility check — build=${{ needs.build.result }} test=${{ needs.test.result }}"
