@@ -20,7 +20,12 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
-import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
+import {
+  useVisitorStats,
+  type InterestStats,
+  type TerritoryInterestStat,
+  type TerritoryStats,
+} from '../hooks/useVisitorStats';
 
 /* ─── Admin shortcut ─────────────────────────────────────────────────── */
 
@@ -268,6 +273,41 @@ function classifyAudienceFocus(topInterest: InterestStats | undefined): Dashboar
   };
 }
 
+export function buildCreatorBriefing({
+  topTerritory,
+  topInterest,
+  topTerritoryHistoricalInterest,
+}: {
+  topTerritory: TerritoryStats | undefined;
+  topInterest: InterestStats | undefined;
+  topTerritoryHistoricalInterest: TerritoryInterestStat | undefined;
+}): string {
+  if (!topTerritory && !topInterest) {
+    return 'Le tableau de bord IA attend les premières remontées de présence et de navigation pour construire un briefing comportemental fiable.';
+  }
+
+  const leadTerritory = topTerritory
+    ? `${topTerritory.flag} ${topTerritory.name}`
+    : 'un territoire encore non identifié';
+  const leadInterest = topInterest
+    ? `${topInterest.emoji} ${topInterest.name.toLowerCase()}`
+    : 'un usage encore diffus';
+  const leadHistoricalAngle = topTerritoryHistoricalInterest
+    ? `${topTerritoryHistoricalInterest.emoji} ${topTerritoryHistoricalInterest.name.toLowerCase()}`
+    : 'aucun historique dominant';
+  const sameFocusAsHistorical = Boolean(
+    topInterest
+    && topTerritoryHistoricalInterest
+    && topInterest.key === topTerritoryHistoricalInterest.interest,
+  );
+
+  if (sameFocusAsHistorical) {
+    return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, et ce besoin confirme aussi le meilleur signal historique sur ce territoire. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
+  }
+
+  return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, tandis que le meilleur signal historique sur ce territoire reste ${leadHistoricalAngle}. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
+}
+
 /* ─── Copy to clipboard helper ──────────────────────────────────────── */
 
 function CopyButton({ text }: { text: string }) {
@@ -381,21 +421,11 @@ const EspaceCreateur: React.FC = () => {
   }, [mostDormantTerritory, topInterest, topTerritory]);
 
   const creatorBriefing = useMemo(() => {
-    if (!topTerritory && !topInterest) {
-      return 'Le tableau de bord IA attend les premières remontées de présence et de navigation pour construire un briefing comportemental fiable.';
-    }
-
-    const leadTerritory = topTerritory
-      ? `${topTerritory.flag} ${topTerritory.name}`
-      : 'un territoire encore non identifié';
-    const leadInterest = topInterest
-      ? `${topInterest.emoji} ${topInterest.name.toLowerCase()}`
-      : 'un usage encore diffus';
-    const leadHistoricalAngle = topTerritoryHistoricalInterest
-      ? `${topTerritoryHistoricalInterest.emoji} ${topTerritoryHistoricalInterest.name.toLowerCase()}`
-      : 'aucun historique dominant';
-
-    return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, tandis que le meilleur signal historique sur ce territoire reste ${leadHistoricalAngle}. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
+    return buildCreatorBriefing({
+      topTerritory,
+      topInterest,
+      topTerritoryHistoricalInterest,
+    });
   }, [topInterest, topTerritory, topTerritoryHistoricalInterest]);
 
   const topInterestMax = Math.max(...byInterest.map((interest) => interest.totalViews), 1);

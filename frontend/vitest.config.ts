@@ -163,6 +163,8 @@ export default defineConfig({
       abs('./src/components/comparateur/__tests__/ComparateurCitoyen.test.tsx'),
       // Creator guard — loading spinner, redirect non-creator, allow creator/admin access
       abs('./src/test/creatorGuard.test.tsx'),
+      // Creator IA briefing — deduplicate live/historical dominant interest wording
+      abs('./src/test/espaceCreateurBriefing.test.ts'),
       // RBAC module — hasRole, hasPermission, isCreator, isAdmin, roleFromClaims pure functions
       abs('./src/test/rbac.test.ts'),
       // RequireRole / RequireCreator / RequireAdmin guards — loading, redirect, access control
