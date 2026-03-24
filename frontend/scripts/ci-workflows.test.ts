@@ -144,9 +144,8 @@ describe('ci.yml — CI trigger guard', () => {
     expect(prTriggerBlock).not.toMatch(/\n\s+paths:/);
   });
 
-  it('build-test compatibility check must be non-blocking (if: always)', () => {
-    // This legacy check should not block merges anymore.
-    expect(ciYml).toMatch(/build-test:[\s\S]*if:\s*always\(\)/);
+  it('must not define legacy build-test compatibility job anymore', () => {
+    expect(ciYml).not.toMatch(/\n\s{2}build-test:\n/);
   });
 });
 
