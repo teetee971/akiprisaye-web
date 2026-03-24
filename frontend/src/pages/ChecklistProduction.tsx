@@ -218,7 +218,9 @@ export default function ChecklistProduction() {
   const totalTasks = CHECKLIST.flatMap((s) => s.tasks).length;
   const doneTasks = CHECKLIST.flatMap((s) => s.tasks).filter((t) => t.status === 'done').length;
   const inProgressTasks = CHECKLIST.flatMap((s) => s.tasks).filter((t) => t.status === 'in-progress').length;
+  const criticalTasks = CHECKLIST.flatMap((s) => s.tasks).filter((t) => t.status === 'critical').length;
   const todoTasks = CHECKLIST.flatMap((s) => s.tasks).filter((t) => t.status === 'todo' || t.status === 'critical').length;
+  const remainingTasks = totalTasks - doneTasks;
   const progressPct = Math.round((doneTasks / totalTasks) * 100);
 
   return (
@@ -263,6 +265,12 @@ export default function ChecklistProduction() {
                   <span className="text-sm font-semibold text-gray-700">Progression globale</span>
                   <span className="text-sm font-bold text-indigo-700">{progressPct}%</span>
                 </div>
+                <p className="text-xs text-gray-600 mb-2">
+                  Il reste <strong>{remainingTasks}</strong> tâche{remainingTasks > 1 ? 's' : ''} à intégrer pour finir le site :{' '}
+                  <strong>{todoTasks}</strong> prévue{todoTasks > 1 ? 's' : ''} non démarrée{todoTasks > 1 ? 's' : ''} et{' '}
+                  <strong>{inProgressTasks}</strong> non finie{inProgressTasks > 1 ? 's' : ''} (en cours), dont{' '}
+                  <strong>{criticalTasks}</strong> critique{criticalTasks > 1 ? 's' : ''}.
+                </p>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
                     className="bg-indigo-600 h-2.5 rounded-full transition-all"

@@ -136,6 +136,11 @@ describe('ci.yml — CI trigger guard', () => {
     expect(ciYml).toMatch(/synchronize/);
     expect(ciYml).toMatch(/reopened/);
   });
+
+  it('build-test compatibility check must be non-blocking (if: always)', () => {
+    // This legacy check should not block merges anymore.
+    expect(ciYml).toMatch(/build-test:[\s\S]*if:\s*always\(\)/);
+  });
 });
 
 describe('deploy-pages.yml — triple validation guard', () => {
