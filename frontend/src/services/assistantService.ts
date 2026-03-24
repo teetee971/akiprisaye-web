@@ -140,7 +140,7 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
           `• **Pro** (9,99€/mois) : Agrégations avancées, multi-territoires\n` +
           `• **Institution** : Licence annuelle sur convention\n\n` +
           `Les paiements d'abonnement (CB/Stripe/PayPal/SumUp) sont activés publiquement. ` +
-          `Si vous avez déjà un compte SumUp, vous pouvez l'utiliser selon les options disponibles au checkout. ` +
+          `Pour connecter SumUp : ouvrez le checkout depuis Tarifs, choisissez SumUp si disponible, autorisez la connexion puis validez le paiement. ` +
           `S'il est question de "paiement par clic", il s'agit de liens externes avec suivi de clics, ` +
           `sans commission active par défaut. Consultez la page Tarifs pour plus d'informations.`;
         sources.push('Grille tarifaire v1.6.1');
