@@ -1,5 +1,5 @@
 /**
- * OrganigrammeGBH — Dossier d'enquête parlementaire : Groupe Bernard Hayot (GBH)
+ * OrganigrammeGBH — Dossier d'enquête A KI PRI SA YÉ : Groupe Bernard Hayot (GBH)
  * Routes : /organigramme-gbh (principal) + /organigrame-gbh (alias rétrocompatibilité)
  *
  * Dossier complet sur la structure, les filiales et l'impact économique du GBH.
@@ -26,7 +26,7 @@ import {
   FileText, Landmark, ArrowLeft, Search, Shield, Info,
   GitBranch, UserCheck, BarChart2,
   Briefcase, DollarSign, ShoppingBag, Flag, Newspaper, Leaf,
-  Clock, Smartphone, TreePine, Library, Heart, GitMerge,
+  Clock, Smartphone, TreePine, Library, Heart, GitMerge, List,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -482,6 +482,7 @@ function getColor(secteur: string) {
 
 const OrganigrammeGBH: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('presentation');
+  const [chapterMenuOpen, setChapterMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [filterSector, setFilterSector] = useState('');
 
@@ -497,10 +498,18 @@ const OrganigrammeGBH: React.FC = () => {
     return matchQ && matchS;
   });
 
+  const switchTab = (tab: TabKey) => {
+    setActiveTab(tab);
+    setChapterMenuOpen(false);
+    requestAnimationFrame(() => {
+      document.getElementById('gbh-tabs')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <Helmet>
-        <title>Enquête parlementaire : Groupe Bernard Hayot (GBH) — A KI PRI SA YÉ</title>
+        <title>Enquête : Groupe Bernard Hayot (GBH) — A KI PRI SA YÉ</title>
         <meta
           name="description"
           content="Dossier d'enquête complet sur le Groupe Bernard Hayot (GBH) : histoire, liste complète des filiales et sociétés rattachées, présence territoriale dans les DOM-TOM, décisions de l'Autorité de la concurrence, impact sur les prix."
@@ -524,12 +533,12 @@ const OrganigrammeGBH: React.FC = () => {
             src={PAGE_HERO_IMAGES.organigrammeGBH}
             alt="Siège social GBH — zone industrielle de Jarry, Baie-Mahault, Guadeloupe"
             gradient="from-slate-950 to-amber-900"
-            height="h-52 sm:h-72"
+            height="h-[30rem] sm:h-72"
           >
             <div className="flex items-center gap-2 mb-2">
               <FileText className="w-6 h-6 text-amber-300 drop-shadow" />
               <span className="text-xs font-semibold uppercase tracking-widest text-amber-300">
-                Dossier d'enquête parlementaire
+                Dossier d'enquête A KI PRI SA YÉ
               </span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-black text-white drop-shadow leading-tight">
@@ -570,13 +579,13 @@ const OrganigrammeGBH: React.FC = () => {
         </InfoBox>
 
         {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-3">
+        <div id="gbh-tabs" className="flex flex-wrap gap-2 mb-6 border-b border-slate-800 pb-3">
           {TABS.map(t => {
             const Icon = t.icon;
             return (
               <button
                 key={t.key}
-                onClick={() => setActiveTab(t.key)}
+                onClick={() => switchTab(t.key)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
                   activeTab === t.key
                     ? 'bg-amber-500/20 border border-amber-500/50 text-amber-300'
@@ -589,6 +598,53 @@ const OrganigrammeGBH: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Mobile quick chapter switcher */}
+        <button
+          type="button"
+          onClick={() => setChapterMenuOpen(true)}
+          className="sm:hidden fixed bottom-24 left-4 z-40 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500 text-slate-950 font-semibold shadow-lg shadow-black/40"
+          aria-label="Ouvrir le menu des chapitres"
+        >
+          <List className="w-4 h-4" />
+          Chapitres
+        </button>
+
+        {chapterMenuOpen && (
+          <div className="sm:hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm p-4">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm font-semibold text-amber-300 uppercase tracking-wide">Aller à un chapitre</p>
+              <button
+                type="button"
+                onClick={() => setChapterMenuOpen(false)}
+                className="px-3 py-1.5 rounded-lg text-sm bg-slate-800 border border-slate-700 text-gray-200"
+              >
+                Fermer
+              </button>
+            </div>
+            <div className="max-h-[80vh] overflow-y-auto pr-1 space-y-2">
+              {TABS.map(t => {
+                const Icon = t.icon;
+                const selected = activeTab === t.key;
+                return (
+                  <button
+                    key={`mobile-${t.key}`}
+                    type="button"
+                    onClick={() => switchTab(t.key)}
+                    className={`w-full text-left rounded-xl px-3 py-2.5 border transition-colors flex items-center gap-2 ${
+                      selected
+                        ? 'bg-amber-500/20 border-amber-400 text-amber-300'
+                        : 'bg-slate-800 border-slate-700 text-gray-200'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-sm">{t.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* ══ TAB 1 : PRÉSENTATION ══════════════════════════════════════════ */}
         {activeTab === 'presentation' && (
