@@ -92,7 +92,7 @@ export function getCommissionStatus(): {
       active: true,
       label: 'Lien partenaire',
       detail:
-        "Lien vers le site officiel de l'opérateur avec suivi technique du parcours.",
+        "Lien vers le site officiel de l'opérateur. Il s'agit d'un lien partenaire : si vous réservez après avoir cliqué dessus, le site peut percevoir une commission, sans surcoût pour vous, avec un suivi technique du parcours.",
       color: 'yellow',
     };
   }
