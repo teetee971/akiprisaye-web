@@ -1,4 +1,5 @@
 import { handleOptions, jsonResponse, methodGuard, parseQuery } from '../_lib/http';
+import { DEFAULT_NEWS_LIMIT } from '../_lib/newsConstants';
 import { serverNewsFallback } from '../data/newsFallback';
 import { RssIngester } from '../ingesters/rssIngester';
 import { RappelConsoIngester } from '../ingesters/rappelConsoIngester';
@@ -107,8 +108,8 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
   if (blocked) return blocked;
 
   const query = parseQuery(request);
-  const limitRaw = Number(query.get('limit') ?? '30');
-  const limit = Number.isFinite(limitRaw) ? Math.min(100, Math.max(1, limitRaw)) : 30;
+  const limitRaw = Number(query.get('limit') ?? String(DEFAULT_NEWS_LIMIT));
+  const limit = Number.isFinite(limitRaw) ? Math.min(100, Math.max(1, limitRaw)) : DEFAULT_NEWS_LIMIT;
 
   const { items, mode, sources } = await aggregateNews();
   const filtered = applyFilters(items, query).slice(0, limit);
