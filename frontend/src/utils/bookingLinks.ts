@@ -92,7 +92,7 @@ export function getCommissionStatus(): {
       active: true,
       label: 'Lien partenaire',
       detail:
-        'A KI PRI SA YÉ peut recevoir une commission si vous réservez via ce lien. Prix identique pour vous.',
+        "Lien vers le site officiel de l'opérateur avec suivi technique du parcours.",
       color: 'yellow',
     };
   }
@@ -100,7 +100,7 @@ export function getCommissionStatus(): {
     active: false,
     label: 'Lien direct',
     detail:
-      'Lien direct vers le site officiel. A KI PRI SA YÉ ne perçoit aucune commission sur ces liens.',
+      "Lien direct vers le site officiel de l'opérateur.",
     color: 'green',
   };
 }

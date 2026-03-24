@@ -6,7 +6,7 @@ import '@testing-library/jest-dom/vitest'
 import PricingPage from '../pages/Pricing'
 
 describe('Pricing page', () => {
-  it('explains CPC click commissions are not active in FAQ', () => {
+  it('explains links open official operator websites in FAQ', () => {
     render(
       <HelmetProvider>
         <MemoryRouter>
@@ -15,8 +15,8 @@ describe('Pricing page', () => {
       </HelmetProvider>,
     )
 
-    const question = /les clics cpc \/ commissions sont-ils activés/i
-    const answer = /les commissions au clic ne sont pas activées actuellement/i
+    const question = /comment fonctionnent les liens vers les opérateurs/i
+    const answer = /les liens « voir l'offre » ouvrent toujours le site officiel de l'opérateur/i
 
     expect(screen.getByRole('button', { name: question })).toBeInTheDocument()
     expect(screen.queryByText(answer)).not.toBeInTheDocument()

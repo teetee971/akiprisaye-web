@@ -325,8 +325,8 @@ const FAQ_ITEMS: FaqItem[] = [
     a: 'La remise de 30 % est automatiquement appliquée aux plans Pro et Business pour les résidents des territoires DOM·ROM·COM. Elle est activée lors de votre abonnement dès que vous indiquez votre territoire.',
   },
   {
-    q: 'Les clics CPC / commissions sont-ils activés ?',
-    a: "Non. Les commissions au clic ne sont pas activées actuellement : les liens restent des liens directs vers les sites officiels. Nous utilisons uniquement des paramètres de suivi interne (UTM) pour mesurer les usages, sans revenu CPC actif à ce stade.",
+    q: 'Comment fonctionnent les liens vers les opérateurs ?',
+    a: "Les liens « Voir l'offre » ouvrent toujours le site officiel de l'opérateur dans un nouvel onglet, afin que vous finalisiez directement votre choix sur la plateforme concernée.",
   },
   {
     q: 'Est-ce que mes données sont partagées avec des tiers ?',
