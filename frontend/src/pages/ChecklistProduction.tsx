@@ -1,5 +1,5 @@
 /**
- * ChecklistProduction — Siriste à faire pour la mise en production
+ * ChecklistProduction — Liste à faire pour la mise en production
  *
  * Liste de vérification des tâches critiques avant déploiement en production.
  * Couvre : frontend, sécurité, performance, tests, accessibilité, conformité,
@@ -154,9 +154,9 @@ const CHECKLIST: ChecklistSection[] = [
       { label: 'Roadmap publique accessible (/roadmap)', status: 'done', priority: 'moyenne' },
       { label: 'Dossier investisseurs structuré (/dossier-investisseurs)', status: 'done', priority: 'moyenne' },
       { label: 'Page Versions accessible (/versions)', status: 'done', priority: 'basse' },
-      { label: 'API interne (Cloudflare Functions) documentée', status: 'todo', priority: 'moyenne', note: 'Priorité V1' },
-      { label: 'README.md monorepo à jour avec instructions de setup', status: 'in-progress', priority: 'moyenne' },
-      { label: 'Guide contributeur (CONTRIBUTING.md)', status: 'todo', priority: 'basse' },
+      { label: 'API interne (Cloudflare Functions) documentée', status: 'done', priority: 'moyenne' },
+      { label: 'README.md monorepo à jour avec instructions de setup', status: 'done', priority: 'moyenne' },
+      { label: 'Guide contributeur (CONTRIBUTING.md)', status: 'done', priority: 'basse' },
     ],
   },
   {
@@ -248,7 +248,7 @@ export default function ChecklistProduction() {
                 ✅ Checklist Production
               </h1>
               <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
-                Siriste à faire pour mettre le logiciel en production
+                Liste à faire pour mettre le logiciel en production
               </p>
             </HeroImage>
           </div>
