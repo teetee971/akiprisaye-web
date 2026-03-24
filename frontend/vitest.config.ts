@@ -174,6 +174,8 @@ export default defineConfig({
       abs('./src/test/autoSeoEngine.test.ts'),
       // CRO engine — tracking storage, score determinism, recommendation generation
       abs('./src/test/cro.engine.test.ts'),
+      // Visitor stats mapping — category aliases and key deduplication
+      abs('./src/test/visitorStats.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
