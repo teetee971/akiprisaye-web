@@ -3,6 +3,7 @@
 // Phase 2 - Strictly factual data, no predictions or recommendations
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Check, ChevronDown, Copy, Lock, Search, Share2, X } from 'lucide-react'
 import { GlassCard } from '../components/ui/glass-card'
 import { HeroImage } from '../components/ui/HeroImage'
@@ -105,6 +106,7 @@ function SelectorSheet({
       window.removeEventListener('keydown', onKeyDown)
     }
   }, [enableSearch, isOpen])
+  }, [isOpen])
 
   return (
     <>
@@ -159,6 +161,19 @@ function SelectorSheet({
           />
           <div
             className="relative w-full rounded-t-[28px] border border-white/10 bg-[#101726] px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-4 shadow-2xl"
+        <div
+          className="fixed inset-0 z-[80] flex items-end bg-slate-950/75 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label={label}
+          onClick={() => {
+            setIsOpen(false)
+            setQuery('')
+          }}
+        >
+          <div
+            className="w-full rounded-t-[28px] border border-white/10 bg-[#101726] px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-4 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
           >
             <div className="mx-auto mb-4 h-1.5 w-16 rounded-full bg-white/15" />
             <div className="mb-4 flex items-start justify-between gap-3">
@@ -188,6 +203,7 @@ function SelectorSheet({
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Rechercher..."
                   className="w-full bg-transparent text-white outline-none placeholder:text-white/35"
+                  autoFocus
                 />
               </div>
             )}
