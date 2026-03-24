@@ -879,7 +879,10 @@ const EspaceCreateur: React.FC = () => {
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
             {ADMIN_LINKS.map(l => {
               const Icon = l.icon;
-              const isLocked = l.requiresAdmin && userRole !== 'admin' && userRole !== 'creator';
+              // NOTE: `requiresAdmin` in ADMIN_LINKS really means "internal-only"
+              // (accessible to both `admin` and `creator` roles), not strictly admin-only.
+              const requiresInternalAccess = l.requiresAdmin;
+              const isLocked = requiresInternalAccess && userRole !== 'admin' && userRole !== 'creator';
               const cardClassName = `flex w-full items-center gap-2.5 rounded-xl border p-3 text-left transition-all group sm:gap-3 sm:p-4 ${
                 isLocked
                   ? 'bg-slate-800/40 border-slate-700/40 hover:border-amber-500/40 hover:bg-amber-950/20'
