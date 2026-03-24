@@ -38,10 +38,13 @@ const RUNTIME_WEB_BASE =
     ? new URL(import.meta.env.BASE_URL, window.location.origin).toString().replace(/\/$/, '')
     : PUBLIC_WEB_BASE;
 
+const ALLOWED_PROTOCOLS = new Set(['http:', 'https:']);
+
 function normalizeNewsUrl(rawUrl) {
   if (!rawUrl) return null;
   try {
     const parsed = new URL(rawUrl, RUNTIME_WEB_BASE);
+    if (!ALLOWED_PROTOCOLS.has(parsed.protocol)) return null;
     if (parsed.hostname === 'akiprisaye.fr' || parsed.hostname === 'www.akiprisaye.fr') {
       return `${RUNTIME_WEB_BASE}${parsed.pathname}${parsed.search}${parsed.hash}`;
     }
