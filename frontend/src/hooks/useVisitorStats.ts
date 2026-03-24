@@ -54,6 +54,14 @@ export interface PageCategory {
   description: string;
 }
 
+const INTEREST_KEY_ALIASES: Record<string, string> = {
+  scan: 'scanner',
+};
+
+function normalizeInterestKey(key: string): string {
+  return INTEREST_KEY_ALIASES[key] ?? key;
+}
+
 /**
  * Ordered list of page categories. The first matching prefix wins.
  * Keep more specific prefixes before generic ones.
@@ -61,7 +69,6 @@ export interface PageCategory {
 export const PAGE_CATEGORIES: PageCategory[] = [
   { key: 'comparateur',    name: 'Comparateur de prix',      emoji: '🛒', description: 'Comparer les prix entre enseignes' },
   { key: 'scanner',        name: 'Scanner / Codes-barres',   emoji: '📷', description: 'Scan EAN & OCR tickets' },
-  { key: 'scan',           name: 'Scanner / Codes-barres',   emoji: '📷', description: 'Scan EAN & OCR tickets' },
   { key: 'observatoire',   name: 'Observatoire des prix',    emoji: '📊', description: 'Données & tendances prix' },
   { key: 'actualites',     name: 'Actualités',               emoji: '📰', description: 'Info vie chère & territoires' },
   { key: 'carte',          name: 'Carte & Magasins',         emoji: '🗺️', description: 'Trouver un magasin' },
@@ -92,6 +99,11 @@ export function getPageCategory(pathname: string): PageCategory | null {
   // Strip leading slash and base URL segment, lowercase
   const cleaned = pathname.replace(/^\/akiprisaye-web\//, '/').replace(/^\/+/, '').toLowerCase();
   if (!cleaned || cleaned === '' || cleaned === 'home') return null; // home is not an "interest"
+
+  if (cleaned === 'scan' || cleaned.startsWith('scan/') || cleaned.startsWith('scan-')) {
+    const scannerCategory = PAGE_CATEGORIES.find((cat) => cat.key === 'scanner');
+    if (scannerCategory) return scannerCategory;
+  }
 
   for (const cat of PAGE_CATEGORIES) {
     if (cleaned === cat.key || cleaned.startsWith(`${cat.key}/`) || cleaned.startsWith(`${cat.key}-`)) {
@@ -307,7 +319,7 @@ export function useVisitorStats(): VisitorStats {
             const t = (data.territory as string) || '_other';
             territCounts[t] = (territCounts[t] ?? 0) + 1;
 
-            const iKey = (data.interest as string) || '_home';
+            const iKey = normalizeInterestKey((data.interest as string) || '_home');
             if (iKey !== '_home') {
               intCounts[iKey] = (intCounts[iKey] ?? 0) + 1;
               // Cross-reference: territory × interest
@@ -357,7 +369,8 @@ export function useVisitorStats(): VisitorStats {
         const views: Record<string, number> = {};
         let latestView: Date | null = null;
         snap.forEach((d) => {
-          views[d.id] = (d.data().totalViews as number) ?? 0;
+          const key = normalizeInterestKey(d.id);
+          views[key] = (views[key] ?? 0) + ((d.data().totalViews as number) ?? 0);
           const lastView = d.data().lastView as Timestamp | null;
           if (lastView && (!latestView || lastView.toMillis() > latestView.getTime())) {
             latestView = lastView.toDate();
@@ -377,14 +390,22 @@ export function useVisitorStats(): VisitorStats {
         snap.forEach((d) => {
           const data = d.data();
           const t = data.territory as string;
+          const interest = normalizeInterestKey((data.interest as string) || '');
           if (!byTerritory[t]) byTerritory[t] = [];
-          byTerritory[t].push({
-            territory: t,
-            interest: data.interest as string,
-            name: (data.name as string) || (data.interest as string),
-            emoji: (data.emoji as string) || '📄',
-            totalViews: (data.totalViews as number) ?? 0,
-          });
+
+          const existing = byTerritory[t].find((entry) => entry.interest === interest);
+          if (existing) {
+            existing.totalViews += (data.totalViews as number) ?? 0;
+          } else {
+            const cat = PAGE_CATEGORIES.find((c) => c.key === interest);
+            byTerritory[t].push({
+              territory: t,
+              interest,
+              name: cat?.name || (data.name as string) || interest,
+              emoji: cat?.emoji || (data.emoji as string) || '📄',
+              totalViews: (data.totalViews as number) ?? 0,
+            });
+          }
         });
         // Sort each territory's interests by totalViews descending
         for (const t of Object.keys(byTerritory)) {
