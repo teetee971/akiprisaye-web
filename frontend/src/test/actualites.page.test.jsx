@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React, { act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
+import { MemoryRouter } from 'react-router-dom';
 import Actualites from '../pages/Actualites';
 import { DEFAULT_NEWS_LIMIT } from '../constants/news';
 
@@ -35,7 +36,7 @@ describe('Actualites page', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await act(async () => {
-      root.render(<HelmetProvider><Actualites /></HelmetProvider>);
+      root.render(<MemoryRouter><HelmetProvider><Actualites /></HelmetProvider></MemoryRouter>);
     });
 
     const territorySelect = container.querySelector('select');
@@ -62,7 +63,7 @@ describe('Actualites page', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
 
     await act(async () => {
-      root.render(<HelmetProvider><Actualites /></HelmetProvider>);
+      root.render(<MemoryRouter><HelmetProvider><Actualites /></HelmetProvider></MemoryRouter>);
     });
 
     await act(async () => {
