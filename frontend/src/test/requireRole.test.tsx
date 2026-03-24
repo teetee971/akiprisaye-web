@@ -10,8 +10,8 @@
  *  4. RequireRole grants access when role is sufficient
  *  5. RequireCreator allows creator and admin
  *  6. RequireCreator blocks citoyen/guest
- *  7. RequireAdmin allows admin and creator
- *  8. RequireAdmin blocks citoyen role
+ *  7. RequireAdmin allows only admin
+ *  8. RequireAdmin blocks creator/citoyen/guest
  */
 /* eslint-disable jsx-a11y/aria-role -- "role" is a custom RequireRole/RequireCreator/RequireAdmin prop, not an ARIA attribute */
 
@@ -336,7 +336,7 @@ describe('RequireAdmin', () => {
     expect(screen.getByTestId('admin-content')).toBeTruthy();
   });
 
-  it('allows creator role', () => {
+  it('blocks creator role (creator !== admin)', () => {
     authState = makeAuthMock({
       loading: false,
       user: fakeUser,
@@ -351,8 +351,8 @@ describe('RequireAdmin', () => {
       </RequireAdmin>,
     );
 
-    expect(screen.getByTestId('admin-content')).toBeTruthy();
-    expect(screen.queryByTestId('home-page')).toBeNull();
+    expect(screen.getByTestId('home-page')).toBeTruthy();
+    expect(screen.queryByTestId('admin-content')).toBeNull();
   });
 
   it('blocks citoyen role', () => {
