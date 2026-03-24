@@ -258,4 +258,30 @@ describe('EspaceCreateur creator guard', () => {
     expect(screen.getByRole('heading', { name: /Revenus CPC — suivi créateur/i })).toBeTruthy();
     expect(screen.getByText(/Revenu 30 jours/i)).toBeTruthy();
   });
+
+  it('applies mobile-first visual ordering for admin before CPC blocks', () => {
+    const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
+    authState = makeAuthMock({
+      loading: false,
+      authResolved: true,
+      user: fakeUser,
+      userRole: 'creator',
+      isGuest: false,
+      isAuthenticated: true,
+      email: fakeUser.email,
+      displayName: fakeUser.displayName,
+      isAdmin: false,
+      isCreator: true,
+    });
+
+    renderCreateur();
+
+    const adminSection = screen.getByRole('heading', { name: /Outils d'administration/i }).closest('section');
+    const cpcSection = screen.getByRole('heading', { name: /Revenus CPC — suivi créateur/i }).closest('section');
+
+    expect(adminSection).toBeTruthy();
+    expect(cpcSection).toBeTruthy();
+    expect(adminSection).toHaveClass('order-1', 'md:order-2');
+    expect(cpcSection).toHaveClass('order-2', 'md:order-1');
+  });
 });

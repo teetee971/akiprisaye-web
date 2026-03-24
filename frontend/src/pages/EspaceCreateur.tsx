@@ -710,9 +710,10 @@ const EspaceCreateur: React.FC = () => {
           </div>
         </section>
 
+        <div className="flex flex-col">
         {/* ── Revenue CPC dashboard ─────────────────────────────────── */}
-        <section className="mb-8">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <section className="mb-8 order-2 md:order-1">
+          <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-white sm:mb-4 sm:text-lg">
             <TrendingUp className="w-5 h-5 text-emerald-400" />
             Revenus CPC — suivi créateur
           </h2>
@@ -726,34 +727,34 @@ const EspaceCreateur: React.FC = () => {
               : 0;
 
             return (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 30 jours</p>
-                    <p className="mt-1 text-2xl font-black text-emerald-300">
+                    <p className="mt-1 text-xl font-black text-emerald-300 sm:text-2xl">
                       {conversionStats.estimatedRevenue.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">estimation locale (clic × prix moyen × taux)</p>
                   </div>
-                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">CTR global</p>
-                    <p className="mt-1 text-2xl font-black text-cyan-300">
+                    <p className="mt-1 text-xl font-black text-cyan-300 sm:text-2xl">
                       {(conversionStats.clickThroughRate * 100).toFixed(2)}%
                     </p>
                     <p className="mt-1 text-xs text-slate-400">
                       {conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 7 jours</p>
-                    <p className="mt-1 text-2xl font-black text-amber-300">
+                    <p className="mt-1 text-xl font-black text-amber-300 sm:text-2xl">
                       {weeklyRevenue.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">{weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
                   </div>
-                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Tendance 7 jours</p>
-                    <p className={`mt-1 text-2xl font-black ${revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
                       {revenueTrend >= 0 ? '+' : ''}
                       {revenueTrend.toFixed(2)} €
                     </p>
@@ -761,8 +762,8 @@ const EspaceCreateur: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="grid gap-4 xl:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-5">
+                <div className="grid gap-3 sm:gap-4 xl:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 sm:p-5">
                     <h3 className="text-base font-bold text-white">Top produits convertisseurs</h3>
                     <p className="mt-1 text-xs text-slate-400">Produits avec le plus de clics et revenu estimé (30 jours)</p>
                     <div className="mt-4 space-y-3">
@@ -771,7 +772,7 @@ const EspaceCreateur: React.FC = () => {
                           Pas encore de données de clic CPC sur la période.
                         </div>
                       ) : conversionStats.topProducts.slice(0, 5).map((product) => (
-                        <div key={`${product.barcode}-${product.name}`} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-3">
+                        <div key={`${product.barcode}-${product.name}`} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <p className="text-sm font-semibold text-white">{product.name}</p>
@@ -786,7 +787,7 @@ const EspaceCreateur: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-5">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 sm:p-5">
                     <h3 className="text-base font-bold text-white">Top enseignes CPC</h3>
                     <p className="mt-1 text-xs text-slate-400">Enseignes les plus cliquées avec panier moyen observé (30 jours)</p>
                     <div className="mt-4 space-y-3">
@@ -795,7 +796,7 @@ const EspaceCreateur: React.FC = () => {
                           Aucun clic enseigne enregistré sur la période.
                         </div>
                       ) : conversionStats.topRetailers.slice(0, 5).map((retailer) => (
-                        <div key={retailer.retailer} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-3">
+                        <div key={retailer.retailer} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <p className="text-sm font-semibold text-white">{retailer.retailer}</p>
@@ -816,7 +817,7 @@ const EspaceCreateur: React.FC = () => {
         </section>
 
         {/* ── Feature grid ─────────────────────────────────────────── */}
-        <section className="mb-8">
+        <section className="mb-8 order-3">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-400" />
             Accès & fonctionnalités — Plan CREATOR
@@ -836,12 +837,12 @@ const EspaceCreateur: React.FC = () => {
         </section>
 
         {/* ── Admin shortcuts ───────────────────────────────────────── */}
-        <section className="mb-8">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <section className="mb-8 order-1 md:order-2">
+          <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-white sm:mb-4 sm:text-lg">
             <Shield className="w-5 h-5 text-blue-400" />
             Outils d'administration
           </h2>
-          <div className="mb-4 rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+          <div className="mb-3 rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3.5 sm:mb-4 sm:p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-white">
@@ -855,7 +856,7 @@ const EspaceCreateur: React.FC = () => {
                     : 'Une fois le rôle créateur/admin actif, utilisez “Actualiser le rôle” puis ouvrez les modules ci-dessous.'}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${
                   (userRole === 'admin' || userRole === 'creator')
                     ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
@@ -875,11 +876,11 @@ const EspaceCreateur: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
             {ADMIN_LINKS.map(l => {
               const Icon = l.icon;
               const isLocked = l.requiresAdmin && userRole !== 'admin' && userRole !== 'creator';
-              const cardClassName = `flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all group ${
+              const cardClassName = `flex w-full items-center gap-2.5 rounded-xl border p-3 text-left transition-all group sm:gap-3 sm:p-4 ${
                 isLocked
                   ? 'bg-slate-800/40 border-slate-700/40 hover:border-amber-500/40 hover:bg-amber-950/20'
                   : 'bg-slate-800/60 border-slate-700/50 hover:border-slate-500/60'
@@ -891,7 +892,7 @@ const EspaceCreateur: React.FC = () => {
                     <Icon className={`w-4 h-4 ${l.color}`} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-start gap-2">
                       <p className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">{l.label}</p>
                       <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
                         isLocked
@@ -901,7 +902,7 @@ const EspaceCreateur: React.FC = () => {
                         {isLocked ? 'Admin requis' : 'Ouvrir'}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 truncate">{l.description}</p>
+                    <p className="text-xs leading-relaxed text-slate-400">{l.description}</p>
                   </div>
                   <ExternalLink className={`h-4 w-4 flex-shrink-0 transition-colors ${
                     isLocked ? 'text-amber-300/80' : 'text-slate-500 group-hover:text-white'
@@ -974,6 +975,7 @@ const EspaceCreateur: React.FC = () => {
             </div>
           )}
         </section>
+        </div>
 
         {/* ── Quick navigation ─────────────────────────────────────── */}
         <section className="mb-8">
