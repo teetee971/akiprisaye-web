@@ -21,6 +21,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
 import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
+import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 
 /* ─── Admin shortcut ─────────────────────────────────────────────────── */
 
@@ -709,6 +710,111 @@ const EspaceCreateur: React.FC = () => {
           </div>
         </section>
 
+        {/* ── Revenue CPC dashboard ─────────────────────────────────── */}
+        <section className="mb-8">
+          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-emerald-400" />
+            Revenus CPC — suivi créateur
+          </h2>
+          {(() => {
+            const conversionStats = getConversionStats(30);
+            const dailyStats = getDailyStats(7);
+            const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
+            const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
+            const revenueTrend = dailyStats.length >= 2
+              ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
+              : 0;
+
+            return (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 30 jours</p>
+                    <p className="mt-1 text-2xl font-black text-emerald-300">
+                      {conversionStats.estimatedRevenue.toFixed(2)} €
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">estimation locale (clic × prix moyen × taux)</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">CTR global</p>
+                    <p className="mt-1 text-2xl font-black text-cyan-300">
+                      {(conversionStats.clickThroughRate * 100).toFixed(2)}%
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 7 jours</p>
+                    <p className="mt-1 text-2xl font-black text-amber-300">
+                      {weeklyRevenue.toFixed(2)} €
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">{weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Tendance 7 jours</p>
+                    <p className={`mt-1 text-2xl font-black ${revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {revenueTrend >= 0 ? '+' : ''}
+                      {revenueTrend.toFixed(2)} €
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">dernier jour vs premier jour (fenêtre 7j)</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 xl:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-5">
+                    <h3 className="text-base font-bold text-white">Top produits convertisseurs</h3>
+                    <p className="mt-1 text-xs text-slate-400">Produits avec le plus de clics et revenu estimé (30 jours)</p>
+                    <div className="mt-4 space-y-3">
+                      {conversionStats.topProducts.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
+                          Pas encore de données de clic CPC sur la période.
+                        </div>
+                      ) : conversionStats.topProducts.slice(0, 5).map((product) => (
+                        <div key={`${product.barcode}-${product.name}`} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-white">{product.name}</p>
+                              <p className="mt-1 text-xs text-slate-400">
+                                {product.clicks} clic(s) · CTR {(product.ctr * 100).toFixed(2)}%
+                              </p>
+                            </div>
+                            <p className="text-sm font-bold text-emerald-300">{product.estimatedRevenue.toFixed(2)} €</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-5">
+                    <h3 className="text-base font-bold text-white">Top enseignes CPC</h3>
+                    <p className="mt-1 text-xs text-slate-400">Enseignes les plus cliquées avec panier moyen observé (30 jours)</p>
+                    <div className="mt-4 space-y-3">
+                      {conversionStats.topRetailers.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
+                          Aucun clic enseigne enregistré sur la période.
+                        </div>
+                      ) : conversionStats.topRetailers.slice(0, 5).map((retailer) => (
+                        <div key={retailer.retailer} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-white">{retailer.retailer}</p>
+                              <p className="mt-1 text-xs text-slate-400">
+                                {retailer.clicks} clic(s) · panier moyen {retailer.avgPrice.toFixed(2)} €
+                              </p>
+                            </div>
+                            <p className="text-sm font-bold text-emerald-300">{retailer.estimatedRevenue.toFixed(2)} €</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </section>
+
         {/* ── Feature grid ─────────────────────────────────────────── */}
         <section className="mb-8">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -739,23 +845,23 @@ const EspaceCreateur: React.FC = () => {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-white">
-                  {userRole === 'admin'
-                    ? 'Votre rôle admin ouvre tous les modules ci-dessous.'
-                    : 'Votre rôle actuel est CREATOR : ces modules système restent protégés jusqu’à promotion admin.'}
+                  {(userRole === 'admin' || userRole === 'creator')
+                    ? 'Votre rôle créateur/admin ouvre tous les modules ci-dessous.'
+                    : 'Ces modules système nécessitent un compte créateur ou admin.'}
                 </p>
                 <p className="mt-1 text-xs leading-relaxed text-slate-400">
-                  {userRole === 'admin'
+                  {(userRole === 'admin' || userRole === 'creator')
                     ? 'Chaque pavé ouvre directement le bon écran d’administration.'
-                    : 'Les pavés ne redirigent plus vers une impasse : touchez-en un pour voir à quoi il sert, puis utilisez “Actualiser le rôle” après promotion admin ou lancez le workflow GitHub prévu.'}
+                    : 'Une fois le rôle créateur/admin actif, utilisez “Actualiser le rôle” puis ouvrez les modules ci-dessous.'}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${
-                  userRole === 'admin'
+                  (userRole === 'admin' || userRole === 'creator')
                     ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
                     : 'border-amber-500/30 bg-amber-500/10 text-amber-300'
                 }`}>
-                  {userRole === 'admin' ? 'Admin actif' : 'Admin requis'}
+                  {(userRole === 'admin' || userRole === 'creator') ? 'Accès actif' : 'Créateur/Admin requis'}
                 </span>
                 <button
                   type="button"
@@ -772,7 +878,7 @@ const EspaceCreateur: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {ADMIN_LINKS.map(l => {
               const Icon = l.icon;
-              const isLocked = l.requiresAdmin && userRole !== 'admin';
+              const isLocked = l.requiresAdmin && userRole !== 'admin' && userRole !== 'creator';
               const cardClassName = `flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all group ${
                 isLocked
                   ? 'bg-slate-800/40 border-slate-700/40 hover:border-amber-500/40 hover:bg-amber-950/20'
@@ -828,7 +934,7 @@ const EspaceCreateur: React.FC = () => {
               );
             })}
           </div>
-          {userRole !== 'admin' && selectedAdminLink && (
+          {userRole !== 'admin' && userRole !== 'creator' && selectedAdminLink && (
             <div className="mt-4 rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/30 to-slate-900/80 p-5">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
