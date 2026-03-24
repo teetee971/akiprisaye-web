@@ -266,7 +266,9 @@ export default function ChecklistProduction() {
                   <span className="text-sm font-bold text-indigo-700">{progressPct}%</span>
                 </div>
                 <p className="text-xs text-gray-600 mb-2">
-                  Il reste <strong>{remainingTasks}</strong> tâche{remainingTasks > 1 ? 's' : ''} pour finir le site, dont{' '}
+                  Il reste <strong>{remainingTasks}</strong> tâche{remainingTasks > 1 ? 's' : ''} à intégrer pour finir le site :{' '}
+                  <strong>{todoTasks}</strong> prévue{todoTasks > 1 ? 's' : ''} non démarrée{todoTasks > 1 ? 's' : ''} et{' '}
+                  <strong>{inProgressTasks}</strong> non finie{inProgressTasks > 1 ? 's' : ''} (en cours), dont{' '}
                   <strong>{criticalTasks}</strong> critique{criticalTasks > 1 ? 's' : ''}.
                 </p>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
