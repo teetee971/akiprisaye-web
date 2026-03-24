@@ -255,7 +255,7 @@ function _evaluateRobots(rules, path = '/') {
   const normalizedPath = path || '/';
 
   const matchRule = (rule) => {
-    if (!rule) return false; // Disallow: (vide) = tout autorisé
+    if (!rule) return false; // Règle vide = aucune correspondance (Disallow: => tout autorisé)
 
     const hasEndAnchor = rule.endsWith('$');
     const body = hasEndAnchor ? rule.slice(0, -1) : rule;
