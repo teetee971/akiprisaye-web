@@ -30,7 +30,7 @@
       Content-Security-Policy (meta tag — GitHub Pages ne peut pas injecter de headers HTTP).
       • script-src : bundles 'self' + Google Identity/OAuth + GTM (Firebase Analytics) + hash du script inline SPA-redirect.
       • style-src  : 'unsafe-inline' requis pour le bloc <style> anti-flash du chargement initial.
-      • img-src    : Unsplash (images produits/héros), Google profile photos, Firebase Storage, OpenFoodFacts.
+      • img-src    : Unsplash (images produits/héros), Google profile photos, Firebase Storage, OpenFoodFacts, GitHub user attachments.
       • connect-src: tous les endpoints Firebase (Firestore, Auth, Storage, Installations) + Google APIs + OpenFoodFacts.
       • frame-src  : popup OAuth Google + domaine Firebase Auth.
       • object-src / base-uri : verrouillés à 'none'/'self'.
@@ -38,7 +38,7 @@
     -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' https://apis.google.com https://accounts.google.com https://www.googletagmanager.com https://connect.facebook.net 'sha256-mZvVvMw8+6CB9PkTzAvR40I1vF+FzuYfiM6VR3ZXeaQ='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://www.gstatic.com https://www.google.com https://firebasestorage.googleapis.com https://images.openfoodfacts.org https://www.facebook.com; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com https://world.openfoodfacts.org https://prices.openfoodfacts.org https://connect.facebook.net https://www.facebook.com; frame-src https://accounts.google.com https://a-ki-pri-sa-ye.firebaseapp.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com;"
+      content="default-src 'self'; script-src 'self' https://apis.google.com https://accounts.google.com https://www.googletagmanager.com https://connect.facebook.net 'sha256-mZvVvMw8+6CB9PkTzAvR40I1vF+FzuYfiM6VR3ZXeaQ='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://images.unsplash.com https://lh3.googleusercontent.com https://www.gstatic.com https://www.google.com https://firebasestorage.googleapis.com https://images.openfoodfacts.org https://www.facebook.com https://github.com https://githubusercontent.com https://i.ytimg.com; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebase.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://www.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com https://world.openfoodfacts.org https://prices.openfoodfacts.org https://connect.facebook.net https://www.facebook.com; frame-src https://accounts.google.com https://a-ki-pri-sa-ye.firebaseapp.com; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self' https://accounts.google.com;"
     />
 
     <!-- App -->
