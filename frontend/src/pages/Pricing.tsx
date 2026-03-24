@@ -325,8 +325,8 @@ const FAQ_ITEMS: FaqItem[] = [
     a: 'La remise de 30 % est automatiquement appliquée aux plans Pro et Business pour les résidents des territoires DOM·ROM·COM. Elle est activée lors de votre abonnement dès que vous indiquez votre territoire.',
   },
   {
-    q: 'Quels systèmes de rémunération avez-vous mis en place pour les contributeurs ?',
-    a: "Nous avons mis en place trois systèmes de rémunération : des crédits collecte convertibles en abonnement, des réductions sur les plans payants et des bons d'achat via nos partenaires. Le système appliqué dépend de votre niveau de contribution et des campagnes en cours.",
+    q: 'Les clics CPC / commissions sont-ils activés ?',
+    a: "Non. Les commissions au clic ne sont pas activées actuellement : les liens restent des liens directs vers les sites officiels. Nous utilisons uniquement des paramètres de suivi interne (UTM) pour mesurer les usages, sans revenu CPC actif à ce stade.",
   },
   {
     q: 'Est-ce que mes données sont partagées avec des tiers ?',

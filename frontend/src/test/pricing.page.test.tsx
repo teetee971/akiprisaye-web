@@ -6,7 +6,7 @@ import '@testing-library/jest-dom/vitest'
 import PricingPage from '../pages/Pricing'
 
 describe('Pricing page', () => {
-  it('explains contributor remuneration systems in FAQ', () => {
+  it('explains CPC click commissions are not active in FAQ', () => {
     render(
       <HelmetProvider>
         <MemoryRouter>
@@ -15,8 +15,8 @@ describe('Pricing page', () => {
       </HelmetProvider>,
     )
 
-    const question = /quels systèmes de rémunération avez-vous mis en place pour les contributeurs/i
-    const answer = /trois systèmes de rémunération/i
+    const question = /les clics cpc \/ commissions sont-ils activés/i
+    const answer = /les commissions au clic ne sont pas activées actuellement/i
 
     expect(screen.getByRole('button', { name: question })).toBeInTheDocument()
     expect(screen.queryByText(answer)).not.toBeInTheDocument()
