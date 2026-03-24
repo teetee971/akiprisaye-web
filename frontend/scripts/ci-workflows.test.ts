@@ -142,6 +142,7 @@ describe('ci.yml — CI trigger guard', () => {
     expect(prTriggerMatch).not.toBeNull();
     const prTriggerBlock = prTriggerMatch![0];
     expect(prTriggerBlock).not.toMatch(/\n\s+paths:/);
+    expect(prTriggerBlock).not.toMatch(/\n\s+paths-ignore:/);
   });
 
   it('must not define legacy build-test compatibility job anymore', () => {
