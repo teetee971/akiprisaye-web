@@ -26,10 +26,6 @@ on:
       - '.github/workflows/**'
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - 'frontend/**'
-      - 'price-api/**'
-      - '.github/workflows/**'
   workflow_dispatch:
     inputs:
       lhci_url:

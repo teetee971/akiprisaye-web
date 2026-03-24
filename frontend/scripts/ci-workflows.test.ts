@@ -137,6 +137,13 @@ describe('ci.yml — CI trigger guard', () => {
     expect(ciYml).toMatch(/reopened/);
   });
 
+  it('must not path-filter pull_request trigger (avoids required checks stuck in Expected state)', () => {
+    const prTriggerMatch = ciYml.match(/pull_request:\n([\s\S]*?)(?=\n\s{2}\w|$)/);
+    expect(prTriggerMatch).not.toBeNull();
+    const prTriggerBlock = prTriggerMatch![0];
+    expect(prTriggerBlock).not.toMatch(/\n\s+paths:/);
+  });
+
   it('build-test compatibility check must be non-blocking (if: always)', () => {
     // This legacy check should not block merges anymore.
     expect(ciYml).toMatch(/build-test:[\s\S]*if:\s*always\(\)/);
