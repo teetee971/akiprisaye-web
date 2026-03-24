@@ -59,4 +59,26 @@ describe('buildCreatorBriefing', () => {
 
     expect(briefing).toContain('tandis que le meilleur signal historique sur ce territoire reste 📊 observatoire des prix');
   });
+
+  it('deduplicates briefing wording when legacy scan key matches scanner alias', () => {
+    const briefing = buildCreatorBriefing({
+      topTerritory: makeTerritory(),
+      topInterest: makeInterest({ key: 'scanner', name: 'Scanner EAN', emoji: '📷' }),
+      topTerritoryHistoricalInterest: makeTerritoryHistoricalInterest({ interest: 'scan', name: 'Scan', emoji: '📷' }),
+    });
+
+    expect(briefing).toContain('Le foyer d’attention principal est 📷 scanner ean');
+    expect(briefing).toContain('ce besoin confirme aussi le meilleur signal historique sur ce territoire');
+    expect(briefing).not.toContain('tandis que le meilleur signal historique sur ce territoire reste');
+  });
+
+  it('keeps graceful fallback wording when historical interest is missing', () => {
+    const briefing = buildCreatorBriefing({
+      topTerritory: makeTerritory(),
+      topInterest: makeInterest(),
+      topTerritoryHistoricalInterest: undefined,
+    });
+
+    expect(briefing).toContain('tandis que le meilleur signal historique sur ce territoire reste aucun historique dominant');
+  });
 });

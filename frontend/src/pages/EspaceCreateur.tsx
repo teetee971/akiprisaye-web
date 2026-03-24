@@ -208,6 +208,16 @@ const INSIGHT_TONE_STYLES: Record<InsightTone, string> = {
   violet: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
 };
 
+const BRIEFING_INTEREST_KEY_ALIASES: Record<string, string> = {
+  scan: 'scanner',
+};
+
+function normalizeBriefingInterestKey(key: string | undefined): string {
+  if (!key) return '';
+  const normalized = key.trim().toLowerCase();
+  return BRIEFING_INTEREST_KEY_ALIASES[normalized] ?? normalized;
+}
+
 function formatDateTime(date: Date | null): string {
   if (!date) return 'En attente de données';
   return new Intl.DateTimeFormat('fr-FR', {
@@ -298,7 +308,7 @@ export function buildCreatorBriefing({
   const sameFocusAsHistorical = Boolean(
     topInterest
     && topTerritoryHistoricalInterest
-    && topInterest.key === topTerritoryHistoricalInterest.interest,
+    && normalizeBriefingInterestKey(topInterest.key) === normalizeBriefingInterestKey(topTerritoryHistoricalInterest.interest),
   );
 
   if (sameFocusAsHistorical) {
