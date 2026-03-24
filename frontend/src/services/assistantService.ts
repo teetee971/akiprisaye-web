@@ -149,7 +149,10 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
           `• **Citoyen+** (2,99€/mois) : Alertes, historique étendu, exports basiques\n` +
           `• **Pro** (9,99€/mois) : Agrégations avancées, multi-territoires\n` +
           `• **Institution** : Licence annuelle sur convention\n\n` +
-          `Le paiement n'est pas encore activé. Consultez la page Tarifs pour plus d'informations.`;
+          `Les paiements d'abonnement (CB/Stripe/PayPal/SumUp) sont activés publiquement. ` +
+          `Pour connecter SumUp : ouvrez le checkout depuis Tarifs, choisissez SumUp si disponible, autorisez la connexion puis validez le paiement. ` +
+          `S'il est question de "paiement par clic", il s'agit de liens externes avec suivi de clics, ` +
+          `sans commission active par défaut. Consultez la page Tarifs pour plus d'informations.`;
         sources.push('Grille tarifaire v1.6.1');
         break;
         

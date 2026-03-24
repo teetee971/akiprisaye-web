@@ -253,7 +253,7 @@ export default function CivicModules() {
             </div>
             <div className="mt-3 p-2 bg-blue-900/20 border border-blue-700/30 rounded-lg">
               <p className="text-xs text-blue-200 text-center">
-                Paiement non activé — accès sur convention ou demande officielle
+                Paiement public activé — abonnement possible en ligne
               </p>
             </div>
           </section>

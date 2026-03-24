@@ -88,8 +88,8 @@ export const FAQ_DATA: FAQItem[] = [
     id: 'faq-010',
     category: 'abonnements',
     question: 'Le paiement est-il activé ?',
-    answer: 'Non, le paiement n\'est pas encore activé. L\'accès aux niveaux Citoyen+ et Pro se fait actuellement sur demande ou par convention. Les tarifs affichés sont indicatifs.',
-    tags: ['paiement', 'facturation', 'activation']
+    answer: 'Oui. Le paiement des abonnements est activé publiquement (CB/Stripe/PayPal/SumUp).\n\nPour connecter SumUp au logiciel :\n1) Créez (ou connectez) votre compte SumUp.\n2) Depuis la page Tarifs, cliquez sur « Choisir » pour ouvrir le checkout.\n3) Dans le checkout, sélectionnez l\'option SumUp si elle est proposée.\n4) Autorisez la connexion puis validez le paiement.\n\nUne fois validé, l\'abonnement est activé automatiquement. Les \"paiements par clic\" évoqués concernent des liens externes avec suivi de clics ; cela reste distinct du paiement d\'abonnement.',
+    tags: ['paiement', 'facturation', 'activation', 'clic', 'commission', 'sumup', 'sumir', 'connecter']
   },
 
   // DONNÉES (Technique / Chercheurs)

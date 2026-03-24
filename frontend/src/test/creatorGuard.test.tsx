@@ -216,7 +216,7 @@ describe('EspaceCreateur creator guard', () => {
     expect(screen.getByRole('heading', { name: /Espace Créateur/i })).toBeTruthy();
   });
 
-  it('shows admin-required guidance instead of broken redirects for creator-only users', () => {
+  it('shows admin tools as open for creator users', () => {
     const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
     authState = makeAuthMock({
       loading: false,
@@ -233,8 +233,55 @@ describe('EspaceCreateur creator guard', () => {
 
     renderCreateur();
 
-    expect(screen.getAllByText(/Admin requis/i).length).toBeGreaterThan(0);
-    expect(screen.getByRole('heading', { name: /Dashboard Admin/i })).toBeTruthy();
-    expect(screen.getByRole('link', { name: /Guide d’activation/i })).toHaveAttribute('href', '/activation-createur');
+    expect(screen.queryByText(/Admin requis/i)).toBeNull();
+    expect(screen.getAllByText(/Ouvrir/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Dashboard Admin/i)).toBeTruthy();
+  });
+
+  it('renders CPC revenue tracking section for creator users', () => {
+    const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
+    authState = makeAuthMock({
+      loading: false,
+      authResolved: true,
+      user: fakeUser,
+      userRole: 'creator',
+      isGuest: false,
+      isAuthenticated: true,
+      email: fakeUser.email,
+      displayName: fakeUser.displayName,
+      isAdmin: false,
+      isCreator: true,
+    });
+
+    renderCreateur();
+
+    expect(screen.getByRole('heading', { name: /Revenus CPC — suivi créateur/i })).toBeTruthy();
+    expect(screen.getByText(/Revenu 30 jours/i)).toBeTruthy();
+  });
+
+  it('applies mobile-first visual ordering for admin before CPC blocks', () => {
+    const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
+    authState = makeAuthMock({
+      loading: false,
+      authResolved: true,
+      user: fakeUser,
+      userRole: 'creator',
+      isGuest: false,
+      isAuthenticated: true,
+      email: fakeUser.email,
+      displayName: fakeUser.displayName,
+      isAdmin: false,
+      isCreator: true,
+    });
+
+    renderCreateur();
+
+    const adminSection = screen.getByRole('heading', { name: /Outils d'administration/i }).closest('section');
+    const cpcSection = screen.getByRole('heading', { name: /Revenus CPC — suivi créateur/i }).closest('section');
+
+    expect(adminSection).toBeTruthy();
+    expect(cpcSection).toBeTruthy();
+    expect(adminSection).toHaveClass('order-1', 'md:order-2');
+    expect(cpcSection).toHaveClass('order-2', 'md:order-1');
   });
 });

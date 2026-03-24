@@ -10,9 +10,7 @@
  *   - Le paramètre `ref` permet, le moment venu, d'activer un programme
  *     d'affiliation sans modifier le comportement visible pour l'utilisateur.
  *
- * Statut commissions par clic : DÉSACTIVÉES par défaut.
- * Pour les activer : passer `affiliateEnabled: true` dans BOOKING_CONFIG
- * et renseigner les codes d'affiliation des opérateurs.
+ * Statut commissions par clic : ACTIVÉES.
  */
 
 /** Configuration globale — modifier ici pour activer l'affiliation */
@@ -21,10 +19,10 @@ export const BOOKING_CONFIG = {
   utmEnabled: true,
   /** Source UTM — identifie le site dans Google Analytics / Plausible */
   utmSource: 'akiprisaye',
-  /** Support de l'affiliation (non activé — aucune commission) */
-  affiliateEnabled: false,
+  /** Support de l'affiliation (activé — commission possible) */
+  affiliateEnabled: true,
   /** Code de partenariat à injecter quand affiliateEnabled === true */
-  affiliateRef: '',
+  affiliateRef: 'akiprisaye',
 } as const;
 
 export type BookingCampaign =
@@ -94,7 +92,7 @@ export function getCommissionStatus(): {
       active: true,
       label: 'Lien partenaire',
       detail:
-        'A KI PRI SA YÉ peut recevoir une commission si vous réservez via ce lien. Prix identique pour vous.',
+        "Lien vers le site officiel de l'opérateur. Il s'agit d'un lien partenaire : si vous réservez après avoir cliqué dessus, le site peut percevoir une commission, sans surcoût pour vous, avec un suivi technique du parcours.",
       color: 'yellow',
     };
   }
@@ -102,7 +100,7 @@ export function getCommissionStatus(): {
     active: false,
     label: 'Lien direct',
     detail:
-      'Lien direct vers le site officiel. A KI PRI SA YÉ ne perçoit aucune commission sur ces liens.',
+      "Lien direct vers le site officiel de l'opérateur.",
     color: 'green',
   };
 }

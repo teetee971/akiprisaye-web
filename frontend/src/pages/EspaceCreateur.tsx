@@ -21,6 +21,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
 import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
+import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
+import {
+  useVisitorStats,
+  type InterestStats,
+  type TerritoryInterestStat,
+  type TerritoryStats,
+} from '../hooks/useVisitorStats';
 
 /* ─── Admin shortcut ─────────────────────────────────────────────────── */
 
@@ -203,6 +210,16 @@ const INSIGHT_TONE_STYLES: Record<InsightTone, string> = {
   violet: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
 };
 
+const BRIEFING_INTEREST_KEY_ALIASES: Record<string, string> = {
+  scan: 'scanner',
+};
+
+function normalizeBriefingInterestKey(key: string | undefined): string {
+  if (!key) return '';
+  const normalized = key.trim().toLowerCase();
+  return BRIEFING_INTEREST_KEY_ALIASES[normalized] ?? normalized;
+}
+
 function formatDateTime(date: Date | null): string {
   if (!date) return 'En attente de données';
   return new Intl.DateTimeFormat('fr-FR', {
@@ -266,6 +283,41 @@ function classifyAudienceFocus(topInterest: InterestStats | undefined): Dashboar
     detail: `Le pôle ${topInterest.name.toLowerCase()} prend l’avantage : privilégier les usages d’échange, d’entraide et d’engagement.`,
     tone: 'violet',
   };
+}
+
+export function buildCreatorBriefing({
+  topTerritory,
+  topInterest,
+  topTerritoryHistoricalInterest,
+}: {
+  topTerritory: TerritoryStats | undefined;
+  topInterest: InterestStats | undefined;
+  topTerritoryHistoricalInterest: TerritoryInterestStat | undefined;
+}): string {
+  if (!topTerritory && !topInterest) {
+    return 'Le tableau de bord IA attend les premières remontées de présence et de navigation pour construire un briefing comportemental fiable.';
+  }
+
+  const leadTerritory = topTerritory
+    ? `${topTerritory.flag} ${topTerritory.name}`
+    : 'un territoire encore non identifié';
+  const leadInterest = topInterest
+    ? `${topInterest.emoji} ${topInterest.name.toLowerCase()}`
+    : 'un usage encore diffus';
+  const leadHistoricalAngle = topTerritoryHistoricalInterest
+    ? `${topTerritoryHistoricalInterest.emoji} ${topTerritoryHistoricalInterest.name.toLowerCase()}`
+    : 'aucun historique dominant';
+  const sameFocusAsHistorical = Boolean(
+    topInterest
+    && topTerritoryHistoricalInterest
+    && normalizeBriefingInterestKey(topInterest.key) === normalizeBriefingInterestKey(topTerritoryHistoricalInterest.interest),
+  );
+
+  if (sameFocusAsHistorical) {
+    return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, et ce besoin confirme aussi le meilleur signal historique sur ce territoire. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
+  }
+
+  return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, tandis que le meilleur signal historique sur ce territoire reste ${leadHistoricalAngle}. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
 }
 
 /* ─── Copy to clipboard helper ──────────────────────────────────────── */
@@ -381,21 +433,11 @@ const EspaceCreateur: React.FC = () => {
   }, [mostDormantTerritory, topInterest, topTerritory]);
 
   const creatorBriefing = useMemo(() => {
-    if (!topTerritory && !topInterest) {
-      return 'Le tableau de bord IA attend les premières remontées de présence et de navigation pour construire un briefing comportemental fiable.';
-    }
-
-    const leadTerritory = topTerritory
-      ? `${topTerritory.flag} ${topTerritory.name}`
-      : 'un territoire encore non identifié';
-    const leadInterest = topInterest
-      ? `${topInterest.emoji} ${topInterest.name.toLowerCase()}`
-      : 'un usage encore diffus';
-    const leadHistoricalAngle = topTerritoryHistoricalInterest
-      ? `${topTerritoryHistoricalInterest.emoji} ${topTerritoryHistoricalInterest.name.toLowerCase()}`
-      : 'aucun historique dominant';
-
-    return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, tandis que le meilleur signal historique sur ce territoire reste ${leadHistoricalAngle}. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
+    return buildCreatorBriefing({
+      topTerritory,
+      topInterest,
+      topTerritoryHistoricalInterest,
+    });
   }, [topInterest, topTerritory, topTerritoryHistoricalInterest]);
 
   const topInterestMax = Math.max(...byInterest.map((interest) => interest.totalViews), 1);
@@ -709,8 +751,114 @@ const EspaceCreateur: React.FC = () => {
           </div>
         </section>
 
+        <div className="flex flex-col">
+        {/* ── Revenue CPC dashboard ─────────────────────────────────── */}
+        <section className="mb-8 order-2 md:order-1">
+          <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-white sm:mb-4 sm:text-lg">
+            <TrendingUp className="w-5 h-5 text-emerald-400" />
+            Revenus CPC — suivi créateur
+          </h2>
+          {(() => {
+            const conversionStats = getConversionStats(30);
+            const dailyStats = getDailyStats(7);
+            const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
+            const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
+            const revenueTrend = dailyStats.length >= 2
+              ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
+              : 0;
+
+            return (
+              <div className="space-y-3 sm:space-y-4">
+                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 30 jours</p>
+                    <p className="mt-1 text-xl font-black text-emerald-300 sm:text-2xl">
+                      {conversionStats.estimatedRevenue.toFixed(2)} €
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">estimation locale (clic × prix moyen × taux)</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">CTR global</p>
+                    <p className="mt-1 text-xl font-black text-cyan-300 sm:text-2xl">
+                      {(conversionStats.clickThroughRate * 100).toFixed(2)}%
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 7 jours</p>
+                    <p className="mt-1 text-xl font-black text-amber-300 sm:text-2xl">
+                      {weeklyRevenue.toFixed(2)} €
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">{weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Tendance 7 jours</p>
+                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {revenueTrend >= 0 ? '+' : ''}
+                      {revenueTrend.toFixed(2)} €
+                    </p>
+                    <p className="mt-1 text-xs text-slate-400">dernier jour vs premier jour (fenêtre 7j)</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 sm:gap-4 xl:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 sm:p-5">
+                    <h3 className="text-base font-bold text-white">Top produits convertisseurs</h3>
+                    <p className="mt-1 text-xs text-slate-400">Produits avec le plus de clics et revenu estimé (30 jours)</p>
+                    <div className="mt-4 space-y-3">
+                      {conversionStats.topProducts.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
+                          Pas encore de données de clic CPC sur la période.
+                        </div>
+                      ) : conversionStats.topProducts.slice(0, 5).map((product) => (
+                        <div key={`${product.barcode}-${product.name}`} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-white">{product.name}</p>
+                              <p className="mt-1 text-xs text-slate-400">
+                                {product.clicks} clic(s) · CTR {(product.ctr * 100).toFixed(2)}%
+                              </p>
+                            </div>
+                            <p className="text-sm font-bold text-emerald-300">{product.estimatedRevenue.toFixed(2)} €</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4 sm:p-5">
+                    <h3 className="text-base font-bold text-white">Top enseignes CPC</h3>
+                    <p className="mt-1 text-xs text-slate-400">Enseignes les plus cliquées avec panier moyen observé (30 jours)</p>
+                    <div className="mt-4 space-y-3">
+                      {conversionStats.topRetailers.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
+                          Aucun clic enseigne enregistré sur la période.
+                        </div>
+                      ) : conversionStats.topRetailers.slice(0, 5).map((retailer) => (
+                        <div key={retailer.retailer} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-white">{retailer.retailer}</p>
+                              <p className="mt-1 text-xs text-slate-400">
+                                {retailer.clicks} clic(s) · panier moyen {retailer.avgPrice.toFixed(2)} €
+                              </p>
+                            </div>
+                            <p className="text-sm font-bold text-emerald-300">{retailer.estimatedRevenue.toFixed(2)} €</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+        </section>
+
         {/* ── Feature grid ─────────────────────────────────────────── */}
-        <section className="mb-8">
+        <section className="mb-8 order-3">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-400" />
             Accès & fonctionnalités — Plan CREATOR
@@ -730,32 +878,32 @@ const EspaceCreateur: React.FC = () => {
         </section>
 
         {/* ── Admin shortcuts ───────────────────────────────────────── */}
-        <section className="mb-8">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <section className="mb-8 order-1 md:order-2">
+          <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-white sm:mb-4 sm:text-lg">
             <Shield className="w-5 h-5 text-blue-400" />
             Outils d'administration
           </h2>
-          <div className="mb-4 rounded-2xl border border-slate-700/50 bg-slate-900/60 p-4">
+          <div className="mb-3 rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3.5 sm:mb-4 sm:p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-white">
-                  {userRole === 'admin'
-                    ? 'Votre rôle admin ouvre tous les modules ci-dessous.'
-                    : 'Votre rôle actuel est CREATOR : ces modules système restent protégés jusqu’à promotion admin.'}
+                  {(userRole === 'admin' || userRole === 'creator')
+                    ? 'Votre rôle créateur/admin ouvre tous les modules ci-dessous.'
+                    : 'Ces modules système nécessitent un compte créateur ou admin.'}
                 </p>
                 <p className="mt-1 text-xs leading-relaxed text-slate-400">
-                  {userRole === 'admin'
+                  {(userRole === 'admin' || userRole === 'creator')
                     ? 'Chaque pavé ouvre directement le bon écran d’administration.'
-                    : 'Les pavés ne redirigent plus vers une impasse : touchez-en un pour voir à quoi il sert, puis utilisez “Actualiser le rôle” après promotion admin ou lancez le workflow GitHub prévu.'}
+                    : 'Une fois le rôle créateur/admin actif, utilisez “Actualiser le rôle” puis ouvrez les modules ci-dessous.'}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${
-                  userRole === 'admin'
+                  (userRole === 'admin' || userRole === 'creator')
                     ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
                     : 'border-amber-500/30 bg-amber-500/10 text-amber-300'
                 }`}>
-                  {userRole === 'admin' ? 'Admin actif' : 'Admin requis'}
+                  {(userRole === 'admin' || userRole === 'creator') ? 'Accès actif' : 'Créateur/Admin requis'}
                 </span>
                 <button
                   type="button"
@@ -769,11 +917,14 @@ const EspaceCreateur: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
             {ADMIN_LINKS.map(l => {
               const Icon = l.icon;
-              const isLocked = l.requiresAdmin && userRole !== 'admin';
-              const cardClassName = `flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-all group ${
+              // NOTE: `requiresAdmin` in ADMIN_LINKS really means "internal-only"
+              // (accessible to both `admin` and `creator` roles), not strictly admin-only.
+              const requiresInternalAccess = l.requiresAdmin;
+              const isLocked = requiresInternalAccess && userRole !== 'admin' && userRole !== 'creator';
+              const cardClassName = `flex w-full items-center gap-2.5 rounded-xl border p-3 text-left transition-all group sm:gap-3 sm:p-4 ${
                 isLocked
                   ? 'bg-slate-800/40 border-slate-700/40 hover:border-amber-500/40 hover:bg-amber-950/20'
                   : 'bg-slate-800/60 border-slate-700/50 hover:border-slate-500/60'
@@ -785,7 +936,7 @@ const EspaceCreateur: React.FC = () => {
                     <Icon className={`w-4 h-4 ${l.color}`} />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-start gap-2">
                       <p className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">{l.label}</p>
                       <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
                         isLocked
@@ -795,7 +946,7 @@ const EspaceCreateur: React.FC = () => {
                         {isLocked ? 'Admin requis' : 'Ouvrir'}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 truncate">{l.description}</p>
+                    <p className="text-xs leading-relaxed text-slate-400">{l.description}</p>
                   </div>
                   <ExternalLink className={`h-4 w-4 flex-shrink-0 transition-colors ${
                     isLocked ? 'text-amber-300/80' : 'text-slate-500 group-hover:text-white'
@@ -828,7 +979,7 @@ const EspaceCreateur: React.FC = () => {
               );
             })}
           </div>
-          {userRole !== 'admin' && selectedAdminLink && (
+          {userRole !== 'admin' && userRole !== 'creator' && selectedAdminLink && (
             <div className="mt-4 rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/30 to-slate-900/80 p-5">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
@@ -868,6 +1019,7 @@ const EspaceCreateur: React.FC = () => {
             </div>
           )}
         </section>
+        </div>
 
         {/* ── Quick navigation ─────────────────────────────────────── */}
         <section className="mb-8">

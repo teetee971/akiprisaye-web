@@ -7,6 +7,8 @@
 
 import { describe, it, expect } from 'vitest';
 import { buildBookingUrl, getCommissionStatus, BOOKING_CONFIG } from '../utils/bookingLinks';
+import { FAQ_DATA } from '../data/faq';
+import { generateAssistantResponse } from '../services/assistantService';
 
 describe('buildBookingUrl — UTM params', () => {
   it('injects utm_source, utm_medium and utm_campaign on a clean URL', () => {
@@ -43,15 +45,20 @@ describe('buildBookingUrl — UTM params', () => {
     expect(buildBookingUrl(relative, 'comparateur-assurances')).toBe(relative);
   });
 
-  it('does NOT inject a "ref" param when affiliateEnabled is false', () => {
+  it('injects a "ref" param when affiliateEnabled is true', () => {
     const result = buildBookingUrl('https://www.allianz.fr/', 'comparateur-assurances');
-    expect(result).not.toContain('ref=');
+    const url = new URL(result);
+    expect(url.searchParams.get('ref')).toBe(BOOKING_CONFIG.affiliateRef);
   });
 });
 
 describe('BOOKING_CONFIG defaults', () => {
-  it('affiliateEnabled is false by default (no commissions)', () => {
-    expect(BOOKING_CONFIG.affiliateEnabled).toBe(false);
+  it('affiliateEnabled is true by default', () => {
+    expect(BOOKING_CONFIG.affiliateEnabled).toBe(true);
+  });
+
+  it('affiliateRef is configured by default', () => {
+    expect(BOOKING_CONFIG.affiliateRef).toBeTruthy();
   });
 
   it('utmEnabled is true by default', () => {
@@ -63,21 +70,49 @@ describe('BOOKING_CONFIG defaults', () => {
   });
 });
 
-describe('getCommissionStatus — no affiliate', () => {
-  it('returns active=false', () => {
-    expect(getCommissionStatus().active).toBe(false);
+describe('getCommissionStatus — affiliate active', () => {
+  it('returns active=true', () => {
+    expect(getCommissionStatus().active).toBe(true);
   });
 
-  it('returns green color', () => {
-    expect(getCommissionStatus().color).toBe('green');
+  it('returns yellow color', () => {
+    expect(getCommissionStatus().color).toBe('yellow');
   });
 
-  it('label mentions "Lien direct"', () => {
-    expect(getCommissionStatus().label).toContain('Lien direct');
+  it('label mentions "Lien partenaire"', () => {
+    expect(getCommissionStatus().label).toContain('Lien partenaire');
   });
 
-  it('detail mentions no commission', () => {
+  it('detail mentions technical tracking', () => {
     const detail = getCommissionStatus().detail.toLowerCase();
-    expect(detail).toContain('aucune commission');
+    expect(detail).toContain('suivi technique');
+  });
+
+  it('keeps commissions disabled by default even when using click tracking', () => {
+    const status = getCommissionStatus();
+    const trackedUrl = buildBookingUrl('https://example.com/', 'comparateur-vols');
+    const tracked = new URL(trackedUrl);
+
+    expect(status.active).toBe(false);
+    expect(tracked.searchParams.get('utm_campaign')).toBe('comparateur-vols');
+    expect(tracked.searchParams.get('ref')).toBeNull();
+  });
+});
+
+describe('payment messaging clarity (SumUp)', () => {
+  it('mentions SumUp in FAQ activation answer', () => {
+    const faqItem = FAQ_DATA.find((item) => item.id === 'faq-010');
+    expect(faqItem?.answer).toContain('SumUp');
+    expect(faqItem?.answer).toContain('activé publiquement');
+    expect(faqItem?.answer).toContain('Pour connecter SumUp');
+    expect(faqItem?.answer).toContain('checkout');
+  });
+
+  it('mentions SumUp in assistant pricing fallback', () => {
+    const response = generateAssistantResponse('Quels sont les tarifs ?');
+    expect(response.message).toContain('SumUp');
+    expect(response.message).toContain('sont activés publiquement');
+    expect(response.message).toContain('Pour connecter SumUp');
+    expect(response.message).not.toContain('ne sont pas encore activés publiquement');
   });
 });
