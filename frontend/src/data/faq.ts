@@ -88,8 +88,8 @@ export const FAQ_DATA: FAQItem[] = [
     id: 'faq-010',
     category: 'abonnements',
     question: 'Le paiement est-il activé ?',
-    answer: 'Pas encore pour les abonnements : aucun paiement CB/Stripe/PayPal n\'est activé publiquement à ce stade. Les niveaux Citoyen+ et Pro se font encore sur demande ou convention. Les \"paiements par clic\" évoqués concernent des liens externes (suivi de clics) ; aucune commission n\'est active par défaut.',
-    tags: ['paiement', 'facturation', 'activation', 'clic', 'commission']
+    answer: 'Pas encore pour les abonnements : aucun paiement CB/Stripe/PayPal/SumUp n\'est activé publiquement à ce stade. Si vous avez déjà un compte SumUp, cela pourra servir au moment de l\'ouverture du paiement, mais l\'accès Citoyen+ et Pro se fait encore sur demande ou convention. Les \"paiements par clic\" évoqués concernent des liens externes (suivi de clics) ; aucune commission n\'est active par défaut.',
+    tags: ['paiement', 'facturation', 'activation', 'clic', 'commission', 'sumup']
   },
 
   // DONNÉES (Technique / Chercheurs)
