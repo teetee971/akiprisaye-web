@@ -51,10 +51,10 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
             <AlertTriangle className="w-8 h-8 text-yellow-400" />
           )}
         </div>
-        <h3 className="text-2xl font-bold text-white/90 mb-2">
+        <h3 className="mb-2 text-2xl font-bold text-slate-900">
           {result.success ? 'Import réussi !' : 'Import terminé avec des erreurs'}
         </h3>
-        <p className="text-white/60">
+        <p className="text-slate-600">
           {result.success
             ? `Tous les ${entityType} ont été importés avec succès`
             : `Certains ${entityType} n'ont pas pu être importés`}
@@ -63,9 +63,9 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg text-center">
-          <div className="text-3xl font-bold text-white/90 mb-1">{result.total}</div>
-          <div className="text-sm text-white/60">Total de lignes</div>
+        <div className="rounded-lg border border-slate-300 bg-white p-4 text-center backdrop-blur-sm">
+          <div className="mb-1 text-3xl font-bold text-slate-900">{result.total}</div>
+          <div className="text-sm text-slate-600">Total de lignes</div>
         </div>
         
         <div className="p-4 bg-green-500/10 backdrop-blur-sm border border-green-500/30 rounded-lg text-center">
@@ -73,7 +73,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
             <CheckCircle className="w-5 h-5 text-green-400" />
             <div className="text-3xl font-bold text-green-400">{result.successful}</div>
           </div>
-          <div className="text-sm text-white/60">Importés</div>
+          <div className="text-sm text-slate-600">Importés</div>
         </div>
         
         <div className="p-4 bg-red-500/10 backdrop-blur-sm border border-red-500/30 rounded-lg text-center">
@@ -81,14 +81,14 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
             <XCircle className="w-5 h-5 text-red-400" />
             <div className="text-3xl font-bold text-red-400">{result.failed}</div>
           </div>
-          <div className="text-sm text-white/60">Échecs</div>
+          <div className="text-sm text-slate-600">Échecs</div>
         </div>
       </div>
 
       {/* Success Rate Bar */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-white/70">Taux de réussite</span>
+          <span className="text-slate-700">Taux de réussite</span>
           <span className={cn(
             'font-semibold',
             successRate === 100 ? 'text-green-400' :
@@ -98,7 +98,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
             {successRate.toFixed(1)}%
           </span>
         </div>
-        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+        <div className="h-2 overflow-hidden rounded-full bg-slate-200">
           <div
             className={cn(
               'h-full transition-all duration-500 rounded-full',
@@ -115,13 +115,13 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
       {result.errors.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold text-white/90 flex items-center space-x-2">
+            <h4 className="flex items-center space-x-2 text-sm font-semibold text-slate-900">
               <XCircle className="w-4 h-4 text-red-400" />
               <span>Erreurs détectées ({result.errors.length})</span>
             </h4>
             <button
               onClick={downloadErrorReport}
-              className="flex items-center space-x-2 px-3 py-1.5 text-xs font-medium text-white/80 hover:text-white bg-white/5 hover:bg-white/10 border border-white/20 rounded-lg transition-colors"
+              className="flex items-center space-x-2 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
             >
               <Download className="w-3.5 h-3.5" />
               <span>Télécharger le rapport</span>
@@ -140,13 +140,13 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
                   </div>
                   <div className="flex-1 min-w-0">
                     {error.field && (
-                      <div className="text-xs text-white/50 mb-1">
-                        Champ: <span className="font-medium text-white/70">{error.field}</span>
+                      <div className="mb-1 text-xs text-slate-500">
+                        Champ: <span className="font-medium text-slate-700">{error.field}</span>
                       </div>
                     )}
-                    <p className="text-sm text-white/80">{error.message}</p>
+                    <p className="text-sm text-slate-800">{error.message}</p>
                     {error.value && (
-                      <p className="text-xs text-white/50 mt-1 truncate">
+                      <p className="mt-1 truncate text-xs text-slate-500">
                         Valeur: "{error.value}"
                       </p>
                     )}
@@ -155,7 +155,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
               </div>
             ))}
             {result.errors.length > 20 && (
-              <div className="text-center text-sm text-white/60 py-2">
+              <div className="py-2 text-center text-sm text-slate-600">
                 ... et {result.errors.length - 20} autres erreurs
               </div>
             )}
@@ -172,7 +172,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
               <p className="text-sm font-medium text-green-400 mb-1">
                 Import terminé avec succès
               </p>
-              <p className="text-xs text-white/70">
+              <p className="text-xs text-slate-700">
                 {result.successful} {entityType} ont été importés dans la base de données.
               </p>
             </div>
@@ -184,7 +184,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
       <div className="flex items-center justify-center pt-4">
         <button
           onClick={onReset}
-          className="flex items-center space-x-2 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-medium rounded-lg transition-colors"
+          className="flex items-center space-x-2 rounded-lg border border-slate-300 bg-white px-6 py-3 font-medium text-slate-800 transition-colors hover:bg-slate-100"
         >
           <RefreshCw className="w-5 h-5" />
           <span>Importer un autre fichier</span>

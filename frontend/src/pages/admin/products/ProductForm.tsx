@@ -214,7 +214,7 @@ export function ProductForm() {
         <GlassCard>
           <div className="text-center py-12">
             <div className="inline-block w-8 h-8 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin" />
-            <p className="mt-4 text-white/60">Chargement...</p>
+            <p className="mt-4 text-slate-600">Chargement...</p>
           </div>
         </GlassCard>
       </div>
@@ -224,7 +224,7 @@ export function ProductForm() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white/90 flex items-center gap-3">
+        <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
           <Package className="w-8 h-8" />
           {isEditMode ? 'Modifier le produit' : 'Nouveau produit'}
         </h1>
@@ -234,7 +234,7 @@ export function ProductForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Name */}
           <div>
-            <label htmlFor="pf-nom-produit" className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-nom-produit" className="mb-2 block text-sm font-medium text-slate-700">
               Nom du produit <span className="text-red-400">*</span>
             </label>
             <input
@@ -242,7 +242,7 @@ export function ProductForm() {
               id="pf-nom-produit"
               type="text"
               {...register('name')}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ex: Lait demi-écrémé"
             />
             {errors.name && (
@@ -252,7 +252,7 @@ export function ProductForm() {
 
           {/* Brand */}
           <div>
-            <label htmlFor="pf-marque" className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-marque" className="mb-2 block text-sm font-medium text-slate-700">
               Marque
             </label>
             <input
@@ -260,21 +260,21 @@ export function ProductForm() {
               id="pf-marque"
               type="text"
               {...register('brand')}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ex: Lactel"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label htmlFor="pf-categorie" className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-categorie" className="mb-2 block text-sm font-medium text-slate-700">
               Catégorie <span className="text-red-400">*</span>
             </label>
             <select
               
               id="pf-categorie"
               {...register('category')}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {PRODUCT_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>
@@ -289,7 +289,7 @@ export function ProductForm() {
 
           {/* EAN with OpenFoodFacts search */}
           <div>
-            <label htmlFor="pf-ean" className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-ean" className="mb-2 block text-sm font-medium text-slate-700">
               Code EAN (8 ou 13 chiffres)
             </label>
             <div className="flex gap-2">
@@ -298,7 +298,7 @@ export function ProductForm() {
                  
                 type="text"
                 {...register('ean')}
-                className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 font-mono text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ex: 3760074380329"
                 maxLength={13}
               />
@@ -325,7 +325,7 @@ export function ProductForm() {
 
           {/* Description */}
           <div>
-            <label htmlFor="pf-description" className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-description" className="mb-2 block text-sm font-medium text-slate-700">
               Description
             </label>
             <textarea
@@ -333,7 +333,7 @@ export function ProductForm() {
               id="pf-description"
               {...register('description')}
               rows={3}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full resize-none rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Description du produit..."
             />
           </div>
@@ -341,14 +341,14 @@ export function ProductForm() {
           {/* Unit and Quantity */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="pf-unite" className="block text-sm font-medium text-white/70 mb-2">
+              <label htmlFor="pf-unite" className="mb-2 block text-sm font-medium text-slate-700">
               Unité <span className="text-red-400">*</span>
               </label>
               <select
                 
               id="pf-unite"
               {...register('unit')}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {UNITS.map((unit) => (
                   <option key={unit} value={unit}>
@@ -362,7 +362,7 @@ export function ProductForm() {
             </div>
 
             <div>
-              <label htmlFor="pf-quantite" className="block text-sm font-medium text-white/70 mb-2">
+              <label htmlFor="pf-quantite" className="mb-2 block text-sm font-medium text-slate-700">
               Quantité <span className="text-red-400">*</span>
               </label>
               <input
@@ -371,7 +371,7 @@ export function ProductForm() {
               type="number"
                 step="0.01"
                 {...register('quantity', { valueAsNumber: true })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ex: 500"
               />
               {errors.quantity && (
@@ -382,7 +382,7 @@ export function ProductForm() {
 
           {/* Image URL */}
           <div>
-            <label htmlFor="pf-image-url" className="block text-sm font-medium text-white/70 mb-2">
+            <label htmlFor="pf-image-url" className="mb-2 block text-sm font-medium text-slate-700">
               URL de l'image
             </label>
             <input
@@ -390,7 +390,7 @@ export function ProductForm() {
               id="pf-image-url"
               type="url"
               {...register('imageUrl')}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white/90 placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="https://example.com/image.jpg"
             />
             {errors.imageUrl && (
@@ -420,7 +420,7 @@ export function ProductForm() {
             <button
               type="button"
               onClick={() => navigate('/admin/products')}
-              className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white rounded-lg transition-colors font-medium flex items-center gap-2"
+              className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-100"
             >
               <X className="w-5 h-5" />
               Annuler

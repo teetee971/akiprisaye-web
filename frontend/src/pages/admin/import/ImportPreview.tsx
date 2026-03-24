@@ -97,7 +97,7 @@ export function ImportPreview({
 
   if (data.length === 0) {
     return (
-      <div className="text-center py-8 text-white/60">
+      <div className="py-8 text-center text-slate-600">
         Aucune donnée à afficher
       </div>
     );
@@ -107,23 +107,23 @@ export function ImportPreview({
     <div className="space-y-4">
       {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg">
-          <div className="text-2xl font-bold text-white/90">{data.length}</div>
-          <div className="text-sm text-white/60">Total de lignes</div>
+        <div className="rounded-lg border border-slate-300 bg-white p-4 backdrop-blur-sm">
+          <div className="text-2xl font-bold text-slate-900">{data.length}</div>
+          <div className="text-sm text-slate-600">Total de lignes</div>
         </div>
         <div className="p-4 bg-green-500/10 backdrop-blur-sm border border-green-500/30 rounded-lg">
           <div className="flex items-center space-x-2">
             <CheckCircle className="w-5 h-5 text-green-400" />
             <div className="text-2xl font-bold text-green-400">{validRows}</div>
           </div>
-          <div className="text-sm text-white/60">Lignes valides</div>
+          <div className="text-sm text-slate-600">Lignes valides</div>
         </div>
         <div className="p-4 bg-red-500/10 backdrop-blur-sm border border-red-500/30 rounded-lg">
           <div className="flex items-center space-x-2">
             <AlertTriangle className="w-5 h-5 text-red-400" />
             <div className="text-2xl font-bold text-red-400">{errorRows}</div>
           </div>
-          <div className="text-sm text-white/60">Lignes avec erreurs</div>
+          <div className="text-sm text-slate-600">Lignes avec erreurs</div>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ export function ImportPreview({
               <p className="text-sm font-medium text-yellow-400 mb-1">
                 Attention: {errorRows} ligne{errorRows > 1 ? 's' : ''} contient{errorRows > 1 ? '' : ''} des erreurs
               </p>
-              <p className="text-xs text-white/70">
+              <p className="text-xs text-slate-700">
                 Les lignes avec erreurs seront ignorées lors de l'import. Survolez les champs en rouge pour voir les détails des erreurs.
               </p>
             </div>
@@ -145,18 +145,18 @@ export function ImportPreview({
       )}
 
       {/* Preview Table */}
-      <div className="overflow-x-auto rounded-lg border border-white/20">
+      <div className="overflow-x-auto rounded-lg border border-slate-300">
         <table className="w-full text-sm">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-white/20 bg-white/5">
-                <th className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">
+              <tr key={headerGroup.id} className="border-b border-slate-200 bg-slate-50">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-700">
                   #
                 </th>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-4 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider"
+                    className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-700"
                   >
                     {flexRender(
                       header.column.columnDef.header,
@@ -167,7 +167,7 @@ export function ImportPreview({
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-white/10">
+          <tbody className="divide-y divide-slate-100">
             {table.getRowModel().rows.map((row) => {
               const rowNumber = row.index + 2;
               const hasError = errorsByRow.has(rowNumber);
@@ -179,16 +179,16 @@ export function ImportPreview({
                     'transition-colors',
                     hasError
                       ? 'bg-red-500/5 hover:bg-red-500/10'
-                      : 'hover:bg-white/5'
+                      : 'hover:bg-slate-50'
                   )}
                 >
-                  <td className="px-4 py-3 text-white/60 font-mono text-xs">
+                  <td className="px-4 py-3 font-mono text-xs text-slate-500">
                     {rowNumber}
                   </td>
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="px-4 py-3 text-white/80"
+                      className="px-4 py-3 text-slate-800"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -204,7 +204,7 @@ export function ImportPreview({
       </div>
 
       {data.length > maxRows && (
-        <div className="text-center py-2 text-sm text-white/60">
+        <div className="py-2 text-center text-sm text-slate-600">
           Affichage de {maxRows} lignes sur {data.length}
         </div>
       )}
@@ -212,7 +212,7 @@ export function ImportPreview({
       {/* Detailed Error List */}
       {errors.length > 0 && (
         <details className="mt-4">
-          <summary className="cursor-pointer text-sm font-medium text-white/70 hover:text-white/90 mb-2">
+          <summary className="mb-2 cursor-pointer text-sm font-medium text-slate-700 hover:text-slate-900">
             Voir la liste détaillée des erreurs ({errors.length})
           </summary>
           <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
@@ -226,14 +226,14 @@ export function ImportPreview({
                     Ligne {error.row}
                   </span>
                   {error.field && (
-                    <span className="text-white/50 text-xs">
+                    <span className="text-xs text-slate-500">
                       · Champ: {error.field}
                     </span>
                   )}
                 </div>
-                <p className="text-white/80 mt-1">{error.message}</p>
+                <p className="mt-1 text-slate-800">{error.message}</p>
                 {error.value && (
-                  <p className="text-white/50 text-xs mt-1">
+                  <p className="mt-1 text-xs text-slate-500">
                     Valeur: "{error.value}"
                   </p>
                 )}
