@@ -3,7 +3,7 @@
 // Phase 2 - Strictly factual data, no predictions or recommendations
 
 import React, { useEffect, useMemo, useState } from 'react'
-import { Lock } from 'lucide-react'
+import { Check, ChevronDown, Copy, Lock, Search, Share2, X } from 'lucide-react'
 import { GlassCard } from '../components/ui/glass-card'
 import { HeroImage } from '../components/ui/HeroImage'
 import { PAGE_HERO_IMAGES } from '../config/imageAssets'
@@ -33,6 +33,202 @@ type ProductOption = {
   label: string
 }
 
+type FilterOption = {
+  id: string
+  label: string
+}
+
+type SelectorSheetProps = {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  options: FilterOption[]
+  placeholder: string
+  allLabel?: string
+  enableSearch?: boolean
+  disabled?: boolean
+}
+
+function SelectorSheet({
+  label,
+  value,
+  onChange,
+  options,
+  placeholder,
+  allLabel,
+  enableSearch = false,
+  disabled = false,
+}: SelectorSheetProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [query, setQuery] = useState('')
+
+  const selectedLabel =
+    value === 'all'
+      ? allLabel ?? placeholder
+      : options.find((option) => option.id === value)?.label ?? placeholder
+
+  const filteredOptions = useMemo(() => {
+    if (!enableSearch) return options
+    const normalizedQuery = query.trim().toLowerCase()
+    if (!normalizedQuery) return options
+
+    return options.filter((option) => option.label.toLowerCase().includes(normalizedQuery))
+  }, [enableSearch, options, query])
+
+  const handleSelect = (nextValue: string) => {
+    onChange(nextValue)
+    setIsOpen(false)
+    setQuery('')
+  }
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false)
+        setQuery('')
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [isOpen])
+
+  return (
+    <>
+      <div className="space-y-2">
+        <label className="block text-sm font-semibold text-white/90">{label}</label>
+        <select
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="hidden w-full rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-3 text-white outline-none transition focus:border-blue-400/60 md:block"
+          aria-label={label}
+          disabled={disabled}
+        >
+          {allLabel && (
+            <option value="all" className="bg-slate-900 text-white">
+              {allLabel}
+            </option>
+          )}
+          {options.map((option) => (
+            <option key={option.id} value={option.id} className="bg-slate-900 text-white">
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          disabled={disabled}
+          className="flex w-full items-center justify-between gap-3 rounded-2xl border border-white/15 bg-white/[0.06] px-4 py-3 text-left text-white transition hover:border-blue-400/50 hover:bg-white/[0.09] disabled:cursor-not-allowed disabled:opacity-60 md:hidden"
+          aria-haspopup="dialog"
+          aria-expanded={isOpen}
+        >
+          <div className="min-w-0">
+            <div className="text-xs uppercase tracking-[0.18em] text-white/45">{label}</div>
+            <div className="truncate text-base font-medium text-white">
+              {selectedLabel || placeholder}
+            </div>
+          </div>
+          <ChevronDown className="h-5 w-5 shrink-0 text-white/65" />
+        </button>
+      </div>
+
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-[80] flex items-end bg-slate-950/75 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label={label}
+          onClick={() => {
+            setIsOpen(false)
+            setQuery('')
+          }}
+        >
+          <div
+            className="w-full rounded-t-[28px] border border-white/10 bg-[#101726] px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-4 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mx-auto mb-4 h-1.5 w-16 rounded-full bg-white/15" />
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-blue-200/70">{label}</p>
+                <h2 className="text-xl font-semibold text-white">{placeholder}</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false)
+                  setQuery('')
+                }}
+                className="rounded-full border border-white/10 p-2 text-white/70 transition hover:bg-white/10 hover:text-white"
+                aria-label={`Fermer ${label.toLowerCase()}`}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {enableSearch && (
+              <div className="mb-4 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3">
+                <Search className="h-4 w-4 text-white/50" />
+                <input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Rechercher..."
+                  className="w-full bg-transparent text-white outline-none placeholder:text-white/35"
+                  autoFocus
+                />
+              </div>
+            )}
+
+            <div className="max-h-[55vh] space-y-2 overflow-y-auto pr-1">
+              {allLabel && (
+                <button
+                  type="button"
+                  onClick={() => handleSelect('all')}
+                  className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-white transition hover:border-blue-400/40 hover:bg-blue-500/10"
+                >
+                  <div>
+                    <div className="text-sm font-medium">{allLabel}</div>
+                    <div className="text-xs text-white/50">Afficher l’ensemble des territoires</div>
+                  </div>
+                  {value === 'all' && <Check className="h-5 w-5 text-blue-300" />}
+                </button>
+              )}
+
+              {filteredOptions.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-white/10 px-4 py-5 text-sm text-white/60">
+                  Aucun résultat pour « {query} ».
+                </div>
+              ) : (
+                filteredOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handleSelect(option.id)}
+                    className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-white transition hover:border-blue-400/40 hover:bg-blue-500/10"
+                  >
+                    <span className="pr-4 text-sm font-medium leading-6">{option.label}</span>
+                    {value === option.id && <Check className="h-5 w-5 shrink-0 text-blue-300" />}
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
 export default function ComparaisonEnseignes() {
   // Feature flag check
   const isFeatureEnabled = import.meta.env.VITE_FEATURE_COMPARAISON_ENSEIGNES === 'true'
@@ -49,6 +245,8 @@ export default function ComparaisonEnseignes() {
   const [observations, setObservations] = useState<PriceObservation[]>([])
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null)
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
+  const [initialProductFromUrl, setInitialProductFromUrl] = useState<string | null>(null)
+  const [linkCopied, setLinkCopied] = useState(false)
 
   const products = useMemo<ProductOption[]>(() => {
     const map = new Map<string, ProductOption>()
@@ -66,6 +264,10 @@ export default function ComparaisonEnseignes() {
     const unique = new Set(allObservations.map((observation) => observation.territory))
     return Array.from(unique).sort((a, b) => a.localeCompare(b, 'fr'))
   }, [allObservations])
+  const territoryOptions = useMemo<FilterOption[]>(
+    () => territories.map((territory) => ({ id: territory, label: territory })),
+    [territories]
+  )
   const { add: addToHistory } = useLocalHistory()
 
   // Initialiser la mise à jour automatique au montage
@@ -75,6 +277,38 @@ export default function ComparaisonEnseignes() {
       setLastUpdate(getLastUpdateDate())
     }
   }, [isFeatureEnabled])
+
+  // Restaurer les filtres depuis l'URL (liens partageables)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const params = new URLSearchParams(window.location.search)
+
+    const product = params.get('produit')
+    const territory = params.get('territoire')
+    const advancedTerritory = params.get('territoire_filtre')
+    const zone = params.get('zone')
+    const category = params.get('categorie')
+
+    if (product) {
+      setInitialProductFromUrl(product)
+    }
+    if (territory) {
+      setSelectedTerritory(territory)
+    }
+    if (zone || category) {
+      setTerritoryFilters((current) => ({
+        ...current,
+        territory: advancedTerritory ?? current.territory,
+        zone: zone ?? current.zone,
+        category: category ?? current.category,
+      }))
+    } else if (advancedTerritory) {
+      setTerritoryFilters((current) => ({
+        ...current,
+        territory: advancedTerritory,
+      }))
+    }
+  }, [])
 
   useEffect(() => {
     if (!isFeatureEnabled) {
@@ -163,15 +397,97 @@ export default function ComparaisonEnseignes() {
       return
     }
 
+    if (initialProductFromUrl) {
+      const fromUrl = products.find((product) => product.id === initialProductFromUrl)
+      if (fromUrl) {
+        setSelectedProduct(fromUrl.id)
+        setInitialProductFromUrl(null)
+        return
+      }
+      setInitialProductFromUrl(null)
+    }
+
     if (!selectedProduct || !products.some((product) => product.id === selectedProduct)) {
       setSelectedProduct(products[0].id)
     }
-  }, [products, selectedProduct])
+  }, [products, selectedProduct, initialProductFromUrl])
+
+  // Synchroniser les filtres dans l'URL (sans rechargement)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const params = new URLSearchParams(window.location.search)
+
+    if (selectedProduct) params.set('produit', selectedProduct)
+    else params.delete('produit')
+
+    if (selectedTerritory !== 'all') params.set('territoire', selectedTerritory)
+    else params.delete('territoire')
+
+    if (territoryFilters.zone !== 'all') params.set('zone', territoryFilters.zone)
+    else params.delete('zone')
+
+    if (territoryFilters.category !== 'all') params.set('categorie', territoryFilters.category)
+    else params.delete('categorie')
+
+    if (territoryFilters.territory !== 'all') params.set('territoire_filtre', territoryFilters.territory)
+    else params.delete('territoire_filtre')
+
+    const query = params.toString()
+    const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`
+    window.history.replaceState({}, '', nextUrl)
+  }, [selectedProduct, selectedTerritory, territoryFilters.zone, territoryFilters.category, territoryFilters.territory])
+
+  const handleCopyShareLink = async () => {
+    if (typeof window === 'undefined') return
+    const shareUrl = window.location.href
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl)
+      } else {
+        const textarea = document.createElement('textarea')
+        textarea.value = shareUrl
+        textarea.setAttribute('readonly', 'true')
+        textarea.style.position = 'absolute'
+        textarea.style.left = '-9999px'
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+      }
+      setLinkCopied(true)
+      window.setTimeout(() => setLinkCopied(false), 2200)
+    } catch (error) {
+      console.error('Impossible de copier le lien de comparaison :', error)
+      setLinkCopied(false)
+    }
+  }
+
+  const handleNativeShare = async () => {
+    if (typeof window === 'undefined') return
+    const shareUrl = window.location.href
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Comparaison inter-enseignes',
+          text: 'Consultez cette comparaison avec filtres appliqués',
+          url: shareUrl,
+        })
+        return
+      }
+    } catch (error) {
+      console.error('Partage natif interrompu :', error)
+    }
+
+    await handleCopyShareLink()
+  }
 
   const aggregation = aggregateObservations(observations)
   const groupedStores = groupByStore(observations)
   const oldData = hasOldData(observations)
   const storeCount = countUniqueStores(observations)
+  const priceSpread = aggregation ? aggregation.maxPrice - aggregation.minPrice : null
 
   // Feature disabled state
   if (!isFeatureEnabled) {
@@ -204,7 +520,7 @@ export default function ComparaisonEnseignes() {
         description="Comparez les prix entre enseignes en Guadeloupe, Martinique, Guyane et La Réunion. Données observatoire citoyen."
         canonical="https://teetee971.github.io/akiprisaye-web/comparaison-enseignes"
       />
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto max-w-7xl px-4 py-6 pb-28 sm:py-8 sm:pb-10">
       <div className="mb-6 animate-fade-in">
         <HeroImage
           src={PAGE_HERO_IMAGES.comparaisonEnseignes}
@@ -218,8 +534,8 @@ export default function ComparaisonEnseignes() {
       </div>
 
       {/* Avertissement institutionnel obligatoire (PR-02) */}
-      <div className="p-4 bg-blue-500/20 border border-blue-500/50 rounded-lg text-sm text-blue-200 mb-6">
-        <strong>ℹ️ Information importante</strong>
+      <div className="mb-6 rounded-2xl border border-blue-500/40 bg-blue-500/15 p-4 text-sm text-blue-100 shadow-[0_8px_24px_rgba(37,99,235,0.12)]">
+        <strong className="block text-base font-semibold text-white">ℹ️ Information importante</strong>
         <p className="mt-2">
           Comparaison strictement factuelle entre enseignes, basée sur des observations déclarées ou ouvertes.
           Aucun classement, aucune recommandation, aucune analyse prédictive n'est réalisée.
@@ -233,45 +549,75 @@ export default function ComparaisonEnseignes() {
       )}
 
       {/* Filtres */}
-      <div className="grid md:grid-cols-2 gap-4 mb-6">
-        <GlassCard title="Sélection du produit">
-          <select
+      <div className="mb-6 grid gap-4 md:grid-cols-2">
+        <GlassCard>
+          <SelectorSheet
+            label="Produit"
             value={selectedProduct}
-            onChange={(e) => setSelectedProduct(e.target.value)}
-            className="w-full px-4 py-3 bg-white/[0.1] border border-white/[0.22] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Sélectionner un produit"
+            onChange={setSelectedProduct}
+            options={products}
+            placeholder="Choisir un produit"
+            enableSearch
             disabled={products.length === 0}
-          >
-            {products.length === 0 && (
-              <option value="" className="bg-gray-800">
-                Aucun produit disponible
-              </option>
-            )}
-            {products.map((product) => (
-              <option key={product.id} value={product.id} className="bg-gray-800">
-                {product.label}
-              </option>
-            ))}
-          </select>
+          />
         </GlassCard>
 
-        <GlassCard title="Territoire">
-          <select
+        <GlassCard>
+          <SelectorSheet
+            label="Territoire"
             value={selectedTerritory}
-            onChange={(e) => setSelectedTerritory(e.target.value)}
-            className="w-full px-4 py-3 bg-white/[0.1] border border-white/[0.22] rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Filtrer par territoire"
-          >
-            <option value="all" className="bg-gray-800">
-              Tous les territoires
-            </option>
-            {territories.map((territory) => (
-              <option key={territory} value={territory} className="bg-gray-800">
-                {territory}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedTerritory}
+            options={territoryOptions}
+            placeholder="Choisir un territoire"
+            allLabel="Tous les territoires"
+          />
         </GlassCard>
+      </div>
+
+      <div className="mb-6 flex flex-wrap items-center gap-2 text-xs text-white/70">
+        <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
+          Produit : <span className="font-semibold text-white">{selectedProduct || 'Aucun'}</span>
+        </span>
+        <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
+          Territoire : <span className="font-semibold text-white">{selectedTerritory === 'all' ? 'Tous' : selectedTerritory}</span>
+        </span>
+        <span className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5">
+          Enseignes comparées : <span className="font-semibold text-white">{storeCount}</span>
+        </span>
+        {(selectedTerritory !== 'all' || territoryFilters.zone !== 'all' || territoryFilters.category !== 'all') && (
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedTerritory('all')
+              setTerritoryFilters({
+                territory: 'all',
+                zone: 'all',
+                category: 'all',
+              })
+            }}
+            className="rounded-full border border-blue-400/30 bg-blue-500/10 px-3 py-1.5 font-medium text-blue-100 transition hover:bg-blue-500/20"
+          >
+            Réinitialiser les filtres
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={handleCopyShareLink}
+          className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/35 bg-emerald-500/10 px-3 py-1.5 font-medium text-emerald-100 transition hover:bg-emerald-500/20"
+          aria-label="Copier le lien avec les filtres actifs"
+        >
+          <Copy className="h-3.5 w-3.5" />
+          {linkCopied ? 'Lien copié' : 'Partager ce filtre'}
+        </button>
+        <button
+          type="button"
+          onClick={handleNativeShare}
+          className="inline-flex items-center gap-1.5 rounded-full border border-fuchsia-400/35 bg-fuchsia-500/10 px-3 py-1.5 font-medium text-fuchsia-100 transition hover:bg-fuchsia-500/20"
+          aria-label="Partager la comparaison via les applications disponibles"
+        >
+          <Share2 className="h-3.5 w-3.5" />
+          Partage rapide
+        </button>
       </div>
 
       {/* Advanced Territory Filters (PR-12) */}
@@ -317,39 +663,46 @@ export default function ComparaisonEnseignes() {
               </div>
             )}
 
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-              <div>
-                <div className="text-white/60 text-sm mb-1">Prix minimum observé</div>
+            <div className="grid grid-cols-1 gap-3 text-center sm:grid-cols-2 xl:grid-cols-6">
+              <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4">
+                <div className="mb-1 text-sm text-white/60">Prix minimum observé</div>
                 <div className="text-2xl font-bold text-green-400">
                   {aggregation.minPrice.toFixed(2)} €
                 </div>
               </div>
 
-              <div>
-                <div className="text-white/60 text-sm mb-1">Prix maximum observé</div>
+              <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4">
+                <div className="mb-1 text-sm text-white/60">Prix maximum observé</div>
                 <div className="text-2xl font-bold text-red-400">
                   {aggregation.maxPrice.toFixed(2)} €
                 </div>
               </div>
 
-              <div>
-                <div className="text-white/60 text-sm mb-1">Prix moyen</div>
+              <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4">
+                <div className="mb-1 text-sm text-white/60">Prix moyen</div>
                 <div className="text-2xl font-bold text-blue-400">
                   {aggregation.averagePrice.toFixed(2)} €
                 </div>
               </div>
 
-              <div>
-                <div className="text-white/60 text-sm mb-1">Nombre d'observations</div>
+              <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4">
+                <div className="mb-1 text-sm text-white/60">Nombre d'observations</div>
                 <div className="text-2xl font-bold text-white">{aggregation.observationCount}</div>
               </div>
 
-              <div>
-                <div className="text-white/60 text-sm mb-1">Période couverte</div>
+              <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4">
+                <div className="mb-1 text-sm text-white/60">Période couverte</div>
                 <div className="text-sm text-white">
                   {new Date(aggregation.periodStart).toLocaleDateString('fr-FR')}
                   <br />→<br />
                   {new Date(aggregation.periodEnd).toLocaleDateString('fr-FR')}
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-white/8 bg-white/[0.04] px-4 py-4">
+                <div className="mb-1 text-sm text-white/60">Dispersion min↔max</div>
+                <div className="text-2xl font-bold text-amber-300">
+                  {priceSpread !== null ? `${priceSpread.toFixed(2)} €` : '—'}
                 </div>
               </div>
             </div>
@@ -359,9 +712,9 @@ export default function ComparaisonEnseignes() {
 
       {/* Tableau de comparaison */}
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-2xl font-bold text-white">Observations de prix</h2>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             {isCitizenReportEnabled && (
               <button
                 onClick={() => setIsReportModalOpen(true)}
