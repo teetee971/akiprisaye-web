@@ -22,6 +22,12 @@ import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
 import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
+import {
+  useVisitorStats,
+  type InterestStats,
+  type TerritoryInterestStat,
+  type TerritoryStats,
+} from '../hooks/useVisitorStats';
 
 /* ─── Admin shortcut ─────────────────────────────────────────────────── */
 
@@ -204,6 +210,16 @@ const INSIGHT_TONE_STYLES: Record<InsightTone, string> = {
   violet: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
 };
 
+const BRIEFING_INTEREST_KEY_ALIASES: Record<string, string> = {
+  scan: 'scanner',
+};
+
+function normalizeBriefingInterestKey(key: string | undefined): string {
+  if (!key) return '';
+  const normalized = key.trim().toLowerCase();
+  return BRIEFING_INTEREST_KEY_ALIASES[normalized] ?? normalized;
+}
+
 function formatDateTime(date: Date | null): string {
   if (!date) return 'En attente de données';
   return new Intl.DateTimeFormat('fr-FR', {
@@ -267,6 +283,41 @@ function classifyAudienceFocus(topInterest: InterestStats | undefined): Dashboar
     detail: `Le pôle ${topInterest.name.toLowerCase()} prend l’avantage : privilégier les usages d’échange, d’entraide et d’engagement.`,
     tone: 'violet',
   };
+}
+
+export function buildCreatorBriefing({
+  topTerritory,
+  topInterest,
+  topTerritoryHistoricalInterest,
+}: {
+  topTerritory: TerritoryStats | undefined;
+  topInterest: InterestStats | undefined;
+  topTerritoryHistoricalInterest: TerritoryInterestStat | undefined;
+}): string {
+  if (!topTerritory && !topInterest) {
+    return 'Le tableau de bord IA attend les premières remontées de présence et de navigation pour construire un briefing comportemental fiable.';
+  }
+
+  const leadTerritory = topTerritory
+    ? `${topTerritory.flag} ${topTerritory.name}`
+    : 'un territoire encore non identifié';
+  const leadInterest = topInterest
+    ? `${topInterest.emoji} ${topInterest.name.toLowerCase()}`
+    : 'un usage encore diffus';
+  const leadHistoricalAngle = topTerritoryHistoricalInterest
+    ? `${topTerritoryHistoricalInterest.emoji} ${topTerritoryHistoricalInterest.name.toLowerCase()}`
+    : 'aucun historique dominant';
+  const sameFocusAsHistorical = Boolean(
+    topInterest
+    && topTerritoryHistoricalInterest
+    && normalizeBriefingInterestKey(topInterest.key) === normalizeBriefingInterestKey(topTerritoryHistoricalInterest.interest),
+  );
+
+  if (sameFocusAsHistorical) {
+    return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, et ce besoin confirme aussi le meilleur signal historique sur ce territoire. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
+  }
+
+  return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, tandis que le meilleur signal historique sur ce territoire reste ${leadHistoricalAngle}. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
 }
 
 /* ─── Copy to clipboard helper ──────────────────────────────────────── */
@@ -382,21 +433,11 @@ const EspaceCreateur: React.FC = () => {
   }, [mostDormantTerritory, topInterest, topTerritory]);
 
   const creatorBriefing = useMemo(() => {
-    if (!topTerritory && !topInterest) {
-      return 'Le tableau de bord IA attend les premières remontées de présence et de navigation pour construire un briefing comportemental fiable.';
-    }
-
-    const leadTerritory = topTerritory
-      ? `${topTerritory.flag} ${topTerritory.name}`
-      : 'un territoire encore non identifié';
-    const leadInterest = topInterest
-      ? `${topInterest.emoji} ${topInterest.name.toLowerCase()}`
-      : 'un usage encore diffus';
-    const leadHistoricalAngle = topTerritoryHistoricalInterest
-      ? `${topTerritoryHistoricalInterest.emoji} ${topTerritoryHistoricalInterest.name.toLowerCase()}`
-      : 'aucun historique dominant';
-
-    return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, tandis que le meilleur signal historique sur ce territoire reste ${leadHistoricalAngle}. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
+    return buildCreatorBriefing({
+      topTerritory,
+      topInterest,
+      topTerritoryHistoricalInterest,
+    });
   }, [topInterest, topTerritory, topTerritoryHistoricalInterest]);
 
   const topInterestMax = Math.max(...byInterest.map((interest) => interest.totalViews), 1);
