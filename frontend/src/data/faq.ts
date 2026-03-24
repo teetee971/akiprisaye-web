@@ -88,8 +88,8 @@ export const FAQ_DATA: FAQItem[] = [
     id: 'faq-010',
     category: 'abonnements',
     question: 'Le paiement est-il activé ?',
-    answer: 'Non, le paiement n\'est pas encore activé. L\'accès aux niveaux Citoyen+ et Pro se fait actuellement sur demande ou par convention. Les tarifs affichés sont indicatifs.',
-    tags: ['paiement', 'facturation', 'activation']
+    answer: 'Pas encore pour les abonnements : aucun paiement CB/Stripe/PayPal n\'est activé publiquement à ce stade. Les niveaux Citoyen+ et Pro se font encore sur demande ou convention. Les \"paiements par clic\" évoqués concernent des liens externes (suivi de clics) ; aucune commission n\'est active par défaut.',
+    tags: ['paiement', 'facturation', 'activation', 'clic', 'commission']
   },
 
   // DONNÉES (Technique / Chercheurs)

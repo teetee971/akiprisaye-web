@@ -80,4 +80,14 @@ describe('getCommissionStatus — no affiliate', () => {
     const detail = getCommissionStatus().detail.toLowerCase();
     expect(detail).toContain('aucune commission');
   });
+
+  it('keeps commissions disabled by default even when using click tracking', () => {
+    const status = getCommissionStatus();
+    const trackedUrl = buildBookingUrl('https://example.com/', 'comparateur-vols');
+    const tracked = new URL(trackedUrl);
+
+    expect(status.active).toBe(false);
+    expect(tracked.searchParams.get('utm_campaign')).toBe('comparateur-vols');
+    expect(tracked.searchParams.get('ref')).toBeNull();
+  });
 });
