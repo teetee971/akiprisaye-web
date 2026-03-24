@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import OptimizedImage from '../components/OptimizedImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -31,6 +32,47 @@ const TYPE_LABELS = {
 const IMPACT_LABELS = { fort: 'Fort', moyen: 'Moyen', info: 'Info' };
 const TYPE_OPTIONS = Object.keys(TYPE_LABELS);
 const IMPACT_OPTIONS = Object.keys(IMPACT_LABELS);
+const PUBLIC_WEB_BASE = 'https://teetee971.github.io/akiprisaye-web';
+const RUNTIME_WEB_BASE =
+  typeof window !== 'undefined'
+    ? new URL(import.meta.env.BASE_URL, window.location.origin).toString().replace(/\/$/, '')
+    : PUBLIC_WEB_BASE;
+
+function normalizeNewsUrl(rawUrl) {
+  if (!rawUrl) return null;
+  try {
+    const parsed = new URL(rawUrl, RUNTIME_WEB_BASE);
+    if (parsed.hostname === 'akiprisaye.fr' || parsed.hostname === 'www.akiprisaye.fr') {
+      return `${RUNTIME_WEB_BASE}${parsed.pathname}${parsed.search}${parsed.hash}`;
+    }
+    return parsed.toString();
+  } catch {
+    return null;
+  }
+}
+
+function isInternalUrl(url) {
+  try {
+    const parsed = new URL(url, RUNTIME_WEB_BASE);
+    return parsed.origin === new URL(RUNTIME_WEB_BASE).origin;
+  } catch {
+    return false;
+  }
+}
+
+function getInternalPath(url) {
+  try {
+    const parsed = new URL(url, RUNTIME_WEB_BASE);
+    const appBase = new URL(RUNTIME_WEB_BASE);
+    if (parsed.origin !== appBase.origin) return null;
+    const basePath = appBase.pathname.endsWith('/') ? appBase.pathname.slice(0, -1) : appBase.pathname;
+    if (!parsed.pathname.startsWith(basePath)) return null;
+    const relativePath = parsed.pathname.slice(basePath.length) || '/';
+    return `${relativePath}${parsed.search}${parsed.hash}`;
+  } catch {
+    return null;
+  }
+}
 
 export default function Actualites() {
   const [territory, setTerritory] = useState('all');
@@ -116,12 +158,12 @@ export default function Actualites() {
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur space-y-3">
-        <a
-          href="/recherche-hub"
+        <Link
+          to="/recherche-hub"
           className="block w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 hover:bg-slate-800 transition-colors"
         >
           Ouvrir la recherche globale du site
-        </a>
+        </Link>
 
         <div className="grid gap-2 grid-cols-2">
           <select value={territory} onChange={(e) => setTerritory(e.target.value)} className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2 text-xs sm:text-sm">
@@ -194,10 +236,16 @@ export default function Actualites() {
         )}
       </section>
 
-      <section ref={newsListRef} className="grid gap-3">
+      <section ref={newsListRef} className="grid gap-3 pb-28 sm:pb-8">
         {shouldRenderNewsList ? displayedItems.map((item) => {
           const evidenceOpen = Boolean(openEvidence[item.id]);
           const impactColor = item.impact === 'fort' ? 'border-l-red-500' : item.impact === 'moyen' ? 'border-l-amber-500' : 'border-l-blue-500';
+          const sourceUrl = normalizeNewsUrl(item.source_url);
+          const detailUrl = normalizeNewsUrl(item.canonical_url);
+          const detailIsInternal = detailUrl ? isInternalUrl(detailUrl) : false;
+          const sourcePath = sourceUrl && isInternalUrl(sourceUrl) ? getInternalPath(sourceUrl) : null;
+          const detailPath = detailUrl && detailIsInternal ? getInternalPath(detailUrl) : null;
+
           return (
             <article key={item.id} className={`rounded-2xl border border-white/10 bg-slate-900/70 overflow-hidden border-l-4 ${impactColor}`}>
               {(item.imageUrl || PAGE_HERO_IMAGES.articleDefault) && (
@@ -227,11 +275,46 @@ export default function Actualites() {
                 <h2 className="text-sm sm:text-base font-semibold leading-snug">{item.title}</h2>
                 <p className="mt-1 text-xs sm:text-sm text-slate-300 line-clamp-3">{item.summary}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-400">
-                  <a href={item.source_url} target="_blank" rel="noreferrer" className="underline hover:text-slate-200 truncate max-w-[140px]">{item.source_name}</a>
+                  {sourcePath ? (
+                    <Link to={sourcePath} className="underline hover:text-slate-200 truncate max-w-[180px]">
+                      {item.source_name}
+                    </Link>
+                  ) : sourceUrl ? (
+                    <a href={sourceUrl} target="_blank" rel="noreferrer" className="underline hover:text-slate-200 truncate max-w-[180px]">
+                      {item.source_name}
+                    </a>
+                  ) : (
+                    <span className="truncate max-w-[180px]">{item.source_name}</span>
+                  )}
                   <span>·</span>
                   <span>{dateFormatter.format(new Date(item.published_at))}</span>
-                  {item.canonical_url && <a href={item.canonical_url} target="_blank" rel="noreferrer" className="underline hover:text-slate-200">Détail →</a>}
                 </div>
+                {detailUrl && (
+                  <div className="mt-2">
+                    {detailPath ? (
+                      <Link
+                        to={detailPath}
+                        className="inline-flex items-center rounded-md border border-blue-400/30 bg-blue-500/10 px-2.5 py-1.5 text-xs font-medium text-blue-200 hover:bg-blue-500/20"
+                      >
+                        Ouvrir le détail
+                      </Link>
+                    ) : (
+                      <a
+                        href={detailUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center rounded-md border border-blue-400/30 bg-blue-500/10 px-2.5 py-1.5 text-xs font-medium text-blue-200 hover:bg-blue-500/20"
+                      >
+                        Ouvrir le détail
+                      </a>
+                    )}
+                  </div>
+                )}
+                {!detailUrl && (
+                  <div className="mt-2 text-xs text-slate-500">
+                    Détail indisponible (source introuvable)
+                  </div>
+                )}
 
                 {item.evidence && (
                   <div className="mt-2">
