@@ -98,10 +98,13 @@ describe('payment messaging clarity (SumUp)', () => {
   it('mentions SumUp in FAQ activation answer', () => {
     const faqItem = FAQ_DATA.find((item) => item.id === 'faq-010');
     expect(faqItem?.answer).toContain('SumUp');
+    expect(faqItem?.answer).toContain('activé publiquement');
   });
 
   it('mentions SumUp in assistant pricing fallback', () => {
     const response = generateAssistantResponse('Quels sont les tarifs ?');
     expect(response.message).toContain('SumUp');
+    expect(response.message).toContain('sont activés publiquement');
+    expect(response.message).not.toContain('ne sont pas encore activés publiquement');
   });
 });
