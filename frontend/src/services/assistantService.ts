@@ -44,7 +44,11 @@ const analyzeIntent = (query: string): {
     lowerQuery.includes('abonnement') ||
     lowerQuery.includes('payer') ||
     lowerQuery.includes('gratuit') ||
-    lowerQuery.includes('coût')
+    lowerQuery.includes('coût') ||
+    lowerQuery.includes('revenu') ||
+    lowerQuery.includes('revenus') ||
+    lowerQuery.includes('finance') ||
+    lowerQuery.includes('financier')
   ) {
     return { category: 'pricing', keywords: ['prix', 'tarif', 'abonnement'] };
   }
@@ -108,7 +112,13 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
       return '⚠️ A KI PRI SA YÉ ne fournit aucun conseil juridique. Consultez un avocat.';
     }
     
-    if (lowerQuery.includes('investir') || lowerQuery.includes('financier')) {
+    if (
+      lowerQuery.includes('investir') ||
+      lowerQuery.includes('financier') ||
+      lowerQuery.includes('finance') ||
+      lowerQuery.includes('revenu') ||
+      lowerQuery.includes('revenus')
+    ) {
       return '⚠️ A KI PRI SA YÉ ne fournit aucun conseil financier. Consultez un conseiller agréé.';
     }
     

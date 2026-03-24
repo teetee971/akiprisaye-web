@@ -91,6 +91,7 @@ export default defineConfig({
       abs('./src/test/eanValidator.test.ts'),
       // Structured receipt parser — French ticket OCR
       abs('./src/test/receiptParser.test.ts'),
+      abs('./src/test/assistantService.test.ts'),
       // Super U Petit Canal fixture — parser + normalizer end-to-end
       abs('./src/test/superUPetitCanalReceipt.test.ts'),
       // ScanHub classifier — text classification and extraction
@@ -173,6 +174,8 @@ export default defineConfig({
       abs('./src/test/autoSeoEngine.test.ts'),
       // CRO engine — tracking storage, score determinism, recommendation generation
       abs('./src/test/cro.engine.test.ts'),
+      // Visitor stats mapping — category aliases and key deduplication
+      abs('./src/test/visitorStats.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
