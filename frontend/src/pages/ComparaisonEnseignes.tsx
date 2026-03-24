@@ -2,7 +2,7 @@
 // PR-02: Inter-Store Comparison in Factual Observation Mode
 // Phase 2 - Strictly factual data, no predictions or recommendations
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronDown, Copy, Lock, Search, Share2, X } from 'lucide-react'
 import { GlassCard } from '../components/ui/glass-card'
 import { HeroImage } from '../components/ui/HeroImage'
@@ -61,6 +61,7 @@ function SelectorSheet({
 }: SelectorSheetProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
 
   const selectedLabel =
     value === 'all'
@@ -86,6 +87,9 @@ function SelectorSheet({
 
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    if (enableSearch) {
+      searchInputRef.current?.focus()
+    }
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -100,7 +104,7 @@ function SelectorSheet({
       document.body.style.overflow = previousOverflow
       window.removeEventListener('keydown', onKeyDown)
     }
-  }, [isOpen])
+  }, [enableSearch, isOpen])
 
   return (
     <>
@@ -143,19 +147,18 @@ function SelectorSheet({
       </div>
 
       {isOpen && (
-        <div
-          className="fixed inset-0 z-[80] flex items-end bg-slate-950/75 backdrop-blur-sm"
-          role="dialog"
-          aria-modal="true"
-          aria-label={label}
-          onClick={() => {
-            setIsOpen(false)
-            setQuery('')
-          }}
-        >
+        <div className="fixed inset-0 z-[80] flex items-end" role="dialog" aria-modal="true" aria-label={label}>
+          <button
+            type="button"
+            className="absolute inset-0 bg-slate-950/75 backdrop-blur-sm"
+            aria-label={`Fermer ${label.toLowerCase()}`}
+            onClick={() => {
+              setIsOpen(false)
+              setQuery('')
+            }}
+          />
           <div
-            className="w-full rounded-t-[28px] border border-white/10 bg-[#101726] px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-4 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
+            className="relative w-full rounded-t-[28px] border border-white/10 bg-[#101726] px-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] pt-4 shadow-2xl"
           >
             <div className="mx-auto mb-4 h-1.5 w-16 rounded-full bg-white/15" />
             <div className="mb-4 flex items-start justify-between gap-3">
@@ -180,11 +183,11 @@ function SelectorSheet({
               <div className="mb-4 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-3">
                 <Search className="h-4 w-4 text-white/50" />
                 <input
+                  ref={searchInputRef}
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Rechercher..."
                   className="w-full bg-transparent text-white outline-none placeholder:text-white/35"
-                  autoFocus
                 />
               </div>
             )}
