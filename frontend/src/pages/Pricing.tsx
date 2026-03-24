@@ -325,6 +325,10 @@ const FAQ_ITEMS: FaqItem[] = [
     a: 'La remise de 30 % est automatiquement appliquée aux plans Pro et Business pour les résidents des territoires DOM·ROM·COM. Elle est activée lors de votre abonnement dès que vous indiquez votre territoire.',
   },
   {
+    q: 'Quels systèmes de rémunération avez-vous mis en place pour les contributeurs ?',
+    a: "Nous avons mis en place trois systèmes de rémunération : des crédits collecte convertibles en abonnement, des réductions sur les plans payants et des bons d'achat via nos partenaires. Le système appliqué dépend de votre niveau de contribution et des campagnes en cours.",
+  },
+  {
     q: 'Est-ce que mes données sont partagées avec des tiers ?',
     a: 'Non. Vos données personnelles et vos listes de prix ne sont jamais vendues ni partagées. Les données B2B proposées dans la section "Revenus additionnels" sont exclusivement des agrégats anonymisés.',
   },
