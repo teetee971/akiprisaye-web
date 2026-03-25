@@ -108,7 +108,7 @@ describe('Home page', () => {
     );
   });
 
-  it('renders the full homepage by default', async () => {
+  it('renders the compact homepage by default', async () => {
     render(
       <MemoryRouter>
         <Home />
@@ -116,23 +116,24 @@ describe('Home page', () => {
     );
 
     expect(screen.getByText(/le plus utile, sans surcharge/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /masquer la vue complète/i })).toBeInTheDocument();
-    expect(screen.getByText(/ce que disent nos utilisateurs/i)).toBeInTheDocument();
-    expect(await screen.findByText(/mock observatory section/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /voir toute la page d’accueil/i })).toBeInTheDocument();
+    expect(screen.queryByText(/ce que disent nos utilisateurs/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/mock observatory section/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/page d’accueil simplifiée/i)).toBeInTheDocument();
   });
 
-  it('can hide the extended homepage on demand', async () => {
+  it('can show the extended homepage on demand', async () => {
     render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /masquer la vue complète/i }));
+    fireEvent.click(screen.getByRole('button', { name: /voir toute la page d’accueil/i }));
 
-    expect(screen.getByRole('button', { name: /voir toute la page d’accueil/i })).toBeInTheDocument();
-    expect(screen.queryByText(/ce que disent nos utilisateurs/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/mock observatory section/i)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /masquer la vue complète/i })).toBeInTheDocument();
+    expect(await screen.findByText(/ce que disent nos utilisateurs/i)).toBeInTheDocument();
+    expect(await screen.findByText(/mock observatory section/i)).toBeInTheDocument();
   });
 
   it('submits hero search to /recherche-produits, not /comparateur', () => {
