@@ -321,7 +321,7 @@ export function ImportPage() {
             <div className="mt-4 pt-4 border-t border-white/35">
               <button
                 onClick={handleDownloadTemplate}
-                className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/20 border border-white/30 text-white rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/25 border border-white/30 text-white rounded-lg transition-colors"
               >
                 <Download className="w-4 h-4" />
                 <span>Télécharger le modèle CSV</span>
