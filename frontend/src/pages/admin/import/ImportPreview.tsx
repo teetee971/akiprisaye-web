@@ -49,7 +49,7 @@ export function ImportPreview({
   }, [errors]);
 
   // Notify parent of validation results
-  useEffect(() => {
+  useMemo(() => {
     onValidationComplete?.(validRows, errorRows);
   }, [validRows, errorRows, onValidationComplete]);
 
