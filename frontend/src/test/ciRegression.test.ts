@@ -24,7 +24,7 @@ const _require = createRequire(import.meta.url);
 const ROOT = path.resolve(process.cwd());
 
 describe('CI regression — eslint.config.cjs', () => {
-  it('loads without SyntaxError (no premature block-comment termination via glob pattern)', () => {
+  it('loads without SyntaxError (no premature block-comment termination via glob pattern)', async () => {
     // Dynamically require() will throw SyntaxError if the file is broken
     expect(() => {
       _require(path.join(ROOT, 'eslint.config.cjs'));
