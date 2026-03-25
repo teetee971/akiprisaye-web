@@ -25,16 +25,13 @@ import {
   MARKETPLACE_PLANS,
 } from '../../../services/merchantService';
 import { getTotalRevenue, getMerchantInvoices } from '../../../services/merchantBillingService';
+import { auth } from '../../../lib/firebase';
 import type {
   MerchantProfile,
   MerchantStatus,
   AdminAuditLog,
   AdminActionType,
 } from '../../../types/merchant';
-
-// ─── ID admin (mock en préproduction) ─────────────────────────────────────────
-
-const ADMIN_ID = 'admin_platform';
 
 // ─── Badge statut ─────────────────────────────────────────────────────────────
 
@@ -228,7 +225,8 @@ export default function AdminMarketplace() {
 
   const handleConfirm = (reason: string) => {
     if (!pendingAction) return;
-    adminChangeMerchantStatus(pendingAction.merchant.id, ADMIN_ID, pendingAction.action, reason);
+    const actingAdminId = auth?.currentUser?.uid || 'admin_platform';
+    adminChangeMerchantStatus(pendingAction.merchant.id, actingAdminId, pendingAction.action, reason);
     setPendingAction(null);
     reload();
   };

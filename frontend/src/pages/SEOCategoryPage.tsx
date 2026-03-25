@@ -26,6 +26,7 @@ import {
   TERRITORY_NAMES,
 } from '../utils/seoHelpers';
 import { getAllCategoryIcons, getFallbackIcon } from '../services/productImageFallback';
+import { liveApiFetchJson } from '../services/liveApiClient';
 import type { ProductCategory as ProductCategoryType } from '../types/product';
 
 // ── Category mapping (slug → display info) ────────────────────────────────────
@@ -117,8 +118,8 @@ const CATEGORY_MAP: Record<string, CategoryInfo> = {
   },
 };
 
-// ── Mock product data (to be replaced with API call) ──────────────────────────
-interface MockProduct {
+// ── Category products ──────────────────────────────────────────────────────────
+interface CategoryProduct {
   id: string;
   name: string;
   brand?: string;
@@ -129,26 +130,9 @@ interface MockProduct {
   storeCount: number;
 }
 
-function getMockProducts(categorySlug: string, territory: string): MockProduct[] {
-  // This would be replaced with an actual API call
-  const categoryInfo = CATEGORY_MAP[categorySlug];
-  if (!categoryInfo) return [];
-
-  // Generate mock products based on category keywords
-  return categoryInfo.keywords.map((keyword, i) => ({
-    id: `${categorySlug}-${i}`,
-    name: keyword.charAt(0).toUpperCase() + keyword.slice(1),
-    brand: i % 3 === 0 ? 'Marque locale' : undefined,
-    category: categoryInfo.name,
-    minPrice: 1.50 + Math.random() * 5,
-    maxPrice: 3.00 + Math.random() * 8,
-    storeCount: 2 + Math.floor(Math.random() * 8),
-  }));
-}
-
 // ── Product card component ────────────────────────────────────────────────────
 interface ProductCardProps {
-  product: MockProduct;
+  product: CategoryProduct;
   territory: string;
   categorySlug: string;
 }
@@ -300,19 +284,46 @@ export default function SEOCategoryPage() {
   const territory = searchParams.get('territory') ?? 'GP';
   
   const [loading, setLoading] = useState(true);
-  const [products, setProducts] = useState<MockProduct[]>([]);
+  const [products, setProducts] = useState<CategoryProduct[]>([]);
   
   const categoryInfo = CATEGORY_MAP[slug];
   
   // Load products when category or territory changes
   useEffect(() => {
     setLoading(true);
-    // Simulate API call delay
-    const timer = setTimeout(() => {
-      setProducts(getMockProducts(slug, territory));
-      setLoading(false);
-    }, 300);
-    return () => clearTimeout(timer);
+    let cancelled = false;
+
+    const loadProducts = async () => {
+      if (!slug) {
+        if (!cancelled) {
+          setProducts([]);
+          setLoading(false);
+        }
+        return;
+      }
+
+      try {
+        const payload = await liveApiFetchJson<{ products?: CategoryProduct[] }>(
+          `/categories/${encodeURIComponent(slug)}/products?territory=${encodeURIComponent(territory)}`,
+          {
+            incidentReason: 'category_products_api_unavailable',
+            timeoutMs: 10000,
+          },
+        );
+        if (!cancelled) {
+          setProducts(Array.isArray(payload?.products) ? payload.products : []);
+        }
+      } catch {
+        if (!cancelled) setProducts([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    void loadProducts();
+    return () => {
+      cancelled = true;
+    };
   }, [slug, territory]);
   
   // Handle territory change

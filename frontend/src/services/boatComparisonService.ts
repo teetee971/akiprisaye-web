@@ -306,13 +306,19 @@ export function analyzeRegularPassengers(
   prices: BoatPricePoint[],
   route: BoatRoute
 ): RegularPassengerAnalysis | undefined {
-  // This would require subscription data which we'll mock for now
-  // In a real implementation, this would come from the database
-  const operators = prices.map((price) => ({
-    operator: price.operator,
-    hasSubscription: false, // Would check if subscriptions exist
-    subscriptionTypes: undefined,
-  }));
+  const operators = prices.map((price) => {
+    const maybeSubscriptions = (price as any)?.subscriptionTypes;
+    const subscriptionTypes = Array.isArray(maybeSubscriptions) ? maybeSubscriptions : undefined;
+    return {
+      operator: price.operator,
+      hasSubscription: Array.isArray(subscriptionTypes) && subscriptionTypes.length > 0,
+      subscriptionTypes,
+    };
+  });
+
+  if (operators.every((operator) => !operator.hasSubscription)) {
+    return undefined;
+  }
 
   return {
     route,

@@ -1,6 +1,4 @@
- 
- 
-import { buildRealtimeFallback } from '../utils/realtimeFallbackProxy';
+import { liveApiFetchJson } from './liveApiClient';
 
 export type RealtimePriceState = 'live' | 'cached' | 'offline';
 
@@ -23,8 +21,7 @@ export type RealtimePriceResult = {
   message?: string;
 };
 
-const API_URL = '/api/prices/realtime';
-const FALLBACK_URL = `${import.meta.env.BASE_URL}data/prices.json`;
+const API_URL = '/prices/realtime';
 const DEFAULT_TIMEOUT_MS = 6000;
 const MIN_TIMEOUT_MS = 2000;
 
@@ -58,46 +55,14 @@ function parseItems(payload: any): RealtimePrice[] {
   return items;
 }
 
-async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Response> {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-  try {
-    const response = await fetch(url, { signal: controller.signal, headers: { Accept: 'application/json' } });
-    return response;
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
-async function loadLocalFallback(): Promise<RealtimePrice[]> {
-  try {
-    const res = await fetch(FALLBACK_URL, { headers: { Accept: 'application/json' } });
-    if (res.ok) {
-      const json = await res.json();
-      const parsed = parseItems(json);
-      if (parsed.length > 0) {
-        return parsed;
-      }
-    }
-  } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('Fallback local indisponible, utilisation des données embarquées', error);
-    }
-  }
-  return buildRealtimeFallback();
-}
-
 export async function getRealtimePrices(options?: { timeoutMs?: number }): Promise<RealtimePriceResult> {
   const timeoutMs = Math.max(MIN_TIMEOUT_MS, options?.timeoutMs ?? DEFAULT_TIMEOUT_MS);
 
   try {
-    const response = await fetchWithTimeout(API_URL, timeoutMs);
-    if (!response.ok) {
-      throw new Error(`Statut inattendu: ${response.status}`);
-    }
-
-    const json = await response.json();
+    const json = await liveApiFetchJson<any>(API_URL, {
+      incidentReason: 'realtime_prices_api_unavailable',
+      timeoutMs,
+    });
     const items = parseItems(json?.items);
     if (!items.length) {
       throw new Error('Payload vide ou invalide');
@@ -120,17 +85,6 @@ export async function getRealtimePrices(options?: { timeoutMs?: number }): Promi
       message: typeof json?.message === 'string' ? json.message : undefined,
     };
   } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('API temps réel indisponible, fallback local utilisé', error);
-    }
-    const items = await loadLocalFallback();
-    return {
-      state: 'offline',
-      updatedAt: items[0]?.observedAt ?? null,
-      items,
-      cache: 'none',
-      source: 'fallback-local',
-      message: 'Données locales servies en secours.',
-    };
+    throw new Error(error instanceof Error ? error.message : 'API temps réel indisponible');
   }
 }

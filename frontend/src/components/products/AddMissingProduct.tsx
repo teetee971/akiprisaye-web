@@ -18,6 +18,7 @@
 
 import { useState } from 'react';
 import ProductPhotoUpload from './ProductPhotoUpload';
+import { submitMissingProduct } from '../../services/contributionService';
 
 interface AddMissingProductProps {
   ean: string;
@@ -84,35 +85,22 @@ export default function AddMissingProduct({
     setError(null);
 
     try {
-      // In a real implementation, this would:
-      // 1. Create pending product entry
-      // 2. Link photo if provided
-      // 3. Send for moderation
-      // 4. Return product ID
-      
-      const productData = {
-        ean,
-        ...formData,
-        photoId,
-        status: 'pending_moderation',
-        source: 'contribution_citoyenne',
-        submittedAt: new Date().toISOString(),
-      };
-      
-      if (import.meta.env.DEV) {
-        console.log('Product contribution submitted:', productData);
-      }
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      const mockProductId = `product-${Date.now()}`;
+      const contributionId = await submitMissingProduct({
+        productName: formData.name,
+        barcode: ean,
+        category: formData.category || undefined,
+        brand: formData.brand || undefined,
+        description: formData.description || undefined,
+        territory: 'GP',
+        photoUrl: photoId || undefined,
+        consentGiven: true,
+      });
       
       setStep('success');
       
       // Call success callback after a brief delay
       setTimeout(() => {
-        onSuccess?.(mockProductId);
+        onSuccess?.(contributionId);
       }, 2000);
       
     } catch (err) {

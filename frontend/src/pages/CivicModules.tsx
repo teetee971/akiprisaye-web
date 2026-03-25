@@ -1,5 +1,4 @@
- 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import QuickSummary from '../components/QuickSummary';
 import NewsWidgetCivic from '../components/NewsWidgetCivic';
@@ -8,41 +7,86 @@ import GPSShoppingList from '../components/GPSShoppingList';
 import GlobalDisclaimer from '../components/GlobalDisclaimer';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import { liveApiFetchJson } from '../services/liveApiClient';
 
 // Compute current time once at module load for demo purposes
 // In production, this would come from API or be computed per-component instance
 const CURRENT_UPDATE_TIME = new Date();
 
+type CivicPrediction = {
+  trend: 'hausse' | 'baisse' | 'stable';
+  percentageMin: number;
+  percentageMax: number;
+  period: number;
+  basedOn: string[];
+};
+
+type CivicSummary = {
+  averageBasket: number;
+  territorialGap: number;
+  productsUnderSurveillance: number;
+  lastUpdate: Date;
+};
+
+type CivicShoppingItem = { id: string; name: string; quantity: number };
+
 export default function CivicModules() {
-  // Mock data for demonstrations
-  const mockShoppingItems = [
-    { id: '1', name: 'Lait demi-écrémé 1L', quantity: 2 },
-    { id: '2', name: 'Pain de mie complet', quantity: 1 },
-    { id: '3', name: 'Yaourts nature x8', quantity: 2 },
-    { id: '4', name: 'Riz basmati 1kg', quantity: 1 },
-    { id: '5', name: "Huile d'olive 750ml", quantity: 1 },
-  ];
-
-  const mockPrediction = {
-    trend: 'hausse' as const,
-    percentageMin: 2,
-    percentageMax: 4,
+  const [shoppingItems, setShoppingItems] = useState<CivicShoppingItem[]>([]);
+  const [predictionData, setPredictionData] = useState<CivicPrediction>({
+    trend: 'stable',
+    percentageMin: 0,
+    percentageMax: 0,
     period: 30,
-    basedOn: [
-      'Historique des prix INSEE',
-      'Données OPMR Guadeloupe',
-      'Inflation mensuelle publiée',
-      'Coûts de transport maritime'
-    ]
-  };
+    basedOn: [],
+  });
+  const [summaryData, setSummaryData] = useState<CivicSummary>({
+    averageBasket: 0,
+    territorialGap: 0,
+    productsUnderSurveillance: 0,
+    lastUpdate: CURRENT_UPDATE_TIME,
+  });
 
-  // Mock data for quick summary
-  const summaryData = {
-    averageBasket: 87.95,
-    territorialGap: 18,
-    productsUnderSurveillance: 2847,
-    lastUpdate: CURRENT_UPDATE_TIME
-  };
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadCivicData = async () => {
+      try {
+        const payload = await liveApiFetchJson<{
+          shoppingItems?: CivicShoppingItem[];
+          prediction?: CivicPrediction;
+          summary?: {
+            averageBasket: number;
+            territorialGap: number;
+            productsUnderSurveillance: number;
+            lastUpdate?: string;
+          };
+        }>('/civic/modules', {
+          incidentReason: 'civic_modules_api_unavailable',
+          timeoutMs: 10000,
+        });
+
+        if (cancelled) return;
+        if (Array.isArray(payload?.shoppingItems)) setShoppingItems(payload.shoppingItems);
+        if (payload?.prediction) setPredictionData(payload.prediction);
+        if (payload?.summary) {
+          setSummaryData({
+            averageBasket: payload.summary.averageBasket ?? 0,
+            territorialGap: payload.summary.territorialGap ?? 0,
+            productsUnderSurveillance: payload.summary.productsUnderSurveillance ?? 0,
+            lastUpdate: payload.summary.lastUpdate ? new Date(payload.summary.lastUpdate) : CURRENT_UPDATE_TIME,
+          });
+        }
+      } catch {
+        if (cancelled) return;
+        setShoppingItems([]);
+      }
+    };
+
+    void loadCivicData();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -211,7 +255,7 @@ export default function CivicModules() {
             </p>
             <AIPricePrediction 
               productName="Lait demi-écrémé 1L"
-              prediction={mockPrediction}
+              prediction={predictionData}
             />
           </section>
 
@@ -223,7 +267,7 @@ export default function CivicModules() {
             <p className="text-sm text-gray-400 mb-3 leading-relaxed">
               Comparaison intelligente incluant distance, prix et coût de déplacement.
             </p>
-            <GPSShoppingList items={mockShoppingItems} lastUpdate={summaryData.lastUpdate} />
+            <GPSShoppingList items={shoppingItems} lastUpdate={summaryData.lastUpdate} />
           </section>
 
           {/* Pricing Information */}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,7 +12,7 @@ import {
   type CreateProductInput,
 } from '@/services/admin/productAdminService';
 import type { ProductCategory, Unit } from '@/types/product';
-import { Package, Save, X, Search } from 'lucide-react';
+import { Package, Save, X, Search, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const PRODUCT_CATEGORIES: ProductCategory[] = [
@@ -65,8 +65,8 @@ const productSchema = z.object({
     .string()
     .optional()
     .refine(
-      (val) => !val || /^https?:\/\/.+/.test(val),
-      'L\'URL doit commencer par http:// ou https://'
+      (val) => !val || /^(https?:\/\/|data:image\/|blob:).+/.test(val),
+      'Format image invalide (http(s), data:image ou blob)'
     ),
 });
 
@@ -80,6 +80,8 @@ export function ProductForm() {
   const [loading, setLoading] = useState(isEditMode);
   const [submitting, setSubmitting] = useState(false);
   const [searchingOFF, setSearchingOFF] = useState(false);
+  const [lastAutoFetchEan, setLastAutoFetchEan] = useState('');
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -103,6 +105,7 @@ export function ProductForm() {
   });
 
   const eanValue = watch('ean');
+  const isValidEan = (value?: string) => Boolean(value && /^\d{8}$|^\d{13}$/.test(value));
 
   useEffect(() => {
     if (isEditMode && id) {
@@ -132,15 +135,26 @@ export function ProductForm() {
     }
   };
 
-  const handleOpenFoodFactsSearch = async () => {
+  useEffect(() => {
+    if (!isValidEan(eanValue) || searchingOFF || eanValue === lastAutoFetchEan) return;
+
+    const timeout = setTimeout(() => {
+      void handleOpenFoodFactsSearch(true);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [eanValue, searchingOFF, lastAutoFetchEan]);
+
+  const handleOpenFoodFactsSearch = async (silent = false) => {
     if (!eanValue || eanValue.length < 8) {
-      toast.error('Veuillez entrer un code EAN valide');
+      if (!silent) toast.error('Veuillez entrer un code EAN valide');
       return;
     }
 
     setSearchingOFF(true);
     try {
       const result = await searchOpenFoodFacts(eanValue);
+      setLastAutoFetchEan(eanValue);
 
       if (result.name) setValue('name', result.name);
       if (result.brand) setValue('brand', result.brand);
@@ -168,12 +182,29 @@ export function ProductForm() {
         }
       }
 
-      toast.success('Produit trouvé sur OpenFoodFacts !');
+      if (!silent) toast.success('Produit trouvé sur OpenFoodFacts !');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Produit non trouvé');
+      if (!silent) {
+        toast.error(err instanceof Error ? err.message : 'Produit non trouvé');
+      }
     } finally {
       setSearchingOFF(false);
     }
+  };
+
+  const handleCameraCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === 'string') {
+        setValue('imageUrl', result, { shouldDirty: true, shouldValidate: true });
+        toast.success('Photo ajoutée. Vous pouvez créer le produit.');
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const onSubmit = async (data: ProductFormData) => {
@@ -305,7 +336,7 @@ export function ProductForm() {
               {eanValue && eanValue.length >= 8 && (
                 <button
                   type="button"
-                  onClick={handleOpenFoodFactsSearch}
+                  onClick={() => void handleOpenFoodFactsSearch(false)}
                   disabled={searchingOFF}
                   className="px-4 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg transition-colors flex items-center gap-2"
                 >
@@ -385,6 +416,31 @@ export function ProductForm() {
             <label htmlFor="pf-image-url" className="mb-2 block text-sm font-medium text-slate-700">
               URL de l'image
             </label>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                id="pf-image-url"
+                type="url"
+                {...register('imageUrl')}
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/image.jpg"
+              />
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current?.click()}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-700 transition-colors hover:bg-slate-100"
+              >
+                <Camera className="w-4 h-4" />
+                Prendre photo
+              </button>
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleCameraCapture}
+              />
+            </div>
             <input
               
               id="pf-image-url"
