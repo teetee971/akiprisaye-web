@@ -5,7 +5,6 @@
  *
  * Features:
  *   - Products ranked by view count (from local tracking)
- *   - Combined with mock popular data
  *   - Territory filter
  */
 
@@ -18,7 +17,7 @@ import {
   getTerritoryName,
   SITE_URL,
 } from '../utils/seoHelpers';
-import { getTopViewedProducts, type ProductViewEntry } from '../utils/priceClickTracker';
+import { liveApiFetchJson } from '../services/liveApiClient';
 
 // ── Popular product type ──────────────────────────────────────────────────────
 interface PopularProduct {
@@ -29,72 +28,7 @@ interface PopularProduct {
   price: number;
   viewCount: number;
   rank: number;
-  isLocal: boolean; // From local tracking vs mock data
-}
-
-function getMockPopularProducts(territory: string): PopularProduct[] {
-  // Baseline popular products (will be merged with local tracking data)
-  return [
-    { id: '1', name: 'Coca-Cola 1.5L', brand: 'Coca-Cola', category: 'Boissons', price: 2.49, viewCount: 1250 },
-    { id: '2', name: 'Riz Uncle Ben\'s 1kg', brand: 'Uncle Ben\'s', category: 'Épicerie', price: 3.29, viewCount: 980 },
-    { id: '3', name: 'Eau Cristaline 6x1.5L', brand: 'Cristaline', category: 'Boissons', price: 2.79, viewCount: 850 },
-    { id: '4', name: 'Nutella 400g', brand: 'Ferrero', category: 'Épicerie', price: 4.99, viewCount: 720 },
-    { id: '5', name: 'Lait Candia 1L', brand: 'Candia', category: 'Produits Laitiers', price: 1.49, viewCount: 680 },
-    { id: '6', name: 'Couches Pampers T4', brand: 'Pampers', category: 'Bébé', price: 19.99, viewCount: 620 },
-    { id: '7', name: 'Yaourt Danone x12', brand: 'Danone', category: 'Produits Laitiers', price: 4.29, viewCount: 590 },
-    { id: '8', name: 'Huile Tournesol 1L', category: 'Épicerie', price: 3.49, viewCount: 540 },
-    { id: '9', name: 'Café Carte Noire 250g', brand: 'Carte Noire', category: 'Épicerie', price: 5.99, viewCount: 510 },
-    { id: '10', name: 'Bière Lorraine 6x25cl', brand: 'Lorraine', category: 'Boissons', price: 6.49, viewCount: 480 },
-    { id: '11', name: 'Pâtes Barilla 500g', brand: 'Barilla', category: 'Épicerie', price: 1.79, viewCount: 450 },
-    { id: '12', name: 'Fromage Emmental 250g', category: 'Produits Laitiers', price: 3.99, viewCount: 420 },
-  ].map((p, i) => ({
-    ...p,
-    rank: i + 1,
-    isLocal: false,
-  }));
-}
-
-function mergeWithLocalViews(
-  mockProducts: PopularProduct[],
-  localViews: ProductViewEntry[],
-): PopularProduct[] {
-  // Create a map of local view data
-  const localMap = new Map(localViews.map((v) => [v.barcode, v]));
-  
-  // Merge local data with mock data
-  const merged = mockProducts.map((product) => {
-    const local = localMap.get(product.id);
-    if (local) {
-      return {
-        ...product,
-        name: local.name || product.name,
-        viewCount: product.viewCount + local.count * 10, // Boost local views
-        isLocal: true,
-      };
-    }
-    return product;
-  });
-  
-  // Add any local views not in mock data
-  for (const local of localViews) {
-    if (!merged.find((p) => p.id === local.barcode)) {
-      merged.push({
-        id: local.barcode,
-        name: local.name,
-        category: 'Autre',
-        price: 0,
-        viewCount: local.count * 10,
-        rank: 0,
-        isLocal: true,
-      });
-    }
-  }
-  
-  // Re-sort and re-rank
-  return merged
-    .sort((a, b) => b.viewCount - a.viewCount)
-    .map((p, i) => ({ ...p, rank: i + 1 }))
-    .slice(0, 20);
+  isLocal: boolean;
 }
 
 // ── Popular product card ──────────────────────────────────────────────────────
@@ -237,14 +171,30 @@ export default function PopulairesPage() {
   
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => {
-      const mockProducts = getMockPopularProducts(territory);
-      const localViews = getTopViewedProducts(20);
-      const merged = mergeWithLocalViews(mockProducts, localViews);
-      setProducts(merged);
-      setLoading(false);
-    }, 300);
-    return () => clearTimeout(timer);
+    let cancelled = false;
+    const loadProducts = async () => {
+      try {
+        const payload = await liveApiFetchJson<{ products?: PopularProduct[] }>(
+          `/popular-products?territory=${encodeURIComponent(territory)}`,
+          { incidentReason: 'popular_products_api_unavailable', timeoutMs: 10000 },
+        );
+        if (cancelled) return;
+        const list = Array.isArray(payload?.products) ? payload.products : [];
+        setProducts(
+          list
+            .sort((a, b) => b.viewCount - a.viewCount)
+            .map((product, idx) => ({ ...product, rank: idx + 1 })),
+        );
+      } catch {
+        if (!cancelled) setProducts([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    void loadProducts();
+    return () => {
+      cancelled = true;
+    };
   }, [territory]);
   
   const handleTerritoryChange = (newTerritory: string) => {

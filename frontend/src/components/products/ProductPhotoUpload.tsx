@@ -1,4 +1,3 @@
- 
 /**
  * ProductPhotoUpload Component
  * Allows users to upload photos of products with GDPR compliance
@@ -17,15 +16,18 @@
  */
 
 import { useState, useRef, ChangeEvent } from 'react';
+import { submitPhotoContribution } from '../../services/contributionService';
+import type { TerritoryCode } from '../../types/extensions';
 
 // Configuration constants
 const MAX_FILE_SIZE_MB = 10;
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 interface ProductPhotoUploadProps {
   productEan: string;
   productName: string;
+  territory?: TerritoryCode;
+  storeName?: string;
   onUploadSuccess?: (photoId: string) => void;
   onCancel?: () => void;
   maxFileSizeMB?: number; // Allow override of default max file size
@@ -34,6 +36,8 @@ interface ProductPhotoUploadProps {
 export default function ProductPhotoUpload({
   productEan,
   productName,
+  territory = 'GP',
+  storeName,
   onUploadSuccess,
   onCancel,
   maxFileSizeMB = MAX_FILE_SIZE_MB,
@@ -106,35 +110,26 @@ export default function ProductPhotoUpload({
     setError(null);
     
     try {
-      // In a real implementation, this would:
-      // 1. Compress the image client-side
-      // 2. Upload to cloud storage (S3, CloudFlare R2, etc.)
-      // 3. Create database record with photo metadata
-      // 4. Link photo to product
-      
-      // Simulate upload delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // For now, just simulate success
-      const mockPhotoId = `photo-${Date.now()}`;
-      
-      if (import.meta.env.DEV) {
-        console.log('Photo uploaded successfully:', {
-          photoId: mockPhotoId,
-          productEan,
-          productName,
-          fileName: selectedFile.name,
-          fileSize: selectedFile.size,
-          consentGiven: consent,
-          uploadedAt: new Date().toISOString(),
-        });
-      }
+      const photoId = await submitPhotoContribution({
+        image: selectedFile,
+        imageDataUrl: preview || '',
+        productName,
+        barcode: productEan,
+        territory,
+        storeName,
+        consentGiven: consent,
+        metadata: {
+          originalSize: selectedFile.size,
+          compressedSize: selectedFile.size,
+          compressionRatio: 0,
+        },
+      });
       
       setSuccess(true);
       
       // Call success callback after a brief delay
       setTimeout(() => {
-        onUploadSuccess?.(mockPhotoId);
+        onUploadSuccess?.(photoId);
       }, 1000);
       
     } catch (err) {

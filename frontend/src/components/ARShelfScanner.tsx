@@ -61,26 +61,9 @@ export function ARShelfScanner() {
   };
 
   const startDetection = () => {
-    // TODO: Integrate with TensorFlow.js or Google Vision API
-    // Mock detection for now
-    const detectionInterval = setInterval(() => {
-      const mockDetections: DetectedProduct[] = [
-        {
-          x: 100, y: 150, width: 200, height: 300,
-          confidence: 0.95,
-          product: {
-            name: 'Lait UHT 1L',
-            price: 2.45,
-            bestPrice: 2.20,
-            savings: 0.25
-          }
-        }
-      ];
-      setDetections(mockDetections);
-    }, 2000);
-
-    // Cleanup on unmount
-    return () => clearInterval(detectionInterval);
+    setDetections([]);
+    setError('Le scan AR live n’est pas encore activé sur cet environnement.');
+    setIsScanning(false);
   };
 
   if (error) {

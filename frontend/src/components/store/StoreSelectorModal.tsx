@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { storesMock } from '../../modules/store/stores.mock';
 import type { ServiceMode, Store } from '../../modules/store/types';
+import { liveApiFetchJson } from '../../services/liveApiClient';
 
 interface Props {
   open: boolean;
@@ -35,10 +36,40 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
   const [serviceMode, setServiceMode] = useState<ServiceMode>('inStore');
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
+  const [storesData, setStoresData] = useState<Store[]>(storesMock);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadStores = async () => {
+      try {
+        const payload = await liveApiFetchJson<{ stores?: Store[] }>(`/stores?territory=${encodeURIComponent(territory)}`, {
+          incidentReason: 'stores_api_unavailable',
+          timeoutMs: 10000,
+        });
+        const apiStores = Array.isArray(payload?.stores) ? payload.stores : [];
+        if (!cancelled && apiStores.length > 0) {
+          setStoresData(apiStores);
+          return;
+        }
+      } catch {
+        // Fallback handled below
+      }
+
+      if (!cancelled) {
+        setStoresData(storesMock);
+      }
+    };
+
+    void loadStores();
+    return () => {
+      cancelled = true;
+    };
+  }, [territory]);
 
   const stores = useMemo(() => {
     const queryLower = query.trim().toLowerCase();
-    return storesMock
+    return storesData
       .filter((store) => store.territory === territory)
       .filter((store) => {
         if (!queryLower) return true;
@@ -54,7 +85,7 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
         if (b.distance === null) return -1;
         return a.distance - b.distance;
       });
-  }, [query, territory, userCoords]);
+  }, [query, territory, userCoords, storesData]);
 
   if (!open) return null;
 
