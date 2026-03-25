@@ -333,6 +333,7 @@ export function ImportPage() {
         {/* Upload */}
         {step === 'upload' && (
           <section className={panelClassName}>
+          <GlassCard>
             <h3 className="mb-4 text-lg font-semibold text-slate-900">
               Sélectionner un fichier
             </h3>
@@ -349,6 +350,7 @@ export function ImportPage() {
         {step === 'preview' && (
           <>
             <section className={panelClassName}>
+            <GlassCard>
               <h3 className="mb-4 text-lg font-semibold text-slate-900">
                 Aperçu des données
               </h3>

@@ -213,6 +213,7 @@ export function ProductForm() {
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="text-center py-12">
             <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-500" />
+            <div className="inline-block w-8 h-8 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin" />
             <p className="mt-4 text-slate-600">Chargement...</p>
           </div>
         </div>
