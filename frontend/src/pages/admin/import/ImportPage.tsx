@@ -267,7 +267,7 @@ export function ImportPage() {
         <h1 className="text-3xl font-bold text-white mb-2">
           Import CSV
         </h1>
-        <p className="text-white/95">
+        <p className="text-white/90">
         <h1 className="mb-2 text-3xl font-bold text-slate-900">
           Import CSV
         </h1>
@@ -315,7 +315,7 @@ export function ImportPage() {
                 </h3>
                 <ul className="space-y-1 text-sm text-white">
                   {currentTab.instructions.map((instruction, index) => (
-                    <li key={instruction} className={index === 0 ? 'font-medium text-white/95' : ''}>
+                    <li key={instruction} className={index === 0 ? 'font-medium text-white/90' : ''}>
                 <h3 className="mb-2 text-lg font-semibold text-slate-900">
                   Instructions d'import
                 </h3>
@@ -333,7 +333,7 @@ export function ImportPage() {
             <div className="mt-4 pt-4 border-t border-white/35">
               <button
                 onClick={handleDownloadTemplate}
-                className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/25 border border-white/30 text-white rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/20 border border-white/30 text-white rounded-lg transition-colors"
             <div className="mt-4 border-t border-slate-200 pt-4">
               <button
                 onClick={handleDownloadTemplate}
@@ -348,6 +348,8 @@ export function ImportPage() {
 
         {/* Upload */}
         {step === 'upload' && (
+          <GlassCard>
+            <h3 className="text-lg font-semibold text-white mb-4">
           <section className={panelClassName}>
           <GlassCard>
             <h3 className="text-lg font-semibold text-white mb-4">
@@ -366,6 +368,8 @@ export function ImportPage() {
         {/* Preview */}
         {step === 'preview' && (
           <>
+            <GlassCard>
+              <h3 className="text-lg font-semibold text-white mb-4">
             <section className={panelClassName}>
             <GlassCard>
               <h3 className="text-lg font-semibold text-white mb-4">
@@ -422,7 +426,7 @@ export function ImportPage() {
               <h3 className="text-xl font-semibold text-white mb-2">
                 Import en cours...
               </h3>
-              <p className="text-white/95 mb-4">
+              <p className="text-white/90 mb-4">
                 Veuillez patienter pendant l'import des données
               </p>
               <div className="max-w-md mx-auto">

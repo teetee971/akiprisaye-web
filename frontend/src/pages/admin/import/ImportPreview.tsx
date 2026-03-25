@@ -97,7 +97,7 @@ export function ImportPreview({
 
   if (data.length === 0) {
     return (
-      <div className="text-center py-8 text-white/95">
+      <div className="text-center py-8 text-white/90">
       <div className="py-8 text-center text-slate-600">
         Aucune donnée à afficher
       </div>
@@ -110,7 +110,7 @@ export function ImportPreview({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="p-4 bg-white/15 backdrop-blur-sm border border-white/35 rounded-lg">
           <div className="text-2xl font-bold text-white">{data.length}</div>
-          <div className="text-sm text-white/95">Total de lignes</div>
+          <div className="text-sm text-white/90">Total de lignes</div>
         <div className="rounded-lg border border-slate-300 bg-white p-4 backdrop-blur-sm">
           <div className="text-2xl font-bold text-slate-900">{data.length}</div>
           <div className="text-sm text-slate-600">Total de lignes</div>
@@ -120,7 +120,7 @@ export function ImportPreview({
             <CheckCircle className="w-5 h-5 text-green-400" />
             <div className="text-2xl font-bold text-green-400">{validRows}</div>
           </div>
-          <div className="text-sm text-white/95">Lignes valides</div>
+          <div className="text-sm text-white/90">Lignes valides</div>
           <div className="text-sm text-slate-600">Lignes valides</div>
         </div>
         <div className="p-4 bg-red-500/10 backdrop-blur-sm border border-red-500/30 rounded-lg">
@@ -128,7 +128,7 @@ export function ImportPreview({
             <AlertTriangle className="w-5 h-5 text-red-400" />
             <div className="text-2xl font-bold text-red-400">{errorRows}</div>
           </div>
-          <div className="text-sm text-white/95">Lignes avec erreurs</div>
+          <div className="text-sm text-white/90">Lignes avec erreurs</div>
           <div className="text-sm text-slate-600">Lignes avec erreurs</div>
         </div>
       </div>
@@ -196,7 +196,7 @@ export function ImportPreview({
                       : 'hover:bg-white/15'
                   )}
                 >
-                  <td className="px-4 py-3 text-white/95 font-mono text-xs">
+                  <td className="px-4 py-3 text-white/90 font-mono text-xs">
                       : 'hover:bg-slate-50'
                   )}
                 >
@@ -206,7 +206,7 @@ export function ImportPreview({
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="px-4 py-3 text-white/95"
+                      className="px-4 py-3 text-white/90"
                       className="px-4 py-3 text-slate-800"
                     >
                       {flexRender(
@@ -223,7 +223,7 @@ export function ImportPreview({
       </div>
 
       {data.length > maxRows && (
-        <div className="text-center py-2 text-sm text-white/95">
+        <div className="text-center py-2 text-sm text-white/90">
         <div className="py-2 text-center text-sm text-slate-600">
           Affichage de {maxRows} lignes sur {data.length}
         </div>
@@ -232,7 +232,7 @@ export function ImportPreview({
       {/* Detailed Error List */}
       {errors.length > 0 && (
         <details className="mt-4">
-          <summary className="cursor-pointer text-sm font-medium text-white mb-2">
+          <summary className="cursor-pointer text-sm font-medium text-white hover:text-white mb-2">
           <summary className="mb-2 cursor-pointer text-sm font-medium text-slate-700 hover:text-slate-900">
             Voir la liste détaillée des erreurs ({errors.length})
           </summary>
@@ -252,7 +252,7 @@ export function ImportPreview({
                     </span>
                   )}
                 </div>
-                <p className="text-white/95 mt-1">{error.message}</p>
+                <p className="text-white/90 mt-1">{error.message}</p>
                 <p className="mt-1 text-slate-800">{error.message}</p>
                 {error.value && (
                   <p className="mt-1 text-xs text-slate-500">

@@ -175,7 +175,7 @@ export function CsvUploader({
           )}>
             <Upload className={cn(
               'w-12 h-12 transition-colors',
-              isDragging ? 'text-blue-400' : 'text-white/95'
+              isDragging ? 'text-blue-400' : 'text-white/90'
             isDragging ? 'bg-blue-500/20' : 'bg-slate-100'
           )}>
             <Upload className={cn(
@@ -188,7 +188,7 @@ export function CsvUploader({
             <p className="text-lg font-medium text-white mb-1">
               {isDragging ? 'Déposez le fichier ici' : 'Glissez-déposez votre fichier'}
             </p>
-            <p className="text-sm text-white/95">
+            <p className="text-sm text-white/90">
             <p className="mb-1 text-lg font-medium text-slate-900">
               {isDragging ? 'Déposez le fichier ici' : 'Glissez-déposez votre fichier'}
             </p>
@@ -223,7 +223,7 @@ export function CsvUploader({
             </div>
             <div>
               <p className="text-sm font-medium text-white">{selectedFile.name}</p>
-              <p className="text-xs text-white/95">
+              <p className="text-xs text-white/90">
               <p className="text-sm font-medium text-slate-900">{selectedFile.name}</p>
               <p className="text-xs text-slate-600">
                 {(selectedFile.size / 1024).toFixed(1)} KB
@@ -235,7 +235,7 @@ export function CsvUploader({
             className="p-2 hover:bg-white/20 rounded-lg transition-colors"
             aria-label="Supprimer le fichier"
           >
-            <X className="w-5 h-5 text-white/95 hover:text-white" />
+            <X className="w-5 h-5 text-white/90 hover:text-white" />
             className="rounded-lg p-2 transition-colors hover:bg-slate-100"
             aria-label="Supprimer le fichier"
           >
