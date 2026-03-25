@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { GlassCard } from '@/components/ui/glass-card';
 import {
   createProduct,
   updateProduct,
@@ -11,7 +12,7 @@ import {
   type CreateProductInput,
 } from '@/services/admin/productAdminService';
 import type { ProductCategory, Unit } from '@/types/product';
-import { Package, Save, X, Search } from 'lucide-react';
+import { Package, Save, X, Search, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const PRODUCT_CATEGORIES: ProductCategory[] = [
@@ -64,8 +65,8 @@ const productSchema = z.object({
     .string()
     .optional()
     .refine(
-      (val) => !val || /^https?:\/\/.+/.test(val),
-      'L\'URL doit commencer par http:// ou https://'
+      (val) => !val || /^(https?:\/\/|data:image\/|blob:).+/.test(val),
+      'Format image invalide (http(s), data:image ou blob)'
     ),
 });
 
@@ -79,6 +80,8 @@ export function ProductForm() {
   const [loading, setLoading] = useState(isEditMode);
   const [submitting, setSubmitting] = useState(false);
   const [searchingOFF, setSearchingOFF] = useState(false);
+  const [lastAutoFetchEan, setLastAutoFetchEan] = useState('');
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -102,6 +105,7 @@ export function ProductForm() {
   });
 
   const eanValue = watch('ean');
+  const isValidEan = (value?: string) => Boolean(value && /^\d{8}$|^\d{13}$/.test(value));
 
   useEffect(() => {
     if (isEditMode && id) {
@@ -131,15 +135,26 @@ export function ProductForm() {
     }
   };
 
-  const handleOpenFoodFactsSearch = async () => {
+  useEffect(() => {
+    if (!isValidEan(eanValue) || searchingOFF || eanValue === lastAutoFetchEan) return;
+
+    const timeout = setTimeout(() => {
+      void handleOpenFoodFactsSearch(true);
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [eanValue, searchingOFF, lastAutoFetchEan]);
+
+  const handleOpenFoodFactsSearch = async (silent = false) => {
     if (!eanValue || eanValue.length < 8) {
-      toast.error('Veuillez entrer un code EAN valide');
+      if (!silent) toast.error('Veuillez entrer un code EAN valide');
       return;
     }
 
     setSearchingOFF(true);
     try {
       const result = await searchOpenFoodFacts(eanValue);
+      setLastAutoFetchEan(eanValue);
 
       if (result.name) setValue('name', result.name);
       if (result.brand) setValue('brand', result.brand);
@@ -167,12 +182,29 @@ export function ProductForm() {
         }
       }
 
-      toast.success('Produit trouvé sur OpenFoodFacts !');
+      if (!silent) toast.success('Produit trouvé sur OpenFoodFacts !');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Produit non trouvé');
+      if (!silent) {
+        toast.error(err instanceof Error ? err.message : 'Produit non trouvé');
+      }
     } finally {
       setSearchingOFF(false);
     }
+  };
+
+  const handleCameraCapture = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result === 'string') {
+        setValue('imageUrl', result, { shouldDirty: true, shouldValidate: true });
+        toast.success('Photo ajoutée. Vous pouvez créer le produit.');
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const onSubmit = async (data: ProductFormData) => {
@@ -210,15 +242,12 @@ export function ProductForm() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-3xl">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <GlassCard>
           <div className="text-center py-12">
-            <div className="inline-block w-8 h-8 border-4 border-white/35 border-t-blue-500 rounded-full animate-spin" />
-            <p className="mt-4 text-white/90">Chargement...</p>
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-500" />
             <div className="inline-block w-8 h-8 border-4 border-white/20 border-t-blue-500 rounded-full animate-spin" />
             <p className="mt-4 text-slate-600">Chargement...</p>
           </div>
-        </div>
+        </GlassCard>
       </div>
     );
   }
@@ -226,18 +255,16 @@ export function ProductForm() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
         <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
           <Package className="w-8 h-8" />
           {isEditMode ? 'Modifier le produit' : 'Nouveau produit'}
         </h1>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <GlassCard>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Name */}
           <div>
-            <label htmlFor="pf-nom-produit" className="block text-sm font-medium text-white mb-2">
             <label htmlFor="pf-nom-produit" className="mb-2 block text-sm font-medium text-slate-700">
               Nom du produit <span className="text-red-400">*</span>
             </label>
@@ -246,7 +273,6 @@ export function ProductForm() {
               id="pf-nom-produit"
               type="text"
               {...register('name')}
-              className="w-full px-4 py-3 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500"
               className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ex: Lait demi-écrémé"
             />
@@ -257,7 +283,6 @@ export function ProductForm() {
 
           {/* Brand */}
           <div>
-            <label htmlFor="pf-marque" className="block text-sm font-medium text-white mb-2">
             <label htmlFor="pf-marque" className="mb-2 block text-sm font-medium text-slate-700">
               Marque
             </label>
@@ -266,7 +291,6 @@ export function ProductForm() {
               id="pf-marque"
               type="text"
               {...register('brand')}
-              className="w-full px-4 py-3 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500"
               className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ex: Lactel"
             />
@@ -274,7 +298,6 @@ export function ProductForm() {
 
           {/* Category */}
           <div>
-            <label htmlFor="pf-categorie" className="block text-sm font-medium text-white mb-2">
             <label htmlFor="pf-categorie" className="mb-2 block text-sm font-medium text-slate-700">
               Catégorie <span className="text-red-400">*</span>
             </label>
@@ -282,7 +305,6 @@ export function ProductForm() {
               
               id="pf-categorie"
               {...register('category')}
-              className="w-full px-4 py-3 bg-white/15 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {PRODUCT_CATEGORIES.map((cat) => (
@@ -298,7 +320,6 @@ export function ProductForm() {
 
           {/* EAN with OpenFoodFacts search */}
           <div>
-            <label htmlFor="pf-ean" className="block text-sm font-medium text-white mb-2">
             <label htmlFor="pf-ean" className="mb-2 block text-sm font-medium text-slate-700">
               Code EAN (8 ou 13 chiffres)
             </label>
@@ -308,7 +329,6 @@ export function ProductForm() {
                  
                 type="text"
                 {...register('ean')}
-                className="flex-1 px-4 py-3 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                 className="flex-1 rounded-lg border border-slate-300 bg-white px-4 py-3 font-mono text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ex: 3760074380329"
                 maxLength={13}
@@ -316,7 +336,7 @@ export function ProductForm() {
               {eanValue && eanValue.length >= 8 && (
                 <button
                   type="button"
-                  onClick={handleOpenFoodFactsSearch}
+                  onClick={() => void handleOpenFoodFactsSearch(false)}
                   disabled={searchingOFF}
                   className="px-4 py-3 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-lg transition-colors flex items-center gap-2"
                 >
@@ -336,7 +356,6 @@ export function ProductForm() {
 
           {/* Description */}
           <div>
-            <label htmlFor="pf-description" className="block text-sm font-medium text-white mb-2">
             <label htmlFor="pf-description" className="mb-2 block text-sm font-medium text-slate-700">
               Description
             </label>
@@ -345,7 +364,6 @@ export function ProductForm() {
               id="pf-description"
               {...register('description')}
               rows={3}
-              className="w-full px-4 py-3 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               className="w-full resize-none rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Description du produit..."
             />
@@ -354,7 +372,6 @@ export function ProductForm() {
           {/* Unit and Quantity */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="pf-unite" className="block text-sm font-medium text-white mb-2">
               <label htmlFor="pf-unite" className="mb-2 block text-sm font-medium text-slate-700">
               Unité <span className="text-red-400">*</span>
               </label>
@@ -376,7 +393,6 @@ export function ProductForm() {
             </div>
 
             <div>
-              <label htmlFor="pf-quantite" className="block text-sm font-medium text-white mb-2">
               <label htmlFor="pf-quantite" className="mb-2 block text-sm font-medium text-slate-700">
               Quantité <span className="text-red-400">*</span>
               </label>
@@ -386,7 +402,6 @@ export function ProductForm() {
               type="number"
                 step="0.01"
                 {...register('quantity', { valueAsNumber: true })}
-                className="w-full px-4 py-3 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Ex: 500"
               />
@@ -398,19 +413,34 @@ export function ProductForm() {
 
           {/* Image URL */}
           <div>
-            <label htmlFor="pf-image-url" className="block text-sm font-medium text-white mb-2">
             <label htmlFor="pf-image-url" className="mb-2 block text-sm font-medium text-slate-700">
               URL de l'image
             </label>
-            <input
-              
-              id="pf-image-url"
-              type="url"
-              {...register('imageUrl')}
-              className="w-full px-4 py-3 bg-white/15 border border-white/30 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="https://example.com/image.jpg"
-            />
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                id="pf-image-url"
+                type="url"
+                {...register('imageUrl')}
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/image.jpg"
+              />
+              <button
+                type="button"
+                onClick={() => cameraInputRef.current?.click()}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-700 transition-colors hover:bg-slate-100"
+              >
+                <Camera className="w-4 h-4" />
+                Prendre photo
+              </button>
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleCameraCapture}
+              />
+            </div>
             {errors.imageUrl && (
               <p className="mt-1 text-sm text-red-400">{errors.imageUrl.message}</p>
             )}
@@ -438,7 +468,6 @@ export function ProductForm() {
             <button
               type="button"
               onClick={() => navigate('/admin/products')}
-              className="px-6 py-3 bg-white/15 hover:bg-white/20 text-white rounded-lg transition-colors font-medium flex items-center gap-2"
               className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 transition-colors hover:bg-slate-100"
             >
               <X className="w-5 h-5" />
@@ -446,7 +475,7 @@ export function ProductForm() {
             </button>
           </div>
         </form>
-      </div>
+      </GlassCard>
     </div>
   );
 }

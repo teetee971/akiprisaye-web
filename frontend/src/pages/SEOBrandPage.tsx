@@ -2,10 +2,10 @@
  * SEOBrandPage.tsx — Brand price page
  *
  * Route: /marque/:slug  (e.g. /marque/coca-cola-guadeloupe)
- * Shows brand products with mock prices in a given territory.
+ * Shows brand products with live prices in a given territory.
  */
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SEOHead } from '../components/ui/SEOHead';
 import { formatEur } from '../utils/currency';
@@ -14,54 +14,12 @@ import { trackRetailerClick, trackSEOProductView } from '../utils/priceClickTrac
 import { getTerritoryName, TERRITORY_SLUG_MAP, SITE_URL } from '../utils/seoHelpers';
 import InternalLinksSection from '../components/seo/InternalLinksSection';
 import ConversionStickyBar from '../components/business/ConversionStickyBar';
+import { liveApiFetchJson } from '../services/liveApiClient';
 
 // ── Territory slug names ──────────────────────────────────────────────────────
 
 const TERRITORY_SLUG_NAMES: Record<string, string> = {
   GP: 'guadeloupe', MQ: 'martinique', GF: 'guyane', RE: 'reunion', YT: 'mayotte',
-};
-
-// ── Brand catalog ─────────────────────────────────────────────────────────────
-
-const BRAND_PRODUCTS: Record<string, Array<{ slug: string; name: string; category: string; basePrice: number }>> = {
-  'coca-cola': [
-    { slug: 'coca-cola-1-5l', name: 'Coca-Cola 1,5L', category: 'boissons', basePrice: 1.89 },
-    { slug: 'coca-cola-33cl-pack6', name: 'Coca-Cola 33cl ×6', category: 'boissons', basePrice: 4.20 },
-    { slug: 'fanta-1-5l', name: 'Fanta 1,5L', category: 'boissons', basePrice: 1.75 },
-    { slug: 'sprite-1-5l', name: 'Sprite 1,5L', category: 'boissons', basePrice: 1.75 },
-    { slug: 'schweppes-1-5l', name: 'Schweppes 1,5L', category: 'boissons', basePrice: 1.80 },
-  ],
-  'nutella': [
-    { slug: 'nutella-400g', name: 'Nutella 400g', category: 'epicerie', basePrice: 3.29 },
-    { slug: 'nutella-750g', name: 'Nutella 750g', category: 'epicerie', basePrice: 5.49 },
-  ],
-  'nestle': [
-    { slug: 'nesquik-chocolat-900g', name: 'Nesquik 900g', category: 'boissons', basePrice: 4.99 },
-    { slug: 'kit-kat-4db', name: 'Kit Kat ×4', category: 'epicerie', basePrice: 1.89 },
-  ],
-  'president': [
-    { slug: 'beurre-president-250g', name: 'Beurre Président 250g', category: 'produits-laitiers', basePrice: 2.79 },
-    { slug: 'creme-fraiche-president-20cl', name: 'Crème fraîche Président 20cl', category: 'produits-laitiers', basePrice: 1.09 },
-  ],
-  'panzani': [
-    { slug: 'pates-panzani-500g', name: 'Pâtes Panzani 500g', category: 'epicerie', basePrice: 1.39 },
-    { slug: 'pates-coquillettes-500g', name: 'Coquillettes 500g', category: 'epicerie', basePrice: 1.29 },
-  ],
-  'evian': [
-    { slug: 'eau-evian-1-5l', name: 'Eau Évian 1,5L', category: 'boissons', basePrice: 1.09 },
-    { slug: 'eau-evian-50cl-pack6', name: 'Eau Évian 50cl ×6', category: 'boissons', basePrice: 3.49 },
-  ],
-  'ariel': [
-    { slug: 'lessive-ariel-30d', name: 'Lessive Ariel 30 doses', category: 'entretien', basePrice: 12.99 },
-  ],
-  'pampers': [
-    { slug: 'couches-pampers-t3', name: 'Couches Pampers T3 ×44', category: 'bebe', basePrice: 15.99 },
-    { slug: 'couches-pampers-t4', name: 'Couches Pampers T4 ×40', category: 'bebe', basePrice: 16.99 },
-  ],
-};
-
-const PRICE_COEFF: Record<string, number> = {
-  GP: 1.18, MQ: 1.16, GF: 1.22, RE: 1.14, YT: 1.25,
 };
 
 const RETAILERS = ['E.Leclerc', 'Carrefour', 'Super U', 'Leader Price', 'Intermarché'];
@@ -91,12 +49,11 @@ function BrandProductCard({
   product,
   territory,
 }: {
-  product: { slug: string; name: string; basePrice: number };
+  product: { slug: string; name: string; price: number; retailer?: string };
   territory: string;
 }) {
-  const coeff = PRICE_COEFF[territory] ?? 1.15;
-  const price = Math.round(product.basePrice * coeff * 100) / 100;
-  const retailer = RETAILERS[product.slug.length % RETAILERS.length];
+  const price = product.price;
+  const retailer = product.retailer || RETAILERS[product.slug.length % RETAILERS.length];
   const url = buildRetailerUrl(retailer, '');
 
   const tSlug = TERRITORY_SLUG_NAMES[territory] ?? 'guadeloupe';
@@ -136,17 +93,41 @@ function BrandProductCard({
 
 export default function SEOBrandPage() {
   const { slug = '' } = useParams<{ slug: string }>();
+  const [products, setProducts] = useState<Array<{ slug: string; name: string; category: string; price: number; retailer?: string }>>([]);
 
   const { brandSlug, brandName, territory } = useMemo(() => parseBrandSlug(slug), [slug]);
   const territoryName = getTerritoryName(territory);
   const tSlug = TERRITORY_SLUG_NAMES[territory] ?? 'guadeloupe';
 
-  const products = BRAND_PRODUCTS[brandSlug] ?? [
-    { slug: brandSlug, name: brandName, category: 'epicerie', basePrice: 2.99 },
-  ];
+  const cheapestProduct = products.reduce<{ price: number; retailer: string | null } | null>((best, product) => {
+    if (!Number.isFinite(product.price) || product.price <= 0) return best;
+    if (!best || product.price < best.price) {
+      return { price: product.price, retailer: product.retailer ?? null };
+    }
+    return best;
+  }, null);
 
-  const coeff = PRICE_COEFF[territory] ?? 1.15;
-  const bestPrice = Math.round(products[0].basePrice * coeff * 100) / 100;
+  const bestPrice = cheapestProduct?.price ?? 0;
+
+  useEffect(() => {
+    let cancelled = false;
+    const loadProducts = async () => {
+      try {
+        const payload = await liveApiFetchJson<{ products?: Array<{ slug: string; name: string; category: string; price: number; retailer?: string }> }>(
+          `/brands/${encodeURIComponent(brandSlug)}/products?territory=${encodeURIComponent(territory)}`,
+          { incidentReason: 'brand_products_api_unavailable', timeoutMs: 10000 },
+        );
+        if (cancelled) return;
+        setProducts(Array.isArray(payload?.products) ? payload.products : []);
+      } catch {
+        if (!cancelled) setProducts([]);
+      }
+    };
+    void loadProducts();
+    return () => {
+      cancelled = true;
+    };
+  }, [brandSlug, territory]);
 
   useMemo(() => {
     trackSEOProductView(brandSlug, territory, 'brand');
@@ -234,12 +215,14 @@ export default function SEOBrandPage() {
 
       <ConversionStickyBar
         bestPrice={bestPrice}
-        savings={Math.round(bestPrice * 0.15 * 100) / 100}
-        retailer={RETAILERS[0]}
-        retailerUrl={buildRetailerUrl(RETAILERS[0], '') ?? null}
+        savings={null}
+        retailer={cheapestProduct?.retailer ?? null}
+        retailerUrl={cheapestProduct?.retailer ? buildRetailerUrl(cheapestProduct.retailer, '') ?? null : null}
         productName={`${brandName} ${territoryName}`}
         territory={territory}
-        onCTAClick={() => trackRetailerClick('', RETAILERS[0], territory, bestPrice)}
+        onCTAClick={() => {
+          if (cheapestProduct?.retailer) trackRetailerClick('', cheapestProduct.retailer, territory, bestPrice);
+        }}
       />
     </div>
   );

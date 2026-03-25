@@ -4,6 +4,7 @@
  */
 
 import type { TerritoryCode } from '../../types/extensions';
+import { adminFetchJson } from './adminApiClient';
 
 export interface Store {
   id: string;
@@ -53,16 +54,6 @@ export interface StoreSearchFilters {
   search?: string;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
-
-/**
- * Get authentication token from Firebase
- */
-async function getAuthToken(): Promise<string> {
-  // TODO: Integrate with actual Firebase auth
-  return localStorage.getItem('authToken') || '';
-}
-
 /**
  * Fetch all stores with filters and pagination
  */
@@ -71,8 +62,6 @@ export async function getStores(
   page = 1,
   limit = 20
 ): Promise<{ stores: Store[]; total: number; page: number; totalPages: number }> {
-  const token = await getAuthToken();
-  
   const params = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
@@ -84,99 +73,41 @@ export async function getStores(
   if (filters.isActive !== undefined) params.append('isActive', filters.isActive.toString());
   if (filters.search) params.append('search', filters.search);
 
-  const response = await fetch(`${API_BASE_URL}/admin/stores?${params}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch stores');
-  }
-
-  return response.json();
+  return adminFetchJson(`/admin/stores?${params}`);
 }
 
 /**
  * Get a single store by ID
  */
 export async function getStore(id: string): Promise<Store> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/admin/stores/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch store');
-  }
-
-  return response.json();
+  return adminFetchJson(`/admin/stores/${id}`);
 }
 
 /**
  * Create a new store
  */
 export async function createStore(data: CreateStoreInput): Promise<Store> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/admin/stores`, {
+  return adminFetchJson('/admin/stores', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
     body: JSON.stringify(data),
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to create store');
-  }
-
-  return response.json();
 }
 
 /**
  * Update an existing store
  */
 export async function updateStore(id: string, data: UpdateStoreInput): Promise<Store> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/admin/stores/${id}`, {
+  return adminFetchJson(`/admin/stores/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
     body: JSON.stringify(data),
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to update store');
-  }
-
-  return response.json();
 }
 
 /**
  * Delete a store (soft delete)
  */
 export async function deleteStore(id: string): Promise<void> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/admin/stores/${id}`, {
+  await adminFetchJson(`/admin/stores/${id}`, {
     method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to delete store');
-  }
 }

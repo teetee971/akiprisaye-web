@@ -8,6 +8,8 @@ import {
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { logError } from '../utils/logger';
+import { activateIncidentMode, clearIncidentMode } from './incidentMode';
+import { liveApiFetchJson } from './liveApiClient';
 
 export interface TiPanieBasket {
   id?: string | number;
@@ -42,89 +44,6 @@ export interface BasketHistoryEntry {
   viewedAt: string;
 }
 
-/**
- * Demo baskets — only used in development mode (import.meta.env.DEV).
- * In production, only real Firestore data is served to avoid presenting
- * fictitious information on a platform dedicated to price transparency.
- */
-const DEV_DEMO_BASKETS: TiPanieBasket[] = [
-  {
-    id: 1,
-    name: 'Panier Fruits & Légumes',
-    store: 'Carrefour Destrellan',
-    territory: 'Guadeloupe',
-    price: 5.0,
-    originalPrice: 12.0,
-    savings: 58,
-    stock: true,
-    timeSlot: '17h-19h',
-    description: 'Fruits et légumes de saison légèrement abîmés',
-    image: '/img/panie-fruits.jpg',
-    lat: 16.262,
-    lon: -61.583,
-  },
-  {
-    id: 2,
-    name: 'Panier Boulangerie',
-    store: 'Super U Baie-Mahault',
-    territory: 'Guadeloupe',
-    price: 3.5,
-    originalPrice: 8.0,
-    savings: 56,
-    stock: true,
-    timeSlot: '18h-20h',
-    description: 'Pains et viennoiseries de la veille',
-    image: '/img/panie-boul.jpg',
-    lat: 16.271,
-    lon: -61.588,
-  },
-  {
-    id: 3,
-    name: 'Panier Mixte',
-    store: 'Leader Price Gosier',
-    territory: 'Guadeloupe',
-    price: 6.0,
-    originalPrice: 15.0,
-    savings: 60,
-    stock: false,
-    timeSlot: '17h30-19h30',
-    description: 'Assortiment de produits proches de la date limite',
-    image: '/img/panie-mix.jpg',
-    lat: 16.224,
-    lon: -61.493,
-  },
-  {
-    id: 4,
-    name: 'Panier Fruits Tropicaux',
-    store: 'Hyper U Le Lamentin',
-    territory: 'Martinique',
-    price: 4.5,
-    originalPrice: 11.0,
-    savings: 59,
-    stock: true,
-    timeSlot: '16h-18h',
-    description: 'Fruits locaux de saison',
-    image: '/img/panie-fruits.jpg',
-    lat: 14.613,
-    lon: -60.996,
-  },
-  {
-    id: 5,
-    name: 'Panier Anti-Gaspi',
-    store: 'Carrefour Matoury',
-    territory: 'Guyane',
-    price: 5.5,
-    originalPrice: 13.0,
-    savings: 58,
-    stock: true,
-    timeSlot: '17h-19h',
-    description: 'Produits variés proches de la date limite',
-    image: '/img/panie-mix.jpg',
-    lat: 4.853,
-    lon: -52.328,
-  },
-];
-
 function applyFilters(baskets: TiPanieBasket[], filters: BasketFilters): TiPanieBasket[] {
   let result = baskets;
 
@@ -156,32 +75,21 @@ function applyFilters(baskets: TiPanieBasket[], filters: BasketFilters): TiPanie
 /**
  * Get all baskets, optionally filtered.
  *
- * In development mode, returns demo data when Firestore has no results.
- * In production, only real Firestore data is returned.
+ * Tries live API first, then falls back to Firestore when available.
  */
 export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBasket[]> => {
   try {
-    if (db) {
-      const basketsRef = collection(db, 'ti_panie');
-      const snapshot = await getDocs(basketsRef);
-      const firestoreBaskets: TiPanieBasket[] = snapshot.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as DocumentData),
-      })) as TiPanieBasket[];
+    const payload = await liveApiFetchJson<{ baskets?: TiPanieBasket[] }>('/ti-panie', {
+      incidentReason: 'ti_panie_live_api_unavailable',
+      timeoutMs: 10000,
+    });
 
-      if (firestoreBaskets.length > 0) {
-        return applyFilters(firestoreBaskets, filters);
-      }
-    }
-
-    // In development only, fall back to demo data when Firestore is empty
-    if (import.meta.env.DEV) {
-      return applyFilters(DEV_DEMO_BASKETS, filters);
-    }
-
-    return [];
+    const apiBaskets = Array.isArray(payload?.baskets) ? payload.baskets : [];
+    clearIncidentMode();
+    return applyFilters(apiBaskets, filters);
   } catch (error) {
-    logError('Error in getBaskets', error);
+    logError('Error in getBaskets (live API)', error);
+    activateIncidentMode('ti_panie_live_api_unavailable');
     throw new Error('Impossible de charger les paniers. Veuillez réessayer plus tard.');
   }
 };
