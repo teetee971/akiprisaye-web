@@ -33,8 +33,16 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
-    "firebase-admin": "^13.0.0",
+    "firebase-admin": "^10.3.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   }
+}
+
+,
+"overrides": {
+  "jsonwebtoken": "^9.0.2",
+  "protobufjs": "^7.2.5",
+  "@grpc/grpc-js": "^1.9.15",
+  "@google-cloud/firestore": "^7.11.0"
 }
