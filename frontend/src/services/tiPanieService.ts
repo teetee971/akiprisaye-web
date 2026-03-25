@@ -87,9 +87,35 @@ export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBa
     const apiBaskets = Array.isArray(payload?.baskets) ? payload.baskets : [];
     clearIncidentMode();
     return applyFilters(apiBaskets, filters);
+  } catch (liveApiError) {
+    logError('Error in getBaskets (live API), fallback to Firestore', liveApiError);
+    activateIncidentMode('ti_panie_live_api_unavailable');
+    try {
+      if (db) {
+        const basketsRef = collection(db, 'ti_panie');
+        const snapshot = await getDocs(basketsRef);
+        const firestoreBaskets: TiPanieBasket[] = snapshot.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as DocumentData),
+        })) as TiPanieBasket[];
+
+        if (firestoreBaskets.length > 0) {
+          return applyFilters(firestoreBaskets, filters);
+        }
+      }
+
+      return [];
+    } catch (error) {
+      logError('Error in getBaskets (Firestore fallback)', error);
+      throw new Error('Impossible de charger les paniers. Veuillez réessayer plus tard.');
+    }
+  }
+};
+
+/**
  * Returns real Firestore data only.
  */
-export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBasket[]> => {
+export const getBasketsFirestoreOnly = async (filters: BasketFilters = {}): Promise<TiPanieBasket[]> => {
   try {
     if (db) {
       const basketsRef = collection(db, 'ti_panie');
@@ -106,8 +132,7 @@ export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBa
 
     return [];
   } catch (error) {
-    logError('Error in getBaskets (live API)', error);
-    activateIncidentMode('ti_panie_live_api_unavailable');
+    logError('Error in getBasketsFirestoreOnly', error);
     throw new Error('Impossible de charger les paniers. Veuillez réessayer plus tard.');
   }
 };

@@ -101,21 +101,20 @@ export class ShoppingListService {
     } catch (error) {
       console.error('[ShoppingListService] optimizeBudget live endpoint failed', {
         error,
-    const response = await fetch(`${this.API_BASE_URL}/shopping-lists/optimize`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ list }),
-    });
-
-    if (!response.ok) {
-      console.error('[ShoppingListService] optimizeBudget live endpoint failed', {
-        status: response.status,
         listId: list.id,
       });
-      throw new Error('Optimisation budget indisponible. Réessayez plus tard.');
-    }
+      const response = await fetch(`${this.API_BASE_URL}/shopping-lists/optimize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ list }),
+      });
 
-    return response.json() as Promise<BudgetOptimization>;
+      if (!response.ok) {
+        throw new Error('Optimisation budget indisponible. Réessayez plus tard.');
+      }
+
+      return response.json() as Promise<BudgetOptimization>;
+    }
   }
 
   /**
