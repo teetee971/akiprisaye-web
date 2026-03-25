@@ -20,7 +20,6 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
-import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 import {
   useVisitorStats,

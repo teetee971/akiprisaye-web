@@ -1,17 +1,21 @@
 /**
  * CalculateurBatiment — Calculateur du Bâtiment
  *
- * Hub avec 6 catégories couvrant tous les corps de métier BTP :
+ * Hub avec 10 catégories couvrant les principaux corps de métier BTP :
  *   - Gros œuvre       (Parpaing, Dalle béton, Fondations, Chape)
  *   - Finitions        (Carrelage, Peinture, Enduit/Crépissage)
- *   - Extérieur        (Tôles couverture, Terrassement, Clôture)
+ *   - Extérieur        (Tôles couverture, Terrassement, Clôture, Piscine)
  *   - Outils divers    (Béton courant, Escalier)
  *   - Électricité & Plomberie (Section câble, Tuyauterie, Isolation, Charpente)
  *   - Second œuvre     (Plâtrerie BA13, Parquet, Gouttières, Menuiserie)
+ *   - Plomberie & CVC  (Tuyauterie, Isolation, Électricité)
+ *   - Carrelage & Revêtements (Carrelage, Peinture, Enduit)
+ *   - Menuiserie & Cloisons (Menuiserie, Plâtrerie, Parquet)
+ *   - Maçonnerie spécialisée (Fondations, Dalle, Chape, Béton)
  *
  * Fonctionnalités :
  *   - Sélecteur de territoire DOM-TOM (GP, MQ, RE, GF, YT)
- *   - 20 calculateurs tous corps de métier BTP
+ *   - 21 calculateurs multi-métiers (accès par familles)
  *   - Images réalistes Unsplash pour toutes les tuiles
  *   - "Trouver en magasin" : comparatif prix par enseigne
  *   - Liste de courses exportable + WhatsApp
@@ -51,11 +55,12 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type CategoryId = 'gros-oeuvre' | 'finitions' | 'exterieur' | 'outils' | 'electricite-plomberie' | 'second-oeuvre';
+type CategoryId = 'gros-oeuvre' | 'finitions' | 'exterieur' | 'outils' | 'electricite-plomberie' | 'second-oeuvre'
+  | 'plomberie-cvc' | 'carrelage-revetements' | 'menuiserie-cloisons' | 'maconnerie-specialisee';
 type CalculatorId =
   | 'parpaing' | 'dalle-beton' | 'fondations' | 'chape'
   | 'carrelage' | 'peinture' | 'enduit'
-  | 'toles' | 'terrassement' | 'cloture'
+  | 'toles' | 'terrassement' | 'cloture' | 'piscine'
   | 'beton-courant' | 'escalier'
   | 'electricite' | 'plomberie' | 'isolation' | 'charpente'
   | 'platrerie' | 'parquet' | 'gouttiere' | 'menuiserie';
@@ -106,7 +111,7 @@ const CATEGORIES = [
     bgTo: 'to-green-600',
     // Couvreur sur toiture — extérieur bâtiment
     image: 'photo-1503387762-592deb58ef4e',
-    calcs: ['toles', 'terrassement', 'cloture'] as CalculatorId[],
+    calcs: ['toles', 'terrassement', 'cloture', 'piscine'] as CalculatorId[],
   },
   {
     id: 'outils' as CategoryId,
@@ -138,6 +143,47 @@ const CATEGORIES = [
     image: 'photo-1532550907401-a500c9a57435',
     calcs: ['platrerie', 'parquet', 'gouttiere', 'menuiserie'] as CalculatorId[],
   },
+
+  {
+    id: 'plomberie-cvc' as CategoryId,
+    label: 'Plomberie & CVC',
+    emoji: '🚰',
+    bgFrom: 'from-cyan-900',
+    bgTo: 'to-sky-700',
+    // Intervention plomberie / ventilation
+    image: 'photo-1585704032915-c3400ca199e7',
+    calcs: ['plomberie', 'isolation', 'electricite'] as CalculatorId[],
+  },
+  {
+    id: 'carrelage-revetements' as CategoryId,
+    label: 'Carrelage & Revêtements',
+    emoji: '🟫',
+    bgFrom: 'from-orange-900',
+    bgTo: 'to-amber-600',
+    // Pose de carrelage et finitions
+    image: 'photo-1618220179428-22790b461013',
+    calcs: ['carrelage', 'peinture', 'enduit'] as CalculatorId[],
+  },
+  {
+    id: 'menuiserie-cloisons' as CategoryId,
+    label: 'Menuiserie & Cloisons',
+    emoji: '🪟',
+    bgFrom: 'from-indigo-900',
+    bgTo: 'to-violet-700',
+    // Pose menuiserie intérieure
+    image: 'photo-1607400201889-565b1ee75c36',
+    calcs: ['menuiserie', 'platrerie', 'parquet'] as CalculatorId[],
+  },
+  {
+    id: 'maconnerie-specialisee' as CategoryId,
+    label: 'Maçonnerie spécialisée',
+    emoji: '🧱',
+    bgFrom: 'from-rose-900',
+    bgTo: 'to-red-700',
+    // Travaux de maçonnerie structurelle
+    image: 'photo-1503387762-592deb58ef4e',
+    calcs: ['fondations', 'dalle-beton', 'chape', 'beton-courant'] as CalculatorId[],
+  },
 ];
 
 const CALC_META: Record<CalculatorId, { label: string; emoji: string; description: string; image: string }> = {
@@ -154,6 +200,7 @@ const CALC_META: Record<CalculatorId, { label: string; emoji: string; descriptio
   toles:                  { label: 'Tôles de couverture',           emoji: '🏠', description: 'Tôles ondulées, fixations, faîtière',           image: 'photo-1517581177682-a085bb7ffb38' },
   terrassement:           { label: 'Terrassement',                  emoji: '⛏️', description: 'Volume de déblai / remblai, camions',           image: 'photo-1547149831-bd9c63d1da4e' },
   cloture:                { label: 'Clôture',                       emoji: '🚧', description: 'Grillage, poteaux, béton de scellement',        image: 'photo-1558618666-fcd25c85cd64' },
+  piscine:                { label: 'Piscine / Bassin',              emoji: '🏊', description: 'Volume d’eau, béton radier, étanchéité',        image: 'photo-1507525428034-b723cf961d3e' },
   // ── Outils ──
   'beton-courant':        { label: 'Béton courant',                 emoji: '🪣', description: 'Dosage ciment, sable, gravier pour béton',     image: 'photo-1582268611958-ebfd161ef9cf' },
   escalier:               { label: 'Escalier',                      emoji: '🪜', description: 'Marches, hauteur, giron, longueur totale',      image: 'photo-1568689285228-f0d18c553ee4' },
@@ -240,9 +287,9 @@ function BlockedBanner() {
 // ─── Store Locator Panel ──────────────────────────────────────────────────────
 
 function StoreLocatorPanel({ needs, territory }: { needs: MaterialNeed[]; territory: TerritoryCode | null }) {
-  const [open, setOpen]         = useState(false);
+  const [open, setOpen]         = useState(true);
   const [copied, setCopied]     = useState(false);
-  const [expandedStore, setExpandedStore] = useState<string | null>(null);
+  const [expandedStore, setExpandedStore] = useState<string | null>('all');
 
   if (!territory || needs.length === 0) return null;
 
@@ -292,7 +339,7 @@ function StoreLocatorPanel({ needs, territory }: { needs: MaterialNeed[]; territ
       {open && (
         <div className="mt-3 space-y-3">
           {/* Action buttons */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={copyShoppingList}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-sm text-slate-300 transition-colors"
@@ -308,11 +355,21 @@ function StoreLocatorPanel({ needs, territory }: { needs: MaterialNeed[]; territ
             >
               💬 Partager WhatsApp
             </a>
+            <button
+              onClick={() => setExpandedStore((v) => (v === 'all' ? null : 'all'))}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-800/50 hover:bg-indigo-700/60 text-sm text-indigo-200 transition-colors"
+            >
+              {expandedStore === 'all' ? 'Tout réduire' : 'Tout afficher'}
+            </button>
           </div>
+
+          <p className="text-xs text-slate-300 rounded-xl border border-slate-700/70 bg-slate-900/40 px-3 py-2">
+            Affichage détaillé des prix de tous les produits trouvés, magasin par magasin.
+          </p>
 
           {/* Store cards */}
           {quotes.map((quote, idx) => {
-            const isExpanded = expandedStore === quote.store.id;
+            const isExpanded = expandedStore === 'all' || expandedStore === quote.store.id;
             const isBest = idx === 0;
             return (
               <StoreCard
@@ -1508,6 +1565,108 @@ function ClotureCalc({ onCalc, territory, onSave }: CalcProps) {
               <ResultRow label="Sacs ciment 25 kg" value={`${result.nbSacsCiment} sacs`} />
             </div>
             <p className="text-xs text-slate-500">Béton scellement 0.015 m³/poteau • Tous les calculs sont à titre indicatif</p>
+          </div>
+          <StoreLocatorPanel needs={materials} territory={territory} />
+        </>
+      )}
+    </div>
+  );
+}
+
+function PiscineCalc({ onCalc, territory, onSave }: CalcProps) {
+  const [longueur, setLongueur] = useState('');
+  const [largeur, setLargeur] = useState('');
+  const [profondeur, setProfondeur] = useState('1.4');
+  const [result, setResult] = useState<{
+    surface: number;
+    volumeEau: number;
+    betonRadierM3: number;
+    betonParoisM3: number;
+    linerM2: number;
+    nbSacsCiment: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
+  const [materials, setMaterials] = useState<MaterialNeed[]>([]);
+
+  const calculate = () => {
+    if (!onCalc()) { setBlocked(true); return; }
+    const l = parseFloat(longueur.replace(',', '.'));
+    const w = parseFloat(largeur.replace(',', '.'));
+    const p = parseFloat(profondeur.replace(',', '.'));
+    if (!l || !w || !p) return;
+
+    const surface = l * w;
+    const volumeEau = surface * p;
+    const radierEpaisseur = 0.18; // 18 cm
+    const paroiEpaisseur = 0.2; // 20 cm
+    const perimetre = 2 * (l + w);
+    const betonRadierM3 = surface * radierEpaisseur;
+    const betonParoisM3 = perimetre * p * paroiEpaisseur;
+    const linerM2 = (surface + (perimetre * p)) * 1.1; // +10% marges
+    const cimentKg = (betonRadierM3 + betonParoisM3) * 300;
+    const nbSacsCiment = Math.ceil(cimentKg / 25);
+
+    const res = {
+      surface: Math.round(surface * 100) / 100,
+      volumeEau: Math.round(volumeEau * 100) / 100,
+      betonRadierM3: Math.round(betonRadierM3 * 100) / 100,
+      betonParoisM3: Math.round(betonParoisM3 * 100) / 100,
+      linerM2: Math.ceil(linerM2),
+      nbSacsCiment,
+    };
+    setResult(res);
+    setBlocked(false);
+
+    const mats: MaterialNeed[] = [
+      { productId: 'ciment_25kg', qty: nbSacsCiment },
+      { productId: 'sable_25kg', qty: Math.ceil((cimentKg * 2.5) / 25) },
+      { productId: 'gravier_25kg', qty: Math.ceil((cimentKg * 4) / 25) },
+      { productId: 'enduit_25kg', qty: Math.ceil(res.linerM2 / 6) },
+    ];
+    setMaterials(mats);
+    onSave({
+      calcType: 'piscine',
+      inputs: { longueurM: longueur, largeurM: largeur, profondeurM: profondeur },
+      results: res,
+      materials: mats,
+    });
+  };
+
+  const reset = () => {
+    setLongueur('');
+    setLargeur('');
+    setProfondeur('1.4');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
+
+  return (
+    <div className="space-y-4">
+      <WarnBanner text="Bassin rectangulaire — estimation eau, béton et étanchéité" />
+      <div className="grid grid-cols-2 gap-3">
+        <NumInput label="Longueur bassin" value={longueur} onChange={setLongueur} unit="m" />
+        <NumInput label="Largeur bassin" value={largeur} onChange={setLargeur} unit="m" />
+        <NumInput label="Profondeur moyenne" value={profondeur} onChange={setProfondeur} unit="m" />
+      </div>
+      <div className="flex gap-3">
+        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
+        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"><RotateCcw className="w-4 h-4" /></button>
+      </div>
+      {blocked && <BlockedBanner />}
+      {result && !blocked && (
+        <>
+          <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <div className="grid grid-cols-2 gap-2">
+              <ResultRow label="Surface bassin" value={`${result.surface} m²`} />
+              <ResultRow label="Volume d’eau" value={`${result.volumeEau} m³`} highlight />
+              <ResultRow label="Béton radier (18 cm)" value={`${result.betonRadierM3} m³`} />
+              <ResultRow label="Béton parois (20 cm)" value={`${result.betonParoisM3} m³`} />
+              <ResultRow label="Étanchéité / liner (+10%)" value={`${result.linerM2} m²`} />
+              <ResultRow label="Ciment (25 kg)" value={`${result.nbSacsCiment} sacs`} highlight />
+            </div>
+            <p className="text-xs text-slate-500">Estimation indicative pour bassin rectangulaire • Vérifier dimensionnement structurel avec un pro</p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -3194,6 +3353,10 @@ export default function CalculateurBatiment() {
                   : cat.id === 'exterieur' ? TreePine
                   : cat.id === 'electricite-plomberie' ? Zap
                   : cat.id === 'second-oeuvre' ? Hammer
+                  : cat.id === 'plomberie-cvc' ? Droplet
+                  : cat.id === 'carrelage-revetements' ? Layers
+                  : cat.id === 'menuiserie-cloisons' ? Ruler
+                  : cat.id === 'maconnerie-specialisee' ? HardHat
                   : Wrench;
                 return (
                   <button
@@ -3308,6 +3471,7 @@ export default function CalculateurBatiment() {
                 {selectedCalc === 'toles'           && <TolesCalc         onCalc={handleCalc} territory={territory} onSave={handleSave} />}
                 {selectedCalc === 'terrassement'    && <TerrassementCalc  onCalc={handleCalc} territory={territory} onSave={handleSave} />}
                 {selectedCalc === 'cloture'         && <ClotureCalc       onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'piscine'         && <PiscineCalc       onCalc={handleCalc} territory={territory} onSave={handleSave} />}
                 {selectedCalc === 'beton-courant'   && <BetonCourantCalc  onCalc={handleCalc} territory={territory} onSave={handleSave} />}
                 {selectedCalc === 'escalier'        && <EscalierCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
                 {selectedCalc === 'electricite'     && <ElectriciteCalc   onCalc={handleCalc} territory={territory} onSave={handleSave} />}
