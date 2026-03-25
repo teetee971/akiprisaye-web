@@ -12,38 +12,10 @@ import { safeLocalStorage } from '../utils/safeLocalStorage';
 import type { 
   Product, 
   ProductSearchParams, 
-  ProductListResponse,
-  PriceSource 
+  ProductListResponse
 } from '../types/product';
 import type { TerritoryCode } from '../types/extensions';
-
-/**
- * Mock data for development
- * In production, this would come from API/database
- */
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: 'prod-001',
-    nom: 'Lait demi-écrémé',
-    marque: 'Lactel',
-    categorie: 'boissons',
-    contenance: 1,
-    unite: 'L',
-    prix_unitaire: 1.85,
-    prix_au_kilo_ou_litre: 1.85,
-    enseigne: 'Carrefour',
-    territoire: 'GP',
-    date_releve: new Date().toISOString(),
-    source_prix: 'api',
-    fiabilite_score: 95,
-    photos: [],
-    metadata: {
-      verified: true,
-      lastUpdated: new Date().toISOString(),
-      updateCount: 15
-    }
-  }
-];
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 /**
  * Fetch products with automatic fallback
@@ -52,44 +24,12 @@ const MOCK_PRODUCTS: Product[] = [
 export async function fetchProducts(
   params: ProductSearchParams = {}
 ): Promise<ProductListResponse> {
-  try {
-    // Try API fetch first
-    const apiProducts = await fetchFromAPI(params);
-    
-    if (apiProducts && apiProducts.length > 0) {
-      return {
-        products: apiProducts,
-        total: apiProducts.length,
-        hasMore: false,
-        filters: params
-      };
-    }
-  } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('API fetch failed, using fallback data:', error);
-    }
-  }
-  
-  // Fallback to cached/historical data
-  const fallbackProducts = await fetchFromCache(params);
-  
-  if (fallbackProducts && fallbackProducts.length > 0) {
-    return {
-      products: fallbackProducts.map(p => ({
-        ...p,
-        source_prix: 'historical' as PriceSource,
-        fiabilite_score: Math.max(p.fiabilite_score - 20, 50) // Lower score for old data
-      })),
-      total: fallbackProducts.length,
-      hasMore: false,
-      filters: params
-    };
-  }
-  
-  // Last resort: return mock data
+  const apiProducts = await fetchFromAPI(params);
+  safeLocalStorage.setJSON('products_cache', apiProducts);
+
   return {
-    products: MOCK_PRODUCTS,
-    total: MOCK_PRODUCTS.length,
+    products: apiProducts,
+    total: apiProducts.length,
     hasMore: false,
     filters: params
   };
@@ -99,57 +39,26 @@ export async function fetchProducts(
  * Fetch from API (placeholder for real implementation)
  */
 async function fetchFromAPI(params: ProductSearchParams): Promise<Product[]> {
-  // Simulate API call
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Filter mock data based on params
-      let results = [...MOCK_PRODUCTS];
-      
-      if (params.territoire) {
-        results = results.filter(p => p.territoire === params.territoire);
-      }
-      
-      if (params.categorie) {
-        results = results.filter(p => p.categorie === params.categorie);
-      }
-      
-      if (params.query) {
-        const query = params.query.toLowerCase();
-        results = results.filter(p => 
-          p.nom.toLowerCase().includes(query) ||
-          p.marque?.toLowerCase().includes(query)
-        );
-      }
-      
-      resolve(results);
-    }, 100);
-  });
-}
+  const query = new URLSearchParams();
+  if (params.territoire) query.set('territoire', params.territoire);
+  if (params.categorie) query.set('categorie', params.categorie);
+  if (params.query) query.set('q', params.query);
+  if (params.limit) query.set('limit', String(params.limit));
+  if (params.offset) query.set('offset', String(params.offset));
 
-/**
- * Fetch from local cache/storage
- */
-async function fetchFromCache(params: ProductSearchParams): Promise<Product[]> {
-  try {
-    const cached = safeLocalStorage.getItem('products_cache');
-    if (cached) {
-      const products: Product[] = JSON.parse(cached);
-      return products.filter(p => {
-        if (params.territoire && p.territoire !== params.territoire) return false;
-        if (params.categorie && p.categorie !== params.categorie) return false;
-        return true;
-      });
-    }
-  } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('Cache fetch failed:', error);
-    }
+  const response = await fetch(`${API_BASE_URL}/products?${query.toString()}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch live products (${response.status})`);
   }
+
+  const payload = await response.json();
+  if (Array.isArray(payload)) return payload as Product[];
+  if (Array.isArray(payload?.products)) return payload.products as Product[];
   return [];
 }
 
 /**
- * Get single product by ID with fallback
+ * Get single product by ID
  */
 export async function getProduct(id: string): Promise<Product | null> {
   try {
@@ -253,4 +162,3 @@ export async function validatePrice(productId: string, isValid: boolean): Promis
     }
   }
 }
-

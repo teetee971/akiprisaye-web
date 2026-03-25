@@ -5,6 +5,7 @@
  */
 
 import type { ProductCategory, Unit } from '../../types/product';
+import { adminFetchJson } from './adminApiClient';
 
 export interface Product {
   id: string;
@@ -49,15 +50,6 @@ export interface ProductSearchFilters {
   hasEan?: boolean;
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
-
-/**
- * Get authentication token
- */
-async function getAuthToken(): Promise<string> {
-  return localStorage.getItem('authToken') || '';
-}
-
 /**
  * Fetch all products with filters and pagination
  */
@@ -66,8 +58,6 @@ export async function getProducts(
   page = 1,
   limit = 20
 ): Promise<{ products: Product[]; total: number; page: number; totalPages: number }> {
-  const token = await getAuthToken();
-
   const params = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
@@ -78,122 +68,43 @@ export async function getProducts(
   if (filters.search) params.append('search', filters.search);
   if (filters.hasEan !== undefined) params.append('hasEan', filters.hasEan.toString());
 
-  const response = await fetch(`${API_BASE_URL}/admin/products?${params}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch products');
-  }
-
-  return response.json();
+  return adminFetchJson(`/admin/products?${params}`);
 }
 
 /**
  * Get a single product by ID
  */
 export async function getProduct(id: string): Promise<Product> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/admin/products/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch product');
-  }
-
-  return response.json();
+  return adminFetchJson(`/admin/products/${id}`);
 }
 
 /**
  * Create a new product
  */
 export async function createProduct(data: CreateProductInput): Promise<Product> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/admin/products`, {
+  return adminFetchJson('/admin/products', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
     body: JSON.stringify(data),
   });
-
-  if (!response.ok) {
-    try {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to create product');
-    } catch (parseError) {
-      if (parseError instanceof Error && parseError.message !== 'Failed to create product') {
-        throw new Error('Failed to create product');
-      }
-      throw parseError;
-    }
-  }
-
-  return response.json();
 }
 
 /**
  * Update an existing product
  */
 export async function updateProduct(id: string, data: UpdateProductInput): Promise<Product> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/admin/products/${id}`, {
+  return adminFetchJson(`/admin/products/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
     body: JSON.stringify(data),
   });
-
-  if (!response.ok) {
-    try {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to update product');
-    } catch (parseError) {
-      if (parseError instanceof Error && parseError.message !== 'Failed to update product') {
-        throw new Error('Failed to update product');
-      }
-      throw parseError;
-    }
-  }
-
-  return response.json();
 }
 
 /**
  * Delete a product
  */
 export async function deleteProduct(id: string): Promise<void> {
-  const token = await getAuthToken();
-
-  const response = await fetch(`${API_BASE_URL}/admin/products/${id}`, {
+  await adminFetchJson(`/admin/products/${id}`, {
     method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
   });
-
-  if (!response.ok) {
-    try {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to delete product');
-    } catch (parseError) {
-      if (parseError instanceof Error && parseError.message !== 'Failed to delete product') {
-        throw new Error('Failed to delete product');
-      }
-      throw parseError;
-    }
-  }
 }
 
 /**

@@ -156,8 +156,7 @@ function applyFilters(baskets: TiPanieBasket[], filters: BasketFilters): TiPanie
 /**
  * Get all baskets, optionally filtered.
  *
- * In development mode, returns demo data when Firestore has no results.
- * In production, only real Firestore data is returned.
+ * Returns real Firestore data only.
  */
 export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBasket[]> => {
   try {
@@ -172,11 +171,6 @@ export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBa
       if (firestoreBaskets.length > 0) {
         return applyFilters(firestoreBaskets, filters);
       }
-    }
-
-    // In development only, fall back to demo data when Firestore is empty
-    if (import.meta.env.DEV) {
-      return applyFilters(DEV_DEMO_BASKETS, filters);
     }
 
     return [];

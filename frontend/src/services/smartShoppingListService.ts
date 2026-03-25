@@ -15,6 +15,7 @@ import type {
 
 export class ShoppingListService {
   private readonly STORAGE_KEY = 'shopping_lists';
+  private readonly API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
   /**
    * Create a new shopping list
@@ -89,45 +90,21 @@ export class ShoppingListService {
    * Optimize budget for shopping list
    */
   async optimizeBudget(list: ShoppingList): Promise<BudgetOptimization> {
-    // TODO: Implement real optimization algorithm
-    // For now, return mock optimization
-    
-    const mockStores: StoreAllocation[] = [
-      {
-        storeId: 'store-1',
-        storeName: 'Carrefour Jarry',
-        items: list.items.slice(0, 2).map(item => ({
-          ean: item.productEAN,
-          name: item.productName,
-          price: 2.50,
-          quantity: item.quantity
-        })),
-        subtotal: 5.00
-      },
-      {
-        storeId: 'store-2',
-        storeName: 'E.Leclerc',
-        items: list.items.slice(2).map(item => ({
-          ean: item.productEAN,
-          name: item.productName,
-          price: 3.00,
-          quantity: item.quantity
-        })),
-        subtotal: 6.00
-      }
-    ];
-    
-    const currentTotal = mockStores.reduce((sum, s) => sum + s.subtotal, 0);
-    
-    return {
-      totalBudget: 15.00,
-      currentTotal,
-      savings: 15.00 - currentTotal,
-      stores: mockStores,
-      route: ['store-1', 'store-2'],
-      estimatedTime: 45,
-      estimatedDistance: 5.2
-    };
+    const response = await fetch(`${this.API_BASE_URL}/shopping-lists/optimize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ list }),
+    });
+
+    if (!response.ok) {
+      console.error('[ShoppingListService] optimizeBudget live endpoint failed', {
+        status: response.status,
+        listId: list.id,
+      });
+      throw new Error('Optimisation budget indisponible. Réessayez plus tard.');
+    }
+
+    return response.json() as Promise<BudgetOptimization>;
   }
 
   /**
