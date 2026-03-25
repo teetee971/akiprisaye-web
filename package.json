@@ -22,8 +22,8 @@
         "seo:sitemap": "node scripts/generate-sitemap.mjs",
         "seo:validate": "node scripts/validate-seo-artifacts.mjs",
         "seo:loop": "node scripts/auto-seo/collect-signals.mjs && node scripts/auto-seo/score-pages.mjs && node scripts/auto-seo/generate-recommendations.mjs",
-        "seo:review-plan": "node scripts/auto-seo/build-patches.mjs && node scripts/auto-seo/export-pr-plan.mjs",
-        "seo:full": "npm run seo:generate && npm run seo:sitemap && npm run seo:validate && npm run seo:loop && npm run seo:review-plan",
+        "seo:review-plan": "npm run seo:loop && node scripts/auto-seo/build-patches.mjs && node scripts/auto-seo/export-pr-plan.mjs",
+        "seo:full": "npm run seo:generate && npm run seo:sitemap && npm run seo:validate && npm run seo:review-plan",
         "content:generate": "node scripts/auto-content-engine.mjs"
     },
     "devDependencies": {
