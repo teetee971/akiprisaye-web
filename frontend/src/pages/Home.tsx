@@ -53,6 +53,55 @@ const PRICE_ALERTS = [
   { label: 'Pâtes 500g',   change: '-3%',  note: 'Prix stabilisé',       down: true  },
 ];
 
+const QUICK_TILES = [
+  {
+    title: 'Comparer vos courses',
+    subtitle: 'Trouvez le prix le plus bas en quelques secondes',
+    links: [
+      { label: 'Comparateur principal', to: '/comparateur' },
+      { label: 'Recherche produits', to: '/recherche-produits' },
+      { label: 'Scanner un code-barres', to: '/scan' },
+    ],
+  },
+  {
+    title: 'Suivre les tendances',
+    subtitle: 'Visualisez rapidement les mouvements de prix',
+    links: [
+      { label: 'Observatoire des prix', to: '/observatoire' },
+      { label: 'Comparaison territoires', to: '/comparateur-territoires' },
+      { label: 'Anomalies de prix', to: '/anomalies-prix' },
+    ],
+  },
+  {
+    title: 'Agir au quotidien',
+    subtitle: 'Activez les options utiles sans surcharge',
+    links: [
+      { label: 'Mes alertes', to: '/mon-compte' },
+      { label: 'Méthodologie', to: '/methodologie' },
+      { label: 'FAQ', to: '/faq' },
+    ],
+  },
+];
+
+const WOW_IDEAS = [
+  '⚡ Défi 7 jours anti-vie-chère : suivez vos économies en direct',
+  '🤖 Assistant malin : alternatives moins chères en 1 clic',
+  '🎯 Alerte panier : notification dès que votre panier passe sous votre budget cible',
+];
+
+const LIFE_EASIER_ACTIONS = [
+  { title: 'Mon budget cible', helper: 'Fixez votre plafond mensuel', to: '/mon-compte' },
+  { title: 'Liste intelligente', helper: 'Priorise les articles les moins chers', to: '/comparateur' },
+  { title: 'Parcours sans friction', helper: 'Du scan au meilleur prix en quelques secondes', to: '/scan' },
+];
+
+const LOCAL_ASSISTANT_RULES = [
+  { keyword: 'lait', suggestion: 'Essayez une marque locale de lait UHT : souvent 8 à 15% moins chère.' },
+  { keyword: 'riz', suggestion: 'Comparez les formats 5kg : le prix au kilo est souvent plus intéressant.' },
+  { keyword: 'huile', suggestion: 'Vérifiez les marques distributeurs pour l’huile de tournesol.' },
+  { keyword: 'pâtes', suggestion: 'Regardez les lots familiaux : bon levier d’économie sur les produits secs.' },
+];
+
 const PRIMARY_TERRITORIES = [
   { code: 'GP', name: 'Guadeloupe', flag: '\ud83c\uddec\ud83c\uddf5' },
   { code: 'MQ', name: 'Martinique', flag: '\ud83c\uddf2\ud83c\uddf6' },
@@ -324,8 +373,12 @@ export default function HomeV5() {
   const [selectedTerritory, setSelectedTerritory] = useState('GP');
   const [selectedRetailer, setSelectedRetailer] = useState('');
   const [showMobileCTA, setShowMobileCTA] = useState(false);
-  const [showExtended, setShowExtended] = useState(true);
+  const [showExtended, setShowExtended] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [wowIndex, setWowIndex] = useState(0);
+  const [budgetTarget, setBudgetTarget] = useState(450);
+  const [estimatedBasket, setEstimatedBasket] = useState(520);
+  const [missionProgress, setMissionProgress] = useState(34);
   const [comparison] = useState<PriceComparison>(getComparisonOfDay());
   const statsRef = useRef<HTMLElement | null>(null);
 
@@ -366,6 +419,8 @@ export default function HomeV5() {
   useEffect(() => {
     const loaded = safeLocalStorage.getJSON('platform_stats', { scans: 1200, products: 5000, territories: 12 });
     setStats(loaded);
+    const savedMission = safeLocalStorage.getJSON('home_weekly_mission_progress', 34);
+    setMissionProgress(savedMission);
     let w = window.innerWidth;
     let ticking = false;
     const onScroll = () => {
@@ -382,6 +437,17 @@ export default function HomeV5() {
     return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onResize); };
   }, []);
 
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setWowIndex((current) => (current + 1) % WOW_IDEAS.length);
+    }, 4200);
+    return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    safeLocalStorage.setJSON('home_weekly_mission_progress', missionProgress);
+  }, [missionProgress]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const dest = searchQuery.trim()
@@ -389,6 +455,14 @@ export default function HomeV5() {
       : `/comparateur${selectedTerritory ? `?territoire=${selectedTerritory}` : ''}`;
     navigate(dest);
   };
+
+  const economyGap = Math.max(0, estimatedBasket - budgetTarget);
+  const economyScore = Math.max(0, Math.min(100, Math.round(((budgetTarget / Math.max(estimatedBasket, 1)) * 100))));
+  const missionBadge = missionProgress >= 100 ? '🏆 Mission complétée' : missionProgress >= 70 ? '🥈 Presque terminé' : '🥉 En cours';
+  const assistantSuggestion =
+    LOCAL_ASSISTANT_RULES.find((rule) => searchQuery.toLowerCase().includes(rule.keyword))?.suggestion
+    ?? 'Astuce IA locale : comparez marque nationale vs marque locale avant validation du panier.';
+  const alertReadiness = economyGap > 0 ? 'Alerte activée: surveillez la prochaine baisse' : 'Budget respecté: continuez ce rythme';
 
   return (
     <>
@@ -518,6 +592,159 @@ export default function HomeV5() {
               </div>
             </form>
           </main>
+
+          {/* Compact tile hub */}
+          <section className="mt-6" aria-label="Accès rapide">
+            <BentoCard>
+              <SectionHeader
+                eyebrow="ACCÈS RAPIDE"
+                title="Page d’accueil simplifiée"
+                description="3 tuiles principales et leurs sous-tuiles pour accéder directement à l’essentiel, avec moins de scroll."
+              />
+              <div className="mt-5 grid gap-4 lg:grid-cols-3">
+                {QUICK_TILES.map((tile) => (
+                  <div key={tile.title} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                    <div className="text-base font-semibold text-white">{tile.title}</div>
+                    <p className="mt-1 text-sm text-zinc-400">{tile.subtitle}</p>
+                    <div className="mt-4 space-y-2">
+                      {tile.links.map((link) => (
+                        <Link
+                          key={link.label}
+                          to={link.to}
+                          className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-zinc-200 transition hover:border-emerald-400/30 hover:text-white"
+                        >
+                          <span>{link.label}</span>
+                          <span aria-hidden="true">→</span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </BentoCard>
+          </section>
+
+          {/* Living / wow strip */}
+          <section className="mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+            <BentoCard className="relative overflow-hidden">
+              <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.2),transparent_38%)]" />
+              <SectionHeader
+                eyebrow="EXPÉRIENCE VIVANTE"
+                title="Un site qui vous aide vraiment au quotidien"
+                description="Des idées activables pour gagner du temps et protéger votre budget, sans complexité."
+              />
+              <div className="relative mt-5 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200">Effet whouaa du moment</div>
+                <p className="mt-2 text-base font-medium text-white">{WOW_IDEAS[wowIndex]}</p>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {LIFE_EASIER_ACTIONS.map((action) => (
+                  <Link
+                    key={action.title}
+                    to={action.to}
+                    className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 transition hover:-translate-y-0.5 hover:border-emerald-400/30"
+                  >
+                    <div className="text-sm font-semibold text-white">{action.title}</div>
+                    <div className="mt-1 text-xs text-zinc-400">{action.helper}</div>
+                  </Link>
+                ))}
+              </div>
+            </BentoCard>
+
+            <BentoCard>
+              <SectionHeader
+                eyebrow="SUGGESTIONS +"
+                title="Autres idées pour aller plus loin"
+                description="Fonctionnalités différenciantes à ajouter pour un rendu unique."
+              />
+              <ul className="mt-5 space-y-3 text-sm text-zinc-300">
+                <li className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">• Mode « panier familial » (simulation d’économie mensuelle).</li>
+                <li className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">• Radar « prix qui explosent » avec code couleur par catégorie.</li>
+                <li className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">• Badge « meilleure fenêtre d’achat » selon l’historique local.</li>
+                <li className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">• Classement communautaire des enseignes les plus stables.</li>
+              </ul>
+            </BentoCard>
+          </section>
+
+          {/* Ultra whouaa V2 */}
+          <section className="mt-6 grid gap-4 xl:grid-cols-2" aria-label="Ultra whouaa V2">
+            <BentoCard>
+              <SectionHeader
+                eyebrow="V2 • SCORE FOYER"
+                title="Score d’économie personnalisé"
+                description="Estimez votre potentiel d’économie selon votre budget et votre panier actuel."
+              />
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <label className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+                  <span className="text-xs uppercase tracking-[0.18em] text-zinc-400">Budget cible (€)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={budgetTarget}
+                    onChange={(e) => setBudgetTarget(Number(e.target.value) || 0)}
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none"
+                  />
+                </label>
+                <label className="rounded-2xl border border-white/10 bg-white/[0.03] p-3">
+                  <span className="text-xs uppercase tracking-[0.18em] text-zinc-400">Panier estimé (€)</span>
+                  <input
+                    type="number"
+                    min={0}
+                    value={estimatedBasket}
+                    onChange={(e) => setEstimatedBasket(Number(e.target.value) || 0)}
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none"
+                  />
+                </label>
+              </div>
+              <div className="mt-4 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 p-4">
+                <div className="text-xs uppercase tracking-[0.18em] text-emerald-200">Score foyer</div>
+                <div className="mt-1 text-3xl font-semibold text-white">{economyScore}/100</div>
+                <div className="mt-1 text-sm text-zinc-300">
+                  {economyGap > 0 ? `Potentiel: jusqu’à ${economyGap.toFixed(0)} € à économiser.` : 'Excellent pilotage: panier dans la cible.'}
+                </div>
+              </div>
+            </BentoCard>
+
+            <BentoCard>
+              <SectionHeader
+                eyebrow="V2 • MINI IA LOCALE"
+                title="Assistant alternatives en direct"
+                description="Suggestions immédiates selon votre recherche, sans cloud externe."
+              />
+              <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-xs uppercase tracking-[0.18em] text-zinc-400">Suggestion en cours</div>
+                <p className="mt-2 text-sm text-zinc-200">{assistantSuggestion}</p>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setMissionProgress((p) => Math.min(100, p + 10))}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white transition hover:bg-white/10"
+                >
+                  +10% mission hebdo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMissionProgress(0)}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white transition hover:bg-white/10"
+                >
+                  Réinitialiser mission
+                </button>
+              </div>
+              <div className="mt-4 rounded-2xl border border-violet-400/25 bg-violet-400/10 p-4">
+                <div className="text-xs uppercase tracking-[0.18em] text-violet-200">Mission hebdo gamifiée</div>
+                <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-black/40">
+                  <div className="h-full rounded-full bg-violet-300 transition-all duration-500" style={{ width: `${missionProgress}%` }} />
+                </div>
+                <div className="mt-2 text-sm text-zinc-200">{missionBadge} — {missionProgress}%</div>
+              </div>
+              <div className="mt-4 rounded-2xl border border-amber-400/25 bg-amber-400/10 p-4">
+                <div className="text-xs uppercase tracking-[0.18em] text-amber-200">Alerte intelligente</div>
+                <div className="mt-2 text-sm text-zinc-100">{alertReadiness}</div>
+                <div className="mt-1 text-xs text-zinc-300">Meilleur moment d’achat: notification push basée sur vos écarts panier.</div>
+              </div>
+            </BentoCard>
+          </section>
 
           {/* Live result with animated counter */}
           <section className="mt-6">
@@ -667,9 +894,9 @@ export default function HomeV5() {
                 description="Architecture compacte, scroll réduit, informations clés immédiatement visibles."
               />
               <div className="mt-5 grid grid-cols-2 gap-3">
-                <StatCard label="Mise à jour"   value="Aujourd'hui"   helper="Flux synchronisés" />
-                <StatCard label="Comparaisons"  value="12 480"        helper="sur 30 jours" />
-                <StatCard label="Temps moyen"   value="&lt; 3 s"         helper="recherche → résultat" />
+                <StatCard label="Mise à jour"   value="Temps réel"   helper="Flux synchronisés" />
+                <StatCard label="Comparaisons"  value="Mise à jour continue" helper="données citoyennes consolidées" />
+                <StatCard label="Temps moyen"   value="Rapide"         helper="recherche → résultat" />
                 <StatCard label="UX cible"      value="CLS ≈ 0"       helper="zones réservées" />
               </div>
             </BentoCard>
@@ -744,7 +971,7 @@ export default function HomeV5() {
                     <FlipStatCard value="12"    label="Territoires"       icon={<Globe className="w-5 h-5 text-blue-400" />}         backContent="Guadeloupe, Martinique, Guyane, La Réunion, Mayotte et plus." />
                     <FlipStatCard value={`${stats.products.toLocaleString()}+`} label="Produits comparés" icon={<ShoppingCart className="w-5 h-5 text-emerald-400" />} backContent="Alimentaire, hygiène, entretien — relevés citoyens vérifiés." />
                     <FlipStatCard value={`${stats.scans.toLocaleString()}+`} label="Scans effectués" icon={<Camera className="w-5 h-5 text-violet-400" />} backContent="Codes-barres et tickets OCR analysés par la communauté." />
-                    <FlipStatCard value="~35%"  label="Surcot moyen DOM"  icon={<BarChart2 className="w-5 h-5 text-orange-400" />}   backContent="Par rapport à l'Hexagone — observatoire citoyen mars 2026." />
+                    <FlipStatCard value="Variable"  label="Surcoût moyen DOM"  icon={<BarChart2 className="w-5 h-5 text-orange-400" />}   backContent="Dépend des produits, enseignes et périodes de relevés." />
                   </div>
                 </Suspense>
               </section>
