@@ -22,7 +22,7 @@ function resolveProductionApiBaseUrl(): string {
 export function resolveApiBaseUrl(): string {
   const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL;
   if (typeof configuredBaseUrl === 'string' && configuredBaseUrl.trim().length > 0) {
-    return configuredBaseUrl.trim().replace(/\/$/, '');
+    return configuredBaseUrl.trim().replace(/\/+$/, '');
   }
 
   return import.meta.env.DEV ? DEV_FALLBACK_API_BASE_URL : resolveProductionApiBaseUrl();
