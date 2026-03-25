@@ -212,7 +212,7 @@ export function ImportPreview({
       {/* Detailed Error List */}
       {errors.length > 0 && (
         <details className="mt-4">
-          <summary className="cursor-pointer text-sm font-medium text-white hover:text-white mb-2">
+          <summary className="cursor-pointer text-sm font-medium text-white mb-2">
             Voir la liste détaillée des erreurs ({errors.length})
           </summary>
           <div className="mt-2 space-y-2 max-h-64 overflow-y-auto">
