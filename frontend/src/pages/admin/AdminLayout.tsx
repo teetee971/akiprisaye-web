@@ -41,7 +41,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <button
@@ -56,8 +56,8 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <div
         className={`
-          fixed inset-y-0 left-0 z-50 w-64 transform bg-white/[0.08] backdrop-blur-[14px] 
-          border-r border-white/[0.22] transition-transform duration-300 ease-in-out
+          fixed inset-y-0 left-0 z-50 w-64 transform bg-slate-900/80 backdrop-blur-[14px] 
+          border-r border-white/10 transition-transform duration-300 ease-in-out
           lg:translate-x-0 lg:static lg:inset-0
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
@@ -127,7 +127,7 @@ export default function AdminLayout() {
       {/* Main content */}
       <div className="flex-1 lg:ml-0">
         {/* Top bar */}
-        <header className="bg-white/[0.08] backdrop-blur-[14px] border-b border-white/[0.22]">
+        <header className="bg-slate-900/60 backdrop-blur-[14px] border-b border-white/10">
           <div className="flex items-center justify-between px-4 py-4">
             {/* Mobile menu button */}
             <button
