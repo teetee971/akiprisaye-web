@@ -13,6 +13,9 @@ import type {
   ProductSearchParams, 
   ProductListResponse
 } from '../types/product';
+import type { TerritoryCode } from '../types/extensions';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+
 /**
  * Fetch products from live API.
  */
@@ -45,6 +48,12 @@ async function fetchFromAPI(params: ProductSearchParams): Promise<Product[]> {
     incidentReason: 'products_api_unavailable',
     timeoutMs: 10000,
   });
+  const response = await fetch(`${API_BASE_URL}/products?${query.toString()}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch live products (${response.status})`);
+  }
+
+  const payload = await response.json();
   if (Array.isArray(payload)) return payload as Product[];
   if (Array.isArray(payload?.products)) return payload.products as Product[];
   return [];

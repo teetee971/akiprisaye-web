@@ -78,6 +78,9 @@ export default function AdminDashboard() {
       } catch (overviewError) {
         console.warn('[AdminDashboard] overview endpoint unavailable, fallback multi-source mode', overviewError);
         activateIncidentMode('admin_overview_endpoint_unavailable');
+        return;
+      } catch (overviewError) {
+        console.warn('[AdminDashboard] overview endpoint unavailable, fallback multi-source mode', overviewError);
       }
 
       const [storesRes, productsRes, pendingContribs] = await Promise.all([

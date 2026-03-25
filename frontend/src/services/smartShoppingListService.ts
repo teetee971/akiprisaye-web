@@ -15,6 +15,7 @@ import type {
 
 export class ShoppingListService {
   private readonly STORAGE_KEY = 'shopping_lists';
+  private readonly API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
   /**
    * Create a new shopping list
@@ -100,10 +101,21 @@ export class ShoppingListService {
     } catch (error) {
       console.error('[ShoppingListService] optimizeBudget live endpoint failed', {
         error,
+    const response = await fetch(`${this.API_BASE_URL}/shopping-lists/optimize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ list }),
+    });
+
+    if (!response.ok) {
+      console.error('[ShoppingListService] optimizeBudget live endpoint failed', {
+        status: response.status,
         listId: list.id,
       });
       throw new Error('Optimisation budget indisponible. Réessayez plus tard.');
     }
+
+    return response.json() as Promise<BudgetOptimization>;
   }
 
   /**

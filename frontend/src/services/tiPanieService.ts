@@ -87,6 +87,24 @@ export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBa
     const apiBaskets = Array.isArray(payload?.baskets) ? payload.baskets : [];
     clearIncidentMode();
     return applyFilters(apiBaskets, filters);
+ * Returns real Firestore data only.
+ */
+export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBasket[]> => {
+  try {
+    if (db) {
+      const basketsRef = collection(db, 'ti_panie');
+      const snapshot = await getDocs(basketsRef);
+      const firestoreBaskets: TiPanieBasket[] = snapshot.docs.map((d) => ({
+        id: d.id,
+        ...(d.data() as DocumentData),
+      })) as TiPanieBasket[];
+
+      if (firestoreBaskets.length > 0) {
+        return applyFilters(firestoreBaskets, filters);
+      }
+    }
+
+    return [];
   } catch (error) {
     logError('Error in getBaskets (live API)', error);
     activateIncidentMode('ti_panie_live_api_unavailable');
