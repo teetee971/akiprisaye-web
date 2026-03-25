@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import OptimizedImage from '../components/OptimizedImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
-import { newsFallback } from '../data/newsFallback';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { DEFAULT_NEWS_LIMIT } from '../constants/news';
 
@@ -80,7 +79,7 @@ export default function Actualites() {
   const [impact, setImpact] = useState('');
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [limit, setLimit] = useState(DEFAULT_NEWS_LIMIT);
-  const [state, setState] = useState({ status: 'loading', items: [], mode: 'mock' });
+  const [state, setState] = useState({ status: 'loading', items: [], mode: 'live' });
   const [openEvidence, setOpenEvidence] = useState({});
   const [showFeaturedMedia, setShowFeaturedMedia] = useState(false);
   const [mediaSectionRef, mediaSectionVisible] = useIntersectionObserver({ rootMargin: '200px', threshold: 0.01 });
@@ -111,10 +110,10 @@ export default function Actualites() {
         const payload = await response.json();
         if (!mounted) return;
         const items = Array.isArray(payload.items) ? payload.items : [];
-        setState({ status: 'success', items, mode: payload.mode ?? 'mock' });
+        setState({ status: 'success', items, mode: payload.mode ?? 'live' });
       } catch {
         if (!mounted) return;
-        setState({ status: 'error', items: newsFallback, mode: 'degraded' });
+        setState({ status: 'error', items: [], mode: 'live_error' });
       }
     };
 
@@ -195,7 +194,7 @@ export default function Actualites() {
       </section>
 
       {state.status === 'loading' && <p className="text-sm text-slate-400 px-1">Chargement des actualités...</p>}
-      {state.status === 'error' && <p className="text-sm text-amber-300 px-1">API indisponible : fallback embarqué affiché.</p>}
+      {state.status === 'error' && <p className="text-sm text-amber-300 px-1">API indisponible : aucune donnée live disponible.</p>}
       {displayedItems.length === 0 && state.status !== 'loading' && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}
 
       <section ref={mediaSectionRef} className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur">

@@ -1,4 +1,3 @@
- 
 /**
  * PalmaresEnseignes Component
  * 
@@ -8,6 +7,7 @@
 
 import { useState, useEffect } from 'react';
 import { Card } from './ui/card.jsx';
+import { liveApiFetchJson } from '../services/liveApiClient';
 
 export function PalmaresEnseignes({ territoire = null }) {
   const [rankings, setRankings] = useState([]);
@@ -26,83 +26,14 @@ export function PalmaresEnseignes({ territoire = null }) {
     setLoading(true);
 
     try {
-      // TODO: PRODUCTION IMPLEMENTATION
-      // const db = getFirestore();
-      // const storesRef = collection(db, 'stores');
-      // const pricesRef = collection(db, 'prices');
-      // 
-      // For each store:
-      // 1. Calculate average price across all products
-      // 2. Calculate number of products
-      // 3. Calculate price change trends
-      // 4. Generate ranking score
-      
-      // Mock data
-      const mockRankings = [
-        {
-          id: '1',
-          name: 'Super U Raizet',
-          logo: null,
-          territoire: 'GP',
-          avgPrice: 3.45,
-          productCount: 1250,
-          priceChangePercent: -2.5,
-          score: 85,
-          rank: 1,
-          badge: '🏆 Meilleur rapport qualité-prix',
-        },
-        {
-          id: '2',
-          name: 'Carrefour Destrellan',
-          logo: null,
-          territoire: 'GP',
-          avgPrice: 3.68,
-          productCount: 1850,
-          priceChangePercent: -1.2,
-          score: 82,
-          rank: 2,
-          badge: '🥈 Bon choix',
-        },
-        {
-          id: '3',
-          name: 'Leader Price Gosier',
-          logo: null,
-          territoire: 'GP',
-          avgPrice: 3.25,
-          productCount: 850,
-          priceChangePercent: -3.1,
-          score: 88,
-          rank: 3,
-          badge: '💰 Prix les plus bas',
-        },
-        {
-          id: '4',
-          name: 'Casino Jarry',
-          logo: null,
-          territoire: 'GP',
-          avgPrice: 4.12,
-          productCount: 1450,
-          priceChangePercent: 1.8,
-          score: 68,
-          rank: 4,
-          badge: null,
-        },
-        {
-          id: '5',
-          name: 'Match Baie-Mahault',
-          logo: null,
-          territoire: 'GP',
-          avgPrice: 3.89,
-          productCount: 1150,
-          priceChangePercent: 0.5,
-          score: 73,
-          rank: 5,
-          badge: null,
-        },
-      ];
+      const payload = await liveApiFetchJson(
+        `/rankings/stores?territoire=${encodeURIComponent(territoire || 'GP')}`,
+        { incidentReason: 'store_rankings_api_unavailable', timeoutMs: 10000 },
+      );
+      const apiRankings = Array.isArray(payload?.rankings) ? payload.rankings : [];
 
       // Sort by selected criteria
-      const sorted = [...mockRankings];
+      const sorted = [...apiRankings];
       if (sortBy === 'avgPrice') {
         sorted.sort((a, b) => a.avgPrice - b.avgPrice);
       } else if (sortBy === 'productCount') {

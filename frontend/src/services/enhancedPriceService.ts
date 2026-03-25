@@ -1,4 +1,3 @@
- 
 /**
  * Enhanced Price Service v1.0.0
  * 
@@ -18,65 +17,29 @@ import type {
   EnhancedSearchFilters,
   PriceObservationEnhanced,
 } from '../types/enhancedPrice';
-import { TERRITORY_FILENAMES } from '../config/territoryFilenames';
+import { liveApiFetchJson } from './liveApiClient';
 
 // Cache for loaded territory data
 const territoryDataCache = new Map<string, EnhancedPriceData>();
 
 /**
- * Load territory-specific price data (optimized)
- * Uses split JSON files when available, falls back to full file
+ * Load territory-specific price data from live API.
  */
 async function loadTerritoryData(territory?: string): Promise<EnhancedPriceData> {
-  // If no territory specified or 'ALL', load full file
-  if (!territory || territory === 'ALL') {
-    const response = await fetch(`${import.meta.env.BASE_URL}data/expanded-prices.json`);
-    if (!response.ok) {
-      // Fallback to smaller database
-      const fallbackResponse = await fetch(`${import.meta.env.BASE_URL}data/enhanced-prices.json`);
-      if (!fallbackResponse.ok) {
-        throw new Error('Failed to fetch price data');
-      }
-      return await fallbackResponse.json();
-    }
-    return await response.json();
+  const cacheKey = territory || 'ALL';
+  if (territoryDataCache.has(cacheKey)) {
+    return territoryDataCache.get(cacheKey)!;
   }
 
-  // Check cache first
-  if (territoryDataCache.has(territory)) {
-    return territoryDataCache.get(territory)!;
-  }
-
-  // Try to load territory-specific file
-  const filename = TERRITORY_FILENAMES[territory as keyof typeof TERRITORY_FILENAMES];
-  if (filename) {
-    try {
-      const response = await fetch(`${import.meta.env.BASE_URL}data/territories/${filename}`);
-      if (response.ok) {
-        const data = await response.json();
-        territoryDataCache.set(territory, data);
-        return data;
-      }
-    } catch (error) {
-      console.warn(
-        `Failed to load territory-specific data for ${territory}, falling back to full file.`,
-        `To resolve: Run 'npm run split-prices' to generate territory files, or check file paths.`,
-        error
-      );
-    }
-  }
-
-  // Fallback: load full file and filter
-  const response = await fetch(`${import.meta.env.BASE_URL}data/expanded-prices.json`);
-  if (!response.ok) {
-    const fallbackResponse = await fetch(`${import.meta.env.BASE_URL}data/enhanced-prices.json`);
-    if (!fallbackResponse.ok) {
-      throw new Error('Failed to fetch price data');
-    }
-    return await fallbackResponse.json();
-  }
-  
-  return await response.json();
+  const params = new URLSearchParams();
+  if (territory && territory !== 'ALL') params.set('territory', territory);
+  const query = params.toString();
+  const data = await liveApiFetchJson<EnhancedPriceData>(`/prices/enhanced${query ? `?${query}` : ''}`, {
+    incidentReason: 'enhanced_prices_api_unavailable',
+    timeoutMs: 10000,
+  });
+  territoryDataCache.set(cacheKey, data);
+  return data;
 }
 
 /**
