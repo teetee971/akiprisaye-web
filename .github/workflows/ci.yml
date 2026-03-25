@@ -455,6 +455,6 @@ jobs:
   build-test:
     name: build-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: always()
     steps:
       - run: echo "build-test PR compatibility check ✅"

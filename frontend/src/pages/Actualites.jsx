@@ -194,6 +194,12 @@ export default function Actualites() {
       </section>
 
       {state.status === 'loading' && <p className="text-sm text-slate-400 px-1">Chargement des actualités...</p>}
+      {state.status === 'error' && (
+        <div className="px-1">
+          <p className="text-sm text-amber-300">API indisponible : fallback embarqué affiché.</p>
+          <p className="text-xs text-orange-400">fallback embarqué affiché</p>
+        </div>
+      )}
       {state.status === 'error' && <p className="text-sm text-amber-300 px-1">API indisponible : aucune donnée live disponible.</p>}
       {displayedItems.length === 0 && state.status !== 'loading' && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}
 

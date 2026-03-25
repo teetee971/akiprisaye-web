@@ -27,11 +27,11 @@ function makeHours(
 }
 
 // Use a fixed UTC Date: Wednesday 2026-01-07 at 10:00
-const WED_10H = new Date('2026-01-07T10:00:00.000Z'); // Wednesday
+const WED_10H = new Date(2026, 0, 7, 10, 0, 0); // Wednesday
 // Same day at 20:30 (closed)
-const WED_20H30 = new Date('2026-01-07T20:30:00.000Z');
+const WED_20H30 = new Date(2026, 0, 7, 20, 30, 0);
 // Same day at 19:45 (closing soon)
-const WED_19H45 = new Date('2026-01-07T19:45:00.000Z');
+const WED_19H45 = new Date(2026, 0, 7, 19, 45, 0);
 
 describe('isStoreOpen', () => {
   it('returns unknown when no hours provided', () => {
