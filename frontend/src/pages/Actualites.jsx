@@ -197,7 +197,6 @@ export default function Actualites() {
       {state.status === 'error' && (
         <div className="px-1">
           <p className="text-sm text-amber-300">API indisponible : fallback embarqué affiché.</p>
-          <p className="text-xs text-orange-400">fallback embarqué affiché</p>
         </div>
       )}
       {state.status === 'error' && <p className="text-sm text-amber-300 px-1">API indisponible : aucune donnée live disponible.</p>}
