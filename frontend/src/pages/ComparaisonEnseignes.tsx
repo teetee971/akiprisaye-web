@@ -15,7 +15,12 @@ import DataReliabilityBadge from '../components/DataReliabilityBadge'
 import LocalHistoryPanel from '../components/LocalHistoryPanel'
 import PriceVariationAlert from '../components/PriceVariationAlert'
 import SignalementCitoyenModal from '../components/SignalementCitoyenModal'
-import TerritoryAdvancedFilter, { type TerritoryFilters } from '../components/TerritoryAdvancedFilter'
+import TerritoryAdvancedFilter, {
+  type TerritoryFilters,
+  type Territory,
+  type ZoneType,
+  type DataCategory,
+} from '../components/TerritoryAdvancedFilter'
 import { useLocalHistory } from '../hooks/useLocalHistory'
 import { priceObservationService } from '../services/priceObservationService'
 import {
@@ -301,14 +306,14 @@ export default function ComparaisonEnseignes() {
     if (zone || category) {
       setTerritoryFilters((current) => ({
         ...current,
-        territory: advancedTerritory ?? current.territory,
-        zone: zone ?? current.zone,
-        category: category ?? current.category,
+        territory: (advancedTerritory as Territory) ?? current.territory,
+        zone: (zone as ZoneType) ?? current.zone,
+        category: (category as DataCategory) ?? current.category,
       }))
     } else if (advancedTerritory) {
       setTerritoryFilters((current) => ({
         ...current,
-        territory: advancedTerritory,
+        territory: advancedTerritory as Territory,
       }))
     }
   }, [])
