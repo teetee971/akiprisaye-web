@@ -152,6 +152,10 @@ export function CsvUploader({
           isDragging
             ? 'border-blue-400 bg-blue-500/10'
             : 'border-white/35 hover:border-white/40 hover:bg-white/20',
+          'bg-white/70 backdrop-blur-sm',
+          isDragging
+            ? 'border-blue-400 bg-blue-500/10'
+            : 'border-slate-300 hover:border-slate-400 hover:bg-white',
           isLoading && 'opacity-50 cursor-not-allowed'
         )}
       >
@@ -172,6 +176,11 @@ export function CsvUploader({
             <Upload className={cn(
               'w-12 h-12 transition-colors',
               isDragging ? 'text-blue-400' : 'text-white/95'
+            isDragging ? 'bg-blue-500/20' : 'bg-slate-100'
+          )}>
+            <Upload className={cn(
+              'w-12 h-12 transition-colors',
+              isDragging ? 'text-blue-500' : 'text-slate-500'
             )} />
           </div>
 
@@ -180,11 +189,15 @@ export function CsvUploader({
               {isDragging ? 'Déposez le fichier ici' : 'Glissez-déposez votre fichier'}
             </p>
             <p className="text-sm text-white/95">
+            <p className="mb-1 text-lg font-medium text-slate-900">
+              {isDragging ? 'Déposez le fichier ici' : 'Glissez-déposez votre fichier'}
+            </p>
+            <p className="text-sm text-slate-600">
               ou cliquez pour parcourir
             </p>
           </div>
 
-          <div className="text-xs text-white/50 text-center">
+          <div className="text-center text-xs text-slate-500">
             <p>Formats acceptés: {acceptedTypes.join(', ')}</p>
             <p>Taille maximale: {maxSize}MB</p>
           </div>
@@ -203,6 +216,7 @@ export function CsvUploader({
       {/* Selected File Info */}
       {selectedFile && !isLoading && (
         <div className="flex items-center justify-between p-4 bg-white/15 backdrop-blur-sm border border-white/35 rounded-lg">
+        <div className="flex items-center justify-between rounded-lg border border-slate-300 bg-white p-4 backdrop-blur-sm">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-green-500/20 rounded-lg">
               <FileSpreadsheet className="w-5 h-5 text-green-400" />
@@ -210,6 +224,8 @@ export function CsvUploader({
             <div>
               <p className="text-sm font-medium text-white">{selectedFile.name}</p>
               <p className="text-xs text-white/95">
+              <p className="text-sm font-medium text-slate-900">{selectedFile.name}</p>
+              <p className="text-xs text-slate-600">
                 {(selectedFile.size / 1024).toFixed(1)} KB
               </p>
             </div>
@@ -220,6 +236,10 @@ export function CsvUploader({
             aria-label="Supprimer le fichier"
           >
             <X className="w-5 h-5 text-white/95 hover:text-white" />
+            className="rounded-lg p-2 transition-colors hover:bg-slate-100"
+            aria-label="Supprimer le fichier"
+          >
+            <X className="h-5 w-5 text-slate-500 hover:text-slate-900" />
           </button>
         </div>
       )}

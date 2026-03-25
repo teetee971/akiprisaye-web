@@ -15,7 +15,6 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { GlassCard } from '@/components/ui/glass-card';
 import { cn } from '@/lib/utils';
 import { CsvUploader } from './CsvUploader';
 import { ImportPreview } from './ImportPreview';
@@ -259,6 +258,7 @@ export function ImportPage() {
   }, [handleReset]);
 
   const canImport = csvData.length > 0 && validCount > 0;
+  const panelClassName = 'rounded-2xl border border-slate-200 bg-white p-4 shadow-sm';
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -268,6 +268,10 @@ export function ImportPage() {
           Import CSV
         </h1>
         <p className="text-white/95">
+        <h1 className="mb-2 text-3xl font-bold text-slate-900">
+          Import CSV
+        </h1>
+        <p className="text-slate-600">
           Importez vos données d'enseignes, produits ou prix depuis des fichiers CSV
         </p>
       </div>
@@ -287,6 +291,8 @@ export function ImportPage() {
                 isActive
                   ? 'bg-white/20 text-white border-2 border-white/40'
                   : 'bg-white/15 text-white border border-white/35 hover:bg-white/20 hover:text-white'
+                  ? 'border-2 border-blue-500/60 bg-blue-100 text-blue-800'
+                  : 'border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900'
               )}
             >
               <Icon className="w-5 h-5" />
@@ -300,7 +306,7 @@ export function ImportPage() {
       <div className="space-y-6">
         {/* Instructions */}
         {step === 'upload' && (
-          <GlassCard>
+          <section className={panelClassName}>
             <div className="flex items-start space-x-3 mb-4">
               <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-1" />
               <div className="flex-1">
@@ -310,6 +316,12 @@ export function ImportPage() {
                 <ul className="space-y-1 text-sm text-white">
                   {currentTab.instructions.map((instruction, index) => (
                     <li key={instruction} className={index === 0 ? 'font-medium text-white/95' : ''}>
+                <h3 className="mb-2 text-lg font-semibold text-slate-900">
+                  Instructions d'import
+                </h3>
+                <ul className="space-y-1 text-sm text-slate-700">
+                  {currentTab.instructions.map((instruction, index) => (
+                    <li key={instruction} className={index === 0 ? 'font-medium text-slate-800' : ''}>
                       {instruction}
                     </li>
                   ))}
@@ -322,18 +334,24 @@ export function ImportPage() {
               <button
                 onClick={handleDownloadTemplate}
                 className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/25 border border-white/30 text-white rounded-lg transition-colors"
+            <div className="mt-4 border-t border-slate-200 pt-4">
+              <button
+                onClick={handleDownloadTemplate}
+                className="flex items-center space-x-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-slate-700 transition-colors hover:bg-slate-100"
               >
                 <Download className="w-4 h-4" />
                 <span>Télécharger le modèle CSV</span>
               </button>
             </div>
-          </GlassCard>
+          </section>
         )}
 
         {/* Upload */}
         {step === 'upload' && (
+          <section className={panelClassName}>
           <GlassCard>
             <h3 className="text-lg font-semibold text-white mb-4">
+            <h3 className="mb-4 text-lg font-semibold text-slate-900">
               Sélectionner un fichier
             </h3>
             <CsvUploader
@@ -342,14 +360,16 @@ export function ImportPage() {
               acceptedTypes={['.csv']}
               maxSize={50}
             />
-          </GlassCard>
+          </section>
         )}
 
         {/* Preview */}
         {step === 'preview' && (
           <>
+            <section className={panelClassName}>
             <GlassCard>
               <h3 className="text-lg font-semibold text-white mb-4">
+              <h3 className="mb-4 text-lg font-semibold text-slate-900">
                 Aperçu des données
               </h3>
               <ImportPreview
@@ -360,13 +380,14 @@ export function ImportPage() {
                   setErrorCount(errors);
                 }}
               />
-            </GlassCard>
+            </section>
 
             {/* Import Actions */}
             <div className="flex items-center justify-between">
               <button
                 onClick={handleReset}
                 className="px-6 py-3 bg-white/15 hover:bg-white/20 border border-white/35 text-white rounded-lg transition-colors"
+                className="rounded-lg border border-slate-300 bg-white px-6 py-3 text-slate-700 transition-colors hover:bg-slate-100"
               >
                 Annuler
               </button>
@@ -378,6 +399,7 @@ export function ImportPage() {
                   canImport
                     ? 'bg-blue-600 hover:bg-blue-700 text-white'
                     : 'bg-white/20 text-white/40 cursor-not-allowed'
+                    : 'cursor-not-allowed bg-slate-200 text-slate-400'
                 )}
               >
                 <Upload className="w-5 h-5" />
@@ -392,7 +414,7 @@ export function ImportPage() {
 
         {/* Importing */}
         {step === 'importing' && (
-          <GlassCard>
+          <section className={panelClassName}>
             <div className="text-center py-8">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/20 mb-4">
                 <div className="w-8 h-8 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin" />
@@ -409,6 +431,18 @@ export function ImportPage() {
                   <span>{importProgress}%</span>
                 </div>
                 <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+              <h3 className="mb-2 text-xl font-semibold text-slate-900">
+                Import en cours...
+              </h3>
+              <p className="mb-4 text-slate-600">
+                Veuillez patienter pendant l'import des données
+              </p>
+              <div className="max-w-md mx-auto">
+                <div className="mb-2 flex items-center justify-between text-sm text-slate-700">
+                  <span>Progression</span>
+                  <span>{importProgress}%</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-slate-200">
                   <div
                     className="h-full bg-blue-500 transition-all duration-300 rounded-full"
                     style={{ width: `${importProgress}%` }}
@@ -416,7 +450,7 @@ export function ImportPage() {
                 </div>
               </div>
             </div>
-          </GlassCard>
+          </section>
         )}
 
         {/* Results */}
