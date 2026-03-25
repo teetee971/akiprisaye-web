@@ -142,7 +142,7 @@ export default function AdminDashboard() {
       {/* Recent Activity */}
       <GlassCard>
         <div className="p-4 border-b border-white/10">
-          <h2 className="text-xl font-semibold text-slate-900">
+          <h2 className="text-xl font-semibold text-slate-100">
             Dernières modifications
           </h2>
         </div>
