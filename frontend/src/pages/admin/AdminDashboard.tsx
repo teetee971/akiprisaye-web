@@ -149,7 +149,7 @@ export default function AdminDashboard() {
         <div className="p-4">
           <div className="space-y-4">
             {recentActivity.length === 0 ? (
-              <p className="text-slate-600 text-center py-8">
+              <p className="text-slate-400 text-center py-8">
                 Aucune activité récente
               </p>
             ) : (
