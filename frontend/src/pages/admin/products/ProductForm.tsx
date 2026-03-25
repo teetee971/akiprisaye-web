@@ -441,6 +441,14 @@ export function ProductForm() {
                 onChange={handleCameraCapture}
               />
             </div>
+            <input
+              
+              id="pf-image-url"
+              type="url"
+              {...register('imageUrl')}
+              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="https://example.com/image.jpg"
+            />
             {errors.imageUrl && (
               <p className="mt-1 text-sm text-red-400">{errors.imageUrl.message}</p>
             )}

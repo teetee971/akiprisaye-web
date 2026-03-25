@@ -90,6 +90,7 @@ export default function AdminDashboard() {
       const products = productsRes.products || [];
       const priceContribs = (pendingContribs || []).filter((c) => c.type === 'price');
 
+      // Mock data for now - replace with actual API calls
       setStats({
         storesCount: storesRes.total ?? stores.length,
         productsCount: productsRes.total ?? products.length,
@@ -263,6 +264,10 @@ export default function AdminDashboard() {
       { store: 0, product: 0, price: 0 }
     );
   }, [filteredActivities]);
+  const filteredActivities = useMemo(
+    () => recentActivity.filter((activity) => activityFilter === 'all' || activity.type === activityFilter),
+    [recentActivity, activityFilter]
+  );
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -334,6 +339,13 @@ export default function AdminDashboard() {
                 </span>
               </div>
             </Link>
+            <div
+              key={alert.id}
+              className={`rounded-xl border px-3 py-2 text-sm ${alert.tone}`}
+            >
+              <p className="font-semibold">{alert.level}</p>
+              <p className="opacity-95">{alert.message}</p>
+            </div>
           ))}
         </div>
       </GlassCard>
@@ -362,6 +374,7 @@ export default function AdminDashboard() {
       <GlassCard>
         <div className="p-4 border-b border-white/10">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xl font-semibold text-slate-100">
               Dernières modifications
             </h2>
@@ -428,6 +441,7 @@ export default function AdminDashboard() {
             ) : (
               filteredActivities.map((activity) => (
                 <Link
+                <div
                   key={activity.id}
                   to={activity.route}
                   className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors"
@@ -443,6 +457,10 @@ export default function AdminDashboard() {
                   </div>
                   <p className="text-sm text-slate-300 tabular-nums">{activity.timestampLabel}</p>
                 </Link>
+                    <p className="text-slate-100">{activity.action}</p>
+                  </div>
+                  <p className="text-sm text-slate-300 tabular-nums">{activity.timestamp}</p>
+                </div>
               ))
             )}
           </div>
@@ -490,6 +508,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-24 sm:pb-0">
         <GlassCard>
           <Link to="/admin/stores" className="block text-center p-6">
+          <div className="text-center p-6">
             <Store className="w-12 h-12 mx-auto mb-4 text-slate-100" />
             <h3 className="text-lg font-semibold text-slate-100 mb-2">
               Gérer les enseignes
@@ -505,6 +524,7 @@ export default function AdminDashboard() {
 
         <GlassCard>
           <Link to="/admin/products" className="block text-center p-6">
+          <div className="text-center p-6">
             <Package className="w-12 h-12 mx-auto mb-4 text-slate-100" />
             <h3 className="text-lg font-semibold text-slate-100 mb-2">
               Gérer les articles
@@ -520,6 +540,7 @@ export default function AdminDashboard() {
 
         <GlassCard>
           <Link to="/admin/import" className="block text-center p-6">
+          <div className="text-center p-6">
             <Package className="w-12 h-12 mx-auto mb-4 text-slate-100" />
             <h3 className="text-lg font-semibold text-slate-100 mb-2">
               Import en masse
@@ -549,6 +570,18 @@ export default function AdminDashboard() {
           >
             Importer
           </Link>
+          <a
+            href="#/admin/products/new"
+            className="text-center px-3 py-2 rounded-lg bg-fuchsia-500 hover:bg-fuchsia-600 text-white text-sm font-medium transition-colors"
+          >
+            Ajouter un prix
+          </a>
+          <a
+            href="#/admin/import"
+            className="text-center px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-colors"
+          >
+            Importer
+          </a>
         </div>
       </div>
     </div>
