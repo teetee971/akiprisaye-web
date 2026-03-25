@@ -184,7 +184,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
       <div className="flex items-center justify-center pt-4">
         <button
           onClick={onReset}
-          className="flex items-center space-x-2 px-6 py-3 bg-white/20 hover:bg-white/20 border border-white/30 text-white font-medium rounded-lg transition-colors"
+          className="flex items-center space-x-2 px-6 py-3 bg-white/20 hover:bg-white/25 border border-white/30 text-white font-medium rounded-lg transition-colors"
         >
           <RefreshCw className="w-5 h-5" />
           <span>Importer un autre fichier</span>
