@@ -1,10 +1,10 @@
- 
 /**
  * Shopping List Service
  * Manages shopping lists and budget optimization
  */
 
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { liveApiFetchJson } from './liveApiClient';
 import type { 
   ShoppingList, 
   ShoppingListItem, 
@@ -15,6 +15,7 @@ import type {
 
 export class ShoppingListService {
   private readonly STORAGE_KEY = 'shopping_lists';
+  private readonly API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
   /**
    * Create a new shopping list
@@ -89,65 +90,60 @@ export class ShoppingListService {
    * Optimize budget for shopping list
    */
   async optimizeBudget(list: ShoppingList): Promise<BudgetOptimization> {
-    // TODO: Implement real optimization algorithm
-    // For now, return mock optimization
-    
-    const mockStores: StoreAllocation[] = [
-      {
-        storeId: 'store-1',
-        storeName: 'Carrefour Jarry',
-        items: list.items.slice(0, 2).map(item => ({
-          ean: item.productEAN,
-          name: item.productName,
-          price: 2.50,
-          quantity: item.quantity
-        })),
-        subtotal: 5.00
-      },
-      {
-        storeId: 'store-2',
-        storeName: 'E.Leclerc',
-        items: list.items.slice(2).map(item => ({
-          ean: item.productEAN,
-          name: item.productName,
-          price: 3.00,
-          quantity: item.quantity
-        })),
-        subtotal: 6.00
-      }
-    ];
-    
-    const currentTotal = mockStores.reduce((sum, s) => sum + s.subtotal, 0);
-    
-    return {
-      totalBudget: 15.00,
-      currentTotal,
-      savings: 15.00 - currentTotal,
-      stores: mockStores,
-      route: ['store-1', 'store-2'],
-      estimatedTime: 45,
-      estimatedDistance: 5.2
-    };
+    try {
+      return await liveApiFetchJson<BudgetOptimization>('/shopping-lists/optimize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ list }),
+        incidentReason: 'shopping_optimize_api_unavailable',
+        timeoutMs: 10000,
+      });
+    } catch (error) {
+      console.error('[ShoppingListService] optimizeBudget live endpoint failed', {
+        error,
+    const response = await fetch(`${this.API_BASE_URL}/shopping-lists/optimize`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ list }),
+    });
+
+    if (!response.ok) {
+      console.error('[ShoppingListService] optimizeBudget live endpoint failed', {
+        status: response.status,
+        listId: list.id,
+      });
+      throw new Error('Optimisation budget indisponible. Réessayez plus tard.');
+    }
+
+    return response.json() as Promise<BudgetOptimization>;
   }
 
   /**
    * Calculate optimal route using TSP approximation
    */
-  calculateOptimalRoute(
-    storeIds: string[], 
+  async calculateOptimalRoute(
+    storeIds: string[],
     userLocation?: Coordinates
-  ): string[] {
-    // TODO: Implement nearest neighbor TSP algorithm
-    // For now, return stores as-is
-    return storeIds;
+  ): Promise<string[]> {
+    const payload = await liveApiFetchJson<{ route?: string[] }>('/shopping-lists/route', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ storeIds, userLocation }),
+      incidentReason: 'shopping_route_api_unavailable',
+      timeoutMs: 10000,
+    });
+    return Array.isArray(payload?.route) ? payload.route : storeIds;
   }
 
   /**
    * Get similar/cheaper products
    */
   async getSimilarProducts(ean: string): Promise<any[]> {
-    // TODO: Implement product similarity search
-    return [];
+    const payload = await liveApiFetchJson<{ items?: any[] }>(`/products/${encodeURIComponent(ean)}/similar`, {
+      incidentReason: 'similar_products_api_unavailable',
+      timeoutMs: 10000,
+    });
+    return Array.isArray(payload?.items) ? payload.items : [];
   }
 
   /**

@@ -16,14 +16,14 @@
  * Features:
  *   - Unique H1 per product × territory combination
  *   - 2–3 territory-specific paragraphs (local prices, local retailers)
- *   - Comparative price table (deterministic mock, replace with API hook)
+ *   - Comparative price table (live API only)
  *   - "Top deals du jour" block (TopDealsSection)
  *   - Schema.org Product + AggregateOffer JSON-LD
  *   - Sticky mobile CTA
  *   - trackEvent('page_view') on mount
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SEOHead }           from '../components/ui/SEOHead';
 import { formatEur }         from '../utils/currency';
@@ -45,6 +45,7 @@ import TopDealsSection        from '../components/ui/TopDealsSection';
 import { trackEvent }         from '../utils/eventTracker';
 import { useEffect }          from 'react';
 import type { Deal }          from '../modules/topDealsEngine';
+import { liveApiFetchJson } from '../services/liveApiClient';
 
 // ── Price coefficients per territory ─────────────────────────────────────────
 
@@ -72,26 +73,7 @@ const LOCAL_ENSEIGNE_NOTES: Record<string, string> = {
   YT: 'À Mayotte, l\'offre commerciale est plus limitée. Carrefour reste la référence principale pour la grande distribution.',
 };
 
-// ── Mock price generator (deterministic, territory-adjusted) ─────────────────
-
-function getMockPrices(productSlug: string, territory: string) {
-  const coeff = PRICE_COEFFICIENTS[territory] ?? 1.15;
-  const base  = charSum(productSlug) % 3 + 1.5; // deterministic 1.5–4.5 €
-
-  const retailers = LOCAL_RETAILERS[territory] ?? ['Carrefour', 'E.Leclerc', 'Super U'];
-
-  return retailers.slice(0, 4).map((retailer, i) => {
-    const variance = (charSum(retailer + productSlug + i) % 40) / 100; // 0–0.40
-    const price    = parseFloat((base * coeff * (1 + variance * 0.3)).toFixed(2));
-    return { retailer, price, isBest: false };
-  }).sort((a, b) => a.price - b.price).map((r, i) => ({ ...r, isBest: i === 0 }));
-}
-
-function charSum(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) & 0x7fffffff;
-  return h;
-}
+type RetailerPrice = { retailer: string; price: number; isBest?: boolean };
 
 // ── Slug parser: "coca-cola-guadeloupe" → { product, territory } ─────────────
 
@@ -126,29 +108,20 @@ function sanitizeJsonLdString(value: string): string {
 // ── Seed deals for TopDealsSection (same territory) ──────────────────────────
 
 function makeSeedDeals(productSlug: string, territory: string): Deal[] {
-  const prices = getMockPrices(productSlug, territory);
-  const delta  = +(prices[prices.length - 1].price - prices[0].price).toFixed(2);
-  return [{
-    name:        humanise(productSlug),
-    delta,
-    score:       70,
-    bestPrice:   prices[0].price,
-    bestRetailer: prices[0].retailer,
-    territory:   territory.toLowerCase(),
-    slug:        productSlug + '-' + territory.toLowerCase(),
-  }];
+  return [];
 }
 
 // ── Page component ────────────────────────────────────────────────────────────
 
 export default function SEOComparateurSlugPage() {
   const { slug = '' } = useParams<{ slug: string }>();
+  const [livePrices, setLivePrices] = useState<RetailerPrice[]>([]);
 
   const { productSlug, territory, territoryName } = useMemo(() => parseSlug(slug), [slug]);
   const productName = humanise(productSlug);
-  const prices      = useMemo(() => getMockPrices(productSlug, territory), [productSlug, territory]);
-  const bestPrice   = prices[0];
-  const worstPrice  = prices[prices.length - 1];
+  const prices = livePrices;
+  const bestPrice   = prices[0] ?? { retailer: 'N/A', price: 0 };
+  const worstPrice  = prices[prices.length - 1] ?? bestPrice;
   const saving      = +(worstPrice.price - bestPrice.price).toFixed(2);
 
   const angle  = getPageAngle(slug);
@@ -163,6 +136,39 @@ export default function SEOComparateurSlugPage() {
   useEffect(() => {
     trackEvent('page_view', { page: `/comparateur/${slug}`, product: productName });
   }, [slug, productName]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadLivePrices = async () => {
+      try {
+        const payload = await liveApiFetchJson<{ prices?: Array<{ retailer: string; price: number }> }>(
+          `/comparateur/${encodeURIComponent(slug)}/prices`,
+          {
+            incidentReason: 'seo_comparator_api_unavailable',
+            timeoutMs: 8000,
+          },
+        );
+        const rows = Array.isArray(payload?.prices) ? payload.prices : [];
+        const normalized = rows
+          .filter((row) => typeof row?.retailer === 'string' && typeof row?.price === 'number')
+          .sort((a, b) => a.price - b.price)
+          .map((row, index) => ({ ...row, isBest: index === 0 }));
+
+        if (!cancelled) {
+          setLivePrices(normalized);
+        }
+      } catch {
+        if (!cancelled) setLivePrices([]);
+      }
+    };
+
+    if (!slug) return undefined;
+    void loadLivePrices();
+    return () => {
+      cancelled = true;
+    };
+  }, [slug]);
 
   // JSON-LD
   const jsonLd = JSON.stringify({

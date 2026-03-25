@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useEffect } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './layout/Header';
 import FabActions from './ui/FabActions';
@@ -8,6 +8,8 @@ import PrivacyConsentBanner from './PrivacyConsentBanner';
 import { hydrateShoppingList } from '../store/useShoppingListStore';
 import { usePriceAlertEvaluator } from '../hooks/usePriceAlertEvaluator';
 import { usePrivacyConsent } from '../hooks/usePrivacyConsent';
+import { getIncidentReason, onIncidentModeChange } from '../services/incidentMode';
+import { checkLiveApiHealth } from '../services/liveApiHealthService';
 
 // Below-the-fold / non-critical — lazy-loaded to reduce critical-path JS
 // Footer: ~20 KB lucide-react icons + layout, not needed for first paint
@@ -65,14 +67,49 @@ function HashScrollManager() {
 }
 
 export default function Layout() {
+  const [incidentReason, setIncidentReason] = useState(getIncidentReason());
+  const [incidentDismissed, setIncidentDismissed] = useState(false);
+
   useEffect(() => {
     hydrateShoppingList();
+  }, []);
+
+  useEffect(
+    () =>
+      onIncidentModeChange(() => {
+        const reason = getIncidentReason();
+        setIncidentReason(reason);
+        setIncidentDismissed(false);
+      }),
+    []
+  );
+
+  useEffect(() => {
+    void checkLiveApiHealth();
+    const interval = window.setInterval(() => {
+      void checkLiveApiHealth();
+    }, 60_000);
+    return () => window.clearInterval(interval);
   }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-[rgb(var(--bg-main))] text-[rgb(var(--text-main))]">
       <SkipLinks />
       <Header />
+      {incidentReason && !incidentDismissed && (
+        <div className="mx-auto mt-2 w-full max-w-6xl rounded-lg border border-amber-400/40 bg-amber-500/20 px-4 py-2 text-sm text-amber-100">
+          <div className="flex items-center justify-between gap-3">
+            <span>Mode incident actif: certains services live sont indisponibles ({incidentReason}).</span>
+            <button
+              type="button"
+              onClick={() => setIncidentDismissed(true)}
+              className="rounded border border-amber-200/40 px-2 py-1 text-xs hover:bg-amber-500/20"
+            >
+              Masquer
+            </button>
+          </div>
+        </div>
+      )}
       <AlertEvaluatorSideEffect />
       <HashScrollManager />
       <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-2 md:pb-4">
