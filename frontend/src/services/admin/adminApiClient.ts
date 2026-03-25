@@ -1,6 +1,8 @@
 import { auth } from '@/lib/firebase';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+import { resolveApiBaseUrl } from '../apiBaseUrl';
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 export async function getAdminAuthToken(): Promise<string> {
   const firebaseUser = auth?.currentUser;

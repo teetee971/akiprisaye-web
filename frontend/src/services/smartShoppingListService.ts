@@ -5,6 +5,7 @@
 
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { liveApiFetchJson } from './liveApiClient';
+import { resolveApiBaseUrl } from './apiBaseUrl';
 import type { 
   ShoppingList, 
   ShoppingListItem, 
@@ -15,7 +16,7 @@ import type {
 
 export class ShoppingListService {
   private readonly STORAGE_KEY = 'shopping_lists';
-  private readonly API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+  private readonly API_BASE_URL = resolveApiBaseUrl();
 
   /**
    * Create a new shopping list

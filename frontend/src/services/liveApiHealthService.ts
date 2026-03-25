@@ -1,6 +1,8 @@
 import { activateIncidentMode, clearIncidentMode } from './incidentMode';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+import { resolveApiBaseUrl } from './apiBaseUrl';
+
+const API_BASE_URL = resolveApiBaseUrl();
 
 export async function checkLiveApiHealth(): Promise<boolean> {
   const controller = new AbortController();
