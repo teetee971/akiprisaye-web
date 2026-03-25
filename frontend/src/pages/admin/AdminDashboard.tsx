@@ -130,8 +130,8 @@ export default function AdminDashboard() {
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
-                  <p className="text-sm text-slate-600">{stat.name}</p>
+                  <p className="text-3xl font-bold text-slate-100">{stat.value}</p>
+                  <p className="text-sm text-slate-300">{stat.name}</p>
                 </div>
               </div>
             </GlassCard>
