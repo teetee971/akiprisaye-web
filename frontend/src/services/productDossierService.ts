@@ -1,4 +1,3 @@
- 
 /**
  * Product Dossier Service - v1.6.0
  * 
@@ -9,6 +8,7 @@
  */
 
 import { safeLocalStorage } from '../utils/safeLocalStorage';
+import { liveApiFetchJson } from './liveApiClient';
 import type {
   ProductDossier,
   ProductDossierRequest,
@@ -218,17 +218,21 @@ export async function calculateCategoryComparison(
   additiveCount: number,
   territory?: TerritoryCode
 ): Promise<CategoryComparisonInsight | undefined> {
-  // In production, would query database for category statistics
-  // For now, return mock data for demonstration
-  
-  // This would typically:
-  // 1. Query all products in same category
-  // 2. Filter by territory if specified
-  // 3. Calculate statistics (min, max, mean, median, stdDev)
-  // 4. Determine percentiles for this product
-  // 5. Classify positioning (below/average/above)
-  
-  return undefined; // Stub for now
+  try {
+    const payload = await liveApiFetchJson<{ comparison?: CategoryComparisonInsight }>(
+      `/products/${encodeURIComponent(ean)}/category-comparison`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, nutrition, additiveCount, territory }),
+        incidentReason: 'category_comparison_api_unavailable',
+        timeoutMs: 10000,
+      },
+    );
+    return payload?.comparison;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
