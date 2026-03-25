@@ -53,7 +53,11 @@ export default function AdminDashboard() {
     loadDashboardData(true);
   }, []);
 
-  const loadDashboardData = async (withPageLoader = false) => {
+  const loadDashboardData = async (withPageLoader = false): Promise<void> => {
+    if (withPageLoader) {
+      setLoading(true);
+    }
+
     try {
       if (withPageLoader) setLoading(true);
       try {
