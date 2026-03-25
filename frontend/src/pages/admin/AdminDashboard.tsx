@@ -111,10 +111,10 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">
+        <h1 className="text-3xl font-bold text-slate-100 mb-2">
           Tableau de bord
         </h1>
-        <p className="text-white/70">
+        <p className="text-slate-300">
           Vue d'ensemble de la plateforme A KI PRI SA YÉ
         </p>
       </div>
@@ -130,8 +130,8 @@ export default function AdminDashboard() {
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-3xl font-bold text-white">{stat.value}</p>
-                  <p className="text-sm text-white/70">{stat.name}</p>
+                  <p className="text-3xl font-bold text-slate-100">{stat.value}</p>
+                  <p className="text-sm text-slate-300">{stat.name}</p>
                 </div>
               </div>
             </GlassCard>
@@ -142,14 +142,14 @@ export default function AdminDashboard() {
       {/* Recent Activity */}
       <GlassCard>
         <div className="p-4 border-b border-white/10">
-          <h2 className="text-xl font-semibold text-white">
+          <h2 className="text-xl font-semibold text-slate-100">
             Dernières modifications
           </h2>
         </div>
         <div className="p-4">
           <div className="space-y-4">
             {recentActivity.length === 0 ? (
-              <p className="text-white/70 text-center py-8">
+              <p className="text-slate-400 text-center py-8">
                 Aucune activité récente
               </p>
             ) : (
@@ -160,9 +160,9 @@ export default function AdminDashboard() {
                 >
                   <div className="w-2 h-2 rounded-full bg-blue-500" />
                   <div className="flex-1">
-                    <p className="text-white">{activity.action}</p>
+                    <p className="text-slate-900">{activity.action}</p>
                   </div>
-                  <p className="text-sm text-white/70">{activity.timestamp}</p>
+                  <p className="text-sm text-slate-500">{activity.timestamp}</p>
                 </div>
               ))
             )}
@@ -174,11 +174,11 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <GlassCard>
           <div className="text-center p-6">
-            <Store className="w-12 h-12 mx-auto mb-4 text-white" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <Store className="w-12 h-12 mx-auto mb-4 text-slate-900" />
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
               Gérer les enseignes
             </h3>
-            <p className="text-sm text-white/70 mb-4">
+            <p className="text-sm text-slate-600 mb-4">
               Ajouter, modifier ou supprimer des magasins
             </p>
             <a
@@ -192,11 +192,11 @@ export default function AdminDashboard() {
 
         <GlassCard>
           <div className="text-center p-6">
-            <Package className="w-12 h-12 mx-auto mb-4 text-white" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <Package className="w-12 h-12 mx-auto mb-4 text-slate-900" />
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
               Gérer les articles
             </h3>
-            <p className="text-sm text-white/70 mb-4">
+            <p className="text-sm text-slate-600 mb-4">
               Ajouter, modifier ou supprimer des produits
             </p>
             <a
@@ -210,11 +210,11 @@ export default function AdminDashboard() {
 
         <GlassCard>
           <div className="text-center p-6">
-            <Package className="w-12 h-12 mx-auto mb-4 text-white" />
-            <h3 className="text-lg font-semibold text-white mb-2">
+            <Package className="w-12 h-12 mx-auto mb-4 text-slate-900" />
+            <h3 className="text-lg font-semibold text-slate-900 mb-2">
               Import en masse
             </h3>
-            <p className="text-sm text-white/70 mb-4">
+            <p className="text-sm text-slate-600 mb-4">
               Importer des données via CSV ou Excel
             </p>
             <a
