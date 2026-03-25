@@ -346,18 +346,18 @@ export default function AdminDashboard() {
       {/* Mobile sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 z-40 p-3 bg-slate-950/90 backdrop-blur-md border-t border-white/10 sm:hidden">
         <div className="grid grid-cols-2 gap-2">
-          <a
-            href="#/admin/products/new"
+          <Link
+            to="/admin/products/new"
             className="text-center px-3 py-2 rounded-lg bg-fuchsia-500 hover:bg-fuchsia-600 text-white text-sm font-medium transition-colors"
           >
             Ajouter un prix
-          </a>
-          <a
-            href="#/admin/import"
+          </Link>
+          <Link
+            to="/admin/import"
             className="text-center px-3 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium transition-colors"
           >
             Importer
-          </a>
+          </Link>
         </div>
       </div>
     </div>
