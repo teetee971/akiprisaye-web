@@ -264,10 +264,10 @@ export function ImportPage() {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white/90 mb-2">
+        <h1 className="text-3xl font-bold text-white mb-2">
           Import CSV
         </h1>
-        <p className="text-white/60">
+        <p className="text-white/95">
           Importez vos données d'enseignes, produits ou prix depuis des fichiers CSV
         </p>
       </div>
@@ -286,7 +286,7 @@ export function ImportPage() {
                 'flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all whitespace-nowrap',
                 isActive
                   ? 'bg-white/20 text-white border-2 border-white/40'
-                  : 'bg-white/5 text-white/70 border border-white/20 hover:bg-white/10 hover:text-white/90'
+                  : 'bg-white/15 text-white border border-white/35 hover:bg-white/20 hover:text-white'
               )}
             >
               <Icon className="w-5 h-5" />
@@ -304,12 +304,12 @@ export function ImportPage() {
             <div className="flex items-start space-x-3 mb-4">
               <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-1" />
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white/90 mb-2">
+                <h3 className="text-lg font-semibold text-white mb-2">
                   Instructions d'import
                 </h3>
-                <ul className="space-y-1 text-sm text-white/70">
+                <ul className="space-y-1 text-sm text-white">
                   {currentTab.instructions.map((instruction, index) => (
-                    <li key={instruction} className={index === 0 ? 'font-medium text-white/80' : ''}>
+                    <li key={instruction} className={index === 0 ? 'font-medium text-white/95' : ''}>
                       {instruction}
                     </li>
                   ))}
@@ -318,10 +318,10 @@ export function ImportPage() {
             </div>
 
             {/* Download Template Button */}
-            <div className="mt-4 pt-4 border-t border-white/20">
+            <div className="mt-4 pt-4 border-t border-white/35">
               <button
                 onClick={handleDownloadTemplate}
-                className="flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/30 text-white rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/20 border border-white/30 text-white rounded-lg transition-colors"
               >
                 <Download className="w-4 h-4" />
                 <span>Télécharger le modèle CSV</span>
@@ -333,7 +333,7 @@ export function ImportPage() {
         {/* Upload */}
         {step === 'upload' && (
           <GlassCard>
-            <h3 className="text-lg font-semibold text-white/90 mb-4">
+            <h3 className="text-lg font-semibold text-white mb-4">
               Sélectionner un fichier
             </h3>
             <CsvUploader
@@ -349,7 +349,7 @@ export function ImportPage() {
         {step === 'preview' && (
           <>
             <GlassCard>
-              <h3 className="text-lg font-semibold text-white/90 mb-4">
+              <h3 className="text-lg font-semibold text-white mb-4">
                 Aperçu des données
               </h3>
               <ImportPreview
@@ -366,7 +366,7 @@ export function ImportPage() {
             <div className="flex items-center justify-between">
               <button
                 onClick={handleReset}
-                className="px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/20 text-white rounded-lg transition-colors"
+                className="px-6 py-3 bg-white/15 hover:bg-white/20 border border-white/35 text-white rounded-lg transition-colors"
               >
                 Annuler
               </button>
@@ -377,7 +377,7 @@ export function ImportPage() {
                   'flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all',
                   canImport
                     ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                    : 'bg-white/10 text-white/40 cursor-not-allowed'
+                    : 'bg-white/20 text-white/40 cursor-not-allowed'
                 )}
               >
                 <Upload className="w-5 h-5" />
@@ -397,18 +397,18 @@ export function ImportPage() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/20 mb-4">
                 <div className="w-8 h-8 border-4 border-blue-400/30 border-t-blue-400 rounded-full animate-spin" />
               </div>
-              <h3 className="text-xl font-semibold text-white/90 mb-2">
+              <h3 className="text-xl font-semibold text-white mb-2">
                 Import en cours...
               </h3>
-              <p className="text-white/60 mb-4">
+              <p className="text-white/95 mb-4">
                 Veuillez patienter pendant l'import des données
               </p>
               <div className="max-w-md mx-auto">
-                <div className="flex items-center justify-between text-sm text-white/70 mb-2">
+                <div className="flex items-center justify-between text-sm text-white mb-2">
                   <span>Progression</span>
                   <span>{importProgress}%</span>
                 </div>
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-2 bg-white/20 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-blue-500 transition-all duration-300 rounded-full"
                     style={{ width: `${importProgress}%` }}

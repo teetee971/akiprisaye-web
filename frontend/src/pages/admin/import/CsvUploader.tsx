@@ -148,10 +148,10 @@ export function CsvUploader({
         onDrop={handleDrop}
         className={cn(
           'relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer',
-          'bg-white/5 backdrop-blur-sm',
+          'bg-white/15 backdrop-blur-sm',
           isDragging
             ? 'border-blue-400 bg-blue-500/10'
-            : 'border-white/20 hover:border-white/40 hover:bg-white/10',
+            : 'border-white/35 hover:border-white/40 hover:bg-white/20',
           isLoading && 'opacity-50 cursor-not-allowed'
         )}
       >
@@ -167,19 +167,19 @@ export function CsvUploader({
         <div className="flex flex-col items-center justify-center space-y-4">
           <div className={cn(
             'p-4 rounded-full transition-colors',
-            isDragging ? 'bg-blue-500/20' : 'bg-white/10'
+            isDragging ? 'bg-blue-500/20' : 'bg-white/20'
           )}>
             <Upload className={cn(
               'w-12 h-12 transition-colors',
-              isDragging ? 'text-blue-400' : 'text-white/60'
+              isDragging ? 'text-blue-400' : 'text-white/95'
             )} />
           </div>
 
           <div className="text-center">
-            <p className="text-lg font-medium text-white/90 mb-1">
+            <p className="text-lg font-medium text-white mb-1">
               {isDragging ? 'Déposez le fichier ici' : 'Glissez-déposez votre fichier'}
             </p>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-white/95">
               ou cliquez pour parcourir
             </p>
           </div>
@@ -202,24 +202,24 @@ export function CsvUploader({
 
       {/* Selected File Info */}
       {selectedFile && !isLoading && (
-        <div className="flex items-center justify-between p-4 bg-white/5 backdrop-blur-sm border border-white/20 rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-white/15 backdrop-blur-sm border border-white/35 rounded-lg">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-green-500/20 rounded-lg">
               <FileSpreadsheet className="w-5 h-5 text-green-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-white/90">{selectedFile.name}</p>
-              <p className="text-xs text-white/60">
+              <p className="text-sm font-medium text-white">{selectedFile.name}</p>
+              <p className="text-xs text-white/95">
                 {(selectedFile.size / 1024).toFixed(1)} KB
               </p>
             </div>
           </div>
           <button
             onClick={handleRemoveFile}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="p-2 hover:bg-white/20 rounded-lg transition-colors"
             aria-label="Supprimer le fichier"
           >
-            <X className="w-5 h-5 text-white/60 hover:text-white/90" />
+            <X className="w-5 h-5 text-white/95 hover:text-white" />
           </button>
         </div>
       )}
