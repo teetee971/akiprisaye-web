@@ -15,10 +15,11 @@ function resolveProductionApiBaseUrl(): string {
   }
 
   if (typeof window !== 'undefined') {
-    const { origin, pathname } = window.location;
+    const { hostname, pathname } = window.location;
+    const isGitHubHost =
+      hostname === 'github.io' || hostname.endsWith('.github.io');
     const isGitHubPages =
-      origin.includes('github.io') ||
-      pathname.startsWith('/akiprisaye-web/');
+      isGitHubHost || pathname.startsWith('/akiprisaye-web/');
 
     if (isGitHubPages) {
       return 'https://akiprisaye-api.pages.dev';
