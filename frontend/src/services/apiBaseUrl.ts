@@ -20,7 +20,7 @@ function resolveProductionApiBaseUrl(): string {
     const { origin, pathname, hostname } = window.location;
 
     const isGitHubPages =
-      hostname.endsWith('github.io') ||
+      hostname === 'akiprisaye.github.io' &&
       pathname.startsWith('/akiprisaye-web/');
 
     if (isGitHubPages) {
