@@ -7,13 +7,6 @@
 #   build      → Build production Vite
 #   verify-pages → Build GitHub Pages + vérifications runtime
 #   lighthouse → Audit Lighthouse CI (performance ≥ 80, accessibilité ≥ 90)
-#
-# Stratégie :
-#   - Chaque job installe ses dépendances via npm ci (rapide grâce au cache npm)
-#   - Les jobs lint/typecheck/test/build s'exécutent en parallèle
-#   - verify-pages reste indépendant (simule l'env GitHub Pages)
-#   - lighthouse build + audit dans le même job (indépendant)
-#   - working-directory: frontend sur tous les jobs pour éviter toute ambiguïté de config
 
 name: CI
 
@@ -33,6 +26,11 @@ on:
         required: false
         default: ""
 
+# ANNULE LES RUNS PRÉCÉDENTS SI UN NOUVEAU COMMIT EST POUSSÉ
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -42,7 +40,6 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v5
 
@@ -52,34 +49,22 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Validate package-lock.json (must be valid JSON)
-        working-directory: frontend
-        run: node -e "JSON.parse(require('fs').readFileSync('package-lock.json','utf8')); console.log('package-lock.json OK')"
-
       - name: Install dependencies
         working-directory: frontend
         run: npm ci --no-audit --no-fund
 
       - name: Lint
         working-directory: frontend
-        # Config : frontend/eslint.config.cjs (détectée automatiquement car cwd=frontend)
-        # jsx-a11y activé en mode warn (dette technique visible, non bloquante)
-        # Les erreurs ESLint (exit 1) font échouer ce job
         run: npm run lint
 
       - name: ESLint warning count guard (max 17)
         working-directory: frontend
-        # Exécute ESLint en sortie JSON sur src/, compte le total des warnings,
-        # et fait échouer la CI si warnings > 17.
-        # Seuil = 17 warnings jsx-a11y acceptés (dette technique figée).
-        # Ne modifie aucune règle ESLint.
         run: node scripts/eslint-warning-check.mjs
 
   # ─── 2. Typecheck ───────────────────────────────────────────────────────────
   typecheck:
     name: Typecheck
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v5
 
@@ -101,7 +86,6 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v5
 
@@ -131,7 +115,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v5
 
@@ -152,12 +135,9 @@ jobs:
         run: npm run build
 
   # ─── 5. Verify Pages ────────────────────────────────────────────────────────
-  # Simule le build GitHub Pages (BASE_PATH=/akiprisaye-web/) pour détecter
-  # les régressions de routing ou de chemins d'assets avant merge.
   verify-pages:
     name: Verify Pages build
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     defaults:
       run:
         working-directory: frontend
@@ -180,7 +160,7 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
 
-      - name: SPA fallback - copy index.html to 404.html (mirrors deploy-pages.yml)
+      - name: SPA fallback - copy index.html to 404.html
         run: cp dist/index.html dist/404.html
 
       - name: Verify build paths (GitHub Pages)
@@ -193,7 +173,6 @@ jobs:
   price-api:
     name: Price-API (typecheck + test)
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     steps:
       - uses: actions/checkout@v5
 
@@ -216,22 +195,13 @@ jobs:
         run: npm run test
 
   # ─── 7. Lighthouse CI ───────────────────────────────────────────────────────
-  # Mesure performance + accessibilité + best practices + SEO sur le build de preview.
-  # Seuils : performance ≥ 80 (warn), accessibilité ≥ 90 (error), SEO ≥ 80 (warn).
-  # URL cible : LHCI_URL si fourni (workflow_dispatch), sinon localhost:4173 (fallback).
-  # Sur push:main, l'audit sur URL réelle se produit aussi via deploy-cloudflare-pages.yml.
-  # Sorties : rapports JSON + HTML uploadés en artefacts CI + résumé dans le job summary.
-  # Régression guard : compare avec la baseline main (artifact "lighthouse-scores").
-  # PR comment : poste/met à jour un commentaire sur la PR avec les scores + delta.
-  # Override label : ci:override-lighthouse — FAIL → WARN (journalisé, jamais silencieux).
   lighthouse:
     name: Lighthouse CI
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
     permissions:
       contents: read
-      pull-requests: write   # pour poster un commentaire sur la PR
-      actions: read          # pour télécharger l'artifact baseline (régression guard)
+      pull-requests: write
+      actions: read
     steps:
       - uses: actions/checkout@v5
 
@@ -263,9 +233,6 @@ jobs:
         run: npm run build
 
       - name: Start preview server
-        # Démarre vite preview en arrière-plan et sauvegarde le PID pour l'arrêt propre.
-        # --host 127.0.0.1 pour éviter d'exposer le serveur sur toutes les interfaces.
-        # $! est disponible immédiatement après & dans bash.
         working-directory: frontend
         env:
           PREVIEW_PORT: "4173"
@@ -274,8 +241,6 @@ jobs:
           npm run preview -- --host 127.0.0.1 --port "$PREVIEW_PORT" > /tmp/preview-server.log 2>&1 &
           echo $! > /tmp/preview-server.pid
           echo "🚀 Preview server démarré (PID: $!)"
-          # 180000ms (3 min) absorbe les pics de latence npm/IO en runners GitHub partagés.
-          # wait-on valide la disponibilité du service; curl confirme une réponse HTTP effective.
           npx wait-on --timeout 180000 "$PREVIEW_URL"
           curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused "$PREVIEW_URL" >/dev/null
           echo "✅ Preview server prêt (wait-on + curl)."
@@ -289,9 +254,6 @@ jobs:
           fi
 
       - name: Check override label (ci:override-lighthouse)
-        # Détecte si le label 'ci:override-lighthouse' est présent sur la PR.
-        # Si oui : FAIL → WARN (jamais PASS, jamais silencieux).
-        # Cet état est journalisé dans le commentaire PR et dans le résumé.
         id: override_check
         if: github.event_name == 'pull_request'
         run: |
@@ -299,45 +261,32 @@ jobs:
           if echo "$LABELS_JSON" | grep -q '"ci:override-lighthouse"'; then
             echo "active=true" >> "$GITHUB_OUTPUT"
             echo "⚠️  Label 'ci:override-lighthouse' détecté — FAIL sera converti en WARN."
-            echo "   Cet override est journalisé dans les artifacts et le commentaire PR."
           else
             echo "active=false" >> "$GITHUB_OUTPUT"
             echo "ℹ️  Aucun override label détecté — comportement normal."
           fi
 
-      - name: Prepare Lighthouse config (URL Cloudflare > manuelle > localhost)
-        # Politique d'URL (ordre de priorité) :
-        #   1. URL Cloudflare Pages réelle (LHCI_URL depuis workflow_dispatch)
-        #   2. URL manuelle (workflow_dispatch)
-        #   3. Fallback localhost:4173 (npm run preview)
-        # Exporte LH_AUDITED_URL, LH_SOURCE_TYPE, LH_WAS_FALLBACK dans $GITHUB_ENV.
+      - name: Prepare Lighthouse config
         working-directory: frontend
         env:
           LHCI_URL: ${{ github.event.inputs.lhci_url }}
         run: node scripts/prepare-lighthouse-config.mjs
 
       - name: Run Lighthouse CI
-        # continue-on-error: LHCI exits 1 for ANY assertion failure (even "warn" level).
-        # Score regressions are not technical errors — they are handled by
-        # lighthouse-guard.mjs --compare. We still want reports and the quality gate
-        # to run even if LHCI assertions fail.
         continue-on-error: true
         working-directory: frontend
         run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
 
       - name: Stop preview server
-        # Arrêt propre du serveur preview quelle que soit l'issue de LHCI.
-        # SIGTERM (signal par défaut de kill) permet à vite preview de se fermer proprement.
         if: always()
         run: |
           if [ -f /tmp/preview-server.pid ]; then
             PID=$(cat /tmp/preview-server.pid)
             kill -TERM "$PID" 2>/dev/null || true
             rm -f /tmp/preview-server.pid
-            echo "🛑 Preview server (PID: $PID) arrêté."
           fi
 
-      - name: Ensure Lighthouse report files exist for artifact upload
+      - name: Ensure Lighthouse report files exist
         if: always()
         working-directory: frontend
         run: |
@@ -361,10 +310,6 @@ jobs:
           fi
 
       - name: Write Lighthouse scores (input baseline)
-        # Toujours exécuté pour capturer les scores même en cas d'erreur LHCI.
-        # Écrit .lighthouseci/lighthouse-scores.json avec métadonnées enrichies
-        # (sha, branch, runId, sourceType, qualityScore…).
-        # Uploadé comme artifact "lighthouse-scores" (baseline pour les prochaines PR).
         if: always()
         working-directory: frontend
         env:
@@ -374,11 +319,6 @@ jobs:
         run: node scripts/lighthouse-guard.mjs --write
 
       - name: Quality gate — warning-only (PR)
-        # Sur PR : télécharge la baseline main, compare les scores, produit un verdict.
-        # POLITIQUE : warning-only — FAIL = avertissement visible dans PR comment + summary,
-        # le merge n'est PAS bloqué (exit 0 quelle que soit la sévérité).
-        # Le label ci:override-lighthouse est pris en compte (FAIL → WARN journalisé).
-        # Écrit /tmp/lh-verdict.json pour le commentaire PR et le résumé.
         if: always() && github.event_name == 'pull_request'
         working-directory: frontend
         env:
@@ -388,15 +328,9 @@ jobs:
           LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
           LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
           LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
-          # LH_BLOCKING non défini → mode warning-only → exit 0 sur FAIL
         run: node scripts/lighthouse-guard.mjs --compare
 
       - name: Quality gate — bloquant (push:main)
-        # Sur push main : compare avec la baseline du run main précédent.
-        # POLITIQUE : bloquant — FAIL (sans override) → exit 1 → CI bloquée.
-        # Cela garantit que la branche main ne régresse pas silencieusement.
-        # Le label ci:override-lighthouse est supporté mais actif uniquement sur PR ;
-        # LH_OVERRIDE_LABEL='false' sur main pour empêcher tout contournement silencieux.
         if: always() && github.event_name == 'push'
         working-directory: frontend
         env:
@@ -410,10 +344,6 @@ jobs:
         run: node scripts/lighthouse-guard.mjs --compare
 
       - name: PR comment — rapport qualité Lighthouse
-        # Poste ou met à jour un commentaire idempotent sur la PR.
-        # Contient : verdict, quality score, tableau métriques, budgets, diagnostics.
-        # Ne fait JAMAIS échouer la CI (continue-on-error: true).
-        # Si le commentaire n'a pas pu être posté, le log l'indique explicitement.
         if: always() && github.event_name == 'pull_request'
         continue-on-error: true
         working-directory: frontend
@@ -424,12 +354,12 @@ jobs:
           BASELINE_SCORES_PATH: /tmp/lh-baseline.json
         run: node scripts/lighthouse-pr-comment.mjs
 
-      - name: Print Lighthouse summary (résumé exécutif)
+      - name: Print Lighthouse summary
         if: always()
         working-directory: frontend
         run: node scripts/lighthouse-summary.mjs
 
-      - name: Upload Lighthouse reports (JSON + HTML)
+      - name: Upload Lighthouse reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -438,9 +368,7 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
 
-      - name: Upload Lighthouse scores (référence baseline, 90 jours)
-        # Uploadé séparément du rapport complet pour être facilement téléchargeable.
-        # Utilisé comme baseline par le quality gate des prochains runs sur PR.
+      - name: Upload Lighthouse scores
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -450,8 +378,6 @@ jobs:
           if-no-files-found: warn
 
   # ─── PR required check shim (non bloquant) ─────────────────────────────────
-  # Fournit un statut stable "build-test" sur PR pour satisfaire les règles
-  # de protection sans lancer la pipeline CI lourde.
   build-test:
     name: build-test
     runs-on: ubuntu-latest
