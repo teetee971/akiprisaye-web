@@ -1,17 +1,39 @@
-HIGH_COUNT=${HIGH_COUNT:-0}
-BASELINE=0
-ALLOW_DEV_HIGH=1
+name: Security Audit Guard
 
-echo "High vulnerabilities detected: $HIGH_COUNT"
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/package.json'
+      - 'frontend/package-lock.json'
+      - '.github/workflows/security-audit.yml'
+      - 'docs/security/SECURITY_AUDIT.md'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
-if [ "$HIGH_COUNT" -gt "$BASELINE" ]; then
-  if [ "$HIGH_COUNT" -le "$ALLOW_DEV_HIGH" ]; then
-    echo "⚠️ Accepting dev-only HIGH vulnerability (documented)"
-    exit 0
-  fi
+permissions:
+  contents: read
 
-  echo "❌ New HIGH vulnerabilities detected (baseline: $BASELINE)"
-  exit 1
-fi
+jobs:
+  security-audit:
+    name: security-audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-echo "✅ Security audit within accepted baseline"
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Run security audit (fail on high/critical)
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
