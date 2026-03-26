@@ -1,34 +1,42 @@
-const DEV_FALLBACK_API_BASE_URL = 'http://localhost:3000/api';
-const PROD_FALLBACK_API_BASE_URL = '/api';
+const DEV_FALLBACK_API_BASE_URL = 'http://127.0.0.1:8787';
+const PROD_API_BASE_URL = 'https://akiprisaye-api.pages.dev';
 
-function normalizeBasePath(rawBasePath: string): string {
-  const trimmed = rawBasePath.trim();
-  if (!trimmed) return '';
+function normalizeBaseUrl(url: string): string {
+  return url.trim().replace(/\/+$/, '');
+}
 
-  const noTrailingSlash = trimmed.replace(/\/+$/, '');
-  if (!noTrailingSlash) return '';
-
-  return noTrailingSlash.startsWith('/') ? noTrailingSlash : `/${noTrailingSlash}`;
+function isGitHubPagesHost(hostname: string): boolean {
+  return hostname === 'teetee971.github.io' || hostname.endsWith('.github.io');
 }
 
 function resolveProductionApiBaseUrl(): string {
-  const normalizedBasePath = normalizeBasePath(import.meta.env.BASE_URL || '/');
-  if (!normalizedBasePath) {
-    return '/api';
+  const envUrl =
+    import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_PRICE_API_BASE_URL ||
+    '';
+
+  if (typeof envUrl === 'string' && envUrl.trim()) {
+    return normalizeBaseUrl(envUrl);
   }
 
-  return `${normalizedBasePath}/api`;
+  if (typeof window !== 'undefined') {
+    const { hostname, pathname } = window.location;
+    const isGitHubPages =
+      isGitHubPagesHost(hostname) || pathname.startsWith('/akiprisaye-web/');
+
+    if (isGitHubPages) {
+      return PROD_API_BASE_URL;
+    }
+  }
+
+  return PROD_API_BASE_URL;
 }
 
 export function resolveApiBaseUrl(): string {
-  const configuredBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  if (typeof configuredBaseUrl === 'string' && configuredBaseUrl.trim().length > 0) {
-    return configuredBaseUrl.trim().replace(/\/$/, '');
-  }
-
-  return import.meta.env.DEV ? DEV_FALLBACK_API_BASE_URL : PROD_FALLBACK_API_BASE_URL;
-    return configuredBaseUrl.trim().replace(/\/+$/, '');
-  }
-
-  return import.meta.env.DEV ? DEV_FALLBACK_API_BASE_URL : resolveProductionApiBaseUrl();
+  return import.meta.env.DEV
+    ? DEV_FALLBACK_API_BASE_URL
+    : resolveProductionApiBaseUrl();
 }
+
+export const API_BASE_URL = resolveApiBaseUrl();
+export default API_BASE_URL;
