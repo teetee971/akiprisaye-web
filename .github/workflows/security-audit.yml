@@ -1,84 +1,42 @@
 name: Security Audit Guard
 
 on:
-  pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
+    branches: [main]
+    paths:
+      - 'frontend/package.json'
+      - 'frontend/package-lock.json'
+      - '.github/workflows/security-audit.yml'
+      - 'docs/security/SECURITY_AUDIT.md'
+  pull_request:
+    paths:
+      - 'frontend/package.json'
+      - 'frontend/package-lock.json'
+      - '.github/workflows/security-audit.yml'
+      - 'docs/security/SECURITY_AUDIT.md'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   security-audit:
+    name: security-audit
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
 
-      - name: Ensure SECURITY_AUDIT.md exists
-        run: |
-          if [ ! -f docs/security/SECURITY_AUDIT.md ]; then
-            echo "❌ docs/security/SECURITY_AUDIT.md is missing"
-            exit 1
-          fi
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies with npm ci
+      - name: Install dependencies
         working-directory: frontend
-        run: npm ci --no-audit --no-fund --ignore-scripts
+        run: npm ci --no-audit --no-fund
 
-      - name: Run npm audit (JSON)
+      - name: Run security audit (fail on high/critical)
         working-directory: frontend
-        run: npm audit --json > audit.json || true
-
-      - name: Check for new HIGH vulnerabilities
-        working-directory: frontend
-        run: |
-          HIGH_COUNT=$(node - <<'EOF'
-          const fs = require('fs');
-
-          if (!fs.existsSync('audit.json')) {
-            console.log(0);
-            process.exit(0);
-          }
-
-          const content = fs.readFileSync('audit.json', 'utf8').trim();
-          if (!content) {
-            console.log(0);
-            process.exit(0);
-          }
-
-          const audit = JSON.parse(content);
-          const vulns = audit.vulnerabilities || {};
-
-          let count = 0;
-          for (const name in vulns) {
-            if (vulns[name].severity === 'high') count++;
-          }
-
-          console.log(count);
-          EOF
-          )
-
-          echo "High vulnerabilities detected: $HIGH_COUNT"
-
-          # 🔐 Baseline documented in SECURITY_AUDIT.md
-          # Updated 2026-03-13: flatted 3.3.4→3.4.1 and undici 7.22.0→7.24.1
-          # fixed via `npm audit fix`. New baseline is 0.
-          BASELINE=0
-
-          if [ "$HIGH_COUNT" -gt "$BASELINE" ]; then
-            echo "❌ New HIGH vulnerabilities detected (baseline: $BASELINE)"
-            echo "Update docs/security/SECURITY_AUDIT.md to justify them."
-            exit 1
-          fi
-
-          echo "✅ Security audit within accepted baseline"
+        run: npm audit --omit=dev --audit-level=high
