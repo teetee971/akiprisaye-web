@@ -1,4 +1,11 @@
-# CI Pipeline — akiprisaye-web / frontend
+
+# ajoute le job security-audit
+
+git add .github/workflows/ci.yml
+git commit -m "fix(ci): add required security-audit job"
+git push origin teetee971-patch-3
+
+gh pr checks 1657 --watch# CI Pipeline — akiprisaye-web / frontend
 #
 # Jobs séparés pour une meilleure lisibilité et un échec précis :
 #   lint         → ESLint (config frontend, jsx-a11y actif)
@@ -393,3 +400,24 @@ jobs:
     if: always()
     steps:
       - run: echo "build-test PR compatibility check ✅"
+# ─── 8. Security Audit (required check) ─────────────────────────────
+  security-audit:
+    name: security-audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Run security audit (fail on high/critical)
+        working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
