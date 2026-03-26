@@ -13,23 +13,28 @@ export const OfflineBanner = () => {
     };
   }, []);
 
-  if (!isOffline) return null;
-
   return (
     <div style={{
-      backgroundColor: '#ff9800',
+      backgroundColor: '#d32f2f', // Un rouge un peu plus pro
       color: 'white',
       textAlign: 'center',
-      padding: '5px 10px',
-      fontSize: '12px',
+      padding: '8px 10px',
+      fontSize: '13px',
       fontWeight: 'bold',
       position: 'fixed',
       top: 0,
-      width: '100%',
-      zIndex: 9999,
-      boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+      left: 0,
+      right: 0,
+      zIndex: 10000,
+      boxShadow: '0 2px 10px rgba(0,0,0,0.3)',
+      transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)', // Effet de ressort
+      transform: isOffline ? 'translateY(0)' : 'translateY(-110%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px'
     }}>
-      ⚠️ Mode Hors-ligne : Affichage des dernières données enregistrées
+      <span>📡</span> Mode Hors-ligne : Données en cache (Cloudflare indisponible)
     </div>
   );
 };
