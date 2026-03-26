@@ -198,9 +198,9 @@ export default function Actualites() {
         <div className="px-1">
           <p className="text-sm text-amber-300">API indisponible : fallback embarqué affiché.</p>
           <p className="text-xs text-orange-400">fallback embarqué affiché</p>
+          <p className="text-sm text-amber-300">API indisponible : aucune donnée live disponible.</p>
         </div>
       )}
-      {state.status === 'error' && <p className="text-sm text-amber-300 px-1">API indisponible : aucune donnée live disponible.</p>}
       {displayedItems.length === 0 && state.status !== 'loading' && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}
 
       <section ref={mediaSectionRef} className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur">
