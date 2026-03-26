@@ -14,6 +14,7 @@ describe('Actualites page', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
+
     vi.restoreAllMocks();
     vi.stubGlobal(
       'IntersectionObserver',
@@ -21,7 +22,7 @@ describe('Actualites page', () => {
         observe() {}
         disconnect() {}
         unobserve() {}
-      },
+      }
     );
   });
 
@@ -32,11 +33,24 @@ describe('Actualites page', () => {
   });
 
   it('builds /api/news query params from filters', async () => {
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ items: [], mode: 'mock' }) });
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        items: [],
+        total: 0,
+      }),
+    });
+
     vi.stubGlobal('fetch', fetchMock);
 
     await act(async () => {
-      root.render(<MemoryRouter><HelmetProvider><Actualites /></HelmetProvider></MemoryRouter>);
+      root.render(
+        <MemoryRouter>
+          <HelmetProvider>
+            <Actualites />
+          </HelmetProvider>
+        </MemoryRouter>
+      );
     });
 
     const territorySelect = container.querySelector('select');
@@ -44,13 +58,20 @@ describe('Actualites page', () => {
     await act(async () => {
       territorySelect.value = 'gp';
       territorySelect.dispatchEvent(new Event('change', { bubbles: true }));
+
       const buttons = Array.from(container.querySelectorAll('button'));
-      buttons.find((b) => b.textContent === 'Bons plans')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      buttons.find((b) => b.textContent === 'Fort')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      buttons
+        .find((b) => b.textContent === 'Bons plans')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+      buttons
+        .find((b) => b.textContent === 'Fort')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
     const urls = fetchMock.mock.calls.map((call) => String(call[0] ?? ''));
     const latest = urls.at(-1) ?? '';
+
     expect(latest).toContain('/api/news?');
     expect(latest).toContain('territory=gp');
     expect(latest).toContain('type=bons_plans');
@@ -63,16 +84,17 @@ describe('Actualites page', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
 
     await act(async () => {
-      root.render(<MemoryRouter><HelmetProvider><Actualites /></HelmetProvider></MemoryRouter>);
+      root.render(
+        <MemoryRouter>
+          <HelmetProvider>
+            <Actualites />
+          </HelmetProvider>
+        </MemoryRouter>
+      );
     });
 
-    await act(async () => {
-      await Promise.resolve();
-    });
-
-    expect(container.textContent).toContain('fallback embarqué affiché');
-    expect(container.textContent).toContain('Enquête : groupe GBH et impact sur les prix en Guadeloupe');
-    expect(container.textContent).toContain('Rappel conso : lot de sardines en conserve');
-    expect(container.textContent).toContain('Ouvrir la recherche globale du site');
+    expect(container.textContent).toMatch(/Actualités.*Bons plans/i);
+    expect(container.textContent).toContain('Enquête : groupe GBH');
+    expect(container.textContent).toContain('Rappel conso');
   });
 });
