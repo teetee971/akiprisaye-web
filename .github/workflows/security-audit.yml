@@ -3,17 +3,8 @@ name: Security Audit Guard
 on:
   push:
     branches: [main]
-    paths:
-      - 'frontend/package.json'
-      - 'frontend/package-lock.json'
-      - '.github/workflows/security-audit.yml'
-      - 'docs/security/SECURITY_AUDIT.md'
   pull_request:
-    paths:
-      - 'frontend/package.json'
-      - 'frontend/package-lock.json'
-      - '.github/workflows/security-audit.yml'
-      - 'docs/security/SECURITY_AUDIT.md'
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -23,20 +14,18 @@ jobs:
   security-audit:
     name: security-audit
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v5
-
       - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-
       - name: Install dependencies
         working-directory: frontend
         run: npm ci --no-audit --no-fund
-
-      - name: Run security audit (fail on high/critical)
+      - name: Run security audit
         working-directory: frontend
         run: npm audit --omit=dev --audit-level=high
