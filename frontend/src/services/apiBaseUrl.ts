@@ -10,7 +10,7 @@ function normalize(url: string): string {
 function resolveProductionApiBaseUrl(): string {
   const envUrl =
     import.meta.env.VITE_API_BASE_URL ||
-    import.meta.env.VITE_PRICE_API_BASE_URL;
+    import.meta.env.VITE_PRICE_API_BASE;
 
   if (typeof envUrl === 'string' && envUrl.trim().length > 0) {
     return normalize(envUrl.trim());
