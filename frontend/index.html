@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
+  <link rel="manifest" href="/manifest.json">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://images.unsplash.com https://github.com https://*.githubusercontent.com https://raw.githubusercontent.com; connect-src 'self' https://akiprisaye-api.pages.dev https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net; frame-src 'self' https://www.youtube.com https://*.firebaseapp.com; media-src 'self' https://interactive-examples.mdn.mozilla.net;">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -246,5 +247,12 @@
 
     <!-- Entrypoint Vite -->
     <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <script>
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("/sw.js");
+    });
+  }
+</script>
+</body>
 </html>
