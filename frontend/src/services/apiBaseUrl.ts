@@ -7,6 +7,6 @@ export function resolveApiBaseUrl(): string {
 
   return (
     env?.VITE_API_BASE_URL ||
-    'https://akiprisaye-api.pages.dev'
+    'https://akiprisaye-web.pages.dev'
   );
 }
