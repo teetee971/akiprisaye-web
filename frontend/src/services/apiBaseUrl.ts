@@ -7,7 +7,7 @@ function normalizeBaseUrl(value: string): string {
 function resolveProductionApiBaseUrl(): string {
   const envValue =
     import.meta.env.VITE_API_BASE_URL ||
-    import.meta.env.VITE_PRICE_API_BASE_URL ||
+    '';
     '';
 
   if (typeof envValue === 'string' && envValue.trim()) {
