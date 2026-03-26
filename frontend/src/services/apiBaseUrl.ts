@@ -15,7 +15,7 @@ function resolveProductionApiBaseUrl(): string {
     import.meta.env.VITE_PRICE_API_BASE_URL ||
     '';
 
-  if (typeof envUrl === 'string' && envUrl.trim()) {
+  if (envUrl.trim()) {
     return normalizeBaseUrl(envUrl);
   }
 
