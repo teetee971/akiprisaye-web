@@ -9,7 +9,11 @@ on:
       - '.github/workflows/security-audit.yml'
       - 'docs/security/SECURITY_AUDIT.md'
   pull_request:
-    branches: [main]
+    paths:
+      - 'frontend/package.json'
+      - 'frontend/package-lock.json'
+      - '.github/workflows/security-audit.yml'
+      - 'docs/security/SECURITY_AUDIT.md'
   workflow_dispatch:
 
 permissions:
