@@ -9,11 +9,9 @@ on:
       - '.github/workflows/security-audit.yml'
       - 'docs/security/SECURITY_AUDIT.md'
   pull_request:
-    paths:
-      - 'frontend/package.json'
-      - 'frontend/package-lock.json'
-      - '.github/workflows/security-audit.yml'
-      - 'docs/security/SECURITY_AUDIT.md'
+    # SUPPRESSION DES PATHS ICI
+    # Le workflow s'exécutera sur chaque PR pour garantir l'envoi du statut "success" ou "failure"
+    branches: [main] # Bonne pratique : limiter aux PRs ciblant main
   workflow_dispatch:
 
 permissions:
@@ -23,6 +21,7 @@ jobs:
   security-audit:
     name: security-audit
     runs-on: ubuntu-latest
+    timeout-minutes: 10 # Ajout de sécurité pour éviter les freezes facturés
 
     steps:
       - uses: actions/checkout@v5
