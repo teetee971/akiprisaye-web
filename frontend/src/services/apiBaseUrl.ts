@@ -1,5 +1,5 @@
 export function resolveApiBaseUrl(): string {
-  const env = import.meta?.env;
+  const env = import.meta.env;
 
   if (env?.DEV) {
     return env.VITE_API_BASE_URL || 'http://localhost:8787';
