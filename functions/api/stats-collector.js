@@ -1,6 +1,6 @@
 export async function onRequest(context) {
   const { request } = context;
-  const cf = request.cf;
+  const cf = request.cf || {};
   const agent = request.headers.get("user-agent");
   
   const stats = {
