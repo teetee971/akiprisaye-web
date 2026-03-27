@@ -574,7 +574,7 @@ const EspaceCreateur: React.FC = () => {
             {[
               {
                 icon: Clock3,
-                label: 'Dernier heartbeat visiteur',
+                label: 'Durée de session moyenne / Live',
                 timestamp: lastPresenceAt,
                 helper: 'Collection presence',
                 iconClassName: 'text-cyan-300',
