@@ -756,6 +756,7 @@ const EspaceCreateur: React.FC = () => {
           <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-white sm:mb-4 sm:text-lg">
             <TrendingUp className="w-5 h-5 text-emerald-400" />
             Revenus CPC — suivi créateur
+<div style={{marginTop: '30px', padding: '18px', background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(147,51,234,0.1) 100%)', border: '1px solid rgba(147,51,234,0.3)', borderRadius: '16px'}}>   <div style={{display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px'}}>     <span style={{fontSize: '1.2em'}}>🧠</span>     <h3 style={{fontSize: '0.95em', fontWeight: 'bold', color: '#a855f7'}}>Le Conseil de l'IA (Briefing 27 Mars)</h3>   </div>   <p style={{fontSize: '0.85em', lineHeight: '1.5', opacity: 0.9, color: '#e9d5ff'}}>   </p>   <div style={{marginTop: '12px', fontSize: '0.7em', opacity: 0.6, fontStyle: 'italic'}}>     Prochaine analyse prévue à 14h00 (Heure locale).   </div> </div>
           </h2>
           {(() => {
             const conversionStats = getConversionStats(30);
