@@ -64,7 +64,6 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, 'src'),
       },
     },
-      outDir: 'dist',
       emptyOutDir: true,
       sourcemap: false,
       minify: 'terser',
