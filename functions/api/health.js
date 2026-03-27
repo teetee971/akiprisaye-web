@@ -1,6 +1,5 @@
 export async function onRequest() {
-  const data = { territory: "GP", plan: "creator", quotaRemaining: 5, status: "active" };
-  return new Response(JSON.stringify(data), {
+  return new Response(JSON.stringify({ status: "ok" }), {
     headers: { 
       "content-type": "application/json",
       "Access-Control-Allow-Origin": "*",
