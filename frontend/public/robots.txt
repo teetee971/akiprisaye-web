@@ -1,18 +1,6 @@
 User-agent: *
 Allow: /
-
-Disallow: /akiprisaye-web/admin
-Disallow: /akiprisaye-web/admin/
-Disallow: /akiprisaye-web/test-i18n
-Disallow: /akiprisaye-web/mes-economies
-Disallow: /akiprisaye-web/tableau-de-bord
-Disallow: /akiprisaye-web/mes-listes
-Disallow: /akiprisaye-web/mon-compte
-Disallow: /akiprisaye-web/parametres
-
-# Key crawl paths (explicit for bots that honour Allow > Disallow)
-Allow: /akiprisaye-web/produit/
-Allow: /akiprisaye-web/categorie/
-Allow: /akiprisaye-web/top-
+Disallow: /espace-createur  # On cache ton dashboard secret aux inconnus !
+Disallow: /api
 
 Sitemap: https://teetee971.github.io/akiprisaye-web/sitemap.xml
