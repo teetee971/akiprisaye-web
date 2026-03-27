@@ -1,0 +1,16 @@
+export async function onRequest(context) {
+  const { request } = context;
+  const cf = request.cf;
+  const agent = request.headers.get("user-agent");
+  
+  const stats = {
+    city: cf.city || "Pointe-à-Pitre",
+    region: cf.region || "Guadeloupe",
+    device: /iPhone|Android|iPad/i.test(agent) ? "Mobile 📱" : "Desktop 💻",
+    timestamp: new Date().toLocaleTimeString('fr-FR', { timeZone: 'America/Guadeloupe' })
+  };
+
+  return new Response(JSON.stringify(stats), {
+    headers: { "Content-Type": "application/json" }
+  });
+}
