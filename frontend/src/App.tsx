@@ -1,5 +1,4 @@
-import React, { Suspense, lazy } from "react";
-import { PendingRevenueCounter } from "./components/PendingRevenueCounter";
+import React, { Suspense, lazy } from 'react';
 import { OfflineBanner } from "./components/OfflineBanner";
  
 import React, { Suspense, lazy, useEffect, useState } from 'react';
@@ -529,7 +528,7 @@ export default function App() {
                           <Route path="inscription-pro" element={<InscriptionPro />} />
                           <Route path="espace-pro" element={<EspacePro />} />
                           <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
-                          <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<div style={{color:'white', padding:'20px'}}>Chargement du Radar...</div>}><Suspense fallback={<div style={{color:'white', padding:'20px'}}>Chargement...</div>}><EspaceCreateur /></Suspense></RequireCreator>} />
+                          <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<div style={{color:'white', padding:'20px'}}>Chargement...</div>}><EspaceCreateur /></Suspense></RequireCreator>} />
                           <Route path="activation-createur" element={<ActivationCreateur />} />
 
                           {/* Additional feature routes */}
