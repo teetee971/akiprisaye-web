@@ -552,7 +552,7 @@ const EspaceCreateur: React.FC = () => {
               },
               {
                 icon: Globe,
-                label: 'Territoires actifs',
+                label: 'Dernière ville : {radar?.ville || 'Détection...'}',
                 value: activeTerritoriesCount.toLocaleString('fr-FR'),
                 detail: `${activeInterestCount} centres d’intérêt actuellement détectés`,
                 tone: 'text-amber-300',
