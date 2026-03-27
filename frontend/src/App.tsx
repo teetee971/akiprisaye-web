@@ -1,4 +1,3 @@
-import React, { Suspense, lazy } from 'react';
 import { OfflineBanner } from "./components/OfflineBanner";
  
 import React, { Suspense, lazy, useEffect, useState } from 'react';
