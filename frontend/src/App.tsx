@@ -528,7 +528,7 @@ export default function App() {
                           <Route path="inscription-pro" element={<InscriptionPro />} />
                           <Route path="espace-pro" element={<EspacePro />} />
                           <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
-                          <Route path="espace-createur" element={<RequireCreator><EspaceCreateur /></RequireCreator>} />
+                          <Route path="espace-createur" element={<RequireCreator><React.Suspense fallback={<div style={{color:'white', padding:'20px'}}>Chargement du Radar...</div>}><EspaceCreateur /></React.Suspense></RequireCreator>} />
                           <Route path="activation-createur" element={<ActivationCreateur />} />
 
                           {/* Additional feature routes */}
