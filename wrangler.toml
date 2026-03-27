@@ -1,5 +1,5 @@
 
 [[d1_databases]]
 binding = "DB" # C'est le nom qu'on utilisera dans le code
-database_name = "akiprisaye-db"
-database_id = "votre-id-ici" # On le générera au déploiement
+database_name = "price-db"
+database_id = "c7ae3626-9154-4625-9d25-606d6dcf5374" # On le générera au déploiement
