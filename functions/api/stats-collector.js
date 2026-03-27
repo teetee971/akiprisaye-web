@@ -7,7 +7,7 @@ export async function onRequest(context) {
     city: cf.city || "Pointe-à-Pitre",
     region: cf.region || "Guadeloupe",
     device: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(agent) ? "Mobile 📱" : "Desktop 💻",
-    timestamp: new Date().toLocaleTimeString('fr-FR', { timeZone: 'America/Guadeloupe' })
+    timestamp: new Date().toISOString()
   };
 
   return new Response(JSON.stringify(stats), {
