@@ -6,7 +6,7 @@ export async function onRequest(context) {
   const stats = {
     city: cf.city || "Pointe-à-Pitre",
     region: cf.region || "Guadeloupe",
-    device: /iPhone|Android|iPad/i.test(agent) ? "Mobile 📱" : "Desktop 💻",
+    device: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(agent) ? "Mobile 📱" : "Desktop 💻",
     timestamp: new Date().toLocaleTimeString('fr-FR', { timeZone: 'America/Guadeloupe' })
   };
 
