@@ -69,7 +69,7 @@ export const simulateFetchPrice = async (target: PredatorTarget): Promise<number
   return round(simulatedPrice);
 };
 
-export const comparePrices = (
+const comparePrices = (
   localData: number,
   competitorData: number,
   thresholdPercent = DEFAULT_THRESHOLD_PERCENT,
