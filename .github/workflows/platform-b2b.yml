@@ -38,7 +38,7 @@ jobs:
           echo "All B2B outputs present"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: platform-b2b-outputs
           path: |

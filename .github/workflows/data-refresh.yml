@@ -62,7 +62,7 @@ jobs:
         run: node scripts/compute-product-scores.mjs
 
       - name: Upload data artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: price-data-${{ github.run_number }}
           retention-days: 3
