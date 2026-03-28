@@ -1,13 +1,84 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Navigate } from 'react-router-dom';
 import { BrainCircuit, Activity, Crown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const pulseStyle = `@keyframes predatorPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }`;
+const CREATOR_DEBUG_SESSION_KEY = 'akp_creator_debug_session';
+
+type RevenueAnalytics = {
+  monthLabel: string;
+  value: number;
+};
+
+type TerritoryAudience = {
+  territory: string;
+  activeUsers: number;
+  growthPercent: number;
+};
+
+const REVENUE_ANALYTICS_SEED: RevenueAnalytics[] = [
+  { monthLabel: 'Jan', value: 1280 },
+  { monthLabel: 'Fév', value: 1640 },
+  { monthLabel: 'Mars', value: 2120 },
+];
+
+const TERRITORY_AUDIENCE_SEED: TerritoryAudience[] = [
+  { territory: 'Guadeloupe', activeUsers: 2480, growthPercent: 12 },
+  { territory: 'Martinique', activeUsers: 1720, growthPercent: 8 },
+  { territory: 'Guyane', activeUsers: 940, growthPercent: 5 },
+];
 
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
+  const [reloadRequestedAt, setReloadRequestedAt] = useState<number | null>(null);
+
+  const { revenueAnalytics, territoryAudience, usingSeedData } = useMemo(() => {
+    const parseArrayFromStorage = <T,>(key: string): T[] | null => {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw) as T[];
+        return Array.isArray(parsed) ? parsed : null;
+      } catch {
+        return null;
+      }
+    };
+
+    const revenueParsed = parseArrayFromStorage<RevenueAnalytics>('creator_revenue_analytics');
+    const territoryParsed = parseArrayFromStorage<TerritoryAudience>('creator_territory_audience');
+
+    const safeRevenue = Array.isArray(revenueParsed) && revenueParsed.length > 0
+      ? revenueParsed
+      : REVENUE_ANALYTICS_SEED;
+    const safeTerritory = Array.isArray(territoryParsed) && territoryParsed.length > 0
+      ? territoryParsed
+      : TERRITORY_AUDIENCE_SEED;
+
+    return {
+      revenueAnalytics: safeRevenue,
+      territoryAudience: safeTerritory,
+      usingSeedData:
+        safeRevenue === REVENUE_ANALYTICS_SEED || safeTerritory === TERRITORY_AUDIENCE_SEED,
+    };
+  }, [reloadRequestedAt]);
+
+  const forceReloadCreatorData = () => {
+    try {
+      localStorage.removeItem('creator_revenue_analytics');
+      localStorage.removeItem('creator_territory_audience');
+      sessionStorage.clear();
+      localStorage.removeItem(CREATOR_DEBUG_SESSION_KEY);
+      if ('caches' in window) {
+        caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
+      }
+    } finally {
+      setReloadRequestedAt(Date.now());
+      window.location.reload();
+    }
+  };
+
   if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Chargement...</div>;
   if (!isCreator) return <Navigate to="/" replace />;
 
@@ -54,6 +125,51 @@ const EspaceCreateur: React.FC = () => {
           <p className="text-sm text-slate-400">Scan du marché en cours. Aucune anomalie critique détectée sur les carburants ou les produits frais.</p>
         </section>
       </div>
+
+      <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <section className="p-6 bg-slate-900/50 rounded-3xl border border-slate-800 backdrop-blur-sm">
+          <h2 className="text-xl font-bold mb-4 text-emerald-300">Revenus enrichis</h2>
+          <div className="space-y-3">
+            {revenueAnalytics.map((item) => (
+              <div key={item.monthLabel} className="flex items-center justify-between rounded-xl border border-slate-700/70 bg-slate-950/70 p-3">
+                <span className="text-sm text-slate-300">{item.monthLabel}</span>
+                <span className="text-sm font-bold text-emerald-300">{item.value.toLocaleString('fr-FR')} €</span>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="p-6 bg-slate-900/50 rounded-3xl border border-slate-800 backdrop-blur-sm">
+          <h2 className="text-xl font-bold mb-4 text-cyan-300">Audience territoire</h2>
+          <div className="space-y-3">
+            {territoryAudience.map((item) => (
+              <div key={item.territory} className="rounded-xl border border-slate-700/70 bg-slate-950/70 p-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-200">{item.territory}</span>
+                  <span className="text-xs text-cyan-300">+{item.growthPercent}%</span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">{item.activeUsers.toLocaleString('fr-FR')} actifs</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {usingSeedData && (
+        <p className="mt-4 text-xs text-amber-300">
+          Base vide détectée : affichage de données de secours (seed) réservé au créateur.
+        </p>
+      )}
+
+      {isCreator && (
+        <button
+          type="button"
+          onClick={forceReloadCreatorData}
+          className="mt-6 rounded-xl border border-rose-400/40 bg-rose-500/20 px-5 py-3 text-xs font-black tracking-wide text-rose-100 hover:bg-rose-500/30"
+        >
+          FORCER LE RECHARGEMENT DES DONNÉES
+        </button>
+      )}
     </div>
   );
 };
