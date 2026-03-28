@@ -7,26 +7,21 @@
  * Route : /espace-createur
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { Link, Navigate } from 'react-router-dom';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import {
   Crown, Shield, Zap, Code2, Database, Users, BarChart3,
-  Settings, Lock, CheckCircle, AlertCircle, Copy, ExternalLink,
+  Settings, CheckCircle, AlertCircle, Copy, ExternalLink,
   Terminal, BookOpen, Sparkles, Globe, Key, ChevronDown, ChevronUp,
   TrendingUp, Bell, Download, FileText, Wrench, RefreshCw,
   LogOut, Star, Building2, Smartphone, BrainCircuit, Activity, Clock3, Eye, MapPinned,
 } from 'lucide-react';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { useAuth } from '../contexts/AuthContext';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { PLAN_DEFINITIONS } from '../billing/plans';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { useUserStats } from '../hooks/useUserStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
+import { getPredatorSeedAlerts, runPredatorMonitoring, type PredatorAlert } from '../services/predatorService';
 import {
   useVisitorStats,
   type InterestStats,
@@ -191,7 +186,6 @@ const ACTIONS_STEPS: MobileStep[] = [
 
 
 const ENV_OVERRIDE_TIP = `# frontend/.env.local
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 # Simule n'importe quel plan sans Firestore (pour les tests)
 VITE_PLAN_OVERRIDE=CREATOR
 
@@ -215,6 +209,17 @@ const INSIGHT_TONE_STYLES: Record<InsightTone, string> = {
   amber: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
   violet: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
 };
+
+
+const predatorRadarStyle = `
+@keyframes predatorSweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes predatorPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}`;
 
 const BRIEFING_INTEREST_KEY_ALIASES: Record<string, string> = {
   scan: 'scanner',
@@ -373,6 +378,9 @@ const EspaceCreateur: React.FC = () => {
   const [envOpen, setEnvOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedAdminLink, setSelectedAdminLink] = useState<AdminLink | null>(ADMIN_LINKS[0]);
+  const [predatorAlerts, setPredatorAlerts] = useState<PredatorAlert[]>([]);
+  const [predatorLoading, setPredatorLoading] = useState(true);
+  const [predatorLastScan, setPredatorLastScan] = useState<Date | null>(null);
 
   // Wait for auth to resolve before checking role — avoids redirect during bootstrap
   if (loading) {
@@ -475,6 +483,36 @@ const EspaceCreateur: React.FC = () => {
     });
   }, [topInterest, topTerritory, topTerritoryHistoricalInterest]);
 
+  useEffect(() => {
+    let active = true;
+
+    const runScan = async () => {
+      setPredatorLoading(true);
+      try {
+        const alerts = await runPredatorMonitoring();
+        if (!active) return;
+        setPredatorAlerts(alerts.length > 0 ? alerts : getPredatorSeedAlerts());
+      } catch (_error) {
+        if (!active) return;
+        setPredatorAlerts(getPredatorSeedAlerts());
+      } finally {
+        if (!active) return;
+        setPredatorLastScan(new Date());
+        setPredatorLoading(false);
+      }
+    };
+
+    void runScan();
+    const interval = window.setInterval(() => {
+      void runScan();
+    }, 5 * 60 * 1000);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
   const topInterestMax = Math.max(...byInterest.map((interest) => interest.totalViews), 1);
 
   return (
@@ -484,10 +522,12 @@ const EspaceCreateur: React.FC = () => {
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
+      <style>{predatorRadarStyle}</style>
+
       <div className="max-w-5xl mx-auto px-4 pt-4 pb-12">
 
         {/* ── Hero ─────────────────────────────────────────────────── */}
-        <div className="mb-8 bg-gradient-to-br from-amber-900/40 to-yellow-900/20 border border-amber-600/40 rounded-2xl p-6 sm:p-8">
+        <div className="relative mb-8 bg-gradient-to-br from-amber-900/40 to-yellow-900/20 border border-amber-600/40 rounded-2xl p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <div className="p-4 bg-amber-400/20 border border-amber-500/40 rounded-2xl flex-shrink-0">
               <Crown className="w-10 h-10 text-amber-300" />
@@ -519,6 +559,19 @@ const EspaceCreateur: React.FC = () => {
             </div>
           </div>
 
+
+
+          <div className="absolute right-4 top-4 hidden sm:flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-200">
+            <span className="relative flex h-3 w-3">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-300 opacity-75" />
+              <span
+                className="relative inline-flex h-3 w-3 rounded-full border border-emerald-200/70 bg-emerald-300/30"
+                style={{ animation: 'predatorPulse 1.8s ease-in-out infinite' }}
+              />
+            </span>
+            Radar Predator Actif
+          </div>
+
           {/* User info */}
           {user && (
             <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-amber-200/60 border-t border-amber-700/30 pt-4">
@@ -544,6 +597,23 @@ const EspaceCreateur: React.FC = () => {
             </div>
           )}
         </div>
+
+
+        {/* ── Ghostwriter card ───────────────────────────────────────── */}
+        <section className="mb-8 rounded-2xl border border-violet-500/25 bg-gradient-to-br from-violet-950/30 via-slate-900/75 to-slate-950 p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-violet-300">Ghostwriter OS</p>
+              <h2 className="mt-1 text-lg font-bold text-white">Carte Ghostwriter stratégique</h2>
+              <p className="mt-2 text-sm text-slate-300">
+                Predator alimente Ghostwriter avec des mouvements marché détectés pour déclencher des contenus “Flash” avant la concurrence.
+              </p>
+            </div>
+            <span className="inline-flex items-center rounded-full border border-violet-400/35 bg-violet-500/10 px-3 py-1 text-xs font-semibold text-violet-200">
+              Mode veille + publication
+            </span>
+          </div>
+        </section>
 
         {/* ── IA audience dashboard ─────────────────────────────────── */}
         <section className="mb-8">
@@ -878,6 +948,48 @@ const EspaceCreateur: React.FC = () => {
                   </div>
                 </div>
               </div>
+        </section>
+
+        <section className="mb-8 order-2 rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-emerald-950/20 via-slate-900/70 to-slate-950 p-5">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-white">
+            <Bell className="h-5 w-5 text-emerald-300" />
+            Alertes Predator
+          </h2>
+          <p className="mt-1 text-xs text-slate-400">
+            Opportunités détectées automatiquement sous la section Ghostwriter.
+            Dernier scan : {predatorLastScan ? formatDateTime(predatorLastScan) : 'en attente'}
+          </p>
+
+          {predatorLoading ? (
+            <div className="mt-4 rounded-xl border border-slate-700/60 bg-slate-950/40 p-4 text-sm text-slate-400">
+              Scan Predator en cours…
+            </div>
+          ) : predatorAlerts.length === 0 ? (
+            <div className="mt-4 rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
+              Aucun mouvement concurrent détecté pour le moment.
+            </div>
+          ) : (
+            <div className="mt-4 space-y-3">
+              {predatorAlerts.map((alert) => (
+                <article key={alert.id} className="rounded-xl border border-slate-700/60 bg-slate-950/50 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-semibold text-white">{alert.targetName}</p>
+                    <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+                      alert.severity === 'high'
+                        ? 'border-red-500/40 bg-red-500/10 text-red-200'
+                        : 'border-amber-500/40 bg-amber-500/10 text-amber-200'
+                    }`}>
+                      {alert.severity === 'high' ? 'Alerte élevée' : 'Alerte modérée'}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-sm text-slate-300">{alert.message}</p>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Référence {alert.referencePrice.toFixed(2)}€ · Concurrent {alert.observedPrice.toFixed(2)}€ · Écart {alert.deltaPercent.toFixed(2)}%
+                  </p>
+                </article>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* ── Feature grid ─────────────────────────────────────────── */}
@@ -1269,7 +1381,6 @@ const EspaceCreateur: React.FC = () => {
           >
             <div className="flex items-center gap-3">
               <Key className="w-5 h-5 text-violet-400" />
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
               <span className="font-bold text-white">🛠️ Développement — Simuler n'importe quel plan</span>
             </div>
             {envOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
@@ -1278,7 +1389,6 @@ const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 10
           {envOpen && (
             <div className="mt-2 bg-slate-900/60 border border-slate-700/40 rounded-2xl p-5">
               <p className="text-sm text-slate-400 mb-3">
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
                 En développement local, vous pouvez simuler n'importe quel plan sans Firestore via une variable d'environnement dans <code className="text-xs bg-slate-700/60 px-1 py-0.5 rounded text-violet-300">frontend/.env.local</code> :
               </p>
               <div className="flex items-start justify-between bg-slate-950/80 border border-slate-700/50 rounded-xl p-4">
