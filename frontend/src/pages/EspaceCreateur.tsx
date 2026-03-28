@@ -7,7 +7,7 @@
  * Route : /espace-createur
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import {
@@ -20,7 +20,6 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
-import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 import {
   useVisitorStats,
@@ -383,10 +382,18 @@ const EspaceCreateur: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const handleRefreshClaims = async () => {
+  const handleRefreshClaims = useCallback(async () => {
     setRefreshing(true);
     try { await refreshClaims(); } finally { setRefreshing(false); }
-  };
+  }, [refreshClaims]);
+
+  const toggleGuideOpen = useCallback(() => {
+    setGuideOpen((open) => !open);
+  }, []);
+
+  const handleSelectLockedAdminLink = useCallback((link: AdminLink) => {
+    setSelectedAdminLink(link);
+  }, []);
 
   const creatorPlan = PLAN_DEFINITIONS['CREATOR'];
   const audienceLoading = userStatsLoading || visitorStatsLoading;
@@ -396,10 +403,31 @@ const EspaceCreateur: React.FC = () => {
   const activeTerritoriesCount = byTerritory.length;
   const activeInterestCount = byInterest.length;
   const accountPresenceRate = totalUsers > 0 ? Math.round((onlineUsers / totalUsers) * 100) : 0;
-  const mostDormantTerritory = [...byTerritory]
-    .sort((a, b) => (b.totalVisits - b.online * 8) - (a.totalVisits - a.online * 8))[0];
+  const mostDormantTerritory = useMemo(() => {
+    if (byTerritory.length === 0) return undefined;
+
+    return [...byTerritory]
+      .sort((a, b) => (b.totalVisits - b.online * 8) - (a.totalVisits - a.online * 8))[0];
+  }, [byTerritory]);
   const detectedTerritory = byTerritory.find((territory) => territory.code.toLowerCase() === myTerritory.toLowerCase());
   const topTerritoryHistoricalInterest = topTerritory ? interestByTerritory[topTerritory.code]?.[0] : undefined;
+
+  const revenueAnalytics = useMemo(() => {
+    const conversionStats = getConversionStats(30);
+    const dailyStats = getDailyStats(7);
+    const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
+    const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
+    const revenueTrend = dailyStats.length >= 2
+      ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
+      : 0;
+
+    return {
+      conversionStats,
+      weeklyRevenue,
+      weeklyClicks,
+      revenueTrend,
+    };
+  }, []);
 
   const dashboardInsights = useMemo<DashboardInsight[]>(() => {
     const focusInsight = classifyAudienceFocus(topInterest);
@@ -758,46 +786,36 @@ const EspaceCreateur: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-emerald-400" />
             Revenus CPC — suivi créateur
           </h2>
-          {(() => {
-            const conversionStats = getConversionStats(30);
-            const dailyStats = getDailyStats(7);
-            const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
-            const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
-            const revenueTrend = dailyStats.length >= 2
-              ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
-              : 0;
-
-            return (
-              <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 sm:space-y-4">
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 30 jours</p>
                     <p className="mt-1 text-xl font-black text-emerald-300 sm:text-2xl">
-                      {conversionStats.estimatedRevenue.toFixed(2)} €
+                      {revenueAnalytics.conversionStats.estimatedRevenue.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">estimation locale (clic × prix moyen × taux)</p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">CTR global</p>
                     <p className="mt-1 text-xl font-black text-cyan-300 sm:text-2xl">
-                      {(conversionStats.clickThroughRate * 100).toFixed(2)}%
+                      {(revenueAnalytics.conversionStats.clickThroughRate * 100).toFixed(2)}%
                     </p>
                     <p className="mt-1 text-xs text-slate-400">
-                      {conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
+                      {revenueAnalytics.conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {revenueAnalytics.conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
                     </p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 7 jours</p>
                     <p className="mt-1 text-xl font-black text-amber-300 sm:text-2xl">
-                      {weeklyRevenue.toFixed(2)} €
+                      {revenueAnalytics.weeklyRevenue.toFixed(2)} €
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
+                    <p className="mt-1 text-xs text-slate-400">{revenueAnalytics.weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Tendance 7 jours</p>
-                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                      {revenueTrend >= 0 ? '+' : ''}
-                      {revenueTrend.toFixed(2)} €
+                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueAnalytics.revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {revenueAnalytics.revenueTrend >= 0 ? '+' : ''}
+                      {revenueAnalytics.revenueTrend.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">dernier jour vs premier jour (fenêtre 7j)</p>
                   </div>
@@ -808,11 +826,11 @@ const EspaceCreateur: React.FC = () => {
                     <h3 className="text-base font-bold text-white">Top produits convertisseurs</h3>
                     <p className="mt-1 text-xs text-slate-400">Produits avec le plus de clics et revenu estimé (30 jours)</p>
                     <div className="mt-4 space-y-3">
-                      {conversionStats.topProducts.length === 0 ? (
+                      {revenueAnalytics.conversionStats.topProducts.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
                           Pas encore de données de clic CPC sur la période.
                         </div>
-                      ) : conversionStats.topProducts.slice(0, 5).map((product) => (
+                      ) : revenueAnalytics.conversionStats.topProducts.slice(0, 5).map((product) => (
                         <div key={`${product.barcode}-${product.name}`} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
@@ -832,11 +850,11 @@ const EspaceCreateur: React.FC = () => {
                     <h3 className="text-base font-bold text-white">Top enseignes CPC</h3>
                     <p className="mt-1 text-xs text-slate-400">Enseignes les plus cliquées avec panier moyen observé (30 jours)</p>
                     <div className="mt-4 space-y-3">
-                      {conversionStats.topRetailers.length === 0 ? (
+                      {revenueAnalytics.conversionStats.topRetailers.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
                           Aucun clic enseigne enregistré sur la période.
                         </div>
-                      ) : conversionStats.topRetailers.slice(0, 5).map((retailer) => (
+                      ) : revenueAnalytics.conversionStats.topRetailers.slice(0, 5).map((retailer) => (
                         <div key={retailer.retailer} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
@@ -853,8 +871,6 @@ const EspaceCreateur: React.FC = () => {
                   </div>
                 </div>
               </div>
-            );
-          })()}
         </section>
 
         {/* ── Feature grid ─────────────────────────────────────────── */}
@@ -959,7 +975,7 @@ const EspaceCreateur: React.FC = () => {
                   <button
                     key={l.to}
                     type="button"
-                    onClick={() => setSelectedAdminLink(l)}
+                    onClick={() => handleSelectLockedAdminLink(l)}
                     className={cardClassName}
                     aria-pressed={selectedAdminLink?.to === l.to}
                   >
@@ -1056,7 +1072,7 @@ const EspaceCreateur: React.FC = () => {
         {/* ── Setup guide (collapsible) ─────────────────────────────── */}
         <section className="mb-6">
           <button
-            onClick={() => setGuideOpen(o => !o)}
+            onClick={toggleGuideOpen}
             className="w-full flex items-center justify-between bg-slate-800/60 border border-slate-700/50 rounded-2xl px-5 py-4 text-left"
           >
             <div className="flex items-center gap-3">
