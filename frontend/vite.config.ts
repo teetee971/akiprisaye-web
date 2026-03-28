@@ -30,7 +30,6 @@ export default defineConfig({
     // Set VITE_GOOGLE_SITE_VERIFICATION as a repo secret and pass it in the
     // deploy-pages workflow Build step env section.
     // When the env var is absent (local dev, CI without the secret) the tag is
-    // simply omitted — harmless and clean.
     {
       name: 'google-site-verification',
       transformIndexHtml() {
