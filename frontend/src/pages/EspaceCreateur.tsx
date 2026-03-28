@@ -450,7 +450,7 @@ const EspaceCreateur: React.FC = () => {
       })),
       notableIncreases: byTerritory.slice(0, 2).map((territory) => ({
         name: territory.name,
-        changePct: Math.max(1, (territory.online / Math.max(territory.totalVisits, 1)) * 100),
+        changePct: Math.max(1, (territory.online / Math.max(territory.totalVisits, 1)) * 100), // Assure que la hausse est au moins de 1%
       })),
       date: new Date().toISOString(),
       revenueAnalytics,
