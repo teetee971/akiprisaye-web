@@ -1,10 +1,5 @@
 /**
- * EspaceCreateur.tsx
- *
- * Tableau de bord exclusif du créateur / développeur du logiciel.
- * Accès réservé au rôle "creator" — plan CREATOR (illimité sur tout).
- *
- * Route : /espace-createur
+ * EspaceCreateur.tsx - Version Ultra 3.1 STABLE
  */
 
 import React, { useCallback, useMemo, useState } from 'react';
@@ -12,360 +7,22 @@ import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import {
   Crown, Shield, Zap, Code2, Database, Users, BarChart3,
-  Settings, Lock, CheckCircle, AlertCircle, Copy, ExternalLink,
+  Settings, Lock, CheckCircle, AlertCircle, Copy, ExternalLink, Radar,
   Terminal, BookOpen, Sparkles, Globe, Key, ChevronDown, ChevronUp,
   TrendingUp, Bell, Download, FileText, Wrench, RefreshCw,
   LogOut, Star, Building2, Smartphone, BrainCircuit, Activity, Clock3, Eye, MapPinned,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
-import {
-  useVisitorStats,
-  type InterestStats,
-  type TerritoryInterestStat,
-  type TerritoryStats,
-} from '../hooks/useVisitorStats';
+import { generateDailyPost } from '../services/ghostwriterService';
+import { useVisitorStats } from '../hooks/useVisitorStats';
 
-/* ─── Admin shortcut ─────────────────────────────────────────────────── */
-
-interface AdminLink {
-  label: string;
-  icon: React.ElementType;
-  to: string;
-  description: string;
-  color: string;
-  requiresAdmin: boolean;
-  helpHref?: string;
-}
-
-const ADMIN_LINKS: AdminLink[] = [
-  { label: 'Dashboard Admin',       icon: BarChart3,   to: '/admin',                  description: 'Vue d\'ensemble et métriques', color: 'text-blue-400',   requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Gestion utilisateurs',  icon: Users,       to: '/admin/users',            description: 'Rôles, plans, accès', color: 'text-purple-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Sync / Import',         icon: RefreshCw,   to: '/admin/sync',             description: 'Synchronisation des données', color: 'text-green-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Gestion Magasins',      icon: Building2,   to: '/admin/stores',           description: 'Référentiel enseigne', color: 'text-amber-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Gestion Produits',      icon: Database,    to: '/admin/products',         description: 'Catalogue EAN', color: 'text-cyan-400',  requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Import Prix',           icon: Download,    to: '/admin/import',           description: 'Import CSV / JSON', color: 'text-orange-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Modération',            icon: Shield,      to: '/admin/moderation',       description: 'Signalements citoyens', color: 'text-red-400',   requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Marketplace Admin',     icon: Globe,       to: '/admin/marketplace',      description: 'Gestion des annonces', color: 'text-pink-400',  requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Devis Institutionnels', icon: FileText,    to: '/admin/devis',            description: 'Licences & contrats B2B', color: 'text-indigo-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  { label: 'Calculs Bâtiment',      icon: Wrench,      to: '/admin/calculs-batiment', description: 'Module BTP admin', color: 'text-slate-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-];
-
-/* ─── Feature grid ───────────────────────────────────────────────────── */
-
-const CREATOR_FEATURES = [
-  { icon: Zap,        label: 'Articles suivis',          value: '∞ illimités',   color: 'text-yellow-400' },
-  { icon: RefreshCw,  label: 'Actualisations/jour',      value: '∞ illimitées',  color: 'text-green-400' },
-  { icon: Globe,      label: 'Territoires',              value: '∞ tous les DOM', color: 'text-blue-400' },
-  { icon: TrendingUp, label: 'Historique des prix',      value: 'Complet',       color: 'text-cyan-400' },
-  { icon: Bell,       label: 'Alertes prix',             value: '∞ illimitées',  color: 'text-purple-400' },
-  { icon: Download,   label: 'Export CSV / JSON / PDF',  value: '✅ Actif',      color: 'text-emerald-400' },
-  { icon: Users,      label: 'Listes partagées',         value: '✅ Actif',      color: 'text-pink-400' },
-  { icon: BarChart3,  label: 'Dashboard budget',         value: '✅ Actif',      color: 'text-amber-400' },
-  { icon: FileText,   label: 'Rapports automatiques',    value: '✅ Actif',      color: 'text-orange-400' },
-  { icon: Code2,      label: 'Accès API complet',        value: '✅ Actif',      color: 'text-red-400' },
-  { icon: Shield,     label: 'Interface Admin',          value: '✅ Actif',      color: 'text-slate-300' },
-  { icon: Crown,      label: 'Plan',                     value: 'CREATOR',       color: 'text-yellow-300' },
-];
-
-/* ─── Setup guide steps ──────────────────────────────────────────────── */
-
-interface Step {
-  num: number;
-  title: string;
-  detail: string;
-  code?: string;
-  link?: { label: string; href: string };
-}
-
-const SETUP_STEPS: Step[] = [
-  {
-    num: 1,
-    title: 'Créez votre compte Firebase',
-    detail: 'Si ce n\'est pas déjà fait, inscrivez-vous avec votre email depuis la page d\'inscription.',
-    link: { label: 'Aller à l\'inscription →', href: '/inscription' },
-  },
-  {
-    num: 2,
-    title: 'Installez firebase-admin (une seule fois)',
-    detail: 'Dans un terminal, à la racine du projet, lancez l\'installation des dépendances (firebase-admin est déjà déclaré en devDependency) :',
-    code: 'npm install',
-  },
-  {
-    num: 3,
-    title: 'Téléchargez la clé Admin Firebase',
-    detail: 'Compte de service : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com → Cliquez "Générer une nouvelle clé privée" → renommez le fichier JSON en serviceAccountKey.json → placez-le à la RACINE du dépôt (même dossier que firebase.json et package.json) ⚠️ Ne commitez jamais ce fichier.',
-    code: 'akiprisaye-web/\n├── firebase.json\n├── package.json\n├── serviceAccountKey.json   ← 👈 ICI\n├── frontend/\n└── scripts/',
-    link: { label: 'Firebase Console → Comptes de service →', href: 'https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk' },
-  },
-  {
-    num: 4,
-    title: 'Exécutez le script d\'activation',
-    detail: 'Dans le terminal, depuis la racine du projet, lancez le script avec votre email :',
-    code: 'node scripts/set-creator-role.mjs votre-email@domaine.com',
-  },
-  {
-    num: 5,
-    title: 'Connectez-vous à l\'application',
-    detail: 'Fermez la session si elle est ouverte, puis reconnectez-vous. Votre rôle Créateur est activé immédiatement.',
-    link: { label: 'Se connecter →', href: '/mon-compte' },
-  },
-  {
-    num: 6,
-    title: 'Accédez à votre espace',
-    detail: 'Ce tableau de bord confirme votre statut. Toutes les fonctionnalités admin et les plans sont débloqués.',
-  },
-];
-
-/* ─── Termux / GitHub Actions guide ─────────────────────────────────── */
-
-interface MobileStep {
-  num: number;
-  title: string;
-  detail: string;
-  code?: string;
-  link?: { label: string; href: string };
-}
-
-const TERMUX_STEPS: MobileStep[] = [
-  {
-    num: 1,
-    title: 'Autoriser l\'accès au stockage (si pas encore fait)',
-    detail: 'Cette commande donne à Termux l\'accès à vos fichiers. Si vous voyez une demande de permission, acceptez. Si vous avez déjà accès à ~/downloads, passez à l\'étape suivante.',
-    code: 'termux-setup-storage',
-  },
-  {
-    num: 2,
-    title: 'Installer / vérifier Node.js',
-    detail: 'Vérifiez d\'abord si Node.js est déjà installé. Si la commande retourne un numéro de version (ex: v22.x.x), passez à l\'étape 3. Sinon, lancez l\'installation. Si vous voyez "Abort.", relancez pkg install nodejs une seconde fois — c\'est un bug connu de Termux lors des upgrades.',
-    code: 'node --version 2>/dev/null || pkg install nodejs',
-  },
-  {
-    num: 3,
-    title: 'Aller dans les téléchargements et télécharger le script',
-    detail: 'Allez dans ~/downloads (où se trouve déjà serviceAccountKey.json) puis téléchargez UNIQUEMENT le script — pas besoin de cloner tout le dépôt (22 Mo) :',
-    code: 'cd ~/downloads && curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/copilot/add-expert-conference-on-water/scripts/set-creator-role.mjs -o set-creator-role.mjs',
-  },
-  {
-    num: 4,
-    title: 'Installer firebase-admin et lancer le script',
-    detail: 'Installez uniquement la dépendance nécessaire, puis exécutez le script. Le fichier serviceAccountKey.json est déjà dans le même dossier :',
-    code: 'npm install firebase-admin && node set-creator-role.mjs teetee971@gmail.com',
-  },
-];
-
-const ACTIONS_STEPS: MobileStep[] = [
-  {
-    num: 1,
-    title: 'Copiez le contenu de serviceAccountKey.json',
-    detail: 'Ouvrez le fichier JSON sur votre téléphone avec un éditeur de texte, puis sélectionnez et copiez tout le contenu (le JSON brut entre { et }).',
-  },
-  {
-    num: 2,
-    title: 'Ajoutez le secret GitHub',
-    detail: 'Dans votre dépôt GitHub → Settings → Secrets and variables → Actions → "New repository secret". Nom : FIREBASE_SERVICE_ACCOUNT. Valeur : collez le contenu JSON copié.',
-    link: { label: 'GitHub → Secrets → Nouveau secret →', href: 'https://github.com/teetee971/akiprisaye-web/settings/secrets/actions/new' },
-  },
-  {
-    num: 3,
-    title: 'Déclenchez le workflow depuis l\'onglet Actions',
-    detail: 'Dans votre dépôt → onglet "Actions" → workflow "✨ Attribuer un rôle utilisateur" → "Run workflow" → entrez votre email et choisissez le rôle → "Run workflow".',
-    link: { label: 'GitHub → Actions → ✨ Attribuer un rôle utilisateur →', href: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
-  },
-  {
-    num: 4,
-    title: 'Reconnectez-vous à l\'application',
-    detail: 'Une fois le workflow terminé (icône ✅ verte), fermez votre session et reconnectez-vous. Votre rôle Créateur est immédiatement actif.',
-    link: { label: 'Se connecter →', href: '/mon-compte' },
-  },
-];
-
-
-
-const ENV_OVERRIDE_TIP = `# frontend/.env.local
-# Simule n'importe quel plan sans Firestore (pour les tests)
-VITE_PLAN_OVERRIDE=CREATOR
-
-# Autres valeurs valides :
-# VITE_PLAN_OVERRIDE=CITIZEN_PREMIUM
-# VITE_PLAN_OVERRIDE=PRO
-# VITE_PLAN_OVERRIDE=INSTITUTION`;
-
-type InsightTone = 'emerald' | 'cyan' | 'amber' | 'violet';
-
-interface DashboardInsight {
-  title: string;
-  value: string;
-  detail: string;
-  tone: InsightTone;
-}
-
-const INSIGHT_TONE_STYLES: Record<InsightTone, string> = {
-  emerald: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200',
-  cyan: 'border-cyan-500/30 bg-cyan-500/10 text-cyan-200',
-  amber: 'border-amber-500/30 bg-amber-500/10 text-amber-200',
-  violet: 'border-violet-500/30 bg-violet-500/10 text-violet-200',
-};
-
-const BRIEFING_INTEREST_KEY_ALIASES: Record<string, string> = {
-  scan: 'scanner',
-};
-
-function normalizeBriefingInterestKey(key: string | undefined): string {
-  if (!key) return '';
-  const normalized = key.trim().toLowerCase();
-  return BRIEFING_INTEREST_KEY_ALIASES[normalized] ?? normalized;
-}
-
-function formatDateTime(date: Date | null): string {
-  if (!date) return 'En attente de données';
-  return new Intl.DateTimeFormat('fr-FR', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(date);
-}
-
-function formatFreshness(date: Date | null): string {
-  if (!date) return 'Aucune remontée récente';
-  const deltaMs = Date.now() - date.getTime();
-  if (deltaMs < 60_000) return 'À l’instant';
-  const deltaMinutes = Math.round(deltaMs / 60_000);
-  if (deltaMinutes < 60) return `Il y a ${deltaMinutes} min`;
-  const deltaHours = Math.round(deltaMinutes / 60);
-  if (deltaHours < 24) return `Il y a ${deltaHours} h`;
-  const deltaDays = Math.round(deltaHours / 24);
-  return `Il y a ${deltaDays} j`;
-}
-
-function classifyAudienceFocus(topInterest: InterestStats | undefined): DashboardInsight {
-  if (!topInterest) {
-    return {
-      title: 'Lecture IA',
-      value: 'Signal faible',
-      detail: 'Aucune tendance nette pour le moment. Les insights s’enrichissent dès les premières visites.',
-      tone: 'violet',
-    };
-  }
-
-  if (['comparateur', 'scanner', 'scan', 'alertes', 'liste'].includes(topInterest.key)) {
-    return {
-      title: 'Profil dominant',
-      value: 'Acheteurs tactiques',
-      detail: `Le trafic se concentre sur ${topInterest.name.toLowerCase()} : vos utilisateurs cherchent un gain prix immédiat.`,
-      tone: 'emerald',
-    };
-  }
-
-  if (['observatoire', 'actualites', 'methodologie', 'vie-chere'].includes(topInterest.key)) {
-    return {
-      title: 'Profil dominant',
-      value: 'Veille citoyenne',
-      detail: `Le sujet ${topInterest.name.toLowerCase()} domine : ils veulent comprendre les écarts, pas seulement acheter.`,
-      tone: 'cyan',
-    };
-  }
-
-  if (['assistant', 'devis', 'espace-pro', 'marketplace'].includes(topInterest.key)) {
-    return {
-      title: 'Profil dominant',
-      value: 'Usage IA / pro',
-      detail: `Les visiteurs se dirigent vers ${topInterest.name.toLowerCase()} : forte attente d’accompagnement expert et de productivité.`,
-      tone: 'amber',
-    };
-  }
-
-  return {
-    title: 'Profil dominant',
-    value: 'Communauté active',
-    detail: `Le pôle ${topInterest.name.toLowerCase()} prend l’avantage : privilégier les usages d’échange, d’entraide et d’engagement.`,
-    tone: 'violet',
-  };
-}
-
-export function buildCreatorBriefing({
-  topTerritory,
-  topInterest,
-  topTerritoryHistoricalInterest,
-}: {
-  topTerritory: TerritoryStats | undefined;
-  topInterest: InterestStats | undefined;
-  topTerritoryHistoricalInterest: TerritoryInterestStat | undefined;
-}): string {
-  if (!topTerritory && !topInterest) {
-    return 'Le tableau de bord IA attend les premières remontées de présence et de navigation pour construire un briefing comportemental fiable.';
-  }
-
-  const leadTerritory = topTerritory
-    ? `${topTerritory.flag} ${topTerritory.name}`
-    : 'un territoire encore non identifié';
-  const leadInterest = topInterest
-    ? `${topInterest.emoji} ${topInterest.name.toLowerCase()}`
-    : 'un usage encore diffus';
-  const leadHistoricalAngle = topTerritoryHistoricalInterest
-    ? `${topTerritoryHistoricalInterest.emoji} ${topTerritoryHistoricalInterest.name.toLowerCase()}`
-    : 'aucun historique dominant';
-  const sameFocusAsHistorical = Boolean(
-    topInterest
-    && topTerritoryHistoricalInterest
-    && normalizeBriefingInterestKey(topInterest.key) === normalizeBriefingInterestKey(topTerritoryHistoricalInterest.interest),
-  );
-
-  if (sameFocusAsHistorical) {
-    return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, et ce besoin confirme aussi le meilleur signal historique sur ce territoire. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
-  }
-
-  return `IA briefing : ${leadTerritory} mène actuellement l’activité. Le foyer d’attention principal est ${leadInterest}, tandis que le meilleur signal historique sur ce territoire reste ${leadHistoricalAngle}. Priorité recommandée : renforcer la proposition de valeur et les CTA autour de ce besoin dominant, puis réactiver les territoires à fort historique mais à faible présence live.`;
-}
-
-/* ─── Copy to clipboard helper ──────────────────────────────────────── */
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <button
-      onClick={() => {
-        navigator.clipboard.writeText(text).then(() => {
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        });
-      }}
-      className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
-    >
-      {copied ? <CheckCircle className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
-      {copied ? 'Copié !' : 'Copier'}
-    </button>
-  );
-}
-
-/* ─── Main component ──────────────────────────────────────────────────── */
+const pulseStyle = `@keyframes pulse-radar { 0% { transform: scale(0.95); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.5; } }`;
 
 const EspaceCreateur: React.FC = () => {
-  const { user, userRole, isCreator, loading, signOutUser, refreshClaims } = useAuth();
-  const {
-    totalUsers,
-    onlineUsers,
-    lastAuthenticatedSeenAt,
-    loading: userStatsLoading,
-  } = useUserStats();
-  const {
-    totalOnline,
-    byTerritory,
-    byInterest,
-    interestByTerritory,
-    loading: visitorStatsLoading,
-    myTerritory,
-    myInterest,
-    lastPresenceAt,
-    lastVisitAt,
-    lastInterestViewAt,
-  } = useVisitorStats();
-  const [guideOpen, setGuideOpen] = useState(!isCreator);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [envOpen, setEnvOpen] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [selectedAdminLink, setSelectedAdminLink] = useState<AdminLink | null>(ADMIN_LINKS[0]);
+  const { isCreator, loading } = useAuth();
+  const [ghostwriterCopied, setGhostwriterCopied] = useState(false);
 
   // Wait for auth to resolve before checking role — avoids redirect during bootstrap
   if (loading) {
@@ -464,72 +121,18 @@ const EspaceCreateur: React.FC = () => {
   }, [dailyStats]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      <Helmet>
-        <title>Espace Créateur — A KI PRI SA YÉ</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-4">
+      <style>{pulseStyle}</style>
+      <Helmet><title>Espace Créateur | Ultra V3.1</title></Helmet>
 
-      <div className="max-w-5xl mx-auto px-4 pt-4 pb-12">
-
-        {/* ── Hero ─────────────────────────────────────────────────── */}
-        <div className="mb-8 bg-gradient-to-br from-amber-900/40 to-yellow-900/20 border border-amber-600/40 rounded-2xl p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="p-4 bg-amber-400/20 border border-amber-500/40 rounded-2xl flex-shrink-0">
-              <Crown className="w-10 h-10 text-amber-300" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
-                  Plan CREATOR — Accès illimité
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-                ✨ Espace Créateur
-              </h1>
-              <p className="text-amber-200/70 text-sm mt-1">
-                Développeur & fondateur — Toutes les fonctionnalités débloquées, quotas infinis, accès admin complet.
-              </p>
-            </div>
-
-            {/* Status badge */}
-            <div className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-semibold ${
-              isCreator
-                ? 'bg-green-500/15 border-green-500/40 text-green-300'
-                : 'bg-amber-500/15 border-amber-500/40 text-amber-300'
-            }`}>
-              {isCreator
-                ? <><CheckCircle className="w-4 h-4" /> Créateur connecté</>
-                : <><AlertCircle className="w-4 h-4" /> Admin (pas encore creator)</>
-              }
-            </div>
-          </div>
-
-          {/* User info */}
-          {user && (
-            <div className="mt-4 flex flex-wrap items-center gap-4 text-sm text-amber-200/60 border-t border-amber-700/30 pt-4">
-              <span>📧 <strong className="text-white">{user.email}</strong></span>
-              <span>🔑 UID : <code className="text-xs bg-slate-800/60 px-1.5 py-0.5 rounded text-amber-300">{user.uid}</code></span>
-              <span>🏷️ Rôle : <strong className="text-amber-300">{userRole}</strong></span>
-              <button
-                type="button"
-                onClick={handleRefreshClaims}
-                disabled={refreshing}
-                title="Forcer le rechargement du rôle depuis Firebase"
-                className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-amber-400 transition-colors disabled:opacity-50"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-                {refreshing ? 'Actualisation…' : 'Actualiser le rôle'}
-              </button>
-              <button
-                onClick={signOutUser}
-                className="ml-auto flex items-center gap-1.5 text-xs text-slate-500 hover:text-red-400 transition-colors"
-              >
-                <LogOut className="w-3.5 h-3.5" /> Déconnexion
-              </button>
-            </div>
-          )}
+      {/* Radar Predator Indicator */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2 bg-slate-900/80 border border-fuchsia-500/30 px-3 py-1.5 rounded-full backdrop-blur-md">
+        <div className="relative h-3 w-3">
+          <div className="absolute inset-0 bg-fuchsia-500 rounded-full animate-ping opacity-75" />
+          <div className="relative h-3 w-3 bg-fuchsia-400 rounded-full" />
         </div>
+        <span className="text-[10px] font-bold text-fuchsia-100 tracking-widest uppercase">Predator Active</span>
+      </div>
 
         {/* ── IA audience dashboard ─────────────────────────────────── */}
         <section className="mb-8">
@@ -1275,41 +878,7 @@ const EspaceCreateur: React.FC = () => {
                 ⚠️ Ne commitez jamais le fichier <code>.env.local</code> — il est déjà dans <code>.gitignore</code>.
               </p>
             </div>
-          )}
         </section>
-
-        {/* ── Plan details ─────────────────────────────────────────── */}
-        <section className="mb-6 bg-slate-800/40 border border-slate-700/40 rounded-2xl p-5">
-          <h2 className="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-slate-400" />
-            Quotas techniques — Plan CREATOR
-          </h2>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            {Object.entries(creatorPlan.quotas).map(([key, value]) => (
-              <div key={key} className="bg-slate-900/60 rounded-xl p-3">
-                <p className="text-lg font-black text-amber-400">{value >= 999999999 ? '∞' : value.toLocaleString()}</p>
-                <p className="text-xs text-slate-500 mt-0.5 capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Bottom links ─────────────────────────────────────────── */}
-        <div className="flex flex-wrap gap-3">
-          <Link to="/mon-compte" className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 hover:border-amber-500/40 text-slate-300 hover:text-amber-300 rounded-xl text-sm font-medium transition-all">
-            <Settings className="w-4 h-4" /> Mon compte
-          </Link>
-          <Link to="/admin" className="flex items-center gap-2 px-4 py-2.5 bg-blue-700/30 border border-blue-700/40 hover:bg-blue-700/50 text-blue-300 rounded-xl text-sm font-medium transition-all">
-            <Shield className="w-4 h-4" /> Accès Admin
-          </Link>
-          <Link to="/roadmap" className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 hover:border-green-500/40 text-slate-300 hover:text-green-300 rounded-xl text-sm font-medium transition-all">
-            <Star className="w-4 h-4" /> Feuille de route
-          </Link>
-          <Link to="/portail-developpeurs" className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 hover:border-cyan-500/40 text-slate-300 hover:text-cyan-300 rounded-xl text-sm font-medium transition-all">
-            <Code2 className="w-4 h-4" /> API & Dev
-          </Link>
-        </div>
-
       </div>
     </div>
   );
