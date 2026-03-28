@@ -66,7 +66,7 @@ jobs:
       deployment_url: ${{ steps.cloudflare_deploy.outputs.deployment-url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -152,7 +152,7 @@ jobs:
           echo "SITE_URL=$URL" >> "$GITHUB_ENV"
 
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node
         uses: actions/setup-node@v6
@@ -241,7 +241,7 @@ jobs:
           echo "DEPLOY_URL=$URL" >> "$GITHUB_ENV"
 
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node
         uses: actions/setup-node@v6
