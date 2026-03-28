@@ -435,8 +435,9 @@ const EspaceCreateur: React.FC = () => {
   const ghostwriterPreviewPost = useMemo(() => {
     const conversionStats = revenueAnalytics.conversionStats;
     const leadingTerritory = byTerritory[0];
+    const BASELINE_CTR_ADJUSTMENT = 2; // Example: baseline or target CTR percentage
     const averagePriceChangePct = conversionStats.clickThroughRate > 0
-      ? Number(((conversionStats.clickThroughRate * 100) - 2).toFixed(1))
+      ? Number(((conversionStats.clickThroughRate * 100) - BASELINE_CTR_ADJUSTMENT).toFixed(1))
       : 0;
 
     return generateDailyPost({
