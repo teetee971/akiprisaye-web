@@ -492,8 +492,9 @@ const EspaceCreateur: React.FC = () => {
         const alerts = await runPredatorMonitoring();
         if (!active) return;
         setPredatorAlerts(alerts);
-      } catch (_error) {
+      } catch (error) {
         if (!active) return;
+        console.error('Échec du scan Predator, utilisation des données de secours :', error);
         setPredatorAlerts(getPredatorSeedAlerts());
       } finally {
         if (!active) return;
