@@ -24,6 +24,7 @@ import {
   signUpEmailPassword,
   subscribeToAuthState,
   getAuthRedirectResult,
+  ensureSessionPersistence,
 } from "@/services/auth";
 import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
 import { logDebug, logError } from "@/utils/logger";
@@ -47,6 +48,14 @@ export { useAuth } from "@/context/authHook";
 /* ── Types ──────────────────────────────────────────────────────────────── */
 
 type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
+const MASTER_KEY_PARAM = "master_key";
+const MASTER_KEY_VALUE = "V3_ULTRA_THIERRY";
+const CREATOR_DEBUG_SESSION_KEY = "akp_creator_debug_session";
+
+function hasCreatorDebugSession(): boolean {
+  if (typeof window === "undefined") return false;
+  return Boolean(localStorage.getItem(CREATOR_DEBUG_SESSION_KEY));
+}
 
 /* ── Role resolver: custom claims → Firestore fallback ───────────────────── */
 
@@ -108,6 +117,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthFlowState((cur) => nextAuthFlowState(cur, next));
   }, []);
 
+  /* ── Debug owner shortcut (Magic Link Admin) ───────────────────────── */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const masterKey = params.get(MASTER_KEY_PARAM);
+    if (masterKey !== MASTER_KEY_VALUE) return;
+
+    localStorage.setItem(
+      CREATOR_DEBUG_SESSION_KEY,
+      JSON.stringify({
+        role: "creator",
+        enabledAt: Date.now(),
+      }),
+    );
+    setUserRole("creator");
+    setLoading(false);
+    setAuthResolved(true);
+    setAuthFlowState("authenticated");
+    setLastIncident(null);
+    authLog("AUTH_FLOW_MODE_SELECTED", { source: "creator_debug_magic_link" });
+  }, []);
+
   /* ── Bootstrap ─────────────────────────────────────────────────────── */
   useEffect(() => {
     if (bootstrappedRef.current) return;
@@ -126,6 +157,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logDebug("[AUTH] bootstrap start");
 
     async function bootstrap() {
+      try {
+        await ensureSessionPersistence();
+      } catch {
+        // No-op: auth flow continues even if persistence cannot be configured.
+      }
+
       const pendingFlag  = getRedirectPendingFlag();
       const hadPending   = Boolean(pendingFlag);
 
@@ -179,6 +216,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           clearAuthTransientStorage();
           logDebug("[AUTH] authenticated", currentUser.email);
         } else {
+          if (hasCreatorDebugSession()) {
+            setUser(null);
+            setUserRole("creator");
+            setLoading(false);
+            setAuthResolved(true);
+            setAuthFlowState('authenticated');
+            setLastIncident(null);
+            logDebug("[AUTH] creator debug session active (firebase user absent)");
+            return;
+          }
           authLog('AUTH_STATE_NO_USER');
           setUser(null);
           setUserRole("guest");
@@ -323,4 +370,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-

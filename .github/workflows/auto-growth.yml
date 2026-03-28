@@ -42,10 +42,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
 
@@ -67,7 +67,7 @@ jobs:
           SITE_URL: https://teetee971.github.io/akiprisaye-web/
 
       - name: Upload growth artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: growth-${{ github.run_number }}
           retention-days: 7
