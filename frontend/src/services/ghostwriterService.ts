@@ -38,7 +38,7 @@ function toNamedPctArray(value: unknown): Array<{ name: string; changePct: numbe
  * Génère un post quotidien engageant à partir de statistiques de prix.
  * MVP Ghostwriter OS : version locale, sans appel externe.
  */
-export function generateDailyPost(data: any): string {
+export function generateDailyPost(data: Partial<GhostwriterDailyPostData>): string {
   const payload = (data ?? {}) as GhostwriterDailyPostData & Record<string, unknown>;
   const territory = typeof payload.territory === 'string' && payload.territory.trim().length > 0 ? payload.territory : 'Guadeloupe';
   const topCategory = typeof payload.topCategory === 'string' && payload.topCategory.trim().length > 0 ? payload.topCategory : 'produits du quotidien';
