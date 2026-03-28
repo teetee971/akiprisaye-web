@@ -427,7 +427,7 @@ const EspaceCreateur: React.FC = () => {
       weeklyClicks,
       revenueTrend,
     };
-  }, []);
+  }, [lastVisitAt, lastInterestViewAt]);
 
   const dashboardInsights = useMemo<DashboardInsight[]>(() => {
     const focusInsight = classifyAudienceFocus(topInterest);
