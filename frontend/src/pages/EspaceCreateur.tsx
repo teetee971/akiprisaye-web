@@ -7,7 +7,7 @@
  * Route : /espace-createur
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import {
@@ -20,7 +20,6 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
-import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 import {
   useVisitorStats,
@@ -383,10 +382,10 @@ const EspaceCreateur: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const handleRefreshClaims = async () => {
+  const handleRefreshClaims = useCallback(async () => {
     setRefreshing(true);
     try { await refreshClaims(); } finally { setRefreshing(false); }
-  };
+  }, [refreshClaims]);
 
   const creatorPlan = PLAN_DEFINITIONS['CREATOR'];
   const audienceLoading = userStatsLoading || visitorStatsLoading;
@@ -396,8 +395,11 @@ const EspaceCreateur: React.FC = () => {
   const activeTerritoriesCount = byTerritory.length;
   const activeInterestCount = byInterest.length;
   const accountPresenceRate = totalUsers > 0 ? Math.round((onlineUsers / totalUsers) * 100) : 0;
-  const mostDormantTerritory = [...byTerritory]
-    .sort((a, b) => (b.totalVisits - b.online * 8) - (a.totalVisits - a.online * 8))[0];
+  const mostDormantTerritory = useMemo(() => {
+    if (!byTerritory.length) return undefined;
+    return [...byTerritory]
+      .sort((a, b) => (b.totalVisits - b.online * 8) - (a.totalVisits - a.online * 8))[0];
+  }, [byTerritory]);
   const detectedTerritory = byTerritory.find((territory) => territory.code.toLowerCase() === myTerritory.toLowerCase());
   const topTerritoryHistoricalInterest = topTerritory ? interestByTerritory[topTerritory.code]?.[0] : undefined;
 
@@ -440,7 +442,26 @@ const EspaceCreateur: React.FC = () => {
     });
   }, [topInterest, topTerritory, topTerritoryHistoricalInterest]);
 
-  const topInterestMax = Math.max(...byInterest.map((interest) => interest.totalViews), 1);
+  const topInterestMax = useMemo(
+    () => Math.max(...byInterest.map((interest) => interest.totalViews), 1),
+    [byInterest],
+  );
+
+  const conversionStats = useMemo(() => getConversionStats(30), []);
+  const dailyStats = useMemo(() => getDailyStats(7), []);
+  const revenueStats = useMemo(() => {
+    const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
+    const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
+    const revenueTrend = dailyStats.length >= 2
+      ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
+      : 0;
+
+    return {
+      weeklyRevenue,
+      weeklyClicks,
+      revenueTrend,
+    };
+  }, [dailyStats]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
@@ -758,17 +779,7 @@ const EspaceCreateur: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-emerald-400" />
             Revenus CPC — suivi créateur
           </h2>
-          {(() => {
-            const conversionStats = getConversionStats(30);
-            const dailyStats = getDailyStats(7);
-            const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
-            const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
-            const revenueTrend = dailyStats.length >= 2
-              ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
-              : 0;
-
-            return (
-              <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 sm:space-y-4">
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 30 jours</p>
@@ -789,15 +800,15 @@ const EspaceCreateur: React.FC = () => {
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 7 jours</p>
                     <p className="mt-1 text-xl font-black text-amber-300 sm:text-2xl">
-                      {weeklyRevenue.toFixed(2)} €
+                      {revenueStats.weeklyRevenue.toFixed(2)} €
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
+                    <p className="mt-1 text-xs text-slate-400">{revenueStats.weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Tendance 7 jours</p>
-                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                      {revenueTrend >= 0 ? '+' : ''}
-                      {revenueTrend.toFixed(2)} €
+                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueStats.revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {revenueStats.revenueTrend >= 0 ? '+' : ''}
+                      {revenueStats.revenueTrend.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">dernier jour vs premier jour (fenêtre 7j)</p>
                   </div>
@@ -853,8 +864,6 @@ const EspaceCreateur: React.FC = () => {
                   </div>
                 </div>
               </div>
-            );
-          })()}
         </section>
 
         {/* ── Feature grid ─────────────────────────────────────────── */}
