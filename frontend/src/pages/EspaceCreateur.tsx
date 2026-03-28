@@ -64,14 +64,15 @@ const EspaceCreateur: React.FC = () => {
     };
   }, [reloadRequestedAt]);
 
-  const forceReloadCreatorData = () => {
+const forceReloadCreatorData = async () => {
     try {
       localStorage.removeItem('creator_revenue_analytics');
       localStorage.removeItem('creator_territory_audience');
       sessionStorage.clear();
       localStorage.removeItem(CREATOR_DEBUG_SESSION_KEY);
       if ('caches' in window) {
-        caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
+        const keys = await caches.keys();
+        await Promise.all(keys.map((key) => caches.delete(key)));
       }
     } finally {
       setReloadRequestedAt(Date.now());
