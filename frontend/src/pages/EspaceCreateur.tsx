@@ -9,9 +9,7 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { Link, Navigate } from 'react-router-dom';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import {
   Crown, Shield, Zap, Code2, Database, Users, BarChart3,
   Settings, Lock, CheckCircle, AlertCircle, Copy, ExternalLink,
@@ -19,20 +17,18 @@ import {
   TrendingUp, Bell, Download, FileText, Wrench, RefreshCw,
   LogOut, Star, Building2, Smartphone, BrainCircuit, Activity, Clock3, Eye, MapPinned,
 } from 'lucide-react';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { useAuth } from '../contexts/AuthContext';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { PLAN_DEFINITIONS } from '../billing/plans';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { useUserStats } from '../hooks/useUserStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
+import { generateDailyPost } from '../services/ghostwriterService';
 import {
   useVisitorStats,
   type InterestStats,
   type TerritoryInterestStat,
   type TerritoryStats,
 } from '../hooks/useVisitorStats';
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 
 /* ─── Admin shortcut ─────────────────────────────────────────────────── */
 
@@ -191,7 +187,6 @@ const ACTIONS_STEPS: MobileStep[] = [
 
 
 const ENV_OVERRIDE_TIP = `# frontend/.env.local
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 # Simule n'importe quel plan sans Firestore (pour les tests)
 VITE_PLAN_OVERRIDE=CREATOR
 
@@ -372,6 +367,7 @@ const EspaceCreateur: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [envOpen, setEnvOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [ghostwriterCopied, setGhostwriterCopied] = useState(false);
   const [selectedAdminLink, setSelectedAdminLink] = useState<AdminLink | null>(ADMIN_LINKS[0]);
 
   // Wait for auth to resolve before checking role — avoids redirect during bootstrap
@@ -435,6 +431,35 @@ const EspaceCreateur: React.FC = () => {
       revenueTrend,
     };
   }, [lastVisitAt, lastInterestViewAt]);
+
+  const ghostwriterPreviewPost = useMemo(() => {
+    const conversionStats = revenueAnalytics.conversionStats;
+    const leadingTerritory = byTerritory[0];
+    const averagePriceChangePct = conversionStats.clickThroughRate > 0
+      ? Number(((conversionStats.clickThroughRate * 100) - 2).toFixed(1))
+      : 0;
+
+    return generateDailyPost({
+      territory: leadingTerritory?.name ?? myTerritory ?? 'Guadeloupe',
+      topCategory: topInterest?.name ?? 'produits du quotidien',
+      topProduct: conversionStats.topProducts?.[0]?.name ?? 'produit stratégique',
+      averagePriceChangePct,
+      notableDrops: conversionStats.topProducts?.slice(0, 2).map((product) => ({
+        name: product.name,
+        changePct: Math.min(-1, -(product.ctr * 100)),
+      })),
+      notableIncreases: byTerritory.slice(0, 2).map((territory) => ({
+        name: territory.name,
+        changePct: Math.max(1, (territory.online / Math.max(territory.totalVisits, 1)) * 100),
+      })),
+      date: new Date().toISOString(),
+      revenueAnalytics,
+      conversionStats,
+      byTerritory,
+    });
+  }, [byTerritory, myTerritory, revenueAnalytics, topInterest]);
+
+  const ghostwriterLiveData = !audienceLoading && (!!lastPresenceAt || !!lastVisitAt || byTerritory.length > 0);
 
   const dashboardInsights = useMemo<DashboardInsight[]>(() => {
     const focusInsight = classifyAudienceFocus(topInterest);
@@ -880,6 +905,51 @@ const EspaceCreateur: React.FC = () => {
               </div>
         </section>
 
+        <section className="mb-8 order-2 md:order-1">
+          <div className="rounded-2xl border border-fuchsia-500/30 bg-gradient-to-br from-slate-900/80 via-slate-900/70 to-fuchsia-950/30 p-4 shadow-[0_0_30px_rgba(217,70,239,0.12)] sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="flex items-center gap-2 text-base font-bold text-white sm:text-lg">
+                <BrainCircuit className="h-5 w-5 text-fuchsia-300" />
+                Ghostwriter Social Preview
+              </h2>
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-wide ${
+                  ghostwriterLiveData
+                    ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-200'
+                    : 'border-slate-600/60 bg-slate-700/40 text-slate-300'
+                }`}
+              >
+                <span className={`h-2 w-2 rounded-full ${ghostwriterLiveData ? 'bg-emerald-300 animate-pulse shadow-[0_0_12px_rgba(110,231,183,0.9)]' : 'bg-slate-400'}`} />
+                LIVE DATA
+              </span>
+            </div>
+
+            <p className="mt-2 text-xs text-slate-400">
+              Post auto-généré depuis les métriques live du dashboard (revenus CPC, conversion et territoires actifs).
+            </p>
+
+            <div className="mt-4 rounded-xl border border-slate-700/60 bg-slate-950/60 p-4">
+              <pre className="whitespace-pre-wrap text-sm leading-relaxed text-slate-100">{ghostwriterPreviewPost}</pre>
+            </div>
+
+            <div className="mt-3 flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(ghostwriterPreviewPost).then(() => {
+                    setGhostwriterCopied(true);
+                    setTimeout(() => setGhostwriterCopied(false), 2000);
+                  });
+                }}
+                className="inline-flex items-center gap-2 rounded-lg border border-fuchsia-400/40 bg-fuchsia-500/15 px-3 py-2 text-xs font-semibold text-fuchsia-100 transition hover:bg-fuchsia-500/25"
+              >
+                {ghostwriterCopied ? <CheckCircle className="h-3.5 w-3.5 text-emerald-300" /> : <Copy className="h-3.5 w-3.5" />}
+                {ghostwriterCopied ? 'Copié !' : 'Copier pour WhatsApp/LinkedIn'}
+              </button>
+            </div>
+          </div>
+        </section>
+
         {/* ── Feature grid ─────────────────────────────────────────── */}
         <section className="mb-8 order-3">
           <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -1269,7 +1339,6 @@ const EspaceCreateur: React.FC = () => {
           >
             <div className="flex items-center gap-3">
               <Key className="w-5 h-5 text-violet-400" />
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
               <span className="font-bold text-white">🛠️ Développement — Simuler n'importe quel plan</span>
             </div>
             {envOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
@@ -1278,7 +1347,6 @@ const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 10
           {envOpen && (
             <div className="mt-2 bg-slate-900/60 border border-slate-700/40 rounded-2xl p-5">
               <p className="text-sm text-slate-400 mb-3">
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
                 En développement local, vous pouvez simuler n'importe quel plan sans Firestore via une variable d'environnement dans <code className="text-xs bg-slate-700/60 px-1 py-0.5 rounded text-violet-300">frontend/.env.local</code> :
               </p>
               <div className="flex items-start justify-between bg-slate-950/80 border border-slate-700/50 rounded-xl p-4">

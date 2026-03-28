@@ -410,7 +410,6 @@ function LoadingFallback() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4"> 
  <OfflineBanner />
- <PendingRevenueCounter />
         <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="Logo" className="h-16 mb-4" width="64" height="64" />
         <h1 className="text-xl font-bold mb-2">Chargement bloqué</h1>
         <p className="text-slate-400 mb-4">L'application met trop de temps à charger.</p>
