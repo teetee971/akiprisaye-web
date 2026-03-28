@@ -7,10 +7,13 @@
  * Route : /espace-createur
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
+import React, { useMemo, useState } from 'react';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import { Helmet } from 'react-helmet-async';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import { Link, Navigate } from 'react-router-dom';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import {
   Crown, Shield, Zap, Code2, Database, Users, BarChart3,
   Settings, Lock, CheckCircle, AlertCircle, Copy, ExternalLink,
@@ -18,11 +21,15 @@ import {
   TrendingUp, Bell, Download, FileText, Wrench, RefreshCw,
   LogOut, Star, Building2, Smartphone, BrainCircuit, Activity, Clock3, Eye, MapPinned,
 } from 'lucide-react';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import { useAuth } from '../contexts/AuthContext';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import { PLAN_DEFINITIONS } from '../billing/plans';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import { useUserStats } from '../hooks/useUserStats';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
-import { generateDailyPost } from '../services/ghostwriterService';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import {
   useVisitorStats,
   type InterestStats,
@@ -187,6 +194,7 @@ const ACTIONS_STEPS: MobileStep[] = [
 
 
 const ENV_OVERRIDE_TIP = `# frontend/.env.local
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 # Simule n'importe quel plan sans Firestore (pour les tests)
 VITE_PLAN_OVERRIDE=CREATOR
 
@@ -507,8 +515,11 @@ const EspaceCreateur: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-white">
       <Helmet>
         <title>Espace Créateur — A KI PRI SA YÉ</title>
+<div style={{marginTop: '15px', display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', borderRadius: '10px', animation: 'pulse 2s infinite'}}>   <span style={{width: '10px', height: '10px', background: '#ef4444', borderRadius: '50%'}}></span>   <div style={{fontSize: '0.85em', color: '#fca5a5'}}>     <strong>⚠️ ALERTE PIC D'AUDIENCE :</strong> Traffic 40% plus élevé que d'habitude en Guadeloupe.   </div> </div>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
+    <div style={{padding: '20px', color: 'white', background: '#0f172a', minHeight: '100vh'}}>
+      <style>{styles}</style>
 
       <div className="max-w-5xl mx-auto px-4 pt-4 pb-12">
 
@@ -526,6 +537,7 @@ const EspaceCreateur: React.FC = () => {
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
                 ✨ Espace Créateur
+<div style={{marginTop: '15px', display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', borderRadius: '10px', animation: 'pulse 2s infinite'}}>   <span style={{width: '10px', height: '10px', background: '#ef4444', borderRadius: '50%'}}></span>   <div style={{fontSize: '0.85em', color: '#fca5a5'}}>     <strong>⚠️ ALERTE PIC D'AUDIENCE :</strong> Traffic 40% plus élevé que d'habitude en Guadeloupe.   </div> </div>
               </h1>
               <p className="text-amber-200/70 text-sm mt-1">
                 Développeur & fondateur — Toutes les fonctionnalités débloquées, quotas infinis, accès admin complet.
@@ -1340,6 +1352,7 @@ const EspaceCreateur: React.FC = () => {
           >
             <div className="flex items-center gap-3">
               <Key className="w-5 h-5 text-violet-400" />
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
               <span className="font-bold text-white">🛠️ Développement — Simuler n'importe quel plan</span>
             </div>
             {envOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
@@ -1348,6 +1361,7 @@ const EspaceCreateur: React.FC = () => {
           {envOpen && (
             <div className="mt-2 bg-slate-900/60 border border-slate-700/40 rounded-2xl p-5">
               <p className="text-sm text-slate-400 mb-3">
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
                 En développement local, vous pouvez simuler n'importe quel plan sans Firestore via une variable d'environnement dans <code className="text-xs bg-slate-700/60 px-1 py-0.5 rounded text-violet-300">frontend/.env.local</code> :
               </p>
               <div className="flex items-start justify-between bg-slate-950/80 border border-slate-700/50 rounded-xl p-4">
