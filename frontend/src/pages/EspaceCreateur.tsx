@@ -491,7 +491,7 @@ const EspaceCreateur: React.FC = () => {
       try {
         const alerts = await runPredatorMonitoring();
         if (!active) return;
-        setPredatorAlerts(alerts.length > 0 ? alerts : getPredatorSeedAlerts());
+        setPredatorAlerts(alerts);
       } catch (_error) {
         if (!active) return;
         setPredatorAlerts(getPredatorSeedAlerts());
