@@ -27,7 +27,7 @@ const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 10
 import { PLAN_DEFINITIONS } from '../billing/plans';
 const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { useUserStats } from '../hooks/useUserStats';
-const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
+import { useVisitorStats, type InterestStats, type TerritoryStats } from '../hooks/useVisitorStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import {
@@ -50,16 +50,16 @@ interface AdminLink {
 }
 
 const ADMIN_LINKS: AdminLink[] = [
-  { label: 'Dashboard Admin',       icon: BarChart3,   to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Gestion utilisateurs',  icon: Users,       to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Sync / Import',         icon: RefreshCw,   to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Gestion Magasins',      icon: Building2,   to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Gestion Produits',      icon: Database,    to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Import Prix',           icon: Download,    to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Modération',            icon: Shield,      to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Marketplace Admin',     icon: Globe,       to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Devis Institutionnels', icon: FileText,    to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-  { label: 'Calculs Bâtiment',      icon: Wrench,      to: '/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+  { label: 'Dashboard Admin',       icon: BarChart3,   to: '/admin',                  description: 'Vue d\'ensemble et métriques', color: 'text-blue-400',   requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion utilisateurs',  icon: Users,       to: '/admin/users',            description: 'Rôles, plans, accès', color: 'text-purple-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Sync / Import',         icon: RefreshCw,   to: '/admin/sync',             description: 'Synchronisation des données', color: 'text-green-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion Magasins',      icon: Building2,   to: '/admin/stores',           description: 'Référentiel enseigne', color: 'text-amber-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Gestion Produits',      icon: Database,    to: '/admin/products',         description: 'Catalogue EAN', color: 'text-cyan-400',  requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Import Prix',           icon: Download,    to: '/admin/import',           description: 'Import CSV / JSON', color: 'text-orange-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Modération',            icon: Shield,      to: '/admin/moderation',       description: 'Signalements citoyens', color: 'text-red-400',   requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Marketplace Admin',     icon: Globe,       to: '/admin/marketplace',      description: 'Gestion des annonces', color: 'text-pink-400',  requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Devis Institutionnels', icon: FileText,    to: '/admin/devis',            description: 'Licences & contrats B2B', color: 'text-indigo-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
+  { label: 'Calculs Bâtiment',      icon: Wrench,      to: '/admin/calculs-batiment', description: 'Module BTP admin', color: 'text-slate-400', requiresAdmin: true, helpHref: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml' },
 ];
 
 /* ─── Feature grid ───────────────────────────────────────────────────── */
@@ -98,16 +98,16 @@ const SETUP_STEPS: Step[] = [
   },
   {
     num: 2,
-    title: 'Installez firebase-admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-    detail: 'Dans un terminal, à la racine du projet, lancez l\'installation des dépendances (firebase-admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+    title: 'Installez firebase-admin (une seule fois)',
+    detail: 'Dans un terminal, à la racine du projet, lancez l\'installation des dépendances (firebase-admin est déjà déclaré en devDependency) :',
     code: 'npm install',
   },
   {
     num: 3,
     title: 'Téléchargez la clé Admin Firebase',
-    detail: 'Compte de service : firebase-admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+    detail: 'Compte de service : firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com → Cliquez "Générer une nouvelle clé privée" → renommez le fichier JSON en serviceAccountKey.json → placez-le à la RACINE du dépôt (même dossier que firebase.json et package.json) ⚠️ Ne commitez jamais ce fichier.',
     code: 'akiprisaye-web/\n├── firebase.json\n├── package.json\n├── serviceAccountKey.json   ← 👈 ICI\n├── frontend/\n└── scripts/',
-    link: { label: 'Firebase Console → Comptes de service →', href: 'https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+    link: { label: 'Firebase Console → Comptes de service →', href: 'https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk' },
   },
   {
     num: 4,
@@ -124,7 +124,7 @@ const SETUP_STEPS: Step[] = [
   {
     num: 6,
     title: 'Accédez à votre espace',
-    detail: 'Ce tableau de bord confirme votre statut. Toutes les fonctionnalités admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+    detail: 'Ce tableau de bord confirme votre statut. Toutes les fonctionnalités admin et les plans sont débloqués.',
   },
 ];
 
@@ -159,9 +159,9 @@ const TERMUX_STEPS: MobileStep[] = [
   },
   {
     num: 4,
-    title: 'Installer firebase-admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+    title: 'Installer firebase-admin et lancer le script',
     detail: 'Installez uniquement la dépendance nécessaire, puis exécutez le script. Le fichier serviceAccountKey.json est déjà dans le même dossier :',
-    code: 'npm install firebase-admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+    code: 'npm install firebase-admin && node set-creator-role.mjs teetee971@gmail.com',
   },
 ];
 
@@ -387,7 +387,7 @@ const EspaceCreateur: React.FC = () => {
     );
   }
 
-  // isCreator is true for both "creator" and "admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+  // isCreator is true for both "creator" and "admin" roles (matches RequireCreator guard)
   if (!isCreator) {
     return <Navigate to="/" replace />;
   }
@@ -476,7 +476,7 @@ const EspaceCreateur: React.FC = () => {
                 ✨ Espace Créateur
               </h1>
               <p className="text-amber-200/70 text-sm mt-1">
-                Développeur & fondateur — Toutes les fonctionnalités débloquées, quotas infinis, accès admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+                Développeur & fondateur — Toutes les fonctionnalités débloquées, quotas infinis, accès admin complet.
               </p>
             </div>
 
@@ -890,29 +890,29 @@ const EspaceCreateur: React.FC = () => {
         <section className="mb-8 order-1 md:order-2">
           <h2 className="mb-3 flex items-center gap-2 text-base font-bold text-white sm:mb-4 sm:text-lg">
             <Shield className="w-5 h-5 text-blue-400" />
-            Outils d'admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+            Outils d'administration
           </h2>
           <div className="mb-3 rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3.5 sm:mb-4 sm:p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-white">
-                  {(userRole === 'admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-                    ? 'Votre rôle créateur/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-                    : 'Ces modules système nécessitent un compte créateur ou admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+                  {(userRole === 'admin' || userRole === 'creator')
+                    ? 'Votre rôle créateur/admin ouvre tous les modules ci-dessous.'
+                    : 'Ces modules système nécessitent un compte créateur ou admin.'}
                 </p>
                 <p className="mt-1 text-xs leading-relaxed text-slate-400">
-                  {(userRole === 'admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-                    ? 'Chaque pavé ouvre directement le bon écran d’admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
-                    : 'Une fois le rôle créateur/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+                  {(userRole === 'admin' || userRole === 'creator')
+                    ? 'Chaque pavé ouvre directement le bon écran d’administration.'
+                    : 'Une fois le rôle créateur/admin actif, utilisez “Actualiser le rôle” puis ouvrez les modules ci-dessous.'}
                 </p>
               </div>
               <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${
-                  (userRole === 'admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+                  (userRole === 'admin' || userRole === 'creator')
                     ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300'
                     : 'border-amber-500/30 bg-amber-500/10 text-amber-300'
                 }`}>
-                  {(userRole === 'admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+                  {(userRole === 'admin' || userRole === 'creator') ? 'Accès actif' : 'Créateur/Admin requis'}
                 </span>
                 <button
                   type="button"
@@ -930,9 +930,9 @@ const EspaceCreateur: React.FC = () => {
             {ADMIN_LINKS.map(l => {
               const Icon = l.icon;
               // NOTE: `requiresAdmin` in ADMIN_LINKS really means "internal-only"
-              // (accessible to both `admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+              // (accessible to both `admin` and `creator` roles), not strictly admin-only.
               const requiresInternalAccess = l.requiresAdmin;
-              const isLocked = requiresInternalAccess && userRole !== 'admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+              const isLocked = requiresInternalAccess && userRole !== 'admin' && userRole !== 'creator';
               const cardClassName = `flex w-full items-center gap-2.5 rounded-xl border p-3 text-left transition-all group sm:gap-3 sm:p-4 ${
                 isLocked
                   ? 'bg-slate-800/40 border-slate-700/40 hover:border-amber-500/40 hover:bg-amber-950/20'
@@ -988,7 +988,7 @@ const EspaceCreateur: React.FC = () => {
               );
             })}
           </div>
-          {userRole !== 'admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+          {userRole !== 'admin' && userRole !== 'creator' && selectedAdminLink && (
             <div className="mt-4 rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/30 to-slate-900/80 p-5">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="min-w-0">
@@ -999,11 +999,11 @@ const EspaceCreateur: React.FC = () => {
                     {selectedAdminLink.label}
                   </h3>
                   <p className="mt-1 text-sm text-slate-300">
-                    {selectedAdminLink.description}. Ce module pointe bien vers <code className="rounded bg-slate-950/70 px-1.5 py-0.5 text-xs text-amber-200">{selectedAdminLink.to}</code>, mais la route est volontairement réservée au rôle <strong>admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+                    {selectedAdminLink.description}. Ce module pointe bien vers <code className="rounded bg-slate-950/70 px-1.5 py-0.5 text-xs text-amber-200">{selectedAdminLink.to}</code>, mais la route est volontairement réservée au rôle <strong>admin</strong>.
                   </p>
                   <ul className="mt-3 space-y-1 text-xs text-slate-400">
                     <li>• Rôle actuel : <span className="font-semibold text-amber-200">{userRole}</span></li>
-                    <li>• Action recommandée : promouvoir le compte en <span className="font-semibold text-emerald-300">admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+                    <li>• Action recommandée : promouvoir le compte en <span className="font-semibold text-emerald-300">admin</span> via GitHub Actions ou script local.</li>
                     <li>• Ensuite : revenir ici puis cliquer sur <span className="font-semibold text-cyan-300">Actualiser le rôle</span>.</li>
                   </ul>
                 </div>
@@ -1154,7 +1154,7 @@ const EspaceCreateur: React.FC = () => {
                   {[
                     { cmd: 'node --version 2>/dev/null || pkg install nodejs', note: '— vérifie ou installe Node' },
                     { cmd: 'curl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/copilot/add-expert-conference-on-water/scripts/set-creator-role.mjs -o set-creator-role.mjs', note: '— télécharge le script' },
-                    { cmd: 'npm install firebase-admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+                    { cmd: 'npm install firebase-admin && node set-creator-role.mjs teetee971@gmail.com', note: '— installe et active' },
                   ].map(({ cmd, note }) => (
                     <div key={cmd} className="flex items-center justify-between bg-slate-950/60 border border-slate-700/40 rounded-lg px-2.5 py-1.5 mb-1.5 last:mb-0">
                       <div className="min-w-0 flex-1">
@@ -1301,7 +1301,7 @@ const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 10
           <Link to="/mon-compte" className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 hover:border-amber-500/40 text-slate-300 hover:text-amber-300 rounded-xl text-sm font-medium transition-all">
             <Settings className="w-4 h-4" /> Mon compte
           </Link>
-          <Link to="/admin<div style={{fontSize: '0.7em', marginTop: '10px', padding: '10px', background: 'rgba(16,185,129,0.1)', borderRadius: '8px', border: '1px solid #10b981'}}><p style={{color: '#10b981', fontWeight: 'bold', marginBottom: '4px'}}>📡 RADAR ACTIVÉ (Géo + Temps)</p><p style={{opacity: 0.8}}>• Dernière MàJ : 27/03 à 09:45</p><p style={{opacity: 0.6}}>• Précédente : 27/03 à 09:20</p></div><div style={{fontSize: '0.7em', opacity: 0.8, marginTop: '8px', padding: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', borderLeft: '2px solid #fbbf24'}}>• Dernière : 27/03 à 09:10 (FINAL_FIX)<br/>• Précédente : 27/03 à 08:40 (TOTAL_CLEAN)</div>
+          <Link to="/admin" className="flex items-center gap-2 px-4 py-2.5 bg-blue-700/30 border border-blue-700/40 hover:bg-blue-700/50 text-blue-300 rounded-xl text-sm font-medium transition-all">
             <Shield className="w-4 h-4" /> Accès Admin
           </Link>
           <Link to="/roadmap" className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 hover:border-green-500/40 text-slate-300 hover:text-green-300 rounded-xl text-sm font-medium transition-all">
