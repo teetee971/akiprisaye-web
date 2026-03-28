@@ -17,4 +17,4 @@
 - Mettre en avant la transparence des sources et l'utilité citoyenne.
 
 ## Signature obligatoire
-- Chaque publication générée se termine systématiquement par : **🪷**
+- Chaque publication générée se termine systématiquement par la phrase : **Vous voulez plus d’analyses locales chaque matin ? 🪷**
