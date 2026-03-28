@@ -3,19 +3,8 @@ import react from '@vitejs/plugin-react'
 import compression from 'vite-plugin-compression'
 import { fileURLToPath, URL } from 'node:url'
 import { execSync } from 'node:child_process'
-import { resolveBasePath } from './scripts/basePath'
 
 const srcPath = fileURLToPath(new URL('./src', import.meta.url))
-
-// GitHub Pages passes BASE_PATH=/akiprisaye-web/ explicitly; Cloudflare Pages keeps "/".
-// When GITHUB_PAGES=true is set (deploy-pages workflow), default to /akiprisaye-web/ as
-// belt-and-suspenders if BASE_PATH is somehow absent.
-const isGitHubPages = process.env.GITHUB_PAGES === 'true';
-const base = resolveBasePath(
-  isGitHubPages
-    ? { ...process.env, BASE_PATH: process.env.BASE_PATH ?? '/akiprisaye-web/' }
-    : process.env,
-);
 
 // Build-time metadata (Issue #0.2 — version/environment display)
 const gitSha = (() => {
@@ -64,7 +53,6 @@ export default defineConfig({
       { find: /^@$/, replacement: srcPath },
     ],
   },
-  base,
   // Inject build-time constants available as import.meta.env.*
   define: {
     // Full SHA from git (short) or from CI env

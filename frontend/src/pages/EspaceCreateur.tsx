@@ -1,10 +1,5 @@
 /**
- * EspaceCreateur.tsx
- *
- * Tableau de bord exclusif du créateur / développeur du logiciel.
- * Accès réservé au rôle "creator" — plan CREATOR (illimité sur tout).
- *
- * Route : /espace-createur
+ * EspaceCreateur.tsx - Version Ultra 3.1 STABLE
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -351,7 +346,7 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-/* ─── Main component ──────────────────────────────────────────────────── */
+const pulseStyle = `@keyframes pulse-radar { 0% { transform: scale(0.95); opacity: 0.5; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.5; } }`;
 
 const EspaceCreateur: React.FC = () => {
   const { user, userRole, isCreator, loading, signOutUser, refreshClaims } = useAuth();
@@ -402,14 +397,6 @@ const EspaceCreateur: React.FC = () => {
     try { await refreshClaims(); } finally { setRefreshing(false); }
   }, [refreshClaims]);
 
-  const toggleGuideOpen = useCallback(() => {
-    setGuideOpen((open) => !open);
-  }, []);
-
-  const handleSelectLockedAdminLink = useCallback((link: AdminLink) => {
-    setSelectedAdminLink(link);
-  }, []);
-
   const creatorPlan = PLAN_DEFINITIONS['CREATOR'];
   const audienceLoading = userStatsLoading || visitorStatsLoading;
 
@@ -419,30 +406,12 @@ const EspaceCreateur: React.FC = () => {
   const activeInterestCount = byInterest.length;
   const accountPresenceRate = totalUsers > 0 ? Math.round((onlineUsers / totalUsers) * 100) : 0;
   const mostDormantTerritory = useMemo(() => {
-    if (byTerritory.length === 0) return undefined;
-
+    if (!byTerritory.length) return undefined;
     return [...byTerritory]
       .sort((a, b) => (b.totalVisits - b.online * 8) - (a.totalVisits - a.online * 8))[0];
   }, [byTerritory]);
   const detectedTerritory = byTerritory.find((territory) => territory.code.toLowerCase() === myTerritory.toLowerCase());
   const topTerritoryHistoricalInterest = topTerritory ? interestByTerritory[topTerritory.code]?.[0] : undefined;
-
-  const revenueAnalytics = useMemo(() => {
-    const conversionStats = getConversionStats(30);
-    const dailyStats = getDailyStats(7);
-    const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
-    const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
-    const revenueTrend = dailyStats.length >= 2
-      ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
-      : 0;
-
-    return {
-      conversionStats,
-      weeklyRevenue,
-      weeklyClicks,
-      revenueTrend,
-    };
-  }, [lastVisitAt, lastInterestViewAt]);
 
   const dashboardInsights = useMemo<DashboardInsight[]>(() => {
     const focusInsight = classifyAudienceFocus(topInterest);
@@ -547,18 +516,12 @@ const EspaceCreateur: React.FC = () => {
               </p>
             </div>
 
-            {/* Status badge */}
-            <div className={`flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border text-sm font-semibold ${
-              isCreator
-                ? 'bg-green-500/15 border-green-500/40 text-green-300'
-                : 'bg-amber-500/15 border-amber-500/40 text-amber-300'
-            }`}>
-              {isCreator
-                ? <><CheckCircle className="w-4 h-4" /> Créateur connecté</>
-                : <><AlertCircle className="w-4 h-4" /> Admin (pas encore creator)</>
-              }
-            </div>
-          </div>
+    return {
+      weeklyRevenue,
+      weeklyClicks,
+      revenueTrend,
+    };
+  }, [dailyStats]);
 
 
 
@@ -598,6 +561,8 @@ const EspaceCreateur: React.FC = () => {
             </div>
           )}
         </div>
+        <span className="text-[10px] font-bold text-fuchsia-100 tracking-widest uppercase">Predator Active</span>
+      </div>
 
 
         {/* ── Ghostwriter card ───────────────────────────────────────── */}
@@ -869,31 +834,31 @@ const EspaceCreateur: React.FC = () => {
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 30 jours</p>
                     <p className="mt-1 text-xl font-black text-emerald-300 sm:text-2xl">
-                      {revenueAnalytics.conversionStats.estimatedRevenue.toFixed(2)} €
+                      {conversionStats.estimatedRevenue.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">estimation locale (clic × prix moyen × taux)</p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">CTR global</p>
                     <p className="mt-1 text-xl font-black text-cyan-300 sm:text-2xl">
-                      {(revenueAnalytics.conversionStats.clickThroughRate * 100).toFixed(2)}%
+                      {(conversionStats.clickThroughRate * 100).toFixed(2)}%
                     </p>
                     <p className="mt-1 text-xs text-slate-400">
-                      {revenueAnalytics.conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {revenueAnalytics.conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
+                      {conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
                     </p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 7 jours</p>
                     <p className="mt-1 text-xl font-black text-amber-300 sm:text-2xl">
-                      {revenueAnalytics.weeklyRevenue.toFixed(2)} €
+                      {revenueStats.weeklyRevenue.toFixed(2)} €
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{revenueAnalytics.weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
+                    <p className="mt-1 text-xs text-slate-400">{revenueStats.weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Tendance 7 jours</p>
-                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueAnalytics.revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                      {revenueAnalytics.revenueTrend >= 0 ? '+' : ''}
-                      {revenueAnalytics.revenueTrend.toFixed(2)} €
+                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueStats.revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {revenueStats.revenueTrend >= 0 ? '+' : ''}
+                      {revenueStats.revenueTrend.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">dernier jour vs premier jour (fenêtre 7j)</p>
                   </div>
@@ -904,11 +869,11 @@ const EspaceCreateur: React.FC = () => {
                     <h3 className="text-base font-bold text-white">Top produits convertisseurs</h3>
                     <p className="mt-1 text-xs text-slate-400">Produits avec le plus de clics et revenu estimé (30 jours)</p>
                     <div className="mt-4 space-y-3">
-                      {revenueAnalytics.conversionStats.topProducts.length === 0 ? (
+                      {conversionStats.topProducts.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
                           Pas encore de données de clic CPC sur la période.
                         </div>
-                      ) : revenueAnalytics.conversionStats.topProducts.slice(0, 5).map((product) => (
+                      ) : conversionStats.topProducts.slice(0, 5).map((product) => (
                         <div key={`${product.barcode}-${product.name}`} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
@@ -928,11 +893,11 @@ const EspaceCreateur: React.FC = () => {
                     <h3 className="text-base font-bold text-white">Top enseignes CPC</h3>
                     <p className="mt-1 text-xs text-slate-400">Enseignes les plus cliquées avec panier moyen observé (30 jours)</p>
                     <div className="mt-4 space-y-3">
-                      {revenueAnalytics.conversionStats.topRetailers.length === 0 ? (
+                      {conversionStats.topRetailers.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
                           Aucun clic enseigne enregistré sur la période.
                         </div>
-                      ) : revenueAnalytics.conversionStats.topRetailers.slice(0, 5).map((retailer) => (
+                      ) : conversionStats.topRetailers.slice(0, 5).map((retailer) => (
                         <div key={retailer.retailer} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
@@ -1095,7 +1060,7 @@ const EspaceCreateur: React.FC = () => {
                   <button
                     key={l.to}
                     type="button"
-                    onClick={() => handleSelectLockedAdminLink(l)}
+                    onClick={() => setSelectedAdminLink(l)}
                     className={cardClassName}
                     aria-pressed={selectedAdminLink?.to === l.to}
                   >
@@ -1192,7 +1157,7 @@ const EspaceCreateur: React.FC = () => {
         {/* ── Setup guide (collapsible) ─────────────────────────────── */}
         <section className="mb-6">
           <button
-            onClick={toggleGuideOpen}
+            onClick={() => setGuideOpen(o => !o)}
             className="w-full flex items-center justify-between bg-slate-800/60 border border-slate-700/50 rounded-2xl px-5 py-4 text-left"
           >
             <div className="flex items-center gap-3">
@@ -1402,41 +1367,7 @@ const EspaceCreateur: React.FC = () => {
                 ⚠️ Ne commitez jamais le fichier <code>.env.local</code> — il est déjà dans <code>.gitignore</code>.
               </p>
             </div>
-          )}
         </section>
-
-        {/* ── Plan details ─────────────────────────────────────────── */}
-        <section className="mb-6 bg-slate-800/40 border border-slate-700/40 rounded-2xl p-5">
-          <h2 className="text-sm font-bold text-slate-300 mb-3 flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-slate-400" />
-            Quotas techniques — Plan CREATOR
-          </h2>
-          <div className="grid grid-cols-3 gap-4 text-center">
-            {Object.entries(creatorPlan.quotas).map(([key, value]) => (
-              <div key={key} className="bg-slate-900/60 rounded-xl p-3">
-                <p className="text-lg font-black text-amber-400">{value >= 999999999 ? '∞' : value.toLocaleString()}</p>
-                <p className="text-xs text-slate-500 mt-0.5 capitalize">{key.replace(/([A-Z])/g, ' $1').toLowerCase()}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Bottom links ─────────────────────────────────────────── */}
-        <div className="flex flex-wrap gap-3">
-          <Link to="/mon-compte" className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 hover:border-amber-500/40 text-slate-300 hover:text-amber-300 rounded-xl text-sm font-medium transition-all">
-            <Settings className="w-4 h-4" /> Mon compte
-          </Link>
-          <Link to="/admin" className="flex items-center gap-2 px-4 py-2.5 bg-blue-700/30 border border-blue-700/40 hover:bg-blue-700/50 text-blue-300 rounded-xl text-sm font-medium transition-all">
-            <Shield className="w-4 h-4" /> Accès Admin
-          </Link>
-          <Link to="/roadmap" className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 hover:border-green-500/40 text-slate-300 hover:text-green-300 rounded-xl text-sm font-medium transition-all">
-            <Star className="w-4 h-4" /> Feuille de route
-          </Link>
-          <Link to="/portail-developpeurs" className="flex items-center gap-2 px-4 py-2.5 bg-slate-800/60 border border-slate-700/50 hover:border-cyan-500/40 text-slate-300 hover:text-cyan-300 rounded-xl text-sm font-medium transition-all">
-            <Code2 className="w-4 h-4" /> API & Dev
-          </Link>
-        </div>
-
       </div>
     </div>
   );
