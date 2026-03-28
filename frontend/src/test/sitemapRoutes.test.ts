@@ -55,15 +55,11 @@ describe('public sitemap route coverage', () => {
     expect(missingRoutes).toEqual([]);
   });
 
-  it('still indexes the main public hubs and audit pages', () => {
+  it('still indexes the current public routes for the Ultra release', () => {
     expect(sitemapPaths).toEqual(
       expect.arrayContaining([
         '/',
-        '/comparateurs',
-        '/observatoire',
-        '/scanner',
-        '/roadmap',
-        '/module-audit',
+        '/comparateur',
       ]),
     );
   });
