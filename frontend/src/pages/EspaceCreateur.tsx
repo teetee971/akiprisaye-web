@@ -375,6 +375,7 @@ const EspaceCreateur: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [envOpen, setEnvOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [ghostwriterCopied, setGhostwriterCopied] = useState(false);
   const [selectedAdminLink, setSelectedAdminLink] = useState<AdminLink | null>(ADMIN_LINKS[0]);
 
   // Wait for auth to resolve before checking role — avoids redirect during bootstrap
@@ -392,10 +393,18 @@ const EspaceCreateur: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  const handleRefreshClaims = async () => {
+  const handleRefreshClaims = useCallback(async () => {
     setRefreshing(true);
     try { await refreshClaims(); } finally { setRefreshing(false); }
-  };
+  }, [refreshClaims]);
+
+  const toggleGuideOpen = useCallback(() => {
+    setGuideOpen((open) => !open);
+  }, []);
+
+  const handleSelectLockedAdminLink = useCallback((link: AdminLink) => {
+    setSelectedAdminLink(link);
+  }, []);
 
   const creatorPlan = PLAN_DEFINITIONS['CREATOR'];
   const audienceLoading = userStatsLoading || visitorStatsLoading;
@@ -405,10 +414,60 @@ const EspaceCreateur: React.FC = () => {
   const activeTerritoriesCount = byTerritory.length;
   const activeInterestCount = byInterest.length;
   const accountPresenceRate = totalUsers > 0 ? Math.round((onlineUsers / totalUsers) * 100) : 0;
-  const mostDormantTerritory = [...byTerritory]
-    .sort((a, b) => (b.totalVisits - b.online * 8) - (a.totalVisits - a.online * 8))[0];
+  const mostDormantTerritory = useMemo(() => {
+    if (byTerritory.length === 0) return undefined;
+
+    return [...byTerritory]
+      .sort((a, b) => (b.totalVisits - b.online * 8) - (a.totalVisits - a.online * 8))[0];
+  }, [byTerritory]);
   const detectedTerritory = byTerritory.find((territory) => territory.code.toLowerCase() === myTerritory.toLowerCase());
   const topTerritoryHistoricalInterest = topTerritory ? interestByTerritory[topTerritory.code]?.[0] : undefined;
+
+  const revenueAnalytics = useMemo(() => {
+    const conversionStats = getConversionStats(30);
+    const dailyStats = getDailyStats(7);
+    const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
+    const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
+    const revenueTrend = dailyStats.length >= 2
+      ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
+      : 0;
+
+    return {
+      conversionStats,
+      weeklyRevenue,
+      weeklyClicks,
+      revenueTrend,
+    };
+  }, [lastVisitAt, lastInterestViewAt]);
+
+  const ghostwriterPreviewPost = useMemo(() => {
+    const conversionStats = revenueAnalytics.conversionStats;
+    const leadingTerritory = byTerritory[0];
+    const averagePriceChangePct = conversionStats.clickThroughRate > 0
+      ? Number(((conversionStats.clickThroughRate * 100) - 2).toFixed(1))
+      : 0;
+
+    return generateDailyPost({
+      territory: leadingTerritory?.name ?? myTerritory ?? 'Guadeloupe',
+      topCategory: topInterest?.name ?? 'produits du quotidien',
+      topProduct: conversionStats.topProducts?.[0]?.name ?? 'produit stratégique',
+      averagePriceChangePct,
+      notableDrops: conversionStats.topProducts?.slice(0, 2).map((product) => ({
+        name: product.name,
+        changePct: Math.min(-1, -(product.ctr * 100)), // Assure que la baisse est au moins de 1%
+      })),
+      notableIncreases: byTerritory.slice(0, 2).map((territory) => ({
+        name: territory.name,
+        changePct: Math.max(1, (territory.online / Math.max(territory.totalVisits, 1)) * 100), // Assure que la hausse est au moins de 1%
+      })),
+      date: new Date().toISOString(),
+      revenueAnalytics,
+      conversionStats,
+      byTerritory,
+    });
+  }, [byTerritory, myTerritory, revenueAnalytics, topInterest]);
+
+  const ghostwriterLiveData = !audienceLoading && (!!lastPresenceAt || !!lastVisitAt || byTerritory.length > 0);
 
   const dashboardInsights = useMemo<DashboardInsight[]>(() => {
     const focusInsight = classifyAudienceFocus(topInterest);
@@ -771,46 +830,36 @@ const EspaceCreateur: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-emerald-400" />
             Revenus CPC — suivi créateur
           </h2>
-          {(() => {
-            const conversionStats = getConversionStats(30);
-            const dailyStats = getDailyStats(7);
-            const weeklyRevenue = dailyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
-            const weeklyClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
-            const revenueTrend = dailyStats.length >= 2
-              ? dailyStats[dailyStats.length - 1].estimatedRevenue - dailyStats[0].estimatedRevenue
-              : 0;
-
-            return (
-              <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 sm:space-y-4">
                 <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 30 jours</p>
                     <p className="mt-1 text-xl font-black text-emerald-300 sm:text-2xl">
-                      {conversionStats.estimatedRevenue.toFixed(2)} €
+                      {revenueAnalytics.conversionStats.estimatedRevenue.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">estimation locale (clic × prix moyen × taux)</p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">CTR global</p>
                     <p className="mt-1 text-xl font-black text-cyan-300 sm:text-2xl">
-                      {(conversionStats.clickThroughRate * 100).toFixed(2)}%
+                      {(revenueAnalytics.conversionStats.clickThroughRate * 100).toFixed(2)}%
                     </p>
                     <p className="mt-1 text-xs text-slate-400">
-                      {conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
+                      {revenueAnalytics.conversionStats.totalClicks.toLocaleString('fr-FR')} clic(s) / {revenueAnalytics.conversionStats.totalViews.toLocaleString('fr-FR')} vue(s)
                     </p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Revenu 7 jours</p>
                     <p className="mt-1 text-xl font-black text-amber-300 sm:text-2xl">
-                      {weeklyRevenue.toFixed(2)} €
+                      {revenueAnalytics.weeklyRevenue.toFixed(2)} €
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">{weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
+                    <p className="mt-1 text-xs text-slate-400">{revenueAnalytics.weeklyClicks.toLocaleString('fr-FR')} clic(s) sur la semaine</p>
                   </div>
                   <div className="rounded-2xl border border-slate-700/50 bg-slate-900/60 p-3 sm:p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Tendance 7 jours</p>
-                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
-                      {revenueTrend >= 0 ? '+' : ''}
-                      {revenueTrend.toFixed(2)} €
+                    <p className={`mt-1 text-xl font-black sm:text-2xl ${revenueAnalytics.revenueTrend >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                      {revenueAnalytics.revenueTrend >= 0 ? '+' : ''}
+                      {revenueAnalytics.revenueTrend.toFixed(2)} €
                     </p>
                     <p className="mt-1 text-xs text-slate-400">dernier jour vs premier jour (fenêtre 7j)</p>
                   </div>
@@ -821,11 +870,11 @@ const EspaceCreateur: React.FC = () => {
                     <h3 className="text-base font-bold text-white">Top produits convertisseurs</h3>
                     <p className="mt-1 text-xs text-slate-400">Produits avec le plus de clics et revenu estimé (30 jours)</p>
                     <div className="mt-4 space-y-3">
-                      {conversionStats.topProducts.length === 0 ? (
+                      {revenueAnalytics.conversionStats.topProducts.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
                           Pas encore de données de clic CPC sur la période.
                         </div>
-                      ) : conversionStats.topProducts.slice(0, 5).map((product) => (
+                      ) : revenueAnalytics.conversionStats.topProducts.slice(0, 5).map((product) => (
                         <div key={`${product.barcode}-${product.name}`} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
@@ -845,11 +894,11 @@ const EspaceCreateur: React.FC = () => {
                     <h3 className="text-base font-bold text-white">Top enseignes CPC</h3>
                     <p className="mt-1 text-xs text-slate-400">Enseignes les plus cliquées avec panier moyen observé (30 jours)</p>
                     <div className="mt-4 space-y-3">
-                      {conversionStats.topRetailers.length === 0 ? (
+                      {revenueAnalytics.conversionStats.topRetailers.length === 0 ? (
                         <div className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/40 p-4 text-sm text-slate-500">
                           Aucun clic enseigne enregistré sur la période.
                         </div>
-                      ) : conversionStats.topRetailers.slice(0, 5).map((retailer) => (
+                      ) : revenueAnalytics.conversionStats.topRetailers.slice(0, 5).map((retailer) => (
                         <div key={retailer.retailer} className="rounded-xl border border-slate-700/40 bg-slate-950/40 p-2.5 sm:p-3">
                           <div className="flex items-start justify-between gap-3">
                             <div>
@@ -866,8 +915,51 @@ const EspaceCreateur: React.FC = () => {
                   </div>
                 </div>
               </div>
-            );
-          })()}
+        </section>
+
+        <section className="mb-8 order-2 md:order-1">
+          <div className="rounded-2xl border border-fuchsia-500/30 bg-gradient-to-br from-slate-900/80 via-slate-900/70 to-fuchsia-950/30 p-4 shadow-[0_0_30px_rgba(217,70,239,0.12)] sm:p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="flex items-center gap-2 text-base font-bold text-white sm:text-lg">
+                <BrainCircuit className="h-5 w-5 text-fuchsia-300" />
+                Ghostwriter Social Preview
+              </h2>
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-wide ${
+                  ghostwriterLiveData
+                    ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-200'
+                    : 'border-slate-600/60 bg-slate-700/40 text-slate-300'
+                }`}
+              >
+                <span className={`h-2 w-2 rounded-full ${ghostwriterLiveData ? 'bg-emerald-300 animate-pulse shadow-[0_0_12px_rgba(110,231,183,0.9)]' : 'bg-slate-400'}`} />
+                LIVE DATA
+              </span>
+            </div>
+
+            <p className="mt-2 text-xs text-slate-400">
+              Post auto-généré depuis les métriques live du dashboard (revenus CPC, conversion et territoires actifs).
+            </p>
+
+            <div className="mt-4 rounded-xl border border-slate-700/60 bg-slate-950/60 p-4">
+              <pre className="whitespace-pre-wrap text-sm leading-relaxed text-slate-100">{ghostwriterPreviewPost}</pre>
+            </div>
+
+            <div className="mt-3 flex items-center justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(ghostwriterPreviewPost).then(() => {
+                    setGhostwriterCopied(true);
+                    setTimeout(() => setGhostwriterCopied(false), 2000);
+                  });
+                }}
+                className="inline-flex items-center gap-2 rounded-lg border border-fuchsia-400/40 bg-fuchsia-500/15 px-3 py-2 text-xs font-semibold text-fuchsia-100 transition hover:bg-fuchsia-500/25"
+              >
+                {ghostwriterCopied ? <CheckCircle className="h-3.5 w-3.5 text-emerald-300" /> : <Copy className="h-3.5 w-3.5" />}
+                {ghostwriterCopied ? 'Copié !' : 'Copier pour WhatsApp/LinkedIn'}
+              </button>
+            </div>
+          </div>
         </section>
 
         {/* ── Feature grid ─────────────────────────────────────────── */}
@@ -972,7 +1064,7 @@ const EspaceCreateur: React.FC = () => {
                   <button
                     key={l.to}
                     type="button"
-                    onClick={() => setSelectedAdminLink(l)}
+                    onClick={() => handleSelectLockedAdminLink(l)}
                     className={cardClassName}
                     aria-pressed={selectedAdminLink?.to === l.to}
                   >
@@ -1069,7 +1161,7 @@ const EspaceCreateur: React.FC = () => {
         {/* ── Setup guide (collapsible) ─────────────────────────────── */}
         <section className="mb-6">
           <button
-            onClick={() => setGuideOpen(o => !o)}
+            onClick={toggleGuideOpen}
             className="w-full flex items-center justify-between bg-slate-800/60 border border-slate-700/50 rounded-2xl px-5 py-4 text-left"
           >
             <div className="flex items-center gap-3">
