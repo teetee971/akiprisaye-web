@@ -7,7 +7,9 @@
  * Route : /espace-createur
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
+import React, { useMemo, useState } from 'react';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import {
@@ -20,6 +22,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 import { useUserStats } from '../hooks/useUserStats';
+const pulseStyle = `@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }`;
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost } from '../services/ghostwriterService';
 import {
@@ -506,8 +509,11 @@ const EspaceCreateur: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-white">
       <Helmet>
         <title>Espace Créateur — A KI PRI SA YÉ</title>
+<div style={{marginTop: '15px', display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', borderRadius: '10px', animation: 'pulse 2s infinite'}}>   <span style={{width: '10px', height: '10px', background: '#ef4444', borderRadius: '50%'}}></span>   <div style={{fontSize: '0.85em', color: '#fca5a5'}}>     <strong>⚠️ ALERTE PIC D'AUDIENCE :</strong> Traffic 40% plus élevé que d'habitude en Guadeloupe.   </div> </div>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
+    <div style={{padding: '20px', color: 'white', background: '#0f172a', minHeight: '100vh'}}>
+      <style>{styles}</style>
 
       <div className="max-w-5xl mx-auto px-4 pt-4 pb-12">
 
@@ -525,6 +531,7 @@ const EspaceCreateur: React.FC = () => {
               </div>
               <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
                 ✨ Espace Créateur
+<div style={{marginTop: '15px', display: 'flex', alignItems: 'center', gap: '10px', padding: '12px', background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444', borderRadius: '10px', animation: 'pulse 2s infinite'}}>   <span style={{width: '10px', height: '10px', background: '#ef4444', borderRadius: '50%'}}></span>   <div style={{fontSize: '0.85em', color: '#fca5a5'}}>     <strong>⚠️ ALERTE PIC D'AUDIENCE :</strong> Traffic 40% plus élevé que d'habitude en Guadeloupe.   </div> </div>
               </h1>
               <p className="text-amber-200/70 text-sm mt-1">
                 Développeur & fondateur — Toutes les fonctionnalités débloquées, quotas infinis, accès admin complet.
