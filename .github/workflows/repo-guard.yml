@@ -12,7 +12,7 @@ jobs:
   repo-guard:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # Prévention Git LFS (hérité des commits précédents)
       - name: Disable Git LFS
