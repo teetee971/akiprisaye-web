@@ -446,7 +446,7 @@ const EspaceCreateur: React.FC = () => {
       averagePriceChangePct,
       notableDrops: conversionStats.topProducts?.slice(0, 2).map((product) => ({
         name: product.name,
-        changePct: Math.min(-1, -(product.ctr * 100)),
+        changePct: Math.min(-1, -(product.ctr * 100)), // Assure que la baisse est au moins de 1%
       })),
       notableIncreases: byTerritory.slice(0, 2).map((territory) => ({
         name: territory.name,
