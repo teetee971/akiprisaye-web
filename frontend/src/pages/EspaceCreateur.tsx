@@ -9,7 +9,9 @@
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { Link, Navigate } from 'react-router-dom';
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import {
   Crown, Shield, Zap, Code2, Database, Users, BarChart3,
   Settings, Lock, CheckCircle, AlertCircle, Copy, ExternalLink,
@@ -17,10 +19,14 @@ import {
   TrendingUp, Bell, Download, FileText, Wrench, RefreshCw,
   LogOut, Star, Building2, Smartphone, BrainCircuit, Activity, Clock3, Eye, MapPinned,
 } from 'lucide-react';
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { useAuth } from '../contexts/AuthContext';
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { PLAN_DEFINITIONS } from '../billing/plans';
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import { useUserStats } from '../hooks/useUserStats';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 import {
   useVisitorStats,
   type InterestStats,
@@ -185,6 +191,7 @@ const ACTIONS_STEPS: MobileStep[] = [
 
 
 const ENV_OVERRIDE_TIP = `# frontend/.env.local
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
 # Simule n'importe quel plan sans Firestore (pour les tests)
 VITE_PLAN_OVERRIDE=CREATOR
 
@@ -1262,6 +1269,7 @@ const EspaceCreateur: React.FC = () => {
           >
             <div className="flex items-center gap-3">
               <Key className="w-5 h-5 text-violet-400" />
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
               <span className="font-bold text-white">🛠️ Développement — Simuler n'importe quel plan</span>
             </div>
             {envOpen ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
@@ -1270,6 +1278,7 @@ const EspaceCreateur: React.FC = () => {
           {envOpen && (
             <div className="mt-2 bg-slate-900/60 border border-slate-700/40 rounded-2xl p-5">
               <p className="text-sm text-slate-400 mb-3">
+const tickerStyle = `@keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }`;
                 En développement local, vous pouvez simuler n'importe quel plan sans Firestore via une variable d'environnement dans <code className="text-xs bg-slate-700/60 px-1 py-0.5 rounded text-violet-300">frontend/.env.local</code> :
               </p>
               <div className="flex items-start justify-between bg-slate-950/80 border border-slate-700/50 rounded-xl p-4">
