@@ -12,8 +12,8 @@ export interface GhostwriterDailyPostData {
  * Génère un post quotidien engageant à partir de statistiques de prix.
  * MVP Ghostwriter OS : version locale, sans appel externe.
  */
-export function generateDailyPost(data: any): string {
-  const payload: GhostwriterDailyPostData = data ?? {};
+export function generateDailyPost(data?: Partial<GhostwriterDailyPostData>): string {
+  const payload = data ?? {};
   const territory = payload.territory ?? 'Guadeloupe';
   const topCategory = payload.topCategory ?? 'produits du quotidien';
   const topProduct = payload.topProduct ?? 'un produit essentiel';
