@@ -1,4 +1,3 @@
-import { PendingRevenueCounter } from "./components/PendingRevenueCounter";
 import { OfflineBanner } from "./components/OfflineBanner";
  
 import React, { Suspense, lazy, useEffect, useState } from 'react';
@@ -40,11 +39,11 @@ const EntitlementProvider = lazy(() =>
 );
 
 // Non-critical UI/tracking — lazy-loaded so they don't block initial paint
-const PerformanceMonitor = lazyPage(() =>
+const PerformanceMonitor = lazy(() =>
   import('./components/PerformanceMonitor').then((m) => ({ default: m.PerformanceMonitor }))
 );
-const OnboardingTour = lazyPage(() => import('./components/OnboardingTour'));
-const AuthDebugPanel = lazyPage(() => import('./components/AuthDebugPanel'));
+const OnboardingTour = lazy(() => import('./components/OnboardingTour'));
+const AuthDebugPanel = lazy(() => import('./components/AuthDebugPanel'));
 const OnboardingAutoStart = lazy(() => import('./components/OnboardingAutoStart'));
 const HelpButton = lazy(() => import('./components/HelpButton'));
 const AnalyticsTracker = lazy(() => import('./components/analytics/AnalyticsTracker'));
@@ -53,299 +52,299 @@ const BuildInfo = lazy(() =>
 );
 
 // Lazy-loaded pages - Main routes
-const Home = lazyPage(() => import('./pages/Home'));
-const SearchPage = lazyPage(() => import('./pages/SearchPage'));
-const Carte = lazyPage(() => import('./pages/Carte'));
-const MapPage = lazyPage(() => import('./pages/MapPage'));
-const PublicStoreDetail = lazyPage(() => import('./pages/StoreDetail'));
-const AdminDashboard = lazyPage(() => import('./pages/AdminDashboard'));
-const Comparateur = lazyPage(() => import('./pages/Comparateur'));
+const Home = lazy(() => import('./pages/Home'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
+const Carte = lazy(() => import('./pages/Carte'));
+const MapPage = lazy(() => import('./pages/MapPage'));
+const PublicStoreDetail = lazy(() => import('./pages/StoreDetail'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const Comparateur = lazy(() => import('./pages/Comparateur'));
 
 // New Admin pages
-const AdminLayout = lazyPage(() => import('./pages/admin/AdminLayout'));
-const AdminDashboardNew = lazyPage(() => import('./pages/admin/AdminDashboard'));
-const AdminUsers = lazyPage(() => import('./pages/admin/AdminUsers'));
-const AdminUsersPanel = lazyPage(() => import('./pages/admin/AdminUsersPanel'));
-const AdminAudience = lazyPage(() => import('./pages/admin/AdminAudience'));
-const StoreList = lazyPage(() => import('./pages/admin/stores/StoreList'));
-const StoreForm = lazyPage(() => import('./pages/admin/stores/StoreForm'));
-const StoreDetail = lazyPage(() => import('./pages/admin/stores/StoreDetail'));
-const ProductList = lazyPage(() => import('./pages/admin/products/ProductList').then((m) => ({ default: m.ProductList })));
-const ProductForm = lazyPage(() => import('./pages/admin/products/ProductForm').then((m) => ({ default: m.ProductForm })));
-const ProductDetail = lazyPage(() => import('./pages/admin/products/ProductDetail').then((m) => ({ default: m.ProductDetail })));
-const ImportPage = lazyPage(() => import('./pages/admin/import/ImportPage').then((m) => ({ default: m.ImportPage })));
-const ObservatoireHub = lazyPage(() => import('./pages/ObservatoireHub'));
-const Methodologie = lazyPage(() => import('./pages/Methodologie'));
-const Faq = lazyPage(() => import('./pages/Faq'));
-const Contact = lazyPage(() => import('./pages/Contact'));
-const MentionsLegales = lazyPage(() => import('./pages/MentionsLegales'));
-const Actualites = lazyPage(() => import('./pages/Actualites'));
+const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
+const AdminDashboardNew = lazy(() => import('./pages/admin/AdminDashboard'));
+const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminUsersPanel = lazy(() => import('./pages/admin/AdminUsersPanel'));
+const AdminAudience = lazy(() => import('./pages/admin/AdminAudience'));
+const StoreList = lazy(() => import('./pages/admin/stores/StoreList'));
+const StoreForm = lazy(() => import('./pages/admin/stores/StoreForm'));
+const StoreDetail = lazy(() => import('./pages/admin/stores/StoreDetail'));
+const ProductList = lazy(() => import('./pages/admin/products/ProductList').then((m) => ({ default: m.ProductList })));
+const ProductForm = lazy(() => import('./pages/admin/products/ProductForm').then((m) => ({ default: m.ProductForm })));
+const ProductDetail = lazy(() => import('./pages/admin/products/ProductDetail').then((m) => ({ default: m.ProductDetail })));
+const ImportPage = lazy(() => import('./pages/admin/import/ImportPage').then((m) => ({ default: m.ImportPage })));
+const ObservatoireHub = lazy(() => import('./pages/ObservatoireHub'));
+const Methodologie = lazy(() => import('./pages/Methodologie'));
+const Faq = lazy(() => import('./pages/Faq'));
+const Contact = lazy(() => import('./pages/Contact'));
+const MentionsLegales = lazy(() => import('./pages/MentionsLegales'));
+const Actualites = lazy(() => import('./pages/Actualites'));
 
 // Additional feature pages
-const DonneesPubliques = lazyPage(() => import('./pages/DonneesPubliques'));
-const Contribuer = lazyPage(() => import('./pages/Contribuer'));
-const ContribuerPrix = lazyPage(() => import('./pages/ContribuerPrix'));
-const ComparateursHub = lazyPage(() => import('./pages/ComparateursHub'));
-const CarteItinerairesHub = lazyPage(() => import('./pages/CarteItinerairesHub'));
-const ComparateurCitoyen = lazyPage(() => import('./pages/ComparateurCitoyen'));
-const LutteVieChere = lazyPage(() => import('./pages/LutteVieChereIndexPage'));
-const SolidariteHub = lazyPage(() => import('./pages/SolidariteHub'));
-const InscriptionPro = lazyPage(() => import('./pages/InscriptionPro'));
-const EspacePro = lazyPage(() => import('./pages/EspacePro'));
-const EspaceCreateur = lazyPage(() => import('./pages/EspaceCreateur'));
-const ActivationCreateur = lazyPage(() => import('./pages/ActivationCreateur'));
+const DonneesPubliques = lazy(() => import('./pages/DonneesPubliques'));
+const Contribuer = lazy(() => import('./pages/Contribuer'));
+const ContribuerPrix = lazy(() => import('./pages/ContribuerPrix'));
+const ComparateursHub = lazy(() => import('./pages/ComparateursHub'));
+const CarteItinerairesHub = lazy(() => import('./pages/CarteItinerairesHub'));
+const ComparateurCitoyen = lazy(() => import('./pages/ComparateurCitoyen'));
+const LutteVieChere = lazy(() => import('./pages/LutteVieChereIndexPage'));
+const SolidariteHub = lazy(() => import('./pages/SolidariteHub'));
+const InscriptionPro = lazy(() => import('./pages/InscriptionPro'));
+const EspacePro = lazy(() => import('./pages/EspacePro'));
+const EspaceCreateur = lazy(() => import('./pages/EspaceCreateur'));
+const ActivationCreateur = lazy(() => import('./pages/ActivationCreateur'));
 
 // Scanner & OCR pages
-const ScannerHub = lazyPage(() => import('./pages/ScannerHub'));
-const OCRHub = lazyPage(() => import('./pages/ocr/OCRHub'));
-const ScanEAN = lazyPage(() => import('./pages/ScanEAN'));
-const ProductPhotoAnalysis = lazyPage(() => import('./pages/ProductPhotoAnalysis'));
-const ProductPhotoSearch = lazyPage(() => import('./pages/ProductPhotoSearch'));
-const ProductScanResult = lazyPage(() => import('./pages/ProductScanResult'));
-const ComparaisonEnseignes = lazyPage(() => import('./pages/ComparaisonEnseignes'));
-const BasketComparison = lazyPage(() => import('./pages/BasketComparison'));
+const ScannerHub = lazy(() => import('./pages/ScannerHub'));
+const OCRHub = lazy(() => import('./pages/ocr/OCRHub'));
+const ScanEAN = lazy(() => import('./pages/ScanEAN'));
+const ProductPhotoAnalysis = lazy(() => import('./pages/ProductPhotoAnalysis'));
+const ProductPhotoSearch = lazy(() => import('./pages/ProductPhotoSearch'));
+const ProductScanResult = lazy(() => import('./pages/ProductScanResult'));
+const ComparaisonEnseignes = lazy(() => import('./pages/ComparaisonEnseignes'));
+const BasketComparison = lazy(() => import('./pages/BasketComparison'));
 
 // Settings & History
-const Settings = lazyPage(() => import('./pages/Settings'));
-const HistoriquePrix = lazyPage(() => import('./pages/HistoriquePrix'));
-const RecherchePrix = lazyPage(() => import('./pages/RecherchePrix'));
-const RechercheProduits = lazyPage(() => import('./pages/RechercheProduits'));
-const ProductDetailPage = lazyPage(() => import('./pages/ProductDetail'));
-const ProduitPage = lazyPage(() => import('./pages/ProduitPage'));
-const Alertes = lazyPage(() => import('./pages/Alertes'));
-const AlerteDetail = lazyPage(() => import('./pages/AlerteDetail'));
-const Promos = lazyPage(() => import('./pages/Promos'));
-const MesListes = lazyPage(() => import('./pages/MesListes'));
-const ListePage = lazyPage(() => import('./pages/ListePage'));
-const UpgradePage = lazyPage(() => import('./pages/UpgradePage'));
+const Settings = lazy(() => import('./pages/Settings'));
+const HistoriquePrix = lazy(() => import('./pages/HistoriquePrix'));
+const RecherchePrix = lazy(() => import('./pages/RecherchePrix'));
+const RechercheProduits = lazy(() => import('./pages/RechercheProduits'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetail'));
+const ProduitPage = lazy(() => import('./pages/ProduitPage'));
+const Alertes = lazy(() => import('./pages/Alertes'));
+const AlerteDetail = lazy(() => import('./pages/AlerteDetail'));
+const Promos = lazy(() => import('./pages/Promos'));
+const MesListes = lazy(() => import('./pages/MesListes'));
+const ListePage = lazy(() => import('./pages/ListePage'));
+const UpgradePage = lazy(() => import('./pages/UpgradePage'));
 
 // Savings Dashboard
-const MesEconomies = lazyPage(() => import('./pages/MesEconomies'));
+const MesEconomies = lazy(() => import('./pages/MesEconomies'));
 
 // Advanced feature pages (v7.0.0)
-const PriceAlertsPage = lazyPage(() => import('./pages/PriceAlertsPage'));
-const PriceHistoryPage = lazyPage(() => import('./pages/PriceHistoryPage'));
-const SmartShoppingListPage = lazyPage(() => import('./pages/SmartShoppingListPage'));
-const InflationDashboardPage = lazyPage(() => import('./pages/InflationDashboardPage'));
-const GamificationProfilePage = lazyPage(() => import('./pages/GamificationProfilePage'));
-const LeaderboardPage = lazyPage(() => import('./pages/LeaderboardPage'));
-const BadgesPage = lazyPage(() => import('./pages/BadgesPage'));
+const PriceAlertsPage = lazy(() => import('./pages/PriceAlertsPage'));
+const PriceHistoryPage = lazy(() => import('./pages/PriceHistoryPage'));
+const SmartShoppingListPage = lazy(() => import('./pages/SmartShoppingListPage'));
+const InflationDashboardPage = lazy(() => import('./pages/InflationDashboardPage'));
+const GamificationProfilePage = lazy(() => import('./pages/GamificationProfilePage'));
+const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
+const BadgesPage = lazy(() => import('./pages/BadgesPage'));
 
 // Auth pages
-const Login = lazyPage(() => import('./pages/Login'));
-const Inscription = lazyPage(() => import('./pages/Inscription'));
-const ResetPassword = lazyPage(() => import('./pages/ResetPassword'));
-const MonCompte = lazyPage(() => import('./pages/MonCompte'));
-const AuthHub = lazyPage(() => import('./pages/AuthHub'));
-const AuthCallbackPage = lazyPage(() => import('./pages/AuthCallbackPage'));
+const Login = lazy(() => import('./pages/Login'));
+const Inscription = lazy(() => import('./pages/Inscription'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const MonCompte = lazy(() => import('./pages/MonCompte'));
+const AuthHub = lazy(() => import('./pages/AuthHub'));
+const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'));
 
 // Pricing & Subscription
-const Pricing = lazyPage(() => import('./pages/Pricing'));
-const Subscribe = lazyPage(() => import('./pages/Subscribe'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Subscribe = lazy(() => import('./pages/Subscribe'));
 
 // Observatory real-time
-const ObservatoireTempsReel = lazyPage(() => import('./pages/ObservatoireTempsReel'));
+const ObservatoireTempsReel = lazy(() => import('./pages/ObservatoireTempsReel'));
 
 // Transparency & reporting
-const Transparence = lazyPage(() => import('./pages/Transparence'));
-const SignalerAbus = lazyPage(() => import('./pages/SignalerAbus'));
+const Transparence = lazy(() => import('./pages/Transparence'));
+const SignalerAbus = lazy(() => import('./pages/SignalerAbus'));
 
 // Admin Sync Dashboard
-const SyncDashboard = lazyPage(() => import('./pages/admin/sync/SyncDashboard'));
-const SignalementModeration = lazyPage(() => import('./pages/admin/moderation/SignalementModeration'));
+const SyncDashboard = lazy(() => import('./pages/admin/sync/SyncDashboard'));
+const SignalementModeration = lazy(() => import('./pages/admin/moderation/SignalementModeration'));
 
 // i18n Test page (for development/testing)
-const I18nTest = lazyPage(() => import('./pages/I18nTest'));
+const I18nTest = lazy(() => import('./pages/I18nTest'));
 
 // About & institutional pages
-const APropos = lazyPage(() => import('./pages/APropos'));
-const PricingDetailed = lazyPage(() => import('./pages/PricingDetailed'));
-const ComparatifConcurrence = lazyPage(() => import('./pages/ComparatifConcurrence'));
-const LicenceInstitution = lazyPage(() => import('./pages/LicenceInstitution'));
+const APropos = lazy(() => import('./pages/APropos'));
+const PricingDetailed = lazy(() => import('./pages/PricingDetailed'));
+const ComparatifConcurrence = lazy(() => import('./pages/ComparatifConcurrence'));
+const LicenceInstitution = lazy(() => import('./pages/LicenceInstitution'));
 
 // Specialised comparators
-const FlightComparator = lazyPage(() => import('./pages/FlightComparator'));
-const BoatComparator = lazyPage(() => import('./pages/BoatComparator'));
-const FreightComparator = lazyPage(() => import('./pages/FreightComparator'));
-const FuelComparator = lazyPage(() => import('./pages/FuelComparator'));
-const StationsProximite = lazyPage(() => import('./pages/StationsProximite'));
-const ProductPriceLookup = lazyPage(() => import('./pages/ProductPriceLookup'));
-const ESLScannerPage = lazyPage(() => import('./pages/ESLScannerPage'));
-const EnqueteCarburants = lazyPage(() => import('./pages/EnqueteCarburants'));
-const ConferenceCarburants = lazyPage(() => import('./pages/ConferenceCarburants'));
-const EnqueteOctroiMer = lazyPage(() => import('./pages/EnqueteOctroiMer'));
-const ConferenceOctroiMer = lazyPage(() => import('./pages/ConferenceOctroiMer'));
-const EnqueteEau = lazyPage(() => import('./pages/EnqueteEau'));
-const ConferenceEau = lazyPage(() => import('./pages/ConferenceEau'));
-const InsuranceComparator = lazyPage(() => import('./pages/InsuranceComparator'));
-const TrainingComparator = lazyPage(() => import('./pages/TrainingComparator'));
-const ServiceComparator = lazyPage(() => import('./pages/ServiceComparator'));
-const CarRentalComparator = lazyPage(() => import('./pages/CarRentalComparator'));
-const BuildingMaterialsComparator = lazyPage(() => import('./pages/BuildingMaterialsComparator'));
+const FlightComparator = lazy(() => import('./pages/FlightComparator'));
+const BoatComparator = lazy(() => import('./pages/BoatComparator'));
+const FreightComparator = lazy(() => import('./pages/FreightComparator'));
+const FuelComparator = lazy(() => import('./pages/FuelComparator'));
+const StationsProximite = lazy(() => import('./pages/StationsProximite'));
+const ProductPriceLookup = lazy(() => import('./pages/ProductPriceLookup'));
+const ESLScannerPage = lazy(() => import('./pages/ESLScannerPage'));
+const EnqueteCarburants = lazy(() => import('./pages/EnqueteCarburants'));
+const ConferenceCarburants = lazy(() => import('./pages/ConferenceCarburants'));
+const EnqueteOctroiMer = lazy(() => import('./pages/EnqueteOctroiMer'));
+const ConferenceOctroiMer = lazy(() => import('./pages/ConferenceOctroiMer'));
+const EnqueteEau = lazy(() => import('./pages/EnqueteEau'));
+const ConferenceEau = lazy(() => import('./pages/ConferenceEau'));
+const InsuranceComparator = lazy(() => import('./pages/InsuranceComparator'));
+const TrainingComparator = lazy(() => import('./pages/TrainingComparator'));
+const ServiceComparator = lazy(() => import('./pages/ServiceComparator'));
+const CarRentalComparator = lazy(() => import('./pages/CarRentalComparator'));
+const BuildingMaterialsComparator = lazy(() => import('./pages/BuildingMaterialsComparator'));
 
 // Cosmetic evaluation
-const EvaluationCosmetique = lazyPage(() => import('./pages/EvaluationCosmetique'));
+const EvaluationCosmetique = lazy(() => import('./pages/EvaluationCosmetique'));
 
 // Additional comparators (previously unrouted)
-const EnhancedComparator = lazyPage(() => import('./pages/EnhancedComparator'));
-const Compare = lazyPage(() => import('./pages/Compare'));
-const ComparateursPage = lazyPage(() => import('./pages/Comparateurs'));
-const AIDashboard = lazyPage(() => import('./pages/AIDashboard'));
+const EnhancedComparator = lazy(() => import('./pages/EnhancedComparator'));
+const Compare = lazy(() => import('./pages/Compare'));
+const ComparateursPage = lazy(() => import('./pages/Comparateurs'));
+const AIDashboard = lazy(() => import('./pages/AIDashboard'));
 
 // 404 Not Found
-const NotFound = lazyPage(() => import('./pages/NotFound'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // OCR history
-const OCRHistory = lazyPage(() => import('./pages/ocr/OCRHistory'));
+const OCRHistory = lazy(() => import('./pages/ocr/OCRHistory'));
 
 // Observatory methodology
-const ObservatoryMethodology = lazyPage(() => import('./pages/ObservatoryMethodology'));
+const ObservatoryMethodology = lazy(() => import('./pages/ObservatoryMethodology'));
 
 // Recherche-prix sub-pages
-const DelaisTensionsLogistiques = lazyPage(() => import('./pages/recherche-prix/DelaisTensionsLogistiques'));
-const IndiceLogistique = lazyPage(() => import('./pages/recherche-prix/IndiceLogistique'));
-const PourquoiDelaisProduit = lazyPage(() => import('./pages/recherche-prix/PourquoiDelaisProduit'));
-const RechercheAvions = lazyPage(() => import('./pages/recherche-prix/Avions'));
-const RechercheBateaux = lazyPage(() => import('./pages/recherche-prix/Bateaux'));
-const RechercheEau = lazyPage(() => import('./pages/recherche-prix/Eau'));
-const RechercheElectricite = lazyPage(() => import('./pages/recherche-prix/Electricite'));
-const RechercheFret = lazyPage(() => import('./pages/recherche-prix/Fret'));
-const RechercheFretAerien = lazyPage(() => import('./pages/recherche-prix/FretAerien'));
-const RechercheAbonnementsInternet = lazyPage(() => import('./pages/recherche-prix/AbonnementsInternet'));
-const RechercheAbonnementsMobile = lazyPage(() => import('./pages/recherche-prix/AbonnementsMobile'));
+const DelaisTensionsLogistiques = lazy(() => import('./pages/recherche-prix/DelaisTensionsLogistiques'));
+const IndiceLogistique = lazy(() => import('./pages/recherche-prix/IndiceLogistique'));
+const PourquoiDelaisProduit = lazy(() => import('./pages/recherche-prix/PourquoiDelaisProduit'));
+const RechercheAvions = lazy(() => import('./pages/recherche-prix/Avions'));
+const RechercheBateaux = lazy(() => import('./pages/recherche-prix/Bateaux'));
+const RechercheEau = lazy(() => import('./pages/recherche-prix/Eau'));
+const RechercheElectricite = lazy(() => import('./pages/recherche-prix/Electricite'));
+const RechercheFret = lazy(() => import('./pages/recherche-prix/Fret'));
+const RechercheFretAerien = lazy(() => import('./pages/recherche-prix/FretAerien'));
+const RechercheAbonnementsInternet = lazy(() => import('./pages/recherche-prix/AbonnementsInternet'));
+const RechercheAbonnementsMobile = lazy(() => import('./pages/recherche-prix/AbonnementsMobile'));
 
 // Ressources pages
-const QuestionsLogistiqueDOM = lazyPage(() => import('./pages/ressources/QuestionsLogistiqueDOM'));
-const GlossaireLogistiqueDOM = lazyPage(() => import('./pages/ressources/GlossaireLogistiqueDOM'));
-const ComprendrePromotionsPrixBarres = lazyPage(() => import('./pages/ressources/ComprendrePromotionsPrixBarres'));
-const PourquoiPrixVarieSansChangement = lazyPage(() => import('./pages/ressources/PourquoiPrixVarieSansChangement'));
+const QuestionsLogistiqueDOM = lazy(() => import('./pages/ressources/QuestionsLogistiqueDOM'));
+const GlossaireLogistiqueDOM = lazy(() => import('./pages/ressources/GlossaireLogistiqueDOM'));
+const ComprendrePromotionsPrixBarres = lazy(() => import('./pages/ressources/ComprendrePromotionsPrixBarres'));
+const PourquoiPrixVarieSansChangement = lazy(() => import('./pages/ressources/PourquoiPrixVarieSansChangement'));
 
 // ── Nouvelles pages : historique, comparateur inter-territoires, inflation, couverture ──
-const CrossTerritoryComparator = lazyPage(() => import('./pages/CrossTerritoryComparator'));
-const ComparaisonTerritoires = lazyPage(() => import('./pages/ComparaisonTerritoires'));
-const InflationRateTracker = lazyPage(() => import('./pages/InflationRateTracker'));
-const TerritoryCoverageReport = lazyPage(() => import('./pages/TerritoryCoverageReport'));
+const CrossTerritoryComparator = lazy(() => import('./pages/CrossTerritoryComparator'));
+const ComparaisonTerritoires = lazy(() => import('./pages/ComparaisonTerritoires'));
+const InflationRateTracker = lazy(() => import('./pages/InflationRateTracker'));
+const TerritoryCoverageReport = lazy(() => import('./pages/TerritoryCoverageReport'));
 
 // ── Pages supplémentaires sans itinéraire ──
-const ContactCollectivites = lazyPage(() => import('./pages/ContactCollectivites'));
-const DossierMedia = lazyPage(() => import('./pages/DossierMedia'));
-const BudgetReelMensuel = lazyPage(() => import('./pages/BudgetReelMensuel'));
-const RechercheHub = lazyPage(() => import('./pages/RechercheHub'));
-const SearchCompareHub = lazyPage(() => import('./pages/SearchCompareHub'));
+const ContactCollectivites = lazy(() => import('./pages/ContactCollectivites'));
+const DossierMedia = lazy(() => import('./pages/DossierMedia'));
+const BudgetReelMensuel = lazy(() => import('./pages/BudgetReelMensuel'));
+const RechercheHub = lazy(() => import('./pages/RechercheHub'));
+const SearchCompareHub = lazy(() => import('./pages/SearchCompareHub'));
 
 // ── Pages institutionnelles & civiques manquantes ──
-const TiPanie = lazyPage(() => import('./pages/TiPanie'));
-const Gouvernance = lazyPage(() => import('./pages/Gouvernance'));
-const Presse = lazyPage(() => import('./pages/Presse'));
-const ComprendrePrix = lazyPage(() => import('./pages/ComprendrePrix'));
-const ConferencePrix = lazyPage(() => import('./pages/ConferencePrix'));
-const LettreHebdoIA = lazyPage(() => import('./pages/LettreHebdoIA'));
-const LettreJourIA = lazyPage(() => import('./pages/LettreJourIA'));
-const InnovationLab = lazyPage(() => import('./pages/InnovationLab'));
-const CalculateurOctroi = lazyPage(() => import('./pages/CalculateurOctroi'));
-const CalculateurBatiment = lazyPage(() => import('./pages/CalculateurBatiment'));
-const SimulateurBudgetFamilial = lazyPage(() => import('./pages/SimulateurBudgetFamilial'));
-const AlertesRupture = lazyPage(() => import('./pages/AlertesRupture'));
-const ReclamationIA = lazyPage(() => import('./pages/ReclamationIA'));
-const RapportCitoyen = lazyPage(() => import('./pages/RapportCitoyen'));
-const PlanificateurRepas = lazyPage(() => import('./pages/PlanificateurRepas'));
-const DLCAntigaspi = lazyPage(() => import('./pages/DLCAntigaspi'));
-const AnalyseNutri = lazyPage(() => import('./pages/AnalyseNutri'));
-const AnalyseConcurrence = lazyPage(() => import('./pages/AnalyseConcurrence'));
-const CivicModules = lazyPage(() => import('./pages/CivicModules'));
-const ObservatoireVivant = lazyPage(() => import('./pages/ObservatoireVivant'));
-const AssistantIAHub = lazyPage(() => import('./pages/AssistantIAHub'));
-const Suggestions = lazyPage(() => import('./pages/Suggestions'));
-const MesDemandes = lazyPage(() => import('./pages/MesDemandes'));
-const Promotions = lazyPage(() => import('./pages/Promotions'));
-const BudgetVital = lazyPage(() => import('./pages/BudgetVital'));
-const IEVRPage = lazyPage(() => import('./pages/IEVR'));
-const Versions = lazyPage(() => import('./pages/Versions'));
-const VersionPage = lazyPage(() => import('./pages/VersionPage'));
-const ScanOCR = lazyPage(() => import('./pages/ScanOCR'));
+const TiPanie = lazy(() => import('./pages/TiPanie'));
+const Gouvernance = lazy(() => import('./pages/Gouvernance'));
+const Presse = lazy(() => import('./pages/Presse'));
+const ComprendrePrix = lazy(() => import('./pages/ComprendrePrix'));
+const ConferencePrix = lazy(() => import('./pages/ConferencePrix'));
+const LettreHebdoIA = lazy(() => import('./pages/LettreHebdoIA'));
+const LettreJourIA = lazy(() => import('./pages/LettreJourIA'));
+const InnovationLab = lazy(() => import('./pages/InnovationLab'));
+const CalculateurOctroi = lazy(() => import('./pages/CalculateurOctroi'));
+const CalculateurBatiment = lazy(() => import('./pages/CalculateurBatiment'));
+const SimulateurBudgetFamilial = lazy(() => import('./pages/SimulateurBudgetFamilial'));
+const AlertesRupture = lazy(() => import('./pages/AlertesRupture'));
+const ReclamationIA = lazy(() => import('./pages/ReclamationIA'));
+const RapportCitoyen = lazy(() => import('./pages/RapportCitoyen'));
+const PlanificateurRepas = lazy(() => import('./pages/PlanificateurRepas'));
+const DLCAntigaspi = lazy(() => import('./pages/DLCAntigaspi'));
+const AnalyseNutri = lazy(() => import('./pages/AnalyseNutri'));
+const AnalyseConcurrence = lazy(() => import('./pages/AnalyseConcurrence'));
+const CivicModules = lazy(() => import('./pages/CivicModules'));
+const ObservatoireVivant = lazy(() => import('./pages/ObservatoireVivant'));
+const AssistantIAHub = lazy(() => import('./pages/AssistantIAHub'));
+const Suggestions = lazy(() => import('./pages/Suggestions'));
+const MesDemandes = lazy(() => import('./pages/MesDemandes'));
+const Promotions = lazy(() => import('./pages/Promotions'));
+const BudgetVital = lazy(() => import('./pages/BudgetVital'));
+const IEVRPage = lazy(() => import('./pages/IEVR'));
+const Versions = lazy(() => import('./pages/Versions'));
+const VersionPage = lazy(() => import('./pages/VersionPage'));
+const ScanOCR = lazy(() => import('./pages/ScanOCR'));
 
 // Messagerie interne
-const Messagerie = lazyPage(() => import('./pages/Messagerie'));
+const Messagerie = lazy(() => import('./pages/Messagerie'));
 
 // Groupes de Parole Citoyens
-const GroupesParole = lazyPage(() => import('./pages/GroupesParole'));
+const GroupesParole = lazy(() => import('./pages/GroupesParole'));
 // Marketplace Enseignes
-const MerchantOnboarding = lazyPage(() => import('./pages/marketplace/MerchantOnboarding'));
-const MerchantDashboard = lazyPage(() => import('./pages/marketplace/MerchantDashboard'));
-const AdminMarketplace = lazyPage(() => import('./pages/admin/marketplace/AdminMarketplace'));
+const MerchantOnboarding = lazy(() => import('./pages/marketplace/MerchantOnboarding'));
+const MerchantDashboard = lazy(() => import('./pages/marketplace/MerchantDashboard'));
+const AdminMarketplace = lazy(() => import('./pages/admin/marketplace/AdminMarketplace'));
 
 // Devis IA (Issue #501) + Roadmap (Issue #492) + Dossier Investisseurs (Issue #503)
-const DevisIA = lazyPage(() => import('./pages/DevisIA'));
-const DevisTracking = lazyPage(() => import('./pages/DevisTracking'));
-const AdminDevis = lazyPage(() => import('./pages/admin/AdminDevis'));
-const AdminCalculsBatiment = lazyPage(() => import('./pages/admin/AdminCalculsBatiment'));
+const DevisIA = lazy(() => import('./pages/DevisIA'));
+const DevisTracking = lazy(() => import('./pages/DevisTracking'));
+const AdminDevis = lazy(() => import('./pages/admin/AdminDevis'));
+const AdminCalculsBatiment = lazy(() => import('./pages/admin/AdminCalculsBatiment'));
 // Marketplace Pros Bâtiment
-const InscriptionProBatiment = lazyPage(() => import('./pages/InscriptionProBatiment'));
-const AdminInseeImport = lazyPage(() => import('./pages/admin/AdminInseeImport'));
-const RoadmapPage = lazyPage(() => import('./pages/RoadmapPage'));
-const DossierInvestisseurs = lazyPage(() => import('./pages/DossierInvestisseurs'));
-const ChecklistProduction = lazyPage(() => import('./pages/ChecklistProduction'));
-const ModuleAuditPage = lazyPage(() => import('./pages/ModuleAuditPage'));
-const AudiencePage = lazyPage(() => import('./pages/AudiencePage'));
-const StatutPage   = lazyPage(() => import('./pages/StatutPage'));
-const Perimetre = lazyPage(() => import('./pages/Perimetre'));
-const Predictions = lazyPage(() => import('./pages/Predictions'));
-const IaConseiller = lazyPage(() => import('./pages/IaConseiller'));
-const AiMarketInsights = lazyPage(() => import('./pages/AiMarketInsights'));
-const TerritoryHub = lazyPage(() => import('./pages/TerritoryHub'));
-const TerritoryScanner = lazyPage(() => import('./pages/TerritoryScanner'));
+const InscriptionProBatiment = lazy(() => import('./pages/InscriptionProBatiment'));
+const AdminInseeImport = lazy(() => import('./pages/admin/AdminInseeImport'));
+const RoadmapPage = lazy(() => import('./pages/RoadmapPage'));
+const DossierInvestisseurs = lazy(() => import('./pages/DossierInvestisseurs'));
+const ChecklistProduction = lazy(() => import('./pages/ChecklistProduction'));
+const ModuleAuditPage = lazy(() => import('./pages/ModuleAuditPage'));
+const AudiencePage = lazy(() => import('./pages/AudiencePage'));
+const StatutPage   = lazy(() => import('./pages/StatutPage'));
+const Perimetre = lazy(() => import('./pages/Perimetre'));
+const Predictions = lazy(() => import('./pages/Predictions'));
+const IaConseiller = lazy(() => import('./pages/IaConseiller'));
+const AiMarketInsights = lazy(() => import('./pages/AiMarketInsights'));
+const TerritoryHub = lazy(() => import('./pages/TerritoryHub'));
+const TerritoryScanner = lazy(() => import('./pages/TerritoryScanner'));
 
 // ── Nouvelles pages V3 ─────────────────────────────────────────────────────
-const GuideIntelligentTerritoires = lazyPage(() => import('./pages/GuideIntelligentTerritoires'));
-const ARScannerPage = lazyPage(() => import('./pages/ARScannerPage'));
-const ChaineFourniture = lazyPage(() => import('./pages/ChaineFourniture'));
-const CommerceSocial = lazyPage(() => import('./pages/CommerceSocial'));
-const PetitsCommerces = lazyPage(() => import('./pages/PetitsCommerces'));
-const ProducteursLocaux = lazyPage(() => import('./pages/ProducteursLocaux'));
-const MarchesLocaux = lazyPage(() => import('./pages/MarchesLocaux'));
-const AnalyseFactures = lazyPage(() => import('./pages/AnalyseFactures'));
-const DetectionFraude = lazyPage(() => import('./pages/DetectionFraude'));
-const EvaluationMagasins = lazyPage(() => import('./pages/EvaluationMagasins'));
-const PortailDeveloppeurs = lazyPage(() => import('./pages/PortailDeveloppeurs'));
-const ChocsPrixPage = lazyPage(() => import('./pages/ChocsPrixPage'));
-const NewsletterHubPage = lazyPage(() => import('./pages/NewsletterHubPage'));
-const MonitoringIAPage = lazyPage(() => import('./pages/MonitoringIAPage'));
-const OrganigrammeGBH = lazyPage(() => import('./pages/OrganigrammeGBH'));
+const GuideIntelligentTerritoires = lazy(() => import('./pages/GuideIntelligentTerritoires'));
+const ARScannerPage = lazy(() => import('./pages/ARScannerPage'));
+const ChaineFourniture = lazy(() => import('./pages/ChaineFourniture'));
+const CommerceSocial = lazy(() => import('./pages/CommerceSocial'));
+const PetitsCommerces = lazy(() => import('./pages/PetitsCommerces'));
+const ProducteursLocaux = lazy(() => import('./pages/ProducteursLocaux'));
+const MarchesLocaux = lazy(() => import('./pages/MarchesLocaux'));
+const AnalyseFactures = lazy(() => import('./pages/AnalyseFactures'));
+const DetectionFraude = lazy(() => import('./pages/DetectionFraude'));
+const EvaluationMagasins = lazy(() => import('./pages/EvaluationMagasins'));
+const PortailDeveloppeurs = lazy(() => import('./pages/PortailDeveloppeurs'));
+const ChocsPrixPage = lazy(() => import('./pages/ChocsPrixPage'));
+const NewsletterHubPage = lazy(() => import('./pages/NewsletterHubPage'));
+const MonitoringIAPage = lazy(() => import('./pages/MonitoringIAPage'));
+const OrganigrammeGBH = lazy(() => import('./pages/OrganigrammeGBH'));
 
 // ── SEO & Growth Pages ───────────────────────────────────────────────────────
-const SEOProductPage = lazyPage(() => import('./pages/SEOProductPage'));
-const SEOCategoryPage = lazyPage(() => import('./pages/SEOCategoryPage'));
-const SEOPrixLocalPage = lazyPage(() => import('./pages/SEOPrixLocalPage'));
-const SEOComparaisonPage = lazyPage(() => import('./pages/SEOComparaisonPage'));
-const SEOInflationPage = lazyPage(() => import('./pages/SEOInflationPage'));
-const SEOMoinsChersPage = lazyPage(() => import('./pages/SEOMoinsChersPage'));
-const SEOBrandPage = lazyPage(() => import('./pages/SEOBrandPage'));
-const SEOEnseignePrixPage = lazyPage(() => import('./pages/SEOEnseignePrixPage'));
-const SEOGuidePrixPage = lazyPage(() => import('./pages/SEOGuidePrixPage'));
-const SEOComparateurSlugPage = lazyPage(() => import('./pages/SEOComparateurSlugPage'));
-const LandingPage   = lazyPage(() => import('./pages/LandingPage'));
-const PartnerPage   = lazyPage(() => import('./pages/PartnerPage'));
-const GuidePrixAlimentaireDOM = lazyPage(() => import('./pages/pillar/GuidePrixAlimentaireDOM'));
-const ComparateurSuperMarchesDOM = lazyPage(() => import('./pages/pillar/ComparateurSuperMarchesDOM'));
-const InflationAlimentaireDOMAnalyse = lazyPage(() => import('./pages/pillar/InflationAlimentaireDOMAnalyse'));
-const OuFaireCoursesDOMPage = lazyPage(() => import('./pages/pillar/OuFaireCoursesDOMPage'));
-const StatsDashboard = lazyPage(() => import('./pages/StatsDashboard'));
-const SeoMonitoringPage = lazyPage(() => import('./pages/SeoMonitoringPage'));
-const OutreachDashboardPage = lazyPage(() => import('./pages/OutreachDashboardPage'));
-const CRODashboardPage = lazyPage(() => import('./pages/CRODashboardPage'));
-const SeoLoopDashboardPage = lazyPage(() => import('./pages/SeoLoopDashboardPage'));
-const RevenueDashboardPage = lazyPage(() => import('./pages/RevenueDashboardPage'));
-const ExpansionDashboardPage = lazyPage(() => import('./pages/ExpansionDashboardPage'));
-const AuthorityDashboardPage = lazyPage(() => import('./pages/AuthorityDashboardPage'));
-const GlobalDashboardPage = lazyPage(() => import('./pages/GlobalDashboardPage'));
-const AutoSeoDashboardPage = lazyPage(() => import('./pages/AutoSeoDashboardPage'));
-const SEOCompetitorComparisonPage = lazyPage(() => import('./pages/SEOCompetitorComparisonPage'));
-const TopEconomiesPage = lazyPage(() => import('./pages/TopEconomiesPage'));
-const TendancesPage = lazyPage(() => import('./pages/TendancesPage'));
-const PopulairesPage = lazyPage(() => import('./pages/PopulairesPage'));
-const UserDashboardPage = lazyPage(() => import('./pages/UserDashboardPage'));
-const ExecutiveDashboardPage = lazyPage(() => import('./pages/ExecutiveDashboardPage'));
-const TopDealsDuJourPage = lazyPage(() => import('./pages/TopDealsDuJourPage'));
+const SEOProductPage = lazy(() => import('./pages/SEOProductPage'));
+const SEOCategoryPage = lazy(() => import('./pages/SEOCategoryPage'));
+const SEOPrixLocalPage = lazy(() => import('./pages/SEOPrixLocalPage'));
+const SEOComparaisonPage = lazy(() => import('./pages/SEOComparaisonPage'));
+const SEOInflationPage = lazy(() => import('./pages/SEOInflationPage'));
+const SEOMoinsChersPage = lazy(() => import('./pages/SEOMoinsChersPage'));
+const SEOBrandPage = lazy(() => import('./pages/SEOBrandPage'));
+const SEOEnseignePrixPage = lazy(() => import('./pages/SEOEnseignePrixPage'));
+const SEOGuidePrixPage = lazy(() => import('./pages/SEOGuidePrixPage'));
+const SEOComparateurSlugPage = lazy(() => import('./pages/SEOComparateurSlugPage'));
+const LandingPage   = lazy(() => import('./pages/LandingPage'));
+const PartnerPage   = lazy(() => import('./pages/PartnerPage'));
+const GuidePrixAlimentaireDOM = lazy(() => import('./pages/pillar/GuidePrixAlimentaireDOM'));
+const ComparateurSuperMarchesDOM = lazy(() => import('./pages/pillar/ComparateurSuperMarchesDOM'));
+const InflationAlimentaireDOMAnalyse = lazy(() => import('./pages/pillar/InflationAlimentaireDOMAnalyse'));
+const OuFaireCoursesDOMPage = lazy(() => import('./pages/pillar/OuFaireCoursesDOMPage'));
+const StatsDashboard = lazy(() => import('./pages/StatsDashboard'));
+const SeoMonitoringPage = lazy(() => import('./pages/SeoMonitoringPage'));
+const OutreachDashboardPage = lazy(() => import('./pages/OutreachDashboardPage'));
+const CRODashboardPage = lazy(() => import('./pages/CRODashboardPage'));
+const SeoLoopDashboardPage = lazy(() => import('./pages/SeoLoopDashboardPage'));
+const RevenueDashboardPage = lazy(() => import('./pages/RevenueDashboardPage'));
+const ExpansionDashboardPage = lazy(() => import('./pages/ExpansionDashboardPage'));
+const AuthorityDashboardPage = lazy(() => import('./pages/AuthorityDashboardPage'));
+const GlobalDashboardPage = lazy(() => import('./pages/GlobalDashboardPage'));
+const AutoSeoDashboardPage = lazy(() => import('./pages/AutoSeoDashboardPage'));
+const SEOCompetitorComparisonPage = lazy(() => import('./pages/SEOCompetitorComparisonPage'));
+const TopEconomiesPage = lazy(() => import('./pages/TopEconomiesPage'));
+const TendancesPage = lazy(() => import('./pages/TendancesPage'));
+const PopulairesPage = lazy(() => import('./pages/PopulairesPage'));
+const UserDashboardPage = lazy(() => import('./pages/UserDashboardPage'));
+const ExecutiveDashboardPage = lazy(() => import('./pages/ExecutiveDashboardPage'));
+const TopDealsDuJourPage = lazy(() => import('./pages/TopDealsDuJourPage'));
 
 /**
  * IMPORTANT — NE PAS SUPPRIMER
@@ -528,7 +527,7 @@ export default function App() {
                           <Route path="inscription-pro" element={<InscriptionPro />} />
                           <Route path="espace-pro" element={<EspacePro />} />
                           <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
-                          <Route path="espace-createur" element={<RequireCreator><EspaceCreateur /></RequireCreator>} />
+                          <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<div style={{color:'white', padding:'20px'}}>Chargement...</div>}><EspaceCreateur /></Suspense></RequireCreator>} />
                           <Route path="activation-createur" element={<ActivationCreateur />} />
 
                           {/* Additional feature routes */}
