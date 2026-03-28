@@ -70,7 +70,7 @@ jobs:
           VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
 
       - name: Configure Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Generate sitemap
         working-directory: ${{ github.workspace }}
