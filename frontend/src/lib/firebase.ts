@@ -31,9 +31,32 @@ let auth: Auth | null = null;
 let db: Firestore | null = null;
 let analytics: Analytics | null = null;
 
+function safeInitInstallations(appInstance: FirebaseApp): void {
+  const init = () => {
+    try {
+      getInstallations(appInstance);
+    } catch (error) {
+      console.warn("Firebase Installations unavailable (non-blocking):", error);
+    }
+  };
+
+  if (typeof window === "undefined") return;
+  const win = window as Window & {
+    requestIdleCallback?: (callback: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+  };
+  if (typeof win.requestIdleCallback === "function") {
+    win.requestIdleCallback(() => init(), { timeout: 5_000 });
+    return;
+  }
+  setTimeout(init, 2_000);
+}
+
 try {
   app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   auth = getAuth(app);
+  void setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.warn("Firebase Auth persistence fallback (local) unavailable:", error);
+  });
   db = getFirestore(app);
   
   // 🔥 L'ULTIMATUM : On active la mémoire du navigateur ici
