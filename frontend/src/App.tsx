@@ -281,6 +281,8 @@ const AdminCalculsBatiment = lazy(() => import('./pages/admin/AdminCalculsBatime
 // Marketplace Pros Bâtiment
 const InscriptionProBatiment = lazy(() => import('./pages/InscriptionProBatiment'));
 const AdminInseeImport = lazy(() => import('./pages/admin/AdminInseeImport'));
+const AdminTicketImport = lazy(() => import('./pages/admin/AdminTicketImport'));
+const AdminCatalogImport = lazy(() => import('./pages/admin/AdminCatalogImport'));
 const RoadmapPage = lazy(() => import('./pages/RoadmapPage'));
 const DossierInvestisseurs = lazy(() => import('./pages/DossierInvestisseurs'));
 const ChecklistProduction = lazy(() => import('./pages/ChecklistProduction'));
@@ -497,6 +499,8 @@ export default function App() {
                           <Route path="calculs-batiment" element={<AdminCalculsBatiment />} />
                           {/* Pros bâtiment — import INSEE */}
                           <Route path="insee-import" element={<AdminInseeImport />} />
+                          <Route path="ticket-import" element={<AdminTicketImport />} />
+                          <Route path="catalogs" element={<AdminCatalogImport />} />
                         </Route>
 
                         {/* Main site routes with Layout */}

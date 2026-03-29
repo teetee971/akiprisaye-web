@@ -15,7 +15,9 @@ import {
   BarChart3,
   Flag,
   Users,
-  Globe
+  Globe,
+  ReceiptText,
+  BookOpen
 } from 'lucide-react';
 
 const navigation = [
@@ -25,6 +27,8 @@ const navigation = [
   { name: 'Enseignes',   href: '/admin/stores',    icon: Store },
   { name: 'Articles',    href: '/admin/products',  icon: Package },
   { name: 'Import',      href: '/admin/import',    icon: Upload },
+  { name: 'Tickets',     href: '/admin/ticket-import', icon: ReceiptText },
+  { name: 'Catalogues',  href: '/admin/catalogs', icon: BookOpen },
   { name: 'Modération',  href: '/admin/moderation',icon: Flag },
   { name: 'Statistiques',href: '/admin/stats',     icon: BarChart3 },
 ];

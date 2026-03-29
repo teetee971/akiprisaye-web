@@ -145,7 +145,7 @@ export default function EnhancedSearch({
 
   const handleOptionKeyDown = (
     event: React.KeyboardEvent<HTMLLIElement>,
-    result: SearchResult
+    result: ProductSearchResult
   ) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();

@@ -7,7 +7,7 @@ import {
   Smartphone, Sparkles, Terminal, TrendingUp, Users, Wrench, CheckCircle, TrendingDown, Clock3
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { getDailyStats } from '../utils/priceClickTracker';
+import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
@@ -16,6 +16,45 @@ import type { InterestStats, TerritoryInterestStat, TerritoryStats } from '../ho
 const radarStyle = `
 @keyframes radarPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
 `;
+
+
+type CreatorBriefingInput = {
+  topTerritory?: TerritoryStats;
+  topInterest?: InterestStats;
+  topTerritoryHistoricalInterest?: TerritoryInterestStat;
+};
+
+function normalizeInterestKey(value: string | undefined): string {
+  if (!value) return '';
+  const key = value.trim().toLowerCase();
+  if (key === 'scan') return 'scanner';
+  return key;
+}
+
+export function buildCreatorBriefing({
+  topTerritory,
+  topInterest,
+  topTerritoryHistoricalInterest,
+}: CreatorBriefingInput): string {
+  const territoryName = topTerritory?.name ?? 'le territoire principal';
+  const liveName = (topInterest?.name ?? 'signal principal').toLowerCase();
+  const liveEmoji = topInterest?.emoji ?? '📌';
+
+  const historicalName = (topTerritoryHistoricalInterest?.name ?? 'aucun historique dominant').toLowerCase();
+  const historicalEmoji = topTerritoryHistoricalInterest?.emoji ?? '📌';
+  const historicalLabel = topTerritoryHistoricalInterest
+    ? `${historicalEmoji} ${historicalName}`
+    : historicalName;
+
+  const sameInterest = normalizeInterestKey(topInterest?.key) !== ''
+    && normalizeInterestKey(topInterest?.key) === normalizeInterestKey(topTerritoryHistoricalInterest?.interest);
+
+  const bridge = sameInterest
+    ? 'ce besoin confirme aussi le meilleur signal historique sur ce territoire'
+    : `tandis que le meilleur signal historique sur ce territoire reste ${historicalLabel}`;
+
+  return `Le foyer d’attention principal est ${liveEmoji} ${liveName} sur ${territoryName}; ${bridge}.`;
+}
 
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
@@ -72,13 +111,13 @@ const EspaceCreateur: React.FC = () => {
 
   useEffect(() => { void handleScan(); }, [handleScan]);
 
-  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Initialisation...</div>;
+  if (loading) return <div data-testid="auth-loading-spinner" className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Initialisation...</div>;
   if (!isCreator) return <Navigate to="/" replace />;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-8">
       <Helmet><title>Dashboard Ultra V3.1 — NASA Station</title></Helmet>
-      <style>{predatorRadarStyle}</style>
+      <style>{radarStyle}</style>
 
       {/* Radar */}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full border border-fuchsia-500/35 bg-slate-900/85 px-3 py-1.5 backdrop-blur-md">
@@ -90,6 +129,8 @@ const EspaceCreateur: React.FC = () => {
       </div>
 
       <header className="mb-8">
+        <h1 className="sr-only">Espace Créateur</h1>
+        <h2 className="sr-only">Tableau de bord IA — audience & comportement</h2>
         <div className="flex items-center gap-4 rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-900/20 to-slate-900 p-6">
           <Crown className="text-amber-400" size={32} />
           <div>
@@ -144,8 +185,9 @@ const EspaceCreateur: React.FC = () => {
       </div>
 
       {/* Trackers Détaillés */}
-      <section className="mb-8 bg-slate-900 border border-slate-800 p-6 rounded-3xl">
-        <h2 className="text-xl font-bold mb-5 flex items-center gap-2"><BarChart3 className="text-emerald-400" /> Trackers d'Engagement CPC</h2>
+      <section className="order-2 md:order-1 mb-8 bg-slate-900 border border-slate-800 p-6 rounded-3xl">
+        <h2 className="text-xl font-bold mb-2 flex items-center gap-2"><BarChart3 className="text-emerald-400" /> Revenus CPC — suivi créateur</h2>
+        <p className="text-sm text-slate-400 mb-5">Revenu 30 jours</p>
         <div className="space-y-4">
             {weeklyStats.slice().reverse().map(stat => (
                 <div key={stat.date} className="grid grid-cols-4 gap-2 items-center bg-slate-950 p-4 rounded-xl border border-slate-800">
@@ -159,18 +201,24 @@ const EspaceCreateur: React.FC = () => {
       </section>
 
       {/* Admin Tools */}
-      <section className="grid gap-4 sm:grid-cols-2 mb-8">
+      <section className="order-1 md:order-2 mb-8">
+        <h2 className="text-xl font-bold mb-4">Outils d'administration</h2>
+        <div className="grid gap-4 sm:grid-cols-2">
         {[
           { to: '/admin', label: 'Dashboard Admin', icon: BarChart3, description: 'Vue globale.' },
           { to: '/admin/stores', label: 'Enseignes', icon: Building2, description: 'Base magasins.' },
           { to: '/admin/calculs-batiment', label: 'Calculs BTP', icon: Wrench, description: 'Simulateurs.' },
           { to: '/admin/users', label: 'Utilisateurs', icon: Users, description: 'Permissions.' },
         ].map(tool => (
-          <Link key={tool.to} to={tool.to} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition">
-            <tool.icon className="text-blue-400" size={24} />
-            <div><p className="font-bold text-slate-100">{tool.label}</p><p className="text-xs text-slate-500">{tool.description}</p></div>
+          <Link key={tool.to} to={tool.to} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center justify-between hover:bg-slate-800 transition">
+            <div className="flex gap-4 items-center">
+              <tool.icon className="text-blue-400" size={24} />
+              <div><p className="font-bold text-slate-100">{tool.label}</p><p className="text-xs text-slate-500">{tool.description}</p></div>
+            </div>
+            <span className="text-xs rounded-md px-2 py-1 bg-blue-600/30 text-blue-200">Ouvrir</span>
           </Link>
         ))}
+        </div>
       </section>
 
       {/* Predator */}
