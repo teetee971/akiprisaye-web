@@ -1,7 +1,8 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import type { Analytics } from "firebase/analytics";
-import { getAuth, type Auth } from "firebase/auth";
+import { browserLocalPersistence, getAuth, setPersistence, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import { getInstallations } from "firebase/installations";
 
 // Firebase web API keys are public by design — security is enforced via
 // Firebase Security Rules, not by keeping these values secret.
@@ -58,7 +59,15 @@ let analytics: Analytics | null = null;
 try {
   app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   auth = getAuth(app);
+  void setPersistence(auth, browserLocalPersistence).catch((error) => {
+    console.warn("Firebase Auth persistence fallback (local) unavailable:", error);
+  });
   db = getFirestore(app);
+  void Promise.resolve()
+    .then(() => getInstallations(app!))
+    .catch((error) => {
+      console.warn("Firebase Installations unavailable (non-blocking):", error);
+    });
   // Analytics requires a real browser environment and a valid measurementId.
   // Load the analytics module lazily so Node/Vitest contexts never evaluate
   // firebase/analytics internals that assume window/document are available.
