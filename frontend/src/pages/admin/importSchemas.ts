@@ -16,7 +16,7 @@ export const receiptSchema = z.object({
     siret: z.string().trim().min(1).optional(),
   }),
   transaction: z.object({
-    date: z.string().trim().min(1),
+    date: z.string().datetime({ message: "Invalid ISO date format" }),
     ticket_id: z.string().trim().min(1),
     total_amount: z.number().finite().nonnegative(),
   }),
