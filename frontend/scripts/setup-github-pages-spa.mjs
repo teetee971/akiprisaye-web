@@ -18,7 +18,7 @@
  * script has already written the correct content.
  */
 
-import { copyFileSync, existsSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const isGitHubPages = process.env.GITHUB_PAGES === 'true';
@@ -31,6 +31,7 @@ if (!isGitHubPages) {
 const distDir       = resolve('dist');
 const indexPath     = resolve(distDir, 'index.html');
 const notFoundPath  = resolve(distDir, '404.html');
+const ghPagesDir    = resolve(distDir, 'akiprisaye-web');
 
 if (!existsSync(indexPath)) {
   console.error('[setup-github-pages-spa] ERROR: dist/index.html not found — build must run first.');
@@ -39,3 +40,24 @@ if (!existsSync(indexPath)) {
 
 copyFileSync(indexPath, notFoundPath);
 console.log('[setup-github-pages-spa] ✓ dist/404.html ← dist/index.html (GitHub Pages SPA fallback).');
+
+// Vite preview (used by verify-pages-runtime.mjs) serves files from dist root.
+// The runtime check fetches /akiprisaye-web/<asset>, so mirror critical public
+// assets under dist/akiprisaye-web/ to match GitHub Pages URL semantics.
+mkdirSync(ghPagesDir, { recursive: true });
+const mirroredFiles = [
+  'manifest.webmanifest',
+  'icon-192.png',
+  'icon-512.png',
+  'logo-akiprisaye.svg',
+  'service-worker.js',
+  'sw.js',
+];
+for (const name of mirroredFiles) {
+  const src = resolve(distDir, name);
+  const dst = resolve(ghPagesDir, name);
+  if (existsSync(src)) {
+    copyFileSync(src, dst);
+  }
+}
+console.log('[setup-github-pages-spa] ✓ mirrored critical public assets under dist/akiprisaye-web/.');

@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 import compression from 'vite-plugin-compression'
 import { fileURLToPath, URL } from 'node:url'
 import { execSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
+import { resolve as pathResolve } from 'node:path'
 
 const srcPath = fileURLToPath(new URL('./src', import.meta.url))
 
@@ -19,7 +21,7 @@ const buildEnv = process.env.CF_PAGES === '1'
     : process.env.NODE_ENV ?? 'development';
 
 export default defineConfig({
-  base: '/',
+  base: process.env.GITHUB_PAGES === 'true' ? '/akiprisaye-web/' : '/',
   plugins: [
     react(),
     compression({
@@ -42,6 +44,20 @@ export default defineConfig({
             injectTo: 'head' as const,
           },
         ];
+      },
+    },
+    {
+      name: 'preview-assets-404',
+      configurePreviewServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const url = req.url ?? '';
+          if (!url.startsWith('/assets/')) return next();
+          const pathname = url.split('?')[0];
+          const distPath = pathResolve(process.cwd(), 'dist', pathname.replace(/^\//, ''));
+          if (existsSync(distPath)) return next();
+          res.statusCode = 404;
+          res.end('Not Found');
+        });
       },
     },
   ],

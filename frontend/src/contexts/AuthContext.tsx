@@ -57,6 +57,11 @@ function hasCreatorDebugSession(): boolean {
   return Boolean(localStorage.getItem(CREATOR_DEBUG_SESSION_KEY));
 }
 
+function buildCreatorSpacePath(): string {
+  const base = import.meta.env.BASE_URL || "/";
+  return `${base.replace(/\/+$/, "")}/espace-createur`;
+}
+
 /* ── Role resolver: custom claims → Firestore fallback ───────────────────── */
 
 async function resolveUserRole(user: User | null): Promise<UserRole> {
@@ -256,6 +261,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(() => writeUserPresence(uid).catch(() => {}), 30_000);
     return () => clearInterval(interval);
   }, [user?.uid]);
+
+  /* ── Auto-login creator owner shortcut ─────────────────────────────── */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (loading || !authResolved) return;
+    if (userRole !== "creator") return;
+
+    const targetPath = buildCreatorSpacePath();
+    const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (currentPath.startsWith(targetPath)) return;
+
+    const isLoginRoute = /\/(login|connexion)\/?$/.test(window.location.pathname);
+    if (isLoginRoute || hasCreatorDebugSession()) {
+      window.location.replace(targetPath);
+    }
+  }, [authResolved, loading, userRole]);
 
   /* ── Auto-refresh claims on tab focus ──────────────────────────────── */
   // Picks up Firebase custom claims set by an admin (via setUserRole Cloud Function)
