@@ -208,6 +208,13 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
     ignoreBlurRef.current = true;
   };
 
+  const handleOptionKeyDown = (event, product) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleSelectProduct(product);
+    }
+  };
+
   // Generate stable IDs for ARIA
   const getOptionId = (index) => `product-option-${index}`;
   const listboxId = 'product-listbox';
@@ -274,6 +281,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
               aria-selected={index === activeIndex}
               onMouseDown={handleMouseDown}
               onClick={() => handleSelectProduct(product)}
+              onKeyDown={(event) => handleOptionKeyDown(event, product)}
               className={`flex items-center gap-3 p-3 cursor-pointer ${
                 index === activeIndex ? 'bg-white/10' : 'hover:bg-white/5'
               }`}

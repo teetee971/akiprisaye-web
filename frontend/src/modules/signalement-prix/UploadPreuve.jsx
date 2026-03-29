@@ -94,9 +94,10 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
       </label>
 
       {!preview && !currentProof && (
-        <div
+        <button
+          type="button"
           onClick={handleClick}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors"
+          className="w-full border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-colors"
         >
           <input
             ref={fileInputRef}
@@ -135,7 +136,7 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
               </p>
             </div>
           )}
-        </div>
+        </button>
       )}
 
       {(preview || currentProof) && (

@@ -35,6 +35,14 @@ export function BadgeCard({ badge, showProgress = false, onClick, className = ''
   const tierGradient = tierColors[badge.tier];
   const rarityBorder = rarityBorders[badge.rarity];
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div 
       className={`relative p-4 rounded-xl border-2 ${rarityBorder} transition-all duration-300 ${
@@ -43,6 +51,7 @@ export function BadgeCard({ badge, showProgress = false, onClick, className = ''
           : `bg-gradient-to-br ${tierGradient} text-white shadow-lg hover:shadow-xl`
       } ${onClick ? 'cursor-pointer hover:scale-105' : ''} ${className}`}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
