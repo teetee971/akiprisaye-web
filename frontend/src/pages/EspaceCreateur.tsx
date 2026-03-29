@@ -13,42 +13,9 @@ const radarStyle = `
 @keyframes radarPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
 `;
 
-const normalizeInterestKey = (value: string | undefined) => {
-  if (!value) return '';
-  if (value === 'scan') return 'scanner';
-  return value.toLowerCase();
-};
-
-export function buildCreatorBriefing({
-  topTerritory,
-  topInterest,
-  topTerritoryHistoricalInterest,
-}: {
-  topTerritory?: TerritoryStats;
-  topInterest?: InterestStats;
-  topTerritoryHistoricalInterest?: TerritoryInterestStat;
-}) {
-  const territoryName = topTerritory?.name ?? 'ce territoire';
-  const liveEmoji = topInterest?.emoji ?? '📌';
-  const liveLabel = (topInterest?.name ?? 'aucun focus').toLowerCase();
-  const historicalEmoji = topTerritoryHistoricalInterest?.emoji ?? '';
-  const historicalLabel = (topTerritoryHistoricalInterest?.name ?? 'aucun historique dominant').toLowerCase();
-
-  const liveKey = normalizeInterestKey(topInterest?.key);
-  const historicalKey = normalizeInterestKey(topTerritoryHistoricalInterest?.interest);
-  const sameSignal = Boolean(liveKey && historicalKey && liveKey === historicalKey);
-
-  const historicalSentence = sameSignal
-    ? 'ce besoin confirme aussi le meilleur signal historique sur ce territoire'
-    : `tandis que le meilleur signal historique sur ce territoire reste ${historicalEmoji ? `${historicalEmoji} ` : ''}${historicalLabel}`;
-
-  return `Sur ${territoryName}, Le foyer d’attention principal est ${liveEmoji} ${liveLabel}; ${historicalSentence}.`;
-}
-
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
   const { totalOnline, byTerritory, byInterest } = useVisitorStats();
-
   const [ghostwriterCopied, setGhostwriterCopied] = useState(false);
   const ghostwriterCopyResetTimer = useRef<number | null>(null);
   const [predatorScanning, setPredatorScanning] = useState(false);
@@ -57,25 +24,30 @@ const EspaceCreateur: React.FC = () => {
 
   const weeklyStats = useMemo(() => getDailyStats(7), []);
   const monthlyStats = useMemo(() => getDailyStats(30), []);
+  const conversionStats = useMemo(() => getConversionStats(30), []);
 
-  const analytics = useMemo(() => {
-    const weeklyRevenue = weeklyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
-    const monthlyRevenue = monthlyStats.reduce((sum, day) => sum + day.estimatedRevenue, 0);
-    const monthlyClicks = monthlyStats.reduce((sum, day) => sum + day.clicks, 0);
-    const monthlyViews = monthlyStats.reduce((sum, day) => sum + day.views, 0);
-    const monthlyCtr = monthlyViews > 0 ? monthlyClicks / monthlyViews : 0;
+  const revenueAnalytics = useMemo(() => {
+    const weeklyRevenue = weeklyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
+    const monthlyRevenue = monthlyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
+    const weeklyClicks = weeklyStats.reduce((sum, item) => sum + item.clicks, 0);
+    const monthlyClicks = monthlyStats.reduce((sum, item) => sum + item.clicks, 0);
+    const weeklyViews = weeklyStats.reduce((sum, item) => sum + item.views, 0);
+    const monthlyViews = monthlyStats.reduce((sum, item) => sum + item.views, 0);
+
+    const lastWeekViews = getDailyStats(14).slice(0, 7).reduce((sum, item) => sum + item.views, 0);
+    const viewsTrend = lastWeekViews > 0 ? ((weeklyViews - lastWeekViews) / lastWeekViews) * 100 : 0;
 
     return {
-      weeklyRevenue,
-      monthlyRevenue,
-      monthlyClicks,
-      monthlyCtr,
-      payoutProgress: (monthlyRevenue / 100) * 100,
+      weeklyRevenue, monthlyRevenue, weeklyClicks, monthlyClicks, weeklyViews,
+      revenueTrend: weeklyStats.length >= 2 ? weeklyStats[weeklyStats.length - 1].estimatedRevenue - weeklyStats[0].estimatedRevenue : 0,
+      monthlyCtr: monthlyViews > 0 ? (monthlyClicks / monthlyViews) : 0,
+      viewsTrend,
+      payoutProgress: (monthlyRevenue / 100) * 100, // Seuil 100€
     };
   }, [weeklyStats, monthlyStats]);
 
-  const ghostwriterPost = useMemo(() => (
-    generateDailyPost({
+  const ghostwriterPost = useMemo(() => {
+    return generateDailyPost({
       territory: byTerritory[0]?.name ?? 'Guadeloupe',
       topCategory: byInterest[0]?.name ?? 'produits frais',
       averagePriceChangePct: analytics.monthlyCtr * 100,
@@ -131,15 +103,15 @@ const EspaceCreateur: React.FC = () => {
     );
   }
 
+  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Initialisation...</div>;
   if (!isCreator) return <Navigate to="/" replace />;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-8">
-      <Helmet>
-        <title>Espace Créateur — Akiprisaye</title>
-      </Helmet>
-      <style>{radarStyle}</style>
+      <Helmet><title>Dashboard Ultra V3.1 — NASA Station</title></Helmet>
+      <style>{predatorRadarStyle}</style>
 
+      {/* Radar */}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full border border-fuchsia-500/35 bg-slate-900/85 px-3 py-1.5 backdrop-blur-md">
         <span className="relative inline-flex h-2 w-2">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-fuchsia-500" />
@@ -161,6 +133,7 @@ const EspaceCreateur: React.FC = () => {
         </div>
       </header>
 
+      {/* Ghostwriter */}
       <section className="mb-8 rounded-3xl border border-violet-500/30 bg-slate-900/50 p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold flex items-center gap-2">
@@ -269,7 +242,6 @@ const EspaceCreateur: React.FC = () => {
             {predatorScanning ? 'Analyse en cours...' : 'Scanner le marché'}
           </button>
         </div>
-
         <div className="space-y-3">
           {predatorAlerts.length === 0 && (
             <p className="text-sm text-slate-500 text-center py-6 border border-dashed border-slate-800 rounded-xl">Aucune alerte critique détectée sur le marché.</p>
