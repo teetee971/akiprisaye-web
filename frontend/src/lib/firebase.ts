@@ -70,7 +70,7 @@ function safeInitInstallations(appInstance: FirebaseApp): void {
     requestIdleCallback?: (callback: IdleRequestCallback, opts?: IdleRequestOptions) => number;
   };
   if (typeof win.requestIdleCallback === "function") {
-    win.requestIdleCallback(() => init(), { timeout: 5_000 });
+    win.requestIdleCallback(init, { timeout: 5_000 });
     return;
   }
   setTimeout(init, 2_000);
@@ -83,11 +83,7 @@ try {
     console.warn("Firebase Auth persistence fallback (local) unavailable:", error);
   });
   db = getFirestore(app);
-  void Promise.resolve()
-    .then(() => getInstallations(app!))
-    .catch((error) => {
-      console.warn("Firebase Installations unavailable (non-blocking):", error);
-    });
+  safeInitInstallations(app);
   // Analytics requires a real browser environment and a valid measurementId.
   // Load the analytics module lazily so Node/Vitest contexts never evaluate
   // firebase/analytics internals that assume window/document are available.
