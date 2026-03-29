@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import {
   Activity, BarChart3, Bell, BrainCircuit, Building2, Copy, Crown,
-  ExternalLink, Eye, Key, RefreshCw, Sparkles, Users, Wrench
+  Key, RefreshCw, Users, Wrench
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
@@ -11,10 +11,9 @@ import { generateDailyPost } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
 
-const predatorRadarStyle = \`
-@keyframes predatorSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes predatorPulse { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.12); } }
-@keyframes predatorScanFlash { 0% { box-shadow: 0 0 0 0 rgba(236,72,153,0.4); } 50% { box-shadow: 0 0 0 10px rgba(236,72,153,0); } 100% { box-shadow: 0 0 0 0 rgba(236,72,153,0); } }\`;
+const predatorRadarStyle = `
+@keyframes predatorPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+@keyframes predatorSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
 
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
@@ -22,26 +21,25 @@ const EspaceCreateur: React.FC = () => {
   const [ghostwriterCopied, setGhostwriterCopied] = useState(false);
   const [predatorAlerts, setPredatorAlerts] = useState(() => getPredatorSeedAlerts());
 
-  const conversionStats = useMemo(() => getConversionStats(30), []);
   const weeklyStats = useMemo(() => getDailyStats(7), []);
   const monthlyStats = useMemo(() => getDailyStats(30), []);
+  const conversionStats = useMemo(() => getConversionStats(30), []);
 
   const revenueAnalytics = useMemo(() => {
     const weeklyRevenue = weeklyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
-    const monthlyRevenue = monthlyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
     const monthlyClicks = monthlyStats.reduce((sum, item) => sum + item.clicks, 0);
     const monthlyViews = monthlyStats.reduce((sum, item) => sum + item.views, 0);
     return {
-      weeklyRevenue, monthlyRevenue, 
+      weeklyRevenue,
       revenueTrend: weeklyStats.length >= 2 ? weeklyStats[weeklyStats.length - 1].estimatedRevenue - weeklyStats[0].estimatedRevenue : 0,
-      monthlyCtr: monthlyViews > 0 ? monthlyClicks / monthlyViews : 0,
+      monthlyCtr: monthlyViews > 0 ? (monthlyClicks / monthlyViews) : 0,
     };
   }, [weeklyStats, monthlyStats]);
 
   const ghostwriterPost = useMemo(() => {
     return generateDailyPost({
-      territory: byTerritory[0]?.name ?? 'Antilles',
-      topCategory: byInterest[0]?.name ?? 'consommation',
+      territory: byTerritory[0]?.name ?? 'Guadeloupe',
+      topCategory: byInterest[0]?.name ?? 'Prix local',
       averagePriceChangePct: revenueAnalytics.revenueTrend,
     });
   }, [byTerritory, byInterest, revenueAnalytics.revenueTrend]);
@@ -50,7 +48,7 @@ const EspaceCreateur: React.FC = () => {
     runPredatorMonitoring().then(setPredatorAlerts).catch(console.error);
   }, []);
 
-  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Authentification...</div>;
+  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Vérification...</div>;
   if (!isCreator) return <Navigate to="/" replace />;
 
   return (
@@ -58,61 +56,74 @@ const EspaceCreateur: React.FC = () => {
       <Helmet><title>Dashboard Ultra</title></Helmet>
       <style>{predatorRadarStyle}</style>
 
+      {/* Badge Radar */}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full border border-fuchsia-500/35 bg-slate-900/85 px-3 py-1.5 backdrop-blur-md">
         <div className="relative h-2 w-2">
           <div className="absolute inset-0 rounded-full bg-fuchsia-500 animate-ping" />
           <div className="relative h-2 w-2 bg-fuchsia-400 rounded-full" />
         </div>
-        <span className="text-[9px] font-bold uppercase tracking-widest text-fuchsia-100">Predator Active</span>
+        <span className="text-[9px] font-bold uppercase text-fuchsia-100">Predator Active</span>
       </div>
 
-      <header className="mb-6 flex items-center gap-4 p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
-        <Crown className="text-amber-400" />
-        <h1 className="text-xl font-black">ULTRA V3.1</h1>
+      <header className="mb-6 flex items-center gap-4 p-5 bg-amber-500/10 border border-amber-500/20 rounded-3xl">
+        <Crown className="text-amber-400" size={32} />
+        <div><h1 className="text-xl font-black">ULTRA V3.1</h1><p className="text-[10px] text-amber-200/50">SYSTÈME RESTAURÉ</p></div>
       </header>
 
-      <section className="mb-6 rounded-2xl border border-violet-500/30 bg-slate-900/50 p-4">
+      {/* Ghostwriter */}
+      <section className="mb-6 rounded-3xl border border-violet-500/30 bg-slate-900/50 p-5">
         <div className="flex justify-between items-center mb-3">
-          <h2 className="text-sm font-bold flex items-center gap-2"><BrainCircuit size={16} /> Ghostwriter</h2>
-          <button onClick={() => {navigator.clipboard.writeText(ghostwriterPost); setGhostwriterCopied(true); setTimeout(() => setGhostwriterCopied(false), 2000);}} className="text-[10px] bg-violet-600 px-2 py-1 rounded">
-            {ghostwriterCopied ? 'Copié' : 'Copier'}
+          <h2 className="text-sm font-bold flex items-center gap-2"><BrainCircuit className="text-violet-400" size={18} /> Ghostwriter</h2>
+          <button onClick={() => {navigator.clipboard.writeText(ghostwriterPost); setGhostwriterCopied(true); setTimeout(() => setGhostwriterCopied(false), 2000);}} className="text-[10px] bg-violet-600 px-2 py-1 rounded-lg">
+            {ghostwriterCopied ? 'Copié !' : 'Copier'}
           </button>
         </div>
-        <pre className="whitespace-pre-wrap text-xs text-slate-300 bg-slate-950 p-3 rounded-lg border border-slate-800">{ghostwriterPost}</pre>
+        <pre className="whitespace-pre-wrap text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800">{ghostwriterPost}</pre>
       </section>
 
+      {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3 mb-6">
-        <div className="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
+        <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
           <p className="text-[10px] text-slate-500 uppercase">Revenu 7j</p>
-          <p className="text-lg font-bold text-emerald-400">{revenueAnalytics.weeklyRevenue.toFixed(2)}€</p>
+          <p className="text-xl font-bold text-emerald-400">{revenueAnalytics.weeklyRevenue.toFixed(2)} €</p>
         </div>
-        <div className="bg-slate-900 p-3 rounded-xl border border-slate-800 text-center">
-          <p className="text-[10px] text-slate-500 uppercase">Audience Live</p>
-          <p className="text-lg font-bold text-fuchsia-400">{totalOnline}</p>
+        <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800">
+          <p className="text-[10px] text-slate-500 uppercase">Live</p>
+          <p className="text-xl font-bold text-fuchsia-400">{totalOnline} pers.</p>
         </div>
       </div>
 
+      {/* Admin Links */}
       <div className="grid grid-cols-2 gap-3 mb-6">
-        <Link to="/admin" className="flex items-center gap-3 p-3 bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800">
-          <BarChart3 size={18} className="text-blue-400" />
+        <Link to="/admin" className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:bg-slate-800">
+          <BarChart3 size={20} className="text-blue-400" />
           <span className="text-sm font-bold">Admin</span>
         </Link>
-        <Link to="/admin/users" className="flex items-center gap-3 p-3 bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800">
-          <Users size={18} className="text-purple-400" />
-          <span className="text-sm font-bold">Users</span>
+        <Link to="/admin/users" className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:bg-slate-800">
+          <Users size={20} className="text-purple-400" />
+          <span className="text-sm font-bold">Rôles</span>
         </Link>
       </div>
 
-      <section className="bg-emerald-950/20 border border-emerald-500/20 p-4 rounded-2xl">
-        <h3 className="text-xs font-bold mb-3 flex items-center gap-2"><Bell size={14} className="text-emerald-400" /> Predator Radar</h3>
+      {/* Predator Radar Alerts */}
+      <section className="bg-emerald-950/20 border border-emerald-500/20 p-5 rounded-3xl">
+        <h3 className="text-xs font-bold mb-4 flex items-center gap-2 text-emerald-400"><Bell size={16} /> Alertes Predator</h3>
         <div className="space-y-2">
           {predatorAlerts.slice(0, 3).map(alert => (
-            <div key={alert.id} className="bg-slate-950/40 p-2 rounded-lg text-[11px] border border-slate-800">
+            <div key={alert.id} className="bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-[11px]">
               <span className="font-bold text-white">{alert.targetName}</span>: {alert.message}
             </div>
           ))}
         </div>
       </section>
+
+      {/* Tools Shortcut */}
+      <div className="mt-6 flex justify-center gap-4">
+        <Link to="/admin/stores" className="text-slate-500"><Building2 size={18} /></Link>
+        <Link to="/admin/calculs-batiment" className="text-slate-500"><Wrench size={18} /></Link>
+        <Link to="/mon-compte" className="text-slate-500"><Key size={18} /></Link>
+        <button onClick={() => window.location.reload()} className="text-slate-500"><RefreshCw size={18} /></button>
+      </div>
     </div>
   );
 };
