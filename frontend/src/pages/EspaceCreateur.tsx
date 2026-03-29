@@ -7,7 +7,7 @@ import {
   Smartphone, Sparkles, Terminal, TrendingUp, Users, Wrench, CheckCircle, TrendingDown, Clock3
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
+import { getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
@@ -27,8 +27,6 @@ const EspaceCreateur: React.FC = () => {
 
   const weeklyStats = useMemo(() => getDailyStats(7), []);
   const monthlyStats = useMemo(() => getDailyStats(30), []);
-  const conversionStats = useMemo(() => getConversionStats(30), []);
-
   const revenueAnalytics = useMemo(() => {
     const weeklyRevenue = weeklyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
     const monthlyClicks = monthlyStats.reduce((sum, item) => sum + item.clicks, 0);
@@ -54,6 +52,16 @@ const EspaceCreateur: React.FC = () => {
     });
     return draft;
   }, [byTerritory, byInterest, revenueAnalytics.revenueTrend]);
+  const handleCopyGhostwriterPost = () => {
+    navigator.clipboard.writeText(ghostwriterPost);
+    setGhostwriterCopied(true);
+    setTimeout(() => setGhostwriterCopied(false), 2000);
+  };
+
+  const handleReload = () => {
+    window.location.reload();
+  };
+
 
   const handleScan = useCallback(async () => {
     setPredatorScanning(true);
@@ -192,7 +200,7 @@ const EspaceCreateur: React.FC = () => {
         <Link to="/admin/stores" className="text-slate-500"><Building2 size={18} /></Link>
         <Link to="/admin/calculs-batiment" className="text-slate-500"><Wrench size={18} /></Link>
         <Link to="/mon-compte" className="text-slate-500"><Key size={18} /></Link>
-        <button onClick={() => window.location.reload()} className="text-slate-500"><RefreshCw size={18} /></button>
+        <button onClick={handleReload} className="text-slate-500"><RefreshCw size={18} /></button>
       </div>
     </div>
   );
