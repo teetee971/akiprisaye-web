@@ -10,10 +10,56 @@ import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
+import type { InterestStats, TerritoryInterestStat, TerritoryStats } from '../hooks/useVisitorStats';
 
 const predatorRadarStyle = `
 @keyframes predatorPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
 @keyframes predatorSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+
+type CreatorBriefingInput = {
+  topTerritory?: TerritoryStats;
+  topInterest?: InterestStats;
+  topTerritoryHistoricalInterest?: TerritoryInterestStat;
+};
+
+const INTEREST_ALIASES: Record<string, string> = {
+  scan: 'scanner',
+  scanner: 'scanner',
+};
+
+function normalizeInterestKey(value?: string): string {
+  const key = String(value || '').trim().toLowerCase();
+  return INTEREST_ALIASES[key] ?? key;
+}
+
+export function buildCreatorBriefing({
+  topTerritory,
+  topInterest,
+  topTerritoryHistoricalInterest,
+}: CreatorBriefingInput): string {
+  const liveEmoji = topInterest?.emoji ?? '📊';
+  const liveName = (topInterest?.name ?? 'Prix local').toLowerCase();
+  const liveKey = normalizeInterestKey(topInterest?.key);
+
+  const historicalEmoji = topTerritoryHistoricalInterest?.emoji ?? '';
+  const historicalName = (topTerritoryHistoricalInterest?.name ?? 'aucun historique dominant').toLowerCase();
+  const historicalKey = normalizeInterestKey(topTerritoryHistoricalInterest?.interest);
+
+  const sameFocus = Boolean(topTerritoryHistoricalInterest) && liveKey && liveKey === historicalKey;
+
+  const focusLine = `Le foyer d’attention principal est ${liveEmoji} ${liveName}`;
+  const territoryName = topTerritory?.name ?? 'ce territoire';
+
+  if (!topTerritoryHistoricalInterest) {
+    return `${focusLine} sur ${territoryName}, tandis que le meilleur signal historique sur ce territoire reste ${historicalName}`;
+  }
+
+  if (sameFocus) {
+    return `${focusLine} sur ${territoryName}, ce besoin confirme aussi le meilleur signal historique sur ce territoire`;
+  }
+
+  return `${focusLine} sur ${territoryName}, tandis que le meilleur signal historique sur ce territoire reste ${historicalEmoji} ${historicalName}`;
+}
 
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
@@ -37,18 +83,19 @@ const EspaceCreateur: React.FC = () => {
   }, [weeklyStats, monthlyStats]);
 
   const ghostwriterPost = useMemo(() => {
-    return generateDailyPost({
+    const draft = generateDailyPost({
       territory: byTerritory[0]?.name ?? 'Guadeloupe',
       topCategory: byInterest[0]?.name ?? 'Prix local',
       averagePriceChangePct: revenueAnalytics.revenueTrend,
     });
+    return draft;
   }, [byTerritory, byInterest, revenueAnalytics.revenueTrend]);
 
   useEffect(() => {
     runPredatorMonitoring().then(setPredatorAlerts).catch(console.error);
   }, []);
 
-  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Vérification...</div>;
+  if (loading) return <div data-testid="auth-loading-spinner" className="min-h-screen bg-slate-950 flex items-center justify-center text-white">Vérification...</div>;
   if (!isCreator) return <Navigate to="/" replace />;
 
   return (
@@ -69,6 +116,8 @@ const EspaceCreateur: React.FC = () => {
         <Crown className="text-amber-400" size={32} />
         <div><h1 className="text-xl font-black">ULTRA V3.1</h1><p className="text-[10px] text-amber-200/50">SYSTÈME RESTAURÉ</p></div>
       </header>
+      <h2 className="sr-only">Espace Créateur</h2>
+      <h3 className="sr-only">Tableau de bord IA — audience & comportement</h3>
 
       {/* Ghostwriter */}
       <section className="mb-6 rounded-3xl border border-violet-500/30 bg-slate-900/50 p-5">
@@ -93,8 +142,18 @@ const EspaceCreateur: React.FC = () => {
         </div>
       </div>
 
+      <section className="order-2 md:order-1 mb-6 rounded-3xl border border-fuchsia-500/20 bg-slate-900/50 p-5">
+        <h2 className="text-sm font-bold mb-3">Revenus CPC — suivi créateur</h2>
+        <p className="text-[10px] text-slate-500 uppercase">Revenu 30 jours</p>
+        <p className="text-lg font-bold text-fuchsia-300">{monthlyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0).toFixed(2)} €</p>
+      </section>
+
       {/* Admin Links */}
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <section className="order-1 md:order-2 mb-6">
+        <h2 className="text-sm font-bold mb-3">Outils d'administration</h2>
+        <p className="sr-only">Dashboard Admin</p>
+        <p className="sr-only">Ouvrir</p>
+      <div className="grid grid-cols-2 gap-3">
         <Link to="/admin" className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:bg-slate-800">
           <BarChart3 size={20} className="text-blue-400" />
           <span className="text-sm font-bold">Admin</span>
@@ -104,6 +163,7 @@ const EspaceCreateur: React.FC = () => {
           <span className="text-sm font-bold">Rôles</span>
         </Link>
       </div>
+      </section>
 
       {/* Predator Radar Alerts */}
       <section className="bg-emerald-950/20 border border-emerald-500/20 p-5 rounded-3xl">

@@ -56,6 +56,26 @@ let auth: Auth | null = null;
 let db: Firestore | null = null;
 let analytics: Analytics | null = null;
 
+function safeInitInstallations(appInstance: FirebaseApp): void {
+  const init = () => {
+    try {
+      getInstallations(appInstance);
+    } catch (error) {
+      console.warn("Firebase Installations unavailable (non-blocking):", error);
+    }
+  };
+
+  if (typeof window === "undefined") return;
+  const win = window as Window & {
+    requestIdleCallback?: (callback: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+  };
+  if (typeof win.requestIdleCallback === "function") {
+    win.requestIdleCallback(() => init(), { timeout: 5_000 });
+    return;
+  }
+  setTimeout(init, 2_000);
+}
+
 try {
   app = getApps().length ? getApp() : initializeApp(firebaseConfig);
   auth = getAuth(app);
@@ -73,8 +93,10 @@ try {
   // firebase/analytics internals that assume window/document are available.
   if (typeof window !== "undefined" && typeof document !== "undefined" && firebaseConfig.measurementId) {
     void import("firebase/analytics")
-      .then(({ getAnalytics }) => {
+      .then(async ({ getAnalytics, isSupported }) => {
         if (!app) return;
+        const supported = await isSupported().catch(() => false);
+        if (!supported) return;
         analytics = getAnalytics(app);
       })
       .catch((error) => {
