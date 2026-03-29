@@ -17,6 +17,51 @@ const radarStyle = `
 @keyframes radarPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
 `;
 
+type CreatorBriefingInput = {
+  topTerritory?: TerritoryStats;
+  topInterest?: InterestStats;
+  topTerritoryHistoricalInterest?: TerritoryInterestStat;
+};
+
+const INTEREST_KEY_ALIASES: Record<string, string> = {
+  scan: 'scanner',
+};
+
+function normalizeInterestLabel(value?: string): string {
+  return (value ?? '').toLowerCase().trim();
+}
+
+function normalizeInterestKey(value?: string): string {
+  const normalized = normalizeInterestLabel(value);
+  return INTEREST_KEY_ALIASES[normalized] ?? normalized;
+}
+
+export function buildCreatorBriefing({
+  topTerritory,
+  topInterest,
+  topTerritoryHistoricalInterest,
+}: CreatorBriefingInput): string {
+  const territoryName = topTerritory?.name ?? 'ce territoire';
+  const liveEmoji = topInterest?.emoji ?? '📊';
+  const liveName = normalizeInterestLabel(topInterest?.name) || 'activité principale';
+  const historicalEmoji = topTerritoryHistoricalInterest?.emoji ?? '📊';
+  const historicalName = normalizeInterestLabel(topTerritoryHistoricalInterest?.name) || 'aucun historique dominant';
+  const hasHistoricalInterest = Boolean(topTerritoryHistoricalInterest);
+
+  const liveKey = normalizeInterestKey(topInterest?.key ?? topInterest?.name);
+  const historicalKey = normalizeInterestKey(topTerritoryHistoricalInterest?.interest ?? topTerritoryHistoricalInterest?.name);
+  const sameFocus = Boolean(liveKey && historicalKey && liveKey === historicalKey);
+
+  const lead = `Le foyer d’attention principal est ${liveEmoji} ${liveName} sur ${territoryName}.`;
+  const historicalDetail = sameFocus
+    ? 'ce besoin confirme aussi le meilleur signal historique sur ce territoire.'
+    : hasHistoricalInterest
+      ? `tandis que le meilleur signal historique sur ce territoire reste ${historicalEmoji} ${historicalName}.`
+      : `tandis que le meilleur signal historique sur ce territoire reste ${historicalName}.`;
+
+  return `${lead} ${historicalDetail}`;
+}
+
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
   const { totalOnline, byTerritory, byInterest } = useVisitorStats();
