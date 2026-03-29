@@ -89,8 +89,10 @@ try {
   // firebase/analytics internals that assume window/document are available.
   if (typeof window !== "undefined" && typeof document !== "undefined" && firebaseConfig.measurementId) {
     void import("firebase/analytics")
-      .then(({ getAnalytics }) => {
+      .then(async ({ getAnalytics, isSupported }) => {
         if (!app) return;
+        const supported = await isSupported().catch(() => false);
+        if (!supported) return;
         analytics = getAnalytics(app);
       })
       .catch((error) => {
