@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import {
@@ -9,13 +9,13 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost } from '../services/ghostwriterService';
-import { getPredatorSeedAlerts, runPredatorMonitoring, type PredatorAlert } from '../services/predatorService';
+import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
+import type { InterestStats, TerritoryInterestStat, TerritoryStats } from '../hooks/useVisitorStats';
 
 const predatorRadarStyle = `
-@keyframes predatorSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes predatorPulse { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.12); } }
-@keyframes predatorScanFlash { 0% { box-shadow: 0 0 0 0 rgba(236,72,153,0.4); } 50% { box-shadow: 0 0 0 10px rgba(236,72,153,0); } 100% { box-shadow: 0 0 0 0 rgba(236,72,153,0); } }`;
+@keyframes predatorPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+@keyframes predatorSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
 
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
@@ -31,8 +31,6 @@ const EspaceCreateur: React.FC = () => {
 
   const revenueAnalytics = useMemo(() => {
     const weeklyRevenue = weeklyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
-    const monthlyRevenue = monthlyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
-    const weeklyClicks = weeklyStats.reduce((sum, item) => sum + item.clicks, 0);
     const monthlyClicks = monthlyStats.reduce((sum, item) => sum + item.clicks, 0);
     const weeklyViews = weeklyStats.reduce((sum, item) => sum + item.views, 0);
     
@@ -54,6 +52,7 @@ const EspaceCreateur: React.FC = () => {
       topCategory: byInterest[0]?.name ?? 'produits frais',
       averagePriceChangePct: revenueAnalytics.revenueTrend,
     });
+    return draft;
   }, [byTerritory, byInterest, revenueAnalytics.revenueTrend]);
 
   const handleScan = useCallback(async () => {
@@ -77,11 +76,11 @@ const EspaceCreateur: React.FC = () => {
 
       {/* Radar */}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full border border-fuchsia-500/35 bg-slate-900/85 px-3 py-1.5 backdrop-blur-md">
-        <div className="relative h-3 w-3">
-          <div className="absolute inset-0 rounded-full bg-fuchsia-500/60" style={{ animation: 'predatorPulse 1.8s ease-in-out infinite' }} />
-          <div className="absolute inset-[1px] rounded-full border border-fuchsia-200/80" style={{ animation: 'predatorSweep 2.6s linear infinite' }} />
+        <div className="relative h-2 w-2">
+          <div className="absolute inset-0 rounded-full bg-fuchsia-500 animate-ping" />
+          <div className="relative h-2 w-2 bg-fuchsia-400 rounded-full" />
         </div>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-fuchsia-100">Predator Active</span>
+        <span className="text-[9px] font-bold uppercase text-fuchsia-100">Predator Active</span>
       </div>
 
       <header className="mb-8">
@@ -102,7 +101,7 @@ const EspaceCreateur: React.FC = () => {
                 {ghostwriterCopied ? 'Copié !' : 'Copier'}
             </button>
         </div>
-        <pre className="whitespace-pre-wrap bg-slate-950 p-4 rounded-xl border border-slate-800 text-sm text-slate-300">{ghostwriterPost}</pre>
+        <pre className="whitespace-pre-wrap text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800">{ghostwriterPost}</pre>
       </section>
 
       {/* Stats Grid */}
@@ -187,8 +186,15 @@ const EspaceCreateur: React.FC = () => {
           ))}
         </div>
       </section>
+
+      {/* Tools Shortcut */}
+      <div className="mt-6 flex justify-center gap-4">
+        <Link to="/admin/stores" className="text-slate-500"><Building2 size={18} /></Link>
+        <Link to="/admin/calculs-batiment" className="text-slate-500"><Wrench size={18} /></Link>
+        <Link to="/mon-compte" className="text-slate-500"><Key size={18} /></Link>
+        <button onClick={() => window.location.reload()} className="text-slate-500"><RefreshCw size={18} /></button>
+      </div>
     </div>
   );
 };
-
 export default EspaceCreateur;

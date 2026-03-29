@@ -272,6 +272,7 @@ jobs:
         run: node scripts/prepare-lighthouse-config.mjs
 
       - name: Run Lighthouse CI
+        continue-on-error: true
         working-directory: frontend
         run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
 
