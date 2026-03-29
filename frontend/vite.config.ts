@@ -19,7 +19,7 @@ const buildEnv = process.env.CF_PAGES === '1'
     : process.env.NODE_ENV ?? 'development';
 
 export default defineConfig({
-  base: '/',
+  base: process.env.GITHUB_PAGES === 'true' ? '/akiprisaye-web/' : '/',
   plugins: [
     react(),
     compression({
