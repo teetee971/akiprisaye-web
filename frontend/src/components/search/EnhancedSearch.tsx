@@ -142,6 +142,16 @@ export default function EnhancedSearch({
   const handleMouseDown = () => {
     ignoreBlurRef.current = true;
   };
+
+  const handleOptionKeyDown = (
+    event: React.KeyboardEvent<HTMLLIElement>,
+    result: SearchResult
+  ) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleSelectProduct(result);
+    }
+  };
   
   const getOptionId = (index: number) => `enhanced-product-option-${index}`;
   const listboxId = 'enhanced-product-listbox';
@@ -271,6 +281,7 @@ export default function EnhancedSearch({
                 aria-selected={index === activeIndex}
                 onMouseDown={handleMouseDown}
                 onClick={() => handleSelectProduct(result)}
+                onKeyDown={(event) => handleOptionKeyDown(event, result)}
                 className={`p-3 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-blue-50 ${
                   index === activeIndex ? 'bg-blue-50' : ''
                 }`}

@@ -7,15 +7,15 @@ import {
   Smartphone, Sparkles, Terminal, TrendingUp, Users, Wrench, CheckCircle, TrendingDown, Clock3
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
+import { getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost } from '../services/ghostwriterService';
-import { getPredatorSeedAlerts, runPredatorMonitoring, type PredatorAlert } from '../services/predatorService';
+import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
+import type { InterestStats, TerritoryInterestStat, TerritoryStats } from '../hooks/useVisitorStats';
 
-const predatorRadarStyle = `
-@keyframes predatorSweep { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes predatorPulse { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.12); } }
-@keyframes predatorScanFlash { 0% { box-shadow: 0 0 0 0 rgba(236,72,153,0.4); } 50% { box-shadow: 0 0 0 10px rgba(236,72,153,0); } 100% { box-shadow: 0 0 0 0 rgba(236,72,153,0); } }`;
+const radarStyle = `
+@keyframes radarPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+`;
 
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
@@ -62,7 +62,11 @@ const EspaceCreateur: React.FC = () => {
       const alerts = await runPredatorMonitoring();
       setPredatorAlerts(alerts);
       setPredatorLastScan(new Date().toISOString());
-    } finally { setPredatorScanning(false); }
+    } catch (error) {
+      console.warn('Predator monitoring unavailable:', error);
+    } finally {
+      setPredatorScanning(false);
+    }
   }, []);
 
   useEffect(() => { void handleScan(); }, [handleScan]);
@@ -77,11 +81,11 @@ const EspaceCreateur: React.FC = () => {
 
       {/* Radar */}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full border border-fuchsia-500/35 bg-slate-900/85 px-3 py-1.5 backdrop-blur-md">
-        <div className="relative h-3 w-3">
-          <div className="absolute inset-0 rounded-full bg-fuchsia-500/60" style={{ animation: 'predatorPulse 1.8s ease-in-out infinite' }} />
-          <div className="absolute inset-[1px] rounded-full border border-fuchsia-200/80" style={{ animation: 'predatorSweep 2.6s linear infinite' }} />
-        </div>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-fuchsia-100">Predator Active</span>
+        <span className="relative inline-flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-fuchsia-500" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-fuchsia-400" />
+        </span>
+        <span className="text-[9px] font-bold uppercase text-fuchsia-100">Predator Active</span>
       </div>
 
       <header className="mb-8">
@@ -102,7 +106,9 @@ const EspaceCreateur: React.FC = () => {
                 {ghostwriterCopied ? 'Copié !' : 'Copier'}
             </button>
         </div>
-        <pre className="whitespace-pre-wrap bg-slate-950 p-4 rounded-xl border border-slate-800 text-sm text-slate-300">{ghostwriterPost}</pre>
+        <pre className="whitespace-pre-wrap text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800">
+          {ghostwriterPost}
+        </pre>
       </section>
 
       {/* Stats Grid */}

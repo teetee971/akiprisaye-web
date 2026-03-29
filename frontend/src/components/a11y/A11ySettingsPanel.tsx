@@ -34,10 +34,13 @@ export default function A11ySettingsPanel() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="a11y-panel-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setIsOpen(false);
-          }}
         >
+          <button
+            type="button"
+            className="absolute inset-0 cursor-default"
+            aria-label="Fermer le panneau d'accessibilité"
+            onClick={() => setIsOpen(false)}
+          />
           <div className="bg-slate-900 rounded-lg shadow-2xl p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">

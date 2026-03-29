@@ -210,6 +210,13 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
     navigate(item.to);
   }, [navigate, onClose]);
 
+  const handleOptionKeyDown = useCallback((event: React.KeyboardEvent<HTMLLIElement>, item: SearchResult) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleSelect(item);
+    }
+  }, [handleSelect]);
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     const max = results.length;
     if (!max) return;
@@ -300,6 +307,7 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
                     role="option"
                     aria-selected={isActive}
                     onClick={() => handleSelect(item)}
+                    onKeyDown={(event) => handleOptionKeyDown(event, item)}
                     onMouseEnter={() => setActiveIdx(idx)}
                     className={`flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors ${isActive ? 'bg-slate-800' : 'hover:bg-slate-800/60'}`}
                   >

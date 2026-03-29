@@ -138,14 +138,25 @@ export function CsvUploader({
     fileInputRef.current?.click();
   }, []);
 
+  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleClick();
+    }
+  }, [handleClick]);
+
   return (
     <div className="space-y-4">
       {/* Upload Area */}
       <div
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        role="button"
+        tabIndex={isLoading ? -1 : 0}
+        aria-label="Zone de téléversement CSV"
         className={cn(
           'relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer',
           'bg-white/70 backdrop-blur-sm',

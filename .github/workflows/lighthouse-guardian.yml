@@ -1,0 +1,113 @@
+name: Lighthouse Guardian 24/24
+run-name: Lighthouse Guardian 24/24
+
+on:
+  schedule:
+    # Audit régulier, sans bloquer la fusion ni le déploiement
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+concurrency:
+  group: lighthouse-guardian
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    name: Surveillance Lighthouse non bloquante
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Create Puppeteer cache directory
+        run: mkdir -p /home/runner/.cache/puppeteer
+
+      - name: Restore Puppeteer / Chrome cache
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            puppeteer-${{ runner.os }}-
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Prepare Lighthouse config (URL production)
+        working-directory: frontend
+        env:
+          LHCI_URL: https://akiprisaye-web.pages.dev
+        run: node scripts/prepare-lighthouse-config.mjs
+
+      - name: Run Lighthouse CI (warning-only)
+        id: lighthouse
+        continue-on-error: true
+        working-directory: frontend
+        run: npx @lhci/cli@0.15.1 autorun --config=/tmp/lhcirc.json
+
+      - name: Write Lighthouse scores
+        if: always()
+        working-directory: frontend
+        run: node scripts/lighthouse-guard.mjs --write
+
+      - name: Print Lighthouse summary
+        if: always()
+        working-directory: frontend
+        run: node scripts/lighthouse-summary.mjs
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-guardian-reports
+          path: frontend/.lighthouseci/**
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: 'Auto-réparation soft: relance du déploiement Cloudflare'
+        if: ${{ steps.lighthouse.outcome == 'failure' }}
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'deploy-cloudflare-pages.yml',
+              ref: 'main',
+            });
+
+      - name: Alerte Lighthouse (issue)
+        if: ${{ steps.lighthouse.outcome == 'failure' }}
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const title = `⚠️ Lighthouse Guardian en alerte — ${new Date().toISOString().slice(0, 16)} UTC`;
+            const body = [
+              'Le run Lighthouse automatisé a détecté un écart ou une erreur d\'audit.',
+              '',
+              `- Workflow: ${context.workflow}`,
+              `- Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '- Politique: warning-only (non bloquant fusion/déploiement).',
+              '- Auto-réparation soft: relance de `deploy-cloudflare-pages.yml` sur `main`.',
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['monitoring', 'automatique', 'lighthouse'],
+            });

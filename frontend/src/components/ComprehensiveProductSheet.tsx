@@ -116,7 +116,7 @@ export default function ComprehensiveProductSheet({
 
           {/* Tabs */}
           <div className="border-b border-gray-200 dark:border-gray-700">
-            <nav className="flex gap-2 px-6" role="tablist">
+            <div className="flex gap-2 px-6" role="tablist">
               {[
                 { id: 'info', label: '📋 Informations', icon: '📋' },
                 { id: 'ingredients', label: '🧪 Ingrédients', icon: '🧪' },
@@ -137,7 +137,7 @@ export default function ComprehensiveProductSheet({
                   {tab.label}
                 </button>
               ))}
-            </nav>
+            </div>
           </div>
 
           {/* Tab Content */}

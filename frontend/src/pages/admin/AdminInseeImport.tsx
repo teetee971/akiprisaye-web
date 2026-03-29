@@ -118,6 +118,14 @@ export default function AdminInseeImport() {
     setSelected(next);
   }
 
+  function handleRowKeyDown(event: React.KeyboardEvent<HTMLDivElement>, siret: string, exists: boolean) {
+    if (exists) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleOne(siret);
+    }
+  }
+
   if (!user) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
@@ -361,6 +369,9 @@ export default function AdminInseeImport() {
                     <div
                       key={e.siret}
                       onClick={() => !exists && toggleOne(e.siret)}
+                      onKeyDown={(event) => handleRowKeyDown(event, e.siret, exists)}
+                      role={exists ? undefined : 'button'}
+                      tabIndex={exists ? -1 : 0}
                       className={`flex items-center gap-3 px-4 py-3 text-sm transition-colors ${
                         exists
                           ? 'opacity-40 cursor-not-allowed'

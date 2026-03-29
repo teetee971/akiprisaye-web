@@ -98,7 +98,8 @@ export default function AuthDebugPanel() {
       role="complementary"
     >
       {/* ── Header bar ──────────────────────────────────────────────────── */}
-      <div
+      <button
+        type="button"
         style={{
           background: '#1e293b',
           border: '1px solid #475569',
@@ -112,10 +113,11 @@ export default function AuthDebugPanel() {
         }}
         onClick={() => setMinimised((m) => !m)}
         title={minimised ? 'Expand auth debug panel' : 'Collapse auth debug panel'}
+        aria-expanded={!minimised}
       >
         <span style={{ color: '#60a5fa', fontWeight: 700 }}>🔒 Auth Debug</span>
         <span style={{ color: '#94a3b8', fontSize: 10 }}>{minimised ? '▲' : '▼'}</span>
-      </div>
+      </button>
 
       {/* ── Body ────────────────────────────────────────────────────────── */}
       {!minimised && (

@@ -94,7 +94,6 @@ export function ShoppingListManager() {
                     onChange={(e) => setNewListName(e.target.value)}
                     placeholder="Nom de la liste"
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white mb-2"
-                    autoFocus
                   />
                   <div className="flex gap-2">
                     <button
