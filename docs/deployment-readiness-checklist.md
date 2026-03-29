@@ -2,7 +2,7 @@
 
 ## ✅ Statut actuel: 100% conforme
 
-**Date de mise à jour:** 29 mars 2026  
+**Date de mise à jour:** AAAA-MM-JJ  
 **Décision:** prêt pour mise en production (critères atteints à 100%).
 
 ---
