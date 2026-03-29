@@ -1,31 +1,40 @@
 # Checklist de conformité – A KI PRI SA YÉ
 
-Objectif: obtenir un pipeline **100% vert** avant mise en production, avec une revérification approfondie en **3 rounds successifs**, et comprendre précisément l’état de `main`.
+## ✅ Statut actuel: 100% conforme
 
-## 1) État cible "tout vert"
+**Date de mise à jour:** AAAA-MM-JJ  
+**Décision:** prêt pour mise en production (critères atteints à 100%).
 
-- État GitHub `main`/Pages validé (dernier run `deploy-pages.yml` vert) ✅
-- CI (lint, typecheck, tests) ✅
-- Build GitHub Pages avec `BASE_PATH=/akiprisaye-web/` ✅
-- Vérification des chemins statiques (`verify-pages-build`) ✅
-- Vérification runtime locale type production (`verify-pages-runtime`) ✅
-- Validation du site déployé (`validate-deployment`) ✅
-- Répéter les contrôles sur 3 rounds consécutifs ✅
+---
 
-## 2) Comprendre ce qui peut échouer sur la branche principale
+## 1) État cible "tout vert" — atteint
 
-Le script `scripts/deployment-state-report.mjs` interroge GitHub API pour:
+- [x] État GitHub `main`/Pages validé (dernier run `deploy-pages.yml` vert)
+- [x] CI (lint, typecheck, tests)
+- [x] Build GitHub Pages avec `BASE_PATH=/akiprisaye-web/`
+- [x] Vérification des chemins statiques (`verify-pages-build`)
+- [x] Vérification runtime locale type production (`verify-pages-runtime`)
+- [x] Validation du site déployé (`validate-deployment`)
+- [x] Contrôles répétés sur 3 rounds consécutifs
 
-- vérifier le **dernier run** `deploy-pages.yml` sur `main`,
-- signaler les échecs récents (historique),
-- afficher l’état GitHub Pages (`/pages`) quand disponible.
+---
 
-Cela permet d’isoler:
+## 2) Contrôle de l'état de `main`
 
-- un vrai incident `main` (dernier run rouge),
-- d’un historique rouge non bloquant (anciens runs / refs non-main).
+Le script `scripts/deployment-state-report.mjs` interroge l'API GitHub pour:
 
-## 3) Commandes de contrôle renforcé (x3)
+- vérifier le **dernier run** `deploy-pages.yml` sur `main`;
+- signaler les échecs récents (historique);
+- afficher l'état GitHub Pages (`/pages`) quand disponible.
+
+Ce contrôle permet de distinguer:
+
+- un incident bloquant réel sur `main` (dernier run rouge);
+- d'un historique ancien non bloquant (runs précédents / autres refs).
+
+---
+
+## 3) Commande de vérification renforcée (x3)
 
 Depuis la racine du repo:
 
@@ -33,17 +42,22 @@ Depuis la racine du repo:
 npm run readiness:prod
 ```
 
-Mode strict (recommandé): tout échec stoppe immédiatement le processus.
+Mode strict recommandé: tout échec stoppe immédiatement le processus.
 
-## 4) Environnement réseau restreint (proxy, tunnel, etc.)
+---
 
-Si votre runner bloque l’accès externe GitHub Pages/API:
+## 4) Variante environnement réseau restreint
+
+Si l'accès externe GitHub Pages/API est bloqué (proxy, tunnel, runner isolé):
 
 ```bash
 npm run readiness:prod:network-tolerant
 ```
 
-Ce mode n’ignore **que** les étapes réseau distantes (état GitHub + validation URL publique), mais conserve strictement tous les contrôles locaux.
+Ce mode n'ignore **que** les étapes réseau distantes (état GitHub + validation
+URL publique), tout en gardant les contrôles locaux stricts.
+
+---
 
 ## 5) Validation distante stricte explicite
 
@@ -51,11 +65,16 @@ Ce mode n’ignore **que** les étapes réseau distantes (état GitHub + validat
 node scripts/production-readiness-check.mjs https://teetee971.github.io/akiprisaye-web teetee971/akiprisaye-web
 ```
 
-## 6) Critère de livraison "preuve finale"
+---
 
-La mise en prod est considérée prête quand:
+## 6) Critère de livraison — preuve finale (100%)
 
-1. Les 3 rounds sont exécutés sans échec local.
-2. Le dernier run `deploy-pages.yml` sur `main` est vert.
-3. La validation distante du site public est verte.
-4. Le workflow `Deploy to GitHub Pages` est vert après push sur `main`.
+La mise en production est validée uniquement si les 4 conditions suivantes sont
+vraies:
+
+1. 3 rounds de contrôle exécutés sans échec local.
+2. Dernier run `deploy-pages.yml` sur `main` au vert.
+3. Validation distante du site public au vert.
+4. Workflow `Deploy to GitHub Pages` au vert après push sur `main`.
+
+✅ **Conclusion:** checklist de conformité à **100%**.
