@@ -266,7 +266,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (loading || !authResolved) return;
-    if (userRole !== "creator") return;
+    if (userRole !== "creator" && userRole !== "admin") return;
 
     const targetPath = buildCreatorSpacePath();
     const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
