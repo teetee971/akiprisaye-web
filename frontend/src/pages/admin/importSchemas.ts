@@ -38,8 +38,8 @@ export const catalogSchema = z.object({
   campaign: z.object({
     name: z.string().trim().min(1),
     retailers: z.array(z.string().trim().min(1)).min(1),
-    validity_start: z.string().trim().min(1),
-    validity_end: z.string().trim().min(1),
+    validity_start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date format, expected YYYY-MM-DD" }),
+    validity_end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date format, expected YYYY-MM-DD" }),
     territory: z.string().trim().min(1),
   }),
   stores_applicable: z.array(z.string().trim().min(1)).min(1),
