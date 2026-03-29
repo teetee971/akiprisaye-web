@@ -272,7 +272,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
     if (currentPath.startsWith(targetPath)) return;
 
-    const isLoginRoute = /\/(login|connexion)$/.test(window.location.pathname);
+    const isLoginRoute = /\/(login|connexion)\/?$/.test(window.location.pathname);
     if (isLoginRoute || hasCreatorDebugSession()) {
       window.location.replace(targetPath);
     }
