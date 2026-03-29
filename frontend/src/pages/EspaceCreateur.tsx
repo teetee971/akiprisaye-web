@@ -89,7 +89,7 @@ const EspaceCreateur: React.FC = () => {
           <div>
             <h1 className="text-2xl font-black">STATION SPATIALE ULTRA</h1>
             <p className="text-xs text-amber-200/60 flex items-center gap-1"><Clock3 size={12}/> Dernière synchro: {new Date().toLocaleTimeString()}</p>
-          </div>
+            <p className="text-xs text-amber-200/60 flex items-center gap-1"><Clock3 size={12}/> Dernière synchro: {predatorLastScan ? new Date(predatorLastScan).toLocaleTimeString('fr-FR') : 'en attente'}</p>
         </div>
       </header>
 
