@@ -35,7 +35,8 @@ const EspaceCreateur: React.FC = () => {
     const weeklyClicks = weeklyStats.reduce((sum, item) => sum + item.clicks, 0);
     const monthlyClicks = monthlyStats.reduce((sum, item) => sum + item.clicks, 0);
     const weeklyViews = weeklyStats.reduce((sum, item) => sum + item.views, 0);
-    
+    const monthlyViews = monthlyStats.reduce((sum, item) => sum + item.views, 0);
+
     const lastWeekViews = getDailyStats(14).slice(0, 7).reduce((sum, item) => sum + item.views, 0);
     const viewsTrend = lastWeekViews > 0 ? ((weeklyViews - lastWeekViews) / lastWeekViews) * 100 : 0;
 
