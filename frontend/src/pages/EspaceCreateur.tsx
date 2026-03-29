@@ -107,7 +107,7 @@ const EspaceCreateur: React.FC = () => {
                 {ghostwriterCopied ? 'Copié !' : 'Copier'}
             </button>
         </div>
-        <pre className="whitespace-pre-wrap text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <pre className="whitespace-pre-wrap text-sm text-slate-300 bg-slate-950 p-5 rounded-xl border border-slate-800">
           {ghostwriterPost}
         </pre>
       </section>
@@ -194,6 +194,21 @@ const EspaceCreateur: React.FC = () => {
           ))}
         </div>
       </section>
+
+      <div className="flex justify-center gap-8 mt-4 pt-6 border-t border-slate-800/50 pb-8">
+        <Link to="/admin/stores" className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Gestion des enseignes">
+          <Building2 size={22} />
+        </Link>
+        <Link to="/admin/calculs-batiment" className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Outils BTP">
+          <Wrench size={22} />
+        </Link>
+        <Link to="/mon-compte" className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Mon compte">
+          <Key size={22} />
+        </Link>
+        <button onClick={() => window.location.reload()} className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Rafraîchir la page">
+          <RefreshCw size={22} />
+        </button>
+      </div>
     </div>
   );
 };
