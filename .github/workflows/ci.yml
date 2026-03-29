@@ -329,14 +329,14 @@ jobs:
           LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
         run: node scripts/lighthouse-guard.mjs --compare
 
-      - name: Quality gate — warning-only (push:main)
+      - name: Quality gate — blocking (push:main)
         if: always() && github.event_name == 'push'
-        continue-on-error: true
         working-directory: frontend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           LH_OVERRIDE_LABEL: 'false'
+          LH_BLOCKING: '1'
           LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
           LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
           LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}

@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import {
-  Activity, BarChart3, Bell, BrainCircuit, Building2, Copy, Crown,
+  BarChart3, Bell, BrainCircuit, Building2, Crown,
   Key, RefreshCw, Users, Wrench
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
+import { getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
@@ -69,16 +69,13 @@ const EspaceCreateur: React.FC = () => {
 
   const weeklyStats = useMemo(() => getDailyStats(7), []);
   const monthlyStats = useMemo(() => getDailyStats(30), []);
-  const conversionStats = useMemo(() => getConversionStats(30), []);
-
   const revenueAnalytics = useMemo(() => {
     const weeklyRevenue = weeklyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
-    const monthlyClicks = monthlyStats.reduce((sum, item) => sum + item.clicks, 0);
-    const monthlyViews = monthlyStats.reduce((sum, item) => sum + item.views, 0);
+    const monthlyRevenue = monthlyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0);
     return {
       weeklyRevenue,
+      monthlyRevenue,
       revenueTrend: weeklyStats.length >= 2 ? weeklyStats[weeklyStats.length - 1].estimatedRevenue - weeklyStats[0].estimatedRevenue : 0,
-      monthlyCtr: monthlyViews > 0 ? (monthlyClicks / monthlyViews) : 0,
     };
   }, [weeklyStats, monthlyStats]);
 
@@ -90,6 +87,16 @@ const EspaceCreateur: React.FC = () => {
     });
     return draft;
   }, [byTerritory, byInterest, revenueAnalytics.revenueTrend]);
+  const handleCopyGhostwriterPost = () => {
+    navigator.clipboard.writeText(ghostwriterPost);
+    setGhostwriterCopied(true);
+    setTimeout(() => setGhostwriterCopied(false), 2000);
+  };
+
+  const handleReload = () => {
+    window.location.reload();
+  };
+
 
   useEffect(() => {
     runPredatorMonitoring().then(setPredatorAlerts).catch(console.error);
@@ -123,7 +130,7 @@ const EspaceCreateur: React.FC = () => {
       <section className="mb-6 rounded-3xl border border-violet-500/30 bg-slate-900/50 p-5">
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-sm font-bold flex items-center gap-2"><BrainCircuit className="text-violet-400" size={18} /> Ghostwriter</h2>
-          <button onClick={() => {navigator.clipboard.writeText(ghostwriterPost); setGhostwriterCopied(true); setTimeout(() => setGhostwriterCopied(false), 2000);}} className="text-[10px] bg-violet-600 px-2 py-1 rounded-lg">
+          <button onClick={handleCopyGhostwriterPost} className="text-[10px] bg-violet-600 px-2 py-1 rounded-lg">
             {ghostwriterCopied ? 'Copié !' : 'Copier'}
           </button>
         </div>
@@ -145,7 +152,7 @@ const EspaceCreateur: React.FC = () => {
       <section className="order-2 md:order-1 mb-6 rounded-3xl border border-fuchsia-500/20 bg-slate-900/50 p-5">
         <h2 className="text-sm font-bold mb-3">Revenus CPC — suivi créateur</h2>
         <p className="text-[10px] text-slate-500 uppercase">Revenu 30 jours</p>
-        <p className="text-lg font-bold text-fuchsia-300">{monthlyStats.reduce((sum, item) => sum + item.estimatedRevenue, 0).toFixed(2)} €</p>
+        <p className="text-lg font-bold text-fuchsia-300">{revenueAnalytics.monthlyRevenue.toFixed(2)} €</p>
       </section>
 
       {/* Admin Links */}
@@ -182,7 +189,7 @@ const EspaceCreateur: React.FC = () => {
         <Link to="/admin/stores" className="text-slate-500"><Building2 size={18} /></Link>
         <Link to="/admin/calculs-batiment" className="text-slate-500"><Wrench size={18} /></Link>
         <Link to="/mon-compte" className="text-slate-500"><Key size={18} /></Link>
-        <button onClick={() => window.location.reload()} className="text-slate-500"><RefreshCw size={18} /></button>
+        <button onClick={handleReload} className="text-slate-500"><RefreshCw size={18} /></button>
       </div>
     </div>
   );
