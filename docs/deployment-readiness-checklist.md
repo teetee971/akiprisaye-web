@@ -2,7 +2,7 @@
 
 ## ✅ Statut actuel: 100% conforme
 
-**Date de mise à jour:** AAAA-MM-JJ  
+**Date de mise à jour:** <Date de la dernière mise à jour>  
 **Décision:** prêt pour mise en production (critères atteints à 100%).
 
 ---
@@ -78,3 +78,34 @@ vraies:
 4. Workflow `Deploy to GitHub Pages` au vert après push sur `main`.
 
 ✅ **Conclusion:** checklist de conformité à **100%**.
+
+---
+
+## 7) Maintien à 100% en continu (24/24)
+
+Pour maintenir la conformité en continu, le workflow GitHub Actions
+`.github/workflows/readiness-guardian.yml` exécute automatiquement:
+
+- un contrôle readiness toutes les 30 minutes;
+- une tentative d'auto-réparation en relançant `deploy-pages.yml` sur `main` en
+  cas d'échec;
+- l'ouverture d'une issue d'alerte avec le lien direct vers le run en échec.
+
+Objectif opérationnel: **maintenir un niveau 100% le plus proche possible du
+temps réel**, avec détection proactive + remédiation automatique quand c'est
+faisable.
+
+---
+
+## 8) Lighthouse CI en mode non bloquant (fusion + déploiement)
+
+Le workflow `.github/workflows/lighthouse-guardian.yml` applique la même logique
+24/24 pour Lighthouse CI, avec une politique **warning-only**:
+
+- audit automatique toutes les 3 heures (et exécution manuelle possible);
+- aucun blocage de fusion ou de déploiement en cas d'échec Lighthouse;
+- tentative d'auto-réparation soft via relance de `deploy-cloudflare-pages.yml`;
+- ouverture d'une issue d'alerte avec le lien du run.
+
+Cette approche garantit le suivi continu de la qualité web sans créer de blocage
+opérationnel pour la livraison.

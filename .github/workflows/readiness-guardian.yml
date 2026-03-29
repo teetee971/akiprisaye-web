@@ -1,0 +1,89 @@
+name: Readiness Guardian 24/24
+run-name: Readiness Guardian 24/24
+
+on:
+  schedule:
+    # Surveillance continue toutes les 30 minutes
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+concurrency:
+  group: readiness-guardian
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    name: Vérification conformité 24/24
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install frontend dependencies
+        run: npm --prefix frontend ci --no-audit --no-fund
+
+      - name: Run production readiness (network tolerant)
+        id: readiness
+        run: npm run readiness:prod:network-tolerant
+
+      - name: Résumé succès
+        if: ${{ success() }}
+        run: |
+          echo "## ✅ Readiness Guardian" >> "$GITHUB_STEP_SUMMARY"
+          echo "Conformité maintenue sur ce cycle (mode network-tolerant)." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 'Auto-réparation: relance du déploiement GitHub Pages'
+        if: ${{ failure() }}
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'deploy-pages.yml',
+              ref: 'main',
+            });
+
+      - name: Alerte incident readiness (issue)
+        if: ${{ failure() }}
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const title = `🚨 Readiness Guardian en échec — ${new Date().toISOString().slice(0, 16)} UTC`;
+            const body = [
+              'La vérification de conformité 24/24 a échoué.',
+              '',
+              `- Workflow: ${context.workflow}`,
+              `- Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '- Auto-réparation tentée: relance de `deploy-pages.yml` sur `main`.',
+              '',
+              'Actions recommandées:',
+              '1. Vérifier les logs du run.',
+              '2. Corriger la cause racine (lint/typecheck/tests/build/deploy).',
+              '3. Relancer manuellement si nécessaire.',
+            ].join('\n');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['monitoring', 'automatique', 'readiness'],
+            });
