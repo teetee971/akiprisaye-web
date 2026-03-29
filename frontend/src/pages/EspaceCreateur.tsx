@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
 import { BarChart3, Bell, BrainCircuit, Building2, Clock3, Crown, RefreshCw, Wrench, Users, Key } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { getDailyStats } from '../utils/priceClickTracker';
+import { getConversionStats, getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
@@ -109,7 +109,7 @@ const EspaceCreateur: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-4 sm:p-8">
       <Helmet><title>Dashboard Ultra V3.1 — NASA Station</title></Helmet>
-      <style>{predatorRadarStyle}</style>
+      <style>{radarStyle}</style>
 
       {/* Radar */}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2 rounded-full border border-fuchsia-500/35 bg-slate-900/85 px-3 py-1.5 backdrop-blur-md">

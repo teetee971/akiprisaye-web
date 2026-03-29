@@ -180,6 +180,7 @@ export default defineConfig({
       abs('./src/test/cro.engine.test.ts'),
       // Visitor stats mapping — category aliases and key deduplication
       abs('./src/test/visitorStats.test.ts'),
+      abs('./src/test/adminCatalogImport.test.tsx'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
