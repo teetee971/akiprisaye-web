@@ -51,7 +51,7 @@ export function buildCreatorBriefing({
   const territoryName = topTerritory?.name ?? 'ce territoire';
 
   if (!topTerritoryHistoricalInterest) {
-    return `${focusLine} sur ${territoryName}, tandis que le meilleur signal historique sur ce territoire reste aucun historique dominant`;
+    return `${focusLine} sur ${territoryName}, tandis que le meilleur signal historique sur ce territoire reste ${historicalName}`;
   }
 
   if (sameFocus) {
