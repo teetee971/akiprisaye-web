@@ -153,7 +153,7 @@ const EspaceCreateur: React.FC = () => {
         <h2 className="text-sm font-bold mb-3">Outils d'administration</h2>
         <p className="sr-only">Dashboard Admin</p>
         <p className="sr-only">Ouvrir</p>
-      <div className="grid grid-cols-2 gap-3 mb-6">
+      <div className="grid grid-cols-2 gap-3">
         <Link to="/admin" className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-2xl hover:bg-slate-800">
           <BarChart3 size={20} className="text-blue-400" />
           <span className="text-sm font-bold">Admin</span>
