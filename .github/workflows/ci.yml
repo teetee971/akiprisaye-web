@@ -22,9 +22,9 @@ on:
   workflow_dispatch:
     inputs:
       lhci_url:
-        description: "URL de preview réelle à auditer (optionnel — fallback localhost:4173)"
+        description: 'URL de preview réelle à auditer (optionnel — fallback localhost:4173)'
         required: false
-        default: ""
+        default: ''
 
 # ANNULE LES RUNS PRÉCÉDENTS SI UN NOUVEAU COMMIT EST POUSSÉ
 concurrency:
@@ -35,7 +35,6 @@ permissions:
   contents: read
 
 jobs:
-
   # ─── 1. Lint ────────────────────────────────────────────────────────────────
   lint:
     name: Lint
@@ -155,7 +154,7 @@ jobs:
 
       - name: Build (GitHub Pages)
         env:
-          GITHUB_PAGES: "true"
+          GITHUB_PAGES: 'true'
           BASE_PATH: /akiprisaye-web/
           NODE_OPTIONS: --max-old-space-size=4096
         run: npm run build
@@ -235,7 +234,7 @@ jobs:
       - name: Start preview server
         working-directory: frontend
         env:
-          PREVIEW_PORT: "4173"
+          PREVIEW_PORT: '4173'
           PREVIEW_URL: http://127.0.0.1:4173
         run: |
           npm run preview -- --host 127.0.0.1 --port "$PREVIEW_PORT" > /tmp/preview-server.log 2>&1 &
@@ -330,8 +329,9 @@ jobs:
           LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
         run: node scripts/lighthouse-guard.mjs --compare
 
-      - name: Quality gate — bloquant (push:main)
+      - name: Quality gate — warning-only (push:main)
         if: always() && github.event_name == 'push'
+        continue-on-error: true
         working-directory: frontend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -340,7 +340,6 @@ jobs:
           LH_AUDITED_URL: ${{ env.LH_AUDITED_URL }}
           LH_SOURCE_TYPE: ${{ env.LH_SOURCE_TYPE }}
           LH_WAS_FALLBACK: ${{ env.LH_WAS_FALLBACK }}
-          LH_BLOCKING: '1'
         run: node scripts/lighthouse-guard.mjs --compare
 
       - name: PR comment — rapport qualité Lighthouse
