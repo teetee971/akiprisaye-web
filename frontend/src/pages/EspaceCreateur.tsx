@@ -278,4 +278,3 @@ const EspaceCreateur: React.FC = () => {
 };
 
 export default EspaceCreateur;
-// Force update for GitHub Actions
