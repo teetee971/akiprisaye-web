@@ -1,4 +1,6 @@
-import { useMemo, useState } from 'react';
+import { getAisleFromCategory } from "../utils/aisleHelper";
+import { AisleHeader } from "../components/shopping/AisleHeader";
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useEntitlements } from '../billing/useEntitlements';
 import { assertQuotaOrThrow, QuotaExceededError } from '../billing/quotaService';
@@ -262,11 +264,16 @@ export default function ListePage() {
       </div>
 
       <ul className="space-y-2">
-        {items.map((item) => {
+        {items.map((item, index) => {
+          const currentAisle = getAisleFromCategory((item as any).category);
+          const previousAisle = index > 0 ? getAisleFromCategory((items[index - 1] as any).category) : null;
+          const showHeader = currentAisle !== previousAisle;
           const lastPrice = item.history?.[item.history.length - 1];
           const rec = recommendations.find((r) => r.itemId === item.id)?.rec;
           return (
-            <li key={item.id} className="rounded border border-slate-700 p-3">
+            <React.Fragment key={item.id}>
+              {showHeader && <AisleHeader aisleName={currentAisle} />}
+              <li className="rounded border border-slate-700 p-3">
               <div className="flex items-start gap-3">
                 {item.imageThumbUrl ? (
                   <img
@@ -309,6 +316,7 @@ export default function ListePage() {
                 </div>
               </div>
             </li>
+            </React.Fragment>
           );
         })}
       </ul>

@@ -1,3 +1,4 @@
+import { sortItemsByAisle } from "../utils/aisleHelper";
 import { emitUpgradePrompt } from '../billing/upgradePrompt';
 import { computeAlerts, computeConfidenceScore, computeTrend, normalizePrice, type PriceHistoryPoint } from '../domain/shoppingList/premium';
 
