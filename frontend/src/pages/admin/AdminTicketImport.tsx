@@ -1,4 +1,6 @@
 import { Camera } from "lucide-react";
+import { useRef } from "react";
+import { Camera } from "lucide-react";
 import { type ChangeEvent, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AlertTriangle, CheckCircle2, Loader2, ReceiptText, RotateCcw, Save, Upload } from 'lucide-react';
