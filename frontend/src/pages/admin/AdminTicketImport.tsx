@@ -207,6 +207,7 @@ export default function AdminTicketImport() {
               >
                 <Upload className="w-4 h-4" />
                 Charger un .json
+                <button onClick={() => fileInputRef.current.click()} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"><Camera className="w-5 h-5" />Scanner Photo</button><input type="file" accept="image/*" capture="environment" className="hidden" ref={fileInputRef} onChange={handlePhotoUpload} />
               </button>
               <button
                 type="button"
