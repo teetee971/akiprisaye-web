@@ -32,6 +32,7 @@ const SAMPLE_CATALOG_JSON = `{
 
 export default function AdminCatalogImport() {
   const [jsonInput, setJsonInput] = useState(SAMPLE_CATALOG_JSON);
+  const fileInputRef = useRef<HTMLInputElement>(null); const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onloadend = async () => { const base64 = (reader.result as string).split(",")[1]; try { const res = await fetch("/api/scan-price", { method: "POST", body: JSON.stringify({ imageBase64: base64 }) }); const data = await res.json(); const text = data.candidates[0].content.parts[0].text; setJsonInput(text.replace(/```json|```/g, "").trim()); } catch (err) { alert("Erreur scan IA"); } }; reader.readAsDataURL(file); };
   const [parsedCatalog, setParsedCatalog] = useState<CatalogPayload | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);

@@ -29,6 +29,7 @@ const SAMPLE_JSON = `{
 
 export default function AdminTicketImport() {
   const [jsonInput, setJsonInput] = useState<string>(SAMPLE_JSON);
+  const fileInputRef = useRef<HTMLInputElement>(null); const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onloadend = async () => { const base64 = (reader.result as string).split(",")[1]; try { const res = await fetch("/api/scan-price", { method: "POST", body: JSON.stringify({ imageBase64: base64 }) }); const data = await res.json(); const text = data.candidates[0].content.parts[0].text; setJsonInput(text.replace(/```json|```/g, "").trim()); } catch (err) { alert("Erreur scan IA"); } }; reader.readAsDataURL(file); };
   const [loading, setLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
