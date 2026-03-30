@@ -37,7 +37,7 @@ export default function AdminTicketImport() {
       return { itemsCount: 0, total: 0, ticketId: '-', computedTotal: 0 };
     }
 
-    const computedTotal = parsedPayload.items.reduce((sum, item) => sum + item.price, 0);
+    const computedTotal = parsedPayload.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     return {
       itemsCount: parsedPayload.items.length,
       total: parsedPayload.transaction.total_amount,

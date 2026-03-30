@@ -51,9 +51,7 @@ export function buildCreatorBriefing({
   const lead = `Le foyer d’attention principal est ${liveEmoji} ${liveName} sur ${territoryName}.`;
   const historicalDetail = sameFocus
     ? 'ce besoin confirme aussi le meilleur signal historique sur ce territoire.'
-    : hasHistoricalInterest
-      ? `tandis que le meilleur signal historique sur ce territoire reste ${historicalEmoji} ${historicalName}.`
-      : `tandis que le meilleur signal historique sur ce territoire reste ${historicalName}.`;
+    : `tandis que le meilleur signal historique sur ce territoire reste ${hasHistoricalInterest ? `${historicalEmoji} ${historicalName}` : historicalName}.`;
 
   return `${lead} ${historicalDetail}`;
 }
@@ -273,18 +271,10 @@ const EspaceCreateur: React.FC = () => {
 
       <section className="bg-emerald-950/20 border border-emerald-500/20 p-6 rounded-3xl mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-bold flex items-center gap-2 text-emerald-400">
-            <Bell size={18} /> Alertes Predator
-          </h3>
-          <button
-            type="button"
-            onClick={() => { void handleScan(); }}
-            disabled={predatorScanning}
-            className="text-xs bg-emerald-700 px-4 py-2 rounded-lg font-bold flex items-center gap-2 disabled:opacity-50 hover:bg-emerald-600 transition"
-          >
-            <RefreshCw size={14} className={predatorScanning ? 'animate-spin' : ''} />
-            {predatorScanning ? 'Analyse en cours...' : 'Scanner le marché'}
-          </button>
+            <h3 className="text-lg font-bold flex items-center gap-2 text-emerald-400"><Bell size={18} /> Alertes Predator</h3>
+            <button onClick={() => { void handleScan(); }} disabled={predatorScanning} className="text-xs bg-emerald-700 px-3 py-1 rounded-lg flex items-center gap-1 disabled:opacity-50">
+                <RefreshCw size={12} className={predatorScanning ? 'animate-spin' : ''} /> {predatorScanning ? 'Scan...' : 'Scanner'}
+            </button>
         </div>
         <div className="space-y-3">
           {predatorAlerts.length === 0 && (
