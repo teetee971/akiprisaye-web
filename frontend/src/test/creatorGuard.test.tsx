@@ -17,6 +17,7 @@ import '@testing-library/jest-dom/vitest';
 
 /* ── Firebase / lib mocks ──────────────────────────────────────────────── */
 vi.mock('../lib/firebase', () => ({
+(global as any).revenueAnalytics = { track: vi.fn(), init: vi.fn(), getStats: vi.fn(() => ({})) };
   firebaseError: null,
   db: null,
   missingCriticalEnvKeys: [],
