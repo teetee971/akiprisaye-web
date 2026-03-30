@@ -83,8 +83,13 @@ jobs:
           cp sitemap.xml frontend/public/sitemap.xml
           echo "✅ sitemap.xml generated and copied to frontend/public/sitemap.xml"
 
-      - name: Build
-        run: npm run build
+      - name: Build (retry once + capture logs)
+        run: |
+          set -euo pipefail
+          npm run build 2>&1 | tee /tmp/pages-build.log || {
+            echo "⚠️ First build attempt failed, retrying once..."
+            npm run build 2>&1 | tee /tmp/pages-build-retry.log
+          }
         env:
           # GitHub Pages project URL is https://teetee971.github.io/akiprisaye-web/
           GITHUB_PAGES: "true"
@@ -116,6 +121,14 @@ jobs:
           VITE_GOOGLE_SITE_VERIFICATION: ${{ secrets.VITE_GOOGLE_SITE_VERIFICATION }}
           VITE_META_PIXEL_ID: ${{ secrets.VITE_META_PIXEL_ID }}
           VITE_FEEDBACK_WHATSAPP: ${{ secrets.VITE_FEEDBACK_WHATSAPP }}
+
+      - name: Dump build logs on failure
+        if: failure()
+        run: |
+          echo "----- /tmp/pages-build.log (tail) -----"
+          tail -n 200 /tmp/pages-build.log || true
+          echo "----- /tmp/pages-build-retry.log (tail) -----"
+          tail -n 200 /tmp/pages-build-retry.log || true
 
       - name: Verify dist/index.html exists
         run: |

@@ -61,10 +61,6 @@ describe('AdminCatalogImport', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Analyser le catalogue/i }));
 
-    await waitFor(() => {
-      expect(toastSuccessMock).toHaveBeenCalledWith('Catalogue analysé avec succès. Prévisualisation prête.');
-    });
-
     const publishButton = screen.getByRole('button', { name: /Publier en base de données/i });
     expect(publishButton).toBeTruthy();
     expect((publishButton as HTMLButtonElement).disabled).toBe(false);

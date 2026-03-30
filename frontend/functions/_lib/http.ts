@@ -39,6 +39,7 @@ const isAllowedOrigin = (origin: string, request: Request, allowlist: string[] =
   const requestOrigin = sameOrigin(request);
   if (requestOrigin && origin === requestOrigin) return true;
   if (origin.endsWith('.pages.dev')) return true;
+  if (origin.endsWith('.github.io')) return true;
   return allowlist.includes(origin);
 };
 
