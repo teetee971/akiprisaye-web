@@ -173,6 +173,13 @@ async function bootstrap() {
   // 0) GitHub Pages self-heal: clear stale SW/caches on github.io
   if (await githubPagesSelfHeal()) return;
 
+  // 0-bis) On github.io we keep service workers disabled to avoid stale caches
+  // and mixed registrations between legacy `sw.js` and `service-worker.js`.
+  if (isGitHubPagesHost(window.location.hostname) && 'serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map((registration) => registration.unregister()));
+  }
+
   // 1) Anti “mismatch de build” (peut reload/redirect)
 
   if (import.meta.env.PROD) {
@@ -181,7 +188,9 @@ async function bootstrap() {
 
     if (versionChanged) return;
 
-    registerAppServiceWorker();
+    if (!isGitHubPagesHost(window.location.hostname)) {
+      registerAppServiceWorker();
+    }
 
   }
   // 3) Render React

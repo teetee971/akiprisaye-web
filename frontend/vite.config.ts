@@ -93,6 +93,8 @@ export default defineConfig({
     ),
   },
   build: {
+    // Publish source maps for production diagnostics (PageSpeed/Lighthouse + Sentry)
+    sourcemap: true,
     // Warn only for truly huge chunks (> 1 MB)
     chunkSizeWarningLimit: 1000,
     // Split CSS per chunk so only needed styles are loaded
