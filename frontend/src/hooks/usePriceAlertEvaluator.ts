@@ -14,7 +14,7 @@ import { loadAlerts, type SavedAlert } from '../services/priceAlertsStorage';
 import {
   detectPriceDrop,
   detectPriceIncrease,
-  DEFAULT_ALERT_PREFERENCES,
+  DEFAULT_ALERT_PREFERENCES
 } from '../services/priceAlertService';
 import { addNotification } from '../utils/notificationStorage';
 import { getTerritoryLabel } from '../services/territoryNormalizationService';
@@ -128,13 +128,13 @@ export function usePriceAlertEvaluator(enabled = true): {
             const dropResult = detectPriceDrop(
               referencePrice,
               avgPrice,
-              DEFAULT_ALERT_PREFERENCES,
+              DEFAULT_ALERT_PREFERENCES
             );
             const riseResult = !dropResult
               ? detectPriceIncrease(
                   referencePrice,
                   avgPrice,
-                  DEFAULT_ALERT_PREFERENCES,
+                  DEFAULT_ALERT_PREFERENCES
                 )
               : null;
 
