@@ -37,7 +37,7 @@ export default function AdminTicketImport() {
       return { itemsCount: 0, total: 0, ticketId: '-', computedTotal: 0 };
     }
 
-    const computedTotal = parsedPayload.items.reduce((sum, item) => sum + item.price, 0);
+    const computedTotal = parsedPayload.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     return {
       itemsCount: parsedPayload.items.length,
       total: parsedPayload.transaction.total_amount,
@@ -120,22 +120,19 @@ export default function AdminTicketImport() {
         updatedAt: serverTimestamp(),
       }, { merge: true });
 
-      const itemsCollection = collection(db, 'receipts', receiptId, 'items');
+      const itemsCollection = collection(firestoreDb, 'receipts', receiptId, 'items');
       const existingItemsSnapshot = await getDocs(itemsCollection);
+      await Promise.all(existingItemsSnapshot.docs.map((entry) => deleteDoc(entry.ref)));
 
-      const batch = writeBatch(db);
-      existingItemsSnapshot.docs.forEach((entry) => batch.delete(entry.ref));
-
-      parsedPayload.items.forEach((item, index) => {
-        const itemRef = doc(db, 'receipts', receiptId, 'items', String(index));
-        batch.set(itemRef, {
-          ...item,
-          itemIndex: index,
-          updatedAt: serverTimestamp(),
-        });
-      });
-
-      await batch.commit();
+      await Promise.all(
+        parsedPayload.items.map((item, index) =>
+          setDoc(doc(firestoreDb, 'receipts', receiptId, 'items', String(index)), {
+            ...item,
+            itemIndex: index,
+            updatedAt: serverTimestamp(),
+          }),
+        ),
+      );
 
       const message = `Ticket ${parsedPayload.transaction.ticket_id} enregistré (${parsedPayload.items.length} article(s)).`;
       setStatusMessage(message);

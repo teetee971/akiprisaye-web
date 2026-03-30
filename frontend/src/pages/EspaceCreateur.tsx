@@ -17,6 +17,49 @@ const radarStyle = `
 @keyframes radarPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
 `;
 
+type CreatorBriefingInput = {
+  topTerritory?: TerritoryStats;
+  topInterest?: InterestStats;
+  topTerritoryHistoricalInterest?: TerritoryInterestStat;
+};
+
+const INTEREST_KEY_ALIASES: Record<string, string> = {
+  scan: 'scanner',
+};
+
+function normalizeInterestLabel(value?: string): string {
+  return (value ?? '').toLowerCase().trim();
+}
+
+function normalizeInterestKey(value?: string): string {
+  const normalized = normalizeInterestLabel(value);
+  return INTEREST_KEY_ALIASES[normalized] ?? normalized;
+}
+
+export function buildCreatorBriefing({
+  topTerritory,
+  topInterest,
+  topTerritoryHistoricalInterest,
+}: CreatorBriefingInput): string {
+  const territoryName = topTerritory?.name ?? 'ce territoire';
+  const liveEmoji = topInterest?.emoji ?? '📊';
+  const liveName = normalizeInterestLabel(topInterest?.name) || 'activité principale';
+  const historicalEmoji = topTerritoryHistoricalInterest?.emoji ?? '📊';
+  const historicalName = normalizeInterestLabel(topTerritoryHistoricalInterest?.name) || 'aucun historique dominant';
+  const hasHistoricalInterest = Boolean(topTerritoryHistoricalInterest);
+
+  const liveKey = normalizeInterestKey(topInterest?.key ?? topInterest?.name);
+  const historicalKey = normalizeInterestKey(topTerritoryHistoricalInterest?.interest ?? topTerritoryHistoricalInterest?.name);
+  const sameFocus = Boolean(liveKey && historicalKey && liveKey === historicalKey);
+
+  const lead = `Le foyer d’attention principal est ${liveEmoji} ${liveName} sur ${territoryName}.`;
+  const historicalDetail = sameFocus
+    ? 'ce besoin confirme aussi le meilleur signal historique sur ce territoire.'
+    : `tandis que le meilleur signal historique sur ce territoire reste ${hasHistoricalInterest ? `${historicalEmoji} ${historicalName}` : historicalName}.`;
+
+  return `${lead} ${historicalDetail}`;
+}
+
 const EspaceCreateur: React.FC = () => {
   const { isCreator, loading } = useAuth();
   const { totalOnline, byTerritory, byInterest } = useVisitorStats();
@@ -177,7 +220,7 @@ const EspaceCreateur: React.FC = () => {
       <section className="bg-emerald-950/20 border border-emerald-500/20 p-6 rounded-3xl">
         <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold flex items-center gap-2 text-emerald-400"><Bell size={18} /> Alertes Predator</h3>
-            <button onClick={void handleScan} disabled={predatorScanning} className="text-xs bg-emerald-700 px-3 py-1 rounded-lg flex items-center gap-1 disabled:opacity-50">
+            <button onClick={() => { void handleScan(); }} disabled={predatorScanning} className="text-xs bg-emerald-700 px-3 py-1 rounded-lg flex items-center gap-1 disabled:opacity-50">
                 <RefreshCw size={12} className={predatorScanning ? 'animate-spin' : ''} /> {predatorScanning ? 'Scan...' : 'Scanner'}
             </button>
         </div>
