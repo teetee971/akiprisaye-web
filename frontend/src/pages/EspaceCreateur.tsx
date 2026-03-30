@@ -93,13 +93,15 @@ const EspaceCreateur: React.FC = () => {
     };
   }, [weeklyStats, monthlyStats]);
 
+  const ghostwriterPriceSignal = revenueAnalytics.revenueTrend;
+
   const ghostwriterPost = useMemo(() => {
     return generateDailyPost({
       territory: byTerritory[0]?.name ?? 'Guadeloupe',
       topCategory: byInterest[0]?.name ?? 'produits frais',
-      averagePriceChangePct: revenueAnalytics.revenueTrend,
+      averagePriceChangePct: ghostwriterPriceSignal,
     });
-  }, [byTerritory, byInterest, revenueAnalytics.revenueTrend]);
+  }, [byTerritory, byInterest, ghostwriterPriceSignal]);
 
   const handleScan = useCallback(async () => {
     setPredatorScanning(true);
