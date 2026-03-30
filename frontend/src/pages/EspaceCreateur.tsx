@@ -49,9 +49,10 @@ export function buildCreatorBriefing({
   const sameFocus = Boolean(liveKey && historicalKey && liveKey === historicalKey);
 
   const lead = `Le foyer d’attention principal est ${liveEmoji} ${liveName} sur ${territoryName}.`;
+  const historicalFocus = hasHistoricalInterest ? `${historicalEmoji} ${historicalName}` : historicalName;
   const historicalDetail = sameFocus
     ? 'ce besoin confirme aussi le meilleur signal historique sur ce territoire.'
-    : `tandis que le meilleur signal historique sur ce territoire reste ${hasHistoricalInterest ? `${historicalEmoji} ${historicalName}` : historicalName}.`;
+    : `tandis que le meilleur signal historique sur ce territoire reste ${historicalFocus}.`;
 
   return `${lead} ${historicalDetail}`;
 }

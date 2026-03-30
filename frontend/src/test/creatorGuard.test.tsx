@@ -258,7 +258,7 @@ describe('EspaceCreateur creator guard', () => {
     expect(screen.getByText(/Revenu 7j/i)).toBeTruthy();
   });
 
-  it('applies mobile-first visual ordering for admin before CPC blocks', () => {
+  it('keeps admin/CPC sections without legacy order utility classes', () => {
     const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
     authState = makeAuthMock({
       loading: false,

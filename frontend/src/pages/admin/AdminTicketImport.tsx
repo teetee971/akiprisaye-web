@@ -2,7 +2,7 @@ import { type ChangeEvent, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AlertTriangle, CheckCircle2, Loader2, ReceiptText, RotateCcw, Save, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, serverTimestamp, setDoc, writeBatch } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { makeDeterministicId, receiptSchema, type ReceiptPayload, zodErrorToMessage } from './importSchemas';
 
@@ -122,17 +122,22 @@ export default function AdminTicketImport() {
 
       const itemsCollection = collection(firestoreDb, 'receipts', receiptId, 'items');
       const existingItemsSnapshot = await getDocs(itemsCollection);
-      await Promise.all(existingItemsSnapshot.docs.map((entry) => deleteDoc(entry.ref)));
+      const batch = writeBatch(firestoreDb);
 
-      await Promise.all(
-        parsedPayload.items.map((item, index) =>
-          setDoc(doc(firestoreDb, 'receipts', receiptId, 'items', String(index)), {
-            ...item,
-            itemIndex: index,
-            updatedAt: serverTimestamp(),
-          }),
-        ),
-      );
+      existingItemsSnapshot.docs.forEach((entry) => {
+        batch.delete(entry.ref);
+      });
+
+      parsedPayload.items.forEach((item, index) => {
+        const itemRef = doc(firestoreDb, 'receipts', receiptId, 'items', String(index));
+        batch.set(itemRef, {
+          ...item,
+          itemIndex: index,
+          updatedAt: serverTimestamp(),
+        });
+      });
+
+      await batch.commit();
 
       const message = `Ticket ${parsedPayload.transaction.ticket_id} enregistré (${parsedPayload.items.length} article(s)).`;
       setStatusMessage(message);
