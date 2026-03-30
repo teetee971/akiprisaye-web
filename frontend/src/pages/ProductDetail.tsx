@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getCachedProduct } from '../services/freemium';
+import { useAuth } from '../context/AuthContext';
+import { priceAlertService } from '../services/priceAlertService';
+import { Bell, BellOff, Loader2 } from 'lucide-react';
 
 function formatPrice(value: unknown) {
   const n = Number(value);
@@ -9,11 +12,39 @@ function formatPrice(value: unknown) {
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
   const product = id ? getCachedProduct(id) : null;
+
+  useEffect(() => {
+    if (user && id) {
+      priceAlertService.checkIfFollowing(user.uid, id).then(setIsFollowing);
+    }
+  }, [user, id]);
 
   if (!product) {
     return <div className="max-w-3xl mx-auto p-4">Produit introuvable. <Link to="/comparateur" className="text-blue-600">Retour</Link></div>;
   }
+
+  const toggleAlert = async () => {
+    if (!user || !id) return;
+    setLoading(true);
+    try {
+      await priceAlertService.createAlert({
+        productId: id,
+        userId: user.uid,
+        productName: String(product.title ?? 'Produit'),
+        targetPrice: Number(product.price) || 0
+      });
+      setIsFollowing(true);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const current = formatPrice(product.price);
   const min = current ?? 0;
@@ -22,21 +53,39 @@ export default function ProductDetail() {
 
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-4">
-      <Link to="/comparateur" className="text-blue-600">← Retour comparateur</Link>
-      <h1 className="text-2xl font-bold">{String(product.title ?? 'Produit')}</h1>
+      <Link to="/comparateur" className="text-blue-600 flex items-center gap-1 text-sm">← Retour comparateur</Link>
+      
+      <div className="flex justify-between items-start">
+        <h1 className="text-2xl font-bold">{String(product.title ?? 'Produit')}</h1>
+        {user && (
+          <button 
+            onClick={toggleAlert}
+            disabled={loading || isFollowing}
+            className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all ${
+              isFollowing 
+                ? 'bg-yellow-50 border-yellow-200 text-yellow-600' 
+                : 'bg-white border-slate-200 text-slate-500 hover:border-yellow-400 hover:text-yellow-500'
+            }`}
+          >
+            {loading ? <Loader2 className="animate-spin" size={18} /> : isFollowing ? <BellOff size={18} /> : <Bell size={18} />}
+            <span className="text-xs font-medium">{isFollowing ? 'Alerte active' : 'Suivre le prix'}</span>
+          </button>
+        )}
+      </div>
+
       <div className="grid grid-cols-3 gap-3">
-        <div className="border rounded p-3"><p className="text-sm text-slate-500">Min</p><p className="font-bold">{min} €</p></div>
-        <div className="border rounded p-3"><p className="text-sm text-slate-500">Médiane</p><p className="font-bold">{median} €</p></div>
-        <div className="border rounded p-3"><p className="text-sm text-slate-500">Max</p><p className="font-bold">{max} €</p></div>
-      </div>
-      <div className="border rounded p-3 space-y-2">
-        <p><strong>Source:</strong> {String(product.merchant ?? 'N/A')}</p>
-        <p><strong>Date:</strong> {new Date().toLocaleDateString('fr-FR')}</p>
-        <p><strong>Fiabilité:</strong> <span className="px-2 py-1 bg-emerald-100 rounded text-emerald-700">Fiable</span></p>
-      </div>
-      <div className="border rounded p-3 bg-slate-50 dark:bg-slate-800">
-        <p className="font-medium">Insights (aperçu)</p>
-        <p className="text-sm text-slate-600 dark:text-slate-300">Tendance stable cette semaine. Passez Pro pour les outliers et l’analyse complète.</p>
+        <div className="border rounded-p-3 p-3">
+          <p className="text-sm text-slate-500">Min</p>
+          <p className="font-bold">{min} €</p>
+        </div>
+        <div className="border rounded-p-3 p-3">
+          <p className="text-sm text-slate-500">Médiane</p>
+          <p className="font-bold">{median} €</p>
+        </div>
+        <div className="border rounded-p-3 p-3">
+          <p className="text-sm text-slate-500">Max</p>
+          <p className="font-bold">{max} €</p>
+        </div>
       </div>
     </div>
   );
