@@ -40,9 +40,9 @@ export function buildCreatorBriefing({
 
   const historicalSentence = sameSignal
     ? 'ce besoin confirme aussi le meilleur signal historique sur ce territoire'
-    : \`tandis que le meilleur signal historique sur ce territoire reste \${historicalEmoji ? \`\${historicalEmoji} \` : ''}\${historicalLabel}\`;
+    : `tandis que le meilleur signal historique sur ce territoire reste ${historicalEmoji ? `${historicalEmoji} ` : ''}${historicalLabel}`;
 
-  return \`Sur \${territoryName}, Le foyer d’attention principal est \${liveEmoji} \${liveLabel}; \${historicalSentence}.\`;
+  return `Sur ${territoryName}, Le foyer d’attention principal est ${liveEmoji} ${liveLabel}; ${historicalSentence}.`;
 }
 
 const EspaceCreateur: React.FC = () => {
@@ -179,7 +179,7 @@ const EspaceCreateur: React.FC = () => {
           <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Paiement estimé</p>
           <p className="text-3xl font-black text-slate-100 mt-2">{analytics.monthlyRevenue.toFixed(2)} €</p>
           <div className="w-full bg-slate-800 rounded-full h-1.5 mt-4">
-            <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: \`\${Math.min(100, analytics.payoutProgress)}%\` }} />
+            <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${Math.min(100, analytics.payoutProgress)}%` }} />
           </div>
         </article>
       </section>
