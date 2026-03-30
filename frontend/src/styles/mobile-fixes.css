@@ -5,6 +5,14 @@
 
 /* Prevent Android keyboard from hiding form buttons */
 @media screen and (max-width: 768px) {
+  /* Lighthouse readable-font-size: ensure tiny utility classes remain >= 12px */
+  .text-\[9px\],
+  .text-\[10px\],
+  .text-\[11px\] {
+    font-size: 12px !important;
+    line-height: 1.35;
+  }
+
   /* MOBILE UX OPTIMIZATION: Improved base font size for readability */
   /* Samsung S24+ audit: 14px causes reading fatigue on long text */
   /* Increased to 16px for better readability without user zoom */
