@@ -179,6 +179,7 @@ export default function AdminCatalogImport() {
     try {
       const formData = new FormData();
       formData.append('image', file);
+      formData.append('type', 'catalog');
 
       const response = await fetch('/api/scan-price', {
         method: 'POST',
