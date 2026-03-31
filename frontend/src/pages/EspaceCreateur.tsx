@@ -73,7 +73,7 @@ const EspaceCreateur: React.FC = () => {
     };
   }, [weeklyStats, monthlyStats]);
 
-  const ghostwriterPriceSignal = revenueAnalytics.revenueTrend;
+  const ghostwriterPriceSignal = (window as any).revenueAnalytics?.revenueTrend ?? 0;
 
   const ghostwriterPost = useMemo(() => {
     return generateDailyPost({
