@@ -147,7 +147,7 @@ export async function onRequestPost({ request, env }) {
     };
 
     const geminiResponse = await callGeminiWithRetry(
-      `${GEMINI_ENDPOINT}?key=${env.GEMINI_API_KEY}`,
+      `${GEMINI_ENDPOINT}?key=${encodeURIComponent(env.GEMINI_API_KEY)}`,
       geminiPayload,
     );
 
