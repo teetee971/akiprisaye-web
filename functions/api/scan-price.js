@@ -106,6 +106,7 @@ export async function onRequestPost({ request, env }) {
   try {
     const formData = await request.formData();
     const image = formData.get('image');
+    const scanType = formData.get('type') || 'catalog';
 
     if (!(image instanceof File)) {
       return jsonResponse({ error: "Le champ 'image' est requis." }, 400);
