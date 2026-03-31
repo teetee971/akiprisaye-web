@@ -1,63 +1,6 @@
 /*
+  Access-Control-Allow-Origin: *
+  Content-Security-Policy: default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; script-src 'self' https://www.googletagmanager.com https://static.cloudflareinsights.com https://apis.google.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; connect-src 'self' https:;
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  X-DNS-Prefetch-Control: on
-  Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(self), camera=(self), microphone=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https: https://github.com https://githubusercontent.com https://i.ytimg.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self' https://www.googletagmanager.com 'sha256-mZvVvMw8+6CB9PkTzAvR40I1vF+FzuYfiM6VR3ZXeaQ=' 'sha256-dK+7CW0a5b1B24QIbYFhVhMX1NH114EFwvzzRLy/f9Q='; connect-src 'self' https:; manifest-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests
-  Cross-Origin-Opener-Policy: same-origin-allow-popups
-  Cross-Origin-Resource-Policy: same-site
-  Cache-Control: public, max-age=0, must-revalidate
-*/
-
-/ocr/*.wasm
-  Content-Type: application/wasm
-  Cache-Control: public, max-age=31536000, immutable
-  Cross-Origin-Resource-Policy: cross-origin
-
-/ocr/*.js
-  Cache-Control: public, max-age=31536000, immutable
-  Cross-Origin-Resource-Policy: cross-origin
-
-/ocr/*.gz
-  Cache-Control: public, max-age=31536000, immutable
-  Cross-Origin-Resource-Policy: cross-origin
-
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.js
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.css
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.png
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.jpg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.jpeg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.svg
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.webp
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.woff
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.woff2
-  Cache-Control: public, max-age=31536000, immutable
-
-/sw.js
-  Cache-Control: no-store, max-age=0, must-revalidate
-
-/service-worker.js
-  Cache-Control: no-store, max-age=0, must-revalidate
-
-/workbox-*.js
-  Cache-Control: no-store, max-age=0, must-revalidate
+  Referrer-Policy: same-origin

@@ -1,6 +1,7 @@
 import { Camera } from "lucide-react";
-
-import { type ChangeEvent, useMemo, useRef, useState } from 'react';
+import { useRef } from "react";
+import { Camera } from "lucide-react";
+import { type ChangeEvent, useMemo, useRef, useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AlertTriangle, CheckCircle2, Loader2, ReceiptText, RotateCcw, Save, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -27,11 +28,12 @@ const SAMPLE_JSON = `{
 }`;
 
 export default function AdminTicketImport() {
-  const [jsonInput, setJsonInput] = useState<string>(SAMPLE_JSON);
-  const [loading, setLoading] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [parsedPayload, setParsedPayload] = useState<ReceiptPayload | null>(null);
+  const [jsonInput, setJsonInput] = useState, useRef<string>(SAMPLE_JSON);
+  const fileInputRef = useRef<HTMLInputElement>(null); const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => { const file = e.target.files?.[0]; if (!file) return; const reader = new FileReader(); reader.onloadend = async () => { const base64 = (reader.result as string).split(",")[1]; try { const res = await fetch("/api/scan-price", { method: "POST", body: JSON.stringify({ imageBase64: base64 }) }); const data = await res.json(); const text = data.candidates[0].content.parts[0].text; setJsonInput(text.replace(/```json|```/g, "").trim()); } catch (err) { alert("Erreur scan IA"); } }; reader.readAsDataURL(file); };
+  const [loading, setLoading] = useState, useRef(false);
+  const [statusMessage, setStatusMessage] = useState, useRef<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState, useRef<string | null>(null);
+  const [parsedPayload, setParsedPayload] = useState, useRef<ReceiptPayload | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const photoInputRef = useRef<HTMLInputElement | null>(null);
 
