@@ -1,13 +1,23 @@
 #!/usr/bin/env node
 import { spawnSync } from 'node:child_process';
 
-const DEPLOYMENT_URL = process.argv[2] || 'https://teetee971.github.io/akiprisaye-web';
+const DEPLOYMENT_URL = process.argv[2] || 'https://akiprisaye-web.pages.dev';
 const REPO_SLUG = process.argv[3] || process.env.GITHUB_REPOSITORY || 'teetee971/akiprisaye-web';
 const ROUNDS = 3;
 const allowNetworkFailure = process.env.ALLOW_NETWORK_FAILURE === '1';
 
+const deploymentHost = new URL(DEPLOYMENT_URL).hostname;
+const isGitHubPagesTarget = deploymentHost.endsWith('github.io');
+const buildBasePath = isGitHubPagesTarget ? '/akiprisaye-web/' : '/';
+
 const checks = [
   { label: 'Diagnostic état main/deploiement GitHub', cmd: 'node', args: ['scripts/deployment-state-report.mjs', REPO_SLUG] },
+  { label: 'Syntax check Cloudflare Functions (/api/scan-price)', cmd: 'node', args: ['--check', 'functions/api/scan-price.js'] },
+  {
+    label: 'Lint ciblé imports admin photo scan',
+    cmd: 'npm',
+    args: ['--prefix', 'frontend', 'run', 'lint', '--', 'src/pages/admin/AdminCatalogImport.tsx', 'src/pages/admin/AdminTicketImport.tsx'],
+  },
   { label: 'Lint frontend', cmd: 'npm', args: ['--prefix', 'frontend', 'run', 'lint'] },
   { label: 'Typecheck frontend (CI)', cmd: 'npm', args: ['--prefix', 'frontend', 'run', 'typecheck:ci'] },
   { label: 'Tests frontend (CI)', cmd: 'npm', args: ['--prefix', 'frontend', 'run', 'test:ci'] },
@@ -16,13 +26,20 @@ const checks = [
     cmd: 'npm',
     args: ['--prefix', 'frontend', 'run', 'build'],
     env: {
-      BASE_PATH: '/akiprisaye-web/',
+      BASE_PATH: buildBasePath,
       NODE_OPTIONS: '--max-old-space-size=4096',
     },
   },
-  { label: 'Verify build paths', cmd: 'node', args: ['scripts/verify-pages-build.mjs'], cwd: 'frontend' },
-  { label: 'Verify runtime paths', cmd: 'node', args: ['scripts/verify-pages-runtime.mjs'], cwd: 'frontend' },
 ];
+
+if (isGitHubPagesTarget) {
+  checks.push(
+    { label: 'Verify build paths', cmd: 'node', args: ['scripts/verify-pages-build.mjs'], cwd: 'frontend' },
+    { label: 'Verify runtime paths', cmd: 'node', args: ['scripts/verify-pages-runtime.mjs'], cwd: 'frontend' },
+  );
+} else {
+  console.log(`ℹ️  Cible ${DEPLOYMENT_URL} détectée comme Cloudflare Pages: vérifications GitHub Pages (verify-pages-*) ignorées.`);
+}
 
 function runStep({ label, cmd, args, env, cwd }, round) {
   console.log(`\n▶️  [Round ${round}/${ROUNDS}] ${label}`);
