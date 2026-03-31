@@ -1,4 +1,9 @@
 const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // 4MB (sécurité + limite payload)
+const ACCEPTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp']);
+const GEMINI_TIMEOUT_MS = 25_000;
+const GEMINI_MAX_ATTEMPTS = 3;
+const GEMINI_RETRY_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 function jsonResponse(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
@@ -18,6 +23,81 @@ function extractJson(text) {
   }
 }
 
+function toBase64(arrayBuffer) {
+  const bytes = new Uint8Array(arrayBuffer);
+  const chunkSize = 0x8000;
+  let binary = '';
+
+  for (let index = 0; index < bytes.length; index += chunkSize) {
+    const chunk = bytes.subarray(index, index + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+
+  return btoa(binary);
+}
+
+async function safeJson(response) {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { raw: text };
+  }
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function callGeminiWithRetry(url, payload) {
+  let lastResponse = null;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= GEMINI_MAX_ATTEMPTS; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      lastResponse = response;
+
+      if (response.ok) {
+        return response;
+      }
+
+      if (!GEMINI_RETRY_STATUSES.has(response.status) || attempt === GEMINI_MAX_ATTEMPTS) {
+        return response;
+      }
+    } catch (error) {
+      clearTimeout(timeoutId);
+      lastError = error;
+
+      if (attempt === GEMINI_MAX_ATTEMPTS) {
+        break;
+      }
+    }
+
+    const backoffMs = 400 * 2 ** (attempt - 1);
+    await sleep(backoffMs);
+  }
+
+  if (lastResponse) {
+    return lastResponse;
+  }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('Échec de communication avec Gemini.');
+}
+
 export async function onRequestPost({ request, env }) {
   if (!env.GEMINI_API_KEY) {
     return jsonResponse({ error: 'Variable env GEMINI_API_KEY manquante.' }, 500);
@@ -26,13 +106,22 @@ export async function onRequestPost({ request, env }) {
   try {
     const formData = await request.formData();
     const image = formData.get('image');
+    const scanType = formData.get('type') || 'catalog';
 
     if (!(image instanceof File)) {
       return jsonResponse({ error: "Le champ 'image' est requis." }, 400);
     }
 
+    if (!ACCEPTED_IMAGE_TYPES.has((image.type || '').toLowerCase())) {
+      return jsonResponse({ error: `Type de fichier non supporté: ${image.type || 'inconnu'}.` }, 415);
+    }
+
+    if (image.size > MAX_IMAGE_BYTES) {
+      return jsonResponse({ error: `Image trop volumineuse (${image.size} octets). Max autorisé: ${MAX_IMAGE_BYTES} octets.` }, 413);
+    }
+
     const arrayBuffer = await image.arrayBuffer();
-    const base64Image = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const base64Image = toBase64(arrayBuffer);
 
     const geminiPayload = {
       contents: [
