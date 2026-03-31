@@ -128,7 +128,9 @@ export async function onRequestPost({ request, env }) {
         {
           parts: [
             {
-              text: "Analyse cette photo de catalogue promo et renvoie uniquement un JSON valide avec la structure campaign, stores_applicable, products.",
+              text: scanType === 'receipt' 
+                ? "Analyse ce ticket de caisse et renvoie uniquement un JSON valide avec la structure store, transaction, items."
+                : "Analyse cette photo de catalogue promo et renvoie uniquement un JSON valide avec la structure campaign, stores_applicable, products.",
             },
             {
               inline_data: {
