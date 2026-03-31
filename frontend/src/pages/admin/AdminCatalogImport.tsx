@@ -38,6 +38,7 @@ export default function AdminCatalogImport() {
   const [successMessage, setSuccessMessage] = useState, useRef<string | null>(null);
   const [isLoading, setIsLoading] = useState, useRef(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const photoInputRef = useRef<HTMLInputElement | null>(null);
 
   const warnings = useMemo(() => {
     if (!parsedCatalog) return [];
@@ -167,6 +168,43 @@ export default function AdminCatalogImport() {
     setSuccessMessage(null);
   };
 
+
+  const handlePhotoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setSuccessMessage(null);
+    setAnalysisError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await fetch('/api/scan-price', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        const message = payload?.error ?? 'Échec du scan photo.';
+        throw new Error(message);
+      }
+
+      const scannedJson = payload?.json ?? payload?.data ?? payload;
+      setJsonInput(typeof scannedJson === 'string' ? scannedJson : JSON.stringify(scannedJson, null, 2));
+      setParsedCatalog(null);
+      toast.success('Scan photo terminé. JSON chargé.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erreur inconnue lors du scan photo.';
+      setAnalysisError(message);
+      toast.error(message);
+    } finally {
+      event.target.value = '';
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -197,6 +235,14 @@ export default function AdminCatalogImport() {
                 onChange={handleFileUpload}
                 className="hidden"
               />
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
@@ -204,7 +250,14 @@ export default function AdminCatalogImport() {
               >
                 <Upload className="w-4 h-4" />
                 Charger un .json
-                <button onClick={() => fileInputRef.current.click()} className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg flex items-center gap-2"><Camera className="w-5 h-5" />Scanner Photo</button><input type="file" accept="image/*" capture="environment" className="hidden" ref={fileInputRef} onChange={handlePhotoUpload} />
+              </button>
+              <button
+                type="button"
+                onClick={() => photoInputRef.current?.click()}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                <Camera className="w-4 h-4" />
+                Scanner photo
               </button>
               <button
                 type="button"
