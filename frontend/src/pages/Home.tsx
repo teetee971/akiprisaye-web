@@ -92,7 +92,7 @@ export default function Home() {
           <div className="relative aspect-video max-w-4xl mx-auto rounded-3xl overflow-hidden border-8 border-slate-900 shadow-2xl bg-black">
             <video controls muted preload="none" poster="/assets/video-poster.jpg" className="w-full h-full object-cover">
               <source src="/assets/demo-app.mp4" type="video/mp4" />
-              <track kind="captions" label="Français" />
+              <track kind="captions" label="Français" src="/assets/demo-captions.vtt" srclang="fr" default />
               Navigateur non supporté.
             </video>
           </div>
