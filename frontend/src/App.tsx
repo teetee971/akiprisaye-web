@@ -414,7 +414,7 @@ export default function App() {
                               <Route path="solidarite" element={<SolidariteHub />} />
                               <Route path="inscription-pro" element={<InscriptionPro />} />
                               <Route path="espace-pro" element={<EspacePro />} />
-                              <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<div>Chargement...</div>}><EspaceCreateur /></Suspense></RequireCreator>} />
+                              <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<div className="text-white p-5">Chargement...</div>}><EspaceCreateur /></Suspense></RequireCreator>} />
                               <Route path="activation-createur" element={<ActivationCreateur />} />
                               <Route path="scanner" element={<ScannerHub />} />
                               <Route path="scan-ean" element={<ScanEAN />} />
