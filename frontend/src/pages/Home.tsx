@@ -17,7 +17,7 @@ const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidge
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 
-// Chemin validé par ton 'find' : Home.tsx et home-v5 sont dans le même dossier
+// Chemin ultra-précis validé par ton terminal
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
@@ -69,13 +69,12 @@ export default function Home() {
             <div className="flex flex-wrap gap-4">
               <button 
                 onClick={() => navigate('/scan')}
-                className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-blue-900/20"
+                className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all hover:scale-105 flex items-center gap-2"
               >
                 <Camera className="w-5 h-5" /> Scanner un ticket
               </button>
             </div>
           </div>
-
           <div className="relative hidden lg:block animate-float">
             <Suspense fallback={<SkeletonWidget />}>
               <PanierVitalWidget />
@@ -84,25 +83,24 @@ export default function Home() {
         </div>
       </header>
 
-      {/* --- SECTION VIDÉO DÉMO --- */}
-      <section className="py-20 px-6 overflow-hidden">
-        <div className="max-w-5xl mx-auto space-y-10 text-center">
+      {/* --- SECTION VIDÉO --- */}
+      <section className="py-20 px-6 overflow-hidden text-center">
+        <div className="max-w-5xl mx-auto space-y-10">
           <h2 className="text-3xl lg:text-4xl font-black italic uppercase flex items-center justify-center gap-3">
             <Play className="text-emerald-400 w-8 h-8 fill-emerald-400" />
             Comment ça marche ?
           </h2>
-          
-          <div className="relative group aspect-video max-w-4xl mx-auto rounded-3xl overflow-hidden border-8 border-slate-900 shadow-2xl bg-black">
+          <div className="relative aspect-video max-w-4xl mx-auto rounded-3xl overflow-hidden border-8 border-slate-900 shadow-2xl bg-black">
             <video 
               controls 
-              muted
-              preload="none"
-              poster="/assets/video-poster.jpg"
+              muted 
+              preload="none" 
+              poster="/assets/video-poster.jpg" 
               className="w-full h-full object-cover"
             >
               <source src="/assets/demo-app.mp4" type="video/mp4" />
               <track kind="captions" label="Français" />
-              Votre navigateur ne supporte pas la lecture de vidéos.
+              Navigateur non supporté.
             </video>
           </div>
         </div>
