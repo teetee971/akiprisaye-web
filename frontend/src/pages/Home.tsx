@@ -11,11 +11,11 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// --- Lazy-loaded components (Chemins STRICTS de ton projet) ---
+// --- Lazy-loaded components (Chemins confirmés) ---
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
-const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometer'));
+const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 const ObservatorySection = lazy(() => import('../home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
@@ -157,7 +157,7 @@ export default function Home() {
 
       <footer className="py-20 px-6 bg-blue-600">
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h2 className="text-4xl font-black text-white italic">PRÊT À RÉDUIRE VOS FACTURES ?</h2>
+          <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">Prêt à réduire vos factures ?</h2>
           <button 
             onClick={() => navigate('/scan')}
             className="px-10 py-5 bg-white text-blue-600 font-black rounded-2xl shadow-xl hover:scale-105 transition-transform"
