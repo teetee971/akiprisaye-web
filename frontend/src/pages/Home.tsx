@@ -126,7 +126,6 @@ export default function Home() {
               className="w-full h-full object-cover"
             >
               <source src="https://akiprisaye-web.pages.dev/assets/demo-app.mp4" type="video/mp4" />
-              <track kind="captions" src="" label="Français" />
               Votre navigateur ne supporte pas la lecture de vidéos.
             </video>
           </div>
