@@ -11,13 +11,13 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// --- Lazy-loaded components (Chemins validés) ---
+// --- Lazy-loaded components ---
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 
-// Note : Home.tsx est dans 'pages/', Observatory est dans 'pages/home-v5/'
+// LE CHEMIN CRITIQUE : ./ signifie "dans le même dossier"
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
@@ -52,13 +52,12 @@ export default function Home() {
         description="Scannez vos tickets, comparez les prix des supermarchés en Guadeloupe et économisez sur vos courses."
       />
 
-      {/* --- HERO SECTION --- */}
       <header className="relative pt-20 pb-32 px-6 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent" />
         <div className="max-w-7xl mx-auto relative z-10 grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold uppercase tracking-widest">
-              <Zap className="w-3 h-3" /> Propulsé par la communauté GP
+              <Zap className="w-3 h-3" /> Communauté GP
             </div>
             <h1 className="text-5xl lg:text-7xl font-black leading-tight italic uppercase">
               Ne payez plus <br />
@@ -84,7 +83,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* --- SECTION VIDÉO DÉMO (ACCESSIBLE + URLs RELATIVES) --- */}
       <section className="py-20 px-6 overflow-hidden text-center">
         <div className="max-w-5xl mx-auto space-y-10">
           <h2 className="text-3xl lg:text-4xl font-black italic uppercase flex items-center justify-center gap-3">
@@ -92,13 +90,7 @@ export default function Home() {
             Comment ça marche ?
           </h2>
           <div className="relative aspect-video max-w-4xl mx-auto rounded-3xl overflow-hidden border-8 border-slate-900 shadow-2xl bg-black">
-            <video 
-              controls 
-              muted 
-              preload="none" 
-              poster="/assets/video-poster.jpg" 
-              className="w-full h-full object-cover"
-            >
+            <video controls muted preload="none" poster="/assets/video-poster.jpg" className="w-full h-full object-cover">
               <source src="/assets/demo-app.mp4" type="video/mp4" />
               <track kind="captions" label="Français" />
               Navigateur non supporté.
@@ -107,7 +99,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- DATA SECTIONS --- */}
       <section className="py-20 px-6 space-y-32">
         <Suspense fallback={<SkeletonSection />}>
           <div className="max-w-7xl mx-auto">
