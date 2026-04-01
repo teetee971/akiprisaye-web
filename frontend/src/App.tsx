@@ -572,7 +572,7 @@ export default function App() {
                               <Route path="chocs-prix" element={<ChocsPrixPage />} />
                               <Route path="newsletter" element={<NewsletterHubPage />} />
                               <Route path="monitoring-ia" element={<MonitoringIAPage />} />
-                              <Route path="organigrame-gbh" element={<OrganigrammeGBH />} />
+                              <Route path="organigramme-gbh" element={<OrganigrammeGBH />} />
                               <Route path="produit/:slug" element={<SEOProductPage />} />
                               <Route path="categorie/:slug" element={<SEOCategoryPage />} />
                               <Route path="prix/:slug" element={<SEOPrixLocalPage />} />
