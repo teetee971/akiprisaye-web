@@ -8,7 +8,8 @@ ATTEMPTS="${4:-6}"
 DELAY_SECONDS="${5:-15}"
 
 if [[ -z "$SITE_URL" ]]; then
-  echo "❌ Missing SITE_URL argument."
+  echo "❌ Erreur : SITE_URL manquant."
+  echo "Usage: $0 <url> [label] [blocking|non-blocking] [attempts] [delay]"
   exit 2
 fi
 
@@ -17,7 +18,7 @@ echo "🔎 ${LABEL} — démarrage sur ${SITE_URL}"
 for attempt in $(seq 1 "$ATTEMPTS"); do
   echo "Tentative ${attempt}/${ATTEMPTS}..."
   
-  # On vérifie si la page répond
+  # On vérifie si la page répond avec un code 200 (Smoke check)
   if curl -fsS --max-time 10 "$SITE_URL" >/dev/null 2>&1; then
     echo "✅ ${LABEL} réussie."
     exit 0
