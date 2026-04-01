@@ -11,14 +11,10 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// --- Widgets (Dossier components/home) ---
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
-
-// --- Section Spéciale (Dossier local pages/home-v5) ---
-// Chemin : ./ car Home.tsx et le dossier home-v5 sont tous deux dans src/pages/
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
@@ -68,40 +64,14 @@ export default function Home() {
               L'application citoyenne qui scanne les tickets de caisse pour vous dire où vos courses sont les moins chères en Guadeloupe.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button 
-                onClick={() => navigate('/scan')}
-                className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all hover:scale-105 flex items-center gap-2 shadow-lg shadow-blue-900/20"
-              >
+              <button onClick={() => navigate('/scan')} className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all hover:scale-105 flex items-center gap-2">
                 <Camera className="w-5 h-5" /> Scanner un ticket
               </button>
             </div>
           </div>
-          <div className="relative hidden lg:block animate-float">
-            <Suspense fallback={<SkeletonWidget />}>
-              <PanierVitalWidget />
-            </Suspense>
-          </div>
         </div>
       </header>
 
-      <section className="px-6 -mt-16 relative z-20">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-6">
-          {QUICK_TILES.map((tile, idx) => (
-            <div key={idx} className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl space-y-6">
-              <h3 className="text-xl font-bold">{tile.title}</h3>
-              <div className="flex flex-wrap gap-3">
-                {tile.links.map((link, lIdx) => (
-                  <Link key={lIdx} to={link.to} className="px-4 py-2 bg-slate-800 hover:bg-blue-600 rounded-xl text-xs font-semibold transition-colors">
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* --- SECTION VIDÉO DÉMO (ACCESSIBLE) --- */}
       <section className="py-20 px-6 overflow-hidden text-center">
         <div className="max-w-5xl mx-auto space-y-10">
           <h2 className="text-3xl lg:text-4xl font-black italic uppercase flex items-center justify-center gap-3">
@@ -109,32 +79,19 @@ export default function Home() {
             Comment ça marche ?
           </h2>
           <div className="relative aspect-video max-w-4xl mx-auto rounded-3xl overflow-hidden border-8 border-slate-900 shadow-2xl bg-black">
-            <video 
-              controls 
-              muted 
-              preload="none" 
-              poster="/assets/video-poster.jpg" 
-              className="w-full h-full object-cover"
-            >
+            <video controls muted preload="none" poster="/assets/video-poster.jpg" className="w-full h-full object-cover">
               <source src="/assets/demo-app.mp4" type="video/mp4" />
               <track kind="captions" label="Français" />
-              Votre navigateur ne supporte pas la lecture de vidéos.
+              Navigateur non supporté.
             </video>
-          </div>
-          <div className="flex justify-center gap-8 text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            <span className="flex items-center gap-2"><ShieldCheck className="text-blue-400 w-4 h-4" /> 100% Anonyme</span>
-            <span className="flex items-center gap-2"><Globe className="text-emerald-400 w-4 h-4" /> Spécial Guadeloupe</span>
           </div>
         </div>
       </section>
 
       <section className="py-20 px-6 space-y-32">
         <Suspense fallback={<SkeletonSection />}>
-          <div className="max-w-7xl mx-auto">
-            <ObservatorySection />
-          </div>
+          <div className="max-w-7xl mx-auto"><ObservatorySection /></div>
         </Suspense>
-
         <Suspense fallback={<SkeletonStatGrid />}>
           <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
             <InflationBarometerWidget />
