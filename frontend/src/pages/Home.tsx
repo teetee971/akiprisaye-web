@@ -16,7 +16,7 @@ const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
-const ObservatorySection = lazy(() => import('../home-v5/ObservatorySection'));
+const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
   {
