@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import React, { lazy, Suspense } from 'react';
-import { Camera, Play, ShieldCheck, Globe, Zap } from 'lucide-react';
+import { Camera, Play, Zap } from 'lucide-react';
 import '../styles/home-v5.css';
 import '../styles/animations.css';
 import { SEOHead } from '../components/ui/SEOHead';
