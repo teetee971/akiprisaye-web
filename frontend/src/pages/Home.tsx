@@ -11,14 +11,14 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// --- Composants chargés dynamiquement (Chemins validés par ton find) ---
+// --- Composants chargés dynamiquement (Chemins validés par ton terminal) ---
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 
-// NOTE : Ici, on pointe directement dans src/home-v5/ comme indiqué par ton terminal
-const ObservatorySection = lazy(() => import('../home-v5/ObservatorySection'));
+// Chemin corrigé selon ton 'find' : Home.tsx et home-v5 sont dans le même dossier 'pages'
+const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
   {
