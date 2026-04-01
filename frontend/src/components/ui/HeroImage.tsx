@@ -63,7 +63,7 @@ export function HeroImage({
             alt={alt}
             loading={loading}
             decoding="async"
-            fetchPriority={fetchPriority}
+            {...({ fetchpriority: fetchPriority } as Record<string, string>)}
             sizes={sizes}
             width={width}
             height={heightPx}
