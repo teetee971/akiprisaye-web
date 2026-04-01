@@ -11,13 +11,13 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// --- Lazy-loaded components ---
+// --- Widgets (Dossier components/home) ---
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 
-// LE CHEMIN CRITIQUE : ./ signifie "dans le même dossier"
+// LE CHEMIN FINAL CORRIGÉ : ./ pour rester dans le dossier pages
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
@@ -75,11 +75,6 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <div className="relative hidden lg:block animate-float">
-            <Suspense fallback={<SkeletonWidget />}>
-              <PanierVitalWidget />
-            </Suspense>
-          </div>
         </div>
       </header>
 
@@ -105,7 +100,6 @@ export default function Home() {
             <ObservatorySection />
           </div>
         </Suspense>
-
         <Suspense fallback={<SkeletonStatGrid />}>
           <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
             <InflationBarometerWidget />
