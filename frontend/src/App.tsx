@@ -457,6 +457,7 @@ export default function App() {
                               {LEGACY_ALIAS_ROUTES}
                               <Route path="pricing" element={<Pricing />} />
                               <Route path="subscribe" element={<Subscribe />} />
+                              <Route path="subscribe/success" element={<Subscribe />} />
                               <Route path="observatoire-temps-reel" element={<ObservatoireTempsReel />} />
                               <Route path="transparence" element={<Transparence />} />
                               <Route path="signaler-abus" element={<SignalerAbus />} />
