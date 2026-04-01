@@ -11,13 +11,13 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// --- Lazy-loaded components ---
+// --- Composants chargés dynamiquement ---
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 
-// Chemin corrigé : ObservatorySection est dans src/pages/home-v5/
+// Chemin corrigé : Home.tsx et home-v5 sont tous les deux dans le dossier 'pages'
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
@@ -83,7 +83,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* --- SECTION VIDÉO DÉMO --- */}
+      {/* --- SECTION VIDÉO DÉMO (URLS RELATIVES + ACCESSIBILITÉ) --- */}
       <section className="py-20 px-6 overflow-hidden text-center">
         <div className="max-w-5xl mx-auto space-y-10">
           <h2 className="text-3xl lg:text-4xl font-black italic uppercase flex items-center justify-center gap-3">
@@ -110,7 +110,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- DATA SECTIONS --- */}
       <section className="py-20 px-6 space-y-32">
         <Suspense fallback={<SkeletonSection />}>
           <div className="max-w-7xl mx-auto">
