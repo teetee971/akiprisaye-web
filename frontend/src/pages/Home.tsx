@@ -3,7 +3,7 @@ import React, { lazy, Suspense } from 'react';
 import { Camera, Play, ShieldCheck, Globe, Zap } from 'lucide-react';
 import '../styles/home-v5.css';
 import '../styles/animations.css';
-import SEOHead from '../components/ui/SEOHead';
+import { SEOHead } from '../components/ui/SEOHead';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import {
   SkeletonSection,
