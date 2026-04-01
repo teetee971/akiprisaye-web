@@ -24,7 +24,8 @@
     "seo:loop": "node scripts/auto-seo/collect-signals.mjs && node scripts/auto-seo/score-pages.mjs && node scripts/auto-seo/generate-recommendations.mjs",
     "seo:review-plan": "npm run seo:loop && node scripts/auto-seo/build-patches.mjs && node scripts/auto-seo/export-pr-plan.mjs",
     "seo:full": "npm run seo:generate && npm run seo:sitemap && npm run seo:validate && npm run seo:review-plan",
-    "content:generate": "node scripts/auto-content-engine.mjs"
+    "content:generate": "node scripts/auto-content-engine.mjs",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.56.1",
@@ -34,6 +35,8 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "firebase-admin": "^13.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^16.4.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   }

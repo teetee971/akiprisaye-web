@@ -39,7 +39,7 @@ export default function AdminTicketImport() {
       if (!result.success) { setErrorMessage(zodErrorToMessage(result.error)); return; }
       setParsedPayload(result.data);
       toast.success('Analyse réussie !');
-    } catch { setErrorMessage('JSON invalide.'); }
+    } catch { setErrorMessage('JSON mal formaté'); }
   };
 
   const handleSave = async () => {
@@ -49,24 +49,23 @@ export default function AdminTicketImport() {
       const id = makeDeterministicId(parsedPayload.transaction.ticket_id + Date.now());
       await setDoc(doc(db, 'receipts', id), { ...parsedPayload, created_at: serverTimestamp(), source: 'admin_import' });
       setStatusMessage('Ticket enregistré !');
-      toast.success('Enregistré !');
     } catch (e: any) { setErrorMessage(e.message); } finally { setLoading(false); }
   };
 
   return (
     <div className="max-w-5xl mx-auto p-6 text-white space-y-6 bg-slate-900 rounded-2xl min-h-screen border border-slate-800">
-      <Helmet><title>Import tickets de caisse — Admin AkiPrisaye</title></Helmet>
-      <h1 className="text-2xl font-black flex items-center gap-2"><ReceiptText className="text-emerald-400" /> Import tickets de caisse</h1>
+      <Helmet><title>Import tickets — Admin</title></Helmet>
+      <h1 className="text-2xl font-black flex items-center gap-2"><ReceiptText /> Import tickets de caisse</h1>
       <div className="flex gap-3">
         <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={async (e) => { const t = await e.target.files?.[0]?.text(); if (t) setJsonInput(t); }} />
         <input ref={photoInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoUpload} />
-        <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-slate-800 rounded-lg border border-slate-700">Charger un .json</button>
+        <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-slate-800 rounded-lg">Charger un .json</button>
         <button type="button" onClick={() => photoInputRef.current?.click()} className="px-4 py-2 bg-purple-600 rounded-lg">Scanner photo</button>
         <button type="button" onClick={() => { setJsonInput(SAMPLE_JSON); setParsedPayload(null); setErrorMessage(null); }} className="px-4 py-2 bg-slate-800 rounded-lg"><RotateCcw className="w-4 h-4" /></button>
       </div>
       <div className="space-y-2">
         <label htmlFor="receipt-json" className="text-sm font-medium text-slate-200">JSON du ticket</label>
-        <textarea id="receipt-json" value={jsonInput} onChange={(e) => setJsonInput(e.target.value)} className="w-full h-80 p-4 bg-slate-950 rounded-xl font-mono text-sm focus:ring-2 focus:ring-emerald-500 outline-none" />
+        <textarea id="receipt-json" value={jsonInput} onChange={(e) => setJsonInput(e.target.value)} className="w-full h-80 p-4 bg-slate-950 rounded-xl font-mono text-sm" />
       </div>
       <div className="flex gap-4">
         <button type="button" onClick={handleAnalyze} className="px-6 py-2 bg-blue-500 text-slate-950 font-bold rounded-lg hover:bg-blue-400">Analyser le ticket</button>

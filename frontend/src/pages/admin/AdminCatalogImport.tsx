@@ -39,7 +39,7 @@ export default function AdminCatalogImport() {
       if (!result.success) { setAnalysisError(zodErrorToMessage(result.error)); return; }
       setParsedCatalog(result.data);
       toast.success('Analyse réussie !');
-    } catch { setAnalysisError('JSON invalide.'); }
+    } catch { setAnalysisError('JSON mal formaté'); }
   };
 
   const handlePublish = async () => {
@@ -60,13 +60,13 @@ export default function AdminCatalogImport() {
       <div className="flex flex-wrap gap-3">
         <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={async (e) => { const text = await e.target.files?.[0]?.text(); if (text) setJsonInput(text); }} />
         <input ref={photoInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoUpload} />
-        <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-slate-800 rounded-lg border border-slate-700 flex items-center gap-2"><Upload className="w-4 h-4" /> Charger un .json</button>
-        <button type="button" onClick={() => photoInputRef.current?.click()} className="px-4 py-2 bg-purple-600 rounded-lg flex items-center gap-2"><Camera className="w-4 h-4" /> Scanner photo</button>
+        <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-slate-800 rounded-lg border border-slate-700 flex items-center gap-2">Charger un .json</button>
+        <button type="button" onClick={() => photoInputRef.current?.click()} className="px-4 py-2 bg-purple-600 rounded-lg flex items-center gap-2">Scanner photo</button>
         <button type="button" onClick={() => { setJsonInput(SAMPLE_CATALOG_JSON); setParsedCatalog(null); setAnalysisError(null); }} className="px-4 py-2 bg-slate-800 rounded-lg"><RotateCcw className="w-4 h-4" /></button>
       </div>
       <div className="space-y-2">
         <label htmlFor="catalog-json" className="text-sm font-semibold text-slate-200">JSON brut du catalogue</label>
-        <textarea id="catalog-json" value={jsonInput} onChange={(e) => setJsonInput(e.target.value)} className="w-full h-80 p-4 bg-slate-900 border border-slate-800 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 outline-none" />
+        <textarea id="catalog-json" value={jsonInput} onChange={(e) => setJsonInput(e.target.value)} className="w-full h-80 p-4 bg-slate-900 border border-slate-800 rounded-lg font-mono text-sm" />
       </div>
       <div className="flex gap-4">
         <button type="button" onClick={handleAnalyze} className="px-6 py-2 bg-blue-500 text-slate-950 font-bold rounded-lg hover:bg-blue-400">Analyser le catalogue</button>
