@@ -11,7 +11,7 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// --- Lazy-loaded components (Chemins confirmés) ---
+// --- Composants chargés dynamiquement ---
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
@@ -110,7 +110,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- SECTION VIDÉO DÉMO (ACCESSIBLE) --- */}
+      {/* --- SECTION VIDÉO DÉMO (VERSION VALIDE HTML) --- */}
       <section className="py-20 px-6 overflow-hidden">
         <div className="max-w-5xl mx-auto space-y-10 text-center">
           <h2 className="text-3xl lg:text-4xl font-black flex items-center justify-center gap-3">
@@ -122,10 +122,16 @@ export default function Home() {
             <video 
               controls 
               muted
-              poster="https://akiprisaye-web.pages.dev/assets/video-poster.jpg"
+              preload="none"
+              poster="/assets/video-poster.jpg"
               className="w-full h-full object-cover"
             >
+<<<<<<< HEAD
               <source src="https://akiprisaye-web.pages.dev/assets/demo-app.mp4" type="video/mp4" />
+=======
+              <source src="/assets/demo-app.mp4" type="video/mp4" />
+              <track kind="captions" label="Français" />
+>>>>>>> bdd50943 (docs: fix SEOHead import and use relative video URLs as per code review)
               Votre navigateur ne supporte pas la lecture de vidéos.
             </video>
           </div>
@@ -156,7 +162,7 @@ export default function Home() {
 
       <footer className="py-20 px-6 bg-blue-600">
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter">Prêt à réduire vos factures ?</h2>
+          <h2 className="text-4xl font-black text-white italic">PRÊT À RÉDUIRE VOS FACTURES ?</h2>
           <button 
             onClick={() => navigate('/scan')}
             className="px-10 py-5 bg-white text-blue-600 font-black rounded-2xl shadow-xl hover:scale-105 transition-transform"
