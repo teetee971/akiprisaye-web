@@ -11,13 +11,13 @@ import {
   SkeletonStatGrid,
 } from '../components/SkeletonWidgets';
 
-// --- Composants chargés dynamiquement ---
+// --- Lazy-loaded components ---
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 
-// Chemin ultra-précis validé par ton terminal
+// Chemin corrigé : ObservatorySection est dans src/pages/home-v5/
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
@@ -83,7 +83,7 @@ export default function Home() {
         </div>
       </header>
 
-      {/* --- SECTION VIDÉO --- */}
+      {/* --- SECTION VIDÉO DÉMO --- */}
       <section className="py-20 px-6 overflow-hidden text-center">
         <div className="max-w-5xl mx-auto space-y-10">
           <h2 className="text-3xl lg:text-4xl font-black italic uppercase flex items-center justify-center gap-3">
@@ -103,9 +103,14 @@ export default function Home() {
               Navigateur non supporté.
             </video>
           </div>
+          <div className="flex justify-center gap-8 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <span className="flex items-center gap-2"><ShieldCheck className="text-blue-400 w-4 h-4" /> 100% Anonyme</span>
+            <span className="flex items-center gap-2"><Globe className="text-emerald-400 w-4 h-4" /> Spécial Guadeloupe</span>
+          </div>
         </div>
       </section>
 
+      {/* --- DATA SECTIONS --- */}
       <section className="py-20 px-6 space-y-32">
         <Suspense fallback={<SkeletonSection />}>
           <div className="max-w-7xl mx-auto">
