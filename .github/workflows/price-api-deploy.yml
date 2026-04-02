@@ -56,6 +56,31 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: npx --yes wrangler@4.68.0 d1 migrations apply price-db --remote
 
+      - name: Ensure R2 bucket exists
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -euo pipefail
+          BUCKET_NAME="price-imports"
+          echo "🔎 Checking R2 bucket '$BUCKET_NAME'"
+
+          EXISTS=$(npx --yes wrangler@4.68.0 r2 bucket list --json | node -e '
+            const fs = require("fs");
+            const bucketName = process.argv[1];
+            const buckets = JSON.parse(fs.readFileSync(0, "utf8"));
+            process.stdout.write(buckets.some((bucket) => bucket.name === bucketName) ? "true" : "false");
+          ' "$BUCKET_NAME")
+
+          if [ "$EXISTS" = "true" ]; then
+            echo "✅ Bucket '$BUCKET_NAME' already exists"
+            exit 0
+          fi
+
+          echo "🪣 Creating bucket '$BUCKET_NAME'"
+          npx --yes wrangler@4.68.0 r2 bucket create "$BUCKET_NAME"
+          echo "✅ Bucket '$BUCKET_NAME' created"
+
       - name: Deploy Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
