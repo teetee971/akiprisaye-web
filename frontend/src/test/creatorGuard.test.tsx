@@ -190,7 +190,7 @@ describe('EspaceCreateur creator guard', () => {
 
     // The creator dashboard heading is rendered — no redirect occurred
     expect(screen.queryByTestId('home-page')).toBeNull();
-    expect(screen.getByRole('heading', { name: /Espace Créateur V3.1/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Espace Créateur v4.6.1/i })).toBeTruthy();
     expect(screen.getByRole('heading', { name: /Ghostwriter Social/i })).toBeTruthy();
   });
 
@@ -214,7 +214,7 @@ describe('EspaceCreateur creator guard', () => {
 
     // Admin users can also access the creator space
     expect(screen.queryByTestId('home-page')).toBeNull();
-    expect(screen.getByRole('heading', { name: /Espace Créateur V3.1/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Espace Créateur v4.6.1/i })).toBeTruthy();
   });
 
   it('shows admin tools as locked for creator users', () => {

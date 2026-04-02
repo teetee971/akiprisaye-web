@@ -138,7 +138,7 @@ const EspaceCreateur: React.FC = () => {
         <div className="flex items-center gap-4">
           <Crown className="text-amber-400" size={32} />
           <div>
-            <h1 className="text-2xl font-black">Espace Créateur V3.1</h1>
+            <h1 className="text-2xl font-black">Espace Créateur v4.6.1</h1>
             <p className="text-xs text-amber-200/60 flex items-center gap-1 mt-1">
               <Clock3 size={12} /> Dernière synchro: {predatorLastScan ? new Date(predatorLastScan).toLocaleTimeString('fr-FR') : 'en attente'}
             </p>
