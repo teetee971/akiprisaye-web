@@ -312,7 +312,7 @@ export default function Home() {
             <div className="max-w-7xl mx-auto"><ObservatorySection /></div>
           </Suspense>
           <Suspense fallback={<SkeletonStatGrid />}>
-            <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
+            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8">
               <StoreRankingWidget />
               <LiveNewsFeed />
             </div>
