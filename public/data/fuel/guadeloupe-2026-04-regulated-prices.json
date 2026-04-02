@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "territory": "GP",
+    "title": "Prix réglementés des produits pétroliers et du gaz - Guadeloupe - Avril 2026",
+    "version": "1.0.0",
+    "effectiveDate": "2026-04-01",
+    "effectiveTime": "00:00:00",
+    "timezone": "America/Guadeloupe",
+    "publishedAt": "2026-03-31",
+    "collectedAt": "2026-04-02T12:00:00Z",
+    "collector": "codex",
+    "status": "provisional_official_linked",
+    "notes": [
+      "Les pages officielles de la préfecture sont bien référencées mais le tableau image des prix n'est pas récupérable automatiquement dans cet environnement.",
+      "Les valeurs numériques ci-dessous sont renseignées à titre provisoire depuis une source de presse secondaire et doivent être validées contre l'arrêté PDF officiel."
+    ]
+  },
+  "officialSources": {
+    "index": "https://www.guadeloupe.gouv.fr/Actions-de-l-Etat/Economie-emploi-travail-formation-et-insertion/France-relance-entreprises-economie-emploi/Les-prix-des-produits-petroliers-et-du-gaz",
+    "article": "https://www.guadeloupe.gouv.fr/Actions-de-l-Etat/Economie-emploi-travail-formation-et-insertion/France-relance-entreprises-economie-emploi/Les-prix-des-produits-petroliers-et-du-gaz/Revision-des-prix-maximums-des-produits-petroliers-du-1er-avril-2026-zero-heure",
+    "arretePdf": "https://www.guadeloupe.gouv.fr/contenu/telechargement/36734/264781/file/AP%20CARBURANT%20AVRIL%202026.pdf"
+  },
+  "marketContext": {
+    "summary": "Hausse mondiale des cours pétroliers dans un contexte de tensions au Moyen-Orient; effet différé sur les prix administrés en Guadeloupe.",
+    "internationalVariation": {
+      "wtiCrude": "+38%",
+      "unleaded": "+40%",
+      "dieselRefined": "+59%",
+      "comparisonWindow": "15 premiers jours de mars vs 15 premiers jours de février 2026"
+    },
+    "localPolicySignals": [
+      "Prix administrés mensuellement",
+      "Marges SARA/grossistes/distributeurs annoncées inchangées",
+      "Pas de TVA/TICP sur les carburants en Guadeloupe (rappel institutionnel)",
+      "Approvisionnement annoncé sécurisé, pas de risque de pénurie à date de publication"
+    ]
+  },
+  "regulatedMaxima": {
+    "superSansPlomb": {
+      "unit": "EUR/L",
+      "value": 1.87,
+      "verification": "pending_official_pdf_check",
+      "secondarySource": "https://www.linfokwezi.fr/prix-des-carburants-mayotte-parmi-les-plus-fortes-hausses/"
+    },
+    "gazole": {
+      "unit": "EUR/L",
+      "value": 1.96,
+      "verification": "pending_official_pdf_check",
+      "secondarySource": "https://www.linfokwezi.fr/prix-des-carburants-mayotte-parmi-les-plus-fortes-hausses/"
+    },
+    "gazBouteille125kg": {
+      "unit": "EUR/bouteille",
+      "value": null,
+      "verification": "missing_numeric_value_extract_from_pdf",
+      "secondarySource": null
+    }
+  },
+  "stationDiscovery": {
+    "googleSearchUrl": "https://www.google.com/search?q=essence+guadeloupe&udm=1",
+    "integrationAdvice": [
+      "Ne pas scraper Google HTML directement en production.",
+      "Brancher une API POI (Google Places, OSM Nominatim + Overpass) pour stations-service géolocalisées.",
+      "Conserver un mapping local stationId -> nom/commune/coordonnées pour la consolidation avec les prix."
+    ]
+  }
+}

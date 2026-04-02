@@ -1,0 +1,149 @@
+{
+  "metadata": {
+    "title": "France — périmètre complet carburants/gaz (avril 2026)",
+    "version": "1.0.0",
+    "effectiveDate": "2026-04-01",
+    "collectedAt": "2026-04-02T12:45:00Z",
+    "scope": [
+      "FR_METRO",
+      "GP",
+      "MQ",
+      "GF",
+      "RE",
+      "YT",
+      "PM",
+      "BL",
+      "MF"
+    ],
+    "status": "multi_territory_bootstrap"
+  },
+  "commonSources": {
+    "nationalRealtimeApi": "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/prix-des-carburants-en-france-flux-instantane-v2/records",
+    "nationalPortal": "https://www.prix-carburants.gouv.fr",
+    "methodology": "Les DOM/COM peuvent publier des maxima réglementés mensuels via arrêtés préfectoraux; la métropole repose majoritairement sur prix observés station par station."
+  },
+  "territories": [
+    {
+      "territory": "FR_METRO",
+      "label": "France métropolitaine",
+      "deptCodes": ["01-95"],
+      "pricingModel": "observed_market_prices",
+      "officialSources": {
+        "primary": "https://www.prix-carburants.gouv.fr",
+        "api": "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/prix-des-carburants-en-france-flux-instantane-v2/records"
+      },
+      "regulatedMaxima": null,
+      "verification": "not_applicable_monthly_prefectoral_cap"
+    },
+    {
+      "territory": "GP",
+      "label": "Guadeloupe",
+      "deptCodes": ["971"],
+      "pricingModel": "monthly_regulated_maxima",
+      "officialSources": {
+        "index": "https://www.guadeloupe.gouv.fr/Actions-de-l-Etat/Economie-emploi-travail-formation-et-insertion/France-relance-entreprises-economie-emploi/Les-prix-des-produits-petroliers-et-du-gaz",
+        "monthArticle": "https://www.guadeloupe.gouv.fr/Actions-de-l-Etat/Economie-emploi-travail-formation-et-insertion/France-relance-entreprises-economie-emploi/Les-prix-des-produits-petroliers-et-du-gaz/Revision-des-prix-maximums-des-produits-petroliers-du-1er-avril-2026-zero-heure",
+        "monthDecreePdf": "https://www.guadeloupe.gouv.fr/contenu/telechargement/36734/264781/file/AP%20CARBURANT%20AVRIL%202026.pdf"
+      },
+      "regulatedMaxima": {
+        "superSansPlomb": { "value": 1.87, "unit": "EUR/L", "verification": "pending_official_pdf_check" },
+        "gazole": { "value": 1.96, "unit": "EUR/L", "verification": "pending_official_pdf_check" },
+        "gazBouteille125kg": { "value": null, "unit": "EUR/bouteille", "verification": "missing_numeric_value_extract_from_pdf" }
+      },
+      "verification": "partial"
+    },
+    {
+      "territory": "MQ",
+      "label": "Martinique",
+      "deptCodes": ["972"],
+      "pricingModel": "monthly_regulated_maxima",
+      "officialSources": {
+        "prefectureHome": "https://www.martinique.gouv.fr"
+      },
+      "regulatedMaxima": {
+        "superSansPlomb": { "value": null, "unit": "EUR/L", "verification": "pending_official_source_linking" },
+        "gazole": { "value": null, "unit": "EUR/L", "verification": "pending_official_source_linking" },
+        "gazBouteille125kg": { "value": null, "unit": "EUR/bouteille", "verification": "pending_official_source_linking" }
+      },
+      "verification": "todo"
+    },
+    {
+      "territory": "GF",
+      "label": "Guyane",
+      "deptCodes": ["973"],
+      "pricingModel": "monthly_regulated_maxima",
+      "officialSources": {
+        "prefectureHome": "https://www.guyane.gouv.fr"
+      },
+      "regulatedMaxima": {
+        "superSansPlomb": { "value": null, "unit": "EUR/L", "verification": "pending_official_source_linking" },
+        "gazole": { "value": null, "unit": "EUR/L", "verification": "pending_official_source_linking" },
+        "gazBouteille125kg": { "value": null, "unit": "EUR/bouteille", "verification": "pending_official_source_linking" }
+      },
+      "verification": "todo"
+    },
+    {
+      "territory": "RE",
+      "label": "La Réunion",
+      "deptCodes": ["974"],
+      "pricingModel": "monthly_regulated_maxima",
+      "officialSources": {
+        "prefectureHome": "https://www.reunion.gouv.fr"
+      },
+      "regulatedMaxima": {
+        "superSansPlomb": { "value": null, "unit": "EUR/L", "verification": "pending_official_source_linking" },
+        "gazole": { "value": null, "unit": "EUR/L", "verification": "pending_official_source_linking" },
+        "gazBouteille125kg": { "value": null, "unit": "EUR/bouteille", "verification": "pending_official_source_linking" }
+      },
+      "verification": "todo"
+    },
+    {
+      "territory": "YT",
+      "label": "Mayotte",
+      "deptCodes": ["976"],
+      "pricingModel": "monthly_regulated_maxima",
+      "officialSources": {
+        "prefectureHome": "https://www.mayotte.gouv.fr"
+      },
+      "regulatedMaxima": {
+        "superSansPlomb": { "value": null, "unit": "EUR/L", "verification": "pending_official_source_linking" },
+        "gazole": { "value": null, "unit": "EUR/L", "verification": "pending_official_source_linking" },
+        "gazBouteille125kg": { "value": null, "unit": "EUR/bouteille", "verification": "pending_official_source_linking" }
+      },
+      "verification": "todo"
+    },
+    {
+      "territory": "PM",
+      "label": "Saint-Pierre-et-Miquelon",
+      "deptCodes": ["975"],
+      "pricingModel": "local_regulation_or_observed",
+      "officialSources": {
+        "prefectureHome": "https://www.saint-pierre-et-miquelon.gouv.fr"
+      },
+      "regulatedMaxima": null,
+      "verification": "todo"
+    },
+    {
+      "territory": "BL",
+      "label": "Saint-Barthélemy",
+      "deptCodes": ["977"],
+      "pricingModel": "local_regulation_or_observed",
+      "officialSources": {
+        "prefectureHome": "https://www.saint-barth-saint-martin.gouv.fr"
+      },
+      "regulatedMaxima": null,
+      "verification": "todo"
+    },
+    {
+      "territory": "MF",
+      "label": "Saint-Martin",
+      "deptCodes": ["978"],
+      "pricingModel": "local_regulation_or_observed",
+      "officialSources": {
+        "prefectureHome": "https://www.saint-barth-saint-martin.gouv.fr"
+      },
+      "regulatedMaxima": null,
+      "verification": "todo"
+    }
+  ]
+}
