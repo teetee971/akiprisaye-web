@@ -4,10 +4,26 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo-akiprisaye.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; connect-src 'self' https:; font-src 'self' data: https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+    />
     <title>AkiPrisaye — Comparateur de prix Guadeloupe</title>
     <meta name="description" content="Comparez les prix des supermarchés en Guadeloupe et économisez sur vos courses." />
   </head>
   <body>
+    <script>
+      // GitHub Pages deep-link restore: /?p=/route -> /route
+      (function () {
+        var search = window.location.search;
+        if (!search) return;
+        if (search[1] === 'p') {
+          var path = decodeURIComponent(search.slice(3).split('&')[0] || '/');
+          var url = window.location.origin + window.location.pathname.replace(/\/$/, '') + path;
+          window.history.replaceState(null, '', url);
+        }
+      })();
+    </script>
     <div id="root"></div>
     
     <script type="module" src="/src/main.tsx"></script>

@@ -25,6 +25,7 @@ import {
   type Store,
   type StoreSearchFilters,
 } from '../../../services/admin/storeAdminService';
+import { getAdminDegradedModeReason, isStaticPreviewEnv } from '../../../services/admin/runtimeEnv';
 import type { TerritoryCode } from '../../../types/extensions';
 
 const TERRITORIES: { code: TerritoryCode; name: string }[] = [
@@ -52,6 +53,8 @@ export default function StoreList() {
   const [statusFilter, setStatusFilter] = useState<'active' | 'inactive' | ''>('');
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const isDegradedMode = isStaticPreviewEnv();
+  const degradedReason = getAdminDegradedModeReason();
 
   const columns = useMemo<ColumnDef<Store>[]>(
     () => [
@@ -149,6 +152,11 @@ export default function StoreList() {
   }, [currentPage, searchTerm, territoryFilter, statusFilter]);
 
   const loadStores = async () => {
+    if (isDegradedMode) {
+      setStores([]);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const filters: StoreSearchFilters = {
@@ -185,12 +193,18 @@ export default function StoreList() {
 
   return (
     <div className="space-y-6">
+      {isDegradedMode && (
+        <div className="p-3 rounded-lg border border-amber-400/40 bg-amber-900/20 text-amber-200 text-sm">
+          {degradedReason}
+        </div>
+      )}
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold text-white">Gestion des enseignes</h1>
         <button
           onClick={() => navigate('/admin/stores/new')}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+          disabled={isDegradedMode}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50"
         >
           <Plus className="h-5 w-5" />
           Nouvelle enseigne

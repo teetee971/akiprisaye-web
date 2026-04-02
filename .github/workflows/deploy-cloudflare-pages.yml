@@ -14,8 +14,20 @@ jobs:
       deployment_url: ${{ steps.deploy_step.outputs.url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install & Build
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Validate Firebase API key secret (fail-fast before build)
+        working-directory: frontend
         run: |
           cd frontend
           npm install

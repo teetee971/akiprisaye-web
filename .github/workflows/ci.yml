@@ -35,9 +35,43 @@ permissions:
   contents: read
 
 jobs:
+  # ─── 0. Contract tests (fast fail) ─────────────────────────────────────────
+  contract-tests:
+    name: Contract tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Route contract lint (ComparateursHub vs App.tsx)
+        working-directory: frontend
+        run: npm run contract:routes
+
+      - name: Route snapshot check (versioned)
+        working-directory: frontend
+        run: npm run snapshot:routes:check
+
+      - name: Workflow + deployment contract tests
+        working-directory: frontend
+        run: npx vitest run --config vitest.config.ts scripts/ci-workflows.test.ts scripts/validate-deployment.test.ts
+
+      - name: Routing + homepage contract tests
+        working-directory: frontend
+        run: npx vitest run --config vitest.config.ts src/test/home.page.test.tsx src/test/cloudflareRouting.test.ts src/test/comparateurRoutes.test.ts src/test/comparateursHubRoutes.test.ts
+
   # ─── 1. Lint ────────────────────────────────────────────────────────────────
   lint:
     name: Lint
+    needs: contract-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -63,6 +97,7 @@ jobs:
   # ─── 2. Typecheck ───────────────────────────────────────────────────────────
   typecheck:
     name: Typecheck
+    needs: contract-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -84,6 +119,7 @@ jobs:
   # ─── 3. Test ────────────────────────────────────────────────────────────────
   test:
     name: Test
+    needs: contract-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -113,6 +149,7 @@ jobs:
   # ─── 4. Build ───────────────────────────────────────────────────────────────
   build:
     name: Build
+    needs: contract-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -136,6 +173,7 @@ jobs:
   # ─── 5. Verify Pages ────────────────────────────────────────────────────────
   verify-pages:
     name: Verify Pages build
+    needs: contract-tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -171,6 +209,7 @@ jobs:
   # ─── 6. Price-API ───────────────────────────────────────────────────────────
   price-api:
     name: Price-API (typecheck + test)
+    needs: contract-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -196,6 +235,7 @@ jobs:
   # ─── 7. Lighthouse CI ───────────────────────────────────────────────────────
   lighthouse:
     name: Lighthouse CI
+    needs: contract-tests
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -379,6 +419,7 @@ jobs:
   # ─── PR required check shim (non bloquant) ─────────────────────────────────
   build-test:
     name: build-test
+    needs: contract-tests
     runs-on: ubuntu-latest
     if: always()
     steps:

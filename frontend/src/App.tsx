@@ -408,12 +408,17 @@ export default function App() {
                               <Route path="methodologie" element={<Methodologie />} />
                               <Route path="faq" element={<Faq />} />
                               <Route path="contact" element={<Contact />} />
+                              <Route path="contribuer" element={<Contribuer />} />
+                              <Route path="contribuer-prix" element={<ContribuerPrix />} />
+                              <Route path="donnees-publiques" element={<DonneesPubliques />} />
+                              <Route path="carte-itineraires" element={<CarteItinerairesHub />} />
                               <Route path="actualites" element={<Actualites />} />
                               <Route path="mentions-legales" element={<MentionsLegales />} />
                               <Route path="privacy" element={<Transparence />} />
                               <Route path="solidarite" element={<SolidariteHub />} />
                               <Route path="inscription-pro" element={<InscriptionPro />} />
                               <Route path="espace-pro" element={<EspacePro />} />
+                              <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
                               <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<div>Chargement...</div>}><EspaceCreateur /></Suspense></RequireCreator>} />
                               <Route path="activation-createur" element={<ActivationCreateur />} />
                               <Route path="scanner" element={<ScannerHub />} />
@@ -483,6 +488,8 @@ export default function App() {
                               <Route path="evaluation-cosmetique" element={<EvaluationCosmetique />} />
                               <Route path="comparateur-avance" element={<EnhancedComparator />} />
                               <Route path="compare" element={<Compare />} />
+                              <Route path="comparateur-citoyen" element={<ComparateurCitoyen />} />
+                              <Route path="comparateurs" element={<ComparateursHub />} />
                               <Route path="comparateurs-prix" element={<ComparateursPage />} />
                               <Route path="ai-dashboard" element={<AIDashboard />} />
                               <Route path="ocr/history" element={<OCRHistory />} />
