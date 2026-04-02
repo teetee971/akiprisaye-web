@@ -20,7 +20,8 @@ import { seedProvider } from './seedProvider';
 import { supecoGuyaneProvider } from './supecoGuyaneProvider';
 import type { PriceProvider, ProviderResult } from './types';
 
-const OPEN_FOOD_FACTS_ENDPOINT = 'https://world.openfoodfacts.org';
+const OFF_PROXY_PRODUCT_ENDPOINT = '/api/off/product';
+const OFF_PROXY_SEARCH_ENDPOINT = '/api/off/search';
 
 const parseFlag = (value: string | boolean | undefined, fallback: boolean): boolean => {
   if (typeof value === 'boolean') return value;
@@ -45,37 +46,37 @@ const openFoodFactsProvider: PriceProvider = {
 
     try {
       if (input.barcode) {
-        const url = `${OPEN_FOOD_FACTS_ENDPOINT}/api/v2/product/${encodeURIComponent(input.barcode)}.json`;
+        const url = `${OFF_PROXY_PRODUCT_ENDPOINT}?barcode=${encodeURIComponent(input.barcode)}`;
         const response = await fetch(url, { signal });
         if (!response.ok) {
           return { source: 'open_food_facts', status: 'UNAVAILABLE', observations: [], warnings: [] };
         }
         const data = (await response.json()) as {
-          product?: { product_name?: string; brands?: string };
+          data?: { productName?: string };
         };
 
         return {
           source: 'open_food_facts',
-          status: data.product ? 'OK' : 'NO_DATA',
+          status: data.data ? 'OK' : 'NO_DATA',
           observations: [],
           warnings: [],
-          productName: data.product?.product_name,
+          productName: data.data?.productName,
         };
       }
 
       const query = encodeURIComponent(normalizeText(input.query));
-      const url = `${OPEN_FOOD_FACTS_ENDPOINT}/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=1`;
+      const url = `${OFF_PROXY_SEARCH_ENDPOINT}?q=${query}&page=1&pageSize=1`;
       const response = await fetch(url, { signal });
       if (!response.ok) {
         return { source: 'open_food_facts', status: 'UNAVAILABLE', observations: [], warnings: [] };
       }
-      const data = (await response.json()) as { products?: Array<{ product_name?: string }> };
+      const data = (await response.json()) as { products?: Array<{ productName?: string }> };
       return {
         source: 'open_food_facts',
         status: data.products?.length ? 'OK' : 'NO_DATA',
         observations: [],
         warnings: [],
-        productName: data.products?.[0]?.product_name,
+        productName: data.products?.[0]?.productName,
       };
     } catch {
       return { source: 'open_food_facts', status: 'UNAVAILABLE', observations: [], warnings: [] };
