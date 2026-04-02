@@ -1,4 +1,5 @@
 import { auth } from '@/lib/firebase';
+import { isStaticPreviewEnv } from './runtimeEnv';
 
 import { resolveApiBaseUrl } from '../apiBaseUrl';
 
@@ -28,11 +29,19 @@ export async function adminFetchJson<T>(path: string, init: RequestInit = {}): P
 
   if (!response.ok) {
     let errorMessage = `Admin API error ${response.status}`;
+    const isStaticPreview = isStaticPreviewEnv();
+
     try {
       const body = await response.json();
       if (body?.message) errorMessage = body.message;
     } catch {
       // ignore parse errors
+    }
+
+    if (response.status === 404 && isStaticPreview) {
+      errorMessage = "API admin indisponible sur cet environnement de preview statique (404).";
+    } else if (response.status >= 500) {
+      errorMessage = "Erreur serveur API admin. Réessayez dans quelques instants.";
     }
     throw new Error(errorMessage);
   }

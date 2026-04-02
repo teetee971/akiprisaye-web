@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { makeDeterministicId, receiptSchema, type ReceiptPayload, zodErrorToMessage } from './importSchemas';
+import { getAdminDegradedModeReason, isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
 
 const SAMPLE_JSON = `{\n  "store": { "name": "SHILO H INTERNATIONAL", "address": "65 RUE BRION", "territory": "GP" },\n  "transaction": { "date": "2026-03-11", "ticket_id": "1610669", "total_amount": 37.46 },\n  "items": [{ "name": "COCA COLA 2L", "price": 3.49, "quantity": 1 }]\n}`;
 
@@ -16,6 +17,8 @@ export default function AdminTicketImport() {
   const [parsedPayload, setParsedPayload] = useState<ReceiptPayload | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const photoInputRef = useRef<HTMLInputElement | null>(null);
+  const isDegradedMode = isStaticPreviewEnv();
+  const degradedReason = getAdminDegradedModeReason();
 
   const handlePhotoUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -28,7 +31,13 @@ export default function AdminTicketImport() {
       if (!res.ok) throw new Error(data?.error || 'Erreur scan');
       setJsonInput(JSON.stringify(data?.json || data, null, 2));
       toast.success('Scan ticket réussi');
-    } catch (e: any) { setErrorMessage(e.message); } finally { setLoading(false); if (event.target) event.target.value = ''; }
+    } catch (e: any) {
+      if (isDegradedMode) {
+        setErrorMessage('Scan IA indisponible sur la preview statique. Utilisez un environnement avec backend/API activé.');
+      } else {
+        setErrorMessage(e.message || 'Erreur Gemini API.');
+      }
+    } finally { setLoading(false); if (event.target) event.target.value = ''; }
   };
 
   const handleAnalyze = () => {
@@ -46,6 +55,7 @@ export default function AdminTicketImport() {
     if (!parsedPayload) return;
     setLoading(true);
     try {
+      if (!db) throw new Error('Firestore non initialisé');
       const id = makeDeterministicId(parsedPayload.transaction.ticket_id + Date.now());
       await setDoc(doc(db, 'receipts', id), { ...parsedPayload, created_at: serverTimestamp(), source: 'admin_import' });
       setStatusMessage('Ticket enregistré !');
@@ -56,11 +66,16 @@ export default function AdminTicketImport() {
     <div className="max-w-5xl mx-auto p-6 text-white space-y-6 bg-slate-900 rounded-2xl min-h-screen border border-slate-800">
       <Helmet><title>Import tickets — Admin</title></Helmet>
       <h1 className="text-2xl font-black flex items-center gap-2"><ReceiptText /> Import tickets de caisse</h1>
+      {isDegradedMode && (
+        <div className="p-3 rounded-lg border border-amber-400/40 bg-amber-900/20 text-amber-200 text-sm">
+          {degradedReason}
+        </div>
+      )}
       <div className="flex gap-3">
         <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={async (e) => { const t = await e.target.files?.[0]?.text(); if (t) setJsonInput(t); }} />
         <input ref={photoInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoUpload} />
         <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-slate-800 rounded-lg">Charger un .json</button>
-        <button type="button" onClick={() => photoInputRef.current?.click()} className="px-4 py-2 bg-purple-600 rounded-lg">Scanner photo</button>
+        <button type="button" onClick={() => photoInputRef.current?.click()} disabled={isDegradedMode} className="px-4 py-2 bg-purple-600 rounded-lg disabled:opacity-50">Scanner photo</button>
         <button type="button" onClick={() => { setJsonInput(SAMPLE_JSON); setParsedPayload(null); setErrorMessage(null); }} className="px-4 py-2 bg-slate-800 rounded-lg"><RotateCcw className="w-4 h-4" /></button>
       </div>
       <div className="space-y-2">
@@ -69,7 +84,7 @@ export default function AdminTicketImport() {
       </div>
       <div className="flex gap-4">
         <button type="button" onClick={handleAnalyze} className="px-6 py-2 bg-blue-500 text-slate-950 font-bold rounded-lg hover:bg-blue-400">Analyser le ticket</button>
-        <button type="button" onClick={handleSave} disabled={!parsedPayload || loading} className="px-6 py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg disabled:opacity-50">
+        <button type="button" onClick={handleSave} disabled={!parsedPayload || loading || isDegradedMode} className="px-6 py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg disabled:opacity-50">
           {loading ? <Loader2 className="animate-spin w-5 h-5" /> : 'Enregistrer en base de données'}
         </button>
       </div>

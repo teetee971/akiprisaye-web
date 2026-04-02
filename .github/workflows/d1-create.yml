@@ -86,11 +86,53 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          output=$(npx wrangler d1 create price-db 2>&1)
-          exit_code=$?
-          echo "$output"
-          if [ $exit_code -ne 0 ] && echo "$output" | grep -qi "already exists"; then
-            echo "ℹ️  La base de données 'price-db' existe déjà — aucune action requise."
+          set -euo pipefail
+
+          DB_NAME="price-db"
+
+          echo "🔍 Vérification de l'existence de la base '${DB_NAME}'..."
+          if ! list_output=$(npx wrangler d1 list --json 2>&1); then
+            echo "$list_output"
+            echo "❌ Impossible de lister les bases D1."
+            exit 1
+          fi
+
+          if ! db_exists=$(printf '%s' "$list_output" | node -e '
+            const fs = require("fs");
+            const dbName = process.argv[1];
+            const raw = fs.readFileSync(0, "utf8");
+            let data;
+            try {
+              data = JSON.parse(raw);
+            } catch (err) {
+              console.error("❌ Réponse JSON invalide de `wrangler d1 list --json`.");
+              console.error(raw);
+              process.exit(2);
+            }
+            const exists = Array.isArray(data) && data.some((db) => db && db.name === dbName);
+            process.stdout.write(exists ? "true" : "false");
+          ' "$DB_NAME"); then
+            exit 1
+          fi
+
+          if [ "$db_exists" = "true" ]; then
+            echo "ℹ️  La base de données '${DB_NAME}' existe déjà — aucune action requise."
             exit 0
           fi
-          exit $exit_code
+
+          echo "🛠️  Création de la base '${DB_NAME}'..."
+          if ! create_output=$(npx wrangler d1 create "${DB_NAME}" 2>&1); then
+            echo "$create_output"
+
+            # Sécurité supplémentaire : en cas de création concurrente, on tolère
+            # le message "already exists" pour rendre l'étape idempotente.
+            if echo "$create_output" | grep -Eqi "already[[:space:]]+exists?|already.*exist"; then
+              echo "ℹ️  La base de données '${DB_NAME}' existe déjà — aucune action requise."
+              exit 0
+            fi
+
+            exit 1
+          fi
+
+          echo "$create_output"
+          echo "✅ Base '${DB_NAME}' créée avec succès."

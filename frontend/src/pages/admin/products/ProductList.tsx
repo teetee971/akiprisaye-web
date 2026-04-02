@@ -16,6 +16,7 @@ import { GlassCard } from '@/components/ui/glass-card';
 import { getProducts, deleteProduct, type Product } from '@/services/admin/productAdminService';
 import type { ProductCategory } from '@/types/product';
 import toast from 'react-hot-toast';
+import { getAdminDegradedModeReason, isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
 
 const PRODUCT_CATEGORIES: ProductCategory[] = [
   'alimentaire',
@@ -41,6 +42,8 @@ export function ProductList() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const isDegradedMode = isStaticPreviewEnv();
+  const degradedReason = getAdminDegradedModeReason();
 
   // Filters
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,6 +56,12 @@ export function ProductList() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const fetchProducts = useCallback(async () => {
+    if (isDegradedMode) {
+      setProducts([]);
+      setLoading(false);
+      setError(degradedReason);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -72,7 +81,7 @@ export function ProductList() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchQuery, categoryFilter, brandFilter, hasEanFilter]);
+  }, [currentPage, searchQuery, categoryFilter, brandFilter, hasEanFilter, degradedReason, isDegradedMode]);
 
   const handleDelete = useCallback(async (id: string, name: string) => {
     if (!window.confirm(`Êtes-vous sûr de vouloir supprimer "${name}" ?`)) {
@@ -211,12 +220,18 @@ export function ProductList() {
         </h1>
         <button
           onClick={() => navigate('/admin/products/new')}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+          disabled={isDegradedMode}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50"
         >
           <Plus className="w-5 h-5" />
           Nouveau produit
         </button>
       </div>
+      {isDegradedMode && (
+        <div className="mb-4 p-3 rounded-lg border border-amber-400/40 bg-amber-900/20 text-amber-200 text-sm">
+          {degradedReason}
+        </div>
+      )}
 
       <GlassCard className="mb-6">
         <form onSubmit={handleSearch} className="space-y-4">
