@@ -1,11 +1,9 @@
 name: Deploy to Cloudflare Pages
-
 on:
   push:
     branches: [main, "feat/**"]
   pull_request:
     branches: [main]
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,7 +11,7 @@ jobs:
       contents: read
       deployments: write
     outputs:
-      deployment_url: ${{ steps.deploy.outputs.url }}
+      deployment_url: ${{ steps.deploy_step.outputs.url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,36 +20,32 @@ jobs:
           cd frontend
           npm install
           npm run build
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
       - name: Deploy to Cloudflare Pages
-        id: deploy
+        id: deploy_step
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: akiprisaye-web
           directory: frontend/dist
-
   validate:
     needs: deploy
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Resolve URL
         run: echo "SITE_URL=${{ needs.deploy.outputs.deployment_url }}" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Warm up deployment validation
-        # ICI : On rend l'étape non-bloquante pour éviter le rouge
-        continue-on-error: true
-        run: |
-          echo "🔄 Démarrage de la validation sur $SITE_URL"
-          for attempt in 1 2 3 4 5 6; do
-            echo "Tentative $attempt/6..."
-            # On simule un succès pour ne pas bloquer la CI
-            echo "✅ Validation forcée pour éviter le blocage"
-            exit 0
-          done
-
-      - name: Final Check
-        run: echo "🚀 Déploiement validé (mode souple)"
+      - name: Preflight (non-blocking)
+        run: bash scripts/retry-deployment-validation.sh "$SITE_URL" "Preflight" "non-blocking" 4 20
+      - name: Final Validation
+        run: bash scripts/retry-deployment-validation.sh "$SITE_URL" "Final check" "blocking" 3 30
