@@ -9,12 +9,12 @@ export default function AkiLogo() {
           <Sparkles size={10} className="absolute top-1 right-1 text-yellow-300 animate-pulse" />
         </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col text-left">
         <div className="flex items-end gap-0.5">
           <span className="text-2xl font-black text-blue-500 italic">Aki</span>
           <span className="text-2xl font-black text-emerald-500">Prisaye</span>
         </div>
-        <span className="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em] mt-1">SOUVERAINETÉ LOCALE v4.6.0</span>
+        <span className="text-[9px] uppercase font-bold text-slate-500 tracking-[0.3em] mt-1">SOUVERAINETÉ v4.6.0</span>
       </div>
     </div>
   );
