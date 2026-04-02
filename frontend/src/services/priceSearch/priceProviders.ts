@@ -15,7 +15,8 @@ export interface PriceProvider {
   search: (input: PriceSearchInput, signal: AbortSignal) => Promise<PriceProviderResult>;
 }
 
-const OPEN_FOOD_FACTS_ENDPOINT = 'https://world.openfoodfacts.org';
+const OFF_PROXY_PRODUCT_ENDPOINT = '/api/off/product';
+const OFF_PROXY_SEARCH_ENDPOINT = '/api/off/search';
 const OPEN_PRICES_ENDPOINT = 'https://prices.openfoodfacts.org/api/v1';
 
 async function fetchJson<T>(url: string, signal: AbortSignal): Promise<T> {
@@ -38,8 +39,8 @@ const openFoodFactsProvider: PriceProvider = {
 
     try {
       if (input.barcode) {
-        const url = `${OPEN_FOOD_FACTS_ENDPOINT}/api/v2/product/${encodeURIComponent(input.barcode)}.json`;
-        const data = await fetchJson<{ product?: { product_name?: string; brands?: string } }>(
+        const url = `${OFF_PROXY_PRODUCT_ENDPOINT}?barcode=${encodeURIComponent(input.barcode)}`;
+        const data = await fetchJson<{ data?: { productName?: string } }>(
           url,
           signal
         );
@@ -47,18 +48,18 @@ const openFoodFactsProvider: PriceProvider = {
           observations: [],
           warnings,
           provider: 'open_food_facts',
-          productName: data.product?.product_name,
+          productName: data.data?.productName,
         };
       }
 
       const query = encodeURIComponent(input.query ?? '');
-      const url = `${OPEN_FOOD_FACTS_ENDPOINT}/cgi/search.pl?search_terms=${query}&search_simple=1&action=process&json=1&page_size=1`;
-      const data = await fetchJson<{ products?: { product_name?: string }[] }>(url, signal);
+      const url = `${OFF_PROXY_SEARCH_ENDPOINT}?q=${query}&page=1&pageSize=1`;
+      const data = await fetchJson<{ products?: { productName?: string }[] }>(url, signal);
       return {
         observations: [],
         warnings,
         provider: 'open_food_facts',
-        productName: data.products?.[0]?.product_name,
+        productName: data.products?.[0]?.productName,
       };
     } catch (error) {
       warnings.push('Open Food Facts indisponible pour le moment.');
