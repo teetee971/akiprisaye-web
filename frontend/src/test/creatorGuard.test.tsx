@@ -214,7 +214,7 @@ describe('EspaceCreateur creator guard', () => {
 
     // Admin users can also access the creator space
     expect(screen.queryByTestId('home-page')).toBeNull();
-    expect(screen.getByRole('heading', { name: /Espace Créateur v4.6.1/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Espace Créateur/i })).toBeTruthy();
   });
 
   it('shows admin tools as locked for creator users', () => {
