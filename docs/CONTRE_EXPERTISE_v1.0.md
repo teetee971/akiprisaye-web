@@ -34,7 +34,7 @@
 
 | Attribut | Valeur |
 |----------|--------|
-| Version courante | 3.3.0 |
+| Version courante | 4.6.1 |
 | Framework frontend | React 18 + Vite 7 + TypeScript 5 |
 | Framework backend | Express 4 + Prisma 5 + PostgreSQL |
 | Lignes de code frontend | ~232 000 (1 100 fichiers) |
@@ -467,5 +467,5 @@ Le logiciel **A KI PRI SA YÉ** est un produit ambitieux et techniquement avanc�
 
 *Rapport rédigé par : Expert indépendant en conception logicielle*  
 *Date : Mars 2026*  
-*Version du logiciel audité : 3.3.0*  
+*Version du logiciel audité : 4.6.1*  
 *Méthode : Revue de code statique, analyse architecturale, tests manuels*

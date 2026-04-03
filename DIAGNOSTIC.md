@@ -78,10 +78,10 @@ akiprisaye-web/
 - **Constats** :
   1. Contient la clé API Firebase réelle (public par design Firebase) : `AIzaSyDf_m8BzMVHFWoFhVLyThuKwWTMhB7u5ZY`
   2. Présence du `messagingSenderId` (`187272078809`) et `appId` complets
-  3. Version `APP_VERSION=1.6.1` désynchronisée avec `package.json` version `3.3.0`
+  3. Version `APP_VERSION=4.6.1` alignée avec `package.json` version `4.6.1` (corrigé)
   4. Nombreux feature flags avec `false` comme valeur par défaut — 40+ variables non documentées dans le contexte prod
-- **Risques** : Confusion développeur sur les versions. Les clés Firebase étant publiques, pas de risque sécurité direct, mais toute rotation de clé nécessite de synchroniser `.env.example` et les secrets CI.
-- **Action minimale** : Synchroniser `APP_VERSION` avec `package.json`. Documenter quels flags sont actifs en production.
+- **Risques** : Risque de désalignement futur si la version n'est pas mise à jour à chaque release. Les clés Firebase étant publiques, pas de risque sécurité direct, mais toute rotation de clé nécessite de synchroniser `.env.example` et les secrets CI.
+- **Action minimale** : Maintenir la synchronisation `APP_VERSION` ↔ `package.json` à chaque release. Documenter quels flags sont actifs en production.
 
 ---
 
@@ -754,7 +754,7 @@ akiprisaye-web/
 | P3-1 | `scripts/add-preload.`, `scripts/optimize-public-assets.` | Fichiers vides (0 octet) avec extension invalide |
 | P3-2 | 19 pages `.jsx` | Pas de types TypeScript — dette à migrer |
 | P3-3 | `frontend/src/pages/index.ts` | Auto-généré en jan 2026, seulement 20 pages sur 186 — obsolète |
-| P3-4 | `.env.example` | `APP_VERSION=1.6.1` désynchronisé avec `package.json@3.3.0` |
+| P3-4 | `.env.example` | ✅ Corrigé : `APP_VERSION=4.6.1` aligné avec `package.json@4.6.1` |
 | P3-5 | `frontend/vitest.config.ts` | Glob `functions/**/__tests__/*.test.ts` pointe hors du `root` Vitest |
 | P3-6 | `.github/workflows/backend-ci.yml` | `actions/checkout@v4` au lieu de `@v5` |
 | P3-7 | 30+ TODOs dans services frontend | Dette fonctionnelle accumulée |

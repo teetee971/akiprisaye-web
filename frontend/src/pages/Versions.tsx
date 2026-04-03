@@ -10,7 +10,7 @@ const BUILD_ENV: string = import.meta.env.VITE_BUILD_ENV ?? 'development';
 
 const APP_VERSIONS = [
   {
-    version: 'v3.3.0',
+    version: 'v4.6.1',
     date: 'mars 2026',
     label: 'latest',
     title: 'Calculateur BTP complet & outillage terrain',
