@@ -74,6 +74,15 @@ const QUICK_LINKS_BY_TERRITORY: Record<TerritoryCode, QuickLink[]> = {
   global: TOP_INTERESTS_INSIGHTS,
 };
 
+
+function canUseStaticApiEndpoints(): boolean {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname.toLowerCase();
+  // Disable static API endpoints on known GitHub Pages host(s) only
+  if (host === 'prix200.github.io') return false;
+  return true;
+}
+
 function detectTerritory(): TerritoryCode {
   if (typeof window === 'undefined') return 'global';
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone?.toLowerCase() || '';
@@ -97,6 +106,8 @@ async function resolveTerritoryFromServer(): Promise<TerritoryCode | null> {
     return fromMeta;
   }
 
+  if (!canUseStaticApiEndpoints()) return null;
+
   try {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 1200);
@@ -115,6 +126,8 @@ async function resolveTerritoryFromServer(): Promise<TerritoryCode | null> {
 
 function trackQuicklinkEvent(event: 'impression' | 'click', payload: Record<string, unknown>) {
   if (typeof window === 'undefined') return;
+  if (!canUseStaticApiEndpoints()) return;
+
   const body = JSON.stringify({ event, ...payload, ts: new Date().toISOString() });
   try {
     navigator.sendBeacon('/api/analytics/home-quicklinks', body);
