@@ -1,19 +1,211 @@
-import React, { useState } from 'react';
-import { 
-  Share2, Facebook, Twitter, MessageCircle, 
-  Copy, Check, Send, Video 
-} from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import React, { lazy, Suspense, useEffect, useMemo, useState } from 'react';
+import { Camera, Play, ShieldCheck, Globe, Zap } from 'lucide-react';
+import '../styles/home-v5.css';
+import '../styles/animations.css';
+import { SEOHead } from '../components/ui/SEOHead';
+import { useScrollReveal } from '../hooks/useScrollReveal';
+import {
+  SkeletonSection,
+  SkeletonWidget,
+  SkeletonStatGrid,
+} from '../components/SkeletonWidgets';
 
-const Home = () => {
-  const [copied, setCopied] = useState(false);
-  const shareUrl = "https://akiprisaye-web.pages.dev";
-  const shareTitle = "AkiPrisaye : Le comparateur de prix n°1 en Guadeloupe ! 🛒🇬🇵";
-  const tiktokProfile = "https://www.tiktok.com/@akiprisaye"; // Remplace par ton vrai lien TikTok
+const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
+const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
+const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
+const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+const QUICK_TILES = [
+  {
+    title: 'Comparer vos courses',
+    subtitle: 'Trouvez le prix le plus bas en quelques secondes',
+    links: [
+      { label: 'Comparateur principal', to: '/comparateur' },
+      { label: 'Recherche produits', to: '/recherche-produits' },
+      { label: 'Scanner un code-barres', to: '/scan' },
+    ],
+  },
+  {
+    title: 'Suivre les tendances',
+    subtitle: 'Visualisez rapidement les mouvements de prix',
+    links: [
+      { label: 'Observatoire des prix', to: '/observatoire' },
+      { label: 'Comparaison territoires', to: '/comparateur-territoires' },
+      { label: 'Anomalies de prix', to: '/anomalies-prix' },
+    ],
+  },
+];
+
+const TOP_INTERESTS_INSIGHTS = [
+  { key: 'comparateur', label: 'Comparateur de prix', to: '/comparateur', emoji: '🛒', views: 39 },
+  { key: 'connexion', label: 'Connexion', to: '/connexion', emoji: '🔑', views: 29 },
+  { key: 'comparateurs', label: 'Hub Comparateurs', to: '/comparateurs', emoji: '🔍', views: 12 },
+  { key: 'scanner', label: 'Scanner / Codes-barres', to: '/scanner', emoji: '📷', views: 7 },
+  { key: 'actualites', label: 'Actualités', to: '/actualites', emoji: '📰', views: 5 },
+];
+
+type TerritoryCode = 'gp' | 'mq' | 'gf' | 'fr' | 'global';
+type QuickLink = { key: string; label: string; to: string; emoji: string; views: number };
+
+const QUICK_LINKS_BY_TERRITORY: Record<TerritoryCode, QuickLink[]> = {
+  gp: [
+    { key: 'comparateur', label: 'Comparateur de prix', to: '/comparateur', emoji: '🛒', views: 39 },
+    { key: 'connexion', label: 'Connexion', to: '/connexion', emoji: '🔑', views: 29 },
+    { key: 'comparateurs', label: 'Hub Comparateurs', to: '/comparateurs', emoji: '🔍', views: 12 },
+    { key: 'scanner', label: 'Scanner / Codes-barres', to: '/scanner', emoji: '📷', views: 7 },
+    { key: 'actualites', label: 'Actualités', to: '/actualites', emoji: '📰', views: 5 },
+  ],
+  mq: [
+    { key: 'comparateur', label: 'Comparateur de prix', to: '/comparateur', emoji: '🛒', views: 7 },
+    { key: 'comparateurs', label: 'Hub Comparateurs', to: '/comparateurs', emoji: '🔍', views: 2 },
+    { key: 'scanner', label: 'Scanner / Codes-barres', to: '/scanner', emoji: '📷', views: 2 },
+  ],
+  gf: [
+    { key: 'comparateur', label: 'Comparateur de prix', to: '/comparateur', emoji: '🛒', views: 2 },
+    { key: 'connexion', label: 'Connexion', to: '/connexion', emoji: '🔑', views: 1 },
+    { key: 'actualites', label: 'Actualités', to: '/actualites', emoji: '📰', views: 1 },
+  ],
+  fr: [
+    { key: 'comparateur', label: 'Comparateur de prix', to: '/comparateur', emoji: '🛒', views: 2 },
+    { key: 'connexion', label: 'Connexion', to: '/connexion', emoji: '🔑', views: 1 },
+    { key: 'comparateurs', label: 'Hub Comparateurs', to: '/comparateurs', emoji: '🔍', views: 1 },
+  ],
+  global: TOP_INTERESTS_INSIGHTS,
+};
+
+
+function canUseStaticApiEndpoints(): boolean {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname.toLowerCase();
+  // Disable static API endpoints on known GitHub Pages host(s) only
+  if (host === 'prix200.github.io') return false;
+  return true;
+}
+
+function detectTerritory(): TerritoryCode {
+  if (typeof window === 'undefined') return 'global';
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone?.toLowerCase() || '';
+  const lang = (navigator.language || '').toLowerCase();
+  if (tz.includes('guadeloupe')) return 'gp';
+  if (tz.includes('martinique')) return 'mq';
+  if (tz.includes('cayenne')) return 'gf';
+  if (lang.startsWith('fr')) return 'fr';
+  return 'global';
+}
+
+async function resolveTerritoryFromServer(): Promise<TerritoryCode | null> {
+  if (typeof window === 'undefined') return null;
+
+  const fromMeta = document
+    .querySelector('meta[name="akp-territory"]')
+    ?.getAttribute('content')
+    ?.toLowerCase()
+    ?.trim();
+  if (fromMeta === 'gp' || fromMeta === 'mq' || fromMeta === 'gf' || fromMeta === 'fr') {
+    return fromMeta;
+  }
+
+  if (!canUseStaticApiEndpoints()) return null;
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 1200);
+    const res = await fetch('/api/runtime-context', { signal: controller.signal, cache: 'no-store' });
+    window.clearTimeout(timeoutId);
+    if (!res.ok) return null;
+    const body = await res.json();
+    const code = String(body?.territory || '').toLowerCase();
+    if (code === 'gp' || code === 'mq' || code === 'gf' || code === 'fr') return code;
+  } catch {
+    // fallback heuristic below
+  }
+
+  return null;
+}
+
+function trackQuicklinkEvent(event: 'impression' | 'click', payload: Record<string, unknown>) {
+  if (typeof window === 'undefined') return;
+  if (!canUseStaticApiEndpoints()) return;
+
+  const body = JSON.stringify({ event, ...payload, ts: new Date().toISOString() });
+  try {
+    navigator.sendBeacon('/api/analytics/home-quicklinks', body);
+  } catch {
+    // no-op: analytics must never break UX
+  }
+}
+
+function getAbVariant(): 'A' | 'B' {
+  if (typeof window === 'undefined') return 'A';
+  const key = 'akp_home_quicklinks_variant';
+  const stored = window.localStorage.getItem(key);
+  if (stored === 'A' || stored === 'B') return stored;
+  const assigned = Math.random() < 0.5 ? 'A' : 'B';
+  window.localStorage.setItem(key, assigned);
+  return assigned;
+}
+
+export default function Home() {
+  const navigate = useNavigate();
+  useScrollReveal();
+  const [showFullHome, setShowFullHome] = useState(false);
+  const [query, setQuery] = useState('');
+  const [territory, setTerritory] = useState<TerritoryCode>(() => detectTerritory());
+  const [abVariant] = useState<'A' | 'B'>(() => getAbVariant());
+
+  const territoryLinks = useMemo(
+    () => QUICK_LINKS_BY_TERRITORY[territory] ?? QUICK_LINKS_BY_TERRITORY.global,
+    [territory]
+  );
+  const orderedLinks = useMemo(
+    () =>
+      [...territoryLinks].sort((a, b) => {
+        // A/B test simple : sur B, "Hub Comparateurs" passe avant "Connexion".
+        if (abVariant === 'B') {
+          if (a.key === 'comparateurs' && b.key === 'connexion') return -1;
+          if (a.key === 'connexion' && b.key === 'comparateurs') return 1;
+        }
+        return b.views - a.views;
+      }),
+    [abVariant, territoryLinks]
+  );
+
+  useEffect(() => {
+    let mounted = true;
+    resolveTerritoryFromServer().then((resolved) => {
+      if (!mounted || !resolved) return;
+      setTerritory(resolved);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    trackQuicklinkEvent('impression', {
+      territory,
+      abVariant,
+      links: orderedLinks.map((l) => l.key),
+    });
+  }, [territory, abVariant, orderedLinks]);
+
+  const orderedLinksForRender = orderedLinks;
+
+  const lastAction = typeof window !== 'undefined' ? window.localStorage.getItem('akp_last_action') : null;
+  const lastActionLabel =
+    lastAction === '/scanner' ? 'Reprendre le scanner' :
+    lastAction === '/comparateur' ? 'Reprendre le comparateur' :
+    lastAction === '/comparateurs' ? 'Reprendre le hub comparateurs' :
+    null;
+
+  const rememberAction = (to: string) => {
+    if (typeof window !== 'undefined') window.localStorage.setItem('akp_last_action', to);
+  };
+
+  const onQuicklinkClick = (to: string, key: string) => {
+    rememberAction(to);
+    trackQuicklinkEvent('click', { territory, abVariant, key, to });
   };
 
   const shareLinks = [
