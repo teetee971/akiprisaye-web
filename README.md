@@ -1,6 +1,6 @@
 # 🧾 A KI PRI SA YÉ
 
-[![Version](https://img.shields.io/badge/version-3.3.0-blue)](#-état-du-projet)
+[![Version](https://img.shields.io/badge/version-4.6.1-blue)](#-état-du-projet)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-deployed-success?logo=github&logoColor=white)](https://teetee971.github.io/akiprisaye-web/)
 [![CI/CD Pipeline](https://img.shields.io/github/actions/workflow/status/teetee971/akiprisaye-web/ci-cd-industrial.yml?branch=main&label=CI%2FCD&logo=github-actions)](https://github.com/teetee971/akiprisaye-web/actions/workflows/ci-cd-industrial.yml)
 [![Firebase Key](https://img.shields.io/badge/Firebase%20key-verified%20%E2%9C%85-success?logo=firebase)](docs/FIREBASE_INCIDENT_POSTMORTEM.md)
@@ -736,7 +736,7 @@ pour les applications web exploitant des API navigateur.
 
 | Élément | Statut |
 |---------|--------|
-| Version | **3.3.0** |
+| Version | **4.6.1** |
 | CI/CD | ✅ Opérationnel |
 | Architecture | ✅ Validée |
 | Déploiement | ✅ GitHub Pages |
