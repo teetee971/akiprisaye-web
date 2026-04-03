@@ -1,3 +1,4 @@
+import Flyer from "./pages/Flyer";
 import { OfflineBanner } from "./components/OfflineBanner";
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { lazyPage } from './router/lazy';
