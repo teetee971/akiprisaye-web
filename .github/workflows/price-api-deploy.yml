@@ -65,21 +65,21 @@ jobs:
           BUCKET_NAME="price-imports"
           echo "🔎 Checking R2 bucket '$BUCKET_NAME'"
 
-          EXISTS=$(npx --yes wrangler@4.68.0 r2 bucket list --json | node -e '
-            const fs = require("fs");
-            const bucketName = process.argv[1];
-            const buckets = JSON.parse(fs.readFileSync(0, "utf8"));
-            process.stdout.write(buckets.some((bucket) => bucket.name === bucketName) ? "true" : "false");
-          ' "$BUCKET_NAME")
-
-          if [ "$EXISTS" = "true" ]; then
+          if npx --yes wrangler@4.68.0 r2 bucket info "$BUCKET_NAME" >/tmp/r2_bucket_info.txt 2>/tmp/r2_bucket_info.err; then
             echo "✅ Bucket '$BUCKET_NAME' already exists"
             exit 0
           fi
 
-          echo "🪣 Creating bucket '$BUCKET_NAME'"
-          npx --yes wrangler@4.68.0 r2 bucket create "$BUCKET_NAME"
-          echo "✅ Bucket '$BUCKET_NAME' created"
+          if grep -Eqi "(not found|does not exist|Couldn't find)" /tmp/r2_bucket_info.err; then
+            echo "🪣 Bucket '$BUCKET_NAME' not found, creating it"
+            npx --yes wrangler@4.68.0 r2 bucket create "$BUCKET_NAME"
+            echo "✅ Bucket '$BUCKET_NAME' created"
+            exit 0
+          fi
+
+          echo "❌ Unable to determine R2 bucket status"
+          cat /tmp/r2_bucket_info.err
+          exit 1
 
       - name: Deploy Worker
         env:
