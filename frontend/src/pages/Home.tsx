@@ -9,7 +9,7 @@ const Home = () => {
   const [territory, setTerritory] = useState('GP');
   const [copied, setCopied] = useState(false);
 
-  const shareUrl = "https://akiprisaye-web.pages.dev";
+  const shareUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const shareTitle = "AkiPrisaye : Compare les prix en Guadeloupe ! 🛒";
 
   const copyToClipboard = async () => {
