@@ -360,6 +360,7 @@ export default function App() {
                       <BrowserRouter basename={import.meta.env.BASE_URL}>
                         <Suspense fallback={<LoadingFallback />}>
                           <Routes>
+<Route path="/flyer" element={<Flyer />} />
                             {/* --- ADMIN SECTION --- */}
                             <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
                               <Route index element={<AdminDashboardNew />} />
