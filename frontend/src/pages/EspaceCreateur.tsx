@@ -46,8 +46,9 @@ export function buildCreatorBriefing({
 }
 
 const EspaceCreateur: React.FC = () => {
-  const { isCreator, loading } = useAuth();
+  const { isCreator, isAdmin, loading } = useAuth();
   const { totalOnline, byTerritory, byInterest } = useVisitorStats();
+  const creatorSpaceVersion = import.meta.env.VITE_APP_VERSION ?? '0.0.0';
 
   const [ghostwriterCopied, setGhostwriterCopied] = useState(false);
   const [predatorScanning, setPredatorScanning] = useState(false);
@@ -138,7 +139,7 @@ const EspaceCreateur: React.FC = () => {
         <div className="flex items-center gap-4">
           <Crown className="text-amber-400" size={32} />
           <div>
-            <h1 className="text-2xl font-black">Espace Créateur V3.1</h1>
+            <h1 className="text-2xl font-black">Espace Créateur v{creatorSpaceVersion}</h1>
             <p className="text-xs text-amber-200/60 flex items-center gap-1 mt-1">
               <Clock3 size={12} /> Dernière synchro: {predatorLastScan ? new Date(predatorLastScan).toLocaleTimeString('fr-FR') : 'en attente'}
             </p>
@@ -214,22 +215,54 @@ const EspaceCreateur: React.FC = () => {
 
       <section className="order-1 md:order-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <h2 className="sr-only">Outils d'administration</h2>
-        <Link to="/admin" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-          <BarChart3 className="text-blue-400" size={24} />
-          <span className="font-bold">Admin Global</span>
-        </Link>
-        <Link to="/admin/stores" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-          <Building2 className="text-emerald-400" size={24} />
-          <span className="font-bold">Enseignes</span>
-        </Link>
-        <Link to="/admin/calculs-batiment" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-          <Wrench className="text-amber-400" size={24} />
-          <span className="font-bold">Calculs BTP</span>
-        </Link>
-        <Link to="/admin/users" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-          <Users className="text-purple-400" size={24} />
-          <span className="font-bold">Utilisateurs</span>
-        </Link>
+        {isAdmin ? (
+          <>
+            <Link to="/admin" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
+              <BarChart3 className="text-blue-400" size={24} />
+              <span className="font-bold">Admin Global</span>
+            </Link>
+            <Link to="/admin/stores" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
+              <Building2 className="text-emerald-400" size={24} />
+              <span className="font-bold">Enseignes</span>
+            </Link>
+            <Link to="/admin/calculs-batiment" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
+              <Wrench className="text-amber-400" size={24} />
+              <span className="font-bold">Calculs BTP</span>
+            </Link>
+            <Link to="/admin/users" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
+              <Users className="text-purple-400" size={24} />
+              <span className="font-bold">Utilisateurs</span>
+            </Link>
+          </>
+        ) : (
+          <>
+            <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col gap-2 shadow-sm opacity-80">
+              <div className="flex gap-4 items-center">
+                <BarChart3 className="text-blue-400" size={24} />
+                <span className="font-bold">Admin Global</span>
+              </div>
+              <p className="text-xs text-amber-300">Admin requis</p>
+            </div>
+            <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col gap-2 shadow-sm opacity-80">
+              <div className="flex gap-4 items-center">
+                <Building2 className="text-emerald-400" size={24} />
+                <span className="font-bold">Enseignes</span>
+              </div>
+              <p className="text-xs text-amber-300">Admin requis</p>
+            </div>
+            <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col gap-2 shadow-sm opacity-80">
+              <div className="flex gap-4 items-center">
+                <Wrench className="text-amber-400" size={24} />
+                <span className="font-bold">Calculs BTP</span>
+              </div>
+              <p className="text-xs text-amber-300">Admin requis</p>
+            </div>
+            <Link to="/mon-compte" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
+              <Users className="text-purple-400" size={24} />
+              <span className="font-bold">Mon compte créateur</span>
+            </Link>
+          </>
+        )}
       </section>
 
       <section className="bg-emerald-950/20 border border-emerald-500/20 p-6 rounded-3xl mb-8">
@@ -254,10 +287,18 @@ const EspaceCreateur: React.FC = () => {
       </section>
 
       <div className="flex justify-center gap-8 mt-4 pt-6 border-t border-slate-800/50 pb-8">
-        <Link to="/admin/stores" className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Gestion des enseignes">
+        <Link
+          to={isAdmin ? '/admin/stores' : '/mon-compte'}
+          className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform"
+          aria-label={isAdmin ? 'Gestion des enseignes' : 'Mon compte'}
+        >
           <Building2 size={22} />
         </Link>
-        <Link to="/admin/calculs-batiment" className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Outils BTP">
+        <Link
+          to={isAdmin ? '/admin/calculs-batiment' : '/mon-compte'}
+          className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform"
+          aria-label={isAdmin ? 'Outils BTP' : 'Mon compte'}
+        >
           <Wrench size={22} />
         </Link>
         <Link to="/mon-compte" className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Mon compte">

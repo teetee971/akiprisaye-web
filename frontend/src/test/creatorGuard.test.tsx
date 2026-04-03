@@ -190,7 +190,7 @@ describe('EspaceCreateur creator guard', () => {
 
     // The creator dashboard heading is rendered — no redirect occurred
     expect(screen.queryByTestId('home-page')).toBeNull();
-    expect(screen.getByRole('heading', { name: /Espace Créateur V3.1/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Espace Créateur v/i })).toBeTruthy();
     expect(screen.getByRole('heading', { name: /Ghostwriter Social/i })).toBeTruthy();
   });
 
@@ -214,10 +214,10 @@ describe('EspaceCreateur creator guard', () => {
 
     // Admin users can also access the creator space
     expect(screen.queryByTestId('home-page')).toBeNull();
-    expect(screen.getByRole('heading', { name: /Espace Créateur V3.1/i })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: /Espace Créateur v/i })).toBeTruthy();
   });
 
-  it('shows admin tools as open for creator users', () => {
+  it('shows admin tools as locked for creator users', () => {
     const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
     authState = makeAuthMock({
       loading: false,
@@ -234,7 +234,7 @@ describe('EspaceCreateur creator guard', () => {
 
     renderCreateur();
 
-    expect(screen.queryByText(/Admin requis/i)).toBeNull();
+    expect(screen.getAllByText(/Admin requis/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/Admin Global/i)).toBeTruthy();
   });
 
