@@ -104,6 +104,7 @@
 /executive
 /expansion-dashboard
 /faq
+/flyer
 /forgot-password
 /gamification
 /gamification/badges
