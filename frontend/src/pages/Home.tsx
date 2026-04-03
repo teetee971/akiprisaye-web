@@ -12,10 +12,19 @@ const Home = () => {
   const shareUrl = "https://akiprisaye-web.pages.dev";
   const shareTitle = "AkiPrisaye : Compare les prix en Guadeloupe ! 🛒";
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyToClipboard = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        window.prompt('Copiez ce lien :', shareUrl);
+      }
+
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      window.prompt('Copiez ce lien :', shareUrl);
+    }
   };
 
   const shareLinks = [
