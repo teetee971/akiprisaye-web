@@ -74,8 +74,15 @@ const Home = () => {
           </h2>
           <div className="grid grid-cols-4 gap-4 mb-6">
             {shareLinks.map((s) => (
-              <a key={s.name} href={s.link} target="_blank" rel="noopener noreferrer" 
-                 className={`${s.color} aspect-square rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all`}>
+              <a
+                key={s.name}
+                href={s.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Partager via ${s.name} (ouvre dans un nouvel onglet)`}
+                title={`Partager via ${s.name}`}
+                className={`${s.color} aspect-square rounded-2xl flex items-center justify-center shadow-lg active:scale-90 transition-all`}
+              >
                 {s.icon}
               </a>
             ))}
