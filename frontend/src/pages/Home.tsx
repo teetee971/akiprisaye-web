@@ -78,7 +78,8 @@ const QUICK_LINKS_BY_TERRITORY: Record<TerritoryCode, QuickLink[]> = {
 function canUseStaticApiEndpoints(): boolean {
   if (typeof window === 'undefined') return false;
   const host = window.location.hostname.toLowerCase();
-  if (host.endsWith('github.io')) return false;
+  // Disable static API endpoints on known GitHub Pages host(s) only
+  if (host === 'prix200.github.io') return false;
   return true;
 }
 
