@@ -277,7 +277,7 @@ export default function Home() {
             Comment ça marche ?
           </h2>
           <div className="relative aspect-video max-w-4xl mx-auto rounded-3xl overflow-hidden border-8 border-slate-900 shadow-2xl bg-black">
-            <video controls muted preload="none" poster="/assets/video-poster.jpg" className="w-full h-full object-cover">
+            <video controls muted preload="none" poster="/logo-akiprisaye.svg" className="w-full h-full object-cover">
               <source src="/assets/demo-app.mp4" type="video/mp4" />
               <track kind="captions" label="Français" />
               Navigateur non supporté.
