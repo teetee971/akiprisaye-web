@@ -14,7 +14,6 @@ import {
 const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
 const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
-const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
 
 const QUICK_TILES = [
@@ -313,8 +312,7 @@ export default function Home() {
             <div className="max-w-7xl mx-auto"><ObservatorySection /></div>
           </Suspense>
           <Suspense fallback={<SkeletonStatGrid />}>
-            <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8">
-              <InflationBarometerWidget />
+            <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8">
               <StoreRankingWidget />
               <LiveNewsFeed />
             </div>
