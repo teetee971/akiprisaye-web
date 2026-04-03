@@ -20,6 +20,15 @@ import { priceObservationsMultiTerritories } from './priceObservations.multiTerr
 import { priceObservationsLarge } from './priceObservations.large.mock.js';
 
 describe('AntiCrisisBasketService', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-02-15T00:00:00.000Z'));
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   let service: AntiCrisisBasketService;
 
   beforeEach(() => {
