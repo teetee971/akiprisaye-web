@@ -74,6 +74,14 @@ const QUICK_LINKS_BY_TERRITORY: Record<TerritoryCode, QuickLink[]> = {
   global: TOP_INTERESTS_INSIGHTS,
 };
 
+
+function canUseStaticApiEndpoints(): boolean {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname.toLowerCase();
+  if (host.endsWith('github.io')) return false;
+  return true;
+}
+
 function detectTerritory(): TerritoryCode {
   if (typeof window === 'undefined') return 'global';
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone?.toLowerCase() || '';
@@ -97,6 +105,8 @@ async function resolveTerritoryFromServer(): Promise<TerritoryCode | null> {
     return fromMeta;
   }
 
+  if (!canUseStaticApiEndpoints()) return null;
+
   try {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), 1200);
@@ -115,6 +125,8 @@ async function resolveTerritoryFromServer(): Promise<TerritoryCode | null> {
 
 function trackQuicklinkEvent(event: 'impression' | 'click', payload: Record<string, unknown>) {
   if (typeof window === 'undefined') return;
+  if (!canUseStaticApiEndpoints()) return;
+
   const body = JSON.stringify({ event, ...payload, ts: new Date().toISOString() });
   try {
     navigator.sendBeacon('/api/analytics/home-quicklinks', body);
@@ -277,7 +289,7 @@ export default function Home() {
             Comment ça marche ?
           </h2>
           <div className="relative aspect-video max-w-4xl mx-auto rounded-3xl overflow-hidden border-8 border-slate-900 shadow-2xl bg-black">
-            <video controls muted preload="none" poster="/assets/video-poster.jpg" className="w-full h-full object-cover">
+            <video controls muted preload="none" poster="/logo-akiprisaye.svg" className="w-full h-full object-cover">
               <source src="/assets/demo-app.mp4" type="video/mp4" />
               <track kind="captions" label="Français" />
               Navigateur non supporté.
