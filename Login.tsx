@@ -91,9 +91,9 @@ const Login = () => {
         </form>
 
         <div className="flex flex-col items-center gap-4 text-sm font-medium">
-          <Link to="/register" className="text-blue-500">Créer un compte</Link>
-          <Link to="/forgot" className="text-blue-500">Mot de passe oublié ?</Link>
-          <Link to="/createur" className="text-[#f97316] text-xs">✨ Vous êtes le propriétaire ? Activez votre accès Créateur →</Link>
+          <Link to="/inscription" className="text-blue-500">Créer un compte</Link>
+          <Link to="/reset-password" className="text-blue-500">Mot de passe oublié ?</Link>
+          <Link to="/activation-createur" className="text-[#f97316] text-xs">✨ Vous êtes le propriétaire ? Activez votre accès Créateur →</Link>
         </div>
       </div>
     </div>
