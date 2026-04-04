@@ -1,80 +1,78 @@
 import React, { useState } from 'react';
-import { Bot, LineChart, Globe, Zap, ArrowRight, ShoppingBag, MessageSquareQuote } from 'lucide-react';
+import { ScanEye, MapPinned, TrendingUp, ShieldAlert, Navigation2, ChevronRight, LayoutGrid } from 'lucide-react';
 
 const Home = () => {
   return (
-    <div id="root" className="min-h-screen bg-[#020617] text-white pb-32 font-sans selection:bg-blue-500/30">
-      {/* Header Visionnaire v8 */}
-      <div className="pt-12 px-6">
-        <div className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-3xl font-black tracking-tighter italic uppercase">Aki Intelligence</h1>
-            <p className="text-[10px] font-black text-blue-500 tracking-[0.3em] uppercase">Sovereign OS v8.0</p>
-          </div>
-          <div className="bg-blue-500/10 border border-blue-500/20 p-2 rounded-2xl">
-            <Bot size={24} className="text-blue-400 animate-pulse" />
-          </div>
+    <div id="root" className="min-h-screen bg-[#020617] text-white pb-32 font-sans">
+      {/* Header Horizon v9 */}
+      <div className="pt-12 px-6 flex justify-between items-end mb-8">
+        <div>
+          <p className="text-[10px] font-black text-emerald-500 tracking-[0.4em] uppercase mb-1">Horizon v9.0</p>
+          <h1 className="text-3xl font-black tracking-tighter uppercase italic italic">Aki Horizon</h1>
         </div>
-
-        {/* COMPAGNON IA LOCAL (No-Fake) */}
-        <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-white/5 rounded-[2rem] p-6 mb-8 relative overflow-hidden group">
-          <div className="absolute -right-4 -top-4 w-24 h-24 bg-blue-600/10 blur-3xl rounded-full group-hover:bg-blue-600/20 transition-all" />
-          <MessageSquareQuote className="text-blue-500 mb-4" size={28} />
-          <h2 className="text-xl font-bold mb-2">Dis-moi "Aki..."</h2>
-          <p className="text-slate-400 text-xs leading-relaxed mb-4">
-            Pose tes questions sur ton budget. L'IA analyse les prix du territoire en temps réel sans connexion.
-          </p>
-          <div className="flex gap-2">
-            <button className="flex-1 bg-white text-black text-[10px] font-black py-3 rounded-xl uppercase tracking-widest active:scale-95 transition-transform">
-              Parler à Aki
-            </button>
-            <button className="px-4 bg-slate-800 rounded-xl">
-              <Zap size={16} />
-            </button>
-          </div>
-        </div>
-
-        {/* MODULE TRANSPARENCE TAXES */}
-        <div className="grid grid-cols-1 gap-4 mb-8">
-          <div className="bg-slate-900/40 border border-white/5 p-5 rounded-[2rem] flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="bg-emerald-500/20 p-3 rounded-2xl text-emerald-400">
-                <Globe size={20} />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Observatoire</p>
-                <p className="text-sm font-bold text-slate-200">Octroi de Mer : -1.2% ce mois</p>
-              </div>
-            </div>
-            <ArrowRight size={16} className="text-slate-600" />
-          </div>
-        </div>
-
-        {/* DASHBOARD DE CONSOMMATION */}
-        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-4 px-2">Analyse Souveraine</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-slate-900/40 border border-white/5 p-5 rounded-[2rem]">
-            <LineChart size={18} className="text-purple-400 mb-4" />
-            <p className="text-2xl font-black tabular-nums">482€</p>
-            <p className="text-[9px] font-bold text-slate-500 uppercase">Budget Moyen / GP</p>
-          </div>
-          <div className="bg-slate-900/40 border border-white/5 p-5 rounded-[2rem]">
-            <ShoppingBag size={18} className="text-orange-400 mb-4" />
-            <p className="text-2xl font-black tabular-nums">14%</p>
-            <p className="text-[9px] font-bold text-slate-500 uppercase">Part Production Locale</p>
-          </div>
+        <div className="bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full text-[10px] font-black text-emerald-400">
+          PROPRIETARY AI
         </div>
       </div>
 
-      {/* NAV BAR ULTRA-MINIMALISTE (OLED) */}
-      <div className="fixed bottom-8 left-8 right-8 h-16 bg-white/5 backdrop-blur-3xl border border-white/10 rounded-full flex items-center justify-around px-2 shadow-2xl">
-         <button className="p-3 text-blue-400"><Bot size={22}/></button>
-         <button className="p-3 text-slate-500"><Zap size={22}/></button>
-         <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-600/40 -mt-10 border-4 border-[#020617]">
-            <Zap size={20} className="text-white" />
-         </div>
-         <button className="p-3 text-slate-500"><Globe size={22}/></button>
-         <button className="p-3 text-slate-500"><LineChart size={22}/></button>
+      {/* MODULE 1 : OPTIMISEUR DE ROUTE (NO-FAKE) */}
+      <div className="px-6 mb-8">
+        <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 border border-white/10 rounded-[2.5rem] p-6 relative overflow-hidden">
+          <div className="flex justify-between items-start mb-6">
+            <div className="bg-blue-600 p-3 rounded-2xl shadow-lg shadow-blue-600/40">
+              <Navigation2 size={24} />
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] font-bold text-slate-400 uppercase">Économie de trajet</p>
+              <p className="text-xl font-black text-emerald-400">+34.15€</p>
+            </div>
+          </div>
+          <h2 className="text-lg font-bold mb-2">Route d'achat optimisée</h2>
+          <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+            Ton panier est optimisé entre 2 enseignes à <span className="text-white font-bold">Petit-Bourg</span>. 
+            Moins de route, plus de souveraineté.
+          </p>
+          <button className="w-full bg-white text-black font-black py-4 rounded-2xl text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+            Lancer l'itinéraire <ChevronRight size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* MODULE 2 : VISION AR (NO-FAKE) */}
+      <div className="px-6 mb-8 grid grid-cols-2 gap-4">
+        <button className="bg-slate-900 border border-white/5 aspect-square rounded-[2rem] flex flex-col items-center justify-center gap-3 active:scale-95 transition-all">
+          <div className="p-4 bg-emerald-500/10 rounded-full text-emerald-400">
+            <ScanEye size={28} />
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-widest">Vision AR</span>
+        </button>
+        <button className="bg-slate-900 border border-white/5 aspect-square rounded-[2rem] flex flex-col items-center justify-center gap-3 active:scale-95 transition-all">
+          <div className="p-4 bg-purple-500/10 rounded-full text-purple-400">
+            <TrendingUp size={28} />
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-widest">Tendances</span>
+        </button>
+      </div>
+
+      {/* ALERTE SOUVERAINETÉ */}
+      <div className="px-6 mb-8">
+        <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-2xl flex items-center gap-4">
+          <ShieldAlert className="text-orange-500" size={20} />
+          <p className="text-[10px] font-bold text-orange-200">
+            Alerte : Rupture de stock imminente sur les œufs locaux (GP).
+          </p>
+        </div>
+      </div>
+
+      {/* NAVIGATION OLED FUTURE */}
+      <div className="fixed bottom-8 left-8 right-8 h-20 bg-black/80 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] flex items-center justify-around px-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] z-50">
+        <button className="p-3 text-emerald-500"><LayoutGrid size={24}/></button>
+        <button className="p-3 text-slate-500"><MapPinned size={24}/></button>
+        <div className="w-14 h-14 bg-gradient-to-tr from-emerald-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20 rotate-45 -mt-12 border-4 border-[#020617]">
+          <ScanEye size={24} className="text-white -rotate-45" />
+        </div>
+        <button className="p-3 text-slate-500"><TrendingUp size={24}/></button>
+        <button className="p-3 text-slate-500"><ShieldAlert size={24}/></button>
       </div>
     </div>
   );
