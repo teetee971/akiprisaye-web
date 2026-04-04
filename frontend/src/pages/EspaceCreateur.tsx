@@ -48,6 +48,7 @@ export function buildCreatorBriefing({
 const EspaceCreateur: React.FC = () => {
   const { isCreator, isAdmin, loading } = useAuth();
   const { totalOnline, byTerritory, byInterest } = useVisitorStats();
+  const creatorSpaceVersion = import.meta.env.VITE_APP_VERSION ?? '0.0.0';
 
   const [ghostwriterCopied, setGhostwriterCopied] = useState(false);
   const [predatorScanning, setPredatorScanning] = useState(false);

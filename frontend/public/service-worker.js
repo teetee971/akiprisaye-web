@@ -1,3 +1,5 @@
+/* FORCE IMMEDIATE UPDATE v4.6.15 */
+self.skipWaiting();
 const CACHE_NAME = 'akiprisaye-smart-cache-v10';
 const PRICE_DATA_CACHE = 'akiprisaye-price-data-v1';
 const SCOPE_PATHNAME = new URL(self.registration.scope).pathname;

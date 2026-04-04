@@ -84,6 +84,9 @@ export default defineConfig({
     'import.meta.env.VITE_BUILD_RUN_ID': JSON.stringify(
       process.env.VITE_BUILD_RUN_ID ?? 'local',
     ),
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify(
+      process.env.VITE_APP_VERSION ?? process.env.npm_package_version ?? '0.0.0',
+    ),
     // Feature flags — enabled for production build
     'import.meta.env.VITE_FEATURE_COMPARAISON_ENSEIGNES': JSON.stringify(
       process.env.VITE_FEATURE_COMPARAISON_ENSEIGNES ?? 'true'
