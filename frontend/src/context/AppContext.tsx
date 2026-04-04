@@ -8,15 +8,22 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Charger les données au démarrage
   useEffect(() => {
+    const defaultProducts = [
+      { id: 1, name: "Banane Pays", price: 1.20, shop: "Super U", territory: "GP", impact: 98, category: "Frais" },
+      { id: 2, name: "Poulet Frais", price: 8.50, shop: "Carrefour", territory: "MQ", impact: 85, category: "Viande" }
+    ] as any;
+
     const saved = localStorage.getItem('aki_db');
     if (saved) {
-      setProducts(JSON.parse(saved));
+      try {
+        setProducts(JSON.parse(saved));
+      } catch {
+        localStorage.removeItem('aki_db');
+        setProducts(defaultProducts);
+      }
     } else {
       // Data par défaut si vide
-      setProducts([
-        { id: 1, name: "Banane Pays", price: 1.20, shop: "Super U", territory: "GP", impact: 98, category: "Frais" },
-        { id: 2, name: "Poulet Frais", price: 8.50, shop: "Carrefour", territory: "MQ", impact: 85, category: "Viande" }
-      ] as any);
+      setProducts(defaultProducts);
     }
     setLoading(false);
   }, []);
