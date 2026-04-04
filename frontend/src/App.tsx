@@ -2,20 +2,16 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import Home from './pages/Home';
-import Flyer from './pages/Flyer';
-import Connexion from './pages/Connexion';
+import Scan from './pages/Scan';
 
 function App() {
   return (
     <AppProvider>
       <Router>
-        <div className="app-container">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/flyer" element={<Flyer />} />
-            <Route path="/connexion" element={<Connexion />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/scan" element={<Scan />} />
+        </Routes>
       </Router>
     </AppProvider>
   );
