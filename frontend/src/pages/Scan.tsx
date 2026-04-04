@@ -34,7 +34,11 @@ const Scan = () => {
 
   return (
     <div className="min-h-screen bg-black text-white p-8 flex flex-col items-center justify-center">
-      <button onClick={() => navigate('/')} className="absolute top-10 left-8 p-3 bg-white/10 rounded-full">
+      <button
+        onClick={() => navigate('/')}
+        aria-label="Retour à l'accueil"
+        className="absolute top-10 left-8 p-3 bg-white/10 rounded-full"
+      >
         <X size={20} />
       </button>
 
