@@ -15,7 +15,11 @@ const Home = () => {
     <div id="root" className="min-h-screen bg-[#020617] text-white pb-32">
       <div className="pt-16 px-8 flex justify-between items-center">
         <h1 className="text-3xl font-black italic tracking-tighter">Aki OS</h1>
-        <button onClick={clearDB} className="p-3 bg-red-500/10 text-red-500 rounded-full active:scale-90 transition-all">
+        <button
+          onClick={clearDB}
+          aria-label="Vider la base locale"
+          className="p-3 bg-red-500/10 text-red-500 rounded-full active:scale-90 transition-all"
+        >
           <Trash2 size={18} />
         </button>
       </div>
