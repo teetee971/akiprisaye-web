@@ -189,9 +189,10 @@
       }
     }
 
-    throw new Error(
-      `Aucun dataset JSON valide trouvé (ou délai dépassé ${FETCH_TIMEOUT_MS} ms). URL testées :\n- ${tried.join('\n- ')}`,
+    console.warn(
+      `⚠️ Aucun dataset JSON valide trouvé (ou délai dépassé ${FETCH_TIMEOUT_MS} ms). URL testées :\n- ${tried.join('\n- ')}`,
     );
+    return null;
   }
 
   function openDb(version = 1) {
@@ -272,18 +273,30 @@
 
     try {
       const found = await resolveFirstReachableUrl(preferredUrl || '');
-      fileLabel = found.url;
-      products = found.products;
-    } catch (networkError) {
+      if (found) {
+        fileLabel = found.url;
+        products = found.products;
+      }
+    } catch {
+      // Le détail est déjà journalisé.
+    }
+
+    if (!products) {
       console.warn('⚠️ Aucun dataset distant valide trouvé. Basculage vers import local (.json).');
-      console.warn(networkError);
       let rawText;
       try {
         rawText = await pickLocalJsonText();
       } catch (localPickerError) {
         console.warn('⚠️ Sélecteur de fichier indisponible (souvent: absence de user activation).');
         console.warn(localPickerError);
-        rawText = await readJsonFromPromptOrUrl();
+        try {
+          rawText = await readJsonFromPromptOrUrl();
+        } catch {
+          alert(
+            "Aucune source exploitable trouvée. Conseil: relance le script puis colle directement une URL JSON valide quand demandé (ou colle le JSON brut).",
+          );
+          return;
+        }
       }
       const payload = JSON.parse(rawText);
       products = extractProducts(payload);
