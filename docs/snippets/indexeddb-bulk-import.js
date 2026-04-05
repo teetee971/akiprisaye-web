@@ -51,6 +51,20 @@
     return new URL(prefixedPath, runtimeOrigin).toString();
   }
 
+  function assertNotDevtoolsUrl(raw) {
+    const value = String(raw || '').trim().toLowerCase();
+    if (
+      value.startsWith('devtools://') ||
+      value.startsWith('chrome://') ||
+      value.includes('chrome-devtools-frontend.appspot.com') ||
+      value.includes('targettype=tab')
+    ) {
+      throw new Error(
+        'URL DevTools détectée. Utilise une URL de données JSON (https://.../data/...json), pas devtools://',
+      );
+    }
+  }
+
   async function fetchWithTimeout(url, timeoutMs) {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -113,6 +127,7 @@
     const looksLikeUrl = /^https?:\/\//i.test(trimmed) || trimmed.startsWith('/');
 
     if (looksLikeUrl) {
+      assertNotDevtoolsUrl(trimmed);
       const url = /^https?:\/\//i.test(trimmed) ? trimmed : buildUrl(trimmed);
       const response = await fetchWithTimeout(url, FETCH_TIMEOUT_MS);
       if (!response.ok) {
@@ -130,6 +145,7 @@
 
     if (preferredUrl && preferredUrl.trim()) {
       const trimmed = preferredUrl.trim();
+      assertNotDevtoolsUrl(trimmed);
       const absolute = /^https?:\/\//i.test(trimmed) ? trimmed : buildUrl(trimmed);
       queue.push(absolute);
     }
