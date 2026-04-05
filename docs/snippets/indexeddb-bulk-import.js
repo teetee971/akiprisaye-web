@@ -79,9 +79,20 @@
     }
   }
 
+  function isLikelyProductRecord(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+
+    const productIdentityKeys = ['id', 'name', 'title', 'sku', 'slug', 'reference'];
+    return productIdentityKeys.some((key) => key in value);
+  }
+
+  function isProductArray(value) {
+    return Array.isArray(value) && value.every(isLikelyProductRecord);
+  }
+
   function extractProducts(payload) {
-    if (Array.isArray(payload)) return payload;
-    if (Array.isArray(payload?.products)) return payload.products;
+    if (isProductArray(payload?.products)) return payload.products;
+    if (isProductArray(payload)) return payload;
     return null;
   }
 
