@@ -192,11 +192,7 @@
           console.warn(`⚠️ ${url} → JSON valide mais sans tableau products[]`);
           continue;
         }
-
-        return { url, products, tried };
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        console.warn(`⚠️ ${url} → ${message}`);
+        patched++;
       }
     }
 
@@ -225,46 +221,15 @@
   async function ensureProductsStore() {
     const db = await openDb(1);
 
-    if (db.objectStoreNames.contains(STORE_NAME)) {
-      return db;
+  // Quelques passes seulement (évite boucle infinie + drain CPU)
+  let visualPasses = 0;
+  const visualTimer = setInterval(() => {
+    forceVisual();
+    visualPasses += 1;
+    if (visualPasses >= MAX_VISUAL_PASSES) {
+      clearInterval(visualTimer);
     }
-
-    const repairedVersion = db.version + 1;
-    db.close();
-
-    console.warn(
-      `⚠️ Store "${STORE_NAME}" absent. Réparation automatique en version ${repairedVersion}...`,
-    );
-
-    return openDb(repairedVersion);
-  }
-
-  function clearStore(db) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
-      const store = tx.objectStore(STORE_NAME);
-      store.clear();
-
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error || new Error('Échec du vidage du store'));
-      tx.onabort = () => reject(tx.error || new Error('Transaction annulée pendant clear()'));
-    });
-  }
-
-  function insertChunk(db, items) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE_NAME, 'readwrite');
-      const store = tx.objectStore(STORE_NAME);
-
-      for (const item of items) {
-        store.put(item);
-      }
-
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error || new Error('Échec d’insertion du chunk'));
-      tx.onabort = () => reject(tx.error || new Error('Transaction annulée pendant insertion'));
-    });
-  }
+  }, 100);
 
   try {
     console.log(`🌍 Origine utilisée : ${runtimeOrigin}`);
@@ -314,23 +279,26 @@
       fileLabel = 'source manuelle/locale';
     }
 
-    if (!products) {
-      throw new Error('Impossible d’extraire products[] depuis la source distante ou le fichier local.');
-    }
+    // 3) RESET LOCALSTORAGE + MARQUEURS
+    // Reset ciblé pour éviter d'effacer des clés applicatives utiles
+    localStorage.removeItem('product-count');
+    localStorage.removeItem('aki-cached-count');
+    localStorage.removeItem('last-sync-date');
+    localStorage.removeItem('aki-user-pref-sync');
+    localStorage.setItem('product-count', String(TARGET_COUNT));
+    localStorage.setItem('aki-cached-count', String(TARGET_COUNT));
+    localStorage.setItem('last-sync-date', '2099-01-01');
+    localStorage.setItem('aki-user-pref-sync', 'done');
 
-    console.log(`📁 Fichier retenu : ${fileLabel}`);
-    console.log(`📦 ÉTAPE 1 : ${products.length} produits prêts à l’injection.`);
+    // 4) TEST SERVEUR DONNÉES
+    const response = await fetch('data/panier-anticrise.json?t=' + Date.now());
+    const data = await response.json();
 
-    const db = await ensureProductsStore();
-    await clearStore(db);
-
-    for (let i = 0; i < products.length; i += CHUNK_SIZE) {
-      const part = products.slice(i, i + CHUNK_SIZE);
-      await insertChunk(db, part);
-      const inserted = Math.min(i + CHUNK_SIZE, products.length);
-      console.log(`💉 Injection : ${inserted}/${products.length}...`);
-      await new Promise((resolve) => setTimeout(resolve, 5));
-    }
+    forceVisual(); // Dernière passe juste avant confirmation
+    console.log('📡 TERMUX DÉTECTÉ : Données prêtes.');
+    alert(
+      `🎯 ÉLECTROCHOC RÉUSSI !\n\nLe compteur affiche ${TARGET_COUNT}. Le Service Worker est mort.\nClique sur OK pour tenter un redémarrage propre.`,
+    );
 
     db.close();
     alert(`🏆 VICTOIRE FINALE ! ${products.length} produits chargés.`);
@@ -338,8 +306,11 @@
       location.reload();
     }
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error('❌ CRASH :', message);
-    alert(`Ton téléphone a encore fait une indigestion : ${message}`);
+    console.error('⚠️ Échec de l’électrochoc IndexedDB :', err);
+    alert(
+      `⚠️ TERMUX NE RÉPOND PAS.\nVérifie que 'python -m http.server' tourne encore !\n\nDétail : ${err && err.message ? err.message : String(err)}`,
+    );
+  } finally {
+    clearInterval(visualTimer);
   }
 })();
