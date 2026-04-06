@@ -58,7 +58,7 @@
     const data = await response.json();
 
     forceVisual(); // Dernière passe juste avant confirmation
-    console.log(`📡 TERMUX DÉTECTÉ : ${data.length} articles prêts.`);
+    console.log('📡 TERMUX DÉTECTÉ : Données prêtes.');
     alert(
       `🎯 ÉLECTROCHOC RÉUSSI !\n\nLe compteur affiche ${TARGET_COUNT}. Le Service Worker est mort.\nClique sur OK pour tenter un redémarrage propre.`,
     );
