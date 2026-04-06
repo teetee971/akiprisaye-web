@@ -4,9 +4,16 @@ export function enforceBuildVersionSync(buildId?: string): boolean {
 
   const key = 'app_build_id';
   const stored = localStorage.getItem(key);
+  const resetKeys = [
+    'app_build_id',
+    'product-count',
+    'aki-cached-count',
+    'last-sync-date',
+    'aki-user-pref-sync',
+  ];
 
   if (stored && stored !== id) {
-    localStorage.clear();
+    resetKeys.forEach((k) => localStorage.removeItem(k));
     location.reload();
     return true;
   }
@@ -21,6 +28,13 @@ export async function enforceBuildVersionSyncAsync(currentBuildId?: string): Pro
 
   const key = 'app_build_id';
   const stored = localStorage.getItem(key);
+  const resetKeys = [
+    'app_build_id',
+    'product-count',
+    'aki-cached-count',
+    'last-sync-date',
+    'aki-user-pref-sync',
+  ];
 
   if (stored && stored !== id) {
     if ('caches' in window) {
@@ -31,7 +45,7 @@ export async function enforceBuildVersionSyncAsync(currentBuildId?: string): Pro
         // best-effort
       }
     }
-    localStorage.clear();
+    resetKeys.forEach((k) => localStorage.removeItem(k));
     location.reload();
     return true;
   }
@@ -45,7 +59,7 @@ export function registerAppServiceWorker() {
 
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register(import.meta.env.BASE_URL + 'service-worker.js', { scope: import.meta.env.BASE_URL })
+      .register(import.meta.env.BASE_URL + 'sw.js', { scope: import.meta.env.BASE_URL })
       .catch((err) => {
         if (import.meta.env.DEV) console.warn('SW error:', err);
       });

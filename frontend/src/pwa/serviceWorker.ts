@@ -4,7 +4,7 @@ export function registerAppServiceWorker() {
 
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register(import.meta.env.BASE_URL + 'service-worker.js', { scope: import.meta.env.BASE_URL })
+      .register(import.meta.env.BASE_URL + 'sw.js', { scope: import.meta.env.BASE_URL })
       .catch(() => {
         // no-op
       });

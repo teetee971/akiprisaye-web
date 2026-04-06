@@ -14,8 +14,8 @@ function resolveFirstExisting(paths: string[]) {
 describe('Service worker cache strategy', () => {
   test('does not precache index.html and uses no-store network-first for documents', () => {
     const swPath = resolveFirstExisting([
-      'public/service-worker.js',
       'public/sw.js',
+      'public/service-worker.js',
       'public/serviceWorker.js',
     ]);
 
@@ -36,8 +36,8 @@ describe('Service worker cache strategy', () => {
 
   test('keeps skipWaiting and clients.claim lifecycle protections', () => {
     const swPath = resolveFirstExisting([
-      'public/service-worker.js',
       'public/sw.js',
+      'public/service-worker.js',
       'public/serviceWorker.js',
     ]);
 
