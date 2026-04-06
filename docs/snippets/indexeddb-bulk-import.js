@@ -74,7 +74,7 @@
     }
 
     // 3) TEST SERVEUR DONNÉES + INJECTION INDEXEDDB
-    const response = await fetch(`/data/panier-anticrise.json?t=${Date.now()}`);
+    const response = await fetch(`./data/panier-anticrise.json?t=${Date.now()}`);
     const data = await response.json();
     const sourceProducts = Array.isArray(data) ? data : [];
     const seededProducts =
