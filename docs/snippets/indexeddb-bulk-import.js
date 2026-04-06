@@ -54,7 +54,7 @@
     localStorage.setItem('aki-user-pref-sync', 'done');
 
     // 4) TEST SERVEUR DONNÉES
-    const response = await fetch(`/data/panier-anticrise.json?t=${Date.now()}`);
+    const response = await fetch('data/panier-anticrise.json?t=' + Date.now());
     const data = await response.json();
 
     forceVisual(); // Dernière passe juste avant confirmation
