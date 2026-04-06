@@ -23,7 +23,7 @@
   const FALLBACK_ORIGIN = 'https://akiprisaye-v13-horizon.pages.dev';
   const DB_NAME = 'AkiPrisayeDB';
   const STORE_NAME = 'products';
-  const CHUNK_SIZE = 100;
+  const CHUNK_SIZE = 500;
   const FETCH_TIMEOUT_MS = 8000;
 
   const runtimeOrigin =
