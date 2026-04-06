@@ -52,16 +52,36 @@
   }
 
   function assertNotDevtoolsUrl(raw) {
-    const value = String(raw || '').trim().toLowerCase();
-    if (
-      value.startsWith('devtools://') ||
-      value.startsWith('chrome://') ||
-      value.includes('chrome-devtools-frontend.appspot.com') ||
-      value.includes('targettype=tab')
-    ) {
-      throw new Error(
-        'URL DevTools détectée. Utilise une URL de données JSON (https://.../data/...json), pas devtools://',
-      );
+    const value = String(raw || '').trim();
+    if (!value) return;
+
+    try {
+      const url = new URL(value, runtimeOrigin);
+      const protocol = url.protocol.toLowerCase();
+      const hostname = url.hostname.toLowerCase();
+
+      if (
+        protocol === 'devtools:' ||
+        protocol === 'chrome:' ||
+        hostname === 'chrome-devtools-frontend.appspot.com' ||
+        value.toLowerCase().includes('targettype=tab')
+      ) {
+        throw new Error(
+          'URL DevTools détectée. Utilise une URL de données JSON (https://.../data/...json), pas devtools://',
+        );
+      }
+    } catch {
+      // Fallback for unparsable values: keep conservative string-based checks
+      const lower = value.toLowerCase();
+      if (
+        lower.startsWith('devtools://') ||
+        lower.startsWith('chrome://') ||
+        lower.includes('targettype=tab')
+      ) {
+        throw new Error(
+          'URL DevTools détectée. Utilise une URL de données JSON (https://.../data/...json), pas devtools://',
+        );
+      }
     }
   }
 
