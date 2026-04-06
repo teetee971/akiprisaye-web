@@ -111,7 +111,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 4) Documents / navigation : network-first + fallback SPA "/"
-  if (request.destination === 'document' || event.request.mode === 'navigate') {
+  if (request.destination === 'document' || request.mode === 'navigate') {
     event.respondWith(networkFirst(request, CORE_CACHE, '/'));
     return;
   }
