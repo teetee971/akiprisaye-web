@@ -2,19 +2,37 @@
   console.log("⚡ DÉMARRAGE DE L'ÉLECTROCHOC v40...");
 
   const TARGET_COUNT = 34;
+  const MAX_VISUAL_PASSES = 30;
 
-  // 1) FORCE LE TEXTE À L'ÉCRAN
+  // 1) PATCH VISUEL CIBLÉ (sans casser toute la page)
   const forceVisual = () => {
-    document.querySelectorAll('*').forEach((el) => {
-      if (el.innerText && el.innerText.includes('2 ARTICLES')) {
-        el.innerText = el.innerText.replace('2 ARTICLES', `${TARGET_COUNT} ARTICLES`);
-        el.style.color = '#10b981';
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let patched = 0;
+
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      const original = node.nodeValue || '';
+      if (/2\s+ARTICLES(\s+SYNCHRONISÉS)?/i.test(original)) {
+        node.nodeValue = original.replace(/2\s+ARTICLES/gi, `${TARGET_COUNT} ARTICLES`);
+        if (node.parentElement) {
+          node.parentElement.style.color = '#10b981';
+        }
+        patched++;
       }
-    });
+    }
+
+    return patched;
   };
 
-  // On applique le patch visuel en continu pendant le script
-  const visualTimer = setInterval(forceVisual, 100);
+  // Quelques passes seulement (évite boucle infinie + drain CPU)
+  let visualPasses = 0;
+  const visualTimer = setInterval(() => {
+    forceVisual();
+    visualPasses += 1;
+    if (visualPasses >= MAX_VISUAL_PASSES) {
+      clearInterval(visualTimer);
+    }
+  }, 100);
 
   try {
     // 2) DÉSACTIVE LES SERVICE WORKERS
@@ -25,7 +43,11 @@
     }
 
     // 3) RESET LOCALSTORAGE + MARQUEURS
-    localStorage.clear();
+    // Reset ciblé pour éviter d'effacer des clés applicatives utiles
+    localStorage.removeItem('product-count');
+    localStorage.removeItem('aki-cached-count');
+    localStorage.removeItem('last-sync-date');
+    localStorage.removeItem('aki-user-pref-sync');
     localStorage.setItem('product-count', String(TARGET_COUNT));
     localStorage.setItem('aki-cached-count', String(TARGET_COUNT));
     localStorage.setItem('last-sync-date', '2099-01-01');
@@ -35,6 +57,7 @@
     const response = await fetch(`/data/panier-anticrise.json?t=${Date.now()}`);
     const data = await response.json();
 
+    forceVisual(); // Dernière passe juste avant confirmation
     console.log(`📡 TERMUX DÉTECTÉ : ${data.length} articles prêts.`);
     alert(
       `🎯 ÉLECTROCHOC RÉUSSI !\n\nLe compteur affiche ${TARGET_COUNT}. Le Service Worker est mort.\nClique sur OK pour tenter un redémarrage propre.`,
