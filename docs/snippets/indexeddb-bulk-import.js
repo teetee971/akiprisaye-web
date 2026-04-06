@@ -64,8 +64,11 @@
     );
 
     window.location.href = `${window.location.origin}${window.location.pathname}?clean=true`;
-  } catch {
-    alert("⚠️ TERMUX NE RÉPOND PAS.\nVérifie que 'python -m http.server' tourne encore !");
+  } catch (err) {
+    console.error('⚠️ Échec de l’électrochoc IndexedDB :', err);
+    alert(
+      `⚠️ TERMUX NE RÉPOND PAS.\nVérifie que 'python -m http.server' tourne encore !\n\nDétail : ${err && err.message ? err.message : String(err)}`,
+    );
   } finally {
     clearInterval(visualTimer);
   }
