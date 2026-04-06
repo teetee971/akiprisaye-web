@@ -135,7 +135,7 @@
     }
 
     const trimmed = input.trim();
-    const looksLikeUrl = /^https?:\/\//i.test(trimmed) || trimmed.startsWith('/');
+    const looksLikeUrl = /^https?:\/\//i.test(trimmed) || trimmed.startsWith('/') || (trimmed.includes('.') && !trimmed.includes(' '));
 
     if (looksLikeUrl) {
       assertNotDevtoolsUrl(trimmed);
