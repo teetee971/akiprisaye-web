@@ -186,8 +186,8 @@
         maxVerifiedCount = Math.max(maxVerifiedCount, Number(verifiedCount) || 0);
         db.close();
         writes += 1;
-      } catch {
-        // best effort
+      } catch (err) {
+        console.warn(`Failed to seed database "${dbName}":`, err);
       }
     }
 
