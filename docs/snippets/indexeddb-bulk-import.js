@@ -251,6 +251,114 @@
     }
   }, 100);
 
+  // Renforce le patch sur les rerenders tardifs
+  const observer = new MutationObserver(() => {
+    forceVisual();
+  });
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+
+  const openDb = (dbName, version = 1, createFallbackStore = false) =>
+    new Promise((resolve, reject) => {
+      const req = indexedDB.open(dbName, version);
+      req.onupgradeneeded = (event) => {
+        if (!createFallbackStore) return;
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME_FALLBACK)) {
+          db.createObjectStore(STORE_NAME_FALLBACK, { keyPath: 'id', autoIncrement: true });
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+
+  const getDatabases = async () => {
+    if (typeof indexedDB.databases === 'function') {
+      try {
+        return (await indexedDB.databases()).filter((entry) => entry?.name);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  };
+
+  const seedKnownDatabases = async (products) => {
+    const databases = await getDatabases();
+    let writes = 0;
+    let maxVerifiedCount = 0;
+
+    for (const dbMeta of databases) {
+      const dbName = dbMeta?.name;
+      if (!dbName) continue;
+      try {
+        const db = await openDb(dbName, dbMeta.version || 1, false);
+        const storeNames = Array.from(db.objectStoreNames || []);
+        const targetStore = storeNames.find((name) =>
+          CANDIDATE_STORE_NAMES.includes(String(name).toLowerCase()),
+        );
+        if (!targetStore) {
+          db.close();
+          continue;
+        }
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(targetStore, 'readwrite');
+          const store = tx.objectStore(targetStore);
+          store.clear();
+          for (const product of products) {
+            store.put(product);
+          }
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+          tx.onabort = () => reject(tx.error);
+        });
+        const verifiedCount = await new Promise((resolve, reject) => {
+          const tx = db.transaction(targetStore, 'readonly');
+          const store = tx.objectStore(targetStore);
+          const req = store.count();
+          req.onsuccess = () => resolve(req.result || 0);
+          req.onerror = () => reject(req.error);
+        });
+        maxVerifiedCount = Math.max(maxVerifiedCount, Number(verifiedCount) || 0);
+        db.close();
+        writes += 1;
+      } catch (err) {
+        console.warn(`Failed to seed database "${dbName}":`, err);
+      }
+    }
+
+    // Fallback explicite si aucun DB/store "produits" connu n'a été trouvé
+    if (writes === 0) {
+      const db = await openDb(DB_NAME_FALLBACK, 1, true);
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME_FALLBACK, 'readwrite');
+        const store = tx.objectStore(STORE_NAME_FALLBACK);
+        store.clear();
+        for (const product of products) {
+          store.put(product);
+        }
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+        tx.onabort = () => reject(tx.error);
+      });
+      const verifiedCount = await new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME_FALLBACK, 'readonly');
+        const store = tx.objectStore(STORE_NAME_FALLBACK);
+        const req = store.count();
+        req.onsuccess = () => resolve(req.result || 0);
+        req.onerror = () => reject(req.error);
+      });
+      maxVerifiedCount = Math.max(maxVerifiedCount, Number(verifiedCount) || 0);
+      db.close();
+      writes = 1;
+    }
+
+    return { writes, maxVerifiedCount };
+  };
+
   try {
     console.log(`🌍 Origine utilisée : ${runtimeOrigin}`);
     console.log('🔎 Recherche du JSON disponible...');
@@ -299,25 +407,41 @@
       fileLabel = 'source manuelle/locale';
     }
 
-    // 3) RESET LOCALSTORAGE + MARQUEURS
-    // Reset ciblé pour éviter d'effacer des clés applicatives utiles
-    localStorage.removeItem('product-count');
-    localStorage.removeItem('aki-cached-count');
-    localStorage.removeItem('last-sync-date');
-    localStorage.removeItem('aki-user-pref-sync');
-    localStorage.setItem('product-count', String(TARGET_COUNT));
-    localStorage.setItem('aki-cached-count', String(TARGET_COUNT));
+    // 3) TEST SERVEUR DONNÉES + INJECTION INDEXEDDB
+    const dataUrl = new URL('data/panier-anticrise.json', window.location.href);
+    dataUrl.searchParams.set('t', String(Date.now()));
+    const response = await fetch(dataUrl.toString());
+    const data = await response.json();
+    const sourceProducts = extractProducts(data);
+    if (!sourceProducts.length) {
+      throw new Error(`Aucune donnée produit exploitable dans ${dataUrl.toString()}`);
+    }
+    const seededProducts = buildSeededProducts(sourceProducts);
+
+    const { writes: seededStores, maxVerifiedCount } = await seedKnownDatabases(seededProducts);
+
+    // 4) RESET LOCALSTORAGE + MARQUEURS
+    CANDIDATE_LOCALSTORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+    localStorage.setItem('product-count', String(seededProducts.length));
+    localStorage.setItem('aki-cached-count', String(seededProducts.length));
+    localStorage.setItem('catalog-count', String(seededProducts.length));
+    localStorage.setItem('catalogue-count', String(seededProducts.length));
+    localStorage.setItem('products-count', String(seededProducts.length));
     localStorage.setItem('last-sync-date', '2099-01-01');
     localStorage.setItem('aki-user-pref-sync', 'done');
 
-    // 4) TEST SERVEUR DONNÉES
-    const response = await fetch('data/panier-anticrise.json?t=' + Date.now());
-    const data = await response.json();
-
     forceVisual(); // Dernière passe juste avant confirmation
-    console.log('📡 TERMUX DÉTECTÉ : Données prêtes.');
+    console.log(
+      `📡 TERMUX DÉTECTÉ : ${sourceProducts.length} source, ${seededProducts.length} injectés dans ${seededStores} store(s), vérifiés=${maxVerifiedCount}.`,
+    );
+    const uiCountBeforeReload = readUiSyncedCount();
+    if (maxVerifiedCount < TARGET_COUNT) {
+      alert(
+        `⚠️ Vérification partielle : ${maxVerifiedCount}/${TARGET_COUNT} enregistrements visibles après écriture.\nL'application lit probablement une autre source de données.`,
+      );
+    }
     alert(
-      `🎯 ÉLECTROCHOC RÉUSSI !\n\nLe compteur affiche ${TARGET_COUNT}. Le Service Worker est mort.\nClique sur OK pour tenter un redémarrage propre.`,
+      `🎯 ÉLECTROCHOC RÉUSSI !\n\n${seededProducts.length} produits injectés (${seededStores} store(s), vérifiés: ${maxVerifiedCount}).\nCompteur UI détecté avant reload: ${uiCountBeforeReload ?? 'non trouvé'}.\nClique sur OK pour tenter un redémarrage propre.`,
     );
 
     db.close();
@@ -332,5 +456,6 @@
     );
   } finally {
     clearInterval(visualTimer);
+    observer.disconnect();
   }
 })();

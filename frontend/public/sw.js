@@ -1,6 +1,6 @@
 // Service Worker — A KI PRI SA YÉ
 // Objectifs :
-// - PAS de precache /index.html (conforme au test)
+// - PAS de precache index.html (conforme au test)
 // - API toujours "no-store" (pas de cache)
 // - Documents (navigate / document) en network-first avec fallback '/'
 // - Assets fingerprintés en cache-first
@@ -15,7 +15,7 @@ const CORE_CACHE = `akiprisaye-core-${CACHE_VERSION}`;
 const ASSET_CACHE = `akiprisaye-assets-${CACHE_VERSION}`;
 const TERRITORY_CACHE = `akiprisaye-territories-${CACHE_VERSION}`;
 
-// Important : ne pas inclure /index.html ici (sinon le test échoue)
+// Important : ne pas inclure index.html ici (sinon le test échoue)
 const BASE_PATH = '/akiprisaye-web/';
 const CORE_ASSETS = [BASE_PATH, `${BASE_PATH}manifest.webmanifest`];
 
