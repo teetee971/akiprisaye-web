@@ -229,11 +229,13 @@
     }
 
     // 3) TEST SERVEUR DONNÉES + INJECTION INDEXEDDB
-    const response = await fetch(`/data/panier-anticrise.json?t=${Date.now()}`);
+    const dataUrl = new URL('data/panier-anticrise.json', window.location.href);
+    dataUrl.searchParams.set('t', String(Date.now()));
+    const response = await fetch(dataUrl.toString());
     const data = await response.json();
     const sourceProducts = extractProducts(data);
     if (!sourceProducts.length) {
-      throw new Error('Aucune donnée produit exploitable dans /data/panier-anticrise.json');
+      throw new Error(`Aucune donnée produit exploitable dans ${dataUrl.toString()}`);
     }
     const seededProducts = buildSeededProducts(sourceProducts);
 
