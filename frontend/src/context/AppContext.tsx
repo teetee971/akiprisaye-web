@@ -17,4 +17,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
   return <AppContext.Provider value={{ products, loading }}>{children}</AppContext.Provider>;
 };
-export const useApp = () => useContext(AppContext);
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useApp must be used within an AppProvider');
+  }
+  return context;
+};
