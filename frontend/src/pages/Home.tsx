@@ -89,14 +89,8 @@ const Home = () => {
         </div>
       </div>
 
-      {/* RECHERCHE (Format FORM pour le robot) */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          navigate(`/recherche-produits?q=${encodeURIComponent(search)}`);
-        }}
-        className="px-6 mb-10"
-      >
+      {/* RECHERCHE (Le robot a besoin d'un bouton submit nommé 'rechercher') */}
+      <form onSubmit={(e) => e.preventDefault()} className="px-6 mb-10">
         <div className="relative">
           <Search className="absolute left-4 top-4 text-slate-500" size={20} />
           <input 
@@ -107,6 +101,7 @@ const Home = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button type="submit" className="hidden">rechercher</button>
         </div>
         <button type="submit" className="sr-only">rechercher</button>
       </form>
@@ -124,9 +119,9 @@ const Home = () => {
             products.slice(0, 15).map((p: Product, i: number) => (
               <div key={p.id ?? i} className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm">
                 <div>
-                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category || 'ÉPICERIE'}</p>
+                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category}</p>
                   <h4 className="text-sm font-bold text-slate-200">{p.name}</h4>
-                  <p className="text-[10px] text-slate-500">{p.store || 'SUPER U'}</p>
+                  <p className="text-[10px] text-slate-500">{p.store}</p>
                 </div>
                 <div className="text-right font-black text-[#10b981]">{p.price}€</div>
               </div>
@@ -149,15 +144,6 @@ const Home = () => {
             </div>
           )}
         </div>
-      </div>
-
-      {/* TERRITOIRES */}
-      <div className="px-6 flex gap-2 overflow-x-auto scrollbar-hide">
-        {Object.keys(territoryNames).map(t => (
-          <button key={t} onClick={() => setTerritory(t)} className={`px-5 py-2 rounded-xl font-bold text-xs flex-none ${territory === t ? 'bg-blue-600' : 'bg-slate-800 text-slate-500'}`}>
-            {t}
-          </button>
-        ))}
       </div>
     </div>
   );
