@@ -25,10 +25,7 @@ const Home = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const form = e.currentTarget as HTMLFormElement;
-    const valueFromDom =
-      form.querySelector<HTMLInputElement>('input[aria-label=\"rechercher un produit\"]')?.value ?? search;
-    navigate(`/recherche-produits?q=${encodeURIComponent(valueFromDom)}`);
+    navigate(`/recherche-produits?q=${encodeURIComponent(search)}`);
   };
 
   const promos = [
