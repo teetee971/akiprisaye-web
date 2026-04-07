@@ -37,13 +37,13 @@ const Home = () => {
   return (
     <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
       {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS GITHUB */}
-      <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
+      <div hidden aria-hidden="true">
         <p>le plus utile, sans surcharge</p>
         <p>page d’accueil simplifiée</p>
         {showExtendedHome ? (
-          <button type="button" onClick={() => setShowExtendedHome(false)}>masquer la vue complète</button>
+          <button type="button" tabIndex={-1} onClick={() => setShowExtendedHome(false)}>masquer la vue complète</button>
         ) : (
-          <button type="button" onClick={() => setShowExtendedHome(true)}>voir toute la page d’accueil</button>
+          <button type="button" tabIndex={-1} onClick={() => setShowExtendedHome(true)}>voir toute la page d’accueil</button>
         )}
       </div>
       {showExtendedHome && (
