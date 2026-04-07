@@ -56,13 +56,12 @@ const main = async () => {
     process.exit(2);
   }
 
-  const headers = Object.fromEntries(response.headers.entries());
   console.log('\n## Header checks');
-  console.log(`- content-type: ${headers['content-type'] || 'missing'}`);
-  console.log(`- cache-control: ${headers['cache-control'] || 'missing'}`);
-  console.log(`- content-encoding: ${headers['content-encoding'] || 'missing'}`);
+  console.log(`- content-type: ${response.headers.get('content-type') || 'missing'}`);
+  console.log(`- cache-control: ${response.headers.get('cache-control') || 'missing'}`);
+  console.log(`- content-encoding: ${response.headers.get('content-encoding') || 'missing'}`);
 
-  const missingHeaders = requiredSecurityHeaders.filter((header) => !headers[header]);
+  const missingHeaders = requiredSecurityHeaders.filter((header) => !response.headers.has(header));
   if (missingHeaders.length === 0) {
     console.log('- Security headers: all required headers present ✅');
   } else {
