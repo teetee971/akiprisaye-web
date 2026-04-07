@@ -6,7 +6,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/data/panier-anticrise.json?v=' + Date.now());
+        const response = await fetch(import.meta.env.BASE_URL + 'data/panier-anticrise.json?v=' + Date.now());
         if (response.ok) {
           const data = await response.json();
           setProducts(Array.isArray(data) ? data : []);
