@@ -76,7 +76,7 @@ const Home = () => {
               <p className="text-[10px] font-bold uppercase tracking-widest">Connexion au gisement...</p>
             </div>
           ) : Array.isArray(products) && products.length > 0 ? (
-            products.map((p: any, i: number) => (
+            products.slice(0, 15).map((p: any, i: number) => (
               <div key={i} className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm">
                 <div>
                   <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category}</p>
