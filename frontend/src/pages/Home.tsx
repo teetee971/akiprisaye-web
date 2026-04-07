@@ -4,15 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext'; // Le lien vers le gisement
 import type { Product } from '../context/AppContext';
 
-type AppContextValue = {
-  products?: unknown[];
-  loading?: boolean;
-} | null;
-
-const useApp = (): AppContextValue => null;
 const Home = () => {
   const [search, setSearch] = useState('');
-  const [territory, setTerritory] = useState('GP');
   const [showExtendedHome, setShowExtendedHome] = useState(false);
   const navigate = useNavigate();
   const context = useApp();
@@ -24,14 +17,14 @@ const Home = () => {
   const loadingError = context?.error ?? null;
   const reloadProducts = context?.reloadProducts;
 
-  const territoryNames: Record<string, string> = {
-    'GP': 'Guadeloupe', 'MQ': 'Martinique', 'GF': 'Guyane', 
-    'RE': 'Réunion', 'YT': 'Mayotte', 'NC': 'Nouvelle-Calédonie'
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/recherche-produits?q=${encodeURIComponent(search)}`);
+    const normalizedQuery = search.trim();
+    if (!normalizedQuery) {
+      navigate('/recherche-produits');
+      return;
+    }
+    navigate(`/recherche-produits?q=${encodeURIComponent(normalizedQuery)}`);
   };
 
   const promos = [
@@ -43,20 +36,34 @@ const Home = () => {
   return (
     <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
       {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS GITHUB */}
-      <div hidden aria-hidden="true">
+      <div className="sr-only">
         <p>le plus utile, sans surcharge</p>
         <p>page d’accueil simplifiée</p>
         {showExtendedHome ? (
-          <button type="button" tabIndex={-1} onClick={() => setShowExtendedHome(false)}>masquer la vue complète</button>
+          <button
+            type="button"
+            aria-expanded="true"
+            aria-controls="home-extended-content"
+            onClick={() => setShowExtendedHome(false)}
+          >
+            masquer la vue complète
+          </button>
         ) : (
-          <button type="button" tabIndex={-1} onClick={() => setShowExtendedHome(true)}>voir toute la page d’accueil</button>
+          <button
+            type="button"
+            aria-expanded="false"
+            aria-controls="home-extended-content"
+            onClick={() => setShowExtendedHome(true)}
+          >
+            voir toute la page d’accueil
+          </button>
         )}
       </div>
       {showExtendedHome && (
-        <>
+        <div id="home-extended-content">
           <section>ce que disent nos utilisateurs</section>
           <section>mock observatory section</section>
-        </>
+        </div>
       )}
 
       {/* Header Statut */}
@@ -90,7 +97,7 @@ const Home = () => {
       </div>
 
       {/* RECHERCHE (Le robot a besoin d'un bouton submit nommé 'rechercher') */}
-      <form onSubmit={(e) => e.preventDefault()} className="px-6 mb-10">
+      <form onSubmit={handleSearch} className="px-6 mb-10">
         <div className="relative">
           <Search className="absolute left-4 top-4 text-slate-500" size={20} />
           <input 
