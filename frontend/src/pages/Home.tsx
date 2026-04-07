@@ -40,7 +40,7 @@ const Home = () => {
       <div className="mb-10">
         <div className="flex gap-4 overflow-x-auto px-6 pb-4 scrollbar-hide snap-x">
           {promos.map(promo => (
-            <div key={promo.id} onClick={promo.action} className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer">
+            <div key={promo.id} onClick={promo.action} className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer active:scale-95 transition-transform">
               <img src={promo.img} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
               <div className="absolute bottom-4 left-5">
