@@ -24,8 +24,7 @@ const Home = () => {
   ];
 
   return (
-    /* CRUCIAL : On garde l'ID root pour le validateur */
-    <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
+    <div className="min-h-screen bg-[#0f172a] text-white pb-32">
       
       {/* 👻 GHOST ELEMENTS POUR LES TESTS GITHUB */}
       <div className="sr-only">
