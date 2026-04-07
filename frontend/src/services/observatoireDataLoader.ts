@@ -1,4 +1,5 @@
- 
+import { TERRITORIES } from './territoryNormalizationService';
+
 /**
  * Observatoire Data Loader
  * 
@@ -107,7 +108,6 @@ export async function loadObservatoireData(
 export async function loadAllTerritories(
   months: string[] = DEFAULT_SNAPSHOT_MONTHS,
 ): Promise<Map<string, ObservatoireSnapshot[]>> {
-  const { TERRITORIES } = await import('./territoryNormalizationService');
   const result = new Map<string, ObservatoireSnapshot[]>();
 
   await Promise.all(

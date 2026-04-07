@@ -1,6 +1,4 @@
 import Flyer from "./pages/Flyer";
-import Flyer from "./pages/Flyer";
-import Flyer from "./pages/Flyer";
 import { OfflineBanner } from "./components/OfflineBanner";
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { lazyPage } from './router/lazy';
@@ -13,6 +11,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
+import { AppProvider } from './context/AppContext';
 import RequireAuth from './components/auth/RequireAuth';
 import RequireCreator from './components/auth/RequireCreator';
 import RequireAdmin from './components/auth/RequireAdmin';
@@ -358,9 +357,10 @@ export default function App() {
             <AuthProvider>
               <OnboardingProvider>
                 <StoreSelectionProvider>
-                  <Suspense fallback={null}>
-                    <EntitlementProvider>
-                      <BrowserRouter basename={import.meta.env.BASE_URL}>
+                  <AppProvider>
+                    <Suspense fallback={null}>
+                      <EntitlementProvider>
+                        <BrowserRouter basename={import.meta.env.BASE_URL}>
                         <Suspense fallback={<LoadingFallback />}>
                           <Routes>
 <Route path="/flyer" element={<Flyer />} />
@@ -634,9 +634,10 @@ export default function App() {
                           <AuthDebugPanel />
                           <Suspense fallback={null}><BuildInfo /></Suspense>
                         </Suspense>
-                      </BrowserRouter>
-                    </EntitlementProvider>
-                  </Suspense>
+                        </BrowserRouter>
+                      </EntitlementProvider>
+                    </Suspense>
+                  </AppProvider>
                 </StoreSelectionProvider>
               </OnboardingProvider>
             </AuthProvider>
