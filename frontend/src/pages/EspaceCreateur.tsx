@@ -74,7 +74,8 @@ const EspaceCreateur: React.FC = () => {
     };
   }, [weeklyStats, monthlyStats]);
 
-  const ghostwriterPriceSignal = (window as any).revenueAnalytics?.revenueTrend ?? 0;
+  const ghostwriterPriceSignal =
+    typeof window !== 'undefined' ? (window as { revenueAnalytics?: { revenueTrend?: number } }).revenueAnalytics?.revenueTrend ?? 0 : 0;
 
   const ghostwriterPost = useMemo(() => {
     return generateDailyPost({
@@ -91,6 +92,7 @@ const EspaceCreateur: React.FC = () => {
   }, [ghostwriterPost]);
 
   const handleScan = useCallback(async () => {
+    if (typeof window === 'undefined') return;
     setPredatorScanning(true);
     try {
       const alerts = await runPredatorMonitoring();
@@ -304,7 +306,13 @@ const EspaceCreateur: React.FC = () => {
         <Link to="/mon-compte" className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Mon compte">
           <Key size={22} />
         </Link>
-        <button onClick={() => window.location.reload()} className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Rafraîchir la page">
+        <button
+          onClick={() => {
+            if (typeof window !== 'undefined') window.location.reload();
+          }}
+          className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform"
+          aria-label="Rafraîchir la page"
+        >
           <RefreshCw size={22} />
         </button>
       </div>
