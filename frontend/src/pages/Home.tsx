@@ -62,6 +62,10 @@ const Home = () => {
               key={promo.id}
               type="button"
               onClick={promo.action}
+<<<<<<< codex/corriger-pour-activer-squash-and-merge
+              aria-label={promo.title}
+=======
+>>>>>>> main
               className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer active:scale-95 transition-transform text-left"
             >
               <img src={promo.img} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="" />
