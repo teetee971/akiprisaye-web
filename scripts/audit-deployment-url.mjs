@@ -49,7 +49,21 @@ const main = async () => {
   console.log(`- HTTP status: ${status}`);
   if (location) console.log(`- Redirect location: ${location}`);
 
-  if (location?.includes('cloudflareaccess.com')) {
+  let isCloudflareAccessRedirect = false;
+  if (location) {
+    try {
+      // Support both absolute and relative redirect URLs.
+      const parsed = new URL(location, targetUrl);
+      const host = parsed.hostname.toLowerCase();
+      if (host === 'cloudflareaccess.com' || host.endsWith('.cloudflareaccess.com')) {
+        isCloudflareAccessRedirect = true;
+      }
+    } catch {
+      // If the location header is not a valid URL, treat it as not a Cloudflare Access redirect.
+    }
+  }
+
+  if (isCloudflareAccessRedirect) {
     console.log('\n## Blocking issue detected');
     console.log('- The URL is protected by Cloudflare Access, so automated external audits cannot crawl it.');
     console.log('- Improvement: create a service token for CI and pass Cloudflare Access headers during audit runs.');
