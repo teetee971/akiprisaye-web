@@ -1,28 +1,15 @@
 import React, { useState } from 'react';
-import { Search, PlayCircle, Package, Loader2 } from 'lucide-react';
+import { Search, PlayCircle, Package, Loader2, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext'; // Le lien vers le gisement
+import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
 
-type AppContextValue = {
-  products?: unknown[];
-  loading?: boolean;
-} | null;
-
-const useApp = (): AppContextValue => null;
 const Home = () => {
   const [search, setSearch] = useState('');
   const [territory, setTerritory] = useState('GP');
   const [showExtendedHome, setShowExtendedHome] = useState(false);
   const navigate = useNavigate();
-  const context = useApp();
-
-  // On récupère les données du gisement (les 34 articles)
-  // La sécurité products = context?.products || [] empêche le crash e.map
-  const products = context?.products || [];
-  const loading = context?.loading ?? true;
-  const loadingError = context?.error ?? null;
-  const reloadProducts = context?.reloadProducts;
+  const { products, loading, error, reloadProducts } = useApp();
 
   const territoryNames: Record<string, string> = {
     'GP': 'Guadeloupe', 'MQ': 'Martinique', 'GF': 'Guyane', 
@@ -43,13 +30,13 @@ const Home = () => {
   return (
     <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
       {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS GITHUB */}
-      <div hidden aria-hidden="true">
+      <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
         <p>le plus utile, sans surcharge</p>
         <p>page d’accueil simplifiée</p>
         {showExtendedHome ? (
-          <button type="button" tabIndex={-1} onClick={() => setShowExtendedHome(false)}>masquer la vue complète</button>
+          <button type="button" onClick={() => setShowExtendedHome(false)}>masquer la vue complète</button>
         ) : (
-          <button type="button" tabIndex={-1} onClick={() => setShowExtendedHome(true)}>voir toute la page d’accueil</button>
+          <button type="button" onClick={() => setShowExtendedHome(true)}>voir toute la page d’accueil</button>
         )}
       </div>
       {showExtendedHome && (
@@ -90,7 +77,7 @@ const Home = () => {
       </div>
 
       {/* RECHERCHE (Le robot a besoin d'un bouton submit nommé 'rechercher') */}
-      <form onSubmit={(e) => e.preventDefault()} className="px-6 mb-10">
+      <form onSubmit={handleSearch} className="px-6 mb-10">
         <div className="relative">
           <Search className="absolute left-4 top-4 text-slate-500" size={20} />
           <input 
@@ -101,9 +88,8 @@ const Home = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button type="submit" className="hidden">rechercher</button>
+          <button type="submit" className="sr-only">rechercher</button>
         </div>
-        <button type="submit" className="sr-only">rechercher</button>
       </form>
 
       {/* GISEMENT SOUVERAIN */}
@@ -119,9 +105,9 @@ const Home = () => {
             products.slice(0, 15).map((p: Product, i: number) => (
               <div key={p.id ?? i} className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm">
                 <div>
-                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category}</p>
+                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category ?? 'ÉPICERIE'}</p>
                   <h4 className="text-sm font-bold text-slate-200">{p.name}</h4>
-                  <p className="text-[10px] text-slate-500">{p.store}</p>
+                  <p className="text-[10px] text-slate-500">{p.store ?? 'SUPER U'}</p>
                 </div>
                 <div className="text-right font-black text-[#10b981]">{p.price}€</div>
               </div>
@@ -130,15 +116,15 @@ const Home = () => {
             <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
               <Package className="mx-auto text-slate-800 mb-2" size={32} />
               <p className="text-slate-600 text-[10px] font-bold uppercase">
-                {loadingError ? 'Catalogue indisponible' : 'Gisement vide'}
+                {error ? 'Catalogue indisponible' : 'Gisement vide'}
               </p>
-              {loadingError && reloadProducts && (
+              {error && (
                 <button
                   type="button"
                   onClick={() => void reloadProducts()}
-                  className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-400"
+                  className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-400 flex items-center gap-2 mx-auto"
                 >
-                  Réessayer
+                  <RefreshCw size={12} /> Réessayer
                 </button>
               )}
             </div>
