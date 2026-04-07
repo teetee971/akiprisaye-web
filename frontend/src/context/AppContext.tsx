@@ -29,6 +29,35 @@ const defaultValue: AppContextValue = {
 const CATALOGUE_CACHE_KEY = 'akp_catalogue_cache_v1';
 const CATALOGUE_CACHE_TTL_MS = 60 * 60 * 1000;
 const RETRY_DELAY_MS = 1500;
+const CATALOGUE_BASE_URL = (import.meta.env.BASE_URL || '/').replace(/\/+$/g, '');
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const buildCatalogueUrl = () => `${CATALOGUE_BASE_URL}/data/catalogue.json`.replace(/\/{2,}/g, '/');
+
+const normalizeCatalogue = (data: unknown): Product[] => {
+  const rawProducts =
+    Array.isArray(data) ? data : Array.isArray((data as { products?: unknown })?.products)
+      ? (data as { products: unknown[] }).products
+      : null;
+
+  if (!rawProducts) {
+    throw new Error('catalogue payload must be an array or { products: [] }');
+  }
+
+  const normalized = rawProducts.filter(
+    (item): item is Product =>
+      typeof item === 'object' &&
+      item !== null &&
+      typeof (item as { name?: unknown }).name === 'string',
+  );
+
+  if (normalized.length === 0) {
+    throw new Error('catalogue payload contains no valid product entries');
+  }
+
+  return normalized;
+};
 
 const AppContext = createContext<AppContextValue>(defaultValue);
 
@@ -42,36 +71,6 @@ export function AppProvider({ children }: AppProviderProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const normalizeCatalogue = (data: unknown): Product[] => {
-    const rawProducts =
-      Array.isArray(data) ? data : Array.isArray((data as { products?: unknown })?.products)
-        ? (data as { products: unknown[] }).products
-        : null;
-
-    if (!rawProducts) {
-      throw new Error('catalogue payload must be an array or { products: [] }');
-    }
-
-    const normalized = rawProducts.filter(
-      (item): item is Product =>
-        typeof item === 'object' &&
-        item !== null &&
-        typeof (item as { name?: unknown }).name === 'string',
-    );
-
-    if (normalized.length === 0) {
-      throw new Error('catalogue payload contains no valid product entries');
-    }
-
-    return normalized;
-  };
-
-  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  const buildCatalogueUrl = () => {
-    const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/g, '');
-    return `${base}/data/catalogue.json`.replace(/\/{2,}/g, '/');
-  };
 
   const reloadProducts = async () => {
     setLoading(true);
