@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-const AppContext = createContext<any>(null);
+type AppContextValue = {
+  products: any[];
+  loading: boolean;
+};
+const AppContext = createContext<AppContextValue | undefined>(undefined);
 type Product = Record<string, unknown>;
 type Territory = { products?: Product[] } & Record<string, unknown>;
 type PanierAnticriseData = {
