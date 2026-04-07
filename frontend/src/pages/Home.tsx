@@ -79,7 +79,7 @@ const Home = () => {
             products.slice(0, 15).map((p: any, i: number) => (
               <div key={i} className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm">
                 <div>
-                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category}</p>
+                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category || 'ÉPICERIE'}</p>
                   <h4 className="text-sm font-bold text-slate-200">{p.name}</h4>
                   <p className="text-[10px] text-slate-500">{p.store}</p>
                 </div>
