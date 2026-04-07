@@ -11,6 +11,7 @@
     "dev": "cd frontend && npm run dev",
     "preview": "cd frontend && npm run preview",
     "typecheck": "cd frontend && npm run -s typecheck",
+    "test:smoke:home": "cd frontend && npx vitest run src/test/home.page.test.tsx --config vitest.config.ts",
     "build:frontend": "cd frontend && npm ci --include=dev && npm run build",
     "install:frontend": "cd frontend && npm ci --include=dev",
     "lint": "cd frontend && npm run lint",
