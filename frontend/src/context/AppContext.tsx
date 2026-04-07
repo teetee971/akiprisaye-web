@@ -42,7 +42,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(import.meta.env.BASE_URL + 'data/panier-anticrise.json?v=' + Date.now());
+        const response = await fetch(import.meta.env.BASE_URL + 'data/panier-anticrise.json', { cache: 'no-store' });
         if (response.ok) {
           const data: unknown = await response.json();
           setProducts(extractProducts(data));
