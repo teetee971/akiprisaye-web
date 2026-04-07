@@ -3,6 +3,12 @@ import { Search, PlayCircle, Package, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 
+type AppContextValue = {
+  products?: unknown[];
+  loading?: boolean;
+} | null;
+
+const useApp = (): AppContextValue => null;
 const Home = () => {
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
@@ -58,16 +64,14 @@ const Home = () => {
           <Search className="absolute left-4 top-4 text-slate-500" size={20} />
           <input 
             type="text"
-            role="textbox"
-            aria-label="rechercher un produit"
             placeholder="Rechercher un produit..."
-            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500/50 transition-colors"
+            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
           <button type="submit" className="hidden">rechercher</button>
         </div>
-      </form>
+      </div>
 
       {/* GISEMENT SOUVERAIN */}
       <div className="px-6 mb-10">
