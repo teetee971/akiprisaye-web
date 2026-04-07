@@ -74,8 +74,11 @@ const EspaceCreateur: React.FC = () => {
     };
   }, [weeklyStats, monthlyStats]);
 
-  const ghostwriterPriceSignal =
-    typeof window !== 'undefined' ? (window as { revenueAnalytics?: { revenueTrend?: number } }).revenueAnalytics?.revenueTrend ?? 0 : 0;
+  const ghostwriterRevenueTrend =
+    typeof window !== 'undefined'
+      ? (window as { revenueAnalytics?: { revenueTrend?: number } }).revenueAnalytics?.revenueTrend
+      : undefined;
+  const ghostwriterPriceSignal = ghostwriterRevenueTrend ?? 0;
 
   const ghostwriterPost = useMemo(() => {
     return generateDailyPost({
