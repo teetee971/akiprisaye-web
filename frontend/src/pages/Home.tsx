@@ -76,7 +76,6 @@ const Home = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button type="submit" className="hidden">rechercher</button>
         </div>
       </form>
 
