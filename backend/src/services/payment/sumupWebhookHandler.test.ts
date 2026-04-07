@@ -12,7 +12,7 @@ jest.mock('@prisma/client', () => ({
   })),
 }));
 
-import { SumUpWebhookHandler } from '../sumupWebhookHandler';
+import { SumUpWebhookHandler } from './sumupWebhookHandler';
 
 describe('SumUpWebhookHandler', () => {
   let handler: SumUpWebhookHandler;

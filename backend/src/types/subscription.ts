@@ -186,7 +186,7 @@ export interface CreateSubscriptionParams {
   userId: string;
   planId: SubscriptionTier;
   paymentMethodId: string | null;  // Null si FREE
-  interval: 'month' | 'year' | 'monthly' | 'yearly';
+  interval: 'monthly' | 'yearly';
   affiliateSource?: string;
 }
 

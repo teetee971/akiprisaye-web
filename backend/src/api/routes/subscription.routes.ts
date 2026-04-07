@@ -50,11 +50,15 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<vo
       });
     }
 
+    // Normalize interval to 'monthly' | 'yearly'
+    const normalizedInterval: 'monthly' | 'yearly' =
+      interval === 'yearly' || interval === 'year' ? 'yearly' : 'monthly';
+
     const subscription = await subscriptionService.createSubscription({
       userId,
       planId: planId as SubscriptionTier,
       paymentMethodId: paymentMethodId || null,
-      interval,
+      interval: normalizedInterval,
       affiliateSource: affiliateSource || undefined,
     });
 
@@ -64,7 +68,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<vo
         planId as SubscriptionTier
       );
       const revenue =
-        interval === 'year' || interval === 'yearly'
+        normalizedInterval === 'yearly'
           ? (plan?.pricing.yearly ?? 0)
           : (plan?.pricing.monthly ?? 0);
 

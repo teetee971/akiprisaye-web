@@ -57,8 +57,7 @@ export class SubscriptionService {
     _paymentMethodId: string | null,
     interval: string
   ): Promise<Subscription> {
-    const billingCycle: 'monthly' | 'yearly' =
-      interval === 'year' || interval === 'yearly' ? 'yearly' : 'monthly';
+    const billingCycle: 'monthly' | 'yearly' = interval === 'yearly' ? 'yearly' : 'monthly';
 
     // Create or retrieve SumUp customer
     const sumupCustomer = await sumupService.createCustomer({
@@ -68,7 +67,6 @@ export class SubscriptionService {
     });
 
     const amount = getPlanPrice(plan.id, billingCycle === 'yearly' ? 'year' : 'month');
-
     // Create recurring SumUp subscription
     const sumupSub = await sumupService.createSubscription({
       customerId: sumupCustomer.customer_id,
