@@ -10,7 +10,7 @@ const Home = () => {
   // Sécurité renforcée pour éviter que l'app ne crashe si le Context est vide
   const context = useApp();
   const products = context?.products || [];
-  const loading = context?.loading ?? true;
+  const loading = context?.loading ?? false;
 
   const promos = [
     { id: 1, title: "OFFRES SUPER U", subtitle: "Grand Ouverture v4.6.20", img: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=400", action: () => navigate('/flyer') },
