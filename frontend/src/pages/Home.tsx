@@ -58,7 +58,13 @@ const Home = () => {
       </div>
 
       {/* RECHERCHE (Format FORM pour le robot) */}
-      <form onSubmit={(e) => { e.preventDefault(); console.log("Search submit"); }} className="px-6 mb-10">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          navigate(`/recherche-produits?q=${encodeURIComponent(search)}`);
+        }}
+        className="px-6 mb-10"
+      >
         <div className="relative">
           <Search className="absolute left-4 top-4 text-slate-500" size={20} />
           <input 
