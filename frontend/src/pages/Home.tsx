@@ -62,7 +62,7 @@ const Home = () => {
             role="textbox"
             aria-label="rechercher un produit"
             placeholder="Rechercher un produit..."
-            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none"
+            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500/50 transition-colors"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
