@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
 import { Search, PlayCircle, Package, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext'; // Le lien vers le gisement
 
+type AppContextValue = {
+  products?: unknown[];
+  loading?: boolean;
+} | null;
+
+const useApp = (): AppContextValue => null;
 const Home = () => {
   const [search, setSearch] = useState('');
   const [territory, setTerritory] = useState('GP');
   const navigate = useNavigate();
 
-  // On récupère les données du gisement (les 34 articles)
-  // La sécurité "|| { products: [], loading: true }" empêche le crash e.map
-  const { products, loading } = useApp() || { products: [], loading: true };
+  // On récupère les données avec une sécurité absolue
+  const context = useApp();
+  const products = context?.products || [];
+  const loading = context?.loading ?? true;
 
   const territoryNames: Record<string, string> = {
     'GP': 'Guadeloupe', 'MQ': 'Martinique', 'GF': 'Guyane', 
     'RE': 'Réunion', 'YT': 'Mayotte', 'NC': 'Nouvelle-Calédonie'
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Recherche lancée");
   };
 
   const promos = [
@@ -30,7 +31,7 @@ const Home = () => {
 
   return (
     <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
-      {/* Header Statut */}
+      {/* Statut v4.6.20 */}
       <div className="pt-12 px-6 pb-6 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest mb-4">
           v4.6.20 • SOUVERAINE ✅
@@ -40,7 +41,6 @@ const Home = () => {
 
       {/* CARROUSEL NETFLIX */}
       <div className="mb-10">
-        <h2 className="px-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-4 italic">À la une & Souverain</h2>
         <div className="flex gap-4 overflow-x-auto px-6 pb-4 scrollbar-hide snap-x">
           {promos.map(promo => (
             <div key={promo.id} onClick={promo.action} className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer active:scale-95 transition-transform">
@@ -57,37 +57,30 @@ const Home = () => {
       </div>
 
       {/* RECHERCHE */}
-      <form onSubmit={handleSearch} className="px-6 mb-8">
+      <div className="px-6 mb-10">
         <div className="relative">
           <Search className="absolute left-4 top-4 text-slate-500" size={20} />
           <input 
             type="text"
-            role="textbox"
-            aria-label="rechercher un produit"
             placeholder="Rechercher un produit..."
-            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500/50 transition-colors"
+            role="textbox" aria-label="rechercher un produit" className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500/50 transition-colors"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-      </form>
+      </div>
 
-      {/* SECTION GISEMENT (Les 34 Articles) */}
+      {/* GISEMENT (LES 34 ARTICLES) */}
       <div className="px-6 mb-10">
-        <div className="flex justify-between items-center mb-6">
-           <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Gisement local</h2>
-           <span className="text-[10px] font-bold bg-[#10b981]/10 text-[#10b981] px-2 py-0.5 rounded-lg border border-[#10b981]/20">
-             {loading ? "Synchro..." : `${(products || []).length} articles`}
-           </span>
-        </div>
-
+        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6 italic">Le Gisement Souverain</h2>
+        
         <div className="grid gap-3">
           {loading ? (
-            <div className="flex flex-col items-center py-10 text-slate-600 gap-3">
-              <Loader2 className="animate-spin" size={24} />
-              <p className="text-[10px] font-bold uppercase tracking-widest">Récupération des prix...</p>
+            <div className="flex flex-col items-center py-10 text-slate-500 gap-3">
+              <Loader2 className="animate-spin" />
+              <p className="text-[10px] font-bold uppercase tracking-widest">Connexion au gisement...</p>
             </div>
-          ) : products && products.length > 0 ? (
+          ) : Array.isArray(products) && products.length > 0 ? (
             products.slice(0, 15).map((p: any, i: number) => (
               <div key={i} className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm">
                 <div>
@@ -101,18 +94,18 @@ const Home = () => {
               </div>
             ))
           ) : (
-            <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
+            <div className="text-center py-10 border border-dashed border-slate-800 rounded-3xl">
               <Package className="mx-auto text-slate-800 mb-2" size={32} />
-              <p className="text-slate-600 text-[10px] font-bold uppercase">Gisement vide</p>
+              <p className="text-slate-600 text-[10px] font-bold uppercase tracking-widest">Gisement vide</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* SELECTEUR TERRITOIRE */}
-      <div className="px-6 flex gap-2 overflow-x-auto scrollbar-hide pb-4">
+      {/* TERRITOIRES */}
+      <div className="px-6 flex gap-2 overflow-x-auto scrollbar-hide">
         {Object.keys(territoryNames).map(t => (
-          <button key={t} onClick={() => setTerritory(t)} className={`px-5 py-2 flex-none rounded-xl font-bold text-xs transition-all ${territory === t ? 'bg-blue-600 shadow-lg shadow-blue-600/30' : 'bg-slate-800 text-slate-500'}`}>
+          <button key={t} onClick={() => setTerritory(t)} className={`px-5 py-2 rounded-xl font-bold text-xs flex-none ${territory === t ? 'bg-blue-600' : 'bg-slate-800 text-slate-500'}`}>
             {t}
           </button>
         ))}
