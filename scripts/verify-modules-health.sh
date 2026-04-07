@@ -21,7 +21,7 @@ for entry in "${checks[@]}"; do
   cmd="${entry#*|}"
   echo
   echo "> $name"
-  if bash -lc "$cmd"; then
+  if bash -c "$cmd"; then
     echo "✅ $name: OK"
   else
     echo "❌ $name: FAIL"
