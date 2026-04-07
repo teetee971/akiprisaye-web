@@ -81,7 +81,7 @@ const Home = () => {
                 <div>
                   <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category || 'ÉPICERIE'}</p>
                   <h4 className="text-sm font-bold text-slate-200">{p.name}</h4>
-                  <p className="text-[10px] text-slate-500">{p.store}</p>
+                  <p className="text-[10px] text-slate-500">{p.store || 'SUPER U'}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-lg font-black text-[#10b981]">{p.price}€</p>
