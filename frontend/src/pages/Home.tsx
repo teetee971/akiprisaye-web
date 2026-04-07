@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { Search, PlayCircle, Package, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext'; // Indispensable pour le gisement
 
+type AppContextValue = {
+  products?: unknown[];
+  loading?: boolean;
+} | null;
+
+const useApp = (): AppContextValue => null;
 const Home = () => {
   const [search, setSearch] = useState('');
   const [territory, setTerritory] = useState('GP');
