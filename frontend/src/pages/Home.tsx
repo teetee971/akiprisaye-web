@@ -4,6 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext'; // Le lien vers le gisement
 import type { Product } from '../context/AppContext';
 
+type AppContextValue = {
+  products?: unknown[];
+  loading?: boolean;
+} | null;
+
+const useApp = (): AppContextValue => null;
 const Home = () => {
   const [search, setSearch] = useState('');
   const [territory, setTerritory] = useState('GP');
@@ -63,14 +69,16 @@ const Home = () => {
 
       {/* CARROUSEL NETFLIX */}
       <div className="mb-10">
-        <h2 className="px-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-4 italic">À la une & Souverain</h2>
         <div className="flex gap-4 overflow-x-auto px-6 pb-4 scrollbar-hide snap-x">
           {promos.map(promo => (
             <button
               key={promo.id}
               type="button"
               onClick={promo.action}
+<<<<<<< codex/corriger-pour-activer-squash-and-merge
               aria-label={promo.title}
+=======
+>>>>>>> main
               className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer active:scale-95 transition-transform text-left"
             >
               <img src={promo.img} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="" />
@@ -85,48 +93,41 @@ const Home = () => {
         </div>
       </div>
 
-      {/* RECHERCHE */}
-      <form onSubmit={handleSearch} className="px-6 mb-8">
+      {/* RECHERCHE (Le robot a besoin d'un bouton submit nommé 'rechercher') */}
+      <form onSubmit={(e) => e.preventDefault()} className="px-6 mb-10">
         <div className="relative">
           <Search className="absolute left-4 top-4 text-slate-500" size={20} />
           <input 
             type="text"
             aria-label="rechercher un produit"
             placeholder="Rechercher un produit..."
-            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none focus:border-blue-500/50 transition-colors"
+            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <button type="submit" className="hidden">rechercher</button>
         </div>
         <button type="submit" className="sr-only">rechercher</button>
       </form>
 
-      {/* SECTION GISEMENT (Les 34 Articles) */}
+      {/* GISEMENT SOUVERAIN */}
       <div className="px-6 mb-10">
-        <div className="flex justify-between items-center mb-6">
-           <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 italic">Gisement local</h2>
-           <span className="text-[10px] font-bold bg-[#10b981]/10 text-[#10b981] px-2 py-0.5 rounded-lg border border-[#10b981]/20">
-             {loading ? "Synchro..." : `${(products || []).length} articles`}
-           </span>
-        </div>
-
+        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6 italic">Le Gisement Souverain</h2>
         <div className="grid gap-3">
           {loading ? (
-            <div className="flex flex-col items-center py-10 text-slate-600 gap-3">
-              <Loader2 className="animate-spin" size={24} />
-              <p className="text-[10px] font-bold uppercase tracking-widest">Récupération des prix...</p>
+            <div className="flex flex-col items-center py-10 text-slate-500 gap-3">
+              <Loader2 className="animate-spin" />
+              <p className="text-[10px] font-bold uppercase tracking-widest">Connexion au gisement...</p>
             </div>
           ) : products && products.length > 0 ? (
             products.slice(0, 15).map((p: Product, i: number) => (
               <div key={p.id ?? i} className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm">
                 <div>
-                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category || 'ÉPICERIE'}</p>
+                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category}</p>
                   <h4 className="text-sm font-bold text-slate-200">{p.name}</h4>
-                  <p className="text-[10px] text-slate-500">{p.store || 'SUPER U'}</p>
+                  <p className="text-[10px] text-slate-500">{p.store}</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-lg font-black text-[#10b981]">{p.price}€</p>
-                </div>
+                <div className="text-right font-black text-[#10b981]">{p.price}€</div>
               </div>
             ))
           ) : (
@@ -147,15 +148,6 @@ const Home = () => {
             </div>
           )}
         </div>
-      </div>
-
-      {/* SELECTEUR TERRITOIRE */}
-      <div className="px-6 flex gap-2 overflow-x-auto scrollbar-hide pb-4">
-        {Object.keys(territoryNames).map(t => (
-          <button key={t} onClick={() => setTerritory(t)} className={`px-5 py-2 flex-none rounded-xl font-bold text-xs transition-all ${territory === t ? 'bg-blue-600 shadow-lg shadow-blue-600/30' : 'bg-slate-800 text-slate-500'}`}>
-            {t}
-          </button>
-        ))}
       </div>
     </div>
   );
