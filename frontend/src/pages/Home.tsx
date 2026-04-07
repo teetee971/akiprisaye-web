@@ -5,7 +5,6 @@ import { useApp } from '../context/AppContext';
 
 const Home = () => {
   const [search, setSearch] = useState('');
-  const [territory, setTerritory] = useState('GP');
   const navigate = useNavigate();
 
   // Sécurité renforcée pour éviter que l'app ne crashe si le Context est vide
