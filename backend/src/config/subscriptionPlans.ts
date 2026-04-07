@@ -6,7 +6,7 @@
  * ✅ Transparent : Prix clairs, pas de frais cachés
  * ✅ Équitable : Ceux qui bénéficient économiquement paient
  * ✅ Flexible : Annulation facile, pas d'engagement
- * ✅ Sécurisé : Paiements Stripe PCI-DSS compliant
+ * ✅ Sécurisé : Paiements SumUp Pro
  */
 
 import { SubscriptionTier, type SubscriptionPlan } from '../types/subscription.js';
@@ -20,8 +20,7 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionTier, SubscriptionPlan> = {
       monthly: 0,
       yearly: 0,
       currency: 'EUR',
-      stripePriceId: '',  // Pas de Stripe
-      stripeProductId: ''
+      sumupPlanKey: 'free'
     },
     features: {
       comparators: true,
@@ -65,10 +64,9 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionTier, SubscriptionPlan> = {
     tagline: 'Fonctionnalités avancées pour optimiser votre budget',
     pricing: {
       monthly: 4.99,
-      yearly: 49.90,  // ~4.16€/mois
+      yearly: 49.90,  // ~4.16€/mois (2 mois offerts)
       currency: 'EUR',
-      stripePriceId: process.env.STRIPE_PRICE_CITIZEN_PREMIUM || '',
-      stripeProductId: process.env.STRIPE_PRODUCT_CITIZEN_PREMIUM || ''
+      sumupPlanKey: 'citizen_premium'
     },
     features: {
       comparators: true,
@@ -113,10 +111,9 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionTier, SubscriptionPlan> = {
     tagline: 'Visibilité et outils pour petites entreprises',
     pricing: {
       monthly: 29,
-      yearly: 290,  // ~24€/mois
+      yearly: 290,  // ~24€/mois (2 mois offerts)
       currency: 'EUR',
-      stripePriceId: process.env.STRIPE_PRICE_SME || '',
-      stripeProductId: process.env.STRIPE_PRODUCT_SME || ''
+      sumupPlanKey: 'sme_freemium'
     },
     features: {
       comparators: true,
@@ -161,13 +158,12 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionTier, SubscriptionPlan> = {
   [SubscriptionTier.BUSINESS_PRO]: {
     id: SubscriptionTier.BUSINESS_PRO,
     name: 'Business Pro',
-    tagline: 'Insights marché et API complète',
+    tagline: 'Webhooks, exports illimités et analytics avancés',
     pricing: {
-      monthly: 299,
-      yearly: 2990,  // ~249€/mois
+      monthly: 79,
+      yearly: 790,  // ~66€/mois (2 mois offerts)
       currency: 'EUR',
-      stripePriceId: process.env.STRIPE_PRICE_BUSINESS || '',
-      stripeProductId: process.env.STRIPE_PRODUCT_BUSINESS || ''
+      sumupPlanKey: 'business_pro'
     },
     features: {
       comparators: true,
@@ -213,20 +209,19 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionTier, SubscriptionPlan> = {
   [SubscriptionTier.INSTITUTIONAL]: {
     id: SubscriptionTier.INSTITUTIONAL,
     name: 'Institutionnel',
-    tagline: 'Solution complète pour collectivités et organismes publics',
+    tagline: 'Support dédié 24/7 et data illimitée – Sur devis',
     pricing: {
-      monthly: 1500,
-      yearly: 15000,  // ~1250€/mois
+      monthly: 0,  // Sur devis
+      yearly: 0,
       currency: 'EUR',
-      stripePriceId: process.env.STRIPE_PRICE_INSTITUTIONAL || '',
-      stripeProductId: process.env.STRIPE_PRODUCT_INSTITUTIONAL || ''
+      sumupPlanKey: 'institutional'
     },
     features: {
       comparators: true,
       contributions: true,
       
       apiAccess: true,
-      apiRateLimit: 500000,
+      apiRateLimit: -1,  // Illimité
       webhooks: true,
       
       alerts: -1,
@@ -264,13 +259,12 @@ export const SUBSCRIPTION_PLANS: Record<SubscriptionTier, SubscriptionPlan> = {
   [SubscriptionTier.RESEARCH]: {
     id: SubscriptionTier.RESEARCH,
     name: 'Recherche',
-    tagline: 'Accès données pour recherche académique',
+    tagline: 'Pour académiques – 100k API calls/mois – Sur devis',
     pricing: {
       monthly: 0,  // Sur devis
       yearly: 0,
       currency: 'EUR',
-      stripePriceId: '',
-      stripeProductId: ''
+      sumupPlanKey: 'research'
     },
     features: {
       comparators: true,
@@ -333,7 +327,6 @@ export function getAllSubscriptionPlans(): SubscriptionPlan[] {
 export function getPlanPrice(planId: SubscriptionTier, interval: 'month' | 'year'): number {
   const plan = SUBSCRIPTION_PLANS[planId];
   if (!plan) return 0;
-  
   return interval === 'year' ? plan.pricing.yearly : plan.pricing.monthly;
 }
 
@@ -346,24 +339,10 @@ export function hasFeature(
 ): boolean {
   const plan = SUBSCRIPTION_PLANS[planId];
   if (!plan) return false;
-  
   const featureValue = plan.features[feature];
-  
-  // Handle boolean features
-  if (typeof featureValue === 'boolean') {
-    return featureValue;
-  }
-  
-  // Handle numeric features (-1 means unlimited, 0 means none, > 0 means available)
-  if (typeof featureValue === 'number') {
-    return featureValue !== 0;
-  }
-  
-  // Handle array features (non-empty means available)
-  if (Array.isArray(featureValue)) {
-    return featureValue.length > 0;
-  }
-  
+  if (typeof featureValue === 'boolean') return featureValue;
+  if (typeof featureValue === 'number') return featureValue !== 0;
+  if (Array.isArray(featureValue)) return featureValue.length > 0;
   return false;
 }
 

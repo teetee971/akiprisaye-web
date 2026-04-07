@@ -6,9 +6,11 @@
  * - FREE: Toujours gratuit pour citoyens contributeurs
  * - CITIZEN_PREMIUM: 4.99€/mois - fonctionnalités avancées
  * - SME_FREEMIUM: 29€/mois - PME locales
- * - BUSINESS_PRO: 299€/mois - Grandes entreprises
- * - INSTITUTIONAL: 1500€/mois - Collectivités
+ * - BUSINESS_PRO: 79€/mois - Grandes entreprises
+ * - INSTITUTIONAL: Sur devis - Collectivités
  * - RESEARCH: Sur devis - Recherche académique
+ *
+ * Intégration paiement: SumUp Pro
  */
 
 export enum SubscriptionTier {
@@ -20,6 +22,65 @@ export enum SubscriptionTier {
   RESEARCH = 'research'
 }
 
+// ---- SumUp-specific types ----
+
+export interface SumUpCustomer {
+  customer_id: string;
+  email: string;
+  personal_details?: {
+    first_name?: string;
+    last_name?: string;
+  };
+}
+
+export interface SumUpCheckout {
+  id: string;
+  checkout_reference: string;
+  amount: number;
+  currency: string;
+  merchant_code: string;
+  description: string;
+  return_url?: string;
+  redirect_url?: string;
+  status: 'PENDING' | 'COMPLETED' | 'FAILED';
+}
+
+export interface SumUpSubscription {
+  id: string;
+  customer_id: string;
+  plan_id: string;
+  status: 'ACTIVE' | 'CANCELED' | 'PENDING';
+  interval: 'monthly' | 'yearly';
+  amount: number;
+  currency: string;
+  next_renewal_date?: string;
+}
+
+export interface SumUpWebhookEvent {
+  id: string;
+  event_type: SumUpWebhookEventType;
+  timestamp: string;
+  payload: Record<string, unknown>;
+}
+
+export type SumUpWebhookEventType =
+  | 'payment.succeeded'
+  | 'payment.failed'
+  | 'subscription.renewed'
+  | 'subscription.canceled';
+
+// ---- Plan mapping ----
+
+/** Maps a SubscriptionTier to a SumUp plan key used for checkout descriptions */
+export const SUMUP_PLAN_KEYS: Record<SubscriptionTier, string> = {
+  [SubscriptionTier.FREE]: 'free',
+  [SubscriptionTier.CITIZEN_PREMIUM]: 'citizen_premium',
+  [SubscriptionTier.SME_FREEMIUM]: 'sme_freemium',
+  [SubscriptionTier.BUSINESS_PRO]: 'business_pro',
+  [SubscriptionTier.INSTITUTIONAL]: 'institutional',
+  [SubscriptionTier.RESEARCH]: 'research',
+};
+
 export interface SubscriptionPlan {
   id: SubscriptionTier;
   name: string;
@@ -29,8 +90,8 @@ export interface SubscriptionPlan {
     monthly: number;      // Prix mensuel en EUR
     yearly: number;       // Prix annuel en EUR (2 mois offerts)
     currency: 'EUR';
-    stripePriceId: string;  // ID Stripe Price
-    stripeProductId: string;  // ID Stripe Product
+    /** SumUp plan identifier key (used in checkout descriptions) */
+    sumupPlanKey: string;
   };
   
   features: {
@@ -100,8 +161,13 @@ export interface Subscription {
   
   trialEnd?: Date;
   
-  stripeSubscriptionId?: string;
-  stripeCustomerId?: string;
+  sumupSubscriptionId?: string;
+  sumupCustomerId?: string;
+  sumupPaymentId?: string;
+  
+  billingCycle?: 'monthly' | 'yearly';
+  nextRenewalDate?: Date;
+  affiliateSource?: string;
   
   createdAt: Date;
   updatedAt: Date;
@@ -120,7 +186,8 @@ export interface CreateSubscriptionParams {
   userId: string;
   planId: SubscriptionTier;
   paymentMethodId: string | null;  // Null si FREE
-  interval: 'month' | 'year';
+  interval: 'month' | 'year' | 'monthly' | 'yearly';
+  affiliateSource?: string;
 }
 
 export interface ChangeSubscriptionParams {
