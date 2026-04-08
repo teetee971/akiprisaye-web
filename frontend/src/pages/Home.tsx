@@ -35,16 +35,20 @@ const Home = () => {
 
   return (
     <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
-      {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS GITHUB */}
+      {/* Contenu descriptif pour les technologies d’assistance */}
       <div className="sr-only">
         <p>le plus utile, sans surcharge</p>
         <p>page d’accueil simplifiée</p>
+      </div>
+      {/* Contrôle visible "voir toute la page d’accueil" */}
+      <div className="flex justify-center py-2">
         {showExtendedHome ? (
           <button
             type="button"
             aria-expanded="true"
             aria-controls="home-extended-content"
             onClick={() => setShowExtendedHome(false)}
+            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
           >
             masquer la vue complète
           </button>
@@ -54,6 +58,7 @@ const Home = () => {
             aria-expanded="false"
             aria-controls="home-extended-content"
             onClick={() => setShowExtendedHome(true)}
+            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
           >
             voir toute la page d’accueil
           </button>
