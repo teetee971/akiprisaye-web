@@ -52,13 +52,10 @@ const normalizeCatalogue = (data: unknown): Product[] => {
       typeof (item as { name?: unknown }).name === 'string',
   );
 
-<<<<<<< codex/corriger-pour-activer-squash-and-merge
-=======
   if (normalized.length === 0) {
     throw new Error('catalogue payload contains no valid product entries');
   }
 
->>>>>>> main
   return normalized;
 };
 
