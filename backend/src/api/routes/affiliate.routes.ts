@@ -56,7 +56,7 @@ router.get('/stats', authMiddleware, async (req: Request, res: Response): Promis
  */
 router.get('/top', async (req: Request, res: Response): Promise<void> => {
   try {
-    const limit = Math.min(Number(req.query['limit']) || 10, 50);
+    const limit = Math.min(parseInt(req.query['limit'] as string, 10) || 10, 50);
     const affiliates = await affiliateService.listTopAffiliates(limit);
 
     // Return only public stats (no userId)

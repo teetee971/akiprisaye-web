@@ -76,12 +76,14 @@ export class ConversionTrackingService {
       )
     );
 
-    const topCount = counts[0] || 1; // landing count (avoid division by zero)
-
     return FUNNEL_STEPS.map((step, i) => {
       const count = counts[i];
-      const previousCount = i === 0 ? topCount : counts[i - 1] || 1;
-      const dropoffRate = i === 0 ? 0 : Math.round((1 - count / previousCount) * 100);
+      const previousCount = i === 0 ? count : (counts[i - 1] ?? 0);
+      // If previous step has no events, drop-off rate is 100% (all dropped before reaching this step)
+      const dropoffRate =
+        i === 0 ? 0
+        : previousCount === 0 ? 100
+        : Math.round((1 - count / previousCount) * 100);
       return { step, count, dropoffRate };
     });
   }

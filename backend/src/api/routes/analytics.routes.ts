@@ -79,7 +79,7 @@ router.get('/conversion-funnel', authMiddleware, async (_req: Request, res: Resp
  */
 router.get('/daily-conversion', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
-    const days = Math.min(Number(req.query['days']) || 30, 365);
+  const days = Math.min(parseInt(req.query['days'] as string, 10) || 30, 365);
     const data = await conversionTrackingService.getDailyConversionRate(days);
     res.json({ success: true, data });
   } catch (error) {

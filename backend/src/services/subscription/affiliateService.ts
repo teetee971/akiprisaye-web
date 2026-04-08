@@ -30,7 +30,14 @@ export interface GenerateLinkResult {
   referralCode: string;
 }
 
-const BASE_URL = process.env.APP_BASE_URL || 'https://akiprisaye-web.pages.dev';
+const BASE_URL = (() => {
+  const url = process.env['APP_BASE_URL'];
+  if (!url) {
+    console.warn('[AffiliateService] APP_BASE_URL is not set; falling back to default URL');
+    return 'https://akiprisaye-web.pages.dev';
+  }
+  return url;
+})();
 
 export class AffiliateService {
   /**

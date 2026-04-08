@@ -141,13 +141,14 @@ export class PromoService {
 
   /**
    * List all currently active promo codes
+   * @deprecated Use listActivePromosSimple instead
    */
   async listActivePromos(): Promise<PromoCode[]> {
     return this.listActivePromosSimple();
   }
 
   /**
-   * List active promos without relying on cross-field comparison (safer query)
+   * List all currently active promo codes (public safe fields only)
    */
   async listActivePromosSimple(): Promise<PromoCode[]> {
     const now = new Date();
