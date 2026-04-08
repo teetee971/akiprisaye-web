@@ -91,9 +91,13 @@ export default function MarketplacePortal() {
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
 
   const copyCode = async () => {
-    await navigator.clipboard.writeText(CODE_EXAMPLES[activeLang]);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(CODE_EXAMPLES[activeLang]);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy code example to clipboard:', error);
+    }
   };
 
   const handleRequestKey = (e: React.FormEvent) => {
