@@ -16,6 +16,12 @@ import { HeroImage } from '@/components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 import { canStartTrial, startTrial } from '@/services/trialService';
 import type { PlanId } from '@/billing/plans';
+import {
+  validatePromoCode,
+  applyPromoDiscount,
+  trackConversion,
+  type PromoCode,
+} from '@/services/subscriptionConversionService';
 
 type Step = 1 | 2 | 3;
 
@@ -40,6 +46,14 @@ export default function Subscribe() {
   const isTrial = searchParams.get('trial') === 'true';
   const trialAvailable = canStartTrial();
 
+  // Promo code
+  const [promoInput, setPromoInput] = useState(searchParams.get('promo') ?? '');
+  const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(() => {
+    const initial = searchParams.get('promo');
+    return initial ? validatePromoCode(initial) : null;
+  });
+  const [promoError, setPromoError] = useState('');
+
   // Step 2 - User info
   const [email, setEmail] = useState('');
   const [territory, setTerritory] = useState('GP');
@@ -60,6 +74,27 @@ export default function Subscribe() {
     : (isDOMTerritory && (planId === 'PRO' || planId === 'BUSINESS') 
       ? (price ?? 0) * 0.7 
       : price);
+
+  // Apply promo discount on top of DOM discount
+  const promoDiscountPct = appliedPromo?.discountPct ?? 0;
+  const promoPrice = domPrice !== null ? applyPromoDiscount(domPrice, promoDiscountPct) : null;
+  const displayPrice = promoPrice ?? domPrice;
+
+  const handleApplyPromo = () => {
+    setPromoError('');
+    const code = promoInput.trim();
+    if (!code) {
+      setPromoError('Saisissez un code promo');
+      return;
+    }
+    const promo = validatePromoCode(code);
+    if (!promo) {
+      setPromoError('Code invalide ou expiré');
+      return;
+    }
+    setAppliedPromo(promo);
+    trackConversion({ type: 'promo_applied', plan: planId, promoCode: promo.code });
+  };
 
   // Activate trial when proceeding to success step
   const activateTrialIfNeeded = () => {
@@ -82,6 +117,7 @@ export default function Subscribe() {
   };
 
   const handleStep1Next = () => {
+    trackConversion({ type: 'subscribe_start', plan: planId });
     setStep(2);
   };
 
@@ -95,6 +131,7 @@ export default function Subscribe() {
   };
 
   const handleConfirmPayment = () => {
+    trackConversion({ type: 'subscribe_complete', plan: planId, promoCode: appliedPromo?.code });
     // Activate 7-day trial if requested
     activateTrialIfNeeded();
     // In production, this would integrate with a payment processor (Stripe, etc.)
@@ -199,12 +236,26 @@ export default function Subscribe() {
                   </p>
                 ) : (
                   <>
-                    <p className="text-4xl font-bold text-blue-400">
-                      {(domPrice ?? 0).toFixed(2)} €
-                      <span className="text-base text-gray-400 ml-2">
-                        / {cycle === 'yearly' ? 'an' : 'mois'}
-                      </span>
-                    </p>
+                    {appliedPromo ? (
+                      <div className="flex items-baseline gap-3">
+                        <p className="text-4xl font-bold text-green-400">
+                          {(displayPrice ?? 0).toFixed(2)} €
+                          <span className="text-base text-gray-400 ml-2">
+                            / {cycle === 'yearly' ? 'an' : 'mois'}
+                          </span>
+                        </p>
+                        <p className="text-xl line-through text-gray-500">
+                          {(domPrice ?? 0).toFixed(2)} €
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-4xl font-bold text-blue-400">
+                        {(domPrice ?? 0).toFixed(2)} €
+                        <span className="text-base text-gray-400 ml-2">
+                          / {cycle === 'yearly' ? 'an' : 'mois'}
+                        </span>
+                      </p>
+                    )}
                     {isDOMTerritory && (planId === 'PRO' || planId === 'BUSINESS') && (
                       <p className="text-green-400 text-sm mt-2">
                         Prix DOM-ROM-COM (-30%)
@@ -264,6 +315,44 @@ export default function Subscribe() {
 
               <DataBadge source="INSEE · OPMR · data.gouv.fr" />
             </GlassCard>
+
+            {/* Promo code input */}
+            {!isCustomPricing && (
+              <div className="mb-6">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoInput}
+                    onChange={(e) => {
+                      setPromoInput(e.target.value.toUpperCase());
+                      setPromoError('');
+                    }}
+                    placeholder="Code promo (ex: WELCOME50)"
+                    className="flex-1 px-4 py-3 bg-white/[0.08] border border-white/[0.22] rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none text-sm"
+                    aria-label="Code promo"
+                  />
+                  <CivicButton
+                    variant="secondary"
+                    onClick={handleApplyPromo}
+                    className="shrink-0"
+                  >
+                    Appliquer
+                  </CivicButton>
+                </div>
+                {promoError && (
+                  <p className="text-red-400 text-sm mt-1">{promoError}</p>
+                )}
+                {appliedPromo && (
+                  <div className="mt-2 flex items-center gap-2 text-green-400 text-sm">
+                    <span>🎉</span>
+                    <span>
+                      <strong>{appliedPromo.label}</strong> appliqué —{' '}
+                      {appliedPromo.discountPct}% de réduction
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="mb-6 text-center">
               <p className="text-gray-300 mb-2">
@@ -431,13 +520,18 @@ export default function Subscribe() {
                 <div className="border-t border-white/[0.22] pt-3 mt-3">
                   <div className="flex justify-between text-lg font-bold">
                     <span className="text-white">Total :</span>
-                    <span className="text-blue-400">
+                    <span className={appliedPromo ? 'text-green-400' : 'text-blue-400'}>
                       {isCustomPricing 
                         ? (currentPlan as any).yearlyRange 
-                        : `${(domPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`
+                        : `${(displayPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`
                       }
                     </span>
                   </div>
+                  {appliedPromo && !isCustomPricing && (
+                    <p className="text-green-400 text-xs mt-1 text-right">
+                      🎉 Code <strong>{appliedPromo.code}</strong> appliqué — {appliedPromo.discountPct}% de réduction
+                    </p>
+                  )}
                 </div>
               </div>
 
