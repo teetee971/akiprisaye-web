@@ -58,9 +58,14 @@ export default function AffiliatePortal() {
   };
 
   const copyUrl = async () => {
-    await navigator.clipboard.writeText(trackedUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(trackedUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      setCopied(false);
+      console.error('Failed to copy tracked URL to clipboard:', error);
+    }
   };
 
   return (
