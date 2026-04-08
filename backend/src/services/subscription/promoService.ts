@@ -132,12 +132,29 @@ export class PromoService {
       return { applied: false, newPrice: PLAN_BASE_PRICES[planKey] ?? 0, discount: 0, message: validation.message };
     }
 
-    // Increment usage count atomically
-    await prisma.promoCode.update({
-      where: { code: code.toUpperCase() },
+    const now = new Date();
+    const normalizedCode = code.toUpperCase();
+
+    // Increment usage count atomically only if the promo is still valid and has remaining uses.
+    const updateResult = await prisma.promoCode.updateMany({
+      where: {
+        code: normalizedCode,
+        validFrom: { lte: now },
+        validUntil: { gte: now },
+        currentUses: { lt: prisma.promoCode.fields.maxUses },
+        applicablePlans: { has: planKey },
+      },
       data: { currentUses: { increment: 1 } },
     });
 
+    if (updateResult.count === 0) {
+      return {
+        applied: false,
+        newPrice: PLAN_BASE_PRICES[planKey] ?? 0,
+        discount: 0,
+        message: 'Code promo invalide, expiré ou limite d’utilisation atteinte',
+      };
+    }
     const basePrice = PLAN_BASE_PRICES[planKey] ?? 0;
     const newPrice = basePrice * (1 - validation.discount / 100);
 
