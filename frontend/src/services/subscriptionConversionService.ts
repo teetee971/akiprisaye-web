@@ -80,7 +80,12 @@ const STORAGE_KEY = 'akip_conversion';
 function loadEvents(): ConversionEvent[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ConversionEvent[]) : [];
+    if (!raw) {
+      return [];
+    }
+
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as ConversionEvent[]) : [];
   } catch {
     return [];
   }
