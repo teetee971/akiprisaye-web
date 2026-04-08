@@ -1,9 +1,17 @@
 #!/usr/bin/env node
 
-const targetUrl = process.argv[2] || process.env.AUDIT_URL;
+const targetUrlRaw = process.argv[2] || process.env.AUDIT_URL;
 
-if (!targetUrl) {
+if (!targetUrlRaw) {
   console.error('Usage: node scripts/audit-deployment-url.mjs <url>');
+  process.exit(1);
+}
+
+let targetUrl;
+try {
+  targetUrl = new URL(targetUrlRaw).toString();
+} catch {
+  console.error(`Error: invalid URL provided: ${targetUrlRaw}`);
   process.exit(1);
 }
 
@@ -16,7 +24,11 @@ const requiredSecurityHeaders = [
 ];
 
 const normalizeUrl = (url) => (url.endsWith('/') ? url.slice(0, -1) : url);
-const requestTimeoutMs = Number(process.env.AUDIT_TIMEOUT_MS || 15000);
+const DEFAULT_TIMEOUT_MS = 15000;
+const parsedTimeout = Number(process.env.AUDIT_TIMEOUT_MS);
+const requestTimeoutMs = Number.isFinite(parsedTimeout) && parsedTimeout > 0
+  ? Math.round(parsedTimeout)
+  : DEFAULT_TIMEOUT_MS;
 
 const fetchSafely = async (url) => {
   try {
@@ -71,11 +83,22 @@ const main = async () => {
   console.log(`- HTTP status: ${status}`);
   if (location) console.log(`- Redirect location: ${location}`);
 
-  if (location?.includes('cloudflareaccess.com')) {
-    console.log('\n## Blocking issue detected');
-    console.log('- The URL is protected by Cloudflare Access, so automated external audits cannot crawl it.');
-    console.log('- Improvement: create a service token for CI and pass Cloudflare Access headers during audit runs.');
-    process.exit(2);
+  if (location) {
+    let isCloudflareAccess = false;
+    try {
+      const locationHostname = new URL(location).hostname;
+      isCloudflareAccess =
+        locationHostname === 'cloudflareaccess.com' ||
+        locationHostname.endsWith('.cloudflareaccess.com');
+    } catch {
+      // unparseable location header – not a Cloudflare Access redirect
+    }
+    if (isCloudflareAccess) {
+      console.log('\n## Blocking issue detected');
+      console.log('- The URL is protected by Cloudflare Access, so automated external audits cannot crawl it.');
+      console.log('- Improvement: create a service token for CI and pass Cloudflare Access headers during audit runs.');
+      process.exit(2);
+    }
   }
 
   console.log('\n## Header checks');
