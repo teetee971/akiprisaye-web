@@ -66,9 +66,6 @@ export class WhiteLabelService {
   }
 
   /**
-   * Generate a unique API key for a new tenant.
-   */
-  /**
    * Generate a unique API key for a new tenant using a cryptographically secure source.
    */
   static generateTenantApiKey(tenantId: string): string {

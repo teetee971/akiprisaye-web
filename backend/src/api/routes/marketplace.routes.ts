@@ -17,10 +17,9 @@ import {
   type ApiTier,
 } from '../../services/monetization/apiMarketplaceService.js';
 import { createLimiter } from '../middlewares/rateLimit.middleware.js';
+import { isValidEmail } from '../../utils/validation.js';
 
 const router = express.Router();
-
-const EMAIL_RE = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 /**
  * POST /api/marketplace/keys
@@ -30,7 +29,7 @@ router.post('/keys', createLimiter, (req: Request, res: Response): void => {
   try {
     const { tier = 'starter', organizationName, email } = req.body;
 
-    if (!email || !EMAIL_RE.test(String(email))) {
+    if (!email || !isValidEmail(email)) {
       res.status(400).json({ success: false, error: 'Email valide requis' });
       return;
     }

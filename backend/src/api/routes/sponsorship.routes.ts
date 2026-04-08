@@ -14,10 +14,9 @@ import {
   type SlotType,
 } from '../../services/monetization/sponsorshipService.js';
 import { createLimiter } from '../middlewares/rateLimit.middleware.js';
+import { isValidEmail } from '../../utils/validation.js';
 
 const router = express.Router();
-
-const EMAIL_RE = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 /**
  * GET /api/sponsorship/slots
@@ -99,7 +98,7 @@ router.post('/campaigns', createLimiter, (req: Request, res: Response): void => 
     return;
   }
 
-  if (!EMAIL_RE.test(String(contactEmail))) {
+  if (!isValidEmail(contactEmail)) {
     res.status(400).json({ success: false, error: 'Format email invalide' });
     return;
   }
