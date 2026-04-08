@@ -9,7 +9,6 @@
  * 4. On failure → redirect to /subscribe/error
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { CivicButton } from '@/components/ui/CivicButton';
 
 interface SumUpPaymentFormProps {
   checkoutId: string;
