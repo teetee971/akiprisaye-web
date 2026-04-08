@@ -20,6 +20,8 @@ import { canStartTrial, startTrial } from '@/services/trialService';
 import SumUpPaymentForm from '@/components/SumUpPaymentForm';
 import { resolveApiBaseUrl } from '@/services/apiBaseUrl';
 import type { PlanId } from '@/billing/plans';
+import { Shield, Lock, FileText, RefreshCw, Share2 } from 'lucide-react';
+import { resolveApiBaseUrl } from '@/services/apiBaseUrl';
 
 type Step = 1 | 2 | 3;
 
@@ -116,6 +118,18 @@ export default function Subscribe() {
   // 7-day trial detection
   const isTrial = searchParams.get('trial') === 'true';
   const trialAvailable = canStartTrial();
+
+  // Promo code state
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [promoCode, setPromoCode] = useState('');
+
+  // Affiliate referral link state
+  const [affiliateLink, setAffiliateLink] = useState<string | null>(null);
+
+  // Countdown
+  const countdownExpiryRef = useRef(getOrCreateExpiry());
+  const { hours, minutes, seconds } = useCountdown(countdownExpiryRef.current);
+  const pad = (n: number) => String(n).padStart(2, '0');
 
   // Step 2 - User info
   const [email, setEmail] = useState('');
@@ -311,7 +325,7 @@ export default function Subscribe() {
         {/* STEP 1: Plan Confirmation */}
         {step === 1 && (
           <div>
-            <h1 className="text-3xl font-bold text-white mb-6 text-center">
+            <h1 className="text-3xl font-bold text-white mb-4 text-center">
               Récapitulatif du plan
             </h1>
 
@@ -351,7 +365,7 @@ export default function Subscribe() {
                 ) : (
                   <>
                     <p className="text-4xl font-bold text-blue-400">
-                      {(domPrice ?? 0).toFixed(2)} €
+                      {(finalPrice ?? 0).toFixed(2)} €
                       <span className="text-base text-gray-400 ml-2">
                         / {cycle === 'yearly' ? 'an' : 'mois'}
                       </span>
@@ -404,7 +418,41 @@ export default function Subscribe() {
               )}
 
               <DataBadge source="INSEE · OPMR · data.gouv.fr" />
+
+              {/* Promo code widget */}
+              {!isCustomPricing && (
+                <div className="mt-4 pt-4 border-t border-white/[0.08]">
+                  <PromoCodeWidget
+                    planKey={planId}
+                    onApply={(discount, code) => {
+                      setPromoDiscount(discount);
+                      setPromoCode(code);
+                    }}
+                    onRemove={() => {
+                      setPromoDiscount(0);
+                      setPromoCode('');
+                    }}
+                  />
+                </div>
+              )}
             </GlassCard>
+
+            {/* Trust badges */}
+            <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-400 mb-6">
+              <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-green-400" /> Paiement 100&nbsp;% sécurisé</span>
+              <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5 text-blue-400" /> RGPD conforme</span>
+              <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5 text-purple-400" /> Factures automatiques</span>
+              <span className="flex items-center gap-1"><RefreshCw className="w-3.5 h-3.5 text-yellow-400" /> Annulation facile</span>
+            </div>
+
+            {/* Affiliate share link */}
+            {affiliateLink && (
+              <div className="mb-6 p-3 bg-white/[0.04] border border-white/10 rounded-lg flex items-center gap-2 text-sm text-gray-400">
+                <Share2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                <span>Partagez et gagnez :</span>
+                <span className="font-mono text-blue-300 text-xs truncate flex-1">{affiliateLink}</span>
+              </div>
+            )}
 
             <div className="mb-6 text-center">
               <p className="text-gray-300 mb-2">
@@ -555,6 +603,12 @@ export default function Subscribe() {
                         : `${(domPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`}
                     </span>
                   </div>
+                  {promoDiscount > 0 && !isCustomPricing && (
+                    <div className="flex justify-between text-sm text-green-400 mt-1">
+                      <span>Code {promoCode} :</span>
+                      <span>-{promoDiscount}%</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
