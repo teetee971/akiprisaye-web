@@ -113,7 +113,7 @@ export class DataLicenseService {
   static anonymizeForAcademic<T extends Record<string, unknown>>(
     records: T[],
     piiFields: string[] = ['userId', 'email', 'phone', 'name']
-  ): Omit<T, string>[] {
+  ): Partial<T>[] {
     return records.map((record) => {
       const cleaned = { ...record };
       piiFields.forEach((field) => {
