@@ -15,7 +15,7 @@ interface TimeLeft {
 }
 
 function getOfferEndDate(): Date {
-  // Offer ends at midnight of the next Monday
+  // Offer ends at the end of next Monday (23:59:59 local time)
   const now = new Date();
   const daysUntilMonday = (8 - now.getDay()) % 7 || 7;
   const end = new Date(now);

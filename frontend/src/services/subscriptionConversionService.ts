@@ -161,7 +161,7 @@ export function trackConversion(event: Omit<ConversionEvent, 'timestamp'>): void
 }
 
 /**
- * Get conversion statistics for the current session.
+ * Get conversion analytics across all stored sessions (persisted in localStorage).
  */
 export function getConversionAnalytics(): {
   totalEvents: number;

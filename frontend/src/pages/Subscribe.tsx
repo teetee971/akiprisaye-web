@@ -78,7 +78,7 @@ export default function Subscribe() {
   const trialAvailable = canStartTrial();
 
   // Promo code
-  const [promoInput, setPromoInput] = useState(searchParams.get('promo') ?? '');
+  const [promoInput, setPromoInput] = useState((searchParams.get('promo') ?? '').toUpperCase());
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(() => {
     const initial = searchParams.get('promo');
     return initial ? validatePromoCode(initial) : null;
@@ -150,11 +150,13 @@ export default function Subscribe() {
     setPromoError('');
     const code = promoInput.trim();
     if (!code) {
+      setAppliedPromo(null);
       setPromoError('Saisissez un code promo');
       return;
     }
     const promo = validatePromoCode(code);
     if (!promo) {
+      setAppliedPromo(null);
       setPromoError('Code invalide ou expiré');
       return;
     }

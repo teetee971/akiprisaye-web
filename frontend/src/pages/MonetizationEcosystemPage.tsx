@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { SEOHead } from '../components/ui/SEOHead';
 import { TrendingUp, DollarSign, Zap, Globe, Star } from 'lucide-react';
 
@@ -453,12 +454,12 @@ export default function MonetizationEcosystemPage() {
                     <p className="text-sm font-extrabold text-emerald-400">{formatEur(stream.monthlyTarget)}</p>
                   </div>
                   {stream.route && (
-                    <a
-                      href={stream.route}
+                    <Link
+                      to={stream.route}
                       className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
                     >
                       Voir →
-                    </a>
+                    </Link>
                   )}
                 </div>
               </div>

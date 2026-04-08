@@ -181,6 +181,8 @@ export default defineConfig({
       // Visitor stats mapping — category aliases and key deduplication
       abs('./src/test/visitorStats.test.ts'),
       abs('./src/test/adminCatalogImport.test.tsx'),
+      // subscriptionConversionService — promo validation, discount math, event tracking, localStorage resilience
+      abs('./src/test/subscriptionConversionService.test.ts'),
     ],
 
     exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**', '**/coverage/**'],
