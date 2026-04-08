@@ -77,10 +77,10 @@ export class ApiMarketplaceService {
   }
 
   /**
-   * Hash an API secret for secure storage (HMAC-SHA256).
+   * Hash an API secret for secure storage using a password KDF (scrypt).
    */
   static hashSecret(secret: string, salt: string): string {
-    return crypto.createHmac('sha256', salt).update(secret).digest('hex');
+    return crypto.scryptSync(secret, salt, 32).toString('hex');
   }
 
   /**
