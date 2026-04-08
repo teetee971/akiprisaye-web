@@ -136,32 +136,34 @@ export default function MarketplacePortal() {
       {/* Pricing Tiers */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {API_TIERS.map((t) => (
-          <div
+          <button
             key={t.tier}
-            className={`rounded-xl border p-6 cursor-pointer transition-all ${
+            type="button"
+            className={`w-full rounded-xl border p-6 text-left cursor-pointer transition-all ${
               t.highlighted
                 ? 'bg-emerald-900/20 border-emerald-500/40'
                 : 'bg-white/5 border-white/10 hover:border-white/20'
             } ${selectedTier === t.tier ? 'ring-2 ring-emerald-500' : ''}`}
             onClick={() => setSelectedTier(t.tier)}
+            aria-pressed={selectedTier === t.tier}
           >
             {t.badge && (
-              <div className="text-xs bg-emerald-500 text-white rounded-full px-2 py-0.5 inline-block mb-2">
+              <span className="inline-block mb-2 rounded-full bg-emerald-500 px-2 py-0.5 text-xs text-white">
                 {t.badge}
-              </div>
+              </span>
             )}
-            <h3 className="text-lg font-bold text-white mb-1">{t.label}</h3>
-            <div className="text-2xl font-bold text-emerald-400 mb-1">{t.price}</div>
-            <div className="text-sm text-gray-400 mb-4">{t.dailyLimit} · {t.costPerRequest}/req</div>
-            <ul className="space-y-2">
+            <span className="mb-1 block text-lg font-bold text-white">{t.label}</span>
+            <span className="mb-1 block text-2xl font-bold text-emerald-400">{t.price}</span>
+            <span className="mb-4 block text-sm text-gray-400">{t.dailyLimit} · {t.costPerRequest}/req</span>
+            <span className="block">
               {t.features.map((f) => (
-                <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
-                  <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  {f}
-                </li>
+                <span key={f} className="flex items-center gap-2 text-sm text-gray-300">
+                  <CheckCircle className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
+                  <span>{f}</span>
+                </span>
               ))}
-            </ul>
-          </div>
+            </span>
+          </button>
         ))}
       </div>
 
