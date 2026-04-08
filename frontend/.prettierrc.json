@@ -8,7 +8,7 @@
   "arrowParens": "always",
   "endOfLine": "lf",
   "bracketSpacing": true,
-  "jsxBracketSameLine": false,
+  "bracketSameLine": false,
   "overrides": [
     {
       "files": "*.json",
