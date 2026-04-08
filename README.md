@@ -710,8 +710,8 @@ reposent sur des **API Web natives** (`window`, `navigator.mediaDevices`, `Image
 **non disponibles en environnement Node.js**.
 
 ### Conséquence en CI
-- Les tests frontend sont **désactivés volontairement** en CI Node.
-- **GitHub Pages** est la **source de vérité actuelle** pour le build statique et la validation runtime.
+- Les tests frontend sont exécutés via Vitest dans la CI (`contract-tests` + `test`).
+- **Cloudflare Pages** est la cible de déploiement prioritaire; GitHub Pages reste un fallback/historique.
 - Aucun code produit n'est exécuté côté serveur Node.
 
 ### Ce qui est validé en production

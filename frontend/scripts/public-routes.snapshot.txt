@@ -251,6 +251,7 @@
 /stores/:id/edit
 /stores/new
 /subscribe
+/subscribe/success
 /suggestions
 /sync
 /tableau-de-bord
