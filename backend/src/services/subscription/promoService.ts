@@ -34,15 +34,25 @@ export interface ApplyPromoResult {
 }
 
 /**
- * Plan base prices (monthly) used to compute promo-adjusted price
+ * Plan base prices (monthly) used to compute promo-adjusted price.
+ * Include both internal/backend plan IDs and frontend-facing aliases so
+ * promo application can safely look up the correct base price regardless
+ * of which vocabulary the caller uses.
  */
 const PLAN_BASE_PRICES: Record<string, number> = {
   FREE: 0,
+
+  // Internal/backend plan IDs
   CITIZEN_PREMIUM: 3.99,
   SME_FREEMIUM: 9.99,
   BUSINESS_PRO: 49,
   INSTITUTIONAL: 0, // custom
   RESEARCH: 0, // custom
+
+  // Frontend-facing plan IDs / aliases
+  PRO: 3.99,
+  BUSINESS: 49,
+  INSTITUTION: 0, // custom
 };
 
 export class PromoService {
