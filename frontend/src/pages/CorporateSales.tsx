@@ -136,12 +136,21 @@ export default function CorporateSales() {
           return (
             <div
               key={pkg.type}
+              role="button"
+              tabIndex={0}
+              aria-pressed={selectedType === pkg.type}
               className={`border rounded-xl p-6 cursor-pointer transition-all ${
                 selectedType === pkg.type
                   ? `${pkg.bgColor} ring-2 ring-current`
                   : 'bg-white/5 border-white/10 hover:border-white/20'
               }`}
               onClick={() => setSelectedType(pkg.type === selectedType ? null : pkg.type)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  event.preventDefault();
+                  setSelectedType(pkg.type === selectedType ? null : pkg.type);
+                }
+              }}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
