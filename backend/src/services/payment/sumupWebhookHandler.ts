@@ -32,8 +32,6 @@ export class SumUpWebhookHandler {
    * Main dispatcher: parse and route webhook event
    */
   async handleWebhook(event: SumUpWebhookEvent): Promise<void> {
-    console.log(`SumUp webhook received: ${event.event_type} (${event.id})`);
-
     switch (event.event_type as SumUpWebhookEventType) {
       case 'payment.succeeded':
         await this.handlePaymentSucceeded(event);
