@@ -76,20 +76,33 @@ router.get('/tiers', (_req: Request, res: Response): void => {
  */
 router.post('/track-usage', (req: Request, res: Response): void => {
   try {
-    const { apiKeyId, endpoint, method = 'GET', statusCode = 200, responseTime = 0 } = req.body;
+    const {
+      apiKeyId,
+      tier,
+      endpoint,
+      method = 'GET',
+      statusCode = 200,
+      responseTime = 0,
+    } = req.body;
 
-    if (!apiKeyId || !endpoint) {
-      res.status(400).json({ success: false, error: 'apiKeyId et endpoint requis' });
+    if (!apiKeyId || !endpoint || !tier) {
+      res.status(400).json({ success: false, error: 'apiKeyId, tier et endpoint requis' });
       return;
     }
 
-    // In production: persist to DB (usageEvent model)
-    const cost = ApiMarketplaceService.computeRequestCost('starter', endpoint);
+    if (!['starter', 'professional', 'enterprise'].includes(tier)) {
+      res.status(400).json({ success: false, error: 'Tier invalide' });
+      return;
+    }
+
+    // In production: resolve tier from apiKeyId via DB before computing cost
+    const cost = ApiMarketplaceService.computeRequestCost(tier as ApiTier, endpoint);
 
     res.status(201).json({
       success: true,
       data: {
         apiKeyId,
+        tier,
         endpoint,
         method,
         statusCode,
