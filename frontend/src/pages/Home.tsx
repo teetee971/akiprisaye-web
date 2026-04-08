@@ -1,37 +1,23 @@
 import React, { useState } from 'react';
-import { Search, PlayCircle, Package, Loader2 } from 'lucide-react';
+import { Search, PlayCircle, Package, Loader2, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext'; // Le lien vers le gisement
+import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
 
-type AppContextValue = {
-  products?: unknown[];
-  loading?: boolean;
-} | null;
-
-const useApp = (): AppContextValue => null;
 const Home = () => {
   const [search, setSearch] = useState('');
-  const [territory, setTerritory] = useState('GP');
   const [showExtendedHome, setShowExtendedHome] = useState(false);
   const navigate = useNavigate();
-  const context = useApp();
-
-  // On récupère les données du gisement (les 34 articles)
-  // La sécurité products = context?.products || [] empêche le crash e.map
-  const products = context?.products || [];
-  const loading = context?.loading ?? true;
-  const loadingError = context?.error ?? null;
-  const reloadProducts = context?.reloadProducts;
-
-  const territoryNames: Record<string, string> = {
-    'GP': 'Guadeloupe', 'MQ': 'Martinique', 'GF': 'Guyane', 
-    'RE': 'Réunion', 'YT': 'Mayotte', 'NC': 'Nouvelle-Calédonie'
-  };
+  const { products, loading, error, reloadProducts } = useApp();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/recherche-produits?q=${encodeURIComponent(search)}`);
+    const normalizedQuery = search.trim();
+    if (!normalizedQuery) {
+      navigate('/recherche-produits');
+      return;
+    }
+    navigate(`/recherche-produits?q=${encodeURIComponent(normalizedQuery)}`);
   };
 
   const promos = [
@@ -42,21 +28,40 @@ const Home = () => {
 
   return (
     <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
-      {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS GITHUB */}
-      <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
+      {/* Contenu descriptif pour les technologies d’assistance */}
+      <div className="sr-only">
         <p>le plus utile, sans surcharge</p>
         <p>page d’accueil simplifiée</p>
+      </div>
+      {/* Contrôle visible "voir toute la page d’accueil" */}
+      <div className="flex justify-center py-2">
         {showExtendedHome ? (
-          <button type="button" onClick={() => setShowExtendedHome(false)}>masquer la vue complète</button>
+          <button
+            type="button"
+            aria-expanded="true"
+            aria-controls="home-extended-content"
+            onClick={() => setShowExtendedHome(false)}
+            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
+          >
+            masquer la vue complète
+          </button>
         ) : (
-          <button type="button" onClick={() => setShowExtendedHome(true)}>voir toute la page d’accueil</button>
+          <button
+            type="button"
+            aria-expanded="false"
+            aria-controls="home-extended-content"
+            onClick={() => setShowExtendedHome(true)}
+            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
+          >
+            voir toute la page d’accueil
+          </button>
         )}
       </div>
       {showExtendedHome && (
-        <>
+        <div id="home-extended-content">
           <section>ce que disent nos utilisateurs</section>
           <section>mock observatory section</section>
-        </>
+        </div>
       )}
 
       {/* Header Statut */}
@@ -102,9 +107,8 @@ const Home = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button type="submit" className="hidden">rechercher</button>
+          <button type="submit" className="sr-only">rechercher</button>
         </div>
-        <button type="submit" className="sr-only">rechercher</button>
       </form>
 
       {/* GISEMENT SOUVERAIN */}
@@ -120,9 +124,9 @@ const Home = () => {
             products.slice(0, 15).map((p: Product, i: number) => (
               <div key={p.id ?? i} className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm">
                 <div>
-                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category}</p>
+                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category ?? 'ÉPICERIE'}</p>
                   <h4 className="text-sm font-bold text-slate-200">{p.name}</h4>
-                  <p className="text-[10px] text-slate-500">{p.store}</p>
+                  <p className="text-[10px] text-slate-500">{p.store ?? 'SUPER U'}</p>
                 </div>
                 <div className="text-right font-black text-[#10b981]">{p.price}€</div>
               </div>
@@ -131,15 +135,15 @@ const Home = () => {
             <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
               <Package className="mx-auto text-slate-800 mb-2" size={32} />
               <p className="text-slate-600 text-[10px] font-bold uppercase">
-                {loadingError ? 'Catalogue indisponible' : 'Gisement vide'}
+                {error ? 'Catalogue indisponible' : 'Gisement vide'}
               </p>
-              {loadingError && reloadProducts && (
+              {error && (
                 <button
                   type="button"
                   onClick={() => void reloadProducts()}
-                  className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-400"
+                  className="mt-3 text-[10px] font-bold uppercase tracking-wider text-blue-400 flex items-center gap-2 mx-auto"
                 >
-                  Réessayer
+                  <RefreshCw size={12} /> Réessayer
                 </button>
               )}
             </div>
