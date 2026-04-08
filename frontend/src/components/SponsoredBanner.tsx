@@ -33,12 +33,12 @@ export function SponsoredBanner({
   slotId = 'unknown',
   onClickTracked,
 }: SponsoredBannerProps) {
-  const impressionSent = useRef(false);
+  const lastTrackedSlotId = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!impressionSent.current) {
+    if (lastTrackedSlotId.current !== slotId) {
       // Track impression (in production: POST /api/sponsorship/track/impression)
-      impressionSent.current = true;
+      lastTrackedSlotId.current = slotId;
     }
   }, [slotId]);
 
