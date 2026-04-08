@@ -138,11 +138,14 @@ const REVENUE_STREAMS: RevenueStream[] = [
 export class MonetizationService {
   static getSummary(): MonetizationSummary {
     const totalDailyRevenue = REVENUE_STREAMS.reduce((sum, s) => sum + s.dailyRevenue, 0);
+    const totalMonthlyRevenue = REVENUE_STREAMS.reduce((sum, s) => sum + s.monthlyRevenue, 0);
+    const totalYearlyRevenue = REVENUE_STREAMS.reduce((sum, s) => sum + s.yearlyRevenue, 0);
+
     return {
       streams: REVENUE_STREAMS,
       totalDailyRevenue,
-      totalMonthlyRevenue: totalDailyRevenue * 30,
-      totalYearlyRevenue: totalDailyRevenue * 365,
+      totalMonthlyRevenue,
+      totalYearlyRevenue,
       generatedAt: new Date().toISOString(),
     };
   }
