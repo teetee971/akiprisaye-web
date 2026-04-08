@@ -195,9 +195,13 @@ router.post(
   express.raw({ type: 'application/json' }),
   async (req: Request, res: Response): Promise<void> => {
     const signature = req.headers['x-webhook-signature'] as string | undefined;
+    const webhookSecretConfigured = Boolean(process.env.SUMUP_WEBHOOK_SECRET);
 
-    // If a webhook secret is configured, verify the signature
-    if (process.env.SUMUP_WEBHOOK_SECRET && signature) {
+    // If a webhook secret is configured, require and verify the signature
+    if (webhookSecretConfigured) {
+      if (!signature) {
+        return void res.status(400).send('Missing webhook signature');
+      }
       const valid = sumupWebhookHandler.verifySignature(req.body as Buffer, signature);
       if (!valid) {
         return void res.status(400).send('Invalid webhook signature');
