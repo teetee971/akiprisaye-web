@@ -80,9 +80,11 @@
 /contact-collectivites
 /contribuer
 /contribuer-prix
+/corporate
 /couverture-territoires
 /cro-dashboard
 /dashboard
+/data-marketplace
 /detection-fraude
 /devenir-partenaire
 /devis
@@ -140,6 +142,7 @@
 /Login
 /marches-locaux
 /marketplace
+/marketplace-portal
 /marketplace/dashboard
 /marketplace/inscription
 /marque/:slug
@@ -158,6 +161,7 @@
 /mon-compte
 /mon-espace
 /moncompte
+/monetisation
 /monitoring-ia
 /news
 /newsletter
@@ -168,6 +172,7 @@
 /ocr
 /ocr/history
 /offres
+/offres-proximite
 /organigrame-gbh
 /ou-faire-courses-dom
 /outreach
@@ -178,6 +183,7 @@
 /petits-commerces
 /planificateur-repas
 /populaires
+/portail-affilies
 /portail-developpeurs
 /predictions
 /presse
@@ -198,6 +204,7 @@
 /promos
 /promotions
 /rapport-citoyen
+/rapports-premium
 /recherche-avancee
 /recherche-hub
 /recherche-prix
@@ -220,6 +227,7 @@
 /ressources/questions-logistique-dom
 /revenue-dashboard
 /roadmap
+/saas-marketplace
 /scan
 /scan-ean
 /scan-eeg

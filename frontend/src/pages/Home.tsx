@@ -6,19 +6,18 @@ import type { Product } from '../context/AppContext';
 
 const Home = () => {
   const [search, setSearch] = useState('');
-  const [territory, setTerritory] = useState('GP');
   const [showExtendedHome, setShowExtendedHome] = useState(false);
   const navigate = useNavigate();
   const { products, loading, error, reloadProducts } = useApp();
 
-  const territoryNames: Record<string, string> = {
-    'GP': 'Guadeloupe', 'MQ': 'Martinique', 'GF': 'Guyane', 
-    'RE': 'Réunion', 'YT': 'Mayotte', 'NC': 'Nouvelle-Calédonie'
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/recherche-produits?q=${encodeURIComponent(search)}`);
+    const normalizedQuery = search.trim();
+    if (!normalizedQuery) {
+      navigate('/recherche-produits');
+      return;
+    }
+    navigate(`/recherche-produits?q=${encodeURIComponent(normalizedQuery)}`);
   };
 
   const promos = [
@@ -33,17 +32,36 @@ const Home = () => {
       <div style={{ position: "absolute", opacity: 0 }}>
         <p>le plus utile, sans surcharge</p>
         <p>page d’accueil simplifiée</p>
+      </div>
+      {/* Contrôle visible "voir toute la page d’accueil" */}
+      <div className="flex justify-center py-2">
         {showExtendedHome ? (
-          <button type="button" onClick={() => setShowExtendedHome(false)}>masquer la vue complète</button>
+          <button
+            type="button"
+            aria-expanded="true"
+            aria-controls="home-extended-content"
+            onClick={() => setShowExtendedHome(false)}
+            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
+          >
+            masquer la vue complète
+          </button>
         ) : (
-          <button type="button" onClick={() => setShowExtendedHome(true)}>voir toute la page d’accueil</button>
+          <button
+            type="button"
+            aria-expanded="false"
+            aria-controls="home-extended-content"
+            onClick={() => setShowExtendedHome(true)}
+            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
+          >
+            voir toute la page d’accueil
+          </button>
         )}
       </div>
       {showExtendedHome && (
-        <>
+        <div id="home-extended-content">
           <section>ce que disent nos utilisateurs</section>
           <section>mock observatory section</section>
-        </>
+        </div>
       )}
 
       {/* Header Statut */}

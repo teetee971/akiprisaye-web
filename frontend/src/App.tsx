@@ -273,6 +273,15 @@ const AutoSeoDashboardPage = lazy(() => import('./pages/AutoSeoDashboardPage'));
 const SEOCompetitorComparisonPage = lazy(() => import('./pages/SEOCompetitorComparisonPage'));
 const TopEconomiesPage = lazy(() => import('./pages/TopEconomiesPage'));
 const TendancesPage = lazy(() => import('./pages/TendancesPage'));
+// Monetization Engine pages
+const MonetizationDashboard = lazy(() => import('./pages/MonetizationDashboard'));
+const MarketplacePortal = lazy(() => import('./pages/MarketplacePortal'));
+const AffiliatePortal = lazy(() => import('./pages/AffiliatePortal'));
+const DataMarketplace = lazy(() => import('./pages/DataMarketplace'));
+const CorporateSales = lazy(() => import('./pages/CorporateSales'));
+const PremiumReports = lazy(() => import('./pages/PremiumReports'));
+const NearbyDeals = lazy(() => import('./pages/NearbyDeals'));
+const SaaSMarketplace = lazy(() => import('./pages/SaaSMarketplace'));
 const PopulairesPage = lazy(() => import('./pages/PopulairesPage'));
 const UserDashboardPage = lazy(() => import('./pages/UserDashboardPage'));
 const ExecutiveDashboardPage = lazy(() => import('./pages/ExecutiveDashboardPage'));
@@ -611,6 +620,15 @@ export default function App() {
                               <Route path="authority-dashboard" element={<RequireAdmin><AuthorityDashboardPage /></RequireAdmin>} />
                               <Route path="global-dashboard" element={<RequireAdmin><GlobalDashboardPage /></RequireAdmin>} />
                               <Route path="auto-seo-dashboard" element={<RequireAdmin><AutoSeoDashboardPage /></RequireAdmin>} />
+                              {/* Monetization Engine routes */}
+                              <Route path="monetisation" element={<RequireAdmin><MonetizationDashboard /></RequireAdmin>} />
+                              <Route path="marketplace-portal" element={<MarketplacePortal />} />
+                              <Route path="portail-affilies" element={<AffiliatePortal />} />
+                              <Route path="data-marketplace" element={<DataMarketplace />} />
+                              <Route path="corporate" element={<CorporateSales />} />
+                              <Route path="rapports-premium" element={<PremiumReports />} />
+                              <Route path="offres-proximite" element={<NearbyDeals />} />
+                              <Route path="saas-marketplace" element={<SaaSMarketplace />} />
                               <Route path="vs/:slug" element={<SEOCompetitorComparisonPage />} />
                               <Route path="top-economies" element={<TopEconomiesPage />} />
                               <Route path="tendances" element={<TendancesPage />} />
