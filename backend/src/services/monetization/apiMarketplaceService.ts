@@ -84,13 +84,23 @@ export class ApiMarketplaceService {
   }
 
   /**
+   * Normalize endpoint paths so premium route matching is consistent
+   * whether callers pass `/v1/...` or `/api/v1/...`.
+   */
+  private static normalizeEndpointPath(endpoint: string): string {
+    const normalized = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    return normalized.startsWith('/api/') ? normalized.slice(4) : normalized;
+  }
+
+  /**
    * Calculate the cost of a single API request.
    */
   static computeRequestCost(tier: ApiTier, endpoint: string): number {
     const config = API_TIER_CONFIGS[tier];
+    const normalizedEndpoint = this.normalizeEndpointPath(endpoint);
     // Premium endpoints (predictions, reports) cost 3×
-    const premiumEndpoints = ['/api/v1/prices/predict', '/api/v1/reports'];
-    const isPremium = premiumEndpoints.some((ep) => endpoint.startsWith(ep));
+    const premiumEndpoints = ['/v1/prices/predict', '/v1/reports'];
+    const isPremium = premiumEndpoints.some((ep) => normalizedEndpoint.startsWith(ep));
     return isPremium ? config.costPerRequest * 3 : config.costPerRequest;
   }
 
