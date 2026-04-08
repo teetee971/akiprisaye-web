@@ -2,14 +2,13 @@
  * Marketplace API Routes
  *
  * Endpoints pour le marketplace API : génération de clés, tracking d'usage,
- * rate limiting et informations sur les tiers.
+ * rate limiting, informations sur les tiers et instructions SDK.
  *
  * Routes :
- *   POST /api/marketplace/keys          — Génère une nouvelle clé API
- *   GET  /api/marketplace/keys/:keyId   — Infos sur une clé
- *   POST /api/marketplace/track-usage   — Enregistre un événement d'usage
- *   GET  /api/marketplace/tiers         — Liste des tiers disponibles
- *   GET  /api/marketplace/usage/:keyId  — Usage du mois en cours
+ *   POST /api/marketplace/keys         — Génère une nouvelle clé API
+ *   POST /api/marketplace/track-usage  — Enregistre un événement d'usage
+ *   GET  /api/marketplace/tiers        — Liste des tiers disponibles
+ *   GET  /api/marketplace/sdk          — Instructions d'installation du SDK
  */
 
 import express, { Request, Response } from 'express';
