@@ -27,6 +27,10 @@ export default defineConfig({
     compression({
       algorithm: 'gzip',
     }),
+    compression({
+      algorithm: 'brotliCompress',
+      ext: '.br',
+    }),
     // ── Google Search Console ownership verification ──────────────────────────
     // Injects <meta name="google-site-verification"> when the env var is set.
     // Set VITE_GOOGLE_SITE_VERIFICATION as a repo secret and pass it in the
@@ -96,8 +100,9 @@ export default defineConfig({
     ),
   },
   build: {
-    // Publish source maps for production diagnostics (PageSpeed/Lighthouse + Sentry)
-    sourcemap: true,
+    // Source maps: enabled in staging/preview, disabled in production for security
+    // (avoids exposing source code in browser dev tools on production)
+    sourcemap: process.env.CF_PAGES === '1' ? false : (process.env.CF_PAGES_BRANCH ? 'hidden' : false),
     // Warn only for truly huge chunks (> 1 MB)
     chunkSizeWarningLimit: 1000,
     // Split CSS per chunk so only needed styles are loaded
