@@ -36,19 +36,19 @@ function getOrCreateExpiry(): Date {
 }
 
 function useCountdown(expiry: Date) {
-  const calc = () => {
+  const calc = useCallback(() => {
     const diff = Math.max(0, expiry.getTime() - Date.now());
     return {
       hours: Math.floor(diff / 3600000),
       minutes: Math.floor((diff % 3600000) / 60000),
       seconds: Math.floor((diff % 60000) / 1000),
     };
-  };
+  }, [expiry]);
   const [t, setT] = useState(calc);
   useEffect(() => {
     const id = setInterval(() => setT(calc()), 1000);
     return () => clearInterval(id);
-  });
+  }, [calc]);
   return t;
 }
 
