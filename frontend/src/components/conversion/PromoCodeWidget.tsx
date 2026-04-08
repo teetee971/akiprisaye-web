@@ -43,12 +43,35 @@ export default function PromoCodeWidget({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: code.trim(), planKey }),
       });
-      const data = (await resp.json()) as PromoResult & { success?: boolean };
-      setResult(data);
+      const data = (await resp.json()) as Partial<PromoResult> & {
+        success?: boolean;
+        error?: string;
+        message?: string;
+      };
 
-      if (data.valid && data.discount > 0) {
+      const normalizedResult: PromoResult =
+        resp.ok && data.success !== false && data.valid === true && typeof data.discount === 'number'
+          ? {
+              valid: true,
+              discount: data.discount,
+              message: data.message,
+              expiresAt: data.expiresAt,
+              usesRemaining: data.usesRemaining,
+            }
+          : {
+              valid: false,
+              discount: 0,
+              message:
+                data.message ||
+                data.error ||
+                'Impossible de valider le code. Réessayez.',
+            };
+
+      setResult(normalizedResult);
+
+      if (normalizedResult.valid && normalizedResult.discount > 0) {
         setApplied(true);
-        onApply?.(data.discount, code.trim().toUpperCase());
+        onApply?.(normalizedResult.discount, code.trim().toUpperCase());
       }
     } catch {
       setResult({ valid: false, discount: 0, message: 'Impossible de valider le code. Réessayez.' });
