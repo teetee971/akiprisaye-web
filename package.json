@@ -7,6 +7,9 @@
     "node": ">=20.19.0"
   },
   "scripts": {
+    "clean-build-for-repo": "npm ci --include=dev && cd frontend && rm -rf dist node_modules/.vite && npm ci --include=dev && npm run build",
+    "audit:head": "node scripts/audit-deployment-url.mjs https://head.akiprisaye-web.pages.dev/",
+    "verify:modules": "bash scripts/verify-modules-health.sh",
     "build": "cd frontend && npm ci --include=dev && npm run build",
     "dev": "cd frontend && npm run dev",
     "preview": "cd frontend && npm run preview",
