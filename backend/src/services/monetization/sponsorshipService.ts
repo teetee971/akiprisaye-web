@@ -119,10 +119,13 @@ export class SponsorshipService {
    * Compute ROI for a sponsor campaign.
    */
   static computeROI(campaign: SponsorCampaign, revenuePerConversion: number): number {
-    const totalSpend =
-      SLOT_CONFIGS[campaign.slotType].pricing.model === 'per_click'
-        ? campaign.clicks * SLOT_CONFIGS[campaign.slotType].pricing.amount
-        : campaign.dailyBudget * ((campaign.endDate.getTime() - campaign.startDate.getTime()) / 86400000);
+    const durationDays =
+      (campaign.endDate.getTime() - campaign.startDate.getTime()) / 86400000;
+    const totalSpend = this.estimateCampaignCost(
+      campaign.slotType,
+      durationDays,
+      campaign.clicks
+    );
 
     const revenue = campaign.conversions * revenuePerConversion;
     if (totalSpend === 0) return 0;
