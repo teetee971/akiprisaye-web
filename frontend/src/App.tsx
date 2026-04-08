@@ -267,6 +267,7 @@ const OutreachDashboardPage = lazy(() => import('./pages/OutreachDashboardPage')
 const CRODashboardPage = lazy(() => import('./pages/CRODashboardPage'));
 const SeoLoopDashboardPage = lazy(() => import('./pages/SeoLoopDashboardPage'));
 const RevenueDashboardPage = lazy(() => import('./pages/RevenueDashboardPage'));
+const MonetizationEcosystemPage = lazy(() => import('./pages/MonetizationEcosystemPage'));
 const ExpansionDashboardPage = lazy(() => import('./pages/ExpansionDashboardPage'));
 const AuthorityDashboardPage = lazy(() => import('./pages/AuthorityDashboardPage'));
 const GlobalDashboardPage = lazy(() => import('./pages/GlobalDashboardPage'));
@@ -618,6 +619,7 @@ export default function App() {
                               <Route path="cro-dashboard" element={<RequireAdmin><CRODashboardPage /></RequireAdmin>} />
                               <Route path="seo-loop-dashboard" element={<RequireAdmin><SeoLoopDashboardPage /></RequireAdmin>} />
                               <Route path="revenue-dashboard" element={<RequireAdmin><RevenueDashboardPage /></RequireAdmin>} />
+                              <Route path="monetisation" element={<RequireAdmin><MonetizationEcosystemPage /></RequireAdmin>} />
                               <Route path="expansion-dashboard" element={<RequireAdmin><ExpansionDashboardPage /></RequireAdmin>} />
                               <Route path="authority-dashboard" element={<RequireAdmin><AuthorityDashboardPage /></RequireAdmin>} />
                               <Route path="global-dashboard" element={<RequireAdmin><GlobalDashboardPage /></RequireAdmin>} />
