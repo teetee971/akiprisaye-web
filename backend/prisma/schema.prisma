@@ -1117,7 +1117,7 @@ model apiUsage {
 model marketplaceApiKey {
   id            String    @id @default(cuid())
   clientId      String    @unique
-  secret        String    @unique
+  secretHash    String    @unique
   tier          String    // "starter" | "professional" | "enterprise"
   rateLimit     Int       // requests/day
   monthlyBudget Float?
