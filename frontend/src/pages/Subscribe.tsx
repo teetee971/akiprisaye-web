@@ -131,8 +131,16 @@ export default function Subscribe() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const currentPlan = plans[planId as keyof typeof plans];
+  const currentPlanPricingMeta = currentPlan as
+    | (typeof currentPlan & {
+        isQuoteOnly?: boolean;
+        yearlyRange?: string | null;
+      })
+    | undefined;
 
-  const isCustomPricing = !currentPlan?.monthly && !currentPlan?.yearly;
+  const isCustomPricing = Boolean(
+    currentPlanPricingMeta?.isQuoteOnly || currentPlanPricingMeta?.yearlyRange
+  );
   const price = isCustomPricing
     ? null
     : cycle === 'yearly'
