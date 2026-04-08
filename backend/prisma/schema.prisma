@@ -1108,3 +1108,160 @@ model apiUsage {
   @@index([apiKeyId])
   @@index([timestamp])
 }
+
+/// ===============================
+/// MONETIZATION ENGINE MODELS
+/// ===============================
+
+/// API Marketplace — extended metered API keys
+model marketplaceApiKey {
+  id            String    @id @default(cuid())
+  clientId      String    @unique
+  secretHash    String    @unique
+  tier          String    // "starter" | "professional" | "enterprise"
+  rateLimit     Int       // requests/day
+  monthlyBudget Float?
+  isActive      Boolean   @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  usageEvents   usageEvent[]
+
+  @@index([clientId])
+  @@index([isActive])
+}
+
+/// Metered API usage events for billing
+model usageEvent {
+  id           String             @id @default(cuid())
+  apiKeyId     String
+  endpoint     String
+  method       String
+  statusCode   Int
+  responseTime Int                // milliseconds
+  cost         Float              @default(0.05)
+  timestamp    DateTime           @default(now())
+
+  apiKey       marketplaceApiKey  @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([apiKeyId])
+  @@index([timestamp])
+}
+
+/// Affiliate commissions tracking
+model affiliateCommission {
+  id            String    @id @default(cuid())
+  affiliateId   String
+  referralCode  String
+  planKey       String
+  commission    Float
+  status        String    @default("pending") // "pending" | "earned" | "paid"
+  paidAt        DateTime?
+  createdAt     DateTime  @default(now())
+
+  @@index([affiliateId])
+  @@index([status])
+}
+
+/// Sponsored content slots
+model sponsorshipSlot {
+  id          String    @id @default(cuid())
+  type        String    // "hero" | "search" | "newsletter" | "sidebar"
+  sponsor     String
+  startDate   DateTime
+  endDate     DateTime
+  dailyBudget Float
+  impressions Int       @default(0)
+  clicks      Int       @default(0)
+  conversions Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([sponsor])
+  @@index([startDate])
+  @@index([isActive])
+}
+
+/// White-label tenants
+model tenant {
+  id           String    @id @default(cuid())
+  name         String
+  domain       String    @unique
+  logo         String?
+  colors       Json?     // { primary: string, secondary: string }
+  apiKey       String    @unique
+  monthlyFee   Float
+  revenueShare Float     @default(0.01)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([domain])
+  @@index([isActive])
+}
+
+/// Corporate B2B accounts
+model corporateAccount {
+  id           String    @id @default(cuid())
+  organization String
+  type         String    // "social_center" | "school" | "collectivity" | "ngo"
+  contact      String
+  email        String    @unique
+  monthlyFee   Float
+  serviceLevel String    @default("basic") // "basic" | "premium" | "enterprise"
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([type])
+  @@index([isActive])
+}
+
+/// Premium on-demand reports
+model premiumReport {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String    // "budget" | "prediction" | "territory" | "tax"
+  period    DateTime
+  fileUrl   String?
+  cost      Float
+  status    String    @default("pending") // "pending" | "ready" | "delivered"
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([status])
+}
+
+/// Geolocation deal alerts
+model geolocationAlert {
+  id        String    @id @default(cuid())
+  userId    String
+  latitude  Float
+  longitude Float
+  radius    Int       @default(500) // meters
+  enabled   Boolean   @default(true)
+  frequency String    @default("1/day") // "1/day" | "3/week" | "realtime"
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([enabled])
+}
+
+/// Dynamic pricing rules
+model pricingRule {
+  id          String    @id @default(cuid())
+  name        String
+  type        String    // "volume" | "seasonal" | "geographic" | "time"
+  conditions  Json
+  modifier    Float     // multiplier e.g. 1.2 for +20%
+  isActive    Boolean   @default(true)
+  priority    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([type])
+  @@index([isActive])
+}

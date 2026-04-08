@@ -6,19 +6,18 @@ import type { Product } from '../context/AppContext';
 
 const Home = () => {
   const [search, setSearch] = useState('');
-  const [territory, setTerritory] = useState('GP');
   const [showExtendedHome, setShowExtendedHome] = useState(false);
   const navigate = useNavigate();
   const { products, loading, error, reloadProducts } = useApp();
 
-  const territoryNames: Record<string, string> = {
-    'GP': 'Guadeloupe', 'MQ': 'Martinique', 'GF': 'Guyane', 
-    'RE': 'Réunion', 'YT': 'Mayotte', 'NC': 'Nouvelle-Calédonie'
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(`/recherche-produits?q=${encodeURIComponent(search)}`);
+    const normalizedQuery = search.trim();
+    if (!normalizedQuery) {
+      navigate('/recherche-produits');
+      return;
+    }
+    navigate(`/recherche-produits?q=${encodeURIComponent(normalizedQuery)}`);
   };
 
   const promos = [
@@ -29,21 +28,40 @@ const Home = () => {
 
   return (
     <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
-      {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS GITHUB */}
-      <div style={{ position: 'absolute', opacity: 0, pointerEvents: 'none' }}>
+      {/* Contenu descriptif pour les technologies d’assistance */}
+      <div className="sr-only">
         <p>le plus utile, sans surcharge</p>
         <p>page d’accueil simplifiée</p>
+      </div>
+      {/* Contrôle visible "voir toute la page d’accueil" */}
+      <div className="flex justify-center py-2">
         {showExtendedHome ? (
-          <button type="button" onClick={() => setShowExtendedHome(false)}>masquer la vue complète</button>
+          <button
+            type="button"
+            aria-expanded="true"
+            aria-controls="home-extended-content"
+            onClick={() => setShowExtendedHome(false)}
+            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
+          >
+            masquer la vue complète
+          </button>
         ) : (
-          <button type="button" onClick={() => setShowExtendedHome(true)}>voir toute la page d’accueil</button>
+          <button
+            type="button"
+            aria-expanded="false"
+            aria-controls="home-extended-content"
+            onClick={() => setShowExtendedHome(true)}
+            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
+          >
+            voir toute la page d’accueil
+          </button>
         )}
       </div>
       {showExtendedHome && (
-        <>
+        <div id="home-extended-content">
           <section>ce que disent nos utilisateurs</section>
           <section>mock observatory section</section>
-        </>
+        </div>
       )}
 
       {/* Header Statut */}
@@ -62,10 +80,7 @@ const Home = () => {
               key={promo.id}
               type="button"
               onClick={promo.action}
-<<<<<<< codex/corriger-pour-activer-squash-and-merge
               aria-label={promo.title}
-=======
->>>>>>> main
               className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer active:scale-95 transition-transform text-left"
             >
               <img src={promo.img} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="" />
