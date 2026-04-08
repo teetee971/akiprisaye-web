@@ -1108,3 +1108,56 @@ model apiUsage {
   @@index([apiKeyId])
   @@index([timestamp])
 }
+
+
+/// ===============================
+/// CONVERSION TUNNEL MODELS
+/// ===============================
+
+model PromoCode {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  discount        Float    // percentage (e.g., 20 for 20%)
+  validFrom       DateTime
+  validUntil      DateTime
+  maxUses         Int
+  currentUses     Int      @default(0)
+  applicablePlans String[]
+  createdBy       String
+  createdAt       DateTime @default(now())
+
+  @@index([code])
+  @@index([validUntil])
+}
+
+model AffiliateLink {
+  id           String   @id @default(cuid())
+  userId       String
+  referralCode String   @unique
+  platform     String   // "sms", "email", "twitter", "whatsapp"
+  conversions  Int      @default(0)
+  revenue      Float    @default(0)
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([userId])
+  @@index([referralCode])
+}
+
+model ConversionEvent {
+  id            String   @id @default(cuid())
+  userId        String?
+  step          String   // "landing", "pricing", "form_start", "form_submit", "success"
+  source        String   // "organic", "affiliate", "direct", "promo"
+  planKey       String?
+  promoCodeUsed String?
+  affiliateCode String?
+  duration      Int?     // ms from previous step
+  timestamp     DateTime @default(now())
+  sessionId     String?
+
+  @@index([userId])
+  @@index([timestamp])
+  @@index([step])
+}

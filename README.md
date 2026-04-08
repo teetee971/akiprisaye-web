@@ -614,6 +614,9 @@ npm run preview
 
 - `npm run dev` - Serveur de développement Vite
 - `npm run build` - Build de production
+- `npm run clean-build-for-repo` - Réinstalle les dépendances et reconstruit proprement le dépôt
+- `npm run audit:head` - Lance un audit HTTP rapide de l’URL HEAD Cloudflare Pages
+- `npm run verify:modules` - Vérifie rapidement les modules backend/functions/price-api/frontend
 - `npm run preview` - Aperçu du build
 - `npm run check-assets` - Vérification d'intégrité des assets
 - `npm run lint` - Linter ESLint
@@ -707,8 +710,8 @@ reposent sur des **API Web natives** (`window`, `navigator.mediaDevices`, `Image
 **non disponibles en environnement Node.js**.
 
 ### Conséquence en CI
-- Les tests frontend sont **désactivés volontairement** en CI Node.
-- **GitHub Pages** est la **source de vérité actuelle** pour le build statique et la validation runtime.
+- Les tests frontend sont exécutés via Vitest dans la CI (`contract-tests` + `test`).
+- **Cloudflare Pages** est la cible de déploiement prioritaire; GitHub Pages reste un fallback/historique.
 - Aucun code produit n'est exécuté côté serveur Node.
 
 ### Ce qui est validé en production

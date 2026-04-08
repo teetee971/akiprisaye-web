@@ -34,6 +34,12 @@ import productsRoutes from './routes/products.js';
 import basketRoutes from './routes/basket.js';
 // Subscription & Payment routes
 import subscriptionRoutes from './api/routes/subscription.routes.js';
+// Promo code routes
+import promoRoutes from './api/routes/promo.routes.js';
+// Affiliate routes
+import affiliateRoutes from './api/routes/affiliate.routes.js';
+// Analytics / conversion tracking routes
+import analyticsRoutes from './api/routes/analytics.routes.js';
 // Verified Pricing routes
 import pricesRoutes from './api/routes/prices.routes.js';
 // Receipt OCR Import routes
@@ -43,6 +49,11 @@ import compareRoutes from './routes/compare.js';
 import territoriesRoutes from './routes/territories.js';
 import historyRoutes from './routes/history.js';
 import signalRoutes from './routes/signal.js';
+// Monetization engine routes
+import marketplaceRoutes from './api/routes/marketplace.routes.js';
+import affiliatesRoutes from './api/routes/affiliates.routes.js';
+import reportsRoutes from './api/routes/reports.routes.js';
+import sponsorshipRoutes from './api/routes/sponsorship.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -213,6 +224,15 @@ app.use('/api/basket', basketRoutes);
 // Subscription & Payment API routes
 app.use('/api/subscriptions', subscriptionRoutes);
 
+// Promo code API routes
+app.use('/api/promos', promoRoutes);
+
+// Affiliate API routes
+app.use('/api/affiliates', affiliateRoutes);
+
+// Analytics / conversion tracking API routes
+app.use('/api/analytics', analyticsRoutes);
+
 // Verified Pricing API routes (public with rate limiting)
 app.use('/api/prices', pricesRoutes);
 
@@ -224,6 +244,11 @@ app.use('/api/compare', compareRoutes);
 app.use('/api/territories', territoriesRoutes);
 app.use('/api/products', historyRoutes);   // mounts /:id/history under /api/products
 app.use('/api/products', signalRoutes);    // mounts /:id/signal  under /api/products
+// Monetization engine routes
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/affiliates', affiliatesRoutes);
+app.use('/api/reports', reportsRoutes);
+app.use('/api/sponsorship', sponsorshipRoutes);
 
 // ========================================
 // Gestion des erreurs
