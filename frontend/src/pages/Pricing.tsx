@@ -26,8 +26,6 @@ import { HeroImage } from '../components/ui/HeroImage'
 import { PAGE_HERO_IMAGES } from '../config/imageAssets'
 import PricingConversionBanner from '../components/PricingConversionBanner'
 import { trackConversion } from '../services/subscriptionConversionService'
-import PricingConversionBanner from '../components/PricingConversionBanner'
-import { trackConversion } from '../services/subscriptionConversionService'
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
