@@ -75,10 +75,7 @@ const Home = () => {
               key={promo.id}
               type="button"
               onClick={promo.action}
-<<<<<<< codex/corriger-pour-activer-squash-and-merge
               aria-label={promo.title}
-=======
->>>>>>> main
               className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer active:scale-95 transition-transform text-left"
             >
               <img src={promo.img} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="" />
@@ -94,7 +91,7 @@ const Home = () => {
       </div>
 
       {/* RECHERCHE (Le robot a besoin d'un bouton submit nommé 'rechercher') */}
-      <form onSubmit={(e) => e.preventDefault()} className="px-6 mb-10">
+      <form onSubmit={handleSearch} className="px-6 mb-10">
         <div className="relative">
           <Search className="absolute left-4 top-4 text-slate-500" size={20} />
           <input 
