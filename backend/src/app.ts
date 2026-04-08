@@ -43,6 +43,11 @@ import compareRoutes from './routes/compare.js';
 import territoriesRoutes from './routes/territories.js';
 import historyRoutes from './routes/history.js';
 import signalRoutes from './routes/signal.js';
+// Monetization engine routes
+import marketplaceRoutes from './api/routes/marketplace.routes.js';
+import affiliatesRoutes from './api/routes/affiliates.routes.js';
+import reportsRoutes from './api/routes/reports.routes.js';
+import sponsorshipRoutes from './api/routes/sponsorship.routes.js';
 
 // Import middlewares
 import { apiLimiter } from './api/middlewares/rateLimit.middleware.js';
@@ -224,6 +229,11 @@ app.use('/api/compare', compareRoutes);
 app.use('/api/territories', territoriesRoutes);
 app.use('/api/products', historyRoutes);   // mounts /:id/history under /api/products
 app.use('/api/products', signalRoutes);    // mounts /:id/signal  under /api/products
+// Monetization engine routes
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/affiliates', affiliatesRoutes);
+app.use('/api/reports', reportsRoutes);
+app.use('/api/sponsorship', sponsorshipRoutes);
 
 // ========================================
 // Gestion des erreurs
