@@ -220,15 +220,11 @@ export default function Subscribe() {
         throw new Error(data.error || 'Erreur lors de la création du paiement');
       }
 
-      if (data.checkoutId) {
-        setCheckoutId(data.checkoutId);
-      } else {
-        // Free plan or deferred payment — subscription created directly
-        activateTrialIfNeeded();
-        navigate(
-          `/subscribe/success?plan=${encodeURIComponent(currentPlan?.name || planId)}&cycle=${cycle}&email=${encodeURIComponent(email)}`
-        );
+      if (!data.checkoutId) {
+        throw new Error('Paiement requis : identifiant de checkout manquant');
       }
+
+      setCheckoutId(data.checkoutId);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Erreur inconnue';
       setCheckoutError(msg);
