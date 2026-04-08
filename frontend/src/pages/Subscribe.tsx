@@ -4,7 +4,7 @@
  * NO dark patterns, NO hidden fields, NO pre-checked options
  * WCAG AA compliant
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -15,6 +15,7 @@ import TerritorySelector from '@/components/TerritorySelector';
 import { HeroImage } from '@/components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 import { canStartTrial, startTrial } from '@/services/trialService';
+import PromoCodeWidget from '@/components/conversion/PromoCodeWidget';
 import type { PlanId } from '@/billing/plans';
 import {
   validatePromoCode,
@@ -24,6 +25,36 @@ import {
 } from '@/services/subscriptionConversionService';
 
 type Step = 1 | 2 | 3;
+
+// Countdown helpers
+function getOrCreateExpiry(): Date {
+  const key = 'subscribeCountdownExpiry';
+  const stored = sessionStorage.getItem(key);
+  if (stored) {
+    const d = new Date(stored);
+    if (d > new Date()) return d;
+  }
+  const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  sessionStorage.setItem(key, expiry.toISOString());
+  return expiry;
+}
+
+function useCountdown(expiry: Date) {
+  const calc = useCallback(() => {
+    const diff = Math.max(0, expiry.getTime() - Date.now());
+    return {
+      hours: Math.floor(diff / 3600000),
+      minutes: Math.floor((diff % 3600000) / 60000),
+      seconds: Math.floor((diff % 60000) / 1000),
+    };
+  }, [expiry]);
+  const [t, setT] = useState(calc);
+  useEffect(() => {
+    const id = setInterval(() => setT(calc()), 1000);
+    return () => clearInterval(id);
+  }, [calc]);
+  return t;
+}
 
 const plans: Record<string, { name: string; monthly?: number; yearly?: number; yearlyRange?: string }> = {
   CITIZEN_PREMIUM: { name: 'Citoyen Premium', monthly: 3.99, yearly: 39 },
@@ -38,8 +69,8 @@ export default function Subscribe() {
   const navigate = useNavigate();
   
   const [step, setStep] = useState<Step>(1);
-  const [planId, setPlanId] = useState(searchParams.get('plan') || 'CITIZEN_PREMIUM');
-  const [cycle, setCycle] = useState(searchParams.get('cycle') || 'yearly');
+  const [planId] = useState(searchParams.get('plan') || 'CITIZEN_PREMIUM');
+  const [cycle] = useState(searchParams.get('cycle') || 'yearly');
   const [isDOMTerritory] = useState(searchParams.get('dom') === 'true');
   
   // 7-day trial detection
@@ -66,14 +97,49 @@ export default function Subscribe() {
   
   // For Enterprise and Institution, use yearly range instead of monthly/yearly calculation
   const isCustomPricing = planId === 'ENTERPRISE' || planId === 'INSTITUTION';
-  const price = isCustomPricing 
+  const basePrice = isCustomPricing 
     ? null 
     : (cycle === 'yearly' ? currentPlan?.yearly : currentPlan?.monthly);
   const domPrice = isCustomPricing
     ? null
     : (isDOMTerritory && (planId === 'PRO' || planId === 'BUSINESS') 
-      ? (price ?? 0) * 0.7 
-      : price);
+      ? (basePrice ?? 0) * 0.7 
+      : basePrice);
+
+  const finalPrice = domPrice !== null && promoDiscount > 0
+    ? (domPrice ?? 0) * (1 - promoDiscount / 100)
+    : domPrice;
+
+  // Pre-fill email from localStorage if available
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('userEmail');
+    if (savedEmail) setEmail(savedEmail);
+  }, []);
+
+  // Try to generate affiliate link
+  const generateAffiliateLink = useCallback(async () => {
+    const token = localStorage.getItem('authToken');
+    if (!token) return;
+    try {
+      const base = resolveApiBaseUrl();
+      const resp = await fetch(`${base}/api/affiliates/generate-link`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ platform: 'direct' }),
+      });
+      const data = await resp.json() as { success?: boolean; link?: string };
+      if (data.success && data.link) setAffiliateLink(data.link);
+    } catch {
+      // Silently ignore
+    }
+  }, []);
+
+  useEffect(() => {
+    generateAffiliateLink();
+  }, [generateAffiliateLink]);
 
   // Apply promo discount on top of DOM discount
   const promoDiscountPct = appliedPromo?.discountPct ?? 0;
@@ -134,14 +200,10 @@ export default function Subscribe() {
     trackConversion({ type: 'subscribe_complete', plan: planId, promoCode: appliedPromo?.code });
     // Activate 7-day trial if requested
     activateTrialIfNeeded();
-    // In production, this would integrate with a payment processor (Stripe, etc.)
-    if (isTrial && trialAvailable) {
-      alert(`Essai 7 jours activé pour ${email}\nPlan: ${currentPlan.name}\nAucun prélèvement pendant 7 jours.`);
-    } else {
-      alert(`Paiement simulé pour ${email}\nPlan: ${currentPlan.name}\nMontant: ${(domPrice ?? 0).toFixed(2)} €`);
-    }
+    // Save email for future pre-fill
+    if (email) localStorage.setItem('userEmail', email);
     // Redirect to success page
-    navigate('/subscribe/success');
+    navigate(`/subscribe/success?plan=${planId}`);
   };
 
   if (!currentPlan) {
@@ -196,9 +258,18 @@ export default function Subscribe() {
         {/* STEP 1: Plan Confirmation */}
         {step === 1 && (
           <div>
-            <h1 className="text-3xl font-bold text-white mb-6 text-center">
+            <h1 className="text-3xl font-bold text-white mb-4 text-center">
               Récapitulatif du plan
             </h1>
+
+            {/* Countdown urgency */}
+            <div className="flex items-center justify-center gap-2 mb-4 text-sm text-blue-300 font-semibold">
+              <span>⏰</span>
+              <span>Offre valide encore : </span>
+              <span className="font-mono text-blue-200">
+                {pad(hours)}h {pad(minutes)}m {pad(seconds)}s
+              </span>
+            </div>
 
             {/* Trial banner */}
             {isTrial && trialAvailable && (
@@ -231,7 +302,7 @@ export default function Subscribe() {
                 </h2>
                 {isCustomPricing ? (
                   <p className="text-4xl font-bold text-blue-400">
-                    {(currentPlan as any).yearlyRange}
+                    {(currentPlan as {yearlyRange?: string}).yearlyRange}
                     <span className="text-base text-gray-400 ml-2">/ an</span>
                   </p>
                 ) : (
@@ -314,6 +385,23 @@ export default function Subscribe() {
               </div>
 
               <DataBadge source="INSEE · OPMR · data.gouv.fr" />
+
+              {/* Promo code widget */}
+              {!isCustomPricing && (
+                <div className="mt-4 pt-4 border-t border-white/[0.08]">
+                  <PromoCodeWidget
+                    planKey={planId}
+                    onApply={(discount, code) => {
+                      setPromoDiscount(discount);
+                      setPromoCode(code);
+                    }}
+                    onRemove={() => {
+                      setPromoDiscount(0);
+                      setPromoCode('');
+                    }}
+                  />
+                </div>
+              )}
             </GlassCard>
 
             {/* Promo code input */}
