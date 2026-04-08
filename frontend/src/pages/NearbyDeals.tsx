@@ -166,6 +166,9 @@ export default function NearbyDeals() {
               <span className="text-sm text-gray-300">Alertes activées</span>
               <button
                 onClick={() => setAlertEnabled(!alertEnabled)}
+                role="switch"
+                aria-checked={alertEnabled}
+                aria-label="Activer/désactiver les alertes"
                 className={`w-10 h-5 rounded-full transition-colors ${alertEnabled ? 'bg-rose-500' : 'bg-white/20'}`}
               >
                 <div className={`w-4 h-4 rounded-full bg-white transition-transform mx-0.5 ${alertEnabled ? 'translate-x-5' : ''}`} />

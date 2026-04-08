@@ -81,7 +81,7 @@ export function SponsoredSearchResult({
       <a
         href={targetUrl}
         target="_blank"
-        rel="noopener noreferrer nofollow"
+        rel="noopener noreferrer nofollow sponsored"
         onClick={handleClick}
         className="shrink-0 self-center p-1.5 text-amber-400 hover:text-amber-300 transition-colors"
         aria-label={`Voir ${productName} chez ${sponsor}`}

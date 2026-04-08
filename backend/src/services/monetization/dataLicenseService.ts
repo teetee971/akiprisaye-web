@@ -135,10 +135,19 @@ export class DataLicenseService {
 
   /**
    * Validate a report order.
+   * Email check uses a linear string-split approach to avoid ReDoS risks.
    */
   static validateOrder(order: ReportOrder): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
-    if (!order.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(order.email)) {
+    // Safe email validation — split on '@', no backtracking regex
+    const emailParts = order.email ? order.email.split('@') : [];
+    const emailValid =
+      emailParts.length === 2 &&
+      emailParts[0].length > 0 &&
+      emailParts[1].includes('.') &&
+      !emailParts[1].startsWith('.') &&
+      !emailParts[1].endsWith('.');
+    if (!emailValid) {
       errors.push('Email invalide');
     }
     if (!order.reportType) {

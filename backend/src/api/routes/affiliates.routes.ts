@@ -10,19 +10,27 @@
 
 import express, { Request, Response } from 'express';
 import { AffiliateService } from '../../services/monetization/affiliateService.js';
+import { createLimiter } from '../middlewares/rateLimit.middleware.js';
 
 const router = express.Router();
+
+const EMAIL_RE = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 /**
  * POST /api/affiliates/register
  * Enroll a new affiliate.
  */
-router.post('/register', (req: Request, res: Response): void => {
+router.post('/register', createLimiter, (req: Request, res: Response): void => {
   try {
     const { affiliateId, displayName, email } = req.body;
 
     if (!affiliateId || !email) {
       res.status(400).json({ success: false, error: 'affiliateId et email requis' });
+      return;
+    }
+
+    if (!EMAIL_RE.test(String(email))) {
+      res.status(400).json({ success: false, error: 'Format email invalide' });
       return;
     }
 

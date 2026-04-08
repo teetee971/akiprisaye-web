@@ -122,12 +122,20 @@ export default function DataMarketplace() {
         {REPORTS.map((report) => (
           <div
             key={report.id}
+            role="button"
+            tabIndex={0}
             className={`bg-white/5 border rounded-xl p-6 cursor-pointer transition-all ${
               selectedReport === report.id
                 ? 'border-blue-500/50 ring-2 ring-blue-500/30'
                 : 'border-white/10 hover:border-white/20'
             }`}
             onClick={() => setSelectedReport(report.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setSelectedReport(report.id);
+              }
+            }}
           >
             <div className="flex items-start justify-between mb-3">
               <div>

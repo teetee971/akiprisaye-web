@@ -13,8 +13,11 @@ import {
   SponsorshipService,
   type SlotType,
 } from '../../services/monetization/sponsorshipService.js';
+import { createLimiter } from '../middlewares/rateLimit.middleware.js';
 
 const router = express.Router();
+
+const EMAIL_RE = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 /**
  * GET /api/sponsorship/slots
@@ -57,9 +60,15 @@ router.post('/estimate', (req: Request, res: Response): void => {
       return;
     }
 
+    const days = Number(durationDays);
+    if (!Number.isFinite(days) || days <= 0 || days > 365) {
+      res.status(400).json({ success: false, error: 'durationDays doit être entre 1 et 365' });
+      return;
+    }
+
     const estimate = SponsorshipService.estimateCampaignCost(
       slotType as SlotType,
-      durationDays,
+      days,
       estimatedClicks
     );
 
@@ -67,7 +76,7 @@ router.post('/estimate', (req: Request, res: Response): void => {
       success: true,
       data: {
         slotType,
-        durationDays,
+        durationDays: days,
         estimatedCost: estimate,
         currency: 'EUR',
         config: SponsorshipService.getSlotConfig(slotType),
@@ -82,11 +91,29 @@ router.post('/estimate', (req: Request, res: Response): void => {
  * POST /api/sponsorship/campaigns
  * Create a sponsorship campaign (stub — full implementation requires auth + payment).
  */
-router.post('/campaigns', (req: Request, res: Response): void => {
+router.post('/campaigns', createLimiter, (req: Request, res: Response): void => {
   const { sponsor, slotType, startDate, endDate, dailyBudget, contactEmail } = req.body;
 
   if (!sponsor || !slotType || !startDate || !endDate || !contactEmail) {
     res.status(400).json({ success: false, error: 'Champs requis manquants' });
+    return;
+  }
+
+  if (!EMAIL_RE.test(String(contactEmail))) {
+    res.status(400).json({ success: false, error: 'Format email invalide' });
+    return;
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (isNaN(start.getTime()) || isNaN(end.getTime()) || end <= start) {
+    res.status(400).json({ success: false, error: 'Les dates sont invalides (endDate doit être après startDate)' });
+    return;
+  }
+
+  const budget = Number(dailyBudget);
+  if (dailyBudget !== undefined && (!Number.isFinite(budget) || budget < 0)) {
+    res.status(400).json({ success: false, error: 'dailyBudget invalide' });
     return;
   }
 
@@ -96,9 +123,9 @@ router.post('/campaigns', (req: Request, res: Response): void => {
       id: `SPO-${Date.now()}`,
       sponsor,
       slotType,
-      startDate,
-      endDate,
-      dailyBudget: dailyBudget ?? 50,
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+      dailyBudget: budget || 50,
       status: 'pending_payment',
       contactEmail,
       createdAt: new Date().toISOString(),

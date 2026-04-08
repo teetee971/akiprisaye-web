@@ -5,6 +5,7 @@
  * Vue d'ensemble des 12 flux de revenus parallèles.
  */
 import { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   TrendingUp,
@@ -254,12 +255,12 @@ export default function MonetizationDashboard() {
                 </div>
               </div>
               {stream.route && (
-                <a
-                  href={stream.route}
+                <RouterLink
+                  to={stream.route}
                   className="mt-3 block text-xs text-emerald-400 hover:text-emerald-300 transition-colors"
                 >
                   Gérer →
-                </a>
+                </RouterLink>
               )}
             </div>
           );

@@ -14,6 +14,7 @@ import {
   type ReportOrder,
   type ReportType,
 } from '../../services/monetization/dataLicenseService.js';
+import { createLimiter } from '../middlewares/rateLimit.middleware.js';
 
 const router = express.Router();
 
@@ -60,7 +61,7 @@ router.get('/:id', (req: Request, res: Response): void => {
  * POST /api/reports/order
  * Place an order for a data report.
  */
-router.post('/order', (req: Request, res: Response): void => {
+router.post('/order', createLimiter, (req: Request, res: Response): void => {
   try {
     const order = req.body as ReportOrder;
     const validation = DataLicenseService.validateOrder(order);

@@ -5,6 +5,8 @@
  * isolation des données, tarification et déploiement multi-tenant.
  */
 
+import crypto from 'node:crypto';
+
 export interface TenantBranding {
   logo: string | null;
   primaryColor: string;
@@ -66,10 +68,12 @@ export class WhiteLabelService {
   /**
    * Generate a unique API key for a new tenant.
    */
+  /**
+   * Generate a unique API key for a new tenant using a cryptographically secure source.
+   */
   static generateTenantApiKey(tenantId: string): string {
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).slice(2, 10);
-    return `wl_${tenantId.slice(0, 6)}_${timestamp}_${random}`;
+    const random = crypto.randomBytes(12).toString('hex');
+    return `wl_${tenantId.slice(0, 6)}_${random}`;
   }
 
   /**

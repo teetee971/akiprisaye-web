@@ -69,7 +69,7 @@ export function SponsoredBanner({
             <a
               href={targetUrl}
               target="_blank"
-              rel="noopener noreferrer nofollow"
+              rel="noopener noreferrer nofollow sponsored"
               onClick={handleClick}
               className="inline-flex items-center gap-1.5 bg-white text-slate-900 text-sm font-medium px-4 py-1.5 rounded-lg hover:bg-white/90 transition-colors"
             >
@@ -99,7 +99,7 @@ export function SponsoredBanner({
       <a
         href={targetUrl}
         target="_blank"
-        rel="noopener noreferrer nofollow"
+        rel="noopener noreferrer nofollow sponsored"
         onClick={handleClick}
         className="block text-center text-xs bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded py-1.5 hover:bg-emerald-500/30 transition-colors"
       >

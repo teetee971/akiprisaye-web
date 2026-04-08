@@ -16,19 +16,22 @@ import {
   ApiMarketplaceService,
   type ApiTier,
 } from '../../services/monetization/apiMarketplaceService.js';
+import { createLimiter } from '../middlewares/rateLimit.middleware.js';
 
 const router = express.Router();
+
+const EMAIL_RE = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 
 /**
  * POST /api/marketplace/keys
  * Generate a new marketplace API key.
  */
-router.post('/keys', (req: Request, res: Response): void => {
+router.post('/keys', createLimiter, (req: Request, res: Response): void => {
   try {
     const { tier = 'starter', organizationName, email } = req.body;
 
-    if (!email) {
-      res.status(400).json({ success: false, error: 'Email requis' });
+    if (!email || !EMAIL_RE.test(String(email))) {
+      res.status(400).json({ success: false, error: 'Email valide requis' });
       return;
     }
 
@@ -76,7 +79,7 @@ router.get('/tiers', (_req: Request, res: Response): void => {
 router.post('/track-usage', (req: Request, res: Response): void => {
   try {
     const {
-      apiKeyId,
+      clientId,
       tier,
       endpoint,
       method = 'GET',
@@ -84,8 +87,8 @@ router.post('/track-usage', (req: Request, res: Response): void => {
       responseTime = 0,
     } = req.body;
 
-    if (!apiKeyId || !endpoint || !tier) {
-      res.status(400).json({ success: false, error: 'apiKeyId, tier et endpoint requis' });
+    if (!clientId || !endpoint || !tier) {
+      res.status(400).json({ success: false, error: 'clientId, tier et endpoint requis' });
       return;
     }
 
@@ -94,13 +97,13 @@ router.post('/track-usage', (req: Request, res: Response): void => {
       return;
     }
 
-    // In production: resolve tier from apiKeyId via DB before computing cost
+    // In production: resolve tier from clientId via DB before computing cost
     const cost = ApiMarketplaceService.computeRequestCost(tier as ApiTier, endpoint);
 
     res.status(201).json({
       success: true,
       data: {
-        apiKeyId,
+        clientId,
         tier,
         endpoint,
         method,
