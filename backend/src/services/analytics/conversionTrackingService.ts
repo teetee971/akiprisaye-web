@@ -83,7 +83,7 @@ export class ConversionTrackingService {
       const dropoffRate =
         i === 0 ? 0
         : previousCount === 0 ? 100
-        : Math.round((1 - count / previousCount) * 100);
+        : Math.max(0, Math.min(100, Math.round((1 - count / previousCount) * 100)));
       return { step, count, dropoffRate };
     });
   }
