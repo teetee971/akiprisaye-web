@@ -167,7 +167,7 @@ export class DynamicPricingService {
 
     // Combine modifiers (multiplicative)
     const combinedModifier = appliedRules.reduce((m, r) => m * r.modifier, 1);
-    const finalPrice = parseFloat((basePrice * combinedModifier).toFixed(4));
+    const finalPrice = Math.round(basePrice * combinedModifier * 10000) / 10000;
 
     return { finalPrice, appliedRules, modifier: combinedModifier };
   }

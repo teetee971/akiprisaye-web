@@ -84,7 +84,7 @@ export class AffiliateService {
   static computeSubscriptionCommission(planKey: string): number {
     const config = COMMISSION_CONFIGS.find((c) => c.planKey === planKey);
     if (!config) return 0;
-    return parseFloat((config.planPrice * config.commissionRate).toFixed(2));
+    return Math.round(config.planPrice * config.commissionRate * 100) / 100;
   }
 
   /**
@@ -93,7 +93,7 @@ export class AffiliateService {
   static computeClickCommission(planKey: string): number {
     const config = COMMISSION_CONFIGS.find((c) => c.planKey === planKey);
     if (!config) return 0;
-    return parseFloat((config.planPrice * config.perClickRate).toFixed(2));
+    return Math.round(config.planPrice * config.perClickRate * 100) / 100;
   }
 
   /**

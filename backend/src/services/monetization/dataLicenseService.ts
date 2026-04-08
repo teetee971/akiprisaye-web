@@ -138,7 +138,7 @@ export class DataLicenseService {
    */
   static validateOrder(order: ReportOrder): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
-    if (!order.email || !order.email.includes('@')) {
+    if (!order.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(order.email)) {
       errors.push('Email invalide');
     }
     if (!order.reportType) {

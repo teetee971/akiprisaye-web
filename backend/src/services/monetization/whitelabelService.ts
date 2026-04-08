@@ -93,7 +93,7 @@ export class WhiteLabelService {
    * Compute revenue share amount.
    */
   static computeRevenueShare(scannerRevenue: number, shareRate: number): number {
-    return parseFloat((scannerRevenue * shareRate).toFixed(2));
+    return Math.round(scannerRevenue * shareRate * 100) / 100;
   }
 
   /**
