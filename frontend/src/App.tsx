@@ -115,6 +115,7 @@ const AuthHub = lazy(() => import('./pages/AuthHub'));
 const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Subscribe = lazy(() => import('./pages/Subscribe'));
+const SubscribeSuccess = lazy(() => import('./pages/SubscribeSuccess'));
 const ObservatoireTempsReel = lazy(() => import('./pages/ObservatoireTempsReel'));
 const Transparence = lazy(() => import('./pages/Transparence'));
 const SignalerAbus = lazy(() => import('./pages/SignalerAbus'));
@@ -475,6 +476,7 @@ export default function App() {
                               {LEGACY_ALIAS_ROUTES}
                               <Route path="pricing" element={<Pricing />} />
                               <Route path="subscribe" element={<Subscribe />} />
+                              <Route path="subscribe/success" element={<SubscribeSuccess />} />
                               <Route path="observatoire-temps-reel" element={<ObservatoireTempsReel />} />
                               <Route path="transparence" element={<Transparence />} />
                               <Route path="signaler-abus" element={<SignalerAbus />} />
