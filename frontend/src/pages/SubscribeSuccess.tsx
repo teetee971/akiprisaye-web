@@ -73,7 +73,7 @@ export default function SubscribeSuccess() {
 
   const handleShare = useCallback(
     (platform: SharePlatform) => {
-      const link = referralLink || window.location.origin + '/pricing';
+      const link = referralLink || `${window.location.origin}${import.meta.env.BASE_URL}pricing`;
       const text = encodeURIComponent(
         `Je viens de débloquer le plan ${planLabel} sur Akiprisaye ! Maîtrisez vos prix ultramarins : ${link}`
       );
