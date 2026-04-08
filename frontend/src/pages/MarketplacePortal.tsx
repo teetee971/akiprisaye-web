@@ -49,13 +49,15 @@ const client = new akiprisaye.Client({
   apiKey: 'aki_your_key_here',
 });
 
-const prices = await client.prices.getByTerritory({
-  territory: 'gp', // Guadeloupe
-  category: 'alimentaire',
-  limit: 20,
-});
+(async () => {
+  const prices = await client.prices.getByTerritory({
+    territory: 'gp', // Guadeloupe
+    category: 'alimentaire',
+    limit: 20,
+  });
 
-console.log(prices.items);`,
+  console.log(prices.items);
+})();`,
   python: `import akiprisaye
 
 client = akiprisaye.Client(api_key='aki_your_key_here')
