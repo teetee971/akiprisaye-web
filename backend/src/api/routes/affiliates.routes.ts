@@ -2,11 +2,10 @@
  * Affiliate Routes
  *
  * Routes :
- *   POST /api/affiliates/register            — Inscription programme affilié
- *   GET  /api/affiliates/:affiliateId/stats  — Stats de l'affilié
- *   GET  /api/affiliates/commissions         — Configs de commission
- *   POST /api/affiliates/generate-link       — Génère un lien tracké
- *   GET  /api/affiliates/assets              — Assets marketing
+ *   POST /api/affiliates/register      — Inscription programme affilié
+ *   GET  /api/affiliates/commissions   — Configs de commission
+ *   POST /api/affiliates/generate-link — Génère un lien tracké
+ *   GET  /api/affiliates/assets        — Assets marketing
  */
 
 import express, { Request, Response } from 'express';
