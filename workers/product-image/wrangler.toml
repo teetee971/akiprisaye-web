@@ -1,3 +1,11 @@
-name = "akiprisaye-product-image"
+name = "product-image-worker"
 main = "src/index.ts"
-compatibility_date = "2026-04-09"
+compatibility_date = "2026-04-01"
+workers_dev = true
+# account_id : set via CLOUDFLARE_ACCOUNT_ID environment variable or GitHub secret.
+# See docs/PRODUCT_IMAGE_LOOKUP.md for deployment instructions.
+
+[vars]
+# Set API_TOKEN as a Wrangler secret (optional) to require a bearer token:
+#   npx wrangler secret put API_TOKEN
+# Leave unset to allow unauthenticated access (suitable for internal use only).
