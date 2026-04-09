@@ -217,14 +217,20 @@ describe('product-image worker', () => {
       'fetch',
       vi.fn(async (input: string | URL | Request) => {
         const url = typeof input === 'string' ? input : input instanceof Request ? input.url : input.toString();
+        const parsedUrl = new URL(url);
 
-        if (url.startsWith('https://world.openfoodfacts.org')) {
+        if (parsedUrl.origin === 'https://world.openfoodfacts.org') {
           return new Response(JSON.stringify({ products: [] }), {
             headers: { 'content-type': 'application/json' },
           });
         }
 
-        if (url.startsWith('https://commons.wikimedia.org/w/api.php?action=query&list=search')) {
+        if (
+          parsedUrl.origin === 'https://commons.wikimedia.org' &&
+          parsedUrl.pathname === '/w/api.php' &&
+          parsedUrl.searchParams.get('action') === 'query' &&
+          parsedUrl.searchParams.get('list') === 'search'
+        ) {
           return new Response(
             JSON.stringify({ query: { search: [{ title: 'File:Sucre_blanc.jpg' }] } }),
             { headers: { 'content-type': 'application/json' } },
@@ -232,9 +238,10 @@ describe('product-image worker', () => {
         }
 
         if (
-          url.startsWith(
-            'https://commons.wikimedia.org/w/api.php?action=query&titles=File:Sucre_blanc.jpg',
-          )
+          parsedUrl.origin === 'https://commons.wikimedia.org' &&
+          parsedUrl.pathname === '/w/api.php' &&
+          parsedUrl.searchParams.get('action') === 'query' &&
+          parsedUrl.searchParams.get('titles') === 'File:Sucre_blanc.jpg'
         ) {
           return new Response(
             JSON.stringify({
