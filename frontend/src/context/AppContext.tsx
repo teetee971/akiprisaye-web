@@ -7,8 +7,6 @@ export interface Product {
   price: string | number;
   category?: string;
   store?: string;
-  brand?: string;
-  imageUrl?: string;
 }
 
 type AppContextValue = {
@@ -71,5 +69,3 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
-
-export default AppContext;

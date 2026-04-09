@@ -1,113 +1,190 @@
 /**
- * Subscription Service - Minimal Implementation
- * Handles subscription lifecycle with Stripe integration
+ * Subscription Service
+ * Handles subscription lifecycle with SumUp integration
+ *
+ * Flow for paid plans:
+ * 1. Create SumUp customer
+ * 2. Create SumUp checkout (returns checkoutId for frontend widget)
+ * 3. Persist subscription in DB with INACTIVE status + sumupPaymentId = checkout reference
+ * 4. Return { subscription, checkoutId } to caller
+ * 5. On payment.succeeded webhook → activate subscription
  */
 
-import Stripe from 'stripe';
 import { PrismaClient, SubscriptionPlan } from '@prisma/client';
 import {
   SubscriptionTier,
   type Subscription,
-  type CreateSubscriptionParams
+  type CreateSubscriptionParams,
+  type CreateSubscriptionResult,
 } from '../../types/subscription.js';
-import { getSubscriptionPlan } from '../../config/subscriptionPlans.js';
+import { getSubscriptionPlan, getPlanPrice } from '../../config/subscriptionPlans.js';
+import sumupService from '../payment/sumupService.js';
 
 const prisma = new PrismaClient();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16'
-});
 
 export class SubscriptionService {
-  async createSubscription(params: CreateSubscriptionParams): Promise<Subscription> {
-    const { userId, planId, paymentMethodId, interval } = params;
-    
+  async createSubscription(params: CreateSubscriptionParams): Promise<CreateSubscriptionResult> {
+    const { userId, planId, paymentMethodId, interval, affiliateSource } = params;
+
     const plan = getSubscriptionPlan(planId);
     if (!plan) throw new Error(`Plan not found: ${planId}`);
-    
+
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new Error('User not found');
-    
+
     if (planId === SubscriptionTier.FREE) {
-      return this.createFreeSubscription(userId);
+      return { subscription: await this.createFreeSubscription(userId, affiliateSource) };
     }
-    
-    return this.createPaidSubscription(user, plan, paymentMethodId, interval);
+
+    return this.createPaidSubscription(user, plan, paymentMethodId, interval, affiliateSource);
   }
-  
-  private async createFreeSubscription(userId: string): Promise<Subscription> {
-    const sub = await prisma.subscription.create({
-      data: {
+
+  private async createFreeSubscription(
+    userId: string,
+    affiliateSource?: string
+  ): Promise<Subscription> {
+    const sub = await prisma.subscription.upsert({
+      where: { userId },
+      update: {
+        plan: 'FREE',
+        status: 'ACTIVE',
+        startDate: new Date(),
+        endDate: null,
+        tierLabel: SubscriptionTier.FREE,
+        affiliateSource: affiliateSource ?? null,
+      },
+      create: {
         userId,
         plan: 'FREE',
         status: 'ACTIVE',
         startDate: new Date(),
-      }
+        tierLabel: SubscriptionTier.FREE,
+        affiliateSource: affiliateSource ?? null,
+      },
     });
-    
+
     return this.mapSubscription(sub, SubscriptionTier.FREE);
   }
-  
-  private async createPaidSubscription(user: { id: string; email: string; name?: string | null }, plan: ReturnType<typeof getSubscriptionPlan>, paymentMethodId: string | null, _interval: string): Promise<Subscription> {
-    if (!plan) throw new Error('Plan is required');
 
-    const customer = await stripe.customers.create({
+  private async createPaidSubscription(
+    user: { id: string; email: string; name?: string | null },
+    plan: NonNullable<ReturnType<typeof getSubscriptionPlan>>,
+    _paymentMethodId: string | null,
+    interval: string,
+    affiliateSource?: string
+  ): Promise<CreateSubscriptionResult> {
+    const billingCycle: 'monthly' | 'yearly' = interval === 'yearly' ? 'yearly' : 'monthly';
+
+    // Create or retrieve SumUp customer
+    const sumupCustomer = await sumupService.createCustomer({
       email: user.email,
       name: user.name || undefined,
-      metadata: { userId: user.id }
+      userId: user.id,
     });
-    const customerId = customer.id;
-    
-    if (paymentMethodId) {
-      await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
-      await stripe.customers.update(customerId, {
-        invoice_settings: { default_payment_method: paymentMethodId }
-      });
+
+    const amount = getPlanPrice(plan.id, billingCycle === 'yearly' ? 'year' : 'month');
+
+    // Generate a unique checkout reference to correlate the webhook event
+    const checkoutRef = sumupService.generateCheckoutReference(user.id, plan.pricing.sumupPlanKey);
+
+    // Create a SumUp checkout (the frontend widget needs this to capture the card)
+    const checkout = await sumupService.createCheckout({
+      amount,
+      currency: 'EUR',
+      description: `A KI PRI SA YÉ – ${plan.name} (${billingCycle === 'yearly' ? 'annuel' : 'mensuel'})`,
+      checkoutReference: checkoutRef,
+      customerId: sumupCustomer.customer_id,
+      affiliateKey: affiliateSource
+        ? (process.env.SUMUP_AFFILIATE_KEY ?? undefined)
+        : undefined,
+    });
+
+    // Calculate expected period dates
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    if (billingCycle === 'yearly') {
+      endDate.setFullYear(endDate.getFullYear() + 1);
+    } else {
+      endDate.setMonth(endDate.getMonth() + 1);
     }
-    
-    const priceId = (plan.pricing as { stripePriceId?: string }).stripePriceId;
-    const stripeSub = await stripe.subscriptions.create({
-      customer: customerId,
-      items: [{ price: priceId }],
-      metadata: { 
-        userId: user.id, 
-        planId: plan.id,
-        actualTier: plan.id
+
+    // Persist subscription as INACTIVE — activated by payment.succeeded webhook
+    const sub = await prisma.subscription.upsert({
+      where: { userId: user.id },
+      update: {
+        plan: this.mapTierToPrismaEnum(plan.id),
+        status: 'INACTIVE',
+        startDate,
+        endDate,
+        sumupCustomerId: sumupCustomer.customer_id,
+        sumupPaymentId: checkoutRef,       // Used by webhook to correlate
+        billingCycle,
+        nextRenewalDate: new Date(endDate),
+        tierLabel: plan.id,                // Exact tier — prevents information loss
+        affiliateSource: affiliateSource ?? null,
+        externalRef: sumupCustomer.customer_id,
       },
-      trial_period_days: plan.id === SubscriptionTier.CITIZEN_PREMIUM ? 14 : 0
-    });
-    
-    const sub = await prisma.subscription.create({
-      data: {
+      create: {
         userId: user.id,
-        plan: this.mapTierToPlan(plan.id),
-        status: 'ACTIVE',
-        startDate: new Date(stripeSub.current_period_start * 1000),
-        endDate: stripeSub.current_period_end ? new Date(stripeSub.current_period_end * 1000) : null,
-        externalRef: customerId,
-      }
+        plan: this.mapTierToPrismaEnum(plan.id),
+        status: 'INACTIVE',
+        startDate,
+        endDate,
+        sumupCustomerId: sumupCustomer.customer_id,
+        sumupPaymentId: checkoutRef,
+        billingCycle,
+        nextRenewalDate: new Date(endDate),
+        tierLabel: plan.id,
+        affiliateSource: affiliateSource ?? null,
+        externalRef: sumupCustomer.customer_id,
+      },
     });
-    
-    return this.mapSubscription(sub, plan.id);
+
+    return {
+      subscription: this.mapSubscription(sub, plan.id, billingCycle),
+      checkoutId: checkout.id,
+    };
   }
-  
+
+  async cancelSubscription(userId: string): Promise<void> {
+    const sub = await prisma.subscription.findUnique({ where: { userId } });
+    if (!sub) throw new Error('Subscription not found');
+
+    if (sub.sumupSubscriptionId) {
+      await sumupService.cancelSubscription(sub.sumupSubscriptionId);
+    }
+
+    await prisma.subscription.update({
+      where: { id: sub.id },
+      data: { status: 'CANCELED' },
+    });
+  }
+
   async getActiveSubscription(userId: string): Promise<Subscription | null> {
     const sub = await prisma.subscription.findFirst({
       where: { userId, status: 'ACTIVE' },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
     });
     if (!sub) return null;
-    
-    // Determine tier from database plan
-    const tier = this.mapPlanToTier(sub.plan);
-    return this.mapSubscription(sub, tier);
+
+    // Prefer tierLabel (exact tier) over the mapped enum
+    const tier = sub.tierLabel
+      ? (sub.tierLabel as SubscriptionTier)
+      : this.mapPrismaEnumToTier(sub.plan);
+
+    const billingCycle =
+      sub.billingCycle === 'yearly' || sub.billingCycle === 'monthly'
+        ? (sub.billingCycle as 'monthly' | 'yearly')
+        : undefined;
+    return this.mapSubscription(sub, tier, billingCycle);
   }
-  
+
   async checkFeatureAccess(userId: string, feature: string): Promise<boolean> {
     const sub = await this.getActiveSubscription(userId);
     const planId = sub?.planId || SubscriptionTier.FREE;
     const plan = getSubscriptionPlan(planId);
     if (!plan) return false;
-    
+
     const featureValue = (plan.features as Record<string, unknown>)[feature];
     if (typeof featureValue === 'boolean') return featureValue;
     if (typeof featureValue === 'number') return featureValue !== 0;
@@ -115,37 +192,73 @@ export class SubscriptionService {
     return false;
   }
 
+  async trackAffiliateConversion(params: {
+    affiliateKey: string;
+    userId: string;
+    plan: string;
+    revenue: number;
+  }): Promise<void> {
+    await prisma.affiliateTracking.create({
+      data: {
+        affiliateKey: params.affiliateKey,
+        userId: params.userId,
+        plan: params.plan,
+        revenue: params.revenue,
+        status: 'pending',
+        conversionDate: new Date(),
+      },
+    });
+  }
+
   /**
-   * Helper: Map SubscriptionTier to Prisma SubscriptionPlan enum
+   * Maps SubscriptionTier to the Prisma SubscriptionPlan enum.
+   * NOTE: Multiple tiers map to PREMIUM — always use tierLabel for the exact tier.
    */
-  private mapTierToPlan(tier: SubscriptionTier): SubscriptionPlan {
+  private mapTierToPrismaEnum(tier: SubscriptionTier): SubscriptionPlan {
     const mapping: Record<string, SubscriptionPlan> = {
       [SubscriptionTier.FREE]: 'FREE',
       [SubscriptionTier.CITIZEN_PREMIUM]: 'PREMIUM',
       [SubscriptionTier.SME_FREEMIUM]: 'PREMIUM',
       [SubscriptionTier.BUSINESS_PRO]: 'PREMIUM',
       [SubscriptionTier.INSTITUTIONAL]: 'INSTITUTION',
+      [SubscriptionTier.RESEARCH]: 'INSTITUTION',
     };
     return mapping[tier] ?? 'FREE';
   }
-  
+
   /**
-   * Helper: Map Prisma SubscriptionPlan to SubscriptionTier
+   * Maps Prisma SubscriptionPlan enum back to SubscriptionTier.
+   * Falls back to the lowest tier in each group — use tierLabel when possible.
    */
-  private mapPlanToTier(plan: SubscriptionPlan): SubscriptionTier {
+  private mapPrismaEnumToTier(plan: SubscriptionPlan): SubscriptionTier {
     const mapping: Partial<Record<SubscriptionPlan, SubscriptionTier>> = {
-      'FREE': SubscriptionTier.FREE,
-      'BASIC': SubscriptionTier.FREE,
-      'PREMIUM': SubscriptionTier.CITIZEN_PREMIUM,
-      'INSTITUTION': SubscriptionTier.INSTITUTIONAL,
+      FREE: SubscriptionTier.FREE,
+      BASIC: SubscriptionTier.FREE,
+      PREMIUM: SubscriptionTier.CITIZEN_PREMIUM,
+      INSTITUTION: SubscriptionTier.INSTITUTIONAL,
     };
     return mapping[plan] ?? SubscriptionTier.FREE;
   }
-  
-  /**
-   * Helper: Map Prisma subscription to our Subscription type
-   */
-  private mapSubscription(sub: { id: string; userId: string; status: string; startDate: Date; endDate?: Date | null; createdAt: Date; updatedAt: Date }, actualTier: SubscriptionTier): Subscription {
+
+  private mapSubscription(
+    sub: {
+      id: string;
+      userId: string;
+      status: string;
+      startDate: Date;
+      endDate?: Date | null;
+      sumupSubscriptionId?: string | null;
+      sumupCustomerId?: string | null;
+      sumupPaymentId?: string | null;
+      nextRenewalDate?: Date | null;
+      affiliateSource?: string | null;
+      tierLabel?: string | null;
+      createdAt: Date;
+      updatedAt: Date;
+    },
+    actualTier: SubscriptionTier,
+    billingCycle?: 'monthly' | 'yearly'
+  ): Subscription {
     return {
       id: sub.id,
       userId: sub.userId,
@@ -154,8 +267,14 @@ export class SubscriptionService {
       currentPeriodStart: sub.startDate,
       currentPeriodEnd: sub.endDate || new Date('2099-12-31'),
       cancelAtPeriodEnd: false,
+      sumupSubscriptionId: sub.sumupSubscriptionId ?? undefined,
+      sumupCustomerId: sub.sumupCustomerId ?? undefined,
+      sumupPaymentId: sub.sumupPaymentId ?? undefined,
+      billingCycle,
+      nextRenewalDate: sub.nextRenewalDate ?? undefined,
+      affiliateSource: sub.affiliateSource ?? undefined,
       createdAt: sub.createdAt,
-      updatedAt: sub.updatedAt
+      updatedAt: sub.updatedAt,
     };
   }
 }

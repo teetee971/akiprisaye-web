@@ -3,8 +3,10 @@
  * Ethical Subscription Tunnel - 3 Steps Max
  * NO dark patterns, NO hidden fields, NO pre-checked options
  * WCAG AA compliant
+ *
+ * Payment processor: SumUp Pro
  */
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -15,7 +17,8 @@ import TerritorySelector from '@/components/TerritorySelector';
 import { HeroImage } from '@/components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 import { canStartTrial, startTrial } from '@/services/trialService';
-import PromoCodeWidget from '@/components/conversion/PromoCodeWidget';
+import SumUpPaymentForm from '@/components/SumUpPaymentForm';
+import { resolveApiBaseUrl } from '@/services/apiBaseUrl';
 import type { PlanId } from '@/billing/plans';
 import {
   validatePromoCode,
@@ -26,53 +29,96 @@ import {
 
 type Step = 1 | 2 | 3;
 
-// Countdown helpers
-function getOrCreateExpiry(): Date {
-  const key = 'subscribeCountdownExpiry';
-  const stored = sessionStorage.getItem(key);
-  if (stored) {
-    const d = new Date(stored);
-    if (d > new Date()) return d;
-  }
-  const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  sessionStorage.setItem(key, expiry.toISOString());
-  return expiry;
-}
-
-function useCountdown(expiry: Date) {
-  const calc = useCallback(() => {
-    const diff = Math.max(0, expiry.getTime() - Date.now());
-    return {
-      hours: Math.floor(diff / 3600000),
-      minutes: Math.floor((diff % 3600000) / 60000),
-      seconds: Math.floor((diff % 60000) / 1000),
-    };
-  }, [expiry]);
-  const [t, setT] = useState(calc);
-  useEffect(() => {
-    const id = setInterval(() => setT(calc()), 1000);
-    return () => clearInterval(id);
-  }, [calc]);
-  return t;
-}
-
-const plans: Record<string, { name: string; monthly?: number; yearly?: number; yearlyRange?: string }> = {
-  CITIZEN_PREMIUM: { name: 'Citoyen Premium', monthly: 3.99, yearly: 39 },
-  PRO: { name: 'Professionnel', monthly: 9.99, yearly: 95.88 },
-  BUSINESS: { name: 'Business', monthly: 49, yearly: 468 },
-  ENTERPRISE: { name: 'Enterprise', yearlyRange: '2 500 € - 25 000 €' },
-  INSTITUTION: { name: 'Institution', yearlyRange: '500 € - 50 000 €' },
+/**
+ * 6 plan definitions aligned with backend SubscriptionTier enum
+ * and updated to reflect actual SumUp pricing from subscriptionPlans.ts
+ */
+const plans: Record<string, {
+  name: string;
+  monthly?: number;
+  yearly?: number;
+  yearlyRange?: string;
+  tagline?: string;
+  features?: string[];
+}> = {
+  free: {
+    name: 'Gratuit',
+    monthly: 0,
+    yearly: 0,
+    tagline: 'Pour tous les citoyens ultramarins',
+    features: ['Accès 29 comparateurs', '3 alertes prix', '5 exports/mois'],
+  },
+  citizen_premium: {
+    name: 'Citoyen Premium ⭐',
+    monthly: 4.99,
+    yearly: 49.90,
+    tagline: 'Alertes SMS, API access',
+    features: ['Tout Gratuit +', '20 alertes + SMS', 'API 1 000 req/j', 'Exports illimités (50/mois)'],
+  },
+  sme_freemium: {
+    name: 'PME Locale',
+    monthly: 29,
+    yearly: 290,
+    tagline: 'Profil entreprise, analytics',
+    features: ['Tout Citoyen +', 'Profil entreprise', 'Suivi concurrence', 'Support prioritaire 4h'],
+  },
+  business_pro: {
+    name: 'Business Pro',
+    monthly: 79,
+    yearly: 790,
+    tagline: 'Webhooks, exports illimités, analytics avancés',
+    features: ['Tout PME +', 'Webhooks temps réel', 'Exports illimités', 'Analytics avancés'],
+  },
+  institutional: {
+    name: 'Institutionnel 🏛️',
+    yearlyRange: 'Sur devis',
+    tagline: 'Support dédié 24/7, data illimitée',
+    features: ['Tout Business +', 'Support dédié 1h', 'API illimitée', 'White-label'],
+  },
+  research: {
+    name: 'Recherche 🎓',
+    yearlyRange: 'Sur devis',
+    tagline: 'Pour académiques, 100k API calls/mois',
+    features: ['API 100 000 req/j', 'Exports open data', 'Analytics avancés'],
+  },
+  // Legacy plan IDs for backward-compatibility
+  CITIZEN_PREMIUM: { name: 'Citoyen Premium ⭐', monthly: 4.99, yearly: 49.90 },
+  PRO: { name: 'PME Locale', monthly: 29, yearly: 290 },
+  BUSINESS: { name: 'Business Pro', monthly: 79, yearly: 790 },
+  ENTERPRISE: { name: 'Institutionnel 🏛️', yearlyRange: 'Sur devis' },
+  INSTITUTION: { name: 'Institutionnel 🏛️', yearlyRange: 'Sur devis' },
 };
+
+/** Retrieve and persist the affiliate key from URL or localStorage */
+function getAffiliateSource(searchParams: URLSearchParams): string | null {
+  const affiliateFromUrl = searchParams.get('affiliate');
+  if (affiliateFromUrl) {
+    try {
+      sessionStorage.setItem('sumup_affiliate', affiliateFromUrl);
+    } catch {
+      // ignore storage errors
+    }
+    return affiliateFromUrl;
+  }
+  try {
+    return sessionStorage.getItem('sumup_affiliate');
+  } catch {
+    return null;
+  }
+}
 
 export default function Subscribe() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const [step, setStep] = useState<Step>(1);
-  const [planId] = useState(searchParams.get('plan') || 'CITIZEN_PREMIUM');
-  const [cycle] = useState(searchParams.get('cycle') || 'yearly');
+  const [planId, setPlanId] = useState(searchParams.get('plan') || 'citizen_premium');
+  const [cycle, setCycle] = useState(searchParams.get('cycle') || 'yearly');
   const [isDOMTerritory] = useState(searchParams.get('dom') === 'true');
-  
+
+  // Affiliate tracking
+  const affiliateSource = getAffiliateSource(searchParams);
+
   // 7-day trial detection
   const isTrial = searchParams.get('trial') === 'true';
   const trialAvailable = canStartTrial();
@@ -89,84 +135,41 @@ export default function Subscribe() {
   const [email, setEmail] = useState('');
   const [territory, setTerritory] = useState('GP');
   const [usageType, setUsageType] = useState('citoyen');
-  
+
   // Validation
   const [emailError, setEmailError] = useState('');
-  
+
+  // SumUp checkout state
+  const [checkoutId, setCheckoutId] = useState<string | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
   const currentPlan = plans[planId as keyof typeof plans];
-  
-  // For Enterprise and Institution, use yearly range instead of monthly/yearly calculation
-  const isCustomPricing = planId === 'ENTERPRISE' || planId === 'INSTITUTION';
-  const basePrice = isCustomPricing 
-    ? null 
-    : (cycle === 'yearly' ? currentPlan?.yearly : currentPlan?.monthly);
+  const currentPlanPricingMeta = currentPlan as
+    | (typeof currentPlan & {
+        isQuoteOnly?: boolean;
+        yearlyRange?: string | null;
+      })
+    | undefined;
+
+  const isCustomPricing = Boolean(
+    currentPlanPricingMeta?.isQuoteOnly || currentPlanPricingMeta?.yearlyRange
+  );
+  const price = isCustomPricing
+    ? null
+    : cycle === 'yearly'
+    ? currentPlan?.yearly
+    : currentPlan?.monthly;
+
   const domPrice = isCustomPricing
     ? null
-    : (isDOMTerritory && (planId === 'PRO' || planId === 'BUSINESS') 
-      ? (basePrice ?? 0) * 0.7 
-      : basePrice);
+    : isDOMTerritory &&
+      (planId === 'sme_freemium' || planId === 'business_pro' || planId === 'PRO' || planId === 'BUSINESS')
+    ? (price ?? 0) * 0.7
+    : price;
 
-  const finalPrice = domPrice !== null && promoDiscount > 0
-    ? (domPrice ?? 0) * (1 - promoDiscount / 100)
-    : domPrice;
-
-  // Pre-fill email from localStorage if available
-  useEffect(() => {
-    const savedEmail = localStorage.getItem('userEmail');
-    if (savedEmail) setEmail(savedEmail);
-  }, []);
-
-  // Try to generate affiliate link
-  const generateAffiliateLink = useCallback(async () => {
-    const token = localStorage.getItem('authToken');
-    if (!token) return;
-    try {
-      const base = resolveApiBaseUrl();
-      const resp = await fetch(`${base}/api/affiliates/generate-link`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ platform: 'direct' }),
-      });
-      const data = await resp.json() as { success?: boolean; link?: string };
-      if (data.success && data.link) setAffiliateLink(data.link);
-    } catch {
-      // Silently ignore
-    }
-  }, []);
-
-  useEffect(() => {
-    generateAffiliateLink();
-  }, [generateAffiliateLink]);
-
-  // Apply promo discount on top of DOM discount
-  const promoDiscountPct = appliedPromo?.discountPct ?? 0;
-  const promoPrice = domPrice !== null ? applyPromoDiscount(domPrice, promoDiscountPct) : null;
-  const displayPrice = promoPrice ?? domPrice;
-
-  const handleApplyPromo = () => {
-    setPromoError('');
-    const code = promoInput.trim();
-    if (!code) {
-      setAppliedPromo(null);
-      setPromoError('Saisissez un code promo');
-      return;
-    }
-    const promo = validatePromoCode(code);
-    if (!promo) {
-      setAppliedPromo(null);
-      setPromoError('Code invalide ou expiré');
-      return;
-    }
-    setAppliedPromo(promo);
-    trackConversion({ type: 'promo_applied', plan: planId, promoCode: promo.code });
-  };
-
-  // Activate trial when proceeding to success step
   const activateTrialIfNeeded = () => {
-    if (isTrial && trialAvailable && planId !== 'ENTERPRISE' && planId !== 'INSTITUTION') {
+    if (isTrial && trialAvailable && !isCustomPricing) {
       startTrial(planId as PlanId);
     }
   };
@@ -184,10 +187,7 @@ export default function Subscribe() {
     return true;
   };
 
-  const handleStep1Next = () => {
-    trackConversion({ type: 'subscribe_start', plan: planId });
-    setStep(2);
-  };
+  const handleStep1Next = () => setStep(2);
 
   const handleStep2Next = () => {
     if (!validateEmail(email)) return;
@@ -198,14 +198,73 @@ export default function Subscribe() {
     setStep(3);
   };
 
-  const handleConfirmPayment = () => {
-    trackConversion({ type: 'subscribe_complete', plan: planId, promoCode: appliedPromo?.code });
-    // Activate 7-day trial if requested
+  /** For custom-pricing plans (institutional/research), redirect to contact */
+  const handleCustomPricingContact = () => {
+    navigate('/contact?subject=subscription&plan=' + encodeURIComponent(planId));
+  };
+
+  /** Create a SumUp checkout via our backend and get the checkout_id */
+  const initiateSumUpCheckout = useCallback(async () => {
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+    try {
+      const apiBase = resolveApiBaseUrl();
+      const interval = cycle === 'yearly' ? 'yearly' : 'monthly';
+
+      const response = await fetch(`${apiBase}/subscriptions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          planId,
+          paymentMethodId: null,
+          interval,
+          affiliateSource: affiliateSource || undefined,
+        }),
+      });
+
+      const data = await response.json() as {
+        success: boolean;
+        checkoutId?: string;
+        subscription?: { id: string };
+        error?: string;
+      };
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Erreur lors de la création du paiement');
+      }
+
+      if (!data.checkoutId) {
+        throw new Error('Paiement requis : identifiant de checkout manquant');
+      }
+
+      setCheckoutId(data.checkoutId);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Erreur inconnue';
+      setCheckoutError(msg);
+    } finally {
+      setCheckoutLoading(false);
+    }
+  }, [planId, cycle, email, affiliateSource, currentPlan, navigate]);
+
+  /** Called when step 3 is reached and plan requires payment */
+  useEffect(() => {
+    if (step === 3 && !isCustomPricing && (price ?? 0) > 0 && !checkoutId && !checkoutLoading) {
+      initiateSumUpCheckout();
+    }
+  }, [step, isCustomPricing, price, checkoutId, checkoutLoading, initiateSumUpCheckout]);
+
+  const handlePaymentSuccess = () => {
     activateTrialIfNeeded();
-    // Save email for future pre-fill
-    if (email) localStorage.setItem('userEmail', email);
-    // Redirect to success page
-    navigate(`/subscribe/success?plan=${planId}`);
+    navigate(
+      `/subscribe/success?plan=${encodeURIComponent(currentPlan?.name || planId)}&cycle=${cycle}&email=${encodeURIComponent(email)}`
+    );
+  };
+
+  const handlePaymentError = (errorMsg: string) => {
+    navigate(
+      `/subscribe/error?reason=${encodeURIComponent(errorMsg)}&plan=${encodeURIComponent(planId)}`
+    );
   };
 
   if (!currentPlan) {
@@ -214,9 +273,7 @@ export default function Subscribe() {
         <GlassCard>
           <h1 className="text-2xl font-bold text-white mb-4">Plan invalide</h1>
           <p className="text-gray-300 mb-6">Le plan sélectionné n'existe pas.</p>
-          <CivicButton onClick={() => navigate('/pricing')}>
-            Retour aux tarifs
-          </CivicButton>
+          <CivicButton onClick={() => navigate('/pricing')}>Retour aux tarifs</CivicButton>
         </GlassCard>
       </div>
     );
@@ -230,9 +287,19 @@ export default function Subscribe() {
         gradient="from-slate-950 to-indigo-900"
         height="h-40 sm:h-52"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🚀 Choisir un abonnement</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Accédez à toutes les fonctionnalités de la plateforme</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          🚀 Choisir un abonnement
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Accédez à toutes les fonctionnalités de la plateforme
+        </p>
+        {affiliateSource && (
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: 'rgba(134,239,172,0.85)' }}>
+            🤝 Offre partenaire active
+          </p>
+        )}
       </HeroImage>
+
       <GlassContainer className="max-w-4xl mx-auto p-8">
         {/* Progress Indicator */}
         <div className="mb-8">
@@ -252,9 +319,7 @@ export default function Subscribe() {
               </div>
             ))}
           </div>
-          <div className="text-center text-gray-300 text-sm">
-            Étape {step} sur 3
-          </div>
+          <div className="text-center text-gray-300 text-sm">Étape {step} sur 3</div>
         </div>
 
         {/* STEP 1: Plan Confirmation */}
@@ -264,16 +329,6 @@ export default function Subscribe() {
               Récapitulatif du plan
             </h1>
 
-            {/* Countdown urgency */}
-            <div className="flex items-center justify-center gap-2 mb-4 text-sm text-blue-300 font-semibold">
-              <span>⏰</span>
-              <span>Offre valide encore : </span>
-              <span className="font-mono text-blue-200">
-                {pad(hours)}h {pad(minutes)}m {pad(seconds)}s
-              </span>
-            </div>
-
-            {/* Trial banner */}
             {isTrial && trialAvailable && (
               <div className="mb-4 p-4 bg-indigo-900/40 border border-indigo-500/40 rounded-xl flex items-start gap-3">
                 <span className="text-2xl flex-shrink-0">✨</span>
@@ -299,92 +354,68 @@ export default function Subscribe() {
 
             <GlassCard className="mb-6">
               <div className="mb-4">
-                <h2 className="text-2xl font-bold text-white mb-2">
-                  {currentPlan.name}
-                </h2>
+                <h2 className="text-2xl font-bold text-white mb-1">{currentPlan.name}</h2>
+                {currentPlan.tagline && (
+                  <p className="text-gray-400 text-sm mb-3">{currentPlan.tagline}</p>
+                )}
                 {isCustomPricing ? (
                   <p className="text-4xl font-bold text-blue-400">
-                    {(currentPlan as {yearlyRange?: string}).yearlyRange}
-                    <span className="text-base text-gray-400 ml-2">/ an</span>
+                    {(currentPlan as { yearlyRange?: string }).yearlyRange}
                   </p>
                 ) : (
                   <>
-                    {appliedPromo ? (
-                      <div className="flex items-baseline gap-3">
-                        <p className="text-4xl font-bold text-green-400">
-                          {(displayPrice ?? 0).toFixed(2)} €
-                          <span className="text-base text-gray-400 ml-2">
-                            / {cycle === 'yearly' ? 'an' : 'mois'}
-                          </span>
-                        </p>
-                        <p className="text-xl line-through text-gray-500">
-                          {(domPrice ?? 0).toFixed(2)} €
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="text-4xl font-bold text-blue-400">
-                        {(domPrice ?? 0).toFixed(2)} €
-                        <span className="text-base text-gray-400 ml-2">
-                          / {cycle === 'yearly' ? 'an' : 'mois'}
-                        </span>
+                    <p className="text-4xl font-bold text-blue-400">
+                      {(finalPrice ?? 0).toFixed(2)} €
+                      <span className="text-base text-gray-400 ml-2">
+                        / {cycle === 'yearly' ? 'an' : 'mois'}
+                      </span>
+                    </p>
+                    {cycle === 'yearly' && (
+                      <p className="text-green-400 text-sm mt-1">
+                        💰 2 mois offerts vs mensuel
                       </p>
                     )}
-                    {isDOMTerritory && (planId === 'PRO' || planId === 'BUSINESS') && (
-                      <p className="text-green-400 text-sm mt-2">
-                        Prix DOM-ROM-COM (-30%)
-                      </p>
-                    )}
+                    {isDOMTerritory &&
+                      (planId === 'sme_freemium' || planId === 'business_pro') && (
+                        <p className="text-green-400 text-sm mt-1">Prix DOM-ROM-COM (-30%)</p>
+                      )}
                   </>
                 )}
               </div>
 
-              <div className="mb-6">
-                <h3 className="font-semibold text-white mb-3">Inclus dans ce plan :</h3>
-                <ul className="space-y-2 text-gray-300 text-sm">
-                  {planId === 'CITIZEN_PREMIUM' && (
-                    <>
-                      <li>• Optimisation multi-trajets</li>
-                      <li>• Export PDF</li>
-                      <li>• Historique illimité</li>
-                      <li>• Mode hors ligne renforcé</li>
-                    </>
-                  )}
-                  {planId === 'PRO' && (
-                    <>
-                      <li>• Tout Premium +</li>
-                      <li>• Multi-territoires</li>
-                      <li>• Export CSV</li>
-                      <li>• Support prioritaire</li>
-                    </>
-                  )}
-                  {planId === 'BUSINESS' && (
-                    <>
-                      <li>• Tout Pro +</li>
-                      <li>• Tableaux de bord</li>
-                      <li>• API lecture seule</li>
-                      <li>• Support dédié</li>
-                    </>
-                  )}
-                  {planId === 'ENTERPRISE' && (
-                    <>
-                      <li>• Tout Business +</li>
-                      <li>• Historique complet</li>
-                      <li>• Analyses prédictives</li>
-                      <li>• API étendue</li>
-                      <li>• Accompagnement dédié</li>
-                    </>
-                  )}
-                  {planId === 'INSTITUTION' && (
-                    <>
-                      <li>• Tout Enterprise +</li>
-                      <li>• Rapports publics institutionnels</li>
-                      <li>• Transparence totale</li>
-                      <li>• Audit complet</li>
-                      <li>• Support institutionnel</li>
-                    </>
-                  )}
-                </ul>
-              </div>
+              {currentPlan.features && (
+                <div className="mb-6">
+                  <h3 className="font-semibold text-white mb-3">Inclus dans ce plan :</h3>
+                  <ul className="space-y-1.5 text-gray-300 text-sm">
+                    {currentPlan.features.map((f, i) => (
+                      <li key={i}>• {f}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Billing cycle toggle */}
+              {!isCustomPricing && (
+                <div className="mb-4">
+                  <p className="text-white font-medium mb-2 text-sm">Périodicité :</p>
+                  <div className="flex gap-2">
+                    {(['monthly', 'yearly'] as const).map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setCycle(c)}
+                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
+                          cycle === c
+                            ? 'bg-blue-600 border-blue-500 text-white'
+                            : 'bg-white/[0.06] border-white/20 text-gray-300 hover:border-blue-500/40'
+                        }`}
+                      >
+                        {c === 'monthly' ? 'Mensuel' : 'Annuel'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <DataBadge source="INSEE · OPMR · data.gouv.fr" />
 
@@ -454,18 +485,10 @@ export default function Subscribe() {
             </div>
 
             <div className="flex gap-4">
-              <CivicButton
-                variant="secondary"
-                className="flex-1"
-                onClick={() => navigate('/pricing')}
-              >
+              <CivicButton variant="secondary" className="flex-1" onClick={() => navigate('/pricing')}>
                 Retour
               </CivicButton>
-              <CivicButton
-                variant="primary"
-                className="flex-1"
-                onClick={handleStep1Next}
-              >
+              <CivicButton variant="primary" className="flex-1" onClick={handleStep1Next}>
                 Continuer
               </CivicButton>
             </div>
@@ -485,7 +508,6 @@ export default function Subscribe() {
               </p>
 
               <div className="space-y-6">
-                {/* Email */}
                 <div>
                   <label htmlFor="email" className="block text-white font-medium mb-2">
                     Email <span className="text-red-400">*</span>
@@ -513,19 +535,13 @@ export default function Subscribe() {
                   )}
                 </div>
 
-                {/* Territory */}
                 <div>
                   <label htmlFor="territory" className="block text-white font-medium mb-2">
                     Territoire principal <span className="text-red-400">*</span>
                   </label>
-                  <TerritorySelector
-                    value={territory}
-                    onChange={setTerritory}
-                    className="w-full"
-                  />
+                  <TerritorySelector value={territory} onChange={setTerritory} className="w-full" />
                 </div>
 
-                {/* Usage Type */}
                 <div>
                   <p className="block text-white font-medium mb-2">
                     Type d'usage <span className="text-red-400">*</span>
@@ -559,25 +575,17 @@ export default function Subscribe() {
             </GlassCard>
 
             <div className="flex gap-4">
-              <CivicButton
-                variant="secondary"
-                className="flex-1"
-                onClick={() => setStep(1)}
-              >
+              <CivicButton variant="secondary" className="flex-1" onClick={() => setStep(1)}>
                 Retour
               </CivicButton>
-              <CivicButton
-                variant="primary"
-                className="flex-1"
-                onClick={handleStep2Next}
-              >
+              <CivicButton variant="primary" className="flex-1" onClick={handleStep2Next}>
                 Continuer
               </CivicButton>
             </div>
           </div>
         )}
 
-        {/* STEP 3: Payment Confirmation */}
+        {/* STEP 3: Payment */}
         {step === 3 && (
           <div>
             <h1 className="text-3xl font-bold text-white mb-6 text-center">
@@ -586,7 +594,7 @@ export default function Subscribe() {
 
             <GlassCard className="mb-6">
               <h2 className="text-xl font-bold text-white mb-4">Récapitulatif</h2>
-              
+
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-300">
                   <span>Plan :</span>
@@ -606,15 +614,14 @@ export default function Subscribe() {
                   <span>Territoire :</span>
                   <span className="text-white font-medium">{territory}</span>
                 </div>
-                
+
                 <div className="border-t border-white/[0.22] pt-3 mt-3">
                   <div className="flex justify-between text-lg font-bold">
                     <span className="text-white">Total :</span>
-                    <span className={appliedPromo ? 'text-green-400' : 'text-blue-400'}>
-                      {isCustomPricing 
-                        ? (currentPlan as any).yearlyRange 
-                        : `${(displayPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`
-                      }
+                    <span className="text-blue-400">
+                      {isCustomPricing
+                        ? (currentPlan as { yearlyRange?: string }).yearlyRange
+                        : `${(domPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`}
                     </span>
                   </div>
                   {appliedPromo && !isCustomPricing && (
@@ -632,30 +639,85 @@ export default function Subscribe() {
                 </p>
               </div>
 
-              <LimitNote>
-                <p className="text-sm">
-                  <strong>Résiliation en 1 clic</strong> depuis votre compte.
-                  <br />
-                  Aucune justification requise. Aucune relance.
-                </p>
-              </LimitNote>
+              {/* SumUp Payment form — only shown for paid non-custom plans */}
+              {!isCustomPricing && (domPrice ?? 0) > 0 && (
+                <div className="mt-6">
+                  {checkoutError && (
+                    <div className="mb-4 p-3 bg-red-900/30 border border-red-500/40 rounded-lg text-red-300 text-sm">
+                      {checkoutError}
+                    </div>
+                  )}
+                  {checkoutLoading && (
+                    <div className="flex items-center justify-center py-6">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-400" />
+                      <span className="ml-2 text-gray-300 text-sm">
+                        Initialisation du paiement SumUp…
+                      </span>
+                    </div>
+                  )}
+                  {checkoutId && (
+                    <SumUpPaymentForm
+                      checkoutId={checkoutId}
+                      amount={domPrice ?? 0}
+                      currency="EUR"
+                      planName={currentPlan.name}
+                      onSuccess={handlePaymentSuccess}
+                      onError={handlePaymentError}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* Free plan confirmation */}
+              {!isCustomPricing && (domPrice ?? 0) === 0 && (
+                <div className="mt-4">
+                  <LimitNote>
+                    <p className="text-sm">
+                      <strong>Résiliation en 1 clic</strong> depuis votre compte.
+                      <br />
+                      Aucune justification requise. Aucune relance.
+                    </p>
+                  </LimitNote>
+                </div>
+              )}
+
+              {/* Custom pricing — redirect to contact */}
+              {isCustomPricing && (
+                <div className="mt-4 p-4 bg-indigo-900/20 border border-indigo-500/30 rounded-lg">
+                  <p className="text-indigo-200 text-sm mb-3">
+                    Ce plan est sur devis. Notre équipe vous contactera sous 24h.
+                  </p>
+                  <CivicButton variant="primary" className="w-full" onClick={handleCustomPricingContact}>
+                    Demander un devis
+                  </CivicButton>
+                </div>
+              )}
             </GlassCard>
 
+            {/* Back button and free plan confirm */}
             <div className="flex gap-4">
               <CivicButton
                 variant="secondary"
                 className="flex-1"
                 onClick={() => setStep(2)}
+                disabled={checkoutLoading}
               >
                 Retour
               </CivicButton>
-              <CivicButton
-                variant="primary"
-                className="flex-1"
-                onClick={handleConfirmPayment}
-              >
-                Confirmer et payer
-              </CivicButton>
+              {!isCustomPricing && (domPrice ?? 0) === 0 && (
+                <CivicButton
+                  variant="primary"
+                  className="flex-1"
+                  onClick={() => {
+                    activateTrialIfNeeded();
+                    navigate(
+                      `/subscribe/success?plan=${encodeURIComponent(currentPlan.name)}&cycle=${cycle}&email=${encodeURIComponent(email)}`
+                    );
+                  }}
+                >
+                  Confirmer (gratuit)
+                </CivicButton>
+              )}
             </div>
           </div>
         )}
