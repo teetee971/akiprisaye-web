@@ -17,20 +17,49 @@ const requiredSecurityHeaders = [
 
 const normalizeUrl = (url) => (url.endsWith('/') ? url.slice(0, -1) : url);
 
+const FETCH_TIMEOUT_MS = 15_000;
+
+const fetchWithTimeout = (url, options = {}) => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() =>
+    clearTimeout(timer)
+  );
+};
+
+const isCloudflareAccessUrl = (url) => {
+  try {
+    const { hostname } = new URL(url);
+    return hostname === 'cloudflareaccess.com' || hostname.endsWith('.cloudflareaccess.com');
+  } catch {
+    return false;
+  }
+};
+
 const checkEndpoint = async (baseUrl, path) => {
   const endpoint = `${normalizeUrl(baseUrl)}${path}`;
-  const response = await fetch(endpoint, { redirect: 'manual' });
-  return {
-    endpoint,
-    status: response.status,
-    location: response.headers.get('location')
-  };
+  try {
+    const response = await fetchWithTimeout(endpoint, { redirect: 'manual' });
+    return {
+      endpoint,
+      status: response.status,
+      location: response.headers.get('location'),
+      error: null
+    };
+  } catch (err) {
+    return {
+      endpoint,
+      status: 'unreachable',
+      location: null,
+      error: err?.message || String(err)
+    };
+  }
 };
 
 const main = async () => {
   let response;
   try {
-    response = await fetch(targetUrl, { redirect: 'manual' });
+    response = await fetchWithTimeout(targetUrl, { redirect: 'manual' });
   } catch (error) {
     console.log(`# Deployment URL audit`);
     console.log(`- URL: ${targetUrl}`);
@@ -49,7 +78,7 @@ const main = async () => {
   console.log(`- HTTP status: ${status}`);
   if (location) console.log(`- Redirect location: ${location}`);
 
-  if (location?.includes('cloudflareaccess.com')) {
+  if (location && isCloudflareAccessUrl(location)) {
     console.log('\n## Blocking issue detected');
     console.log('- The URL is protected by Cloudflare Access, so automated external audits cannot crawl it.');
     console.log('- Improvement: create a service token for CI and pass Cloudflare Access headers during audit runs.');
@@ -74,8 +103,10 @@ const main = async () => {
 
   console.log(`- robots.txt: ${robots.status} (${robots.endpoint})`);
   if (robots.location) console.log(`  redirect -> ${robots.location}`);
+  if (robots.error) console.log(`  error: ${robots.error}`);
   console.log(`- sitemap.xml: ${sitemap.status} (${sitemap.endpoint})`);
   if (sitemap.location) console.log(`  redirect -> ${sitemap.location}`);
+  if (sitemap.error) console.log(`  error: ${sitemap.error}`);
 
   console.log('\n## Suggested next steps');
   console.log('- Run Lighthouse/PageSpeed once Cloudflare Access service-token auth is configured.');
