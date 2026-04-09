@@ -1,10 +1,19 @@
 {
-  "name": "product-image-worker",
+  "name": "@akiprisaye/product-image-worker",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
+  "description": "Cloudflare Worker — free product image lookup by receipt label text",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "vitest run --config vitest.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250405.0",
-    "typescript": "^5.7.3",
-    "wrangler": "^4.0.0"
+    "@cloudflare/workers-types": "^4.20260208.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.0",
+    "wrangler": "^4.16.0"
   }
 }
