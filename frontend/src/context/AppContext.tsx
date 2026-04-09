@@ -36,8 +36,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      // Le "?v=" force Cloudflare à nous donner la toute dernière version du fichier
-      const response = await fetch(`${import.meta.env.BASE_URL}data/catalogue.json?v=${Date.now()}`);
+      // On garde une URL stable et on demande explicitement une réponse fraîche
+      const response = await fetch(`${import.meta.env.BASE_URL}data/catalogue.json`, {
+        cache: 'no-store',
+      });
 
       if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
 
