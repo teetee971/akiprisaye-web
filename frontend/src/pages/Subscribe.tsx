@@ -17,8 +17,12 @@ import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 import { canStartTrial, startTrial } from '@/services/trialService';
 import PromoCodeWidget from '@/components/conversion/PromoCodeWidget';
 import type { PlanId } from '@/billing/plans';
-import { Shield, Lock, FileText, RefreshCw, Share2 } from 'lucide-react';
-import { resolveApiBaseUrl } from '@/services/apiBaseUrl';
+import {
+  validatePromoCode,
+  applyPromoDiscount,
+  trackConversion,
+  type PromoCode,
+} from '@/services/subscriptionConversionService';
 
 type Step = 1 | 2 | 3;
 
@@ -73,17 +77,13 @@ export default function Subscribe() {
   const isTrial = searchParams.get('trial') === 'true';
   const trialAvailable = canStartTrial();
 
-  // Promo code state
-  const [promoDiscount, setPromoDiscount] = useState(0);
-  const [promoCode, setPromoCode] = useState('');
-
-  // Affiliate referral link state
-  const [affiliateLink, setAffiliateLink] = useState<string | null>(null);
-
-  // Countdown
-  const countdownExpiryRef = useRef(getOrCreateExpiry());
-  const { hours, minutes, seconds } = useCountdown(countdownExpiryRef.current);
-  const pad = (n: number) => String(n).padStart(2, '0');
+  // Promo code
+  const [promoInput, setPromoInput] = useState((searchParams.get('promo') ?? '').toUpperCase());
+  const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(() => {
+    const initial = searchParams.get('promo');
+    return initial ? validatePromoCode(initial) : null;
+  });
+  const [promoError, setPromoError] = useState('');
 
   // Step 2 - User info
   const [email, setEmail] = useState('');
@@ -141,6 +141,29 @@ export default function Subscribe() {
     generateAffiliateLink();
   }, [generateAffiliateLink]);
 
+  // Apply promo discount on top of DOM discount
+  const promoDiscountPct = appliedPromo?.discountPct ?? 0;
+  const promoPrice = domPrice !== null ? applyPromoDiscount(domPrice, promoDiscountPct) : null;
+  const displayPrice = promoPrice ?? domPrice;
+
+  const handleApplyPromo = () => {
+    setPromoError('');
+    const code = promoInput.trim();
+    if (!code) {
+      setAppliedPromo(null);
+      setPromoError('Saisissez un code promo');
+      return;
+    }
+    const promo = validatePromoCode(code);
+    if (!promo) {
+      setAppliedPromo(null);
+      setPromoError('Code invalide ou expiré');
+      return;
+    }
+    setAppliedPromo(promo);
+    trackConversion({ type: 'promo_applied', plan: planId, promoCode: promo.code });
+  };
+
   // Activate trial when proceeding to success step
   const activateTrialIfNeeded = () => {
     if (isTrial && trialAvailable && planId !== 'ENTERPRISE' && planId !== 'INSTITUTION') {
@@ -162,6 +185,7 @@ export default function Subscribe() {
   };
 
   const handleStep1Next = () => {
+    trackConversion({ type: 'subscribe_start', plan: planId });
     setStep(2);
   };
 
@@ -175,6 +199,7 @@ export default function Subscribe() {
   };
 
   const handleConfirmPayment = () => {
+    trackConversion({ type: 'subscribe_complete', plan: planId, promoCode: appliedPromo?.code });
     // Activate 7-day trial if requested
     activateTrialIfNeeded();
     // Save email for future pre-fill
@@ -284,15 +309,24 @@ export default function Subscribe() {
                   </p>
                 ) : (
                   <>
-                    <p className="text-4xl font-bold text-blue-400">
-                      {(finalPrice ?? 0).toFixed(2)} €
-                      <span className="text-base text-gray-400 ml-2">
-                        / {cycle === 'yearly' ? 'an' : 'mois'}
-                      </span>
-                    </p>
-                    {promoDiscount > 0 && (
-                      <p className="text-green-400 text-sm mt-1">
-                        Remise {promoCode} : -{promoDiscount}% appliquée
+                    {appliedPromo ? (
+                      <div className="flex items-baseline gap-3">
+                        <p className="text-4xl font-bold text-green-400">
+                          {(displayPrice ?? 0).toFixed(2)} €
+                          <span className="text-base text-gray-400 ml-2">
+                            / {cycle === 'yearly' ? 'an' : 'mois'}
+                          </span>
+                        </p>
+                        <p className="text-xl line-through text-gray-500">
+                          {(domPrice ?? 0).toFixed(2)} €
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-4xl font-bold text-blue-400">
+                        {(domPrice ?? 0).toFixed(2)} €
+                        <span className="text-base text-gray-400 ml-2">
+                          / {cycle === 'yearly' ? 'an' : 'mois'}
+                        </span>
                       </p>
                     )}
                     {isDOMTerritory && (planId === 'PRO' || planId === 'BUSINESS') && (
@@ -372,20 +406,41 @@ export default function Subscribe() {
               )}
             </GlassCard>
 
-            {/* Trust badges */}
-            <div className="flex flex-wrap justify-center gap-4 text-xs text-gray-400 mb-6">
-              <span className="flex items-center gap-1"><Shield className="w-3.5 h-3.5 text-green-400" /> Paiement 100&nbsp;% sécurisé</span>
-              <span className="flex items-center gap-1"><Lock className="w-3.5 h-3.5 text-blue-400" /> RGPD conforme</span>
-              <span className="flex items-center gap-1"><FileText className="w-3.5 h-3.5 text-purple-400" /> Factures automatiques</span>
-              <span className="flex items-center gap-1"><RefreshCw className="w-3.5 h-3.5 text-yellow-400" /> Annulation facile</span>
-            </div>
-
-            {/* Affiliate share link */}
-            {affiliateLink && (
-              <div className="mb-6 p-3 bg-white/[0.04] border border-white/10 rounded-lg flex items-center gap-2 text-sm text-gray-400">
-                <Share2 className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                <span>Partagez et gagnez :</span>
-                <span className="font-mono text-blue-300 text-xs truncate flex-1">{affiliateLink}</span>
+            {/* Promo code input */}
+            {!isCustomPricing && (
+              <div className="mb-6">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoInput}
+                    onChange={(e) => {
+                      setPromoInput(e.target.value.toUpperCase());
+                      setPromoError('');
+                    }}
+                    placeholder="Code promo (ex: WELCOME50)"
+                    className="flex-1 px-4 py-3 bg-white/[0.08] border border-white/[0.22] rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none text-sm"
+                    aria-label="Code promo"
+                  />
+                  <CivicButton
+                    variant="secondary"
+                    onClick={handleApplyPromo}
+                    className="shrink-0"
+                  >
+                    Appliquer
+                  </CivicButton>
+                </div>
+                {promoError && (
+                  <p className="text-red-400 text-sm mt-1">{promoError}</p>
+                )}
+                {appliedPromo && (
+                  <div className="mt-2 flex items-center gap-2 text-green-400 text-sm">
+                    <span>🎉</span>
+                    <span>
+                      <strong>{appliedPromo.label}</strong> appliqué —{' '}
+                      {appliedPromo.discountPct}% de réduction
+                    </span>
+                  </div>
+                )}
               </div>
             )}
 
@@ -555,18 +610,17 @@ export default function Subscribe() {
                 <div className="border-t border-white/[0.22] pt-3 mt-3">
                   <div className="flex justify-between text-lg font-bold">
                     <span className="text-white">Total :</span>
-                    <span className="text-blue-400">
+                    <span className={appliedPromo ? 'text-green-400' : 'text-blue-400'}>
                       {isCustomPricing 
-                        ? (currentPlan as {yearlyRange?: string}).yearlyRange 
-                        : `${(finalPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`
+                        ? (currentPlan as any).yearlyRange 
+                        : `${(displayPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`
                       }
                     </span>
                   </div>
-                  {promoDiscount > 0 && !isCustomPricing && (
-                    <div className="flex justify-between text-sm text-green-400 mt-1">
-                      <span>Code {promoCode} :</span>
-                      <span>-{promoDiscount}%</span>
-                    </div>
+                  {appliedPromo && !isCustomPricing && (
+                    <p className="text-green-400 text-xs mt-1 text-right">
+                      🎉 Code <strong>{appliedPromo.code}</strong> appliqué — {appliedPromo.discountPct}% de réduction
+                    </p>
                   )}
                 </div>
               </div>

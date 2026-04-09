@@ -114,7 +114,7 @@ jobs:
 
       - name: Typecheck (TypeScript strict)
         working-directory: frontend
-        run: npx tsc -p tsconfig.ci.json --noEmit
+        run: npm run typecheck:ci
 
   # ─── 3. Test ────────────────────────────────────────────────────────────────
   test:
