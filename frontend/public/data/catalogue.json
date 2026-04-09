@@ -1,42 +1,2829 @@
 [
   {
-    "id": "p-001",
-    "name": "Riz 1kg",
-    "store": "Supermarché A",
-    "territory": "GP",
-    "currency": "€",
+    "name": "SUCRE MARIE GALANTE 1KG",
+    "price": 2.75,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
     "observations": [
-      { "date": "2025-11-01T10:00:00Z", "price": 2.50 },
-      { "date": "2025-11-08T10:00:00Z", "price": 2.45 },
-      { "date": "2025-11-15T10:00:00Z", "price": 2.30 },
-      { "date": "2025-11-22T10:00:00Z", "price": 2.20 },
-      { "date": "2025-11-29T10:00:00Z", "price": 1.95 }
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.75
+      }
+    ],
+    "tags": [
+      "LOCAL",
+      "SOUVERAIN"
     ]
   },
   {
-    "id": "p-002",
-    "name": "Lait UHT 1L",
-    "store": "Épicerie B",
-    "territory": "RE",
-    "currency": "€",
+    "name": "SUCRE BLANC 1KG CRF",
+    "price": 1.99,
+    "store": "CARREFOUR",
+    "category": "ÉPICERIE",
     "observations": [
-      { "date": "2025-11-01T10:00:00Z", "price": 1.20 },
-      { "date": "2025-11-10T10:00:00Z", "price": 1.18 },
-      { "date": "2025-11-20T10:00:00Z", "price": 1.15 },
-      { "date": "2025-11-28T10:00:00Z", "price": 1.12 }
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 1.99
+      }
     ]
   },
   {
-    "id": "p-003",
-    "name": "Farine 1kg",
-    "store": "Marché C",
-    "territory": "MQ",
-    "currency": "€",
+    "name": "FARINE DE BLE 1KG GMA",
+    "price": 1.35,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
     "observations": [
-      { "date": "2025-10-01T10:00:00Z", "price": 1.80 },
-      { "date": "2025-10-15T10:00:00Z", "price": 1.85 },
-      { "date": "2025-11-01T10:00:00Z", "price": 1.78 },
-      { "date": "2025-11-25T10:00:00Z", "price": 1.75 }
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.35
+      }
+    ],
+    "tags": [
+      "LOCAL",
+      "ESSENTIEL"
+    ]
+  },
+  {
+    "name": "FARINE PATISSIERE 1KG",
+    "price": 1.79,
+    "store": "SUPER U",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 1.79
+      }
+    ]
+  },
+  {
+    "name": "RIZ LONG GRAIN 1KG",
+    "price": 1.45,
+    "store": "SUPER U",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 1.45
+      }
+    ]
+  },
+  {
+    "name": "RIZ BASMATI 1KG",
+    "price": 2.39,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.39
+      }
+    ]
+  },
+  {
+    "name": "RIZ COMPLET 1KG",
+    "price": 2.19,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.19
+      }
+    ]
+  },
+  {
+    "name": "PATES COQUILLETTES 500G",
+    "price": 0.85,
+    "store": "CARREFOUR",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 0.85
+      }
+    ]
+  },
+  {
+    "name": "PATES SPAGHETTI 500G",
+    "price": 0.89,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 0.89
+      }
+    ]
+  },
+  {
+    "name": "PATES FARFALLE 500G",
+    "price": 1.05,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.05
+      }
+    ]
+  },
+  {
+    "name": "HUILE COLZA CRF 1L",
+    "price": 3.79,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.79
+      }
+    ]
+  },
+  {
+    "name": "HUILE TOURNESOL 1L",
+    "price": 2.15,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.15
+      }
+    ]
+  },
+  {
+    "name": "HUILE OLIVE VIERGE 75CL",
+    "price": 6.49,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.49
+      }
+    ]
+  },
+  {
+    "name": "HUILE DE COCO 500ML",
+    "price": 5.29,
+    "store": "SUPER U",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 5.29
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "CAFE MOULU 250G",
+    "price": 3.45,
+    "store": "SUPER U",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 3.45
+      }
+    ]
+  },
+  {
+    "name": "CAFE EN GRAINS 500G",
+    "price": 7.95,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 7.95
+      }
+    ]
+  },
+  {
+    "name": "THE VERT SENCHA 25 SAC",
+    "price": 2.99,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "CACAO EN POUDRE 250G",
+    "price": 3.29,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 3.29
+      }
+    ]
+  },
+  {
+    "name": "CONFITURE GOYAVE 370G",
+    "price": 2.95,
+    "store": "CARREFOUR",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 2.95
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "CONFITURE MANGUE 370G",
+    "price": 3.15,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.15
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "MIEL ANTILLAIS 250G",
+    "price": 6.99,
+    "store": "SUPER U",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 6.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "NUTELLA 350G",
+    "price": 4.99,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 4.99
+      }
+    ]
+  },
+  {
+    "name": "PATE AMANDE CACAO 350G",
+    "price": 4.45,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 4.45
+      }
+    ]
+  },
+  {
+    "name": "MAIS SANS SUCRE CRF",
+    "price": 1.39,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.39
+      }
+    ]
+  },
+  {
+    "name": "POIS CHICHES CLASSIC",
+    "price": 1.1,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.1
+      }
+    ]
+  },
+  {
+    "name": "HARICOTS ROUGES DAUCY",
+    "price": 3.15,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.15
+      }
+    ]
+  },
+  {
+    "name": "LENTILLES VERTES 500G",
+    "price": 1.85,
+    "store": "SUPER U",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 1.85
+      }
+    ]
+  },
+  {
+    "name": "POIS CASSES JAUNES 500G",
+    "price": 1.55,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.55
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "FLAGEOLETS VERTS",
+    "price": 1.29,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.29
+      }
+    ]
+  },
+  {
+    "name": "CORNICHONS LAMELLES",
+    "price": 2.45,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.45
+      }
+    ]
+  },
+  {
+    "name": "TOMATES CONCASSEES 400G",
+    "price": 0.99,
+    "store": "CARREFOUR",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 0.99
+      }
+    ]
+  },
+  {
+    "name": "SAUCE TOMATE BASILIC 690G",
+    "price": 2.49,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "KETCHUP HEINZ 570G",
+    "price": 3.69,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.69
+      }
+    ]
+  },
+  {
+    "name": "MOUTARDE DIJON 285G",
+    "price": 1.79,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.79
+      }
+    ]
+  },
+  {
+    "name": "VINAIGRE DE MANIOC 50CL",
+    "price": 2.19,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.19
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "SEL FIN 1KG",
+    "price": 0.65,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 0.65
+      }
+    ]
+  },
+  {
+    "name": "POIVRE MOULIN 50G",
+    "price": 2.99,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "BOUILLON CUBE X12 MAGGI",
+    "price": 2.49,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "POUDRE CURRY 80G",
+    "price": 2.15,
+    "store": "SUPER U",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 2.15
+      }
+    ]
+  },
+  {
+    "name": "COLOMBO POUDRE 80G",
+    "price": 2.59,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.59
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "CURCUMA POUDRE 80G",
+    "price": 2.09,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.09
+      }
+    ]
+  },
+  {
+    "name": "CANNELLE BATON X5",
+    "price": 1.95,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.95
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "THON LISTAO MORCEAUX",
+    "price": 8.55,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 8.55
+      }
+    ]
+  },
+  {
+    "name": "SARDINES HUILE D'OLIVE 135G",
+    "price": 1.35,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.35
+      }
+    ]
+  },
+  {
+    "name": "MAQUEREAU TOMATE 385G",
+    "price": 2.29,
+    "store": "CARREFOUR",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 2.29
+      }
+    ]
+  },
+  {
+    "name": "POULPE ENTIER SURGELE 1KG",
+    "price": 9.99,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 9.99
+      }
+    ]
+  },
+  {
+    "name": "BISCUITS PETIT LU 200G",
+    "price": 1.99,
+    "store": "CARREFOUR MARKET",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.99
+      }
+    ]
+  },
+  {
+    "name": "GATEAU PEPITO 3P",
+    "price": 2.55,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.55
+      }
+    ]
+  },
+  {
+    "name": "CRACKERS SALES 100G",
+    "price": 1.45,
+    "store": "CARREFOUR",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 1.45
+      }
+    ]
+  },
+  {
+    "name": "CHIPS NATURE 130G",
+    "price": 1.79,
+    "store": "LEADER PRICE",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.79
+      }
+    ]
+  },
+  {
+    "name": "CACAHUETES GRILL. 200G",
+    "price": 2.29,
+    "store": "SUPER U",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 2.29
+      }
+    ]
+  },
+  {
+    "name": "CONCOMBRE LOCAL (L'UNITÉ)",
+    "price": 0.4,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 0.4
+      }
+    ],
+    "tags": [
+      "PROMO",
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "TOMATES LOCALES 1KG",
+    "price": 4.99,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 4.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "SALADE FEUILLE DE CHENE",
+    "price": 3.59,
+    "store": "LEADER PRICE",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 3.59
+      }
+    ]
+  },
+  {
+    "name": "BANANES DESSERT 1KG",
+    "price": 1.99,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "BANANES PLANTAINS 1KG",
+    "price": 2.49,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 2.49
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "ANANAS VICTORIA (L'UNITÉ)",
+    "price": 2.79,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.79
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "MANGUES LOCALES 1KG",
+    "price": 3.99,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 3.99
+      }
+    ],
+    "tags": [
+      "LOCAL",
+      "PROMO"
+    ]
+  },
+  {
+    "name": "PAPAYE LOCALE 1KG",
+    "price": 2.59,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 2.59
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "GOYAVES 1KG",
+    "price": 3.29,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 3.29
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "CITRONS VERTS 500G",
+    "price": 1.99,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "MARACUJAS 500G",
+    "price": 3.49,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 3.49
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "CHRISTOPHINES 1KG",
+    "price": 2.79,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 2.79
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "IGNAMES JAUNES 1KG",
+    "price": 3.89,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 3.89
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "PATATE DOUCE ROUGE 1KG",
+    "price": 2.39,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 2.39
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "POMMES DE TERRE 1KG",
+    "price": 1.99,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.99
+      }
+    ]
+  },
+  {
+    "name": "CAROTTES FANES 1KG",
+    "price": 1.79,
+    "store": "LEADER PRICE",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.79
+      }
+    ]
+  },
+  {
+    "name": "COURGETTES 1KG",
+    "price": 2.29,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.29
+      }
+    ]
+  },
+  {
+    "name": "POIVRONS ROUGES 1KG",
+    "price": 3.59,
+    "store": "SUPER U",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 3.59
+      }
+    ]
+  },
+  {
+    "name": "BROCOLI (L'UNITÉ)",
+    "price": 2.49,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "AUBERGINES LOCALES 1KG",
+    "price": 2.89,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 2.89
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "GIRAUMONS 1KG",
+    "price": 1.69,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 1.69
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "PIMENT ANTILLAIS 100G",
+    "price": 1.49,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 1.49
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "OIGNONS PAYS 500G",
+    "price": 1.79,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 1.79
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "POMMES GOLDEN 1KG",
+    "price": 3.49,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "ORANGES ESPAGNE 1KG",
+    "price": 2.89,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.89
+      }
+    ]
+  },
+  {
+    "name": "FRAISES 250G",
+    "price": 3.99,
+    "store": "CARREFOUR MARKET",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.99
+      }
+    ]
+  },
+  {
+    "name": "AILES DE POULET (2.5KG)",
+    "price": 8.79,
+    "store": "LEADER PRICE",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 8.79
+      }
+    ],
+    "tags": [
+      "GROS VOLUME"
+    ]
+  },
+  {
+    "name": "COTES DE PORC (2.5KG)",
+    "price": 9.95,
+    "store": "LEADER PRICE",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 9.95
+      }
+    ],
+    "tags": [
+      "GROS VOLUME"
+    ]
+  },
+  {
+    "name": "STEAK HACHE 15% MG X10",
+    "price": 16.95,
+    "store": "LEADER PRICE",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 16.95
+      }
+    ]
+  },
+  {
+    "name": "POULET ENTIER 1.5KG",
+    "price": 7.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 7.99
+      }
+    ]
+  },
+  {
+    "name": "CUISSES POULET 1KG",
+    "price": 4.99,
+    "store": "LEADER PRICE",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 4.99
+      }
+    ]
+  },
+  {
+    "name": "ESCALOPES POULET X4",
+    "price": 6.49,
+    "store": "CARREFOUR MARKET",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.49
+      }
+    ]
+  },
+  {
+    "name": "FILET POULET 500G",
+    "price": 5.79,
+    "store": "SUPER U",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 5.79
+      }
+    ]
+  },
+  {
+    "name": "ESCALOPES DINDE X4",
+    "price": 7.29,
+    "store": "CARREFOUR MARKET",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 7.29
+      }
+    ]
+  },
+  {
+    "name": "COTE BOEUF 500G",
+    "price": 12.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 12.99
+      }
+    ]
+  },
+  {
+    "name": "BAVETTE BOEUF 300G",
+    "price": 8.99,
+    "store": "SUPER U",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 8.99
+      }
+    ]
+  },
+  {
+    "name": "AGNEAU GIGOT 1KG",
+    "price": 18.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 18.99
+      }
+    ]
+  },
+  {
+    "name": "COTE D'AGNEAU X3",
+    "price": 10.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 10.99
+      }
+    ]
+  },
+  {
+    "name": "SAUCISSES PORC X8",
+    "price": 3.99,
+    "store": "LEADER PRICE",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 3.99
+      }
+    ]
+  },
+  {
+    "name": "MERGUEZ X8",
+    "price": 4.49,
+    "store": "LEADER PRICE",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 4.49
+      }
+    ]
+  },
+  {
+    "name": "CHIPOLATAS X8",
+    "price": 3.79,
+    "store": "CARREFOUR MARKET",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.79
+      }
+    ]
+  },
+  {
+    "name": "DOMBRÉS A LA MORUE 400G",
+    "price": 5.49,
+    "store": "Ô MARCHÉ",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 5.49
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "LARDONS FUMES 2X200G",
+    "price": 1.45,
+    "store": "CARREFOUR MARKET",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.45
+      }
+    ]
+  },
+  {
+    "name": "MOUSSE FORESTIERE 180G",
+    "price": 5.53,
+    "store": "CARREFOUR MARKET",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 5.53
+      }
+    ]
+  },
+  {
+    "name": "JAMBON SEC 4 TR.",
+    "price": 2.99,
+    "store": "LEADER PRICE",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "JAMBON CUIT SUPERIEUR 4TR",
+    "price": 2.79,
+    "store": "CARREFOUR MARKET",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.79
+      }
+    ]
+  },
+  {
+    "name": "RILLETTES PORC 180G",
+    "price": 2.49,
+    "store": "LEADER PRICE",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "PATE DE CAMPAGNE 180G",
+    "price": 2.29,
+    "store": "CARREFOUR",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 2.29
+      }
+    ]
+  },
+  {
+    "name": "SAUCISSON SEC 200G",
+    "price": 3.99,
+    "store": "CARREFOUR MARKET",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.99
+      }
+    ]
+  },
+  {
+    "name": "CHORIZO DOUX 130G",
+    "price": 2.89,
+    "store": "LEADER PRICE",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.89
+      }
+    ]
+  },
+  {
+    "name": "ROSETTE LYONNAISE 100G",
+    "price": 3.49,
+    "store": "CARREFOUR MARKET",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "DAURADE ROYALE 1KG (VRAC)",
+    "price": 12.99,
+    "store": "Ô MARCHÉ",
+    "category": "POISSONNERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 12.99
+      }
+    ],
+    "tags": [
+      "LOCAL",
+      "FRAÎCHE"
+    ]
+  },
+  {
+    "name": "VIVANEAU 1KG (VRAC)",
+    "price": 14.99,
+    "store": "Ô MARCHÉ",
+    "category": "POISSONNERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 14.99
+      }
+    ],
+    "tags": [
+      "LOCAL",
+      "FRAÎCHE"
+    ]
+  },
+  {
+    "name": "THON ROUGE TRANCHE 1KG",
+    "price": 18.99,
+    "store": "Ô MARCHÉ",
+    "category": "POISSONNERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 18.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "MORUE SECHE EFFILOCHEE 500G",
+    "price": 5.99,
+    "store": "CARREFOUR MARKET",
+    "category": "POISSONNERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 5.99
+      }
+    ]
+  },
+  {
+    "name": "CREVETTES ENTIERES 1KG",
+    "price": 11.99,
+    "store": "CARREFOUR MARKET",
+    "category": "POISSONNERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 11.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "LANGOUSTE ANTILLAISE 1KG",
+    "price": 28.99,
+    "store": "Ô MARCHÉ",
+    "category": "POISSONNERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 28.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "CHATROU (PIEUVRE) 1KG",
+    "price": 13.99,
+    "store": "Ô MARCHÉ",
+    "category": "POISSONNERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 13.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "OURSINS GRATINES X6",
+    "price": 8.99,
+    "store": "Ô MARCHÉ",
+    "category": "POISSONNERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 8.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "DUO MIX PIZZAIOLO 1KG",
+    "price": 11.25,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 11.25
+      }
+    ]
+  },
+  {
+    "name": "LAIT ENTIER BRICK 1L",
+    "price": 6.99,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.99
+      }
+    ]
+  },
+  {
+    "name": "BEURRE MOULE 250G 1/2 SEL",
+    "price": 4.2,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 4.2
+      }
+    ]
+  },
+  {
+    "name": "KIRI CREME 12 PORTIONS",
+    "price": 3.55,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.55
+      }
+    ]
+  },
+  {
+    "name": "ST MARCELLIN 80G",
+    "price": 2.59,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.59
+      }
+    ]
+  },
+  {
+    "name": "ST FELICIEN 180G",
+    "price": 3.61,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.61
+      }
+    ]
+  },
+  {
+    "name": "EMMENTAL RAPE 150G",
+    "price": 2.89,
+    "store": "LEADER PRICE",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.89
+      }
+    ]
+  },
+  {
+    "name": "MOZZARELLA BUFALA 125G",
+    "price": 2.59,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.59
+      }
+    ]
+  },
+  {
+    "name": "COMTE 200G",
+    "price": 4.99,
+    "store": "SUPER U",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 4.99
+      }
+    ]
+  },
+  {
+    "name": "CAMEMBERT 250G",
+    "price": 2.99,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "BRIE 200G",
+    "price": 3.49,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "YAOURT GREC YOPL X8",
+    "price": 6.15,
+    "store": "CARREFOUR MARKET",
+    "category": "ULTRA FRAIS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.15
+      }
+    ]
+  },
+  {
+    "name": "YAOURT NATURE 0% X8",
+    "price": 2.59,
+    "store": "LEADER PRICE",
+    "category": "ULTRA FRAIS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.59
+      }
+    ]
+  },
+  {
+    "name": "YAOURT AUX FRUITS X4",
+    "price": 2.29,
+    "store": "CARREFOUR",
+    "category": "ULTRA FRAIS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 2.29
+      }
+    ]
+  },
+  {
+    "name": "FROMAGE BLANC 500G",
+    "price": 2.99,
+    "store": "CARREFOUR MARKET",
+    "category": "ULTRA FRAIS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "CREME FRAICHE 20% 20CL",
+    "price": 1.89,
+    "store": "LEADER PRICE",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.89
+      }
+    ]
+  },
+  {
+    "name": "CREME LIQUIDE 30CL",
+    "price": 1.99,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.99
+      }
+    ]
+  },
+  {
+    "name": "OEUFS PLEIN AIR X6",
+    "price": 2.99,
+    "store": "CARREFOUR MARKET",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "OEUFS BIOLOGIQUES X6",
+    "price": 3.49,
+    "store": "SUPER U",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "FRITES SURGELES 1KG",
+    "price": 2.99,
+    "store": "LEADER PRICE",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "PIZZA MARGHERITA 3X",
+    "price": 7.49,
+    "store": "CARREFOUR MARKET",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 7.49
+      }
+    ]
+  },
+  {
+    "name": "LASAGNES BOLOGNAISE 400G",
+    "price": 3.49,
+    "store": "LEADER PRICE",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "NUGGETS POULET X20",
+    "price": 4.99,
+    "store": "LEADER PRICE",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 4.99
+      }
+    ]
+  },
+  {
+    "name": "POISSON PANE X10",
+    "price": 5.49,
+    "store": "CARREFOUR MARKET",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 5.49
+      }
+    ]
+  },
+  {
+    "name": "SOLE MEUNIERE SURGELE 2P",
+    "price": 6.99,
+    "store": "CARREFOUR MARKET",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.99
+      }
+    ]
+  },
+  {
+    "name": "CREVETTES DECORTIQUEES 500G",
+    "price": 8.49,
+    "store": "CARREFOUR MARKET",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 8.49
+      }
+    ]
+  },
+  {
+    "name": "GLACE VANILLE 500G",
+    "price": 4.29,
+    "store": "LEADER PRICE",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 4.29
+      }
+    ]
+  },
+  {
+    "name": "SORBET COCO LOCAL 500G",
+    "price": 5.29,
+    "store": "CARREFOUR MARKET",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 5.29
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "PAIN DE MIE SURGELE",
+    "price": 2.19,
+    "store": "LEADER PRICE",
+    "category": "SURGELÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.19
+      }
+    ]
+  },
+  {
+    "name": "BAGUETTE TRADITION",
+    "price": 1.2,
+    "store": "CARREFOUR MARKET",
+    "category": "BOULANGERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.2
+      }
+    ]
+  },
+  {
+    "name": "PAIN AU CHOCOLAT",
+    "price": 1.1,
+    "store": "CARREFOUR MARKET",
+    "category": "BOULANGERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.1
+      }
+    ]
+  },
+  {
+    "name": "CROISSANT BEURRE",
+    "price": 1.05,
+    "store": "LEADER PRICE",
+    "category": "BOULANGERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.05
+      }
+    ]
+  },
+  {
+    "name": "PAIN DE MIE COMPLET 500G",
+    "price": 2.49,
+    "store": "SUPER U",
+    "category": "BOULANGERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "BRIOCHE TRESSEE 500G",
+    "price": 3.29,
+    "store": "CARREFOUR MARKET",
+    "category": "BOULANGERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.29
+      }
+    ]
+  },
+  {
+    "name": "CAKE MARBRE 400G",
+    "price": 3.49,
+    "store": "LEADER PRICE",
+    "category": "BOULANGERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "MADELEINES X20",
+    "price": 2.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOULANGERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "GALETTES BRETONNES 150G",
+    "price": 2.49,
+    "store": "SUPER U",
+    "category": "BOULANGERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "POULET BOUCANE 1/2 (CHAUD)",
+    "price": 7.99,
+    "store": "Ô MARCHÉ",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 7.99
+      }
+    ],
+    "tags": [
+      "LOCAL",
+      "SIGNATURE"
+    ]
+  },
+  {
+    "name": "ACRAS MORUE X10 (CHAUD)",
+    "price": 5.49,
+    "store": "Ô MARCHÉ",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 5.49
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "BOUDINS CREOLES X4 (FRAIS)",
+    "price": 4.99,
+    "store": "CARREFOUR MARKET",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 4.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "COLOMBO POULET 500G",
+    "price": 5.99,
+    "store": "CARREFOUR MARKET",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 5.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "GRATIN DE CHRISTOPHINE 400G",
+    "price": 4.49,
+    "store": "SUPER U",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 4.49
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "SAUCE CHIEN 200ML",
+    "price": 2.79,
+    "store": "Ô MARCHÉ",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 2.79
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "SOUPE DE POISSONS 500ML",
+    "price": 4.99,
+    "store": "CARREFOUR MARKET",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 4.99
+      }
+    ]
+  },
+  {
+    "name": "QUICHE LORRAINE 400G",
+    "price": 4.29,
+    "store": "LEADER PRICE",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 4.29
+      }
+    ]
+  },
+  {
+    "name": "HACHIS PARMENTIER 400G",
+    "price": 3.99,
+    "store": "LEADER PRICE",
+    "category": "PLATS CUISINÉS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 3.99
+      }
+    ]
+  },
+  {
+    "name": "RED BULL MYRTILLE 250ML",
+    "price": 2.45,
+    "store": "Ô MARCHÉ",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "Ô MARCHÉ",
+        "price": 2.45
+      }
+    ]
+  },
+  {
+    "name": "BANGA SOLEIL FRUITS 2L",
+    "price": 2.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "BANGA GROSEILLE PAYS 2L",
+    "price": 3.49,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.49
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "EAU MINERALE 1.5L",
+    "price": 0.55,
+    "store": "LEADER PRICE",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 0.55
+      }
+    ]
+  },
+  {
+    "name": "EAU PETILLANTE 1.5L",
+    "price": 0.89,
+    "store": "CARREFOUR",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 0.89
+      }
+    ]
+  },
+  {
+    "name": "JUS ORANGE 100% 1L",
+    "price": 2.49,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "JUS MULTIFRUITS 1L",
+    "price": 2.19,
+    "store": "LEADER PRICE",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.19
+      }
+    ]
+  },
+  {
+    "name": "JUS GOYAVE ANTILLES 1L",
+    "price": 3.29,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.29
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "COCA-COLA 1.5L",
+    "price": 2.39,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 2.39
+      }
+    ]
+  },
+  {
+    "name": "ORANGINA 1.5L",
+    "price": 2.59,
+    "store": "LEADER PRICE",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.59
+      }
+    ]
+  },
+  {
+    "name": "BIERE LORRAINE 33CL X6",
+    "price": 6.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "RHUM AGRICOLE 70CL",
+    "price": 16.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 16.99
+      }
+    ],
+    "tags": [
+      "LOCAL",
+      "SIGNATURE"
+    ]
+  },
+  {
+    "name": "RHUM VIEUX X.O. 70CL",
+    "price": 29.99,
+    "store": "SUPER U",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 29.99
+      }
+    ],
+    "tags": [
+      "LOCAL",
+      "PRESTIGE"
+    ]
+  },
+  {
+    "name": "PUNCH COCO 70CL",
+    "price": 12.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 12.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "VIN ROUGE BORDEAUX 75CL",
+    "price": 7.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 7.99
+      }
+    ]
+  },
+  {
+    "name": "VIN BLANC SEC 75CL",
+    "price": 6.99,
+    "store": "LEADER PRICE",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 6.99
+      }
+    ]
+  },
+  {
+    "name": "CHAMPAGNE BRUT 75CL",
+    "price": 19.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 19.99
+      }
+    ]
+  },
+  {
+    "name": "PAPIER HYG. 12 ROULEAUX",
+    "price": 8.29,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 8.29
+      }
+    ]
+  },
+  {
+    "name": "ESSUIE-TOUT MAXI BOBINE",
+    "price": 6.65,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.65
+      }
+    ]
+  },
+  {
+    "name": "SHAMPOOING ELSEVE 250ML",
+    "price": 5.69,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 5.69
+      }
+    ]
+  },
+  {
+    "name": "GEL DOUCHE DOUCEUR 400ML",
+    "price": 3.49,
+    "store": "LEADER PRICE",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "DEODORANT DOVE FEMME 150ML",
+    "price": 3.99,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.99
+      }
+    ]
+  },
+  {
+    "name": "DENTIFRICE COLGATE 75ML",
+    "price": 2.79,
+    "store": "SUPER U",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 2.79
+      }
+    ]
+  },
+  {
+    "name": "BROSSE A DENTS X2 ORAL-B",
+    "price": 4.49,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 4.49
+      }
+    ]
+  },
+  {
+    "name": "SAVON SOLIDE LAVANDIN X6",
+    "price": 3.99,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.99
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "CREME SOLAIRE SPF50+ 200ML",
+    "price": 8.99,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 8.99
+      }
+    ]
+  },
+  {
+    "name": "LINGETTES BEBE X80",
+    "price": 4.29,
+    "store": "LEADER PRICE",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 4.29
+      }
+    ]
+  },
+  {
+    "name": "COUCHES BEBE T3 X46",
+    "price": 12.99,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 12.99
+      }
+    ]
+  },
+  {
+    "name": "COTON HYDROPHILE 100G",
+    "price": 1.99,
+    "store": "LEADER PRICE",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.99
+      }
+    ]
+  },
+  {
+    "name": "LESSIVE LIQUIDE 2L",
+    "price": 7.49,
+    "store": "CARREFOUR MARKET",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 7.49
+      }
+    ]
+  },
+  {
+    "name": "LIQUIDE VAISSELLE 500ML",
+    "price": 1.99,
+    "store": "LEADER PRICE",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 1.99
+      }
+    ]
+  },
+  {
+    "name": "NETTOYANT MULTI-USAGE 750ML",
+    "price": 2.49,
+    "store": "CARREFOUR",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "SACS POUBELLE 30L X20",
+    "price": 2.99,
+    "store": "LEADER PRICE",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "LIMES 7 FACES (GIFI)",
+    "price": 2.99,
+    "store": "GIFI",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "CINTRES X10 PLASTIQUE",
+    "price": 2.49,
+    "store": "GIFI",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "BOITE CONSERVATION 1L",
+    "price": 2.99,
+    "store": "GIFI",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "PASSOIRE PLASTIQUE",
+    "price": 3.49,
+    "store": "GIFI",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "TORCHONS X3 COTON",
+    "price": 4.99,
+    "store": "GIFI",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 4.99
+      }
+    ]
+  },
+  {
+    "name": "PILES AA X4 DURACELL",
+    "price": 4.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 4.99
+      }
+    ]
+  },
+  {
+    "name": "AMPOULE LED E27 9W",
+    "price": 3.99,
+    "store": "CARREFOUR MARKET",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.99
+      }
+    ]
+  },
+  {
+    "name": "SEAU 10L PLASTIQUE",
+    "price": 3.99,
+    "store": "GIFI",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 3.99
+      }
+    ]
+  },
+  {
+    "name": "BALAI BROSSE SOUPLE",
+    "price": 6.99,
+    "store": "GIFI",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 6.99
+      }
+    ]
+  },
+  {
+    "name": "FIL A LINGE 10M",
+    "price": 2.49,
+    "store": "GIFI",
+    "category": "BAZAR",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "BONBONS FINI ANNEAUX",
+    "price": 1.95,
+    "store": "GIFI",
+    "category": "CONFISERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 1.95
+      }
+    ]
+  },
+  {
+    "name": "CARAMBAR CARAMEL 130G",
+    "price": 3.79,
+    "store": "GIFI",
+    "category": "CONFISERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "GIFI",
+        "price": 3.79
+      }
+    ]
+  },
+  {
+    "name": "HARIBO TAGADA 300G",
+    "price": 3.29,
+    "store": "CARREFOUR MARKET",
+    "category": "CONFISERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.29
+      }
+    ]
+  },
+  {
+    "name": "CHOCOLAT NOIR 70% 100G",
+    "price": 2.49,
+    "store": "LEADER PRICE",
+    "category": "CONFISERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.49
+      }
+    ]
+  },
+  {
+    "name": "KIT KAT 4 BARRES X4",
+    "price": 3.89,
+    "store": "CARREFOUR MARKET",
+    "category": "CONFISERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.89
+      }
+    ]
+  },
+  {
+    "name": "PASTILLES MENTHE X200",
+    "price": 2.99,
+    "store": "SUPER U",
+    "category": "CONFISERIE",
+    "observations": [
+      {
+        "date": "2025-04-01",
+        "store": "SUPER U",
+        "price": 2.99
+      }
     ]
   }
 ]
