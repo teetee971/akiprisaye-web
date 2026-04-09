@@ -746,7 +746,6 @@ async function main() {
   if (cloudflareAccess) {
     console.log('');
     console.log('============================');
-    logWarn('Validation ignorée — URL protégée par Cloudflare Access.');
     logWarn('Pour auditer ce déploiement, configurez un service token Cloudflare Access en CI.');
     return;
   }
