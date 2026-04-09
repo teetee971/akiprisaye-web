@@ -56,8 +56,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setProducts(finalArray);
     } catch (err: unknown) {
       console.error('Erreur gisement:', err);
-      const message = err instanceof Error ? err.message : 'Erreur inconnue du gisement';
-      setError(message);
+      setError('Impossible de charger le catalogue.');
       setProducts([]); // On met une liste vide pour éviter le crash .map
     } finally {
       setLoading(false);
