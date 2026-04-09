@@ -1,17 +1,9 @@
 #!/usr/bin/env node
 
-const targetUrlRaw = process.argv[2] || process.env.AUDIT_URL;
+const targetUrl = process.argv[2] || process.env.AUDIT_URL;
 
-if (!targetUrlRaw) {
+if (!targetUrl) {
   console.error('Usage: node scripts/audit-deployment-url.mjs <url>');
-  process.exit(1);
-}
-
-let targetUrl;
-try {
-  targetUrl = new URL(targetUrlRaw).toString();
-} catch {
-  console.error(`Error: invalid URL provided: ${targetUrlRaw}`);
   process.exit(1);
 }
 
@@ -24,36 +16,10 @@ const requiredSecurityHeaders = [
 ];
 
 const normalizeUrl = (url) => (url.endsWith('/') ? url.slice(0, -1) : url);
-const DEFAULT_TIMEOUT_MS = 15000;
-const parsedTimeout = Number(process.env.AUDIT_TIMEOUT_MS);
-const requestTimeoutMs = Number.isFinite(parsedTimeout) && parsedTimeout > 0
-  ? Math.round(parsedTimeout)
-  : DEFAULT_TIMEOUT_MS;
-
-const fetchSafely = async (url) => {
-  try {
-    const response = await fetch(url, {
-      redirect: 'manual',
-      signal: AbortSignal.timeout(requestTimeoutMs)
-    });
-    return { ok: true, response };
-  } catch (error) {
-    return { ok: false, error };
-  }
-};
 
 const checkEndpoint = async (baseUrl, path) => {
   const endpoint = `${normalizeUrl(baseUrl)}${path}`;
-  const result = await fetchSafely(endpoint);
-  if (!result.ok) {
-    return {
-      endpoint,
-      status: 'unreachable',
-      location: null,
-      error: result.error?.message || String(result.error)
-    };
-  }
-  const { response } = result;
+  const response = await fetch(endpoint, { redirect: 'manual' });
   return {
     endpoint,
     status: response.status,
@@ -62,9 +28,10 @@ const checkEndpoint = async (baseUrl, path) => {
 };
 
 const main = async () => {
-  const rootResult = await fetchSafely(targetUrl);
-  if (!rootResult.ok) {
-    const error = rootResult.error;
+  let response;
+  try {
+    response = await fetch(targetUrl, { redirect: 'manual' });
+  } catch (error) {
     console.log(`# Deployment URL audit`);
     console.log(`- URL: ${targetUrl}`);
     console.log(`- HTTP status: unreachable`);
@@ -74,7 +41,6 @@ const main = async () => {
     console.log(`- Technical detail: ${error?.message || String(error)}`);
     process.exit(2);
   }
-  const response = rootResult.response;
   const status = response.status;
   const location = response.headers.get('location');
 
@@ -83,30 +49,34 @@ const main = async () => {
   console.log(`- HTTP status: ${status}`);
   if (location) console.log(`- Redirect location: ${location}`);
 
+  let isCloudflareAccessRedirect = false;
   if (location) {
-    let isCloudflareAccess = false;
     try {
-      const locationHostname = new URL(location).hostname;
-      isCloudflareAccess =
-        locationHostname === 'cloudflareaccess.com' ||
-        locationHostname.endsWith('.cloudflareaccess.com');
+      // Support both absolute and relative redirect URLs.
+      const parsed = new URL(location, targetUrl);
+      const host = parsed.hostname.toLowerCase();
+      if (host === 'cloudflareaccess.com' || host.endsWith('.cloudflareaccess.com')) {
+        isCloudflareAccessRedirect = true;
+      }
     } catch {
-      // unparseable location header – not a Cloudflare Access redirect
-    }
-    if (isCloudflareAccess) {
-      console.log('\n## Blocking issue detected');
-      console.log('- The URL is protected by Cloudflare Access, so automated external audits cannot crawl it.');
-      console.log('- Improvement: create a service token for CI and pass Cloudflare Access headers during audit runs.');
-      process.exit(2);
+      // If the location header is not a valid URL, treat it as not a Cloudflare Access redirect.
     }
   }
 
-  console.log('\n## Header checks');
-  console.log(`- content-type: ${response.headers.get('content-type') || 'missing'}`);
-  console.log(`- cache-control: ${response.headers.get('cache-control') || 'missing'}`);
-  console.log(`- content-encoding: ${response.headers.get('content-encoding') || 'missing'}`);
+  if (isCloudflareAccessRedirect) {
+    console.log('\n## Blocking issue detected');
+    console.log('- The URL is protected by Cloudflare Access, so automated external audits cannot crawl it.');
+    console.log('- Improvement: create a service token for CI and pass Cloudflare Access headers during audit runs.');
+    process.exit(2);
+  }
 
-  const missingHeaders = requiredSecurityHeaders.filter((header) => !response.headers.get(header));
+  const headers = Object.fromEntries(response.headers.entries());
+  console.log('\n## Header checks');
+  console.log("- content-type: " + (response.headers.get("content-type") || "missing"));
+  console.log("- cache-control: " + (response.headers.get("cache-control") || "missing"));
+  console.log("- content-encoding: " + (response.headers.get("content-encoding") || "missing"));
+
+  const missingHeaders = requiredSecurityHeaders.filter((header) => !response.headers.has(header));
   if (missingHeaders.length === 0) {
     console.log('- Security headers: all required headers present ✅');
   } else {
@@ -119,10 +89,8 @@ const main = async () => {
 
   console.log(`- robots.txt: ${robots.status} (${robots.endpoint})`);
   if (robots.location) console.log(`  redirect -> ${robots.location}`);
-  if (robots.error) console.log(`  error -> ${robots.error}`);
   console.log(`- sitemap.xml: ${sitemap.status} (${sitemap.endpoint})`);
   if (sitemap.location) console.log(`  redirect -> ${sitemap.location}`);
-  if (sitemap.error) console.log(`  error -> ${sitemap.error}`);
 
   console.log('\n## Suggested next steps');
   console.log('- Run Lighthouse/PageSpeed once Cloudflare Access service-token auth is configured.');
