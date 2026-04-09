@@ -1,33 +1,34 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -u
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 
+checks=(
+  "backend typecheck|npm --prefix backend run -s typecheck"
+  "price-api typecheck|npm --prefix price-api run -s typecheck"
+  "functions build|npm --prefix functions run -s build"
+  "frontend typecheck|npm --prefix frontend run -s typecheck"
+  "frontend tests CI|npm --prefix frontend run -s test:ci"
+)
+
 failed=0
 failed_modules=()
 
-run_check() {
-  local name="$1"
-  shift
-
+echo "# Module health check"
+for entry in "${checks[@]}"; do
+  name="${entry%%|*}"
+  cmd="${entry#*|}"
   echo
   echo "> $name"
-  if "$@"; then
+  if bash -c "$cmd"; then
     echo "✅ $name: OK"
   else
     echo "❌ $name: FAIL"
     failed=1
     failed_modules+=("$name")
   fi
-}
-
-echo "# Module health check"
-run_check "backend typecheck" npm --prefix backend run -s typecheck
-run_check "price-api typecheck" npm --prefix price-api run -s typecheck
-run_check "functions build" npm --prefix functions run -s build
-run_check "frontend typecheck" npm --prefix frontend run -s typecheck
-run_check "frontend tests CI" npm --prefix frontend run -s test:ci
+done
 
 if [ "$failed" -eq 0 ]; then
   echo

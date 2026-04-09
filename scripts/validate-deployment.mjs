@@ -64,6 +64,24 @@ export function hasReactShell(html) {
   return /<div[^>]+id=["']root["']/i.test(html);
 }
 
+/**
+ * Returns true if the fetched response appears to be a Cloudflare Access challenge page.
+ * This can happen when preview deployment URLs are protected by Cloudflare Access —
+ * the fetch follows the redirect and lands on the challenge page (200 status, no React shell).
+ * Checks both the final response URL (after redirects) and the HTML body.
+ */
+export function isCloudflareAccessPage(responseUrl, body) {
+  try {
+    const host = new URL(responseUrl).hostname.toLowerCase();
+    if (host === 'cloudflareaccess.com' || host.endsWith('.cloudflareaccess.com')) {
+      return true;
+    }
+  } catch {
+    // ignore unparseable URLs
+  }
+  return /cloudflareaccess\.com/i.test(body);
+}
+
 export function containsLegacyFallback(html) {
   return /Le site est en ligne/i.test(html);
 }
@@ -283,36 +301,72 @@ export function isTransientHttpError(status) {
 async function fetchText(url) {
   let lastResponse;
   let lastBody;
+  let lastError;
   for (let attempt = 0; attempt <= FETCH_MAX_RETRIES; attempt++) {
+    const isLastAttempt = attempt === FETCH_MAX_RETRIES;
     if (attempt > 0) {
       await new Promise((resolve) => setTimeout(resolve, FETCH_RETRY_DELAY_MS));
     }
-    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-    const body = await response.text();
-    if (!isTransientHttpError(response.status)) {
-      return { response, body };
+    try {
+      const response = await fetch(url, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      });
+      const body = await response.text();
+      if (!isTransientHttpError(response.status)) {
+        return { response, body };
+      }
+      lastResponse = response;
+      lastBody = body;
+      if (!isLastAttempt) {
+        logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+      }
+    } catch (error) {
+      lastError = error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (!isLastAttempt) {
+        logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — erreur réseau sur ${url}: ${errorMessage}. Nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+      }
     }
-    lastResponse = response;
-    lastBody = body;
-    logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
   }
-  return { response: lastResponse, body: lastBody };
+  if (lastResponse) {
+    return { response: lastResponse, body: lastBody };
+  }
+  throw new Error(`Échec réseau lors de la récupération de ${url}`, lastError ? { cause: lastError } : undefined);
 }
 
 async function fetchStatus(url) {
   let lastResponse;
+  let lastError;
   for (let attempt = 0; attempt <= FETCH_MAX_RETRIES; attempt++) {
+    const isLastAttempt = attempt === FETCH_MAX_RETRIES;
     if (attempt > 0) {
       await new Promise((resolve) => setTimeout(resolve, FETCH_RETRY_DELAY_MS));
     }
-    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-    if (!isTransientHttpError(response.status)) {
-      return response;
+    try {
+      const response = await fetch(url, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      });
+      if (!isTransientHttpError(response.status)) {
+        return response;
+      }
+      lastResponse = response;
+      if (!isLastAttempt) {
+        logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+      }
+    } catch (error) {
+      lastError = error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (!isLastAttempt) {
+        logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — erreur réseau sur ${url}: ${errorMessage}. Nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+      }
     }
-    lastResponse = response;
-    logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
   }
-  return lastResponse;
+  if (lastResponse) {
+    return lastResponse;
+  }
+  throw new Error(`Échec réseau lors de la récupération de ${url}`, lastError ? { cause: lastError } : undefined);
 }
 
 function hasAcceptableRouteResponse(response, body, githubPages) {
@@ -328,6 +382,11 @@ async function verifyHomepage(siteUrl) {
   const rootUrl = `${normalizeBaseUrl(siteUrl)}/`;
   const { response, body } = await fetchText(rootUrl);
 
+  if (isCloudflareAccessPage(response.url, body)) {
+    logWarn('URL protégée par Cloudflare Access — validation ignorée pour cette URL.');
+    return { html: null, headers: response.headers, cloudflareAccess: true };
+  }
+
   if (!response.ok) {
     fail(`La page d'accueil a répondu ${response.status} au lieu de 200.`);
   }
@@ -341,7 +400,7 @@ async function verifyHomepage(siteUrl) {
   }
 
   logOk("Page d'accueil accessible avec un shell React.");
-  return { html: body, headers: response.headers };
+  return { html: body, headers: response.headers, cloudflareAccess: false };
 }
 
 async function verifyAssets(siteUrl, html) {
@@ -720,7 +779,15 @@ async function main() {
   console.log(`Site: ${siteUrl}`);
   console.log('');
 
-  const { html, headers } = await verifyHomepage(siteUrl);
+  const { html, headers, cloudflareAccess } = await verifyHomepage(siteUrl);
+
+  if (cloudflareAccess) {
+    console.log('');
+    console.log('============================');
+    logWarn('Pour auditer ce déploiement, configurez un service token Cloudflare Access en CI.');
+    return;
+  }
+
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
   await verifyNoBundleRegression(siteUrl, html, assetPaths);
