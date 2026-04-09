@@ -251,6 +251,7 @@
 /stores/:id/edit
 /stores/new
 /subscribe
+/subscribe/error
 /subscribe/success
 /suggestions
 /sync
