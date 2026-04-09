@@ -301,36 +301,72 @@ export function isTransientHttpError(status) {
 async function fetchText(url) {
   let lastResponse;
   let lastBody;
+  let lastError;
   for (let attempt = 0; attempt <= FETCH_MAX_RETRIES; attempt++) {
+    const isLastAttempt = attempt === FETCH_MAX_RETRIES;
     if (attempt > 0) {
       await new Promise((resolve) => setTimeout(resolve, FETCH_RETRY_DELAY_MS));
     }
-    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-    const body = await response.text();
-    if (!isTransientHttpError(response.status)) {
-      return { response, body };
+    try {
+      const response = await fetch(url, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      });
+      const body = await response.text();
+      if (!isTransientHttpError(response.status)) {
+        return { response, body };
+      }
+      lastResponse = response;
+      lastBody = body;
+      if (!isLastAttempt) {
+        logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+      }
+    } catch (error) {
+      lastError = error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (!isLastAttempt) {
+        logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — erreur réseau sur ${url}: ${errorMessage}. Nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+      }
     }
-    lastResponse = response;
-    lastBody = body;
-    logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
   }
-  return { response: lastResponse, body: lastBody };
+  if (lastResponse) {
+    return { response: lastResponse, body: lastBody };
+  }
+  throw new Error(`Échec réseau lors de la récupération de ${url}`, lastError ? { cause: lastError } : undefined);
 }
 
 async function fetchStatus(url) {
   let lastResponse;
+  let lastError;
   for (let attempt = 0; attempt <= FETCH_MAX_RETRIES; attempt++) {
+    const isLastAttempt = attempt === FETCH_MAX_RETRIES;
     if (attempt > 0) {
       await new Promise((resolve) => setTimeout(resolve, FETCH_RETRY_DELAY_MS));
     }
-    const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-    if (!isTransientHttpError(response.status)) {
-      return response;
+    try {
+      const response = await fetch(url, {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      });
+      if (!isTransientHttpError(response.status)) {
+        return response;
+      }
+      lastResponse = response;
+      if (!isLastAttempt) {
+        logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+      }
+    } catch (error) {
+      lastError = error;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (!isLastAttempt) {
+        logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — erreur réseau sur ${url}: ${errorMessage}. Nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
+      }
     }
-    lastResponse = response;
-    logWarn(`Tentative ${attempt + 1}/${FETCH_MAX_RETRIES + 1} — ${url} a répondu ${response.status}, nouvel essai dans ${FETCH_RETRY_DELAY_MS / 1000}s…`);
   }
-  return lastResponse;
+  if (lastResponse) {
+    return lastResponse;
+  }
+  throw new Error(`Échec réseau lors de la récupération de ${url}`, lastError ? { cause: lastError } : undefined);
 }
 
 function hasAcceptableRouteResponse(response, body, githubPages) {
