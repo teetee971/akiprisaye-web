@@ -1,153 +1,304 @@
+/**
+ * Cloudflare Worker — product image lookup by receipt label text.
+ *
+ * Endpoint:  GET /api/product-image?q=<label>&lang=fr&limit=1
+ *
+ * Lookup pipeline (all free, no API keys required):
+ *   1. Cloudflare Cache API  (keyed by normalised query)
+ *   2. OpenFoodFacts text search
+ *   3. Wikimedia Commons image search
+ *   4. null fallback
+ *
+ * See docs/PRODUCT_IMAGE_LOOKUP.md for full documentation.
+ */
+
+import { normalizeQuery } from './normalizer';
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+
+const MAX_Q_LENGTH = 200;
+const FETCH_TIMEOUT_MS = 6000;
+const CACHE_TTL_SECONDS = 3600; // 1 hour
+
+const OFF_SEARCH_URL = 'https://world.openfoodfacts.org/cgi/search.pl';
+const WIKIMEDIA_API_URL = 'https://commons.wikimedia.org/w/api.php';
+const USER_AGENT =
+  'akiprisaye-web/1.0 (https://github.com/teetee971/akiprisaye-web; contact@akiprisaye.fr)';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
 export interface Env {
-  // Optionnel: si tu veux protéger l’API
+  /** Optional bearer token. When set, every request must supply it. */
   API_TOKEN?: string;
 }
 
-function corsHeaders(origin = "*") {
+type ImageSource = 'openfoodfacts' | 'wikimedia' | 'none';
+
+interface ProductImageResponse {
+  query: string;
+  normalizedQuery: string;
+  imageUrl: string | null;
+  source: ImageSource;
+  confidence: number;
+  cached: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function corsHeaders(): Record<string, string> {
   return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Max-Age": "86400",
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 }
 
-function stripAccents(input: string) {
-  return input.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      ...corsHeaders(),
+    },
+  });
 }
 
-function normalizeQuery(q: string) {
-  let s = stripAccents(q.toLowerCase());
+// ---------------------------------------------------------------------------
+// OpenFoodFacts text search
+// ---------------------------------------------------------------------------
 
-  // supprime ponctuation / symboles
-  s = s.replace(/[^a-z0-9\s]/g, " ");
-
-  // enlève mots “enseigne” fréquents (à ajuster)
-  s = s.replace(/\b(crf|carrefour|super|u|leclerc|auchan|lidl|aldi|intermarche|casino|monoprix|franprix|leader|price)\b/g, " ");
-
-  // espaces multiples
-  s = s.replace(/\s+/g, " ").trim();
-  return s;
+interface OffProduct {
+  image_front_url?: string;
+  image_url?: string;
+  product_name?: string;
+  product_name_fr?: string;
 }
 
-function clampQ(q: string) {
-  q = q.trim();
-  if (!q) return null;
-  if (q.length > 120) return null; // anti-abus
-  return q;
+interface OffSearchResponse {
+  products?: OffProduct[];
 }
 
-async function openFoodFactsImage(normalized: string, lang = "fr") {
-  // Recherche texte simple (sans EAN)
-  // Note: l’API OFF peut évoluer; on fait au plus robuste avec des champs standards.
-  const url =
-    `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(normalized)}` +
-    `&search_simple=1&action=process&json=1&page_size=5&fields=product_name,image_front_url,image_url,image_small_url,brands,quantity,lang`;
+async function searchOpenFoodFacts(
+  query: string,
+  lang: string,
+  limit: number,
+  signal: AbortSignal,
+): Promise<string | null> {
+  const params = new URLSearchParams({
+    search_terms: query,
+    search_simple: '1',
+    action: 'process',
+    json: '1',
+    page_size: String(Math.min(limit, 5)),
+    fields: 'image_front_url,image_url,product_name,product_name_fr',
+    lc: lang,
+  });
 
-  const res = await fetch(url, { headers: { "User-Agent": "akiprisaye-web/1.0 (product-image-worker)" } });
-  if (!res.ok) return null;
-  const data: any = await res.json();
+  try {
+    const resp = await fetch(`${OFF_SEARCH_URL}?${params.toString()}`, {
+      signal,
+      headers: { 'User-Agent': USER_AGENT, Accept: 'application/json' },
+    });
+    if (!resp.ok) return null;
 
-  const products: any[] = Array.isArray(data?.products) ? data.products : [];
-  for (const p of products) {
-    const img =
-      p?.image_front_url ||
-      p?.image_url ||
-      p?.image_small_url ||
-      null;
-    if (img) return { imageUrl: img as string, confidence: 0.65 };
+    const data = (await resp.json()) as OffSearchResponse;
+    const products = Array.isArray(data.products) ? data.products : [];
+
+    for (const p of products) {
+      if (p.image_front_url && /^https?:\/\//.test(p.image_front_url)) {
+        return p.image_front_url;
+      }
+      if (p.image_url && /^https?:\/\//.test(p.image_url)) {
+        return p.image_url;
+      }
+    }
+    return null;
+  } catch {
+    return null;
   }
-  return null;
 }
 
-async function wikimediaImage(normalized: string) {
-  // Recherche une image sur Wikimedia Commons
-  const search = `${normalized} product packaging`;
-  const api =
-    `https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*` +
-    `&generator=search&gsrsearch=${encodeURIComponent(search)}` +
-    `&gsrlimit=3&gsrnamespace=6&prop=imageinfo&iiprop=url&iiurlwidth=640`;
+// ---------------------------------------------------------------------------
+// Wikimedia Commons fallback
+// ---------------------------------------------------------------------------
 
-  const res = await fetch(api);
-  if (!res.ok) return null;
-  const data: any = await res.json();
-  const pages = data?.query?.pages;
-  if (!pages) return null;
+interface WikiSearchHit {
+  title: string;
+}
 
-  const arr = Object.values(pages) as any[];
-  for (const page of arr) {
-    const info = page?.imageinfo?.[0];
-    const thumb = info?.thumburl || info?.url;
-    if (thumb) return { imageUrl: thumb as string, confidence: 0.4 };
+interface WikiSearchResponse {
+  query?: {
+    search?: WikiSearchHit[];
+  };
+}
+
+interface WikiImageInfoPage {
+  imageinfo?: Array<{ thumburl?: string; url?: string }>;
+}
+
+interface WikiImageInfoResponse {
+  query?: {
+    pages?: Record<string, WikiImageInfoPage>;
+  };
+}
+
+async function getWikimediaThumb(title: string, signal: AbortSignal): Promise<string | null> {
+  const params = new URLSearchParams({
+    action: 'query',
+    titles: title,
+    prop: 'imageinfo',
+    iiprop: 'url',
+    iiurlwidth: '300',
+    format: 'json',
+    origin: '*',
+  });
+
+  try {
+    const resp = await fetch(`${WIKIMEDIA_API_URL}?${params.toString()}`, { signal });
+    if (!resp.ok) return null;
+
+    const data = (await resp.json()) as WikiImageInfoResponse;
+    const pages = data.query?.pages ?? {};
+    for (const page of Object.values(pages)) {
+      const info = page.imageinfo?.[0];
+      if (info?.thumburl) return info.thumburl;
+      if (info?.url) return info.url;
+    }
+    return null;
+  } catch {
+    return null;
   }
-  return null;
 }
+
+async function searchWikimedia(query: string, signal: AbortSignal): Promise<string | null> {
+  // Append context keywords to improve relevance.
+  const searchQuery = `${query} produit packaging`;
+
+  const params = new URLSearchParams({
+    action: 'query',
+    list: 'search',
+    srsearch: searchQuery,
+    srnamespace: '6', // File: namespace
+    srlimit: '5',
+    format: 'json',
+    origin: '*',
+  });
+
+  try {
+    const resp = await fetch(`${WIKIMEDIA_API_URL}?${params.toString()}`, { signal });
+    if (!resp.ok) return null;
+
+    const data = (await resp.json()) as WikiSearchResponse;
+    const hits = data.query?.search ?? [];
+
+    for (const hit of hits) {
+      if (!hit.title.startsWith('File:')) continue;
+      const thumbUrl = await getWikimediaThumb(hit.title, signal);
+      if (thumbUrl) return thumbUrl;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Main handler
+// ---------------------------------------------------------------------------
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
-    if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: { ...corsHeaders() } });
+    // CORS pre-flight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: corsHeaders() });
     }
 
-    if (request.method !== "GET") {
-      return new Response("Method Not Allowed", { status: 405, headers: corsHeaders() });
+    // Route guard
+    if (!url.pathname.endsWith('/api/product-image')) {
+      return jsonResponse({ error: 'Not found' }, 404);
     }
 
-    // Optionnel: token
+    // Method guard
+    if (request.method !== 'GET') {
+      return jsonResponse({ error: 'Method not allowed' }, 405);
+    }
+
+    // Optional bearer-token auth
     if (env.API_TOKEN) {
-      const auth = request.headers.get("authorization") || "";
-      const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
-      if (token !== env.API_TOKEN) {
-        return new Response("Unauthorized", { status: 401, headers: corsHeaders() });
+      const authHeader = request.headers.get('Authorization') ?? '';
+      const provided = authHeader.replace(/^Bearer\s+/i, '').trim();
+      if (provided !== env.API_TOKEN) {
+        return jsonResponse({ error: 'Unauthorized' }, 401);
       }
     }
 
-    const qRaw = clampQ(url.searchParams.get("q") || "");
-    if (!qRaw) {
-      return Response.json(
-        { error: "Missing or invalid q" },
-        { status: 400, headers: corsHeaders() },
-      );
+    // Parse + validate parameters
+    const rawQ = url.searchParams.get('q') ?? '';
+    const lang = (url.searchParams.get('lang') ?? 'fr').slice(0, 5).replace(/[^a-z]/g, '');
+    const limit = Math.max(1, Math.min(5, Number(url.searchParams.get('limit') ?? '1')));
+
+    if (!rawQ.trim()) {
+      return jsonResponse({ error: 'Missing required parameter: q' }, 400);
+    }
+    if (rawQ.length > MAX_Q_LENGTH) {
+      return jsonResponse({ error: `Parameter q too long (max ${MAX_Q_LENGTH} characters)` }, 400);
     }
 
-    const lang = (url.searchParams.get("lang") || "fr").slice(0, 5);
-    const normalizedQuery = normalizeQuery(qRaw);
+    const normalizedQuery = normalizeQuery(rawQ);
+    if (!normalizedQuery) {
+      return jsonResponse({ error: 'Query is empty after normalization' }, 400);
+    }
 
-    // Cache API (clé stable)
-    const cacheKey = new Request(`https://cache.local/product-image?q=${encodeURIComponent(normalizedQuery)}&lang=${encodeURIComponent(lang)}`);
+    // Cache lookup
+    const cacheKey = new Request(
+      `https://product-image-cache.internal/${encodeURIComponent(normalizedQuery)}?lang=${lang}&limit=${limit}`,
+      { method: 'GET' },
+    );
     const cache = caches.default;
-
     const cached = await cache.match(cacheKey);
     if (cached) {
-      const body = await cached.text();
-      return new Response(body, {
-        status: 200,
-        headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders(), "X-Cache": "HIT" },
-      });
+      const data = (await cached.json()) as ProductImageResponse;
+      return jsonResponse({ ...data, cached: true });
     }
+
+    // Shared abort controller for all upstream requests
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
     let imageUrl: string | null = null;
-    let source: "openfoodfacts" | "wikimedia" | "none" = "none";
+    let source: ImageSource = 'none';
     let confidence = 0;
 
-    const off = await openFoodFactsImage(normalizedQuery, lang);
-    if (off?.imageUrl) {
-      imageUrl = off.imageUrl;
-      source = "openfoodfacts";
-      confidence = off.confidence;
-    } else {
-      const wm = await wikimediaImage(normalizedQuery);
-      if (wm?.imageUrl) {
-        imageUrl = wm.imageUrl;
-        source = "wikimedia";
-        confidence = wm.confidence;
+    try {
+      // 1. OpenFoodFacts
+      imageUrl = await searchOpenFoodFacts(normalizedQuery, lang, limit, controller.signal);
+      if (imageUrl) {
+        source = 'openfoodfacts';
+        confidence = 0.7;
       }
+
+      // 2. Wikimedia Commons fallback
+      if (!imageUrl) {
+        imageUrl = await searchWikimedia(normalizedQuery, controller.signal);
+        if (imageUrl) {
+          source = 'wikimedia';
+          confidence = 0.4;
+        }
+      }
+    } finally {
+      clearTimeout(timeoutId);
     }
 
-    const payload = {
-      query: qRaw,
+    const result: ProductImageResponse = {
+      query: rawQ,
       normalizedQuery,
       imageUrl,
       source,
@@ -155,16 +306,19 @@ export default {
       cached: false,
     };
 
-    const response = new Response(JSON.stringify(payload), {
-      status: 200,
-      headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders(), "X-Cache": "MISS" },
-    });
+    // Store in cache asynchronously
+    ctx.waitUntil(
+      cache.put(
+        cacheKey,
+        new Response(JSON.stringify(result), {
+          headers: {
+            'content-type': 'application/json; charset=utf-8',
+            'cache-control': `public, max-age=${CACHE_TTL_SECONDS}`,
+          },
+        }),
+      ),
+    );
 
-    // Cache 30 jours si on a une image, 1 jour sinon
-    const ttl = imageUrl ? 60 * 60 * 24 * 30 : 60 * 60 * 24;
-    response.headers.set("Cache-Control", `public, max-age=${ttl}`);
-    ctx.waitUntil(cache.put(cacheKey, response.clone()));
-
-    return response;
+    return jsonResponse(result);
   },
 };
