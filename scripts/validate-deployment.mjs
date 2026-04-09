@@ -64,6 +64,24 @@ export function hasReactShell(html) {
   return /<div[^>]+id=["']root["']/i.test(html);
 }
 
+/**
+ * Returns true if the fetched response appears to be a Cloudflare Access challenge page.
+ * This can happen when preview deployment URLs are protected by Cloudflare Access —
+ * the fetch follows the redirect and lands on the challenge page (200 status, no React shell).
+ * Checks both the final response URL (after redirects) and the HTML body.
+ */
+export function isCloudflareAccessPage(responseUrl, body) {
+  try {
+    const host = new URL(responseUrl).hostname.toLowerCase();
+    if (host === 'cloudflareaccess.com' || host.endsWith('.cloudflareaccess.com')) {
+      return true;
+    }
+  } catch {
+    // ignore unparseable URLs
+  }
+  return /cloudflareaccess\.com/i.test(body);
+}
+
 export function containsLegacyFallback(html) {
   return /Le site est en ligne/i.test(html);
 }
@@ -328,6 +346,11 @@ async function verifyHomepage(siteUrl) {
   const rootUrl = `${normalizeBaseUrl(siteUrl)}/`;
   const { response, body } = await fetchText(rootUrl);
 
+  if (isCloudflareAccessPage(response.url, body)) {
+    logWarn('URL protégée par Cloudflare Access — validation ignorée pour cette URL.');
+    return { html: null, headers: response.headers, cloudflareAccess: true };
+  }
+
   if (!response.ok) {
     fail(`La page d'accueil a répondu ${response.status} au lieu de 200.`);
   }
@@ -341,7 +364,7 @@ async function verifyHomepage(siteUrl) {
   }
 
   logOk("Page d'accueil accessible avec un shell React.");
-  return { html: body, headers: response.headers };
+  return { html: body, headers: response.headers, cloudflareAccess: false };
 }
 
 async function verifyAssets(siteUrl, html) {
@@ -718,7 +741,16 @@ async function main() {
   console.log(`Site: ${siteUrl}`);
   console.log('');
 
-  const { html, headers } = await verifyHomepage(siteUrl);
+  const { html, headers, cloudflareAccess } = await verifyHomepage(siteUrl);
+
+  if (cloudflareAccess) {
+    console.log('');
+    console.log('============================');
+    logWarn('Validation ignorée — URL protégée par Cloudflare Access.');
+    logWarn('Pour auditer ce déploiement, configurez un service token Cloudflare Access en CI.');
+    return;
+  }
+
   const assetPaths = await verifyAssets(siteUrl, html);
   await verifyServiceWorker(siteUrl, assetPaths);
   await verifyNoBundleRegression(siteUrl, html, assetPaths);

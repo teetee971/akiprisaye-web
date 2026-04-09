@@ -15,6 +15,7 @@ import {
   hasMetaCSP,
   hasReactShell,
   inferAssetBasePath,
+  isCloudflareAccessPage,
   isCloudflarePagesSite,
   isGitHubPagesSite,
   isMainBranch,
@@ -37,6 +38,13 @@ describe('validate-deployment helpers', () => {
     expect(hasReactShell('<div id="root"></div>')).toBe(true);
     expect(hasReactShell('<div id="root"><div id="loading-fallback"></div></div>')).toBe(true);
     expect(hasReactShell('<main></main>')).toBe(false);
+  });
+
+  it('detects Cloudflare Access protected pages', () => {
+    expect(isCloudflareAccessPage('https://access.cloudflareaccess.com/cdn-cgi/access/login', '')).toBe(true);
+    expect(isCloudflareAccessPage('https://cloudflareaccess.com/login', '')).toBe(true);
+    expect(isCloudflareAccessPage('https://example.pages.dev/', '<html>cloudflareaccess.com</html>')).toBe(true);
+    expect(isCloudflareAccessPage('https://example.pages.dev/', '<div id="root"></div>')).toBe(false);
   });
 
   it('detects the legacy fallback marker', () => {
