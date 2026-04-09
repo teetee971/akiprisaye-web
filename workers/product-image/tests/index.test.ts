@@ -215,32 +215,48 @@ describe('product-image worker', () => {
   it('falls back to wikimedia when OFF returns no image', async () => {
     vi.stubGlobal(
       'fetch',
-      makeJsonFetch(
-        new Map([
-          ['https://world.openfoodfacts.org', { products: [] }],
-          [
-            'https://commons.wikimedia.org/w/api.php?action=query&list=search',
-            { query: { search: [{ title: 'File:Sucre_blanc.jpg' }] } },
-          ],
-          [
-            'https://commons.wikimedia.org/w/api.php?action=query&titles=File',
-            {
+      vi.fn(async (input: string | URL | Request) => {
+        const url = typeof input === 'string' ? input : input instanceof Request ? input.url : input.toString();
+
+        if (url.startsWith('https://world.openfoodfacts.org')) {
+          return new Response(JSON.stringify({ products: [] }), {
+            headers: { 'content-type': 'application/json' },
+          });
+        }
+
+        if (url.startsWith('https://commons.wikimedia.org/w/api.php?action=query&list=search')) {
+          return new Response(
+            JSON.stringify({ query: { search: [{ title: 'File:Sucre_blanc.jpg' }] } }),
+            { headers: { 'content-type': 'application/json' } },
+          );
+        }
+
+        if (
+          url.startsWith(
+            'https://commons.wikimedia.org/w/api.php?action=query&titles=File:Sucre_blanc.jpg',
+          )
+        ) {
+          return new Response(
+            JSON.stringify({
               query: {
                 pages: {
                   '12345': { imageinfo: [{ thumburl: 'https://upload.wikimedia.org/thumb.jpg' }] },
                 },
               },
-            },
-          ],
-        ]),
-      ),
+            }),
+            { headers: { 'content-type': 'application/json' } },
+          );
+        }
+
+        throw new Error(`Unexpected fetch URL in Wikimedia fallback test: ${url}`);
+      }),
     );
     const req = new Request('https://worker.test/api/product-image?q=sucre+roux', { method: 'GET' });
     const res = await worker.fetch(req, ENV_EMPTY, ctxStub);
     expect(res.status).toBe(200);
     const body = (await res.json()) as { source: string; imageUrl: string | null };
-    // Could be wikimedia or none depending on URL matching in the stub.
-    expect(['wikimedia', 'none']).toContain(body.source);
+    expect(body.source).toBe('wikimedia');
+    expect(body.imageUrl).toBe('https://upload.wikimedia.org/thumb.jpg');
   });
 
   // ---- None fallback ----
