@@ -34,8 +34,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      // Le "?v=" force Cloudflare à nous donner la toute dernière version du fichier
-      const response = await fetch(`${import.meta.env.BASE_URL}data/catalogue.json?v=${Date.now()}`);
+      // On garde une URL stable et on demande explicitement une réponse fraîche
+      const response = await fetch(`${import.meta.env.BASE_URL}data/catalogue.json`, {
+        cache: 'no-store',
+      });
 
       if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
 
@@ -50,9 +52,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       }
 
       setProducts(finalArray);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Erreur gisement:', err);
-      setError(err.message);
+      setError('Impossible de charger le catalogue.');
       setProducts([]); // On met une liste vide pour éviter le crash .map
     } finally {
       setLoading(false);
@@ -63,7 +65,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     void reloadProducts();
   }, []);
 
-  const value = useMemo(() => ({ products, loading, error, reloadProducts }), [products, loading, error]);
+  const value = useMemo(() => ({ products, loading, error, reloadProducts }), [products, loading, error, reloadProducts]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
