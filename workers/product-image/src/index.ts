@@ -128,6 +128,11 @@ async function searchOpenFoodFacts(
 // Wikimedia Commons fallback
 // ---------------------------------------------------------------------------
 
+function isGoodWikimediaFileTitle(title: string) {
+  const t = title.toLowerCase();
+  return t.endsWith('.jpg') || t.endsWith('.jpeg') || t.endsWith('.png') || t.endsWith('.webp');
+}
+
 interface WikiSearchHit {
   title: string;
 }
@@ -139,7 +144,7 @@ interface WikiSearchResponse {
 }
 
 interface WikiImageInfoPage {
-  imageinfo?: Array<{ thumburl?: string; url?: string }>;
+  imageinfo?: Array<{ thumburl?: string; url?: string; mime?: string }>;
 }
 
 interface WikiImageInfoResponse {
@@ -153,7 +158,7 @@ async function getWikimediaThumb(title: string, signal: AbortSignal): Promise<st
     action: 'query',
     titles: title,
     prop: 'imageinfo',
-    iiprop: 'url',
+    iiprop: 'url|mime',
     iiurlwidth: '300',
     format: 'json',
     origin: '*',
@@ -167,8 +172,13 @@ async function getWikimediaThumb(title: string, signal: AbortSignal): Promise<st
     const pages = data.query?.pages ?? {};
     for (const page of Object.values(pages)) {
       const info = page.imageinfo?.[0];
-      if (info?.thumburl) return info.thumburl;
-      if (info?.url) return info.url;
+      if (!info) continue;
+
+      // Reject PDFs / non-images safely
+      if (info.mime && !info.mime.startsWith('image/')) continue;
+
+      if (info.thumburl) return info.thumburl;
+      if (info.url) return info.url;
     }
     return null;
   } catch {
@@ -178,14 +188,14 @@ async function getWikimediaThumb(title: string, signal: AbortSignal): Promise<st
 
 async function searchWikimedia(query: string, signal: AbortSignal): Promise<string | null> {
   // Append context keywords to improve relevance.
-  const searchQuery = `${query} produit packaging`;
+  const searchQuery = `${query} (packaging OR jar OR bottle) (jpg OR png OR webp)`;
 
   const params = new URLSearchParams({
     action: 'query',
     list: 'search',
     srsearch: searchQuery,
     srnamespace: '6', // File: namespace
-    srlimit: '5',
+    srlimit: '25',
     format: 'json',
     origin: '*',
   });
@@ -199,6 +209,8 @@ async function searchWikimedia(query: string, signal: AbortSignal): Promise<stri
 
     for (const hit of hits) {
       if (!hit.title.startsWith('File:')) continue;
+      if (!isGoodWikimediaFileTitle(hit.title)) continue;
+
       const thumbUrl = await getWikimediaThumb(hit.title, signal);
       if (thumbUrl) return thumbUrl;
     }
