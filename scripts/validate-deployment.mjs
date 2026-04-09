@@ -314,7 +314,7 @@ async function fetchText(url) {
   if (lastResponse) {
     return { response: lastResponse, body: lastBody };
   }
-  throw lastError ?? new Error(`Échec réseau lors de la récupération de ${url}`);
+  throw new Error(`Échec réseau lors de la récupération de ${url}`, lastError ? { cause: lastError } : undefined);
 }
 
 async function fetchStatus(url) {
@@ -348,7 +348,7 @@ async function fetchStatus(url) {
   if (lastResponse) {
     return lastResponse;
   }
-  throw lastError ?? new Error(`Échec réseau lors de la récupération de ${url}`);
+  throw new Error(`Échec réseau lors de la récupération de ${url}`, lastError ? { cause: lastError } : undefined);
 }
 
 function hasAcceptableRouteResponse(response, body, githubPages) {
