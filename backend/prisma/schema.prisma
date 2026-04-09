@@ -263,11 +263,36 @@ model Subscription {
   status      SubscriptionStatus @default(ACTIVE)
   startDate   DateTime           @default(now())
   endDate     DateTime?
-  externalRef String? /// (option Stripe, extensible plus tard)
-  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  externalRef String? /// Legacy field (kept for compatibility)
+
+  /// SumUp integration fields
+  sumupCustomerId     String?
+  sumupSubscriptionId String?
+  sumupPaymentId      String?
+
+  billingCycle    String? /// "monthly" | "yearly"
+  nextRenewalDate DateTime?
+  affiliateSource String? /// Affiliate key if subscription came from affiliate link
+  tierLabel       String? /// Exact SubscriptionTier string (e.g. "citizen_premium", "business_pro")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model AffiliateTracking {
+  id             String   @id @default(cuid())
+  affiliateKey   String
+  userId         String
+  plan           String
+  conversionDate DateTime @default(now())
+  revenue        Float
+  status         String   @default("pending") /// "pending" | "confirmed"
+  createdAt      DateTime @default(now())
+
+  @@index([affiliateKey])
+  @@index([userId])
 }
 
 model Price {

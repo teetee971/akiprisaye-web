@@ -1,20 +1,15 @@
 /**
  * Subscription API Routes
- * Endpoints for subscription management
+ * Endpoints for subscription management via SumUp
  */
 
 import express, { Request, Response } from 'express';
-import Stripe from 'stripe';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import subscriptionService from '../../services/subscription/subscriptionService.js';
-import stripeWebhookHandler from '../../services/payment/stripeWebhookHandler.js';
+import sumupWebhookHandler from '../../services/payment/sumupWebhookHandler.js';
 import { SubscriptionTier } from '../../types/subscription.js';
 import { getAllSubscriptionPlans } from '../../config/subscriptionPlans.js';
-
 const router = express.Router();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2023-10-16'
-});
 
 /**
  * GET /api/subscriptions/plans
@@ -37,37 +32,64 @@ router.get('/plans', (_req: Request, res: Response) => {
  */
 router.post('/', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
-    // Get authenticated user ID from JWT token
     const userId = req.user?.userId;
     if (!userId) {
       return void res.status(401).json({
         success: false,
-        error: 'Authentication required'
+        error: 'Authentication required',
       });
     }
-    
-    const { planId, paymentMethodId, interval } = req.body;
-    
+
+    const { planId, paymentMethodId, interval, affiliateSource } = req.body;
+
     if (!planId || !interval) {
       return void res.status(400).json({
         success: false,
-        error: 'Missing required fields: planId, interval'
+        error: 'Missing required fields: planId, interval',
       });
     }
-    
-    const subscription = await subscriptionService.createSubscription({
+
+    // Normalize interval to 'monthly' | 'yearly'
+    const normalizedInterval: 'monthly' | 'yearly' =
+      interval === 'yearly' || interval === 'year' ? 'yearly' : 'monthly';
+
+    const result = await subscriptionService.createSubscription({
       userId,
       planId: planId as SubscriptionTier,
       paymentMethodId: paymentMethodId || null,
-      interval
+      interval: normalizedInterval,
+      affiliateSource: affiliateSource || undefined,
     });
-    
-    res.json({ success: true, subscription });
+
+    // Track affiliate conversion if an affiliate key was provided
+    if (affiliateSource && result.subscription.id) {
+      const plan = (await import('../../config/subscriptionPlans.js')).getSubscriptionPlan(
+        planId as SubscriptionTier
+      );
+      const revenue =
+        normalizedInterval === 'yearly'
+          ? (plan?.pricing.yearly ?? 0)
+          : (plan?.pricing.monthly ?? 0);
+
+      await subscriptionService.trackAffiliateConversion({
+        affiliateKey: affiliateSource,
+        userId,
+        plan: planId,
+        revenue,
+      });
+    }
+
+    res.json({
+      success: true,
+      subscription: result.subscription,
+      // checkoutId is present for paid plans — frontend mounts SumUp widget with this
+      ...(result.checkoutId ? { checkoutId: result.checkoutId } : {}),
+    });
   } catch (error) {
     console.error('Error creating subscription:', error);
     res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to create subscription'
+      error: error instanceof Error ? error.message : 'Failed to create subscription',
     });
   }
 });
@@ -75,7 +97,6 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<vo
 /**
  * GET /api/subscriptions/me
  * Get active subscription for the authenticated user
- * Requires authentication
  */
 router.get('/me', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
@@ -83,26 +104,52 @@ router.get('/me', authMiddleware, async (req: Request, res: Response): Promise<v
     if (!userId) {
       return void res.status(401).json({
         success: false,
-        error: 'Authentication required'
+        error: 'Authentication required',
       });
     }
-    
+
     const subscription = await subscriptionService.getActiveSubscription(userId);
-    
+
     if (!subscription) {
       return void res.json({
         success: true,
         subscription: null,
-        message: 'No active subscription found'
+        message: 'No active subscription found',
       });
     }
-    
+
     res.json({ success: true, subscription });
   } catch (error) {
     console.error('Error fetching subscription:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to fetch subscription'
+      error: 'Failed to fetch subscription',
+    });
+  }
+});
+
+/**
+ * POST /api/subscriptions/cancel
+ * Cancel the authenticated user's active subscription
+ */
+router.post('/cancel', authMiddleware, async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+    if (!userId) {
+      return void res.status(401).json({
+        success: false,
+        error: 'Authentication required',
+      });
+    }
+
+    await subscriptionService.cancelSubscription(userId);
+
+    res.json({ success: true, message: 'Subscription canceled successfully' });
+  } catch (error) {
+    console.error('Error canceling subscription:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to cancel subscription',
     });
   }
 });
@@ -110,7 +157,6 @@ router.get('/me', authMiddleware, async (req: Request, res: Response): Promise<v
 /**
  * POST /api/subscriptions/check-feature
  * Check if authenticated user has access to a feature
- * Requires authentication
  */
 router.post('/check-feature', authMiddleware, async (req: Request, res: Response): Promise<void> => {
   try {
@@ -118,56 +164,65 @@ router.post('/check-feature', authMiddleware, async (req: Request, res: Response
     if (!userId) {
       return void res.status(401).json({
         success: false,
-        error: 'Authentication required'
+        error: 'Authentication required',
       });
     }
-    
+
     const { feature } = req.body;
-    
+
     if (!feature) {
       return void res.status(400).json({
         success: false,
-        error: 'Feature name is required'
+        error: 'Feature name is required',
       });
     }
-    
+
     const hasAccess = await subscriptionService.checkFeatureAccess(userId, feature);
-    
+
     res.json({ success: true, hasAccess, feature });
   } catch (error) {
     console.error('Error checking feature access:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to check feature access'
+      error: 'Failed to check feature access',
     });
   }
 });
 
 /**
  * POST /api/subscriptions/webhook
- * Stripe webhook endpoint
+ * SumUp webhook endpoint
+ * Must receive raw body for signature verification
  */
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response): Promise<void> => {
-  const sig = req.headers['stripe-signature'];
-  
-  if (!sig) {
-    return void res.status(400).send('Missing stripe-signature header');
+router.post(
+  '/webhook',
+  express.raw({ type: 'application/json' }),
+  async (req: Request, res: Response): Promise<void> => {
+    const signature = req.headers['x-webhook-signature'] as string | undefined;
+    const webhookSecretConfigured = Boolean(process.env.SUMUP_WEBHOOK_SECRET);
+
+    // If a webhook secret is configured, require and verify the signature
+    if (webhookSecretConfigured) {
+      if (!signature) {
+        return void res.status(400).send('Missing webhook signature');
+      }
+      const valid = sumupWebhookHandler.verifySignature(req.body as Buffer, signature);
+      if (!valid) {
+        return void res.status(400).send('Invalid webhook signature');
+      }
+    }
+
+    try {
+      const event = JSON.parse((req.body as Buffer).toString('utf-8'));
+      await sumupWebhookHandler.handleWebhook(event);
+      res.json({ received: true });
+    } catch (error) {
+      console.error('Webhook error:', error);
+      res
+        .status(400)
+        .send(`Webhook Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
-  
-  try {
-    const event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET || ''
-    );
-    
-    await stripeWebhookHandler.handleWebhook(event);
-    
-    res.json({ received: true });
-  } catch (error) {
-    console.error('Webhook error:', error);
-    res.status(400).send(`Webhook Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }
-});
+);
 
 export default router;
