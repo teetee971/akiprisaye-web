@@ -49,6 +49,16 @@ describe('SumUpWebhookHandler', () => {
       const wrongSig = '0'.repeat(64);
       expect(handler.verifySignature(Buffer.from('payload'), wrongSig)).toBe(false);
     });
+
+    it('should reject a malformed (non-hex) signature without throwing', () => {
+      process.env.SUMUP_WEBHOOK_SECRET = 'test-secret';
+      expect(handler.verifySignature(Buffer.from('payload'), 'not-hex!!!')).toBe(false);
+    });
+
+    it('should reject a signature of odd length without throwing', () => {
+      process.env.SUMUP_WEBHOOK_SECRET = 'test-secret';
+      expect(handler.verifySignature(Buffer.from('payload'), 'abc')).toBe(false);
+    });
   });
 
   describe('handleWebhook', () => {

@@ -9,7 +9,6 @@ import subscriptionService from '../../services/subscription/subscriptionService
 import sumupWebhookHandler from '../../services/payment/sumupWebhookHandler.js';
 import { SubscriptionTier } from '../../types/subscription.js';
 import { getAllSubscriptionPlans } from '../../config/subscriptionPlans.js';
-
 const router = express.Router();
 
 /**
@@ -54,7 +53,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<vo
     const normalizedInterval: 'monthly' | 'yearly' =
       interval === 'yearly' || interval === 'year' ? 'yearly' : 'monthly';
 
-    const subscription = await subscriptionService.createSubscription({
+    const result = await subscriptionService.createSubscription({
       userId,
       planId: planId as SubscriptionTier,
       paymentMethodId: paymentMethodId || null,
@@ -63,7 +62,7 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<vo
     });
 
     // Track affiliate conversion if an affiliate key was provided
-    if (affiliateSource && subscription.id) {
+    if (affiliateSource && result.subscription.id) {
       const plan = (await import('../../config/subscriptionPlans.js')).getSubscriptionPlan(
         planId as SubscriptionTier
       );
@@ -80,7 +79,12 @@ router.post('/', authMiddleware, async (req: Request, res: Response): Promise<vo
       });
     }
 
-    res.json({ success: true, subscription });
+    res.json({
+      success: true,
+      subscription: result.subscription,
+      // checkoutId is present for paid plans — frontend mounts SumUp widget with this
+      ...(result.checkoutId ? { checkoutId: result.checkoutId } : {}),
+    });
   } catch (error) {
     console.error('Error creating subscription:', error);
     res.status(500).json({

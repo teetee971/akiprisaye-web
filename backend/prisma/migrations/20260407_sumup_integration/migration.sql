@@ -9,6 +9,8 @@ ALTER TABLE "Subscription" ADD COLUMN IF NOT EXISTS "sumupPaymentId" TEXT;
 ALTER TABLE "Subscription" ADD COLUMN IF NOT EXISTS "billingCycle" TEXT;
 ALTER TABLE "Subscription" ADD COLUMN IF NOT EXISTS "nextRenewalDate" TIMESTAMP(3);
 ALTER TABLE "Subscription" ADD COLUMN IF NOT EXISTS "affiliateSource" TEXT;
+-- Stores the exact SubscriptionTier string value to avoid information loss from enum mapping
+ALTER TABLE "Subscription" ADD COLUMN IF NOT EXISTS "tierLabel" TEXT;
 
 -- Create AffiliateTracking table for tracking affiliate conversions
 CREATE TABLE IF NOT EXISTS "AffiliateTracking" (

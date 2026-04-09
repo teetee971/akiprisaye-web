@@ -1,12 +1,12 @@
 /**
  * SumUpPaymentForm
  * Embedded SumUp payment widget for subscription checkout.
- * 
+ *
  * Flow:
  * 1. Backend creates a SumUp checkout → returns checkout_id
- * 2. This component loads SumUp's hosted payment widget
- * 3. On success → redirect to /subscribe/success
- * 4. On failure → redirect to /subscribe/error
+ * 2. This component loads SumUp's hosted payment widget via CDN SDK
+ * 3. On success → calls onSuccess()
+ * 4. On failure → calls onError(message)
  */
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -44,7 +44,34 @@ export default function SumUpPaymentForm({
   useEffect(() => {
     if (!checkoutId) return;
 
-    // Load SumUp card widget script
+    // Hold the unmount function returned by SumUpCard.mount
+    let widgetInstance: { unmount: () => void } | null = null;
+
+    function mountWidget() {
+      if (!window.SumUpCard) {
+        setError('Widget SumUp non disponible.');
+        setLoading(false);
+        return;
+      }
+      setLoading(false);
+
+      widgetInstance = window.SumUpCard.mount({
+        id: checkoutId,
+        mountPoint: mountRef.current,
+        showSubmitButton: true,
+        showInstallments: false,
+        onResponse: (type: string, body: { status?: string; error?: string }) => {
+          if (type === 'success' || body?.status === 'PAID') {
+            onSuccess?.();
+          } else if (type === 'error' || type === 'failure') {
+            const msg = body?.error || 'Le paiement a échoué.';
+            onError?.(msg);
+          }
+        },
+      });
+    }
+
+    // Load SumUp card widget script if not already present
     const existing = document.getElementById('sumup-sdk');
     if (!existing) {
       const script = document.createElement('script');
@@ -61,36 +88,10 @@ export default function SumUpPaymentForm({
       mountWidget();
     }
 
-    function mountWidget() {
-      if (!window.SumUpCard) {
-        setError('Widget SumUp non disponible.');
-        setLoading(false);
-        return;
-      }
-      setLoading(false);
-
-      const card = window.SumUpCard.mount({
-        id: checkoutId,
-        mountPoint: mountRef.current,
-        showSubmitButton: true,
-        showInstallments: false,
-        onResponse: (type: string, body: { status?: string; error?: string }) => {
-          if (type === 'success' || body?.status === 'PAID') {
-            onSuccess?.();
-          } else if (type === 'error' || type === 'failure') {
-            const msg = body?.error || 'Le paiement a échoué.';
-            onError?.(msg);
-          }
-        },
-      });
-
-      return () => {
-        card?.unmount?.();
-      };
-    }
-
+    // Cleanup: unmount the widget when the component unmounts or checkoutId changes
     return () => {
-      // Cleanup handled inside mountWidget closure above
+      widgetInstance?.unmount?.();
+      widgetInstance = null;
     };
   }, [checkoutId, onSuccess, onError]);
 

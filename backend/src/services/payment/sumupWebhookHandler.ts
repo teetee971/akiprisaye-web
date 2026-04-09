@@ -12,20 +12,39 @@ const prisma = new PrismaClient();
 
 export class SumUpWebhookHandler {
   /**
-   * Verify webhook signature from SumUp
-   * SumUp sends an HMAC-SHA256 signature in the x-webhook-signature header
+   * Verify webhook signature from SumUp.
+   * SumUp sends an HMAC-SHA256 hex signature in the x-webhook-signature header.
+   * Returns true (skip verification) when SUMUP_WEBHOOK_SECRET is not configured.
    */
   verifySignature(payload: Buffer, signature: string): boolean {
     const secret = process.env.SUMUP_WEBHOOK_SECRET || '';
     if (!secret) {
-      console.warn('SUMUP_WEBHOOK_SECRET not configured — skipping signature verification');
       return true;
     }
-    const expected = crypto
-      .createHmac('sha256', secret)
-      .update(payload)
-      .digest('hex');
-    return crypto.timingSafeEqual(Buffer.from(expected, 'hex'), Buffer.from(signature, 'hex'));
+
+    try {
+      // Guard against malformed / non-hex signatures to prevent timingSafeEqual throwing
+      if (!signature || !/^[0-9a-fA-F]+$/.test(signature) || signature.length % 2 !== 0) {
+        return false;
+      }
+
+      const expected = crypto
+        .createHmac('sha256', secret)
+        .update(payload)
+        .digest('hex');
+
+      const expectedBuffer = Buffer.from(expected, 'hex');
+      const signatureBuffer = Buffer.from(signature, 'hex');
+
+      // timingSafeEqual requires equal-length buffers
+      if (expectedBuffer.length !== signatureBuffer.length) {
+        return false;
+      }
+
+      return crypto.timingSafeEqual(expectedBuffer, signatureBuffer);
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -50,7 +69,8 @@ export class SumUpWebhookHandler {
         break;
 
       default:
-        console.log(`Unhandled SumUp event type: ${event.event_type}`);
+        // Unknown event type — silently ignore; don't log webhook traffic
+        break;
     }
   }
 
@@ -61,8 +81,6 @@ export class SumUpWebhookHandler {
       amount?: number;
       currency?: string;
     };
-
-    console.log(`Payment succeeded: checkout=${payload.checkout_reference}, amount=${payload.amount} ${payload.currency}`);
 
     // Update subscription status if linked via checkout_reference
     if (payload.checkout_reference) {
@@ -76,8 +94,6 @@ export class SumUpWebhookHandler {
       failure_reason?: string;
     };
 
-    console.warn(`Payment failed: checkout=${payload.checkout_reference}, reason=${payload.failure_reason}`);
-
     if (payload.checkout_reference) {
       await this.updateSubscriptionByRef(payload.checkout_reference, 'INACTIVE');
     }
@@ -88,8 +104,6 @@ export class SumUpWebhookHandler {
       subscription_id?: string;
       next_renewal_date?: string;
     };
-
-    console.log(`Subscription renewed: id=${payload.subscription_id}, next=${payload.next_renewal_date}`);
 
     if (payload.subscription_id) {
       const nextRenewal = payload.next_renewal_date
@@ -110,8 +124,6 @@ export class SumUpWebhookHandler {
     const payload = event.payload as {
       subscription_id?: string;
     };
-
-    console.log(`Subscription canceled: id=${payload.subscription_id}`);
 
     if (payload.subscription_id) {
       await prisma.subscription.updateMany({

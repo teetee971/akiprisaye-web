@@ -29,7 +29,10 @@ describe('SumUpService', () => {
 
   describe('createCustomer', () => {
     it('should create a SumUp customer with name split into first/last', async () => {
-      const mockCustomer = { customer_id: 'cust_123', email: 'test@example.com' };
+      const mockCustomer = {
+        customer_id: 'cust_123',
+        personal_details: { email: 'test@example.com', first_name: 'Jean', last_name: 'Dupont' },
+      };
       mockPost.mockResolvedValueOnce({ data: mockCustomer });
 
       const result = await service.createCustomer({
@@ -52,7 +55,10 @@ describe('SumUpService', () => {
     });
 
     it('should handle a single-word name', async () => {
-      const mockCustomer = { customer_id: 'cust_456', email: 'user@example.com' };
+      const mockCustomer = {
+        customer_id: 'cust_456',
+        personal_details: { email: 'user@example.com', first_name: 'Monique', last_name: '' },
+      };
       mockPost.mockResolvedValueOnce({ data: mockCustomer });
 
       await service.createCustomer({

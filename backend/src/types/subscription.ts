@@ -24,10 +24,15 @@ export enum SubscriptionTier {
 
 // ---- SumUp-specific types ----
 
+/**
+ * SumUp Customer response.
+ * The API response has customer_id at top level.
+ * personal_details holds the email/name (as sent in the request body).
+ */
 export interface SumUpCustomer {
   customer_id: string;
-  email: string;
   personal_details?: {
+    email?: string;
     first_name?: string;
     last_name?: string;
   };
@@ -188,6 +193,13 @@ export interface CreateSubscriptionParams {
   paymentMethodId: string | null;  // Null si FREE
   interval: 'monthly' | 'yearly';
   affiliateSource?: string;
+}
+
+/** Returned by createSubscription — includes checkoutId for paid plans */
+export interface CreateSubscriptionResult {
+  subscription: Subscription;
+  /** Present for paid plans: the SumUp checkout ID to mount in the payment widget */
+  checkoutId?: string;
 }
 
 export interface ChangeSubscriptionParams {
