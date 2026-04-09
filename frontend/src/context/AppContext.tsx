@@ -68,7 +68,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     void reloadProducts();
   }, []);
 
-  const value = useMemo(() => ({ products, loading, error, reloadProducts }), [products, loading, error]);
+  const value = useMemo(() => ({ products, loading, error, reloadProducts }), [products, loading, error, reloadProducts]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
