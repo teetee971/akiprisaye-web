@@ -440,7 +440,7 @@ async function verifyServiceWorker(siteUrl, assetPaths) {
 
   // service-worker.js may be a compatibility wrapper that delegates to sw.js via importScripts.
   // In that case, check sw.js for the cache version.
-  if (version === null && /importScripts/i.test(body)) {
+  if (version === null && /importScripts\(/i.test(body)) {
     const canonicalSwPath = `${basePath}sw.js`.replace(/\/+/g, '/');
     const canonicalUrl = joinSiteUrl(siteUrl, canonicalSwPath);
     const { response: swResponse, body: swBody } = await fetchText(canonicalUrl);
