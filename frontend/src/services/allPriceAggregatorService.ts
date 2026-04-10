@@ -39,6 +39,12 @@ export interface ProductInfo {
   imageUrl?: string;
   quantity?: string;
   categories?: string[];
+  /** Nutri-Score grade: 'a' | 'b' | 'c' | 'd' | 'e' */
+  nutriScore?: string;
+  /** NOVA group (food processing level): 1–4 */
+  novaGroup?: number;
+  /** Short ingredient text (fr) */
+  ingredients?: string;
 }
 
 export interface AggregationResult {
