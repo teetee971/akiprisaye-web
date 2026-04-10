@@ -29,11 +29,14 @@ function relativeTime(isoString) {
 }
 
 /** Détermine le statut et le score de santé d'une source. */
+const BASE_HEALTH = 70;
+const MAX_BONUS_HEALTH = 30;
+
 function sourceStatus(sourceData, isStale) {
   if (!sourceData) return { status: 'offline', health: 0 };
   const { ok, count } = sourceData;
   if (isStale) return { status: 'warning', health: 40 };
-  if (ok && count > 0) return { status: 'online', health: Math.min(100, 70 + Math.min(30, count)) };
+  if (ok && count > 0) return { status: 'online', health: Math.min(100, BASE_HEALTH + Math.min(MAX_BONUS_HEALTH, count)) };
   if (!ok && count > 0) return { status: 'warning', health: 50 };
   // ok is false and count is 0 — source returned no data this run
   return { status: 'warning', health: 30 };

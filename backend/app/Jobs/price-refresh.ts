@@ -107,7 +107,12 @@ export async function runPriceRefreshJob(): Promise<{
 
 // When executed directly (e.g. `node price-refresh.js` or `tsx price-refresh.ts`),
 // run the job immediately and exit.
-if (process.argv[1]?.includes('price-refresh')) {
+const isMain =
+  typeof import.meta.url === 'string' &&
+  process.argv[1] != null &&
+  new URL(import.meta.url).pathname === new URL(process.argv[1], 'file://').pathname;
+
+if (isMain) {
   runPriceRefreshJob()
     .then((r) => {
       console.info('[CRON][price-refresh] Done:', r);
