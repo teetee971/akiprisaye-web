@@ -76,11 +76,18 @@ export async function onRequest(context) {
         count: sources.fuel?.count ?? 0,
       },
       {
-        name: 'Alimentaire (Open Prices)',
+        name: 'Alimentaire (Open Prices + enseignes)',
         source: 'food',
         ...sourceStatus(sources.food, isStale),
         lastScan: lastScanLabel,
         count: sources.food?.count ?? 0,
+      },
+      {
+        name: 'Produits frais (DAAF / OPMR / DIETS)',
+        source: 'fresh',
+        ...sourceStatus(sources.fresh, isStale),
+        lastScan: lastScanLabel,
+        count: sources.fresh?.count ?? 0,
       },
       {
         name: 'Bouclier Qualité Prix (data.gouv.fr)',
@@ -90,7 +97,7 @@ export async function onRequest(context) {
         count: sources.bqp?.count ?? 0,
       },
       {
-        name: 'Services (ARCEP / CRE / INSEE)',
+        name: 'Services (ARCEP / CRE / INSEE / Transport)',
         source: 'services',
         ...sourceStatus(sources.services, isStale),
         lastScan: lastScanLabel,
@@ -105,10 +112,11 @@ export async function onRequest(context) {
   } catch {
     // Fallback: return all sources as unknown when health file is unavailable
     const fallback = [
-      { name: 'Carburants (prix-carburants.gouv.fr)', source: 'fuel',     status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Alimentaire (Open Prices)',            source: 'food',     status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Bouclier Qualité Prix (data.gouv.fr)', source: 'bqp',      status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Services (ARCEP / CRE / INSEE)',       source: 'services', status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Carburants (prix-carburants.gouv.fr)',          source: 'fuel',     status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Alimentaire (Open Prices + enseignes)',         source: 'food',     status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Produits frais (DAAF / OPMR / DIETS)',         source: 'fresh',    status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Bouclier Qualité Prix (data.gouv.fr)',          source: 'bqp',      status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Services (ARCEP / CRE / INSEE / Transport)',    source: 'services', status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
     ];
     return new Response(JSON.stringify(fallback), {
       headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },

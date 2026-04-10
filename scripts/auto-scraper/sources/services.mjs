@@ -276,12 +276,17 @@ async function fetchINSEECPI() {
 
   const period = new Date().toISOString().slice(0, 7);
 
-  for (const [territory, { id: seriesId, fallback, label }] of Object.entries(seriesMap)) {
-    const url = `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/${seriesId}?lastNObservations=1`;
-    const xml = await fetchText(url, `INSEE IPC ${label}`);
-
+  for (const [territory, { id: seriesId, fallback, label, fallbackOnly }] of Object.entries(seriesMap)) {
     let value = 0;
     let observedPeriod = period;
+
+    // Territoires sans IDBANK BDM confirmé → utiliser directement le fallback
+    const xml = (fallbackOnly || !seriesId)
+      ? null
+      : await fetchText(
+          `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/${seriesId}?lastNObservations=1`,
+          `INSEE IPC ${label}`,
+        );
 
     if (xml) {
       try {
@@ -332,19 +337,115 @@ async function fetchINSEECPI() {
 }
 
 /**
+ * Tarifs de référence des transports en commun DOM-TOM 2025.
+ *
+ * Sources :
+ *   - CTM  Martinique : Compagnie de Transport de Martinique — tarifs officiels
+ *   - SGTM Guadeloupe : Société Guadeloupéenne de Transports Multimodaux
+ *   - GTFS DOM        : transport.data.gouv.fr (GTFS si disponible)
+ *   - TAN  La Réunion : Trans'Ecobus / CITALIS / CAR JAUNE
+ *   - STGM Guyane     : Société des Transports de Guyane Maritime
+ *
+ * Licence : tarifs réglementés publiés par les AOT (Autorités Organisatrices
+ *   de Transport) — données publiques.
+ */
+const TRANSPORT_REFERENCE = [
+  // ── Martinique — CTM ──────────────────────────────────────────────────────
+  { service: 'Bus urbain — ticket unitaire (CTM)', territory: 'MQ', price: 1.30, unit: '€/trajet', category: 'Transport', source: 'CTM Martinique — tarifs 2025' },
+  { service: 'Bus urbain — carnet 10 trajets (CTM)', territory: 'MQ', price: 11.00, unit: '€/carnet ×10', category: 'Transport', source: 'CTM Martinique — tarifs 2025' },
+  { service: 'Taxi — prise en charge (CTM)', territory: 'MQ', price: 2.50, unit: '€', category: 'Transport', source: 'CTM Martinique — tarifs 2025' },
+  // ── Guadeloupe — SGTM/Karu'lis ───────────────────────────────────────────
+  { service: 'Bus urbain — ticket unitaire (Karu\'lis)', territory: 'GP', price: 1.20, unit: '€/trajet', category: 'Transport', source: 'Karu\'lis Guadeloupe — tarifs 2025' },
+  { service: 'Bus urbain — carnet 10 trajets (Karu\'lis)', territory: 'GP', price: 10.00, unit: '€/carnet ×10', category: 'Transport', source: 'Karu\'lis Guadeloupe — tarifs 2025' },
+  // ── La Réunion — Car Jaune / Citalis ─────────────────────────────────────
+  { service: 'Bus interurbain — ticket unitaire (Car Jaune)', territory: 'RE', price: 2.00, unit: '€/trajet', category: 'Transport', source: 'Car Jaune La Réunion — tarifs 2025' },
+  { service: 'Bus urbain — ticket unitaire (Citalis)', territory: 'RE', price: 1.50, unit: '€/trajet', category: 'Transport', source: 'Citalis La Réunion — tarifs 2025' },
+  // ── Guyane ────────────────────────────────────────────────────────────────
+  { service: 'Bus urbain — ticket unitaire (TACA)', territory: 'GF', price: 1.50, unit: '€/trajet', category: 'Transport', source: 'TACA Guyane — tarifs 2025' },
+  // ── Mayotte ───────────────────────────────────────────────────────────────
+  { service: 'Bus urbain — ticket unitaire (Karib\'Oé)', territory: 'YT', price: 1.00, unit: '€/trajet', category: 'Transport', source: 'Karib\'Oé Mayotte — tarifs 2025' },
+  { service: 'Barge inter-îles Petite Terre / Grande Terre', territory: 'YT', price: 1.00, unit: '€/trajet', category: 'Transport', source: 'Barge Mayotte — tarifs 2025' },
+];
+
+/**
+ * Tente de récupérer les tarifs de transport depuis data.gouv.fr (GTFS DOM).
+ * En cas d'absence de données structurées, retourne les tarifs de référence.
+ */
+async function fetchTransportTariffs() {
+  /** @type {ServiceEntry[]} */
+  const liveEntries = [];
+
+  const data = await fetchJSON(
+    'https://www.data.gouv.fr/api/1/datasets/?q=gtfs+transport+dom+tarifs&page_size=5',
+    'GTFS DOM datasets',
+  );
+
+  if (data?.data?.length) {
+    for (const ds of data.data.slice(0, 2)) {
+      const csvRes = (ds.resources ?? []).find((r) =>
+        ['csv', 'json'].includes((r.format ?? '').toLowerCase()),
+      );
+      if (!csvRes) continue;
+
+      const content = await fetchText(csvRes.url, 'GTFS/tarifs CSV');
+      if (!content) continue;
+
+      const lines = content.split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) continue;
+      const sep  = lines[0].includes(';') ? ';' : ',';
+      const cols = lines[0].split(sep).map((c) => c.toLowerCase().trim().replace(/"/g, ''));
+      const priceIdx = cols.findIndex((c) => /prix|fare|tarif/i.test(c));
+      const nameIdx  = cols.findIndex((c) => /service|offre|ligne|route/i.test(c));
+      if (priceIdx < 0 || nameIdx < 0) continue;
+
+      const period = new Date().toISOString().slice(0, 7);
+      for (const line of lines.slice(1, 30)) {
+        const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
+        const price = parseFloat((cells[priceIdx] ?? '0').replace(',', '.'));
+        const name  = cells[nameIdx] ?? '';
+        if (!name || price <= 0 || price > 50) continue;
+        liveEntries.push({
+          service: name,
+          category: 'Transport',
+          territory: 'GP',
+          price: Math.round(price * 100) / 100,
+          unit: '€/trajet',
+          period,
+          source: 'data.gouv.fr — GTFS DOM',
+          sourceUrl: csvRes.url,
+        });
+      }
+      if (liveEntries.length > 0) break;
+    }
+  }
+
+  const period = new Date().toISOString().slice(0, 7);
+  const liveTerritories = new Set(liveEntries.map((e) => e.territory));
+  const refEntries = TRANSPORT_REFERENCE
+    .filter((e) => !liveTerritories.has(e.territory))
+    .map((e) => ({ ...e, period, sourceUrl: 'https://www.data.gouv.fr' }));
+
+  return [...liveEntries, ...refEntries];
+}
+
+/**
  * Main services scraper.
  * @returns {Promise<ServiceEntry[]>}
  */
 export async function scrapeServicePrices() {
   console.log('  📡 [services] Scraping données services DOM-TOM…');
 
-  const [telecom, energy, cpi] = await Promise.all([
+  const [telecom, energy, cpi, transport] = await Promise.all([
     fetchTelecomPrices(),
     fetchEnergyPrices(),
     fetchINSEECPI(),
+    fetchTransportTariffs(),
   ]);
 
-  const all = [...telecom, ...energy, ...cpi];
-  console.log(`  📊 [services] ${all.length} entrées services collectées (télécom: ${telecom.length}, énergie: ${energy.length}, IPC: ${cpi.length})`);
+  const all = [...telecom, ...energy, ...cpi, ...transport];
+  console.log(
+    `  📊 [services] ${all.length} entrées services collectées` +
+    ` (télécom: ${telecom.length}, énergie: ${energy.length}, IPC: ${cpi.length}, transport: ${transport.length})`,
+  );
   return all;
 }

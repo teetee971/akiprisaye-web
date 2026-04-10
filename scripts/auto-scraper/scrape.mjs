@@ -6,8 +6,9 @@
  * ├──────────────────────────────────────────────────────────────────────┤
  * │  ⛽ Carburants  prix-carburants.gouv.fr (XML officiel quotidien)      │
  * │  🥦 Alimentaire Open Prices / Open Food Facts (ODbL + CC-BY-SA)      │
+ * │  🌿 Frais       DAAF / OPMR / DIETS — produits vivriers DOM          │
  * │  📋 BQP         data.gouv.fr — DGCCRF / Préfectures DOM              │
- * │  📡 Services    ARCEP + CRE + INSEE BDM (Licence Ouverte v2)         │
+ * │  📡 Services    ARCEP + CRE + INSEE BDM + Transport DOM              │
  * └──────────────────────────────────────────────────────────────────────┘
  *
  * Flux complet :
@@ -20,9 +21,11 @@
  *   7. Step summary GitHub Actions
  *
  * Usage :
- *   node scrape.mjs                    → toutes sources
+ *   node scrape.mjs                    → toutes sources (mode normal)
+ *   node scrape.mjs --deep-scan        → pagination étendue + Overpass OSM
  *   node scrape.mjs --source fuel      → carburants uniquement
  *   node scrape.mjs --source food      → alimentaire uniquement
+ *   node scrape.mjs --source fresh     → produits frais uniquement
  *   node scrape.mjs --source bqp       → BQP uniquement
  *   node scrape.mjs --source services  → services uniquement
  *   node scrape.mjs --dry-run          → simulation (pas d'écriture)
@@ -44,8 +47,10 @@ import { scrapeFuelPrices }    from './sources/fuel.mjs';
 import { scrapeFoodPrices }    from './sources/food.mjs';
 import { scrapeBQPPrices }     from './sources/bqp.mjs';
 import { scrapeServicePrices } from './sources/services.mjs';
+import { scrapeFreshPrices }   from './sources/daaf.mjs';
 
 const DRY_RUN   = process.argv.includes('--dry-run');
+const DEEP_SCAN = process.argv.includes('--deep-scan');
 const SOURCE_FILTER = (() => {
   const idx = process.argv.indexOf('--source');
   return idx >= 0 ? process.argv[idx + 1] : 'all';
@@ -251,13 +256,14 @@ async function generateScrapingReport(counts, shocks) {
       ).join('\n');
 
   const prompt = `Tu es l'IA de collecte de données du projet "A KI PRI SA YÉ".
-Date : ${DATE_ID}
+Date : ${DATE_ID}${DEEP_SCAN ? ' (deep-scan hebdomadaire)' : ''}
 
 Données collectées aujourd'hui :
 - ⛽ Carburants : ${counts.fuel} stations / prix moyens DOM-TOM
-- 🥦 Alimentaire : ${counts.food} relevés Open Prices
+- 🥦 Alimentaire : ${counts.food} relevés Open Prices (enseignes + pays)
+- 🌿 Produits frais : ${counts.fresh} relevés DAAF/OPMR/DIETS
 - 📋 BQP : ${counts.bqp} prix officiels plafonnés
-- 📡 Services : ${counts.services} tarifs (énergie, télécom, eau, IPC)
+- 📡 Services : ${counts.services} tarifs (énergie, télécom, eau, IPC, transport)
 
 Chocs de prix détectés :
 ${shockSummary}
@@ -299,7 +305,7 @@ async function main() {
   console.log('╚══════════════════════════════════════════════════════════╝');
   console.log(`   Date    : ${DATE_ID}`);
   console.log(`   Source  : ${SOURCE_FILTER}`);
-  console.log(`   Mode    : ${DRY_RUN ? 'DRY-RUN (simulation)' : 'PRODUCTION'}`);
+  console.log(`   Mode    : ${DRY_RUN ? 'DRY-RUN (simulation)' : 'PRODUCTION'}${DEEP_SCAN ? ' + DEEP-SCAN' : ''}`);
   console.log('');
 
   const db = getFirestore();
@@ -309,11 +315,12 @@ async function main() {
   const shouldRun = (s) => SOURCE_FILTER === 'all' || SOURCE_FILTER === s;
 
   console.log('📡 Lancement du scraping…\n');
-  const [rawFuel, rawFood, rawBQP, rawServices] = await Promise.all([
-    shouldRun('fuel')     ? scrapeFuelPrices()    : Promise.resolve([]),
-    shouldRun('food')     ? scrapeFoodPrices()     : Promise.resolve([]),
-    shouldRun('bqp')      ? scrapeBQPPrices()      : Promise.resolve([]),
-    shouldRun('services') ? scrapeServicePrices()  : Promise.resolve([]),
+  const [rawFuel, rawFood, rawFresh, rawBQP, rawServices] = await Promise.all([
+    shouldRun('fuel')     ? scrapeFuelPrices()                         : Promise.resolve([]),
+    shouldRun('food')     ? scrapeFoodPrices({ deepScan: DEEP_SCAN })  : Promise.resolve([]),
+    shouldRun('fresh')    ? scrapeFreshPrices()                        : Promise.resolve([]),
+    shouldRun('bqp')      ? scrapeBQPPrices()                          : Promise.resolve([]),
+    shouldRun('services') ? scrapeServicePrices()                      : Promise.resolve([]),
   ]);
 
   // ── Normalisation ─────────────────────────────────────────────────────────
@@ -324,12 +331,14 @@ async function main() {
   const counts = {
     fuel:     fuelAggregated.length,
     food:     foodDedup.length,
+    fresh:    rawFresh.length,
     bqp:      rawBQP.length,
     services: rawServices.length,
   };
 
   console.log(`   ⛽ Carburants : ${rawFuel.length} relevés → ${counts.fuel} entrées agrégées`);
   console.log(`   🥦 Alimentaire: ${rawFood.length} relevés → ${counts.food} après dédup`);
+  console.log(`   🌿 Frais/vivriers: ${counts.fresh} relevés`);
   console.log(`   📋 BQP        : ${counts.bqp} entrées`);
   console.log(`   📡 Services   : ${counts.services} entrées`);
 
@@ -402,6 +411,21 @@ async function main() {
       console.log('💾 open-prices-dom.json mis à jour');
     }
 
+    // ── Save fresh produce snapshot ───────────────────────────────────────
+    if (rawFresh.length > 0) {
+      const existingFresh = loadJSON(join(dataDir, 'fresh-prices.json')) ?? { metadata: {}, prices: [] };
+      saveJSON(join(dataDir, 'fresh-prices.json'), {
+        metadata: {
+          ...(existingFresh.metadata ?? {}),
+          lastUpdated: ISO_NOW,
+          source: 'DAAF / OPMR / DIETS — data.gouv.fr (Licence Ouverte v2)',
+          autoCollected: true,
+        },
+        prices: rawFresh,
+      });
+      console.log('💾 fresh-prices.json mis à jour');
+    }
+
     // ── Write to Firestore ────────────────────────────────────────────────
     await writeScrapingResults(db, { fuel: fuelAggregated, food: foodDedup, bqp: rawBQP, services: rawServices }, shocks);
   } else {
@@ -421,14 +445,15 @@ async function main() {
   if (summaryPath) {
     const { appendFileSync } = await import('fs');
     const lines = [
-      `## 🤖 Scraping Automatique — ${DATE_ID}`,
+      `## 🤖 Scraping Automatique — ${DATE_ID}${DEEP_SCAN ? ' (deep-scan)' : ''}`,
       '',
       `| Source | Entrées collectées |`,
       `|---|---|`,
       `| ⛽ Carburants (prix-carburants.gouv.fr) | ${rawFuel.length} relevés → ${counts.fuel} agrégés |`,
-      `| 🥦 Alimentaire (Open Prices) | ${rawFood.length} relevés → ${counts.food} dédupliqués |`,
+      `| 🥦 Alimentaire (Open Prices + enseignes) | ${rawFood.length} relevés → ${counts.food} dédupliqués |`,
+      `| 🌿 Frais/vivriers (DAAF/OPMR/DIETS) | ${counts.fresh} relevés |`,
       `| 📋 BQP (data.gouv.fr) | ${counts.bqp} entrées officielles |`,
-      `| 📡 Services (ARCEP/CRE/INSEE) | ${counts.services} tarifs |`,
+      `| 📡 Services (ARCEP/CRE/INSEE/Transport) | ${counts.services} tarifs |`,
       '',
       allShocks.length === 0
         ? '### ✅ Prix stables — aucun choc détecté'
@@ -439,7 +464,7 @@ async function main() {
     appendFileSync(summaryPath, lines + '\n');
   }
 
-  const totalEntries = counts.fuel + counts.food + counts.bqp + counts.services;
+  const totalEntries = counts.fuel + counts.food + counts.fresh + counts.bqp + counts.services;
   console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total\n`);
 
   // ── Scraping health file ────────────────────────────────────────────────
@@ -449,9 +474,11 @@ async function main() {
     lastScrapedAt: ISO_NOW,
     date: DATE_ID,
     dryRun: DRY_RUN,
+    deepScan: DEEP_SCAN,
     sources: {
       fuel:     { count: counts.fuel,     ok: counts.fuel > 0 },
       food:     { count: counts.food,     ok: counts.food > 0 },
+      fresh:    { count: counts.fresh,    ok: counts.fresh > 0 },
       bqp:      { count: counts.bqp,      ok: counts.bqp > 0 },
       services: { count: counts.services, ok: counts.services > 0 },
     },
