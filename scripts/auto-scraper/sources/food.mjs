@@ -49,10 +49,13 @@ const DOM_COUNTRIES = {
  * (`icontains` sur PostgreSQL avec `unaccent`).
  */
 const RETAILER_NAME_FILTERS = [
+  // Utiliser uniquement des formes ASCII sans accent : l'API Open Prices
+  // effectue une recherche insensible à la casse ET aux accents côté serveur
+  // (`icontains` sur PostgreSQL avec `unaccent`).
   'leader price',
-  'intermarche',   // ASCII sans accent — l'API icontains utilise unaccent() côté serveur
+  'intermarche',
   'cora',
-  'geant casino',  // ASCII sans accent — représente 'Géant Casino'
+  'geant casino',
   'hyper u',
   'lidl',
   'casino',
