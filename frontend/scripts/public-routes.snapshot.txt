@@ -178,6 +178,7 @@
 /outreach
 /p/:id
 /panier
+/paniers-types
 /parametres
 /perimetre
 /petits-commerces
