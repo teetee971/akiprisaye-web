@@ -159,10 +159,12 @@ body {
   }
 }
 
+/* Compositable gradient animation using transform (avoids background-position paint) */
 @keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0%   { transform: translate(0%, 0%); }
+  33%  { transform: translate(20%, -10%); }
+  66%  { transform: translate(-20%, 10%); }
+  100% { transform: translate(0%, 0%); }
 }
 
 .animate-slide-in {
@@ -202,11 +204,28 @@ body {
 .animate-stagger > *:nth-child(5) { animation-delay: 0.25s; }
 .animate-stagger > *:nth-child(6) { animation-delay: 0.3s; }
 
-/* Gradients animés */
+/* Gradients animés — uses a pseudo-element so that only transform is composited */
 .gradient-animated {
-  background: linear-gradient(-45deg, #2563eb, #3b82f6, #60a5fa, #93c5fd);
-  background-size: 400% 400%;
+  position: relative;
+  overflow: hidden;
+  background: #2563eb;
+}
+
+.gradient-animated::before {
+  content: '';
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(-45deg, #2563eb, #3b82f6, #60a5fa, #93c5fd, #2563eb, #3b82f6);
+  background-size: 50% 50%;
+  will-change: transform;
   animation: gradient 15s ease infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.gradient-animated > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* Boutons modernes */

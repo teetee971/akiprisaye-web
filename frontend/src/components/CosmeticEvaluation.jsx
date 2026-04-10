@@ -205,7 +205,7 @@ export default function CosmeticEvaluation({ initialEan }) {
           {(productImage || productBrand) && (
             <div className="mt-3 flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
               {productImage && (
-                <img src={productImage} alt="produit" className="w-14 h-14 object-contain rounded bg-white" />
+                <img src={productImage} alt="produit" className="w-14 h-14 object-contain rounded bg-white" width={56} height={56} loading="lazy" />
               )}
               <div>
                 {productBrand && <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{productBrand}</p>}

@@ -539,6 +539,7 @@ export default function ESLScannerPage() {
               {pricesResult.product.imageUrl && (
                 <img src={pricesResult.product.imageUrl} alt={pricesResult.product.name}
                   className="w-14 h-14 object-contain rounded-xl bg-white/10 flex-shrink-0"
+                  width={56} height={56} loading="lazy"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               )}
               <div>
