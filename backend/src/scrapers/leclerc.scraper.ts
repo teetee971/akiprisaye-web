@@ -13,6 +13,7 @@ import {
   BaseScraper,
   type ScrapeResult,
   type ScrapedObservation,
+  type TerritoryCode,
   sleep,
   REQUEST_DELAY_MS,
 } from './base.scraper.js';
@@ -21,7 +22,7 @@ const OPENPRICES_API = 'https://prices.openfoodfacts.org/api/v1/prices';
 const USER_AGENT     = 'akiprisaye-web/1.0 (https://teetee971.github.io/akiprisaye-web; contact via GitHub)';
 
 /** OSM store IDs for E.Leclerc in French DOM-TOM. */
-const LECLERC_STORES: { osmId: string; territory: 'gp' | 'mq' | 'gf' | 're'; label: string }[] = [
+const LECLERC_STORES: { osmId: string; territory: TerritoryCode; label: string }[] = [
   { osmId: '4226949052', territory: 'gp', label: 'E.Leclerc Guadeloupe (Les Abymes)' },
   { osmId: '4226949053', territory: 'mq', label: 'E.Leclerc Martinique' },
   { osmId: '4226949054', territory: 'gf', label: 'E.Leclerc Guyane' },

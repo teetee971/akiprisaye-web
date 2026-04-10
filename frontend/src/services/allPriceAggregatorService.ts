@@ -39,6 +39,12 @@ export interface ProductInfo {
   imageUrl?: string;
   quantity?: string;
   categories?: string[];
+  /** Nutri-Score grade: 'a' | 'b' | 'c' | 'd' | 'e' */
+  nutriScore?: string;
+  /** NOVA group (food processing level): 1–4 */
+  novaGroup?: number;
+  /** Short ingredient text (fr) */
+  ingredients?: string;
 }
 
 export interface AggregationResult {
@@ -332,16 +338,24 @@ async function fetchProductInfo(barcode: string): Promise<ProductInfo | null> {
         image_url?: string;
         quantity?: string;
         categories_tags?: string[];
+        nutriscore_grade?: string;
+        nova_group?: number;
+        ingredients_text_fr?: string;
+        ingredients_text?: string;
       };
     };
     if (payload.status !== 1 || !payload.product) return null;
     const p = payload.product;
+    const rawIngredients = (p.ingredients_text_fr || p.ingredients_text || '').trim();
     return {
       name: (p.product_name_fr || p.product_name || '').trim() || `Produit ${barcode}`,
       brand: p.brands,
       imageUrl: p.image_front_url || p.image_url,
       quantity: p.quantity,
       categories: Array.isArray(p.categories_tags) ? p.categories_tags.slice(0, 5) : [],
+      nutriScore: p.nutriscore_grade ? p.nutriscore_grade.toUpperCase() : undefined,
+      novaGroup: p.nova_group ?? undefined,
+      ingredients: rawIngredients ? rawIngredients.slice(0, 300) : undefined,
     };
   } catch {
     return null;

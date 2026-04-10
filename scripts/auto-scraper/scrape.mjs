@@ -4,10 +4,12 @@
  * ┌──────────────────────────────────────────────────────────────────────┐
  * │  SOURCES DE DONNÉES SCRAPÉES (100% Open Data légal)                  │
  * ├──────────────────────────────────────────────────────────────────────┤
- * │  ⛽ Carburants  prix-carburants.gouv.fr (XML officiel quotidien)      │
- * │  🥦 Alimentaire Open Prices / Open Food Facts (ODbL + CC-BY-SA)      │
- * │  📋 BQP         data.gouv.fr — DGCCRF / Préfectures DOM              │
- * │  📡 Services    ARCEP + CRE + INSEE BDM (Licence Ouverte v2)         │
+ * │  ⛽ Carburants   prix-carburants.gouv.fr (XML officiel quotidien)     │
+ * │  🥦 Alimentaire  Open Prices / Open Food Facts (ODbL + CC-BY-SA)     │
+ * │  🌿 Frais        DAAF / OPMR / DIETS — produits vivriers DOM         │
+ * │  🛒 Catalogue    E.Leclerc / Intermarché / Leader Price / Super U    │
+ * │  📋 BQP          data.gouv.fr — DGCCRF / Préfectures DOM             │
+ * │  📡 Services     ARCEP + CRE + INSEE BDM + Eau + Transport + IEDOM   │
  * └──────────────────────────────────────────────────────────────────────┘
  *
  * Flux complet :
@@ -20,12 +22,15 @@
  *   7. Step summary GitHub Actions
  *
  * Usage :
- *   node scrape.mjs                    → toutes sources
- *   node scrape.mjs --source fuel      → carburants uniquement
- *   node scrape.mjs --source food      → alimentaire uniquement
- *   node scrape.mjs --source bqp       → BQP uniquement
- *   node scrape.mjs --source services  → services uniquement
- *   node scrape.mjs --dry-run          → simulation (pas d'écriture)
+ *   node scrape.mjs                       → toutes sources (mode normal)
+ *   node scrape.mjs --deep-scan           → pagination étendue + Overpass OSM
+ *   node scrape.mjs --source fuel         → carburants uniquement
+ *   node scrape.mjs --source food         → alimentaire uniquement
+ *   node scrape.mjs --source fresh        → produits frais uniquement
+ *   node scrape.mjs --source catalogue    → catalogues enseignes uniquement
+ *   node scrape.mjs --source bqp          → BQP uniquement
+ *   node scrape.mjs --source services     → services uniquement
+ *   node scrape.mjs --dry-run             → simulation (pas d'écriture)
  *
  * Variables d'environnement :
  *   FIREBASE_SERVICE_ACCOUNT  — Credentials Firebase Admin SDK (requis)
@@ -38,14 +43,23 @@ import { join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import admin from 'firebase-admin';
 import OpenAI from 'openai';
-import { timedSource, isScrapingAllowed } from './sources/utils.mjs';
+import { timedSource } from './sources/utils.mjs';
 
-import { scrapeFuelPrices }    from './sources/fuel.mjs';
-import { scrapeFoodPrices }    from './sources/food.mjs';
-import { scrapeBQPPrices }     from './sources/bqp.mjs';
-import { scrapeServicePrices } from './sources/services.mjs';
+import { scrapeFuelPrices }        from './sources/fuel.mjs';
+import { scrapeFoodPrices }        from './sources/food.mjs';
+import { scrapeBQPPrices }         from './sources/bqp.mjs';
+import { scrapeServicePrices }     from './sources/services.mjs';
+import { scrapeFreshPrices }       from './sources/daaf.mjs';
+import { scrapeCataloguePrices }   from './sources/catalogue.mjs';
+import { scrapeHexagonePrices }    from './sources/hexagone.mjs';
+import { scrapeLoyerPrices }       from './sources/loyer.mjs';
+import { scrapeMedicamentPrices }  from './sources/medicaments.mjs';
+import { scrapeOctroisMer }        from './sources/octroi-mer.mjs';
+import { scrapeCOMPrices }         from './sources/com.mjs';
+import { scrapeGrossistePrices }   from './sources/grossistes.mjs';
 
 const DRY_RUN   = process.argv.includes('--dry-run');
+const DEEP_SCAN = process.argv.includes('--deep-scan');
 const SOURCE_FILTER = (() => {
   const idx = process.argv.indexOf('--source');
   return idx >= 0 ? process.argv[idx + 1] : 'all';
@@ -54,6 +68,10 @@ const NOW       = new Date();
 const ISO_NOW   = NOW.toISOString();
 const DATE_ID   = ISO_NOW.slice(0, 10);
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const SOURCE_KEYS = [
+  'fuel', 'food', 'fresh', 'catalogue', 'hexagone', 'bqp',
+  'services', 'loyer', 'medicaments', 'octroi-mer', 'com', 'grossistes',
+];
 
 // ─── Firebase Admin ───────────────────────────────────────────────────────────
 
@@ -126,6 +144,117 @@ function deduplicateFoodEntries(entries) {
     }
   }
   return [...map.values()];
+}
+
+/**
+ * Enrichit les entrées catalogue DOM avec un prix de référence hexagonal
+ * (`priceRef`) et un écart en pourcentage (`ecartPercent`).
+ *
+ * L'appariement se fait par EAN quand disponible, sinon par nom normalisé.
+ * Le prix de référence hexagonal est la moyenne des prix métropolitains
+ * collectés par hexagone.mjs pour le même produit.
+ *
+ * @param {Array<{ean?:string,productName?:string,price:number,[key:string]:any}>} domEntries
+ * @param {Array<{ean?:string,productName?:string,price:number,[key:string]:any}>} hexEntries
+ * @returns {Array<{priceRef?:number,ecartPercent?:number,[key:string]:any}>}
+ */
+function computePriceGaps(domEntries, hexEntries) {
+  if (!hexEntries || hexEntries.length === 0) return domEntries;
+
+  // Build hexagone reference index: ean → avg price, normalized name → avg price
+  const byEan  = new Map();
+  const byName = new Map();
+
+  const normalize = (s) =>
+    (s ?? '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+  const tokenize = (s) => {
+    const normalized = normalize(s);
+    if (!normalized) return [];
+    const chunks = normalized
+      .replace(/(litres?|ltrs?|ltr)/g, 'l')
+      .replace(/(grammes?|grs?)/g, 'g')
+      .replace(/(kilogrammes?|kgs?)/g, 'kg')
+      .replace(/([0-9]+)([a-z]+)/g, '$1 $2')
+      .replace(/([a-z]+)([0-9]+)/g, '$1 $2')
+      .split(/[^a-z0-9]+/)
+      .filter(Boolean);
+    const stop = new Set(['de', 'du', 'des', 'la', 'le', 'les', 'et', 'a', 'au']);
+    return chunks.filter((t) => t.length > 1 && !stop.has(t));
+  };
+  const jaccard = (aTokens, bTokens) => {
+    if (aTokens.length === 0 || bTokens.length === 0) return 0;
+    const a = new Set(aTokens);
+    const b = new Set(bTokens);
+    let intersection = 0;
+    for (const token of a) if (b.has(token)) intersection += 1;
+    const union = new Set([...a, ...b]).size;
+    return union > 0 ? intersection / union : 0;
+  };
+
+  for (const h of hexEntries) {
+    if (h.ean && h.price > 0) {
+      const cur = byEan.get(h.ean) ?? { sum: 0, count: 0 };
+      byEan.set(h.ean, { sum: cur.sum + h.price, count: cur.count + 1 });
+    }
+    const nName = normalize(h.productName);
+    if (nName.length >= 4 && h.price > 0) {
+      const cur = byName.get(nName) ?? { sum: 0, count: 0 };
+      byName.set(nName, { sum: cur.sum + h.price, count: cur.count + 1 });
+    }
+  }
+
+  const avgEan  = new Map([...byEan.entries()].map(([k, v]) => [k, Math.round((v.sum / v.count) * 100) / 100]));
+  const avgName = new Map([...byName.entries()].map(([k, v]) => [k, Math.round((v.sum / v.count) * 100) / 100]));
+  const nameTokens = new Map([...avgName.keys()].map((k) => [k, tokenize(k)]));
+  const tokenIndex = new Map();
+  for (const [nameKey, tokens] of nameTokens.entries()) {
+    for (const token of tokens) {
+      if (!tokenIndex.has(token)) tokenIndex.set(token, new Set());
+      tokenIndex.get(token).add(nameKey);
+    }
+  }
+
+  const findFuzzyNameMatch = (productName) => {
+    const normalized = normalize(productName);
+    if (!normalized) return undefined;
+    const exact = avgName.get(normalized);
+    if (exact) return exact;
+
+    const domTokens = tokenize(productName);
+    const candidates = new Set();
+    for (const token of domTokens) {
+      for (const candidate of tokenIndex.get(token) ?? []) {
+        candidates.add(candidate);
+      }
+    }
+
+    let bestName = '';
+    let bestScore = 0;
+    for (const candidate of candidates) {
+      const score = jaccard(domTokens, nameTokens.get(candidate) ?? []);
+      if (score > bestScore) {
+        bestScore = score;
+        bestName = candidate;
+      }
+    }
+    if (bestScore < 0.55 || !bestName) return undefined;
+    return avgName.get(bestName);
+  };
+
+  return domEntries.map((e) => {
+    let priceRef;
+    if (e.ean) priceRef = avgEan.get(e.ean);
+    if (!priceRef) priceRef = findFuzzyNameMatch(e.productName);
+
+    if (!priceRef || !e.price) return e;
+
+    const ecartPercent = Math.round(((e.price - priceRef) / priceRef) * 1000) / 10;
+    return { ...e, priceRef, ecartPercent };
+  });
 }
 
 // ─── Shock detection ──────────────────────────────────────────────────────────
@@ -251,13 +380,14 @@ async function generateScrapingReport(counts, shocks) {
       ).join('\n');
 
   const prompt = `Tu es l'IA de collecte de données du projet "A KI PRI SA YÉ".
-Date : ${DATE_ID}
+Date : ${DATE_ID}${DEEP_SCAN ? ' (deep-scan hebdomadaire)' : ''}
 
 Données collectées aujourd'hui :
 - ⛽ Carburants : ${counts.fuel} stations / prix moyens DOM-TOM
-- 🥦 Alimentaire : ${counts.food} relevés Open Prices
+- 🥦 Alimentaire : ${counts.food} relevés Open Prices (enseignes + pays)
+- 🌿 Produits frais : ${counts.fresh} relevés DAAF/OPMR/DIETS
 - 📋 BQP : ${counts.bqp} prix officiels plafonnés
-- 📡 Services : ${counts.services} tarifs (énergie, télécom, eau, IPC)
+- 📡 Services : ${counts.services} tarifs (énergie, télécom, eau, IPC, transport)
 
 Chocs de prix détectés :
 ${shockSummary}
@@ -299,39 +429,98 @@ async function main() {
   console.log('╚══════════════════════════════════════════════════════════╝');
   console.log(`   Date    : ${DATE_ID}`);
   console.log(`   Source  : ${SOURCE_FILTER}`);
-  console.log(`   Mode    : ${DRY_RUN ? 'DRY-RUN (simulation)' : 'PRODUCTION'}`);
+  console.log(`   Mode    : ${DRY_RUN ? 'DRY-RUN (simulation)' : 'PRODUCTION'}${DEEP_SCAN ? ' + DEEP-SCAN' : ''}`);
   console.log('');
+
+  if (SOURCE_FILTER !== 'all' && !SOURCE_KEYS.includes(SOURCE_FILTER)) {
+    console.error(`❌ Source inconnue: "${SOURCE_FILTER}"`);
+    console.error(`   Sources supportées: ${SOURCE_KEYS.join(', ')}`);
+    process.exit(1);
+  }
 
   const db = getFirestore();
   const dataDir = getDataDir();
 
   // ── Scraping en parallèle ─────────────────────────────────────────────────
   const shouldRun = (s) => SOURCE_FILTER === 'all' || SOURCE_FILTER === s;
+  const runSource = (name, fn) => timedSource(name, () => shouldRun(name) ? fn() : Promise.resolve([]));
 
   console.log('📡 Lancement du scraping…\n');
-  const [rawFuel, rawFood, rawBQP, rawServices] = await Promise.all([
-    shouldRun('fuel')     ? scrapeFuelPrices()    : Promise.resolve([]),
-    shouldRun('food')     ? scrapeFoodPrices()     : Promise.resolve([]),
-    shouldRun('bqp')      ? scrapeBQPPrices()      : Promise.resolve([]),
-    shouldRun('services') ? scrapeServicePrices()  : Promise.resolve([]),
+  const [
+    fuelRes, foodRes, freshRes, catalogueRes, hexagoneRes, bqpRes, servicesRes,
+    loyerRes, medicamentsRes, octroiRes, comRes, grossistesRes,
+  ] = await Promise.all([
+    runSource('fuel', () => scrapeFuelPrices()),
+    runSource('food', () => scrapeFoodPrices({ deepScan: DEEP_SCAN })),
+    runSource('fresh', () => scrapeFreshPrices()),
+    runSource('catalogue', () => scrapeCataloguePrices()),
+    timedSource('hexagone', () => shouldRun('hexagone') || shouldRun('catalogue') ? scrapeHexagonePrices() : Promise.resolve([])),
+    runSource('bqp', () => scrapeBQPPrices()),
+    runSource('services', () => scrapeServicePrices()),
+    runSource('loyer', () => scrapeLoyerPrices()),
+    runSource('medicaments', () => scrapeMedicamentPrices()),
+    runSource('octroi-mer', () => scrapeOctroisMer()),
+    runSource('com', () => scrapeCOMPrices()),
+    runSource('grossistes', () => scrapeGrossistePrices()),
   ]);
+  const rawFuel = fuelRes.data;
+  const rawFood = foodRes.data;
+  const rawFresh = freshRes.data;
+  const rawCatalogue = catalogueRes.data;
+  const rawHexagone = hexagoneRes.data;
+  const rawBQP = bqpRes.data;
+  const rawServices = servicesRes.data;
+  const rawLoyer = loyerRes.data;
+  const rawMedicaments = medicamentsRes.data;
+  const rawOctrois = octroiRes.data;
+  const rawCOM = comRes.data;
+  const rawGrossistes = grossistesRes.data;
+  const sourceDiagnostics = {
+    fuel: fuelRes, food: foodRes, fresh: freshRes, catalogue: catalogueRes,
+    hexagone: hexagoneRes, bqp: bqpRes, services: servicesRes, loyer: loyerRes,
+    medicaments: medicamentsRes, octroiMer: octroiRes, com: comRes, grossistes: grossistesRes,
+  };
 
   // ── Normalisation ─────────────────────────────────────────────────────────
   console.log('\n🔧 Normalisation des données…');
-  const fuelAggregated = aggregateFuelEntries(rawFuel);
-  const foodDedup      = deduplicateFoodEntries(rawFood);
+  const fuelAggregated  = aggregateFuelEntries(rawFuel);
+  const foodDedup       = deduplicateFoodEntries(rawFood);
+  const catalogueEnriched = computePriceGaps(rawCatalogue, rawHexagone);
 
   const counts = {
-    fuel:     fuelAggregated.length,
-    food:     foodDedup.length,
-    bqp:      rawBQP.length,
-    services: rawServices.length,
+    fuel:        fuelAggregated.length,
+    food:        foodDedup.length,
+    fresh:       rawFresh.length,
+    catalogue:   catalogueEnriched.length,
+    hexagone:    rawHexagone.length,
+    bqp:         rawBQP.length,
+    services:    rawServices.length,
+    loyer:       rawLoyer.length,
+    medicaments: rawMedicaments.length,
+    octroisMer:  rawOctrois.length,
+    com:         rawCOM.length,
+    grossistes:  rawGrossistes.length,
   };
 
-  console.log(`   ⛽ Carburants : ${rawFuel.length} relevés → ${counts.fuel} entrées agrégées`);
-  console.log(`   🥦 Alimentaire: ${rawFood.length} relevés → ${counts.food} après dédup`);
-  console.log(`   📋 BQP        : ${counts.bqp} entrées`);
-  console.log(`   📡 Services   : ${counts.services} entrées`);
+  const withGaps = catalogueEnriched.filter((e) => e.ecartPercent !== undefined).length;
+
+  console.log(`   ⛽ Carburants      : ${rawFuel.length} relevés → ${counts.fuel} entrées agrégées`);
+  console.log(`   🥦 Alimentaire     : ${rawFood.length} relevés → ${counts.food} après dédup`);
+  console.log(`   🌿 Frais/vivriers  : ${counts.fresh} relevés`);
+  console.log(`   🛒 Catalogue DOM   : ${counts.catalogue} relevés (11 enseignes — dont ${withGaps} avec écart DOM/HEX)`);
+  console.log(`   🇫🇷 Référence hex.  : ${counts.hexagone} relevés (4 enseignes métro de référence)`);
+  console.log(`   📋 BQP             : ${counts.bqp} entrées`);
+  console.log(`   📡 Services        : ${counts.services} entrées`);
+  console.log(`   🏠 Logement        : ${counts.loyer} entrées (loyers + immobilier)`);
+  console.log(`   💊 Médicaments     : ${counts.medicaments} entrées (BDPM)`);
+  console.log(`   🏛️  Octroi de mer   : ${counts.octroisMer} taux`);
+  console.log(`   🌏 COM (NC/PF/…)   : ${counts.com} entrées IEOM/ISPF/INSEE`);
+  console.log(`   🏭 Grossistes      : ${counts.grossistes} cours de gros (MIN/FranceAgriMer/ODEADOM)`);
+  console.log('\n⏱️  Durée par source :');
+  Object.entries(sourceDiagnostics).forEach(([name, res]) => {
+    const errorPart = res.error ? ` — erreur: ${res.error}` : '';
+    console.log(`   - ${name.padEnd(12)} ${String(res.durationMs).padStart(5)} ms${errorPart}`);
+  });
 
   // ── Shock detection ───────────────────────────────────────────────────────
   console.log('\n🔍 Détection des chocs de prix…');
@@ -402,6 +591,98 @@ async function main() {
       console.log('💾 open-prices-dom.json mis à jour');
     }
 
+    // ── Save fresh produce snapshot ───────────────────────────────────────
+    if (rawFresh.length > 0) {
+      const existingFresh = loadJSON(join(dataDir, 'fresh-prices.json')) ?? { metadata: {}, prices: [] };
+      saveJSON(join(dataDir, 'fresh-prices.json'), {
+        metadata: {
+          ...(existingFresh.metadata ?? {}),
+          lastUpdated: ISO_NOW,
+          source: 'DAAF / OPMR / DIETS — data.gouv.fr (Licence Ouverte v2)',
+          autoCollected: true,
+        },
+        prices: rawFresh,
+      });
+      console.log('💾 fresh-prices.json mis à jour');
+    }
+
+    // ── Save catalogue snapshot ───────────────────────────────────────────
+    if (catalogueEnriched.length > 0) {
+      const existingCat = loadJSON(join(dataDir, 'catalogue-prices.json')) ?? { metadata: {}, prices: [] };
+      saveJSON(join(dataDir, 'catalogue-prices.json'), {
+        metadata: {
+          ...(existingCat.metadata ?? {}),
+          lastUpdated: ISO_NOW,
+          source: 'E.Leclerc / Intermarché / Leader Price / Super U / Cora / Carrefour Market / Aldi / Score Réunion / Auchan / Monoprix / 123.click — APIs publiques',
+          autoCollected: true,
+          hexagoneReferenceEntries: rawHexagone.length,
+          entriesWithPriceGap: catalogueEnriched.filter((e) => e.ecartPercent !== undefined).length,
+        },
+        prices: catalogueEnriched,
+      });
+      console.log('💾 catalogue-prices.json mis à jour (avec écarts DOM/Hexagone)');
+    }
+
+    // ── Save hexagone reference snapshot ─────────────────────────────────
+    if (rawHexagone.length > 0) {
+      saveJSON(join(dataDir, 'hexagone-prices.json'), {
+        metadata: {
+          lastUpdated: ISO_NOW,
+          source: 'E.Leclerc / Intermarché / Super U / Carrefour — magasins métropolitains de référence',
+          territory: 'FR',
+          autoCollected: true,
+          note: 'Prix de référence hexagonaux pour calcul des écarts DOM ↔ Métropole',
+        },
+        prices: rawHexagone,
+      });
+      console.log('💾 hexagone-prices.json mis à jour');
+    }
+
+    // ── Save loyer snapshot ───────────────────────────────────────────────
+    if (rawLoyer.length > 0) {
+      saveJSON(join(dataDir, 'loyer-prices.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'DVF + ANIL + INSEE — data.gouv.fr', autoCollected: true },
+        prices: rawLoyer,
+      });
+      console.log('💾 loyer-prices.json mis à jour');
+    }
+
+    // ── Save médicaments snapshot ─────────────────────────────────────────
+    if (rawMedicaments.length > 0) {
+      saveJSON(join(dataDir, 'medicaments-prices.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'BDPM — base-donnees-publique.medicaments.gouv.fr', autoCollected: true },
+        prices: rawMedicaments,
+      });
+      console.log('💾 medicaments-prices.json mis à jour');
+    }
+
+    // ── Save octroi de mer snapshot ───────────────────────────────────────
+    if (rawOctrois.length > 0) {
+      saveJSON(join(dataDir, 'octroi-mer.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'Conseils Régionaux DOM / DGDDI — data.gouv.fr', autoCollected: true },
+        rates: rawOctrois,
+      });
+      console.log('💾 octroi-mer.json mis à jour');
+    }
+
+    // ── Save COM snapshot ─────────────────────────────────────────────────
+    if (rawCOM.length > 0) {
+      saveJSON(join(dataDir, 'com-prices.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'IEOM / ISPF / ISEE / INSEE — NC/PF/WF/PM/BL/MF', autoCollected: true },
+        prices: rawCOM,
+      });
+      console.log('💾 com-prices.json mis à jour');
+    }
+
+    // ── Save grossistes snapshot ──────────────────────────────────────────
+    if (rawGrossistes.length > 0) {
+      saveJSON(join(dataDir, 'grossistes-prices.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'MIN Jarry/Saint-Paul + FranceAgriMer + ODEADOM + DGCCRF', autoCollected: true },
+        prices: rawGrossistes,
+      });
+      console.log('💾 grossistes-prices.json mis à jour');
+    }
+
     // ── Write to Firestore ────────────────────────────────────────────────
     await writeScrapingResults(db, { fuel: fuelAggregated, food: foodDedup, bqp: rawBQP, services: rawServices }, shocks);
   } else {
@@ -421,14 +702,22 @@ async function main() {
   if (summaryPath) {
     const { appendFileSync } = await import('fs');
     const lines = [
-      `## 🤖 Scraping Automatique — ${DATE_ID}`,
+      `## 🤖 Scraping Automatique — ${DATE_ID}${DEEP_SCAN ? ' (deep-scan)' : ''}`,
       '',
       `| Source | Entrées collectées |`,
       `|---|---|`,
       `| ⛽ Carburants (prix-carburants.gouv.fr) | ${rawFuel.length} relevés → ${counts.fuel} agrégés |`,
-      `| 🥦 Alimentaire (Open Prices) | ${rawFood.length} relevés → ${counts.food} dédupliqués |`,
+      `| 🥦 Alimentaire (Open Prices + enseignes) | ${rawFood.length} relevés → ${counts.food} dédupliqués |`,
+      `| 🌿 Frais/vivriers (DAAF/OPMR/DIETS) | ${counts.fresh} relevés |`,
+      `| 🛒 Catalogue enseignes DOM (11 enseignes) | ${counts.catalogue} relevés (dont ${catalogueEnriched.filter((e) => e.ecartPercent !== undefined).length} avec écart DOM/HEX) |`,
+      `| 🇫🇷 Référence hexagonale (Leclerc/IMC/U/Carrefour métro) | ${counts.hexagone} relevés de référence |`,
       `| 📋 BQP (data.gouv.fr) | ${counts.bqp} entrées officielles |`,
-      `| 📡 Services (ARCEP/CRE/INSEE) | ${counts.services} tarifs |`,
+      `| 📡 Services (ARCEP/CRE/INSEE/Eau/Transport/IEDOM) | ${counts.services} tarifs |`,
+      `| 🏠 Logement/Loyers (DVF + ANIL + INSEE) | ${counts.loyer} entrées |`,
+      `| 💊 Médicaments (BDPM officiel) | ${counts.medicaments} prix remboursables |`,
+      `| 🏛️ Octroi de mer (Conseils Régionaux DOM) | ${counts.octroisMer} taux par catégorie |`,
+      `| 🌏 COM NC/PF/WF/PM/BL/MF (IEOM/ISPF/INSEE) | ${counts.com} indicateurs XPF/EUR |`,
+      `| 🏭 Grossistes (MIN/FranceAgriMer/ODEADOM) | ${counts.grossistes} cours de gros |`,
       '',
       allShocks.length === 0
         ? '### ✅ Prix stables — aucun choc détecté'
@@ -439,8 +728,8 @@ async function main() {
     appendFileSync(summaryPath, lines + '\n');
   }
 
-  const totalEntries = counts.fuel + counts.food + counts.bqp + counts.services;
-  console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total\n`);
+  const totalEntries = counts.fuel + counts.food + counts.fresh + counts.catalogue + counts.hexagone + counts.bqp + counts.services + counts.loyer + counts.medicaments + counts.octroisMer + counts.com + counts.grossistes;
+  console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total (12 sources)\n`);
 
   // ── Scraping health file ────────────────────────────────────────────────
   // Written unconditionally (even in dry-run) so the monitoring system can
@@ -449,11 +738,20 @@ async function main() {
     lastScrapedAt: ISO_NOW,
     date: DATE_ID,
     dryRun: DRY_RUN,
+    deepScan: DEEP_SCAN,
     sources: {
-      fuel:     { count: counts.fuel,     ok: counts.fuel > 0 },
-      food:     { count: counts.food,     ok: counts.food > 0 },
-      bqp:      { count: counts.bqp,      ok: counts.bqp > 0 },
-      services: { count: counts.services, ok: counts.services > 0 },
+      fuel:        { count: counts.fuel,        ok: counts.fuel > 0,        durationMs: fuelRes.durationMs,       error: fuelRes.error },
+      food:        { count: counts.food,        ok: counts.food > 0,        durationMs: foodRes.durationMs,       error: foodRes.error },
+      fresh:       { count: counts.fresh,       ok: counts.fresh > 0,       durationMs: freshRes.durationMs,      error: freshRes.error },
+      catalogue:   { count: counts.catalogue,   ok: counts.catalogue > 0,   durationMs: catalogueRes.durationMs,  error: catalogueRes.error },
+      hexagone:    { count: counts.hexagone,    ok: counts.hexagone > 0,    durationMs: hexagoneRes.durationMs,   error: hexagoneRes.error },
+      bqp:         { count: counts.bqp,         ok: counts.bqp > 0,         durationMs: bqpRes.durationMs,        error: bqpRes.error },
+      services:    { count: counts.services,    ok: counts.services > 0,    durationMs: servicesRes.durationMs,   error: servicesRes.error },
+      loyer:       { count: counts.loyer,       ok: counts.loyer > 0,       durationMs: loyerRes.durationMs,      error: loyerRes.error },
+      medicaments: { count: counts.medicaments, ok: counts.medicaments > 0, durationMs: medicamentsRes.durationMs, error: medicamentsRes.error },
+      octroisMer:  { count: counts.octroisMer,  ok: counts.octroisMer > 0,  durationMs: octroiRes.durationMs,     error: octroiRes.error },
+      com:         { count: counts.com,         ok: counts.com > 0,         durationMs: comRes.durationMs,        error: comRes.error },
+      grossistes:  { count: counts.grossistes,  ok: counts.grossistes > 0,  durationMs: grossistesRes.durationMs, error: grossistesRes.error },
     },
     totalEntries,
     shocksDetected: allShocks.length,

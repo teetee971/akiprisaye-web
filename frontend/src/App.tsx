@@ -87,6 +87,7 @@ const ProductPhotoSearch = lazy(() => import('./pages/ProductPhotoSearch'));
 const ProductScanResult = lazy(() => import('./pages/ProductScanResult'));
 const ComparaisonEnseignes = lazy(() => import('./pages/ComparaisonEnseignes'));
 const BasketComparison = lazy(() => import('./pages/BasketComparison'));
+const PaniersTypes = lazy(() => import('./pages/PaniersTypes'));
 const Settings = lazy(() => import('./pages/Settings'));
 const HistoriquePrix = lazy(() => import('./pages/HistoriquePrix'));
 const RecherchePrix = lazy(() => import('./pages/RecherchePrix'));
@@ -446,6 +447,7 @@ export default function App() {
                               <Route path="ocr" element={<OCRHub />} />
                               <Route path="comparaison-enseignes" element={<ComparaisonEnseignes />} />
                               <Route path="comparaison-panier" element={<BasketComparison />} />
+                              <Route path="paniers-types" element={<PaniersTypes />} />
                               <Route path="signalement" element={<SignalerAbus />} />
                               <Route path="parametres" element={<Settings />} />
                               <Route path="historique-prix" element={<HistoriquePrix />} />

@@ -21,6 +21,7 @@ import TerritoryAdvancedFilter, {
   type ZoneType,
   type DataCategory,
 } from '../components/TerritoryAdvancedFilter'
+import { EcartHexagone } from '../components/EcartHexagone'
 import { useLocalHistory } from '../hooks/useLocalHistory'
 import { priceObservationService } from '../services/priceObservationService'
 import {
@@ -30,6 +31,7 @@ import {
   countUniqueStores,
 } from '../services/priceAggregationService'
 import { initAutoUpdate, getLastUpdateDate } from '../services/priceUpdateScheduler'
+import { computeScoreEnseigne, type EnseigneScore } from '../services/scoreEnseigneService'
 import type { PriceObservation } from '../types/PriceObservation'
 
 import { SEOHead } from '../components/ui/SEOHead';
@@ -255,6 +257,7 @@ export default function ComparaisonEnseignes() {
   const [isReportModalOpen, setIsReportModalOpen] = useState(false)
   const [initialProductFromUrl, setInitialProductFromUrl] = useState<string | null>(null)
   const [linkCopied, setLinkCopied] = useState(false)
+  const [enseigneScores, setEnseigneScores] = useState<EnseigneScore[]>([])
 
   const products = useMemo<ProductOption[]>(() => {
     const map = new Map<string, ProductOption>()
@@ -445,6 +448,13 @@ export default function ComparaisonEnseignes() {
     const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`
     window.history.replaceState({}, '', nextUrl)
   }, [selectedProduct, selectedTerritory, territoryFilters.zone, territoryFilters.category, territoryFilters.territory])
+
+  // Load score enseigne data once on mount
+  useEffect(() => {
+    computeScoreEnseigne().then((result) => {
+      setEnseigneScores(result.global.slice(0, 10))
+    }).catch(() => {/* silently ignore — catalogue-prices.json may be absent */})
+  }, [])
 
   const handleCopyShareLink = async () => {
     if (typeof window === 'undefined') return
@@ -747,6 +757,52 @@ export default function ComparaisonEnseignes() {
           </GlassCard>
         )}
       </div>
+
+      {/* Score vie chère par enseigne */}
+      {enseigneScores.length > 0 && (
+        <div className="mb-6">
+          <GlassCard>
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+              🏪 Score vie chère par enseigne
+              <span className="text-sm font-normal text-white/50">(panier catalogue — moins cher en haut)</span>
+            </h2>
+            <div className="mb-3 text-xs text-white/60">
+              <span className="font-semibold text-white/75">Méthodologie :</span>{' '}
+              calcul basé sur un panier type de produits communs observés. Les prix peuvent varier selon la date de collecte, les arrivages et les promotions locales.
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-xs text-white/50 border-b border-white/10">
+                    <th className="text-left pb-2 pr-4">Rang</th>
+                    <th className="text-left pb-2 pr-4">Enseigne</th>
+                    <th className="text-left pb-2 pr-4">Territoire</th>
+                    <th className="text-right pb-2 pr-4">Coût panier</th>
+                    <th className="text-right pb-2">Écart métropole</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {enseigneScores.map((s, i) => (
+                    <tr key={`${s.retailer}-${s.territory}`} className="border-b border-white/5">
+                      <td className="py-1.5 pr-4 text-white/40 font-mono">{i + 1}</td>
+                      <td className="py-1.5 pr-4 text-white font-medium">{s.retailer}</td>
+                      <td className="py-1.5 pr-4 text-white/60">{s.territory}</td>
+                      <td className="py-1.5 pr-4 text-right text-white">{s.basketCost.toFixed(2)} €</td>
+                      <td className="py-1.5 text-right">
+                        {s.avgEcartPercent !== undefined ? (
+                          <EcartHexagone ecartPercent={s.avgEcartPercent} size="xs" />
+                        ) : (
+                          <span className="text-white/30 text-xs">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GlassCard>
+        </div>
+      )}
 
       {/* Citizen Report Modal (PR-11) */}
       <SignalementCitoyenModal

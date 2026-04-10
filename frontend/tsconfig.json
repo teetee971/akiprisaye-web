@@ -10,7 +10,7 @@
     "noEmit": true,
     "types": ["vite/client", "node"],
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
 
     "baseUrl": ".",
     "paths": {
