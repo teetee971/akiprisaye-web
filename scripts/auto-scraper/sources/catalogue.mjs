@@ -427,6 +427,40 @@ const RETAILERS = [
       })).filter((r) => r.price > 0);
     },
   },
+  {
+    name: 'leclerc_dom_drive',
+    label: 'E.Leclerc Drive DOM (123.click)',
+    baseUrl: 'https://www.123.click',
+    // 123.click est le drive en ligne spécifique Leclerc pour les Antilles.
+    // Les prix pratiqués peuvent différer du catalogue e.leclerc national.
+    territories: {
+      GP: 'guadeloupe',
+      MQ: 'martinique',
+      RE: null,
+      GF: null,
+      YT: null,
+    },
+    buildUrl(query, zone) {
+      const p = new URLSearchParams({ q: query, pageSize: '20' });
+      if (zone) p.set('zone', zone);
+      return `${this.baseUrl}/api/v1/products/search?${p.toString()}`;
+    },
+    parseResult(json) {
+      const unwrapped = json?.data ?? json?.results ?? json?.content ?? json;
+      const items = _extractArray(unwrapped, ['products', 'items', 'results', 'data', 'hits', 'content']);
+      return items.map((p) => ({
+        ean: _str(p.ean ?? p.code ?? p.gtin ?? p.barcode ?? p.reference),
+        name: _str(p.name ?? p.label ?? p.libelle ?? p.title ?? p.productName),
+        brand: _str(p.brand ?? p.brandName ?? p.marque),
+        price: _num(
+          p.price?.value ?? p.price?.amount ?? p.price ??
+          p.offers?.[0]?.price ?? p.sellingPrice ?? p.priceValue,
+        ),
+        unit: _unit(p.unit ?? p.unitOfMeasure ?? p.price?.unit ?? p.offers?.[0]?.unit),
+        imageUrl: _str(p.imageUrl ?? p.image?.url ?? p.photo ?? p.thumbnail),
+      })).filter((r) => r.price > 0);
+    },
+  },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

@@ -51,6 +51,7 @@ import { scrapeBQPPrices }         from './sources/bqp.mjs';
 import { scrapeServicePrices }     from './sources/services.mjs';
 import { scrapeFreshPrices }       from './sources/daaf.mjs';
 import { scrapeCataloguePrices }   from './sources/catalogue.mjs';
+import { scrapeHexagonePrices }    from './sources/hexagone.mjs';
 import { scrapeLoyerPrices }       from './sources/loyer.mjs';
 import { scrapeMedicamentPrices }  from './sources/medicaments.mjs';
 import { scrapeOctroisMer }        from './sources/octroi-mer.mjs';
@@ -139,6 +140,54 @@ function deduplicateFoodEntries(entries) {
     }
   }
   return [...map.values()];
+}
+
+/**
+ * Enrichit les entrées catalogue DOM avec un prix de référence hexagonal
+ * (`priceRef`) et un écart en pourcentage (`ecartPercent`).
+ *
+ * L'appariement se fait par EAN quand disponible, sinon par nom normalisé.
+ * Le prix de référence hexagonal est la moyenne des prix métropolitains
+ * collectés par hexagone.mjs pour le même produit.
+ *
+ * @param {Array<{ean?:string,productName?:string,price:number,[key:string]:any}>} domEntries
+ * @param {Array<{ean?:string,productName?:string,price:number,[key:string]:any}>} hexEntries
+ * @returns {Array<{priceRef?:number,ecartPercent?:number,[key:string]:any}>}
+ */
+function computePriceGaps(domEntries, hexEntries) {
+  if (!hexEntries || hexEntries.length === 0) return domEntries;
+
+  // Build hexagone reference index: ean → avg price, normalized name → avg price
+  const byEan  = new Map();
+  const byName = new Map();
+
+  const normalize = (s) => (s ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
+  for (const h of hexEntries) {
+    if (h.ean && h.price > 0) {
+      const cur = byEan.get(h.ean) ?? { sum: 0, count: 0 };
+      byEan.set(h.ean, { sum: cur.sum + h.price, count: cur.count + 1 });
+    }
+    const nName = normalize(h.productName);
+    if (nName.length >= 4 && h.price > 0) {
+      const cur = byName.get(nName) ?? { sum: 0, count: 0 };
+      byName.set(nName, { sum: cur.sum + h.price, count: cur.count + 1 });
+    }
+  }
+
+  const avgEan  = new Map([...byEan.entries()].map(([k, v]) => [k, Math.round((v.sum / v.count) * 100) / 100]));
+  const avgName = new Map([...byName.entries()].map(([k, v]) => [k, Math.round((v.sum / v.count) * 100) / 100]));
+
+  return domEntries.map((e) => {
+    let priceRef;
+    if (e.ean) priceRef = avgEan.get(e.ean);
+    if (!priceRef) priceRef = avgName.get(normalize(e.productName));
+
+    if (!priceRef || !e.price) return e;
+
+    const ecartPercent = Math.round(((e.price - priceRef) / priceRef) * 1000) / 10;
+    return { ...e, priceRef, ecartPercent };
+  });
 }
 
 // ─── Shock detection ──────────────────────────────────────────────────────────
@@ -324,13 +373,15 @@ async function main() {
 
   console.log('📡 Lancement du scraping…\n');
   const [
-    rawFuel, rawFood, rawFresh, rawCatalogue, rawBQP, rawServices,
+    rawFuel, rawFood, rawFresh, rawCatalogue, rawHexagone, rawBQP, rawServices,
     rawLoyer, rawMedicaments, rawOctrois, rawCOM, rawGrossistes,
   ] = await Promise.all([
     shouldRun('fuel')         ? scrapeFuelPrices()                         : Promise.resolve([]),
     shouldRun('food')         ? scrapeFoodPrices({ deepScan: DEEP_SCAN })  : Promise.resolve([]),
     shouldRun('fresh')        ? scrapeFreshPrices()                        : Promise.resolve([]),
     shouldRun('catalogue')    ? scrapeCataloguePrices()                    : Promise.resolve([]),
+    shouldRun('hexagone') || shouldRun('catalogue') || shouldRun('all')
+                              ? scrapeHexagonePrices()                     : Promise.resolve([]),
     shouldRun('bqp')          ? scrapeBQPPrices()                          : Promise.resolve([]),
     shouldRun('services')     ? scrapeServicePrices()                      : Promise.resolve([]),
     shouldRun('loyer')        ? scrapeLoyerPrices()                        : Promise.resolve([]),
@@ -342,14 +393,16 @@ async function main() {
 
   // ── Normalisation ─────────────────────────────────────────────────────────
   console.log('\n🔧 Normalisation des données…');
-  const fuelAggregated = aggregateFuelEntries(rawFuel);
-  const foodDedup      = deduplicateFoodEntries(rawFood);
+  const fuelAggregated  = aggregateFuelEntries(rawFuel);
+  const foodDedup       = deduplicateFoodEntries(rawFood);
+  const catalogueEnriched = computePriceGaps(rawCatalogue, rawHexagone);
 
   const counts = {
     fuel:        fuelAggregated.length,
     food:        foodDedup.length,
     fresh:       rawFresh.length,
-    catalogue:   rawCatalogue.length,
+    catalogue:   catalogueEnriched.length,
+    hexagone:    rawHexagone.length,
     bqp:         rawBQP.length,
     services:    rawServices.length,
     loyer:       rawLoyer.length,
@@ -359,10 +412,13 @@ async function main() {
     grossistes:  rawGrossistes.length,
   };
 
+  const withGaps = catalogueEnriched.filter((e) => e.ecartPercent !== undefined).length;
+
   console.log(`   ⛽ Carburants      : ${rawFuel.length} relevés → ${counts.fuel} entrées agrégées`);
   console.log(`   🥦 Alimentaire     : ${rawFood.length} relevés → ${counts.food} après dédup`);
   console.log(`   🌿 Frais/vivriers  : ${counts.fresh} relevés`);
-  console.log(`   🛒 Catalogue       : ${counts.catalogue} relevés (Leclerc/IMC/LP/SuperU/Cora/Carrefour/Aldi/Score/Auchan/Monoprix)`);
+  console.log(`   🛒 Catalogue DOM   : ${counts.catalogue} relevés (11 enseignes — dont ${withGaps} avec écart DOM/HEX)`);
+  console.log(`   🇫🇷 Référence hex.  : ${counts.hexagone} relevés (4 enseignes métro de référence)`);
   console.log(`   📋 BQP             : ${counts.bqp} entrées`);
   console.log(`   📡 Services        : ${counts.services} entrées`);
   console.log(`   🏠 Logement        : ${counts.loyer} entrées (loyers + immobilier)`);
@@ -456,18 +512,35 @@ async function main() {
     }
 
     // ── Save catalogue snapshot ───────────────────────────────────────────
-    if (rawCatalogue.length > 0) {
+    if (catalogueEnriched.length > 0) {
       const existingCat = loadJSON(join(dataDir, 'catalogue-prices.json')) ?? { metadata: {}, prices: [] };
       saveJSON(join(dataDir, 'catalogue-prices.json'), {
         metadata: {
           ...(existingCat.metadata ?? {}),
           lastUpdated: ISO_NOW,
-          source: 'E.Leclerc / Intermarché / Leader Price / Super U / Cora / Carrefour Market / Aldi / Score Réunion — APIs publiques',
+          source: 'E.Leclerc / Intermarché / Leader Price / Super U / Cora / Carrefour Market / Aldi / Score Réunion / Auchan / Monoprix / 123.click — APIs publiques',
           autoCollected: true,
+          hexagoneReferenceEntries: rawHexagone.length,
+          entriesWithPriceGap: catalogueEnriched.filter((e) => e.ecartPercent !== undefined).length,
         },
-        prices: rawCatalogue,
+        prices: catalogueEnriched,
       });
-      console.log('💾 catalogue-prices.json mis à jour');
+      console.log('💾 catalogue-prices.json mis à jour (avec écarts DOM/Hexagone)');
+    }
+
+    // ── Save hexagone reference snapshot ─────────────────────────────────
+    if (rawHexagone.length > 0) {
+      saveJSON(join(dataDir, 'hexagone-prices.json'), {
+        metadata: {
+          lastUpdated: ISO_NOW,
+          source: 'E.Leclerc / Intermarché / Super U / Carrefour — magasins métropolitains de référence',
+          territory: 'FR',
+          autoCollected: true,
+          note: 'Prix de référence hexagonaux pour calcul des écarts DOM ↔ Métropole',
+        },
+        prices: rawHexagone,
+      });
+      console.log('💾 hexagone-prices.json mis à jour');
     }
 
     // ── Save loyer snapshot ───────────────────────────────────────────────
@@ -541,7 +614,8 @@ async function main() {
       `| ⛽ Carburants (prix-carburants.gouv.fr) | ${rawFuel.length} relevés → ${counts.fuel} agrégés |`,
       `| 🥦 Alimentaire (Open Prices + enseignes) | ${rawFood.length} relevés → ${counts.food} dédupliqués |`,
       `| 🌿 Frais/vivriers (DAAF/OPMR/DIETS) | ${counts.fresh} relevés |`,
-      `| 🛒 Catalogue enseignes (Leclerc/IMC/LP/U/Cora/Carrefour/Aldi/Score/Auchan/Monoprix) | ${counts.catalogue} relevés |`,
+      `| 🛒 Catalogue enseignes DOM (11 enseignes) | ${counts.catalogue} relevés (dont ${catalogueEnriched.filter((e) => e.ecartPercent !== undefined).length} avec écart DOM/HEX) |`,
+      `| 🇫🇷 Référence hexagonale (Leclerc/IMC/U/Carrefour métro) | ${counts.hexagone} relevés de référence |`,
       `| 📋 BQP (data.gouv.fr) | ${counts.bqp} entrées officielles |`,
       `| 📡 Services (ARCEP/CRE/INSEE/Eau/Transport/IEDOM) | ${counts.services} tarifs |`,
       `| 🏠 Logement/Loyers (DVF + ANIL + INSEE) | ${counts.loyer} entrées |`,
@@ -559,8 +633,8 @@ async function main() {
     appendFileSync(summaryPath, lines + '\n');
   }
 
-  const totalEntries = counts.fuel + counts.food + counts.fresh + counts.catalogue + counts.bqp + counts.services + counts.loyer + counts.medicaments + counts.octroisMer + counts.com + counts.grossistes;
-  console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total (11 sources)\n`);
+  const totalEntries = counts.fuel + counts.food + counts.fresh + counts.catalogue + counts.hexagone + counts.bqp + counts.services + counts.loyer + counts.medicaments + counts.octroisMer + counts.com + counts.grossistes;
+  console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total (12 sources)\n`);
 
   // ── Scraping health file ────────────────────────────────────────────────
   // Written unconditionally (even in dry-run) so the monitoring system can
@@ -575,6 +649,7 @@ async function main() {
       food:        { count: counts.food,        ok: counts.food > 0 },
       fresh:       { count: counts.fresh,       ok: counts.fresh > 0 },
       catalogue:   { count: counts.catalogue,   ok: counts.catalogue > 0 },
+      hexagone:    { count: counts.hexagone,    ok: counts.hexagone > 0 },
       bqp:         { count: counts.bqp,         ok: counts.bqp > 0 },
       services:    { count: counts.services,    ok: counts.services > 0 },
       loyer:       { count: counts.loyer,       ok: counts.loyer > 0 },
