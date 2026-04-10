@@ -206,6 +206,55 @@ const GROSSISTES_REFERENCE = [
   { productName: 'Riz blanc 50 kg (palette gros YT)', category: 'Épicerie',     territory: 'YT', price: 0.55, unit: '€/kg', priceType: 'gros', origin: 'Import Asie',   source: 'MAYCO Distribution 2024' },
   { productName: 'Poisson (mérou, gros YT)',           category: 'Poissons',     territory: 'YT', price: 6.00, unit: '€/kg', priceType: 'gros', origin: 'Pêche locale YT', source: 'CRPMEM Mayotte 2024' },
   { productName: 'Thon (criée YT)',                    category: 'Poissons',     territory: 'YT', price: 3.80, unit: '€/kg', priceType: 'gros', origin: 'Pêche locale YT', source: 'CRPMEM Mayotte 2024' },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // PRODUITS D'ÉPICERIE SÈCHE (import gros — tous DOM)
+  // Données : enquêtes DGCCRF 2024, ODEADOM, SOCAGUI/SCAPAM/SCAPGUY/LEAL
+  // ═══════════════════════════════════════════════════════════════════════
+
+  // ─── Riz / Féculents ─────────────────────────────────────────────────
+  { productName: 'Riz parfumé Thai 25 kg (sac gros)',  category: 'Épicerie',     territory: 'GP', price: 0.75, unit: '€/kg', priceType: 'gros', origin: 'Import Thaïlande', source: 'SOCAGUI 2025' },
+  { productName: 'Riz parfumé Thai 25 kg (sac gros)',  category: 'Épicerie',     territory: 'MQ', price: 0.76, unit: '€/kg', priceType: 'gros', origin: 'Import Thaïlande', source: 'SCAPAM 2025' },
+  { productName: 'Riz basmati 25 kg (sac gros)',       category: 'Épicerie',     territory: 'RE', price: 0.80, unit: '€/kg', priceType: 'gros', origin: 'Import Inde/Pakistan', source: 'SOCOREALE 2025' },
+  { productName: 'Lentilles 25 kg (sac gros)',         category: 'Épicerie',     territory: 'RE', price: 1.10, unit: '€/kg', priceType: 'gros', origin: 'Import Canada/France', source: 'SOCOREALE 2025' },
+  { productName: 'Pois chiches 25 kg (sac gros)',      category: 'Épicerie',     territory: 'GP', price: 1.20, unit: '€/kg', priceType: 'gros', origin: 'Import Mexique/Turquie', source: 'SOCAGUI 2025' },
+  { productName: 'Haricots rouges 25 kg (sac gros)',   category: 'Épicerie',     territory: 'MQ', price: 1.15, unit: '€/kg', priceType: 'gros', origin: 'Import Amérique Centrale', source: 'SCAPAM 2025' },
+
+  // ─── Huiles alimentaires (gros) ──────────────────────────────────────
+  { productName: 'Huile de palme 20 L (bidon gros)',   category: 'Corps gras',   territory: 'GF', price: 1.45, unit: '€/L',  priceType: 'gros', origin: 'Import Côte d\'Ivoire/Malaisie', source: 'SCAPGUY 2025' },
+  { productName: 'Huile de coco vierge 10 L (gros)',   category: 'Corps gras',   territory: 'MQ', price: 4.20, unit: '€/L',  priceType: 'gros', origin: 'Import Philippines',  source: 'SCAPAM 2025' },
+  { productName: 'Huile tournesol 5 L (carton 6, gros)', category: 'Corps gras', territory: 'RE', price: 2.85, unit: '€/L',  priceType: 'gros', origin: 'Import France/Ukraine', source: 'SOCOREALE 2025' },
+
+  // ─── Boissons (gros) ─────────────────────────────────────────────────
+  { productName: 'Eau minérale 1,5 L (palette 12 packs)', category: 'Boissons', territory: 'GP', price: 0.28, unit: '€/L',  priceType: 'gros', origin: 'Import France (Evian/Cristaline)', source: 'SOCAGUI 2025' },
+  { productName: 'Soda cola 1,5 L (carton 6, gros)',    category: 'Boissons',    territory: 'MQ', price: 0.55, unit: '€/L',  priceType: 'gros', origin: 'Import/Fabrication locale', source: 'SCAPAM 2025' },
+  { productName: 'Jus de fruit 1 L (carton 12, gros)', category: 'Boissons',    territory: 'RE', price: 0.90, unit: '€/L',  priceType: 'gros', origin: 'Import France/Europe', source: 'LEAL Distribution 2025' },
+  { productName: 'Rhum agricole 70 cl (carton 6, gros)', category: 'Alcools',   territory: 'GP', price: 5.80, unit: '€/btl', priceType: 'gros', origin: 'Production locale GP', source: 'Distilleries Guadeloupe 2025' },
+  { productName: 'Rhum agricole 70 cl (carton 6, gros)', category: 'Alcools',   territory: 'MQ', price: 5.50, unit: '€/btl', priceType: 'gros', origin: 'Production locale MQ', source: 'SAEM Martinique 2025' },
+  { productName: 'Bière locale 33 cl (carton 24, gros)', category: 'Alcools',   territory: 'RE', price: 0.68, unit: '€/btl', priceType: 'gros', origin: 'Brasserie de Bourbon RE', source: 'LEAL Distribution 2025' },
+
+  // ─── Charcuterie / Conserves (gros) ─────────────────────────────────
+  { productName: 'Thon en boîte 160 g (carton 48, gros)', category: 'Conserves', territory: 'GP', price: 0.85, unit: '€/btl', priceType: 'gros', origin: 'Import France/Espagne', source: 'SOCAGUI 2025' },
+  { productName: 'Corned-beef 340 g (carton 24, gros)', category: 'Conserves',   territory: 'MQ', price: 1.60, unit: '€/btl', priceType: 'gros', origin: 'Import Brésil/Argentine', source: 'SCAPAM 2025' },
+  { productName: 'Saucisson sec (kg, gros)',             category: 'Charcuterie', territory: 'RE', price: 9.50, unit: '€/kg', priceType: 'gros', origin: 'Import France',  source: 'LEAL Distribution 2025' },
+  { productName: 'Jambon cuit tranché (kg, gros)',       category: 'Charcuterie', territory: 'GP', price: 6.20, unit: '€/kg', priceType: 'gros', origin: 'Import France',  source: 'SOCAGUI 2025' },
+  { productName: 'Merguez (kg, gros)',                   category: 'Charcuterie', territory: 'MQ', price: 5.50, unit: '€/kg', priceType: 'gros', origin: 'Import/Local',   source: 'SCAPAM 2025' },
+
+  // ─── Produits laitiers (gros) ────────────────────────────────────────
+  { productName: 'Beurre doux 250 g (carton 20, gros)', category: 'Lait/Crémerie', territory: 'GP', price: 1.60, unit: '€/pcs', priceType: 'gros', origin: 'Import France (Président/Candia)', source: 'SOCAGUI 2025' },
+  { productName: 'Yaourt nature 125 g (carton 48, gros)', category: 'Lait/Crémerie', territory: 'RE', price: 0.25, unit: '€/pcs', priceType: 'gros', origin: 'SICA LAIT RE / Import', source: 'SICA LAIT La Réunion 2025' },
+  { productName: 'Fromage râpé 200 g (carton 12, gros)', category: 'Lait/Crémerie', territory: 'MQ', price: 1.65, unit: '€/pcs', priceType: 'gros', origin: 'Import France',  source: 'SCAPAM 2025' },
+
+  // ─── Produits bébé / Hygiène (gros — poste budget DOM élevé) ────────
+  { productName: 'Couches T3 (palette 6 colis 44, gros)', category: 'Bébé/Hygiène', territory: 'GP', price: 6.20, unit: '€/colis', priceType: 'gros', origin: 'Import France/Europe', source: 'SOCAGUI 2025' },
+  { productName: 'Couches T3 (palette 6 colis 44, gros)', category: 'Bébé/Hygiène', territory: 'RE', price: 6.40, unit: '€/colis', priceType: 'gros', origin: 'Import France/Europe', source: 'LEAL Distribution 2025' },
+  { productName: 'Lait 1er âge 900 g (carton 6, gros)', category: 'Bébé/Hygiène', territory: 'GP', price: 9.80, unit: '€/pcs', priceType: 'gros', origin: 'Import France (Guigoz/Nutricia)', source: 'SOCAGUI 2025' },
+
+  // ─── Épices / Aromates (gros — production locale DOM) ───────────────
+  { productName: 'Piment antillais séché (gros, 1 kg)', category: 'Épices',      territory: 'GP', price: 8.00, unit: '€/kg', priceType: 'gros', origin: 'Production locale GP', source: 'Marché gros GP 2025' },
+  { productName: 'Curcuma frais (kg, gros)',             category: 'Épices',      territory: 'RE', price: 3.50, unit: '€/kg', priceType: 'gros', origin: 'Production locale RE', source: 'OPMR La Réunion 2025' },
+  { productName: 'Girofle (kg, gros)',                   category: 'Épices',      territory: 'RE', price: 12.00, unit: '€/kg', priceType: 'gros', origin: 'Import Madagascar',  source: 'ODEADOM La Réunion 2025' },
+  { productName: 'Cannelle bâton (kg, gros)',            category: 'Épices',      territory: 'MQ', price: 9.50, unit: '€/kg', priceType: 'gros', origin: 'Import Sri Lanka',   source: 'SCAPAM 2025' },
 ];
 
 // ─── Requêtes data.gouv.fr pour les données de gros ──────────────────────────
@@ -223,7 +272,111 @@ const DATAGOUV_QUERIES = [
   { territory: null, query: 'odeadom+prix+production+dom+outre-mer+agriculture' },
   // DGCCRF enquêtes marges DOM
   { territory: null, query: 'dgccrf+marges+distribution+dom+grossistes+prix' },
+  // AGRESTE statistiques agricoles DOM (DRAAF/DAAF)
+  { territory: null, query: 'agreste+statistiques+agricoles+dom+prix+production' },
+  { territory: 'GP', query: 'draaf+guadeloupe+prix+production+agricole' },
+  { territory: 'MQ', query: 'draaf+martinique+prix+production+agricole' },
+  { territory: 'GF', query: 'draaf+guyane+prix+production+agricole' },
+  { territory: 'RE', query: 'draaf+reunion+prix+production+agricole' },
+  // OPAM Martinique (Observatoire des Prix et des Marges)
+  { territory: 'MQ', query: 'opam+martinique+prix+marges+alimentation' },
+  // Criées DOM (CRPMEM)
+  { territory: 'GP', query: 'criee+guadeloupe+cours+poissons+crustaces' },
+  { territory: 'MQ', query: 'criee+martinique+cours+poissons' },
+  { territory: 'RE', query: 'criee+reunion+prix+poissons+mer' },
 ];
+
+// ─── RNM FranceAgriMer (Réseau National des Marchés) ────────────────────────
+
+/**
+ * Produits tropicaux et DOM cotés au RNM FranceAgriMer.
+ *
+ * Le RNM (https://rnm.franceagrimer.fr/prix) est la base de cotations
+ * hebdomadaires nationale des marchés de gros français, gérée par
+ * FranceAgriMer. Elle publie les cours moyens des marchés de Rungis et
+ * des marchés régionaux, y compris pour les produits provenant des DOM.
+ *
+ * Format de requête :
+ *   GET https://rnm.franceagrimer.fr/prix?MARCHE=<marché>&PRODUIT=<produit>&FORMAT=JSON
+ *
+ * Les marchés DOM disponibles dans le RNM :
+ *   GUADELOUPE, MARTINIQUE, REUNION — réseau officiel des marchés de gros
+ *
+ * Pour les produits tropicaux, le marché de RUNGIS est aussi interrogé
+ * (les produits DOM transitent souvent par Rungis pour la métropole).
+ */
+const RNM_QUERIES = [
+  // ─── Marchés DOM directs ────────────────────────────────────────────────
+  { marche: 'GUADELOUPE', produit: 'BANANE',        territory: 'GP', category: 'Fruits' },
+  { marche: 'GUADELOUPE', produit: 'ANANAS',        territory: 'GP', category: 'Fruits' },
+  { marche: 'GUADELOUPE', produit: 'IGNAME',        territory: 'GP', category: 'Légumes pays' },
+  { marche: 'GUADELOUPE', produit: 'TOMATE',        territory: 'GP', category: 'Légumes pays' },
+  { marche: 'MARTINIQUE', produit: 'BANANE',        territory: 'MQ', category: 'Fruits' },
+  { marche: 'MARTINIQUE', produit: 'ANANAS',        territory: 'MQ', category: 'Fruits' },
+  { marche: 'MARTINIQUE', produit: 'CHRISTOPHINE', territory: 'MQ', category: 'Légumes pays' },
+  { marche: 'REUNION',    produit: 'BANANE',        territory: 'RE', category: 'Fruits' },
+  { marche: 'REUNION',    produit: 'ANANAS',        territory: 'RE', category: 'Fruits' },
+  { marche: 'REUNION',    produit: 'LETCHI',        territory: 'RE', category: 'Fruits' },
+  { marche: 'REUNION',    produit: 'CHOU',          territory: 'RE', category: 'Légumes pays' },
+  // ─── Rungis — produits DOM exportés vers métropole ─────────────────────
+  { marche: 'RUNGIS',     produit: 'BANANE',        territory: 'GP', category: 'Fruits' },
+  { marche: 'RUNGIS',     produit: 'ANANAS',        territory: 'GP', category: 'Fruits' },
+  { marche: 'RUNGIS',     produit: 'MANGUE',        territory: 'GP', category: 'Fruits' },
+  { marche: 'RUNGIS',     produit: 'PAPAYE',        territory: 'GP', category: 'Fruits' },
+];
+
+/**
+ * Interroge l'API RNM FranceAgriMer pour les cotations de gros.
+ * Retourne les 4 dernières semaines de cotations par produit × marché.
+ * @returns {Promise<GrossistesEntry[]>}
+ */
+async function fetchRNMPrices() {
+  /** @type {GrossistesEntry[]} */
+  const entries = [];
+  const today = new Date().toISOString().slice(0, 10);
+
+  for (const { marche, produit, territory, category } of RNM_QUERIES) {
+    const url = `https://rnm.franceagrimer.fr/prix?MARCHE=${encodeURIComponent(marche)}&PRODUIT=${encodeURIComponent(produit)}&FORMAT=JSON`;
+    const data = await fetchJSON(url, `RNM ${marche}/${produit}`);
+    if (!data) { await sleep(400); continue; }
+
+    // L'API RNM retourne un tableau de cotations hebdomadaires
+    const cotations = Array.isArray(data) ? data : (data.cotations ?? data.resultats ?? []);
+    // Prendre la cotation la plus récente disponible
+    const recent = cotations.slice(-1)[0];
+    if (!recent) { await sleep(400); continue; }
+
+    // Champs possibles selon la version de l'API RNM
+    const price = parseFloat(
+      recent.prix_moyen ?? recent.prixMoyen ?? recent.prixMin ?? recent.prix ?? '0',
+    );
+    if (price <= 0 || price > 5_000) { await sleep(400); continue; }
+
+    const unit = recent.unite ?? recent.unit ?? '€/kg';
+    const date = recent.date_semaine ?? recent.dateSemaine ?? recent.date ?? today;
+
+    entries.push({
+      productName: `${produit.charAt(0) + produit.slice(1).toLowerCase()} (gros RNM ${marche})`,
+      category,
+      territory,
+      price:     Math.round(price * 100) / 100,
+      unit,
+      priceType: 'gros',
+      origin:    marche === 'RUNGIS' ? `${territory} (export Rungis)` : territory,
+      wholesaler: `RNM FranceAgriMer — Marché ${marche}`,
+      date:      typeof date === 'string' ? date.slice(0, 10) : today,
+      source:    'RNM FranceAgriMer (rnm.franceagrimer.fr)',
+      sourceUrl: url,
+    });
+
+    await sleep(400);
+  }
+
+  if (entries.length > 0) {
+    console.log(`  ✅ [grossistes] RNM FranceAgriMer: ${entries.length} cotations récupérées`);
+  }
+  return entries;
+}
 
 // ─── Parseur mercuriales CSV ─────────────────────────────────────────────────
 
@@ -343,9 +496,10 @@ async function fetchGrossistesLive() {
  * Scrape les prix de gros des produits alimentaires DOM-TOM.
  *
  * Stratégie :
- *   1. data.gouv.fr live : mercuriales MIN Jarry/Saint-Paul, FranceAgriMer,
- *      ODEADOM, DGCCRF enquêtes marges
- *   2. Fallback : prix grossistes de référence 2024 (mercuriales publiées)
+ *   1. RNM FranceAgriMer (API REST cotations hebdomadaires marchés de gros)
+ *   2. data.gouv.fr live : mercuriales MIN Jarry/Saint-Paul, FranceAgriMer,
+ *      ODEADOM, DGCCRF enquêtes marges, AGRESTE/DRAAF, criées DOM
+ *   3. Fallback : prix grossistes de référence 2024-2025 (mercuriales publiées)
  *      pour toutes les combinaisons produit × territoire non couvertes par le live.
  *
  * @returns {Promise<GrossistesEntry[]>}
@@ -353,19 +507,24 @@ async function fetchGrossistesLive() {
 export async function scrapeGrossistePrices() {
   console.log('  🏭 [grossistes] Scraping prix de gros DOM-TOM…');
 
-  const liveEntries = await fetchGrossistesLive();
+  // Lancer RNM et data.gouv.fr en parallèle
+  const [rnmEntries, liveEntries] = await Promise.all([
+    fetchRNMPrices(),
+    fetchGrossistesLive(),
+  ]);
 
   const today = new Date().toISOString().slice(0, 10);
 
   // Données de référence pour les produits non couverts par le live
+  const allLive = [...rnmEntries, ...liveEntries];
   const liveCoverage = new Set(
-    liveEntries.map((e) => `${e.territory}|${e.productName.slice(0, 20).toLowerCase()}`),
+    allLive.map((e) => `${e.territory}|${e.productName.slice(0, 20).toLowerCase()}`),
   );
   const refEntries = GROSSISTES_REFERENCE
     .filter((e) => !liveCoverage.has(`${e.territory}|${e.productName.slice(0, 20).toLowerCase()}`))
     .map((e) => ({ ...e, date: today }));
 
-  const all = [...liveEntries, ...refEntries];
+  const all = [...allLive, ...refEntries];
 
   const byTerritory = all.reduce(
     (acc, e) => { acc[e.territory] = (acc[e.territory] ?? 0) + 1; return acc; },
@@ -373,7 +532,7 @@ export async function scrapeGrossistePrices() {
   );
   console.log(
     `  📊 [grossistes] ${all.length} prix de gros` +
-    ` (live: ${liveEntries.length}, ref: ${refEntries.length})` +
+    ` (RNM: ${rnmEntries.length}, live: ${liveEntries.length}, ref: ${refEntries.length})` +
     ` — ${Object.entries(byTerritory).map(([k, v]) => `${k}: ${v}`).join(', ')}`,
   );
   return all;

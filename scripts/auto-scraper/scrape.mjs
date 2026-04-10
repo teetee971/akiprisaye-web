@@ -462,7 +462,7 @@ async function main() {
         metadata: {
           ...(existingCat.metadata ?? {}),
           lastUpdated: ISO_NOW,
-          source: 'E.Leclerc / Intermarché / Leader Price / Super U — APIs publiques',
+          source: 'E.Leclerc / Intermarché / Leader Price / Super U / Cora / Carrefour Market — APIs publiques',
           autoCollected: true,
         },
         prices: rawCatalogue,
@@ -541,7 +541,7 @@ async function main() {
       `| ⛽ Carburants (prix-carburants.gouv.fr) | ${rawFuel.length} relevés → ${counts.fuel} agrégés |`,
       `| 🥦 Alimentaire (Open Prices + enseignes) | ${rawFood.length} relevés → ${counts.food} dédupliqués |`,
       `| 🌿 Frais/vivriers (DAAF/OPMR/DIETS) | ${counts.fresh} relevés |`,
-      `| 🛒 Catalogue enseignes (Leclerc/IMC/LP/U) | ${counts.catalogue} relevés |`,
+      `| 🛒 Catalogue enseignes (Leclerc/IMC/LP/U/Cora/Carrefour) | ${counts.catalogue} relevés |`,
       `| 📋 BQP (data.gouv.fr) | ${counts.bqp} entrées officielles |`,
       `| 📡 Services (ARCEP/CRE/INSEE/Eau/Transport/IEDOM) | ${counts.services} tarifs |`,
       `| 🏠 Logement/Loyers (DVF + ANIL + INSEE) | ${counts.loyer} entrées |`,

@@ -99,6 +99,49 @@ const DATAGOUV_QUERIES = [
     ],
     orgSlug: null,
   },
+  // ─── Sources AGRESTE/DRAAF (statistiques agricoles et productions DOM) ────────
+  {
+    territory: 'GP',
+    queries: [
+      'agreste+guadeloupe+prix+productions+agricoles',
+      'draaf+guadeloupe+enquete+prix+vivriers',
+      'statistiques+agricoles+guadeloupe+fruits+legumes',
+    ],
+    orgSlug: null,
+  },
+  {
+    territory: 'MQ',
+    queries: [
+      'agreste+martinique+prix+productions+agricoles',
+      'draaf+martinique+enquete+prix+vivriers',
+      'opam+martinique+bulletin+prix',
+    ],
+    orgSlug: null,
+  },
+  {
+    territory: 'GF',
+    queries: [
+      'agreste+guyane+prix+productions+agricoles',
+      'draaf+guyane+statistiques+prix+vivriers',
+    ],
+    orgSlug: null,
+  },
+  {
+    territory: 'RE',
+    queries: [
+      'agreste+reunion+prix+productions+agricoles',
+      'draaf+reunion+statistiques+prix+productions',
+    ],
+    orgSlug: null,
+  },
+  {
+    territory: 'YT',
+    queries: [
+      'agreste+mayotte+statistiques+prix+productions',
+      'daaf+mayotte+prix+vivriers+marches',
+    ],
+    orgSlug: null,
+  },
 ];
 
 /**

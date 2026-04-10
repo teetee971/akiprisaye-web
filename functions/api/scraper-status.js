@@ -83,7 +83,7 @@ export async function onRequest(context) {
         count: sources.food?.count ?? 0,
       },
       {
-        name: 'Catalogue enseignes (Leclerc / Intermarché / LP / Super U)',
+        name: 'Catalogue enseignes (Leclerc / Intermarché / LP / Super U / Cora / Carrefour)',
         source: 'catalogue',
         ...sourceStatus(sources.catalogue, isStale),
         lastScan: lastScanLabel,
@@ -156,7 +156,7 @@ export async function onRequest(context) {
     const fallback = [
       { name: 'Carburants (prix-carburants.gouv.fr)',                             source: 'fuel',        status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
       { name: 'Alimentaire (Open Prices + enseignes)',                            source: 'food',        status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Catalogue enseignes (Leclerc / Intermarché / LP / Super U)',       source: 'catalogue',   status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Catalogue enseignes (Leclerc / Intermarché / LP / Super U / Cora / Carrefour)',    source: 'catalogue',   status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
       { name: 'Produits frais (DAAF / OPMR / DIETS)',                            source: 'fresh',       status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
       { name: 'Bouclier Qualité Prix (data.gouv.fr)',                             source: 'bqp',         status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
       { name: 'Services (ARCEP / CRE / INSEE / Eau / Transport / IEDOM)',         source: 'services',    status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },

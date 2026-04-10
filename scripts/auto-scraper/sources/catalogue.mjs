@@ -4,7 +4,7 @@
  * ┌────────────────────────────────────────────────────────────────────────┐
  * │  LACUNE COUVERTE : Open Prices est communautaire et ne couvre pas les  │
  * │  catalogues complets des enseignes. Ce module interroge directement    │
- * │  les APIs publiques de catalogues des 4 grandes enseignes DOM-TOM      │
+ * │  les APIs publiques de catalogues des 6 grandes enseignes DOM-TOM      │
  * │  pour un panier de 25 produits courants × 5 territoires.              │
  * │                                                                         │
  * │  Gain : des centaines de relevés de prix actuels (quotidiens) avec     │
@@ -16,6 +16,8 @@
  *   - Intermarché     : https://www.intermarche.com/api/v2/products/search
  *   - Leader Price    : https://www.leaderprice.fr/api/catalog/search
  *   - Super U (CU)    : https://www.coursesu.com/api/2.0/catalog/search
+ *   - Cora            : https://www.cora.fr/api/search/product (GP/MQ)
+ *   - Carrefour Market: https://www.carrefour.fr/api/cm/v1/product-search
  *
  * Conformité légale :
  *   - Uniquement données publiques consultables sans authentification
@@ -211,6 +213,71 @@ const RETAILERS = [
           imageUrl,
         };
       }).filter((r) => r.price > 0);
+    },
+  },
+  {
+    name: 'cora',
+    label: 'Cora',
+    baseUrl: 'https://www.cora.fr',
+    // Cora est présent en Guadeloupe (Baie-Mahault) et Martinique (Le Lamentin).
+    territories: {
+      GP: '97163',  // Cora Baie-Mahault (Guadeloupe)
+      MQ: '97232',  // Cora Le Lamentin (Martinique)
+      RE: null,
+      GF: null,
+      YT: null,
+    },
+    buildUrl(query, storeId) {
+      const p = new URLSearchParams({ q: query, page: '1', pageSize: '20', lang: 'fr' });
+      if (storeId) p.set('storeId', storeId);
+      return `${this.baseUrl}/api/search/product?${p.toString()}`;
+    },
+    parseResult(json) {
+      const items = _extractArray(json, ['products', 'items', 'results', 'data', 'hits', 'content']);
+      return items.map((p) => ({
+        ean: _str(p.ean ?? p.code ?? p.gtin ?? p.barcode),
+        name: _str(p.name ?? p.label ?? p.libelle ?? p.title ?? p.productName),
+        brand: _str(p.brand ?? p.marque ?? p.brandName),
+        price: _num(
+          p.offers?.[0]?.promotionPrice ?? p.offers?.[0]?.price ??
+          p.price ?? p.sellingPrice ?? p.normalPrice ?? p.priceValue,
+        ),
+        unit: _unit(p.offers?.[0]?.unit ?? p.offers?.[0]?.unitOfMeasure ?? p.unit ?? p.unitOfMeasure),
+        imageUrl: _str(p.imageUrl ?? p.image ?? p.photo ?? p.thumbnail),
+      })).filter((r) => r.price > 0);
+    },
+  },
+  {
+    name: 'carrefour',
+    label: 'Carrefour Market',
+    baseUrl: 'https://www.carrefour.fr',
+    // Carrefour Market / Carrefour Express DOM (GP/MQ/RE/GF/YT).
+    territories: {
+      GP: '971',
+      MQ: '972',
+      RE: '974',
+      GF: '973',
+      YT: '976',
+    },
+    buildUrl(query, storeId) {
+      const p = new URLSearchParams({ query, size: '20', lang: 'fr_FR' });
+      if (storeId) p.set('storeId', storeId);
+      return `${this.baseUrl}/api/cm/v1/product-search?${p.toString()}`;
+    },
+    parseResult(json) {
+      const unwrapped = json?.content ?? json?.results ?? json;
+      const items = _extractArray(unwrapped, ['products', 'items', 'results', 'data', 'hits', 'content']);
+      return items.map((p) => ({
+        ean: _str(p.ean ?? p.code ?? p.gtin ?? p.barcode ?? p.id),
+        name: _str(p.description ?? p.name ?? p.label ?? p.title ?? p.libelle),
+        brand: _str(p.brand ?? p.brandName ?? p.marque),
+        price: _num(
+          p.pricing?.salePrice ?? p.pricing?.price ?? p.price ?? p.sellingPrice ??
+          p.priceValue ?? p.discountedPrice,
+        ),
+        unit: _unit(p.pricing?.perUnitLabel ?? p.unit ?? p.unitOfMeasure),
+        imageUrl: _str(p.medias?.[0]?.url ?? p.imageUrl ?? p.image ?? p.thumbnail),
+      })).filter((r) => r.price > 0);
     },
   },
 ];

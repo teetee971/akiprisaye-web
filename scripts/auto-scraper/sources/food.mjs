@@ -58,6 +58,10 @@ const RETAILER_NAME_FILTERS = [
   'casino',
   'spar',
   'maxi',
+  'jumbo',         // Jumbo — grande enseigne discount GP/MQ (groupe GBH/Vivalya)
+  'carrefour',     // Carrefour Market DOM (GP/MQ/RE/GF)
+  'simply',        // Simply Market DOM (devenu Carrefour Market dans certains territoires)
+  'match',         // Match DOM — enseigne nord présente en GP
 ];
 
 /** Pause entre les requêtes API pour respecter les rate limits */
