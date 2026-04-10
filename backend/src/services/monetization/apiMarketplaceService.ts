@@ -70,7 +70,7 @@ export class ApiMarketplaceService {
   /**
    * Generate a new marketplace API key pair.
    */
-  static generateApiKey(tier: ApiTier = 'starter'): { clientId: string; secret: string } {
+  static generateApiKey(_tier: ApiTier = 'starter'): { clientId: string; secret: string } {
     const clientId = `aki_${crypto.randomBytes(12).toString('hex')}`;
     const secret = `sk_${crypto.randomBytes(24).toString('hex')}`;
     return { clientId, secret };

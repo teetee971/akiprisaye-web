@@ -68,6 +68,10 @@ const NOW       = new Date();
 const ISO_NOW   = NOW.toISOString();
 const DATE_ID   = ISO_NOW.slice(0, 10);
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+const SOURCE_KEYS = [
+  'fuel', 'food', 'fresh', 'catalogue', 'hexagone', 'bqp',
+  'services', 'loyer', 'medicaments', 'octroi-mer', 'com', 'grossistes',
+];
 
 // ─── Firebase Admin ───────────────────────────────────────────────────────────
 
@@ -365,11 +369,18 @@ async function main() {
   console.log(`   Mode    : ${DRY_RUN ? 'DRY-RUN (simulation)' : 'PRODUCTION'}${DEEP_SCAN ? ' + DEEP-SCAN' : ''}`);
   console.log('');
 
+  if (SOURCE_FILTER !== 'all' && !SOURCE_KEYS.includes(SOURCE_FILTER)) {
+    console.error(`❌ Source inconnue: "${SOURCE_FILTER}"`);
+    console.error(`   Sources supportées: ${SOURCE_KEYS.join(', ')}`);
+    process.exit(1);
+  }
+
   const db = getFirestore();
   const dataDir = getDataDir();
 
   // ── Scraping en parallèle ─────────────────────────────────────────────────
   const shouldRun = (s) => SOURCE_FILTER === 'all' || SOURCE_FILTER === s;
+  const runSource = (name, fn) => timedSource(name, () => shouldRun(name) ? fn() : Promise.resolve([]));
 
   console.log('📡 Lancement du scraping…\n');
   const [
@@ -390,6 +401,23 @@ async function main() {
     shouldRun('com')          ? scrapeCOMPrices()                          : Promise.resolve([]),
     shouldRun('grossistes')   ? scrapeGrossistePrices()                    : Promise.resolve([]),
   ]);
+  const rawFuel = fuelRes.data;
+  const rawFood = foodRes.data;
+  const rawFresh = freshRes.data;
+  const rawCatalogue = catalogueRes.data;
+  const rawHexagone = hexagoneRes.data;
+  const rawBQP = bqpRes.data;
+  const rawServices = servicesRes.data;
+  const rawLoyer = loyerRes.data;
+  const rawMedicaments = medicamentsRes.data;
+  const rawOctrois = octroiRes.data;
+  const rawCOM = comRes.data;
+  const rawGrossistes = grossistesRes.data;
+  const sourceDiagnostics = {
+    fuel: fuelRes, food: foodRes, fresh: freshRes, catalogue: catalogueRes,
+    hexagone: hexagoneRes, bqp: bqpRes, services: servicesRes, loyer: loyerRes,
+    medicaments: medicamentsRes, octroiMer: octroiRes, com: comRes, grossistes: grossistesRes,
+  };
 
   // ── Normalisation ─────────────────────────────────────────────────────────
   console.log('\n🔧 Normalisation des données…');
