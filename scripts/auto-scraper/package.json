@@ -9,6 +9,7 @@
     "scrape:fuel": "node scrape.mjs --source fuel",
     "scrape:food": "node scrape.mjs --source food",
     "scrape:fresh": "node scrape.mjs --source fresh",
+    "scrape:catalogue": "node scrape.mjs --source catalogue",
     "scrape:bqp": "node scrape.mjs --source bqp",
     "scrape:services": "node scrape.mjs --source services",
     "dry-run": "node scrape.mjs --dry-run",

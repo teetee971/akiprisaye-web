@@ -4,11 +4,12 @@
  * ┌──────────────────────────────────────────────────────────────────────┐
  * │  SOURCES DE DONNÉES SCRAPÉES (100% Open Data légal)                  │
  * ├──────────────────────────────────────────────────────────────────────┤
- * │  ⛽ Carburants  prix-carburants.gouv.fr (XML officiel quotidien)      │
- * │  🥦 Alimentaire Open Prices / Open Food Facts (ODbL + CC-BY-SA)      │
- * │  🌿 Frais       DAAF / OPMR / DIETS — produits vivriers DOM          │
- * │  📋 BQP         data.gouv.fr — DGCCRF / Préfectures DOM              │
- * │  📡 Services    ARCEP + CRE + INSEE BDM + Transport DOM              │
+ * │  ⛽ Carburants   prix-carburants.gouv.fr (XML officiel quotidien)     │
+ * │  🥦 Alimentaire  Open Prices / Open Food Facts (ODbL + CC-BY-SA)     │
+ * │  🌿 Frais        DAAF / OPMR / DIETS — produits vivriers DOM         │
+ * │  🛒 Catalogue    E.Leclerc / Intermarché / Leader Price / Super U    │
+ * │  📋 BQP          data.gouv.fr — DGCCRF / Préfectures DOM             │
+ * │  📡 Services     ARCEP + CRE + INSEE BDM + Eau + Transport + IEDOM   │
  * └──────────────────────────────────────────────────────────────────────┘
  *
  * Flux complet :
@@ -21,14 +22,15 @@
  *   7. Step summary GitHub Actions
  *
  * Usage :
- *   node scrape.mjs                    → toutes sources (mode normal)
- *   node scrape.mjs --deep-scan        → pagination étendue + Overpass OSM
- *   node scrape.mjs --source fuel      → carburants uniquement
- *   node scrape.mjs --source food      → alimentaire uniquement
- *   node scrape.mjs --source fresh     → produits frais uniquement
- *   node scrape.mjs --source bqp       → BQP uniquement
- *   node scrape.mjs --source services  → services uniquement
- *   node scrape.mjs --dry-run          → simulation (pas d'écriture)
+ *   node scrape.mjs                       → toutes sources (mode normal)
+ *   node scrape.mjs --deep-scan           → pagination étendue + Overpass OSM
+ *   node scrape.mjs --source fuel         → carburants uniquement
+ *   node scrape.mjs --source food         → alimentaire uniquement
+ *   node scrape.mjs --source fresh        → produits frais uniquement
+ *   node scrape.mjs --source catalogue    → catalogues enseignes uniquement
+ *   node scrape.mjs --source bqp          → BQP uniquement
+ *   node scrape.mjs --source services     → services uniquement
+ *   node scrape.mjs --dry-run             → simulation (pas d'écriture)
  *
  * Variables d'environnement :
  *   FIREBASE_SERVICE_ACCOUNT  — Credentials Firebase Admin SDK (requis)
@@ -43,11 +45,12 @@ import admin from 'firebase-admin';
 import OpenAI from 'openai';
 import { timedSource, isScrapingAllowed } from './sources/utils.mjs';
 
-import { scrapeFuelPrices }    from './sources/fuel.mjs';
-import { scrapeFoodPrices }    from './sources/food.mjs';
-import { scrapeBQPPrices }     from './sources/bqp.mjs';
-import { scrapeServicePrices } from './sources/services.mjs';
-import { scrapeFreshPrices }   from './sources/daaf.mjs';
+import { scrapeFuelPrices }      from './sources/fuel.mjs';
+import { scrapeFoodPrices }      from './sources/food.mjs';
+import { scrapeBQPPrices }       from './sources/bqp.mjs';
+import { scrapeServicePrices }   from './sources/services.mjs';
+import { scrapeFreshPrices }     from './sources/daaf.mjs';
+import { scrapeCataloguePrices } from './sources/catalogue.mjs';
 
 const DRY_RUN   = process.argv.includes('--dry-run');
 const DEEP_SCAN = process.argv.includes('--deep-scan');
@@ -315,12 +318,13 @@ async function main() {
   const shouldRun = (s) => SOURCE_FILTER === 'all' || SOURCE_FILTER === s;
 
   console.log('📡 Lancement du scraping…\n');
-  const [rawFuel, rawFood, rawFresh, rawBQP, rawServices] = await Promise.all([
-    shouldRun('fuel')     ? scrapeFuelPrices()                         : Promise.resolve([]),
-    shouldRun('food')     ? scrapeFoodPrices({ deepScan: DEEP_SCAN })  : Promise.resolve([]),
-    shouldRun('fresh')    ? scrapeFreshPrices()                        : Promise.resolve([]),
-    shouldRun('bqp')      ? scrapeBQPPrices()                          : Promise.resolve([]),
-    shouldRun('services') ? scrapeServicePrices()                      : Promise.resolve([]),
+  const [rawFuel, rawFood, rawFresh, rawCatalogue, rawBQP, rawServices] = await Promise.all([
+    shouldRun('fuel')      ? scrapeFuelPrices()                         : Promise.resolve([]),
+    shouldRun('food')      ? scrapeFoodPrices({ deepScan: DEEP_SCAN })  : Promise.resolve([]),
+    shouldRun('fresh')     ? scrapeFreshPrices()                        : Promise.resolve([]),
+    shouldRun('catalogue') ? scrapeCataloguePrices()                    : Promise.resolve([]),
+    shouldRun('bqp')       ? scrapeBQPPrices()                          : Promise.resolve([]),
+    shouldRun('services')  ? scrapeServicePrices()                      : Promise.resolve([]),
   ]);
 
   // ── Normalisation ─────────────────────────────────────────────────────────
@@ -329,18 +333,20 @@ async function main() {
   const foodDedup      = deduplicateFoodEntries(rawFood);
 
   const counts = {
-    fuel:     fuelAggregated.length,
-    food:     foodDedup.length,
-    fresh:    rawFresh.length,
-    bqp:      rawBQP.length,
-    services: rawServices.length,
+    fuel:      fuelAggregated.length,
+    food:      foodDedup.length,
+    fresh:     rawFresh.length,
+    catalogue: rawCatalogue.length,
+    bqp:       rawBQP.length,
+    services:  rawServices.length,
   };
 
-  console.log(`   ⛽ Carburants : ${rawFuel.length} relevés → ${counts.fuel} entrées agrégées`);
-  console.log(`   🥦 Alimentaire: ${rawFood.length} relevés → ${counts.food} après dédup`);
+  console.log(`   ⛽ Carburants  : ${rawFuel.length} relevés → ${counts.fuel} entrées agrégées`);
+  console.log(`   🥦 Alimentaire : ${rawFood.length} relevés → ${counts.food} après dédup`);
   console.log(`   🌿 Frais/vivriers: ${counts.fresh} relevés`);
-  console.log(`   📋 BQP        : ${counts.bqp} entrées`);
-  console.log(`   📡 Services   : ${counts.services} entrées`);
+  console.log(`   🛒 Catalogue   : ${counts.catalogue} relevés (Leclerc/IMC/LP/SuperU)`);
+  console.log(`   📋 BQP         : ${counts.bqp} entrées`);
+  console.log(`   📡 Services    : ${counts.services} entrées`);
 
   // ── Shock detection ───────────────────────────────────────────────────────
   console.log('\n🔍 Détection des chocs de prix…');
@@ -426,6 +432,21 @@ async function main() {
       console.log('💾 fresh-prices.json mis à jour');
     }
 
+    // ── Save catalogue snapshot ───────────────────────────────────────────
+    if (rawCatalogue.length > 0) {
+      const existingCat = loadJSON(join(dataDir, 'catalogue-prices.json')) ?? { metadata: {}, prices: [] };
+      saveJSON(join(dataDir, 'catalogue-prices.json'), {
+        metadata: {
+          ...(existingCat.metadata ?? {}),
+          lastUpdated: ISO_NOW,
+          source: 'E.Leclerc / Intermarché / Leader Price / Super U — APIs publiques',
+          autoCollected: true,
+        },
+        prices: rawCatalogue,
+      });
+      console.log('💾 catalogue-prices.json mis à jour');
+    }
+
     // ── Write to Firestore ────────────────────────────────────────────────
     await writeScrapingResults(db, { fuel: fuelAggregated, food: foodDedup, bqp: rawBQP, services: rawServices }, shocks);
   } else {
@@ -452,8 +473,9 @@ async function main() {
       `| ⛽ Carburants (prix-carburants.gouv.fr) | ${rawFuel.length} relevés → ${counts.fuel} agrégés |`,
       `| 🥦 Alimentaire (Open Prices + enseignes) | ${rawFood.length} relevés → ${counts.food} dédupliqués |`,
       `| 🌿 Frais/vivriers (DAAF/OPMR/DIETS) | ${counts.fresh} relevés |`,
+      `| 🛒 Catalogue enseignes (Leclerc/IMC/LP/U) | ${counts.catalogue} relevés |`,
       `| 📋 BQP (data.gouv.fr) | ${counts.bqp} entrées officielles |`,
-      `| 📡 Services (ARCEP/CRE/INSEE/Transport) | ${counts.services} tarifs |`,
+      `| 📡 Services (ARCEP/CRE/INSEE/Eau/Transport/IEDOM) | ${counts.services} tarifs |`,
       '',
       allShocks.length === 0
         ? '### ✅ Prix stables — aucun choc détecté'
@@ -464,7 +486,7 @@ async function main() {
     appendFileSync(summaryPath, lines + '\n');
   }
 
-  const totalEntries = counts.fuel + counts.food + counts.fresh + counts.bqp + counts.services;
+  const totalEntries = counts.fuel + counts.food + counts.fresh + counts.catalogue + counts.bqp + counts.services;
   console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total\n`);
 
   // ── Scraping health file ────────────────────────────────────────────────
@@ -476,11 +498,12 @@ async function main() {
     dryRun: DRY_RUN,
     deepScan: DEEP_SCAN,
     sources: {
-      fuel:     { count: counts.fuel,     ok: counts.fuel > 0 },
-      food:     { count: counts.food,     ok: counts.food > 0 },
-      fresh:    { count: counts.fresh,    ok: counts.fresh > 0 },
-      bqp:      { count: counts.bqp,      ok: counts.bqp > 0 },
-      services: { count: counts.services, ok: counts.services > 0 },
+      fuel:      { count: counts.fuel,      ok: counts.fuel > 0 },
+      food:      { count: counts.food,      ok: counts.food > 0 },
+      fresh:     { count: counts.fresh,     ok: counts.fresh > 0 },
+      catalogue: { count: counts.catalogue, ok: counts.catalogue > 0 },
+      bqp:       { count: counts.bqp,       ok: counts.bqp > 0 },
+      services:  { count: counts.services,  ok: counts.services > 0 },
     },
     totalEntries,
     shocksDetected: allShocks.length,
