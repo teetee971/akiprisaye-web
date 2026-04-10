@@ -217,8 +217,9 @@ export default function NearbyDeals() {
                 <div className="text-xs text-gray-400 mt-1">Inclus : alertes push + SMS + optimisation itinéraire</div>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Email</label>
+                <label htmlFor="nearby-email-input" className="block text-sm text-gray-400 mb-1">Email</label>
                 <input
+                  id="nearby-email-input"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

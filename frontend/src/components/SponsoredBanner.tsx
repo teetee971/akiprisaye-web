@@ -55,6 +55,9 @@ export function SponsoredBanner({
             src={imageUrl}
             alt={`Sponsorisé par ${sponsor}`}
             className="w-full h-40 md:h-56 object-cover opacity-60"
+            loading="lazy"
+            width="800"
+            height="224"
           />
         )}
         <div className="absolute inset-0 flex flex-col justify-between p-4">
@@ -91,6 +94,9 @@ export function SponsoredBanner({
           src={imageUrl}
           alt={`Sponsorisé par ${sponsor}`}
           className="w-full h-20 object-cover rounded mb-2 opacity-80"
+          loading="lazy"
+          width="400"
+          height="80"
         />
       )}
       <div className="text-sm font-medium text-white mb-1">{title}</div>

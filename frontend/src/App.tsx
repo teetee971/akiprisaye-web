@@ -1,4 +1,3 @@
-import Flyer from "./pages/Flyer";
 import { OfflineBanner } from "./components/OfflineBanner";
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { lazyPage } from './router/lazy';
@@ -290,6 +289,7 @@ const PopulairesPage = lazy(() => import('./pages/PopulairesPage'));
 const UserDashboardPage = lazy(() => import('./pages/UserDashboardPage'));
 const ExecutiveDashboardPage = lazy(() => import('./pages/ExecutiveDashboardPage'));
 const TopDealsDuJourPage = lazy(() => import('./pages/TopDealsDuJourPage'));
+const Flyer = lazy(() => import('./pages/Flyer'));
 
 const LEGACY_ALIAS_ROUTES = (
   <>

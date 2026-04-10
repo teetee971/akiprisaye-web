@@ -103,10 +103,14 @@ export default defineConfig({
     // Source maps: enabled in staging/preview, disabled in production for security
     // (avoids exposing source code in browser dev tools on production)
     sourcemap: process.env.CF_PAGES === '1' ? false : (process.env.CF_PAGES_BRANCH ? 'hidden' : false),
+    // Target modern browsers for smaller output
+    target: 'es2020',
     // Warn only for truly huge chunks (> 1 MB)
     chunkSizeWarningLimit: 1000,
     // Split CSS per chunk so only needed styles are loaded
     cssCodeSplit: true,
+    // Minify CSS output
+    cssMinify: true,
     // Disable the module-preload polyfill — all target browsers support
     // <link rel="modulepreload"> natively.  The polyfill adds ~2 kB and is
     // unnecessary for our target audience.
