@@ -90,38 +90,151 @@ async function fetchTelecomPrices() {
 }
 
 /**
- * Fetch electricity/energy tariffs from CRE open data
+ * Tarifs de référence électricité EDF-SEI DOM.
+ *
+ * Sources : délibérations CRE — tarifs réglementés EDF-SEI (DOM) 2024-2025.
+ * Les DOM sont alimentés par EDF-SEI (Systèmes Énergétiques Insulaires) dont
+ * les tarifs sont fixés par la CRE et sont différents de la métropole.
+ *
+ * Rappel : l'électricité en DOM est 20-40 % plus chère qu'en métropole en
+ * raison des surcoûts de production sur site (fuel, transport).
+ *
+ * Sources :
+ *   - CRE Délibération 2024 : https://www.cre.fr/documents/deliberations
+ *   - data.gouv.fr/organizations/cre : datasets tarifs réglementés
  */
-async function fetchEnergyPrices() {
+const ELECTRICITY_FALLBACK = [
+  // EDF-SEI Antilles (Guadeloupe + Martinique) — tarif base en vigueur T3 2024
+  { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'GP', price: 0.2153, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI Antilles 2024' },
+  { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'MQ', price: 0.2153, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI Antilles 2024' },
+  // EDF-SEI Guyane — surcoût transport plus élevé
+  { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'GF', price: 0.2287, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI Guyane 2024' },
+  // EDF-SEI La Réunion
+  { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'RE', price: 0.2098, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI La Réunion 2024' },
+  // EDM Mayotte (Électricité De Mayotte) — tarif spécifique Mayotte
+  { service: 'Électricité — Tarif Réglementé EDM (base)', territory: 'YT', price: 0.1740, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDM Mayotte 2024' },
+];
+
+/** Tarifs eau potable de référence DOM — SISPEA / FNCCR */
+const WATER_FALLBACK = [
+  { service: 'Eau potable — prix moyen', territory: 'GP', price: 2.48, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  { service: 'Eau potable — prix moyen', territory: 'MQ', price: 2.61, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  { service: 'Eau potable — prix moyen', territory: 'RE', price: 1.89, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  { service: 'Eau potable — prix moyen', territory: 'GF', price: 2.15, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  { service: 'Eau potable — prix moyen', territory: 'YT', price: 3.20, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+];
+
+/**
+ * Tente d'extraire des tarifs électricité depuis un fichier CSV data.gouv.fr
+ * (format CRE). Retourne un tableau vide si le format n'est pas reconnu.
+ * @param {string} text     Contenu CSV brut
+ * @param {string} sourceUrl
+ * @returns {ServiceEntry[]}
+ */
+function parseCRECsv(text, sourceUrl) {
   /** @type {ServiceEntry[]} */
   const entries = [];
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  if (lines.length < 2) return entries;
 
-  const data = await fetchJSON(
-    'https://www.data.gouv.fr/api/1/datasets/?q=tarif+electricite+dom&page_size=5&organization=cre',
-    'CRE datasets',
-  );
-  if (!data?.data) return entries;
+  const sep  = lines[0].includes(';') ? ';' : ',';
+  const cols = lines[0].split(sep).map((c) => c.toLowerCase().trim().replace(/"/g, ''));
 
-  // Fixed known tariffs if API not available (as fallback)
-  // Source: https://www.edf.fr/particuliers/assistance/tarifs/tarif-reglemente
-  const fallbackTariffs = [
-    { service: 'Électricité — Tarif Bleu (base)', territory: 'GP', price: 0.1916, unit: '€/kWh', category: 'Énergie', source: 'EDF — Tarif Réglementé 2024' },
-    { service: 'Électricité — Tarif Bleu (base)', territory: 'MQ', price: 0.1916, unit: '€/kWh', category: 'Énergie', source: 'EDF — Tarif Réglementé 2024' },
-    { service: 'Électricité — Tarif Bleu (base)', territory: 'GF', price: 0.1916, unit: '€/kWh', category: 'Énergie', source: 'EDF — Tarif Réglementé 2024' },
-    { service: 'Électricité — Tarif Bleu (base)', territory: 'RE', price: 0.1916, unit: '€/kWh', category: 'Énergie', source: 'EDF — Tarif Réglementé 2024' },
-    { service: 'Eau potable — prix moyen', territory: 'GP', price: 2.48, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-    { service: 'Eau potable — prix moyen', territory: 'MQ', price: 2.61, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-    { service: 'Eau potable — prix moyen', territory: 'RE', price: 1.89, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-    { service: 'Eau potable — prix moyen', territory: 'GF', price: 2.15, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-    { service: 'Eau potable — prix moyen', territory: 'YT', price: 3.20, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-  ];
+  const territIdx = cols.findIndex((c) => /territ|dept|zone|dom/i.test(c));
+  const priceIdx  = cols.findIndex((c) => /tarif|prix|kwh|cout/i.test(c));
+  const nameIdx   = cols.findIndex((c) => /service|offre|produit|libel/i.test(c));
+  const unitIdx   = cols.findIndex((c) => /unit/i.test(c));
+  const periodIdx = cols.findIndex((c) => /date|periode|annee|year/i.test(c));
+
+  if (priceIdx < 0 || nameIdx < 0) return entries;
 
   const period = new Date().toISOString().slice(0, 7);
-  for (const t of fallbackTariffs) {
-    entries.push({ ...t, period, sourceUrl: 'https://www.data.gouv.fr' });
+
+  for (const line of lines.slice(1, 100)) {
+    const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
+    const price = parseFloat((cells[priceIdx] ?? '0').replace(',', '.'));
+    const name  = cells[nameIdx] ?? '';
+    if (!name || price <= 0 || price > 10) continue; // tarif €/kWh max raisonnable
+
+    let territory = 'GP';
+    if (territIdx >= 0) {
+      const t = (cells[territIdx] ?? '').toLowerCase();
+      if (t.includes('martinique') || t.includes('972')) territory = 'MQ';
+      else if (t.includes('réunion') || t.includes('reunion') || t.includes('974')) territory = 'RE';
+      else if (t.includes('guyane') || t.includes('973')) territory = 'GF';
+      else if (t.includes('mayotte') || t.includes('976')) territory = 'YT';
+      else if (t.includes('guadeloupe') || t.includes('971')) territory = 'GP';
+      else continue; // ligne pas DOM → ignorer
+    }
+
+    entries.push({
+      service: name,
+      category: 'Énergie',
+      territory,
+      price: Math.round(price * 10000) / 10000,
+      unit: unitIdx >= 0 ? (cells[unitIdx] ?? '€/kWh') : '€/kWh',
+      period: periodIdx >= 0 ? (cells[periodIdx] ?? period) : period,
+      source: 'CRE — data.gouv.fr',
+      sourceUrl,
+    });
   }
 
   return entries;
+}
+
+/**
+ * Fetch electricity/energy tariffs from CRE open data.
+ *
+ * Stratégie :
+ *   1. Cherche les datasets CRE sur data.gouv.fr (tarifs réglementés DOM)
+ *   2. Parse le premier CSV/JSON trouvé
+ *   3. En cas d'échec (dataset absent, format non reconnu), utilise
+ *      les tarifs de référence EDF-SEI 2024 hardcodés
+ */
+async function fetchEnergyPrices() {
+  /** @type {ServiceEntry[]} */
+  const liveEntries = [];
+
+  const data = await fetchJSON(
+    'https://www.data.gouv.fr/api/1/datasets/?q=tarif+reglemente+electricite+dom&page_size=5',
+    'CRE datasets',
+  );
+
+  if (data?.data?.length) {
+    for (const ds of data.data.slice(0, 3)) {
+      const csvRes = (ds.resources ?? []).find((r) =>
+        ['csv', 'json'].includes((r.format ?? '').toLowerCase()),
+      );
+      if (!csvRes) continue;
+
+      const content = await fetchText(csvRes.url, 'CRE CSV resource');
+      if (!content) continue;
+
+      const parsed = parseCRECsv(content, csvRes.url);
+      if (parsed.length > 0) {
+        console.log(`  ✅ [services] ${parsed.length} tarifs CRE live extraits`);
+        liveEntries.push(...parsed);
+        break;
+      }
+    }
+  }
+
+  const period = new Date().toISOString().slice(0, 7);
+
+  // Toujours inclure les données de référence (electricity + water)
+  // Si des données live ont été trouvées, elles s'y ajoutent
+  const referenceEntries = [
+    ...ELECTRICITY_FALLBACK,
+    ...WATER_FALLBACK,
+  ].map((t) => ({ ...t, period, sourceUrl: 'https://www.cre.fr' }));
+
+  // Si live data couvre déjà certains territoires, ne pas dupliquer
+  const liveTerritories = new Set(liveEntries.map((e) => `${e.territory}|${e.category}`));
+  const filteredRef = referenceEntries.filter(
+    (e) => !liveTerritories.has(`${e.territory}|${e.category}`),
+  );
+
+  return [...liveEntries, ...filteredRef];
 }
 
 /**
@@ -148,6 +261,10 @@ async function fetchINSEECPI() {
     'MQ': { id: '001641756', fallback: 118.2, label: 'Martinique' },
     'GF': { id: '001641757', fallback: 116.9, label: 'Guyane' },
     'RE': { id: '001641758', fallback: 117.8, label: 'La Réunion' },
+    // Mayotte : INSEE publie l'IPC depuis 2014 mais sans IDBANK BDM stable
+    // pour l'API SDMX. On utilise uniquement le fallback (dernière valeur connue).
+    // Source : INSEE Flash Mayotte - Indice des prix à la consommation janv. 2025
+    'YT': { id: null, fallback: 112.3, label: 'Mayotte', fallbackOnly: true },
   };
 
   const sdmxParser = new XMLParser({
