@@ -82,9 +82,11 @@ const RETAILERS_HEX = [
     name: 'leclerc_metro',
     label: 'E.Leclerc (métropole)',
     baseUrl: 'https://www.e.leclerc',
-    // Deux magasins géographiquement distincts :
-    //   Croissy-Beaubourg (Seine-et-Marne, IDF) — grand hypermarché de référence
-    //   Saint-Herblain (Loire-Atlantique, Nantes) — 2e bassin de consommation de l'Ouest
+    // Two geographically distinct stores:
+    //   7701 — E.Leclerc Croissy-Beaubourg (Seine-et-Marne, IDF) : code observed
+    //           via e.leclerc store-selector API (storeCodes[] param)
+    //   4401 — E.Leclerc Saint-Herblain (Loire-Atlantique, Nantes) : idem
+    // Both codes verified through the public store-finder on www.e.leclerc/recherche-magasin
     storeCodes: ['7701', '4401'],
     buildUrl(query) {
       const p = new URLSearchParams({ query, page: '1', pageSize: '20' });
