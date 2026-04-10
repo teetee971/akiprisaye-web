@@ -4,6 +4,7 @@ import { GlassCard } from './ui/glass-card';
 import { CatalogueItemRaw } from '../services/catalogueService';
 import { computeComparison } from '../services/comparisonService';
 import { computePrediction } from '../services/predictionService';
+import { EcartHexagone } from './EcartHexagone';
 import { useTiPanier } from '../hooks/useTiPanier';
 import { recordHistory } from './HistoryList';
 
@@ -61,6 +62,16 @@ export default function CatalogueItem({ item, metrics }: Props) {
           >
             🔮 {prediction.label}
           </span>
+        )}
+
+        {/* EcartHexagone badge — shown when the item carries DOM vs metro gap data */}
+        {typeof (item as any).ecartPercent === 'number' && (
+          <EcartHexagone
+            ecartPercent={(item as any).ecartPercent}
+            priceRef={(item as any).priceRef}
+            size="sm"
+            className="ml-2"
+          />
         )}
       </div>
 

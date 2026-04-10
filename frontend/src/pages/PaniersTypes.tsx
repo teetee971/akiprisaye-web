@@ -12,9 +12,9 @@
  * disponible.  Aucune source tierce nommée dans l'interface.
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ShoppingCart, TrendingUp, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { ShoppingCart, TrendingUp, Info, ChevronDown, ChevronUp, Share2, Download } from 'lucide-react';
 import { EcartHexagone } from '../components/EcartHexagone';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -117,6 +117,9 @@ const DOM_TERRITORIES = TERRITORIES.filter((t) =>
   ['gp', 'mq', 'gf', 're', 'yt'].includes(t.code),
 );
 
+/** Pseudo-territoire "Métropole seule" — affiche les prix hexagone sans comparaison */
+const METRO_TERRITORY = { code: 'fr', label: 'Métropole', labelFull: 'Hexagone', flag: '🇫🇷' } as const;
+
 // ─── Types internes ───────────────────────────────────────────────────────────
 
 interface ProduitPrix {
@@ -209,6 +212,9 @@ export default function PaniersTypes() {
   const [loading, setLoading] = useState(true);
   const [expandedItems, setExpandedItems] = useState(false);
 
+  /** true when the "Métropole" pseudo-territory is selected */
+  const isMetroSelected = selectedTerritory === METRO_TERRITORY.labelFull;
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -237,14 +243,61 @@ export default function PaniersTypes() {
 
   const hasData = result.totalDOM > 0;
 
+  /** Share button — Web Share API with WhatsApp/X fallback */
+  const handleShare = useCallback(() => {
+    const territory = isMetroSelected ? 'France métropolitaine' : selectedTerritory;
+    const ecartText = !isMetroSelected && result.ecartPercent !== 0
+      ? ` Ce panier coûte ${result.ecartPercent > 0 ? '+' : ''}${result.ecartPercent.toFixed(1)}\u202f% ${result.ecartPercent > 0 ? 'de plus' : 'de moins'} en ${territory} qu'en métropole.`
+      : '';
+    const text = `🛒 Panier "${panier.label}" — ${territory} : ${result.totalDOM.toFixed(2)}\u202f€.${ecartText} Données ouvertes A KI PRI SA YÉ.`;
+    const url = typeof window !== 'undefined' ? window.location.href : 'https://akiprisaye.fr/paniers-types';
+    if (typeof navigator !== 'undefined' && 'share' in navigator) {
+      navigator.share({ title: 'Paniers types DOM / Métropole', text, url }).catch(() => {/* user cancelled */});
+    } else {
+      const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${text}\n${url}`)}`;
+      window.open(waUrl, '_blank', 'noopener');
+    }
+  }, [panier, result, selectedTerritory, isMetroSelected]);
+
+  /** CSV export — client-side, journalist-ready */
+  const handleExportCSV = useCallback(() => {
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const territory = isMetroSelected ? 'metropole' : selectedTerritory.toLowerCase().replace(/\s+/g, '_');
+    const rows: string[] = [
+      'produit,unite,prix_dom_eur,prix_metro_eur,ecart_pct',
+      ...result.items
+        .filter((i) => i.prixDOM !== undefined)
+        .map((i) =>
+          [
+            `"${i.produit.replace(/"/g, '""')}"`,
+            `"${i.unite}"`,
+            i.prixDOM !== undefined ? i.prixDOM.toFixed(2) : '',
+            i.prixHex !== undefined ? i.prixHex.toFixed(2) : '',
+            i.ecartPercent !== undefined ? i.ecartPercent.toFixed(1) : '',
+          ].join(','),
+        ),
+    ];
+    const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `panier_${panier.id}_${territory}_vs_metro_${today}.csv`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  }, [panier, result, selectedTerritory, isMetroSelected]);
+
+  // Build dynamic OG description based on computed ecart
+  const ogDescription = !isMetroSelected && result.ecartPercent !== 0
+    ? `Panier ${panier.label} : ${result.ecartPercent > 0 ? '+' : ''}${result.ecartPercent.toFixed(0)}\u202f% ${result.ecartPercent > 0 ? 'plus cher' : 'moins cher'} en ${selectedTerritory} qu'en métropole. Données A KI PRI SA YÉ.`
+    : 'Comparez le coût de paniers types (alimentaire, hygiène, bébé, scolaire) entre les DOM et la France métropolitaine.';
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <Helmet>
         <title>Paniers types DOM vs Métropole — A KI PRI SA YÉ</title>
-        <meta
-          name="description"
-          content="Comparez le coût de paniers types (alimentaire, hygiène, bébé, scolaire) entre les DOM et la France métropolitaine."
-        />
+        <meta name="description" content={ogDescription} />
+        <meta property="og:title" content={`Paniers types DOM / Métropole — ${panier.label}`} />
+        <meta property="og:description" content={ogDescription} />
+        <meta property="og:type" content="website" />
       </Helmet>
 
       <HeroImage
@@ -264,7 +317,8 @@ export default function PaniersTypes() {
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 items-center">
+        <div className="flex flex-wrap gap-3 items-center justify-between">
+          <div className="flex flex-wrap gap-3 items-center">
           <div>
             <label className="block text-xs text-slate-400 mb-1">Territoire</label>
             <select
@@ -275,6 +329,7 @@ export default function PaniersTypes() {
               {DOM_TERRITORIES.map((t) => (
                 <option key={t.code} value={t.labelFull}>{t.flag} {t.label}</option>
               ))}
+              <option value={METRO_TERRITORY.labelFull}>{METRO_TERRITORY.flag} {METRO_TERRITORY.label} (seule)</option>
             </select>
           </div>
           <div>
@@ -290,11 +345,35 @@ export default function PaniersTypes() {
                       ? 'bg-indigo-600 border-indigo-500 text-white'
                       : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700',
                   ].join(' ')}
+
                 >
                   {p.emoji} {p.label}
                 </button>
               ))}
             </div>
+          </div>
+          </div>
+
+          {/* Action buttons: Share & Export CSV */}
+          <div className="flex gap-2 self-end">
+            <button
+              onClick={handleShare}
+              className="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-sm rounded-lg transition-colors"
+              aria-label="Partager ce comparatif"
+            >
+              <Share2 className="w-4 h-4" />
+              Partager
+            </button>
+            {hasData && (
+              <button
+                onClick={handleExportCSV}
+                className="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white text-sm rounded-lg transition-colors"
+                aria-label="Télécharger le comparatif en CSV"
+              >
+                <Download className="w-4 h-4" />
+                CSV
+              </button>
+            )}
           </div>
         </div>
 

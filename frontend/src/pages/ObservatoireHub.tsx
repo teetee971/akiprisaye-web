@@ -236,8 +236,9 @@ export default function ObservatoireHub() {
                 {/* Quick-action buttons */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
                   {[
-                    { Icon: BarChart2,   label: 'Comparaison enseignes', to: '/comparaison-enseignes' },
-                    { Icon: ShoppingCart, label: 'Comparaison panier',   to: '/comparaison-panier' },
+                    { Icon: BarChart2,    label: 'Comparaison enseignes',     to: '/comparaison-enseignes' },
+                    { Icon: ShoppingCart, label: 'Paniers types DOM / Métropole', to: '/paniers-types' },
+                    { Icon: ShoppingCart, label: 'Comparaison panier',          to: '/comparaison-panier' },
                     { Icon: Globe,        label: 'Comparateur citoyen',  to: '/comparateur-citoyen' },
                     { Icon: Star,         label: 'Évaluation magasins',  to: '/evaluation-magasins' },
                   ].map((item) => (
