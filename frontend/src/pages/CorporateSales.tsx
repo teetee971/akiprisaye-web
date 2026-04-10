@@ -23,7 +23,7 @@ const PACKAGES = [
       'Accès illimité pour les bénéficiaires',
       'Tableau de bord gestionnaire',
       'Ateliers numériques inclus',
-      'Rapports d\'impact mensuels',
+      'Rapports d'impact mensuels',
       'Support prioritaire',
     ],
     examples: ['Centre Social Pointe-à-Pitre', 'CCAS Basse-Terre'],
@@ -64,7 +64,7 @@ const PACKAGES = [
     features: [
       'Tableau de bord exécutif',
       'Rapports territoriaux personnalisés',
-      'API d\'accès aux données',
+      'API d'accès aux données',
       'Veille concurrentielle',
       'Intégration portail citoyen',
       'SLA 99,9% garanti',
@@ -87,7 +87,7 @@ const PACKAGES = [
       'Accès complet à tarif solidaire',
       'Badge "Partenaire Solidaire"',
       'Communication commune',
-      'Données d\'impact partagées',
+      'Données d'impact partagées',
     ],
     examples: ['Secours Catholique Antilles', 'Restos du Cœur Réunion'],
   },
@@ -197,8 +197,9 @@ export default function CorporateSales() {
           <form onSubmit={handleContact} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Organisation</label>
+                <label htmlFor="cs-org" className="block text-sm text-gray-400 mb-1">Organisation</label>
                 <input
+                  id="cs-org"
                   type="text"
                   required
                   value={contactForm.org}
@@ -208,8 +209,9 @@ export default function CorporateSales() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Nom du contact</label>
+                <label htmlFor="cs-name" className="block text-sm text-gray-400 mb-1">Nom du contact</label>
                 <input
+                  id="cs-name"
                   type="text"
                   required
                   value={contactForm.name}
@@ -220,8 +222,9 @@ export default function CorporateSales() {
               </div>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Email institutionnel</label>
+              <label htmlFor="cs-email" className="block text-sm text-gray-400 mb-1">Email institutionnel</label>
               <input
+                id="cs-email"
                 type="email"
                 required
                 value={contactForm.email}
@@ -231,8 +234,9 @@ export default function CorporateSales() {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Type d'organisation</label>
+              <label htmlFor="cs-type" className="block text-sm text-gray-400 mb-1">Type d'organisation</label>
               <select
+                id="cs-type"
                 value={selectedType ?? ''}
                 onChange={(e) => setSelectedType(e.target.value)}
                 required
