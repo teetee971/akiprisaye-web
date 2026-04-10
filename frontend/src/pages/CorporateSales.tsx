@@ -23,7 +23,7 @@ const PACKAGES = [
       'Accès illimité pour les bénéficiaires',
       'Tableau de bord gestionnaire',
       'Ateliers numériques inclus',
-      'Rapports d'impact mensuels',
+      "Rapports d'impact mensuels",
       'Support prioritaire',
     ],
     examples: ['Centre Social Pointe-à-Pitre', 'CCAS Basse-Terre'],
@@ -64,7 +64,7 @@ const PACKAGES = [
     features: [
       'Tableau de bord exécutif',
       'Rapports territoriaux personnalisés',
-      'API d'accès aux données',
+      "API d'accès aux données",
       'Veille concurrentielle',
       'Intégration portail citoyen',
       'SLA 99,9% garanti',
@@ -87,7 +87,7 @@ const PACKAGES = [
       'Accès complet à tarif solidaire',
       'Badge "Partenaire Solidaire"',
       'Communication commune',
-      'Données d'impact partagées',
+      "Données d'impact partagées",
     ],
     examples: ['Secours Catholique Antilles', 'Restos du Cœur Réunion'],
   },
@@ -132,7 +132,6 @@ export default function CorporateSales() {
       {/* Packages */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {PACKAGES.map((pkg) => {
-          const PkgIcon = pkg.icon;
           return (
             <div
               key={pkg.type}
@@ -156,7 +155,7 @@ export default function CorporateSales() {
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{pkg.emoji}</span>
                   <div>
-                    <h3 className={`text-lg font-bold text-white`}>{pkg.label}</h3>
+                    <h3 className="text-lg font-bold text-white">{pkg.label}</h3>
                     <p className="text-sm text-gray-400">{pkg.subtitle}</p>
                   </div>
                 </div>
@@ -165,9 +164,7 @@ export default function CorporateSales() {
                   <div className="text-xs text-gray-500">ou {pkg.annualFee}€/an</div>
                 </div>
               </div>
-              <div className="text-xs text-gray-400 mb-3">
-                🎯 {pkg.target}
-              </div>
+              <div className="text-xs text-gray-400 mb-3">🎯 {pkg.target}</div>
               <ul className="space-y-1.5 mb-4">
                 {pkg.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
@@ -176,12 +173,8 @@ export default function CorporateSales() {
                   </li>
                 ))}
               </ul>
-              <div className="text-xs text-gray-500">
-                💡 Potentiel : {pkg.potentialMRR}
-              </div>
-              <div className="text-xs text-gray-600 mt-1">
-                Ex : {pkg.examples.join(', ')}
-              </div>
+              <div className="text-xs text-gray-500">💡 Potentiel : {pkg.potentialMRR}</div>
+              <div className="text-xs text-gray-600 mt-1">Ex : {pkg.examples.join(', ')}</div>
             </div>
           );
         })}
