@@ -495,7 +495,7 @@ async function fetchIEDOMData() {
       const period = new Date().toISOString().slice(0, 7);
       for (const line of lines.slice(1, 80)) {
         const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
-        const ecart = parseFloat((cells[ecartIdx] ?? '0').replace(',', '.').replace('%', ''));
+        const ecart = parseFloat((cells[ecartIdx] ?? '0').replace(',', '.').replace(/%/g, ''));
         if (!Number.isFinite(ecart) || ecart === 0) continue;
 
         const category = catIdx >= 0 ? (cells[catIdx] ?? 'Général') : 'Général';
