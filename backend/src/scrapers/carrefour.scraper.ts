@@ -19,6 +19,7 @@ import {
   BaseScraper,
   type ScrapeResult,
   type ScrapedObservation,
+  type TerritoryCode,
   sleep,
   REQUEST_DELAY_MS,
 } from './base.scraper.js';
@@ -37,7 +38,7 @@ const USER_AGENT = 'akiprisaye-web/1.0 (https://teetee971.github.io/akiprisaye-w
  * Each ID maps to a physical store and a territory.
  * Extend this list as new stores are confirmed.
  */
-const CARREFOUR_STORES: { osmId: string; territory: 'gp' | 'mq' | 'gf' | 're'; label: string }[] = [
+const CARREFOUR_STORES: { osmId: string; territory: TerritoryCode; label: string }[] = [
   { osmId: '2709085079', territory: 'gp', label: 'Carrefour Guadeloupe' },
   { osmId: '2709085080', territory: 'mq', label: 'Carrefour Martinique' },
 ];

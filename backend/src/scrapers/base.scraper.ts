@@ -32,7 +32,7 @@ export const FETCH_TIMEOUT_MS = 10_000;
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 /** ISO 3166-1 alpha-2 territory codes supported by the platform. */
-export type TerritoryCode = 'gp' | 'mq' | 'gf' | 're';
+export type TerritoryCode = 'gp' | 'mq' | 'gf' | 're' | 'yt';
 
 /** Source label for observations produced by scrapers. */
 export type ScraperSource = 'scraper';
