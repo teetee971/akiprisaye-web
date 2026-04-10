@@ -20,6 +20,81 @@ import {
 export type RiskLevel = 'LOW' | 'MODERATE' | 'HIGH' | 'RESTRICTED' | 'PROHIBITED';
 export type WarningLevel = 'info' | 'warning' | 'error';
 
+/**
+ * Hazard categories inspired by INCI Beauty, Que Choisir and Zenziscope.
+ * PE = Perturbateur endocrinien avéré
+ * PE_SUSPECTE = Perturbateur endocrinien suspecté
+ * CMR = Cancérogène / Mutagène / Reprotoxique
+ * ALLERGEN = Allergène réglementé (Annexe III Règlement 1223/2009)
+ * NANO = Nanoparticule
+ * SILICONE = Silicone non biodégradable
+ * PEG = PEG / éthoxylé (risque contamination 1,4-dioxane)
+ * IRRITANT = Irritant cutané ou muqueux reconnu
+ */
+export type HazardCategory =
+  | 'PE'
+  | 'PE_SUSPECTE'
+  | 'CMR'
+  | 'ALLERGEN'
+  | 'NANO'
+  | 'SILICONE'
+  | 'PEG'
+  | 'IRRITANT';
+
+export const HAZARD_CATEGORY_META: Record<
+  HazardCategory,
+  { label: string; emoji: string; color: string; description: string }
+> = {
+  PE: {
+    label: 'Perturbateur endocrinien',
+    emoji: '🟣',
+    color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200',
+    description: 'Substance avérée perturbant le système hormonal (ANSES, ECHA).',
+  },
+  PE_SUSPECTE: {
+    label: 'PE suspecté',
+    emoji: '🔵',
+    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200',
+    description: 'Perturbateur endocrinien suspecté selon les évaluations en cours.',
+  },
+  CMR: {
+    label: 'CMR',
+    emoji: '🔴',
+    color: 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200',
+    description: 'Cancérogène, Mutagène ou Reprotoxique (classé par IARC, ECHA ou CIRC).',
+  },
+  ALLERGEN: {
+    label: 'Allergène réglementé',
+    emoji: '🟡',
+    color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200',
+    description: 'Allergène soumis à déclaration obligatoire (Annexe III Règlement CE 1223/2009).',
+  },
+  NANO: {
+    label: 'Nanoparticule',
+    emoji: '⚫',
+    color: 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200',
+    description: 'Substance sous forme nanoparticulaire. Déclaration [nano] obligatoire sur l\'étiquette.',
+  },
+  SILICONE: {
+    label: 'Silicone non biodégradable',
+    emoji: '🩶',
+    color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
+    description: 'Silicone persistant dans l\'environnement aquatique. Certaines formes cycliques sont des PE.',
+  },
+  PEG: {
+    label: 'PEG / éthoxylé',
+    emoji: '🟠',
+    color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200',
+    description: 'Polyéthylène glycol ou dérivé éthoxylé. Risque de contamination au 1,4-dioxane (CMR).',
+  },
+  IRRITANT: {
+    label: 'Irritant',
+    emoji: '🟤',
+    color: 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200',
+    description: 'Irritant cutané ou des muqueuses reconnu, notamment sur peaux sensibles.',
+  },
+};
+
 export interface IngredientSource {
   name: string;
   url: string;
@@ -34,8 +109,62 @@ export interface CosmeticIngredient {
   function: string[];
   riskLevel: RiskLevel;
   restrictions?: string;
+  hazardCategories?: HazardCategory[];
   sources?: IngredientSource[];
   [key: string]: unknown;
+}
+
+/* ------------------------------------------------------------------ */
+/* Open Beauty Facts                                                    */
+/* ------------------------------------------------------------------ */
+
+export interface OpenBeautyProduct {
+  productName: string;
+  brand?: string;
+  imageUrl?: string;
+  inciList?: string;
+  categories?: string[];
+}
+
+/**
+ * Fetch a product from Open Beauty Facts by barcode.
+ * Uses the same API shape as Open Food Facts v2.
+ */
+export async function fetchOpenBeautyFacts(barcode: string): Promise<OpenBeautyProduct | null> {
+  if (!barcode || barcode.trim() === '') return null;
+  try {
+    const url =
+      `https://world.openbeautyfacts.org/api/v2/product/${encodeURIComponent(barcode.trim())}.json` +
+      `?fields=product_name,brands,image_front_url,ingredients_text,categories_tags`;
+    const res = await fetch(url, {
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'AKiPriSaYe/1.0 (https://teetee971.github.io/akiprisaye-web)',
+      },
+    });
+    if (!res.ok) return null;
+    const data = await res.json() as {
+      status?: number;
+      product?: {
+        product_name?: string;
+        brands?: string;
+        image_front_url?: string;
+        ingredients_text?: string;
+        categories_tags?: string[];
+      };
+    };
+    if (data.status !== 1 || !data.product) return null;
+    const p = data.product;
+    return {
+      productName: (p.product_name ?? '').trim() || `Produit ${barcode}`,
+      brand: p.brands ?? undefined,
+      imageUrl: p.image_front_url ?? undefined,
+      inciList: (p.ingredients_text ?? '').trim() || undefined,
+      categories: Array.isArray(p.categories_tags) ? p.categories_tags.slice(0, 5) : [],
+    };
+  } catch {
+    return null;
+  }
 }
 
 export interface IdentifiedIngredients {
@@ -321,6 +450,36 @@ export function getOfficialDatabases(): unknown {
   return OFFICIAL_DATABASES;
 }
 
+/* ------------------------------------------------------------------ */
+/* Hazard category analysis                                             */
+/* ------------------------------------------------------------------ */
+
+export interface HazardSummary {
+  category: HazardCategory;
+  ingredients: string[];
+}
+
+/**
+ * Group identified ingredients by hazard category.
+ * Returns one entry per category found, sorted by severity.
+ */
+export function analyzeHazardCategories(ingredients: CosmeticIngredient[]): HazardSummary[] {
+  const order: HazardCategory[] = ['PE', 'CMR', 'PE_SUSPECTE', 'ALLERGEN', 'NANO', 'SILICONE', 'PEG', 'IRRITANT'];
+  const map = new Map<HazardCategory, string[]>();
+
+  for (const ing of ingredients) {
+    const cats = (ing.hazardCategories ?? []) as HazardCategory[];
+    for (const cat of cats) {
+      if (!map.has(cat)) map.set(cat, []);
+      map.get(cat)!.push(ing.inciName);
+    }
+  }
+
+  return order
+    .filter((cat) => map.has(cat))
+    .map((cat) => ({ category: cat, ingredients: map.get(cat)! }));
+}
+
 export default {
   parseInciList,
   findIngredient,
@@ -329,6 +488,8 @@ export default {
   generateWarnings,
   collectSources,
   evaluateProduct,
+  analyzeHazardCategories,
+  fetchOpenBeautyFacts,
   getCategories,
   getRegulatoryReferences,
   getOfficialDatabases,
