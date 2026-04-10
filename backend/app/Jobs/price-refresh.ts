@@ -1,189 +1,126 @@
-// price-refresh.ts - CRON job to refresh prices from external sources
-// This job should run daily to update price data from partner stores
+/**
+ * price-refresh.ts — Scheduled price-refresh job (node-cron)
+ *
+ * Runs every day at 2 AM UTC to collect fresh price observations from the
+ * Open Prices API (prices.openfoodfacts.org) via the platform's typed
+ * scraper layer (backend/src/scrapers/).
+ *
+ * Usage (standalone):
+ *   npx tsx backend/app/Jobs/price-refresh.ts
+ *
+ * Integration with SyncScheduler (backend/src/services/scheduler/syncScheduler.ts):
+ *   The SyncScheduler already schedules syncOpenPricesJob every 6 hours.
+ *   This file exists as an alternative entry-point for a daily full-run and
+ *   can be wired to the scheduler with:
+ *     this.registerJob({ id: 'price:refresh', cron: '0 2 * * *', handler: runPriceRefreshJob })
+ */
 
-import type { CronJob } from '@adonisjs/core/types';
+import { CarrefourScraper } from '../../src/scrapers/carrefour.scraper.js';
+import { LeclercScraper }   from '../../src/scrapers/leclerc.scraper.js';
+import { SuperUScraper }    from '../../src/scrapers/superu.scraper.js';
+import type { ScrapeResult } from '../../src/scrapers/base.scraper.js';
 
-interface PriceSource {
-  name: string;
-  url: string;
-  apiKey?: string;
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+/** Notify on job failure — extend with email/webhook/Sentry as needed. */
+function notifyAdmin(jobName: string, error: unknown): void {
+  const msg = error instanceof Error ? error.message : String(error);
+  console.error(`[CRON][${jobName}] ⚠️  Admin notification: job failed — ${msg}`);
+  // TODO: integrate with alerting service (email, Slack webhook, Sentry, etc.)
 }
 
-class PriceRefreshJob implements CronJob {
-  /**
-   * CRON expression: Run every day at 2:00 AM
-   */
-  public pattern = '0 2 * * *';
+// ── Main job function ──────────────────────────────────────────────────────────
 
-  /**
-   * Job name for logging
-   */
-  public name = 'price-refresh';
+/**
+ * Run a full price-refresh cycle across all configured DOM-TOM retailer scrapers.
+ *
+ * @returns Summary counts and any collected errors.
+ */
+export async function runPriceRefreshJob(): Promise<{
+  success: boolean;
+  totalObservations: number;
+  totalErrors: number;
+  results: Record<string, { observations: number; errors: string[] }>;
+  error?: string;
+}> {
+  console.info('[CRON][price-refresh] Started at', new Date().toISOString());
 
-  /**
-   * Main job execution
-   */
-  async handle() {
-    console.log('[CRON] Price refresh job started at', new Date().toISOString());
+  const scrapers = [
+    new CarrefourScraper(),
+    new LeclercScraper(),
+    new SuperUScraper(),
+  ];
 
-    try {
-      // Step 1: Fetch prices from external sources
-      await this.fetchFromSources();
+  const summary: Record<string, { observations: number; errors: string[] }> = {};
+  let totalObservations = 0;
+  let totalErrors = 0;
 
-      // Step 2: Update database
-      await this.updateDatabase();
-
-      // Step 3: Clean old data (older than 30 days)
-      await this.cleanOldPrices();
-
-      // Step 4: Generate statistics
-      await this.generateStatistics();
-
-      console.log('[CRON] Price refresh job completed successfully');
-    } catch (error) {
-      console.error('[CRON] Price refresh job failed:', error);
-      // In production: Send alert to admin
-      this.notifyAdmin(error);
-    }
-  }
-
-  /**
-   * Fetch prices from partner stores APIs
-   */
-  private async fetchFromSources(): Promise<void> {
-    console.log('[CRON] Fetching prices from sources...');
-
-    const sources: PriceSource[] = [
-      { name: 'Carrefour API', url: 'https://api.carrefour.example/prices' },
-      { name: 'Super U API', url: 'https://api.superu.example/prices' },
-      { name: 'Leader Price API', url: 'https://api.leaderprice.example/prices' }
-    ];
-
-    for (const source of sources) {
+  try {
+    // Run all scrapers in sequence (each already includes polite rate-limiting)
+    for (const scraper of scrapers) {
+      let result: ScrapeResult;
       try {
-        // In production: Make actual API calls
-        console.log(`[CRON] Fetching from ${source.name}...`);
-        
-        // Mock delay to simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Mock data - replace with actual API response
-        const mockPrices = this.generateMockPrices(source.name);
-        
-        console.log(`[CRON] Fetched ${mockPrices.length} prices from ${source.name}`);
-      } catch (error) {
-        console.error(`[CRON] Error fetching from ${source.name}:`, error);
-        // Continue with other sources even if one fails
+        result = await scraper.fetch();
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error(`[CRON][price-refresh] ${scraper.retailer} — unexpected error: ${msg}`);
+        summary[scraper.retailer] = { observations: 0, errors: [msg] };
+        totalErrors += 1;
+        continue;
+      }
+
+      summary[scraper.retailer] = {
+        observations: result.observations.length,
+        errors: result.errors,
+      };
+      totalObservations += result.observations.length;
+      totalErrors += result.errors.length;
+
+      console.info(
+        `[CRON][price-refresh] ${scraper.retailer} — ` +
+        `${result.observations.length} observations, ${result.errors.length} errors`,
+      );
+
+      if (result.errors.length > 0) {
+        result.errors.slice(0, 3).forEach((e) =>
+          console.warn(`  ⚠️  ${e}`),
+        );
       }
     }
-  }
 
-  /**
-   * Update database with new prices
-   */
-  private async updateDatabase(): Promise<void> {
-    console.log('[CRON] Updating database...');
-    
-    // In production:
-    // 1. Compare new prices with existing ones
-    // 2. Update changed prices
-    // 3. Add new products
-    // 4. Mark discontinued products
-    
-    await new Promise(resolve => setTimeout(resolve, 500));
-    console.log('[CRON] Database updated successfully');
-  }
+    console.info(
+      `[CRON][price-refresh] Completed — ${totalObservations} observations total, ` +
+      `${totalErrors} errors`,
+    );
 
-  /**
-   * Clean old price data
-   */
-  private async cleanOldPrices(): Promise<void> {
-    console.log('[CRON] Cleaning old prices...');
-    
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
-    // In production: Delete prices older than 30 days
-    // DELETE FROM prices WHERE last_update < :thirtyDaysAgo
-    
-    console.log('[CRON] Old prices cleaned');
-  }
+    return { success: true, totalObservations, totalErrors, results: summary };
 
-  /**
-   * Generate daily statistics
-   */
-  private async generateStatistics(): Promise<void> {
-    console.log('[CRON] Generating statistics...');
-    
-    // In production:
-    // 1. Calculate average prices by category
-    // 2. Identify price trends (increases/decreases)
-    // 3. Generate alerts for significant changes
-    // 4. Update dashboard metrics
-    
-    const stats = {
-      totalProducts: 10000,
-      pricesUpdated: 8500,
-      newProducts: 150,
-      averageChange: -2.5, // % change
-      topIncreases: [],
-      topDecreases: []
-    };
-    
-    console.log('[CRON] Statistics generated:', stats);
-  }
-
-  /**
-   * Generate mock prices for testing
-   */
-  private generateMockPrices(sourceName: string): any[] {
-    const count = Math.floor(Math.random() * 100) + 50;
-    const prices = [];
-    
-    for (let i = 0; i < count; i++) {
-      prices.push({
-        ean: this.generateEAN(),
-        store: sourceName.replace(' API', ''),
-        price: parseFloat((Math.random() * 20 + 1).toFixed(2)),
-        lastUpdate: new Date().toISOString()
-      });
-    }
-    
-    return prices;
-  }
-
-  /**
-   * Generate random EAN code
-   */
-  private generateEAN(): string {
-    let ean = '';
-    for (let i = 0; i < 13; i++) {
-      ean += Math.floor(Math.random() * 10);
-    }
-    return ean;
-  }
-
-  /**
-   * Notify admin of job failure
-   */
-  private notifyAdmin(error: Error): void {
-    console.error('[CRON] Sending admin notification...');
-    
-    // In production:
-    // 1. Send email to admin
-    // 2. Log to error tracking service (Sentry, etc.)
-    // 3. Send webhook to monitoring service
-    
-    console.error('[CRON] Admin notified of error:', error.message);
-  }
-
-  /**
-   * Job error handler
-   */
-  async onError(error: Error) {
-    console.error('[CRON] Job execution error:', error);
-    this.notifyAdmin(error);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[CRON][price-refresh] Fatal error:', msg);
+    notifyAdmin('price-refresh', err);
+    return { success: false, totalObservations, totalErrors, results: summary, error: msg };
   }
 }
 
-export default PriceRefreshJob;
+// ── Standalone entry-point ─────────────────────────────────────────────────────
+
+// When executed directly (e.g. `node price-refresh.js` or `tsx price-refresh.ts`),
+// run the job immediately and exit.
+const isMain =
+  typeof import.meta.url === 'string' &&
+  process.argv[1] != null &&
+  new URL(import.meta.url).pathname === new URL(process.argv[1], 'file://').pathname;
+
+if (isMain) {
+  runPriceRefreshJob()
+    .then((r) => {
+      console.info('[CRON][price-refresh] Done:', r);
+      process.exit(r.success ? 0 : 1);
+    })
+    .catch((err) => {
+      console.error('[CRON][price-refresh] Uncaught error:', err);
+      process.exit(1);
+    });
+}
+

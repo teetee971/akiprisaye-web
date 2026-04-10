@@ -13,6 +13,7 @@ import {
   BaseScraper,
   type ScrapeResult,
   type ScrapedObservation,
+  type TerritoryCode,
   sleep,
   REQUEST_DELAY_MS,
 } from './base.scraper.js';
@@ -21,7 +22,7 @@ const OPENPRICES_API = 'https://prices.openfoodfacts.org/api/v1/prices';
 const USER_AGENT     = 'akiprisaye-web/1.0 (https://teetee971.github.io/akiprisaye-web; contact via GitHub)';
 
 /** OSM store IDs for Super U / Courses U in French DOM-TOM. */
-const SUPERU_STORES: { osmId: string; territory: 'gp' | 'mq' | 'gf' | 're'; label: string }[] = [
+const SUPERU_STORES: { osmId: string; territory: TerritoryCode; label: string }[] = [
   { osmId: '5312045891', territory: 'gp', label: 'Super U Guadeloupe' },
   { osmId: '5312045892', territory: 'mq', label: 'Super U Martinique' },
 ];

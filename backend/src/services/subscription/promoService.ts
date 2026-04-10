@@ -125,7 +125,7 @@ export class PromoService {
   /**
    * Apply a promo code to a user subscription, returning adjusted price
    */
-  async applyPromoCode(userId: string, code: string, planKey: string): Promise<ApplyPromoResult> {
+  async applyPromoCode(_userId: string, code: string, planKey: string): Promise<ApplyPromoResult> {
     const validation = await this.validatePromoCode(code, planKey);
 
     if (!validation.valid) {

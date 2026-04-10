@@ -180,8 +180,9 @@ export default function DataMarketplace() {
         {!ordered ? (
           <form onSubmit={handleOrder} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Rapport sélectionné</label>
+              <label htmlFor="dm-report" className="block text-sm text-gray-400 mb-1">Rapport sélectionné</label>
               <select
+                id="dm-report"
                 value={selectedReport ?? ''}
                 onChange={(e) => setSelectedReport(e.target.value)}
                 required
@@ -194,8 +195,9 @@ export default function DataMarketplace() {
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Email de livraison</label>
+              <label htmlFor="dm-email" className="block text-sm text-gray-400 mb-1">Email de livraison</label>
               <input
+                id="dm-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

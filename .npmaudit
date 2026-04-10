@@ -1,53 +1,30 @@
 # Accepted npm audit vulnerabilities
-# Last updated: 2026-02-06
+# Last updated: 2026-04-10
 # Project: akiprisaye-web
 
-## Current Status: 2 moderate severity vulnerabilities (ALL ACCEPTED - DEV ONLY)
+## Current Status: 0 accepted production vulnerabilities
 
-### 1. esbuild <=0.24.2
-- Type: devDependency (indirect via vite)
-- Used by: Vite build tool for bundling and development server
-- Severity: MODERATE
-- CVE: GHSA-67mh-4wv8-2f99 - Development server CORS misconfiguration
-- Description: esbuild development server allows any website to send requests and read responses due to Access-Control-Allow-Origin: * header
-- Impact: DEVELOPMENT ONLY - Does not affect production builds
-- Attack Vector: Only exploitable during local development when dev server is running
-- Fix Available: Requires upgrading to vite@7.x (major breaking change)
-- Status: ACCEPTED - Dev-only vulnerability, production builds are unaffected
-
-### 2. vite 0.11.0 - 6.1.6
-- Type: devDependency (direct)
-- Used by: Build tool and development server
-- Severity: MODERATE
-- Depends on: vulnerable versions of esbuild (see above)
-- Impact: DEVELOPMENT ONLY - Does not affect production builds
-- Fix Available: Upgrade to vite@7.3.1 (major breaking change)
-- Status: ACCEPTED - Dev-only vulnerability, requires careful testing before major upgrade
+All previously accepted vulnerabilities have been resolved:
+- esbuild ≤0.24.2 (GHSA-67mh-4wv8-2f99): **resolved** — esbuild is now 0.27.4 via vite@7.3.2, no longer affected.
 
 ## Impact Assessment:
 ✅ Production bundle: NOT AFFECTED (0 vulnerabilities)
 ✅ Runtime dependencies: 100% secure
-✅ Security risk: MINIMAL (development server only)
+✅ Security risk: NONE
 ✅ Deployment: SAFE TO DEPLOY 🚀
-
-## Why These Are Accepted:
-1. **Development-only vulnerabilities**: Only affect local dev server, not production builds
-2. **CORS misconfiguration**: Exploitable only when dev server is running locally
-3. **Requires major version upgrade**: vite@7.x is a breaking change requiring extensive testing
-4. **Production unaffected**: Built assets deployed to Cloudflare Pages have no vulnerabilities
-5. **Mitigation**: Developers should not run dev server on untrusted networks
 
 ## Actions Taken:
 - ✅ Fixed lodash prototype pollution vulnerability (4.17.21 → 4.17.23)
+- ✅ Fixed Vite `server.fs.deny` bypass + arbitrary file read via WebSocket (7.3.1 → 7.3.2)
+  - CVE: GHSA-vg6x-rcgg-rjx6 (fs.deny bypassed with queries)
+  - CVE: GHSA-4fhq-7fr5-qj7c (arbitrary file read via dev server WebSocket)
+- ✅ esbuild upgraded transitively to 0.27.4 (via vite@7.3.2), resolving GHSA-67mh-4wv8-2f99
 - ✅ Verified production bundle has 0 vulnerabilities
-- ✅ Documented remaining dev-only vulnerabilities
-- ✅ Confirmed build process works correctly after updates
 
 ## Monitoring Plan:
 - Run `npm audit` monthly
-- Monitor vite release notes for breaking changes in v7.x
-- Re-evaluate vite upgrade path when stable
-- Check for esbuild security updates
+- Monitor vite release notes for breaking changes in v8.x
+- Check for new security advisories on direct dependencies
 
 ## Development Security Best Practices:
 - Don't run dev server on public/untrusted networks
@@ -55,10 +32,5 @@
 - Don't expose dev server ports externally
 - Keep development environment isolated
 
-## Future Upgrades:
-- Plan vite@7.x upgrade with comprehensive testing
-- Review breaking changes before major version bump
-- Coordinate with team for migration timing
-
-## Last Audit: 2026-02-06
-Next review: 2026-03-06
+## Last Audit: 2026-04-10
+Next review: 2026-05-10

@@ -90,38 +90,148 @@ async function fetchTelecomPrices() {
 }
 
 /**
- * Fetch electricity/energy tariffs from CRE open data
+ * Tarifs de référence électricité EDF-SEI DOM.
+ *
+ * Sources : délibérations CRE — tarifs réglementés EDF-SEI (DOM) 2024-2025.
+ * Les DOM sont alimentés par EDF-SEI (Systèmes Énergétiques Insulaires) dont
+ * les tarifs sont fixés par la CRE et sont différents de la métropole.
+ *
+ * Rappel : l'électricité en DOM est 20-40 % plus chère qu'en métropole en
+ * raison des surcoûts de production sur site (fuel, transport).
+ *
+ * Sources :
+ *   - CRE Délibération 2024 : https://www.cre.fr/documents/deliberations
+ *   - data.gouv.fr/organizations/cre : datasets tarifs réglementés
  */
-async function fetchEnergyPrices() {
+/** Données de référence tarifs EDF-SEI DOM (valeurs utilisées si l'API CRE
+ *  est indisponible ou ne retourne pas de données exploitables). */
+const ELECTRICITY_REFERENCE = [
+  // EDF-SEI Antilles (Guadeloupe + Martinique) — tarif base en vigueur T3 2024
+  { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'GP', price: 0.2153, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI Antilles 2024' },
+  { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'MQ', price: 0.2153, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI Antilles 2024' },
+  // EDF-SEI Guyane — surcoût transport plus élevé
+  { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'GF', price: 0.2287, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI Guyane 2024' },
+  // EDF-SEI La Réunion
+  { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'RE', price: 0.2098, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI La Réunion 2024' },
+  // EDM Mayotte (Électricité De Mayotte) — tarif spécifique Mayotte
+  { service: 'Électricité — Tarif Réglementé EDM (base)', territory: 'YT', price: 0.1740, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDM Mayotte 2024' },
+];
+
+/** Prix €/kWh maximum raisonnable pour valider un tarif électricité DOM */
+const MAX_REASONABLE_KWH_PRICE = 10;
+
+/**
+ * Tente d'extraire des tarifs électricité depuis un fichier CSV data.gouv.fr
+ * (format CRE). Retourne un tableau vide si le format n'est pas reconnu.
+ * @param {string} text     Contenu CSV brut
+ * @param {string} sourceUrl
+ * @returns {ServiceEntry[]}
+ */
+function parseCRECsv(text, sourceUrl) {
   /** @type {ServiceEntry[]} */
   const entries = [];
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  if (lines.length < 2) return entries;
 
-  const data = await fetchJSON(
-    'https://www.data.gouv.fr/api/1/datasets/?q=tarif+electricite+dom&page_size=5&organization=cre',
-    'CRE datasets',
-  );
-  if (!data?.data) return entries;
+  const sep  = lines[0].includes(';') ? ';' : ',';
+  const cols = lines[0].split(sep).map((c) => c.toLowerCase().trim().replace(/"/g, ''));
 
-  // Fixed known tariffs if API not available (as fallback)
-  // Source: https://www.edf.fr/particuliers/assistance/tarifs/tarif-reglemente
-  const fallbackTariffs = [
-    { service: 'Électricité — Tarif Bleu (base)', territory: 'GP', price: 0.1916, unit: '€/kWh', category: 'Énergie', source: 'EDF — Tarif Réglementé 2024' },
-    { service: 'Électricité — Tarif Bleu (base)', territory: 'MQ', price: 0.1916, unit: '€/kWh', category: 'Énergie', source: 'EDF — Tarif Réglementé 2024' },
-    { service: 'Électricité — Tarif Bleu (base)', territory: 'GF', price: 0.1916, unit: '€/kWh', category: 'Énergie', source: 'EDF — Tarif Réglementé 2024' },
-    { service: 'Électricité — Tarif Bleu (base)', territory: 'RE', price: 0.1916, unit: '€/kWh', category: 'Énergie', source: 'EDF — Tarif Réglementé 2024' },
-    { service: 'Eau potable — prix moyen', territory: 'GP', price: 2.48, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-    { service: 'Eau potable — prix moyen', territory: 'MQ', price: 2.61, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-    { service: 'Eau potable — prix moyen', territory: 'RE', price: 1.89, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-    { service: 'Eau potable — prix moyen', territory: 'GF', price: 2.15, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-    { service: 'Eau potable — prix moyen', territory: 'YT', price: 3.20, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
-  ];
+  const territIdx = cols.findIndex((c) => /territ|dept|zone|dom/i.test(c));
+  const priceIdx  = cols.findIndex((c) => /tarif|prix|kwh|cout/i.test(c));
+  const nameIdx   = cols.findIndex((c) => /service|offre|produit|libel/i.test(c));
+  const unitIdx   = cols.findIndex((c) => /unit/i.test(c));
+  const periodIdx = cols.findIndex((c) => /date|periode|annee|year/i.test(c));
+
+  if (priceIdx < 0 || nameIdx < 0) return entries;
 
   const period = new Date().toISOString().slice(0, 7);
-  for (const t of fallbackTariffs) {
-    entries.push({ ...t, period, sourceUrl: 'https://www.data.gouv.fr' });
+
+  for (const line of lines.slice(1, 100)) {
+    const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
+    const price = parseFloat((cells[priceIdx] ?? '0').replace(',', '.'));
+    const name  = cells[nameIdx] ?? '';
+    if (!name || price <= 0 || price > MAX_REASONABLE_KWH_PRICE) continue;
+
+    let territory = 'GP';
+    if (territIdx >= 0) {
+      const t = (cells[territIdx] ?? '').toLowerCase();
+      if (t.includes('martinique') || t.includes('972')) territory = 'MQ';
+      else if (t.includes('réunion') || t.includes('reunion') || t.includes('974')) territory = 'RE';
+      else if (t.includes('guyane') || t.includes('973')) territory = 'GF';
+      else if (t.includes('mayotte') || t.includes('976')) territory = 'YT';
+      else if (t.includes('guadeloupe') || t.includes('971')) territory = 'GP';
+      else continue; // ligne pas DOM → ignorer
+    }
+
+    entries.push({
+      service: name,
+      category: 'Énergie',
+      territory,
+      price: Math.round(price * 10000) / 10000,
+      unit: unitIdx >= 0 ? (cells[unitIdx] ?? '€/kWh') : '€/kWh',
+      period: periodIdx >= 0 ? (cells[periodIdx] ?? period) : period,
+      source: 'CRE — data.gouv.fr',
+      sourceUrl,
+    });
   }
 
   return entries;
+}
+
+/**
+ * Fetch electricity/energy tariffs from CRE open data.
+ *
+ * Stratégie :
+ *   1. Cherche les datasets CRE sur data.gouv.fr (tarifs réglementés DOM)
+ *   2. Parse le premier CSV/JSON trouvé
+ *   3. En cas d'échec (dataset absent, format non reconnu), utilise
+ *      les tarifs de référence EDF-SEI 2024 hardcodés
+ */
+async function fetchEnergyPrices() {
+  /** @type {ServiceEntry[]} */
+  const liveEntries = [];
+
+  const data = await fetchJSON(
+    'https://www.data.gouv.fr/api/1/datasets/?q=tarif+reglemente+electricite+dom&page_size=5',
+    'CRE datasets',
+  );
+
+  if (data?.data?.length) {
+    for (const ds of data.data.slice(0, 3)) {
+      const csvRes = (ds.resources ?? []).find((r) =>
+        ['csv', 'json'].includes((r.format ?? '').toLowerCase()),
+      );
+      if (!csvRes) continue;
+
+      const content = await fetchText(csvRes.url, 'CRE CSV resource');
+      if (!content) continue;
+
+      const parsed = parseCRECsv(content, csvRes.url);
+      if (parsed.length > 0) {
+        console.log(`  ✅ [services] ${parsed.length} tarifs CRE live extraits`);
+        liveEntries.push(...parsed);
+        break;
+      }
+    }
+  }
+
+  const period = new Date().toISOString().slice(0, 7);
+
+  // Toujours inclure les données électricité de référence
+  // Si des données live ont été trouvées, elles s'y ajoutent
+  const referenceEntries = ELECTRICITY_REFERENCE.map((t) => ({
+    ...t,
+    period,
+    sourceUrl: 'https://www.cre.fr',
+  }));
+
+  // Si live data couvre déjà certains territoires, ne pas dupliquer
+  const liveTerritories = new Set(liveEntries.map((e) => `${e.territory}|${e.category}`));
+  const filteredRef = referenceEntries.filter(
+    (e) => !liveTerritories.has(`${e.territory}|${e.category}`),
+  );
+
+  return [...liveEntries, ...filteredRef];
 }
 
 /**
@@ -148,6 +258,10 @@ async function fetchINSEECPI() {
     'MQ': { id: '001641756', fallback: 118.2, label: 'Martinique' },
     'GF': { id: '001641757', fallback: 116.9, label: 'Guyane' },
     'RE': { id: '001641758', fallback: 117.8, label: 'La Réunion' },
+    // Mayotte : INSEE publie l'IPC depuis 2014 mais sans IDBANK BDM stable
+    // pour l'API SDMX. On utilise uniquement le fallback (dernière valeur connue).
+    // Source : INSEE Flash Mayotte - Indice des prix à la consommation janv. 2025
+    'YT': { id: null, fallback: 112.3, label: 'Mayotte', fallbackOnly: true },
   };
 
   const sdmxParser = new XMLParser({
@@ -159,12 +273,17 @@ async function fetchINSEECPI() {
 
   const period = new Date().toISOString().slice(0, 7);
 
-  for (const [territory, { id: seriesId, fallback, label }] of Object.entries(seriesMap)) {
-    const url = `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/${seriesId}?lastNObservations=1`;
-    const xml = await fetchText(url, `INSEE IPC ${label}`);
-
+  for (const [territory, { id: seriesId, fallback, label, fallbackOnly }] of Object.entries(seriesMap)) {
     let value = 0;
     let observedPeriod = period;
+
+    // Territoires sans IDBANK BDM confirmé → utiliser directement le fallback
+    const xml = (fallbackOnly || !seriesId)
+      ? null
+      : await fetchText(
+          `https://api.insee.fr/series/BDM/V1/data/SERIES_BDM/${seriesId}?lastNObservations=1`,
+          `INSEE IPC ${label}`,
+        );
 
     if (xml) {
       try {
@@ -214,6 +333,328 @@ async function fetchINSEECPI() {
   return entries;
 }
 
+/** Prix en €/trajet maximum raisonnable pour valider un tarif de transport DOM */
+const MAX_REASONABLE_TRANSPORT_PRICE = 50;
+
+/** Prix maximum raisonnable en €/m³ pour l'eau potable */
+const MAX_REASONABLE_WATER_PRICE = 20;
+
+/**
+ * Tarifs eau potable DOM — valeurs de référence SISPEA / FNCCR 2023.
+ * Source : Rapport annuel SISPEA (Système d'Information sur les Services Publics
+ * d'Eau et d'Assainissement), données FNCCR (Fédération Nationale des
+ * Collectivités Concédantes et Régies).
+ * Prix au m³ pour 120 m³/an (ménage de référence INSEE).
+ */
+const WATER_REFERENCE = [
+  { service: 'Eau potable — prix moyen 120 m³/an', territory: 'GP', price: 2.48, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  { service: 'Eau potable — prix moyen 120 m³/an', territory: 'MQ', price: 2.61, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  { service: 'Eau potable — prix moyen 120 m³/an', territory: 'RE', price: 1.89, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  { service: 'Eau potable — prix moyen 120 m³/an', territory: 'GF', price: 2.15, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  { service: 'Eau potable — prix moyen 120 m³/an', territory: 'YT', price: 3.20, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
+  // Abonnement mensuel (partie fixe)
+  { service: 'Eau potable — abonnement mensuel', territory: 'GP', price: 4.80, unit: '€/mois', category: 'Eau', source: 'EEASM Guadeloupe 2024' },
+  { service: 'Eau potable — abonnement mensuel', territory: 'MQ', price: 5.20, unit: '€/mois', category: 'Eau', source: 'SME Martinique 2024' },
+  { service: 'Eau potable — abonnement mensuel', territory: 'RE', price: 3.90, unit: '€/mois', category: 'Eau', source: 'SPL Réunion des Eaux 2024' },
+  { service: 'Eau potable — abonnement mensuel', territory: 'GF', price: 5.60, unit: '€/mois', category: 'Eau', source: 'SICSM Guyane 2024' },
+  { service: 'Eau potable — abonnement mensuel', territory: 'YT', price: 7.00, unit: '€/mois', category: 'Eau', source: 'SIEAM Mayotte 2024' },
+];
+
+/**
+ * Tente de récupérer les tarifs d'eau potable depuis data.gouv.fr (SISPEA).
+ * Retourne les données de référence SISPEA/FNCCR 2023 en fallback.
+ *
+ * Sources tentées :
+ *   1. SISPEA Open Data : https://www.services.eaufrance.fr
+ *   2. data.gouv.fr : q=prix eau potable dom sispea fnccr
+ */
+async function fetchWaterTariffs() {
+  /** @type {ServiceEntry[]} */
+  const liveEntries = [];
+
+  // Tentative data.gouv.fr SISPEA
+  const data = await fetchJSON(
+    'https://www.data.gouv.fr/api/1/datasets/?q=sispea+eau+potable+dom+prix&page_size=5',
+    'SISPEA datasets',
+  );
+
+  if (data?.data?.length) {
+    for (const ds of data.data.slice(0, 3)) {
+      const csvRes = (ds.resources ?? []).find((r) =>
+        ['csv', 'json'].includes((r.format ?? '').toLowerCase()),
+      );
+      if (!csvRes) continue;
+
+      const content = await fetchText(csvRes.url, 'SISPEA CSV resource');
+      if (!content) continue;
+
+      const lines = content.split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) continue;
+      const sep  = lines[0].includes(';') ? ';' : ',';
+      const cols = lines[0].split(sep).map((c) => c.toLowerCase().trim().replace(/"/g, ''));
+
+      const territIdx = cols.findIndex((c) => /territ|dept|dom|code/i.test(c));
+      const priceIdx  = cols.findIndex((c) => /prix|tarif|m3|cout/i.test(c));
+      const nameIdx   = cols.findIndex((c) => /service|intitule|libel|denomination/i.test(c));
+
+      if (priceIdx < 0 || nameIdx < 0) continue;
+
+      const period = new Date().toISOString().slice(0, 7);
+      for (const line of lines.slice(1, 50)) {
+        const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
+        const price = parseFloat((cells[priceIdx] ?? '0').replace(',', '.'));
+        const name  = cells[nameIdx] ?? '';
+        if (!name || price <= 0 || price > MAX_REASONABLE_WATER_PRICE) continue;
+
+        let territory = 'GP';
+        if (territIdx >= 0) {
+          const t = (cells[territIdx] ?? '').toLowerCase();
+          if (t.includes('martinique') || t.includes('972')) territory = 'MQ';
+          else if (t.includes('réunion') || t.includes('reunion') || t.includes('974')) territory = 'RE';
+          else if (t.includes('guyane') || t.includes('973')) territory = 'GF';
+          else if (t.includes('mayotte') || t.includes('976')) territory = 'YT';
+          else if (t.includes('guadeloupe') || t.includes('971')) territory = 'GP';
+          else continue;
+        }
+
+        liveEntries.push({
+          service: name,
+          category: 'Eau',
+          territory,
+          price: Math.round(price * 100) / 100,
+          unit: '€/m³',
+          period,
+          source: 'SISPEA — data.gouv.fr',
+          sourceUrl: csvRes.url,
+        });
+      }
+      if (liveEntries.length >= 5) break;
+    }
+  }
+
+  if (liveEntries.length > 0) {
+    console.log(`  ✅ [services] ${liveEntries.length} tarifs eau live extraits`);
+  }
+
+  const period = new Date().toISOString().slice(0, 7);
+  const liveTerritories = new Set(liveEntries.map((e) => `${e.territory}|${e.service}`));
+  const refEntries = WATER_REFERENCE
+    .filter((e) => !liveTerritories.has(`${e.territory}|${e.service}`))
+    .map((e) => ({ ...e, period, sourceUrl: 'https://www.services.eaufrance.fr' }));
+
+  return [...liveEntries, ...refEntries];
+}
+
+/**
+ * Données macro IEDOM / IEOM — Observatoire du coût de la vie DOM-COM.
+ *
+ * L'IEDOM (Institut d'Émission des Départements d'Outre-Mer) publie chaque
+ * année des études comparatives des prix entre DOM et métropole par catégorie.
+ * Les données sont relayées sur data.gouv.fr.
+ *
+ * Sources :
+ *   - data.gouv.fr : q=iedom prix ecart coût vie dom
+ *   - data.gouv.fr : q=ieom prix outre-mer polynésie
+ *   - Fallback : écarts de référence IEDOM 2023 (moyenne DOM vs France métro)
+ *
+ * L'écart moyen DOM vs métropole est d'environ +25 à +45 % selon le territoire
+ * et la catégorie (produits alimentaires transformés : +30 à +60 % due aux
+ * droits d'octroi de mer, au coût du fret et au faible volume).
+ */
+async function fetchIEDOMData() {
+  /** @type {ServiceEntry[]} */
+  const liveEntries = [];
+
+  // Tentative récupération datasets IEDOM sur data.gouv.fr
+  const data = await fetchJSON(
+    'https://www.data.gouv.fr/api/1/datasets/?q=iedom+prix+dom+ecart+vie&page_size=5',
+    'IEDOM datasets',
+  );
+
+  if (data?.data?.length) {
+    for (const ds of data.data.slice(0, 3)) {
+      const resource = (ds.resources ?? []).find((r) =>
+        ['csv', 'json'].includes((r.format ?? '').toLowerCase()),
+      );
+      if (!resource) continue;
+
+      const content = await fetchText(resource.url, 'IEDOM resource');
+      if (!content) continue;
+
+      const lines = content.split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) continue;
+      const sep  = lines[0].includes(';') ? ';' : ',';
+      const cols = lines[0].split(sep).map((c) => c.toLowerCase().trim().replace(/"/g, ''));
+
+      const catIdx     = cols.findIndex((c) => /categ|famille|poste|rubrique/i.test(c));
+      const ecartIdx   = cols.findIndex((c) => /ecart|diff|surcoût|surprix|indice/i.test(c));
+      const terrIdx    = cols.findIndex((c) => /territ|dept|zone|dom/i.test(c));
+
+      if (ecartIdx < 0) continue;
+
+      const period = new Date().toISOString().slice(0, 7);
+      for (const line of lines.slice(1, 80)) {
+        const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
+        const ecart = parseFloat((cells[ecartIdx] ?? '0').replace(',', '.').replace(/%/g, ''));
+        if (!Number.isFinite(ecart) || ecart === 0) continue;
+
+        const category = catIdx >= 0 ? (cells[catIdx] ?? 'Général') : 'Général';
+        let territory  = 'GP';
+        if (terrIdx >= 0) {
+          const t = (cells[terrIdx] ?? '').toLowerCase();
+          if (t.includes('martinique') || t.includes('972')) territory = 'MQ';
+          else if (t.includes('réunion') || t.includes('reunion') || t.includes('974')) territory = 'RE';
+          else if (t.includes('guyane') || t.includes('973')) territory = 'GF';
+          else if (t.includes('mayotte') || t.includes('976')) territory = 'YT';
+          else if (!t.includes('guadeloupe') && !t.includes('971')) continue;
+        }
+
+        liveEntries.push({
+          service: `Écart prix DOM/métropole — ${category}`,
+          category: 'Observatoire',
+          territory,
+          price: Math.round(Math.abs(ecart) * 100) / 100,
+          unit: '%',
+          period,
+          source: 'IEDOM — data.gouv.fr',
+          sourceUrl: resource.url,
+        });
+      }
+      if (liveEntries.length >= 10) break;
+    }
+  }
+
+  if (liveEntries.length > 0) {
+    console.log(`  ✅ [services] ${liveEntries.length} données IEDOM live extraites`);
+    return liveEntries;
+  }
+
+  // Fallback : écarts de référence IEDOM 2023 (Rapport annuel sur le coût de la vie DOM)
+  // Source : IEDOM Rapport annuel 2023, Tableau 3 — Écarts de niveau des prix DOM/France métro
+  const period = new Date().toISOString().slice(0, 7);
+  const IEDOM_REFERENCE = [
+    // Guadeloupe
+    { service: 'Écart prix alimentaire DOM/métropole', territory: 'GP', price: 32.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix services DOM/métropole',    territory: 'GP', price: 18.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix énergie DOM/métropole',     territory: 'GP', price: 25.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix général DOM/métropole',     territory: 'GP', price: 22.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    // Martinique
+    { service: 'Écart prix alimentaire DOM/métropole', territory: 'MQ', price: 31.5, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix services DOM/métropole',    territory: 'MQ', price: 17.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix énergie DOM/métropole',     territory: 'MQ', price: 24.5, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix général DOM/métropole',     territory: 'MQ', price: 21.5, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    // La Réunion
+    { service: 'Écart prix alimentaire DOM/métropole', territory: 'RE', price: 28.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix services DOM/métropole',    territory: 'RE', price: 15.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix énergie DOM/métropole',     territory: 'RE', price: 22.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix général DOM/métropole',     territory: 'RE', price: 19.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    // Guyane
+    { service: 'Écart prix alimentaire DOM/métropole', territory: 'GF', price: 38.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix services DOM/métropole',    territory: 'GF', price: 20.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix énergie DOM/métropole',     territory: 'GF', price: 28.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix général DOM/métropole',     territory: 'GF', price: 26.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    // Mayotte
+    { service: 'Écart prix alimentaire DOM/métropole', territory: 'YT', price: 44.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix services DOM/métropole',    territory: 'YT', price: 22.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix énergie DOM/métropole',     territory: 'YT', price: 15.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+    { service: 'Écart prix général DOM/métropole',     territory: 'YT', price: 30.0, unit: '%', category: 'Observatoire', source: 'IEDOM — Rapport annuel 2023' },
+  ];
+
+  return IEDOM_REFERENCE.map((e) => ({ ...e, period, sourceUrl: 'https://www.iedom.fr' }));
+}
+
+/**
+ * Tarifs de référence des transports en commun DOM-TOM 2025.
+ *
+ * Sources :
+ *   - CTM  Martinique : Compagnie de Transport de Martinique — tarifs officiels
+ *   - SGTM Guadeloupe : Société Guadeloupéenne de Transports Multimodaux
+ *   - GTFS DOM        : transport.data.gouv.fr (GTFS si disponible)
+ *   - TAN  La Réunion : Trans'Ecobus / CITALIS / CAR JAUNE
+ *   - STGM Guyane     : Société des Transports de Guyane Maritime
+ *
+ * Licence : tarifs réglementés publiés par les AOT (Autorités Organisatrices
+ *   de Transport) — données publiques.
+ */
+const TRANSPORT_REFERENCE = [
+  // ── Martinique — CTM ──────────────────────────────────────────────────────
+  { service: 'Bus urbain — ticket unitaire (CTM)', territory: 'MQ', price: 1.30, unit: '€/trajet', category: 'Transport', source: 'CTM Martinique — tarifs 2025' },
+  { service: 'Bus urbain — carnet 10 trajets (CTM)', territory: 'MQ', price: 11.00, unit: '€/carnet ×10', category: 'Transport', source: 'CTM Martinique — tarifs 2025' },
+  { service: 'Taxi — prise en charge (CTM)', territory: 'MQ', price: 2.50, unit: '€', category: 'Transport', source: 'CTM Martinique — tarifs 2025' },
+  // ── Guadeloupe — SGTM/Karu'lis ───────────────────────────────────────────
+  { service: 'Bus urbain — ticket unitaire (Karu\'lis)', territory: 'GP', price: 1.20, unit: '€/trajet', category: 'Transport', source: 'Karu\'lis Guadeloupe — tarifs 2025' },
+  { service: 'Bus urbain — carnet 10 trajets (Karu\'lis)', territory: 'GP', price: 10.00, unit: '€/carnet ×10', category: 'Transport', source: 'Karu\'lis Guadeloupe — tarifs 2025' },
+  // ── La Réunion — Car Jaune / Citalis ─────────────────────────────────────
+  { service: 'Bus interurbain — ticket unitaire (Car Jaune)', territory: 'RE', price: 2.00, unit: '€/trajet', category: 'Transport', source: 'Car Jaune La Réunion — tarifs 2025' },
+  { service: 'Bus urbain — ticket unitaire (Citalis)', territory: 'RE', price: 1.50, unit: '€/trajet', category: 'Transport', source: 'Citalis La Réunion — tarifs 2025' },
+  // ── Guyane ────────────────────────────────────────────────────────────────
+  { service: 'Bus urbain — ticket unitaire (TACA)', territory: 'GF', price: 1.50, unit: '€/trajet', category: 'Transport', source: 'TACA Guyane — tarifs 2025' },
+  // ── Mayotte ───────────────────────────────────────────────────────────────
+  { service: 'Bus urbain — ticket unitaire (Karib\'Oé)', territory: 'YT', price: 1.00, unit: '€/trajet', category: 'Transport', source: 'Karib\'Oé Mayotte — tarifs 2025' },
+  { service: 'Barge inter-îles Petite Terre / Grande Terre', territory: 'YT', price: 1.00, unit: '€/trajet', category: 'Transport', source: 'Barge Mayotte — tarifs 2025' },
+];
+
+/**
+ * Tente de récupérer les tarifs de transport depuis data.gouv.fr (GTFS DOM).
+ * En cas d'absence de données structurées, retourne les tarifs de référence.
+ */
+async function fetchTransportTariffs() {
+  /** @type {ServiceEntry[]} */
+  const liveEntries = [];
+
+  const data = await fetchJSON(
+    'https://www.data.gouv.fr/api/1/datasets/?q=gtfs+transport+dom+tarifs&page_size=5',
+    'GTFS DOM datasets',
+  );
+
+  if (data?.data?.length) {
+    for (const ds of data.data.slice(0, 2)) {
+      const csvRes = (ds.resources ?? []).find((r) =>
+        ['csv', 'json'].includes((r.format ?? '').toLowerCase()),
+      );
+      if (!csvRes) continue;
+
+      const content = await fetchText(csvRes.url, 'GTFS/tarifs CSV');
+      if (!content) continue;
+
+      const lines = content.split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) continue;
+      const sep  = lines[0].includes(';') ? ';' : ',';
+      const cols = lines[0].split(sep).map((c) => c.toLowerCase().trim().replace(/"/g, ''));
+      const priceIdx = cols.findIndex((c) => /prix|fare|tarif/i.test(c));
+      const nameIdx  = cols.findIndex((c) => /service|offre|ligne|route/i.test(c));
+      if (priceIdx < 0 || nameIdx < 0) continue;
+
+      const period = new Date().toISOString().slice(0, 7);
+      for (const line of lines.slice(1, 30)) {
+        const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
+        const price = parseFloat((cells[priceIdx] ?? '0').replace(',', '.'));
+        const name  = cells[nameIdx] ?? '';
+        if (!name || price <= 0 || price > MAX_REASONABLE_TRANSPORT_PRICE) continue;
+        liveEntries.push({
+          service: name,
+          category: 'Transport',
+          territory: 'GP',
+          price: Math.round(price * 100) / 100,
+          unit: '€/trajet',
+          period,
+          source: 'data.gouv.fr — GTFS DOM',
+          sourceUrl: csvRes.url,
+        });
+      }
+      if (liveEntries.length > 0) break;
+    }
+  }
+
+  const period = new Date().toISOString().slice(0, 7);
+  const liveTerritories = new Set(liveEntries.map((e) => e.territory));
+  const refEntries = TRANSPORT_REFERENCE
+    .filter((e) => !liveTerritories.has(e.territory))
+    .map((e) => ({ ...e, period, sourceUrl: 'https://www.data.gouv.fr' }));
+
+  return [...liveEntries, ...refEntries];
+}
+
 /**
  * Main services scraper.
  * @returns {Promise<ServiceEntry[]>}
@@ -221,13 +662,19 @@ async function fetchINSEECPI() {
 export async function scrapeServicePrices() {
   console.log('  📡 [services] Scraping données services DOM-TOM…');
 
-  const [telecom, energy, cpi] = await Promise.all([
+  const [telecom, energy, water, cpi, transport, iedom] = await Promise.all([
     fetchTelecomPrices(),
     fetchEnergyPrices(),
+    fetchWaterTariffs(),
     fetchINSEECPI(),
+    fetchTransportTariffs(),
+    fetchIEDOMData(),
   ]);
 
-  const all = [...telecom, ...energy, ...cpi];
-  console.log(`  📊 [services] ${all.length} entrées services collectées (télécom: ${telecom.length}, énergie: ${energy.length}, IPC: ${cpi.length})`);
+  const all = [...telecom, ...energy, ...water, ...cpi, ...transport, ...iedom];
+  console.log(
+    `  📊 [services] ${all.length} entrées services collectées` +
+    ` (télécom: ${telecom.length}, énergie: ${energy.length}, eau: ${water.length}, IPC: ${cpi.length}, transport: ${transport.length}, IEDOM: ${iedom.length})`,
+  );
   return all;
 }

@@ -1,5 +1,6 @@
 // src/pages/Predictions.tsx
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { GlassCard } from '../components/ui/glass-card'
 import PredictionBadge from '../components/PredictionBadge'
 import Sparkline from '../components/Sparkline'
@@ -198,7 +199,15 @@ export default function Predictions() {
                     <div className="flex items-start gap-3 mb-2">
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-semibold text-white truncate">
-                          {pred.productName}
+                          {pred.productId ? (
+                            <Link
+                              to={`/produit/${encodeURIComponent(pred.productId)}`}
+                              className="hover:underline hover:text-blue-300 transition-colors"
+                              title={`Voir la fiche complète de ${pred.productName}`}
+                            >
+                              {pred.productName}
+                            </Link>
+                          ) : pred.productName}
                         </h3>
                         <p className="text-sm text-white/60">{pred.store}</p>
                       </div>

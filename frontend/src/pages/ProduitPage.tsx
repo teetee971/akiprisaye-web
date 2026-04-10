@@ -302,6 +302,44 @@ export default function ProduitPage() {
                       {productInfo?.brand && (
                         <p className="text-sm text-slate-500 dark:text-slate-400">{productInfo.brand}</p>
                       )}
+                      {/* Nutri-Score + NOVA badges */}
+                      {(productInfo?.nutriScore || productInfo?.novaGroup) && (
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          {productInfo.nutriScore && (
+                            <span
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded font-bold text-xs text-white ${
+                                productInfo.nutriScore === 'A' ? 'bg-green-600' :
+                                productInfo.nutriScore === 'B' ? 'bg-lime-500' :
+                                productInfo.nutriScore === 'C' ? 'bg-yellow-500' :
+                                productInfo.nutriScore === 'D' ? 'bg-orange-500' : 'bg-red-600'
+                              }`}
+                              title="Nutri-Score : qualité nutritionnelle (A = meilleure, E = à éviter)"
+                            >
+                              Nutri-Score {productInfo.nutriScore}
+                            </span>
+                          )}
+                          {productInfo.novaGroup && (
+                            <span
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded font-bold text-xs text-white ${
+                                productInfo.novaGroup === 1 ? 'bg-green-600' :
+                                productInfo.novaGroup === 2 ? 'bg-lime-500' :
+                                productInfo.novaGroup === 3 ? 'bg-orange-500' : 'bg-red-600'
+                              }`}
+                              title={`NOVA groupe ${productInfo.novaGroup} : niveau de transformation (1 = non transformé, 4 = ultra-transformé)`}
+                            >
+                              NOVA {productInfo.novaGroup}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {productInfo?.ingredients && (
+                        <details className="mt-1">
+                          <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-300">
+                            Ingrédients ▾
+                          </summary>
+                          <p className="text-xs text-slate-400 mt-1 leading-relaxed">{productInfo.ingredients}</p>
+                        </details>
+                      )}
                       <p className="text-xs text-slate-400 mt-0.5 font-mono">EAN : {ean}</p>
                       {bestPrice !== null && (
                         <p className="mt-2 text-2xl font-bold text-green-600 dark:text-green-400">

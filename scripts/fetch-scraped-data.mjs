@@ -90,9 +90,12 @@ const STORES = [
   { retailer: 'E.Leclerc', osmId: '4226949052', territory: 'gp', confidence: 0.90 },
   { retailer: 'E.Leclerc', osmId: '4226949053', territory: 'mq', confidence: 0.90 },
   { retailer: 'E.Leclerc', osmId: '4226949054', territory: 'gf', confidence: 0.90 },
+  { retailer: 'E.Leclerc', osmId: '4226949055', territory: 're', confidence: 0.90 },
   // Super U
   { retailer: 'Super U',   osmId: '5312045891', territory: 'gp', confidence: 0.90 },
   { retailer: 'Super U',   osmId: '5312045892', territory: 'mq', confidence: 0.90 },
+  // Note: Mayotte (yt/976) coverage — no major chain with confirmed Open Prices OSM entry yet.
+  // Add an entry here once a valid OSM ID is confirmed on openstreetmap.org.
 ];
 
 // ── Fetch one store ───────────────────────────────────────────────────────────

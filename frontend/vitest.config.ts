@@ -82,6 +82,7 @@ export default defineConfig({
       // Firebase API key integrity — prevents re-introducing the wrong hardcoded key
       abs('./scripts/firebase-config.test.ts'),
       abs('./scripts/auto-scraper-robots.test.ts'),
+      abs('./scripts/scraper-base.test.ts'),
       // Aggregation utilities — normalizeRetailer, deduplicateObservations, discardOutliers
       abs('./src/test/compareAggregation.test.ts'),
       // Retailer link builder — UTM-enriched URLs + deep-links by retailer

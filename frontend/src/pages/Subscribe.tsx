@@ -167,6 +167,26 @@ export default function Subscribe() {
       (planId === 'sme_freemium' || planId === 'business_pro' || planId === 'PRO' || planId === 'BUSINESS')
     ? (price ?? 0) * 0.7
     : price;
+  const finalPrice = isCustomPricing
+    ? null
+    : applyPromoDiscount(domPrice ?? 0, appliedPromo?.discountPct ?? 0);
+
+  const handleApplyPromo = useCallback(() => {
+    const code = promoInput.trim();
+    if (!code) {
+      setPromoError('Veuillez saisir un code promo.');
+      return;
+    }
+    const validated = validatePromoCode(code);
+    if (!validated) {
+      setAppliedPromo(null);
+      setPromoError('Code promo invalide ou expiré.');
+      return;
+    }
+    setAppliedPromo(validated);
+    setPromoInput(validated.code);
+    setPromoError('');
+  }, [promoInput]);
 
   const activateTrialIfNeeded = () => {
     if (isTrial && trialAvailable && !isCustomPricing) {
@@ -419,22 +439,6 @@ export default function Subscribe() {
 
               <DataBadge source="INSEE · OPMR · data.gouv.fr" />
 
-              {/* Promo code widget */}
-              {!isCustomPricing && (
-                <div className="mt-4 pt-4 border-t border-white/[0.08]">
-                  <PromoCodeWidget
-                    planKey={planId}
-                    onApply={(discount, code) => {
-                      setPromoDiscount(discount);
-                      setPromoCode(code);
-                    }}
-                    onRemove={() => {
-                      setPromoDiscount(0);
-                      setPromoCode('');
-                    }}
-                  />
-                </div>
-              )}
             </GlassCard>
 
             {/* Promo code input */}
@@ -621,7 +625,7 @@ export default function Subscribe() {
                     <span className="text-blue-400">
                       {isCustomPricing
                         ? (currentPlan as { yearlyRange?: string }).yearlyRange
-                        : `${(domPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`}
+                        : `${(finalPrice ?? 0).toFixed(2)} € / ${cycle === 'yearly' ? 'an' : 'mois'}`}
                     </span>
                   </div>
                   {appliedPromo && !isCustomPricing && (
@@ -640,7 +644,7 @@ export default function Subscribe() {
               </div>
 
               {/* SumUp Payment form — only shown for paid non-custom plans */}
-              {!isCustomPricing && (domPrice ?? 0) > 0 && (
+              {!isCustomPricing && (finalPrice ?? 0) > 0 && (
                 <div className="mt-6">
                   {checkoutError && (
                     <div className="mb-4 p-3 bg-red-900/30 border border-red-500/40 rounded-lg text-red-300 text-sm">
@@ -658,7 +662,7 @@ export default function Subscribe() {
                   {checkoutId && (
                     <SumUpPaymentForm
                       checkoutId={checkoutId}
-                      amount={domPrice ?? 0}
+                      amount={finalPrice ?? 0}
                       currency="EUR"
                       planName={currentPlan.name}
                       onSuccess={handlePaymentSuccess}

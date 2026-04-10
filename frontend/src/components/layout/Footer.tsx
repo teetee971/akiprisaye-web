@@ -22,6 +22,7 @@ export default function Footer() {
     : `${BUILD_ENV} · ${BUILD_SHA}`;
 
   const [debugActive, setDebugActive] = useState(false);
+  const [dataFreshDate, setDataFreshDate] = useState<string | null>(null);
   const tapCount = useRef(0);
   const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -34,6 +35,18 @@ export default function Footer() {
     return () => {
       if (tapTimer.current) clearTimeout(tapTimer.current);
     };
+  }, []);
+
+  // Load scraping-health.json to show data freshness badge
+  useEffect(() => {
+    const base = import.meta.env.BASE_URL ?? '/';
+    fetch(`${base}data/scraping-health.json`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.lastScrapedAt) setDataFreshDate(data.lastScrapedAt);
+        else if (data?.date) setDataFreshDate(data.date);
+      })
+      .catch(() => {/* health file absent — silently ignore */});
   }, []);
 
   /**
@@ -148,7 +161,23 @@ export default function Footer() {
               <span className="ml-1 text-xs text-orange-400" aria-label="Auth debug activé">🔒</span>
             )}
           </button>
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-3 items-center flex-wrap">
+            {dataFreshDate && (() => {
+              const d = new Date(dataFreshDate);
+              const today = new Date();
+              const isToday = d.toDateString() === today.toDateString();
+              const label = isToday
+                ? '⚡ Données fraîches'
+                : `Données du ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`;
+              return (
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full border ${isToday ? 'bg-emerald-900/30 text-emerald-400 border-emerald-700/50' : 'bg-slate-800 text-slate-500 border-slate-700'}`}
+                  title={`Dernière actualisation : ${d.toLocaleString('fr-FR')}`}
+                >
+                  {label}
+                </span>
+              );
+            })()}
             <Suspense fallback={<SkeletonBadge />}><LiveOnlineBadge /></Suspense>
             <Link to="/mentions-legales" className="hover:text-slate-400 transition-colors">Mentions légales</Link>
             <Link to="/transparence" className="hover:text-slate-400 transition-colors">Confidentialité</Link>

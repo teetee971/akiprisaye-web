@@ -10,6 +10,7 @@
     "clean-build-for-repo": "npm ci --include=dev && cd frontend && rm -rf dist node_modules/.vite && npm ci --include=dev && npm run build",
     "audit:head": "node scripts/audit-deployment-url.mjs https://head.akiprisaye-web.pages.dev/",
     "verify:modules": "bash scripts/verify-modules-health.sh",
+    "audit:catalogue": "node scripts/audit-catalogue-json.mjs",
     "build": "cd frontend && npm ci --include=dev && npm run build",
     "dev": "cd frontend && npm run dev",
     "preview": "cd frontend && npm run preview",
@@ -45,6 +46,6 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "typescript": "^5.9.3",
-    "vite": "^7.3.1"
+    "vite": "7.3.2"
   }
 }

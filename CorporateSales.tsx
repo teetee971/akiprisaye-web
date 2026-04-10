@@ -132,6 +132,7 @@ export default function CorporateSales() {
       {/* Packages */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {PACKAGES.map((pkg) => {
+          const PkgIcon = pkg.icon;
           return (
             <div
               key={pkg.type}
@@ -164,7 +165,9 @@ export default function CorporateSales() {
                   <div className="text-xs text-gray-500">ou {pkg.annualFee}€/an</div>
                 </div>
               </div>
-              <div className="text-xs text-gray-400 mb-3">🎯 {pkg.target}</div>
+              <div className="text-xs text-gray-400 mb-3">
+                🎯 {pkg.target}
+              </div>
               <ul className="space-y-1.5 mb-4">
                 {pkg.features.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
@@ -173,8 +176,12 @@ export default function CorporateSales() {
                   </li>
                 ))}
               </ul>
-              <div className="text-xs text-gray-500">💡 Potentiel : {pkg.potentialMRR}</div>
-              <div className="text-xs text-gray-600 mt-1">Ex : {pkg.examples.join(', ')}</div>
+              <div className="text-xs text-gray-500">
+                💡 Potentiel : {pkg.potentialMRR}
+              </div>
+              <div className="text-xs text-gray-600 mt-1">
+                Ex : {pkg.examples.join(', ')}
+              </div>
             </div>
           );
         })}
