@@ -4,7 +4,7 @@
  * ┌────────────────────────────────────────────────────────────────────────┐
  * │  LACUNE COUVERTE : Open Prices est communautaire et ne couvre pas les  │
  * │  catalogues complets des enseignes. Ce module interroge directement    │
- * │  les APIs publiques de catalogues des 6 grandes enseignes DOM-TOM      │
+ * │  les APIs publiques de catalogues des 8 grandes enseignes DOM-TOM      │
  * │  pour un panier de 25 produits courants × 5 territoires.              │
  * │                                                                         │
  * │  Gain : des centaines de relevés de prix actuels (quotidiens) avec     │
@@ -18,6 +18,8 @@
  *   - Super U (CU)    : https://www.coursesu.com/api/2.0/catalog/search
  *   - Cora            : https://www.cora.fr/api/search/product (GP/MQ)
  *   - Carrefour Market: https://www.carrefour.fr/api/cm/v1/product-search
+ *   - Aldi            : https://www.aldi.fr/search (GP/MQ — catalogue national)
+ *   - Score Réunion   : https://www.score.re/api/v1/products/search (RE, groupe LEAL)
  *
  * Conformité légale :
  *   - Uniquement données publiques consultables sans authentification
@@ -277,6 +279,73 @@ const RETAILERS = [
         ),
         unit: _unit(p.pricing?.perUnitLabel ?? p.unit ?? p.unitOfMeasure),
         imageUrl: _str(p.medias?.[0]?.url ?? p.imageUrl ?? p.image ?? p.thumbnail),
+      })).filter((r) => r.price > 0);
+    },
+  },
+  {
+    name: 'aldi',
+    label: 'Aldi',
+    baseUrl: 'https://www.aldi.fr',
+    // Aldi est présent en Guadeloupe depuis 2022 (Baie-Mahault, Les Abymes)
+    // et en Martinique depuis 2023 (Le Lamentin). Présence confirmée DOM 2025.
+    territories: {
+      GP: null,   // Aldi GP — pas de code magasin exposé dans l'API publique
+      MQ: null,   // Aldi MQ — même situation
+      RE: null,
+      GF: null,
+      YT: null,
+    },
+    buildUrl(query) {
+      // Aldi France utilise un endpoint de recherche headless (Commerce Layer / Algolia).
+      // Le paramètre `q` déclenche la recherche produit nationale (catalogue commun DOM/métropole).
+      const p = new URLSearchParams({ q: query, resultsPerPage: '20', lang: 'fr' });
+      return `${this.baseUrl}/search?${p.toString()}`;
+    },
+    parseResult(json) {
+      const items = _extractArray(json, ['products', 'hits', 'items', 'results', 'data']);
+      return items.map((p) => ({
+        ean: _str(p.ean ?? p.barcode ?? p.code ?? p.objectID),
+        name: _str(p.name ?? p.title ?? p.label ?? p.productName),
+        brand: _str(p.brand ?? p.brandName ?? p.marque),
+        price: _num(
+          p.price?.value ?? p.price?.amount ?? p.price ??
+          p.offers?.[0]?.price ?? p.sellingPrice,
+        ),
+        unit: _unit(p.unit ?? p.unitOfMeasure ?? p.priceUnit),
+        imageUrl: _str(p.image?.url ?? p.imageUrl ?? p.thumbnail),
+      })).filter((r) => r.price > 0);
+    },
+  },
+  {
+    name: 'score_re',
+    label: 'Score Réunion',
+    baseUrl: 'https://www.score.re',
+    // Score et Jumbo Score sont les leaders de la grande distribution à La Réunion
+    // (groupe LEAL). Score.re exploite un site e-commerce avec catalogue en ligne.
+    territories: {
+      GP: null,
+      MQ: null,
+      RE: null,   // Score est spécifique RE — pas de code PDV requis, catalogue national
+      GF: null,
+      YT: null,
+    },
+    buildUrl(query) {
+      const p = new URLSearchParams({ q: query, page: '1', pageSize: '20' });
+      return `${this.baseUrl}/api/v1/products/search?${p.toString()}`;
+    },
+    parseResult(json) {
+      const unwrapped = json?.data ?? json?.response ?? json;
+      const items = _extractArray(unwrapped, ['products', 'items', 'results', 'hits', 'content']);
+      return items.map((p) => ({
+        ean: _str(p.ean ?? p.barcode ?? p.code ?? p.gtin),
+        name: _str(p.name ?? p.label ?? p.title ?? p.libelle ?? p.productName),
+        brand: _str(p.brand ?? p.brandName ?? p.marque),
+        price: _num(
+          p.price?.value ?? p.price?.amount ?? p.price ??
+          p.offers?.[0]?.price ?? p.priceValue ?? p.sellingPrice,
+        ),
+        unit: _unit(p.unit ?? p.unitOfMeasure ?? p.offers?.[0]?.unit),
+        imageUrl: _str(p.imageUrl ?? p.image?.url ?? p.photo ?? p.thumbnail),
       })).filter((r) => r.price > 0);
     },
   },

@@ -65,6 +65,11 @@ const RETAILER_NAME_FILTERS = [
   'carrefour',     // Carrefour Market DOM (GP/MQ/RE/GF)
   'simply',        // Simply Market DOM (devenu Carrefour Market dans certains territoires)
   'match',         // Match DOM — enseigne nord présente en GP
+  'aldi',          // Aldi — présent en GP (Baie-Mahault/Les Abymes 2022-2023) et MQ (Le Lamentin 2023)
+  'score',         // Score / Jumbo Score — La Réunion (groupe LEAL, leader de la grande distribution RE)
+  'monoprix',      // Monoprix — présent en Martinique (Fort-de-France)
+  'ecomax',        // Ecomax — enseigne discount Antilles (GP/MQ)
+  'lolo',          // Lolo — petites épiceries locales de quartier typiques des DOM (Antilles/Réunion)
 ];
 
 /** Pause entre les requêtes API pour respecter les rate limits */
