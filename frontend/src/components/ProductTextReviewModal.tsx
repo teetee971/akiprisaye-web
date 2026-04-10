@@ -72,7 +72,7 @@ export function ProductTextReviewModal({ suggestions, onConfirm, onCancel }: Pro
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       role="dialog"
-      aria-labelledby="modal-title"
+      aria-labelledby="product-review-modal-title"
       aria-describedby="modal-description"
       aria-modal="true"
     >
@@ -82,7 +82,7 @@ export function ProductTextReviewModal({ suggestions, onConfirm, onCancel }: Pro
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-white/10">
-          <h3 id="modal-title" className="text-xl font-bold text-white">
+          <h3 id="product-review-modal-title" className="text-xl font-bold text-white">
             🔍 Confirmer le produit détecté
           </h3>
           <p id="modal-description" className="text-sm text-white/70 mt-1">

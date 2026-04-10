@@ -299,6 +299,7 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
               id="global-search-results"
               ref={listRef}
               role="listbox"
+              aria-label="Résultats de recherche"
               className="py-2"
             >
               {results.map((item, idx) => {

@@ -258,6 +258,7 @@ export default function EnhancedSearch({
           ref={listboxRef}
           id={listboxId}
           role="listbox"
+          aria-label="Résultats de recherche de produits"
           className="absolute z-20 mt-2 w-full bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-96 overflow-auto"
         >
           {results.map((result, index) => {

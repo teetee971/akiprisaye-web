@@ -251,6 +251,7 @@ export default function ProductPriceLookup() {
               <button
                 type="submit"
                 disabled={!isValidEAN(input) || loading}
+                aria-label="Rechercher le produit par code EAN"
                 className="px-5 py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 disabled:opacity-40 rounded-2xl font-semibold text-white transition-all flex items-center gap-2"
               >
                 {loading ? <Loader2 size={18} className="animate-spin" /> : <ChevronRight size={18} />}

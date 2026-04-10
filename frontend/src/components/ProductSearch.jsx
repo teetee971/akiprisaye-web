@@ -271,6 +271,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
           ref={listboxRef}
           id={listboxId}
           role="listbox"
+          aria-label="Résultats de recherche de produits"
           className="absolute z-20 mt-2 w-full bg-slate-900/95 backdrop-blur-lg border border-white/10 rounded-xl shadow-xl max-h-80 overflow-auto"
         >
           {results.map((product, index) => (

@@ -125,6 +125,7 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
               className={`h-full ${barColorClass} transition-all duration-500 ease-out rounded-full`}
               style={{ width: `${ilpp.score}%` }}
               role="progressbar"
+              aria-label={`Indice de pression inflationniste : ${ilpp.score} sur 100`}
               aria-valuenow={ilpp.score}
               aria-valuemin={0}
               aria-valuemax={100}

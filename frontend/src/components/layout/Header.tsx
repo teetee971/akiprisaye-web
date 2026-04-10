@@ -164,7 +164,7 @@ export default function Header() {
                   className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-2 py-1.5 text-slate-100 hover:bg-slate-800 transition-colors"
                   aria-label="Mon compte"
                   aria-expanded={accountOpen}
-                  aria-haspopup="true"
+                  aria-haspopup="menu"
                 >
                   {/* Avatar circle */}
                   <span className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold flex-shrink-0 ${

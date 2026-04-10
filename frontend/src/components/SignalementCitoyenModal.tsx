@@ -80,7 +80,7 @@ export default function SignalementCitoyenModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="modal-title"
+      aria-labelledby="signalement-modal-title"
     >
       <button
         type="button"
@@ -101,7 +101,7 @@ export default function SignalementCitoyenModal({
           {/* Header */}
           <div className="flex items-start justify-between mb-6">
             <div>
-              <h2 id="modal-title" className="text-2xl font-bold text-white mb-2">
+              <h2 id="signalement-modal-title" className="text-2xl font-bold text-white mb-2">
                 Signaler une observation
               </h2>
               {productContext && (
