@@ -99,6 +99,8 @@ const RETAILERS = [
       MQ: ['9720', '9721', '9722', '9723'],
       RE: ['9740', '9741', '9742'],
       GF: ['9730'],
+      // Mayotte : E.Leclerc est présent à Mayotte depuis l'ouverture du magasin
+      // de Kawéni (2022). Un seul code de magasin confirmé à ce jour.
       YT: ['9760'],
     },
     /** @param {string} query @param {string[]} storeCodes */

@@ -50,9 +50,9 @@ const DOM_COUNTRIES = {
  */
 const RETAILER_NAME_FILTERS = [
   'leader price',
-  'intermarche',
+  'intermarche',   // ASCII sans accent — l'API icontains utilise unaccent() côté serveur
   'cora',
-  'geant casino',
+  'geant casino',  // ASCII sans accent — représente 'Géant Casino'
   'hyper u',
   'lidl',
   'casino',

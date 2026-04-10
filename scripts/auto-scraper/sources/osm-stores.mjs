@@ -39,7 +39,9 @@ const OVERPASS_ENDPOINTS = [
   'https://z.overpass-api.de/api/interpreter',
 ];
 
-/** Délai poli entre deux requêtes Overpass (rate limit public : ~2 req/s) */
+/** Délai poli entre deux requêtes Overpass (rate limit public : ~2 req/s ;
+ *  on utilise 1 500 ms pour une marge de sécurité confortable et respecter
+ *  la politique d'accès "poli" décrite dans les CGU Overpass API). */
 const OVERPASS_DELAY_MS = 1_500;
 
 /** Départements DOM-TOM avec leur préfixe de code postal */

@@ -103,7 +103,9 @@ async function fetchTelecomPrices() {
  *   - CRE Délibération 2024 : https://www.cre.fr/documents/deliberations
  *   - data.gouv.fr/organizations/cre : datasets tarifs réglementés
  */
-const ELECTRICITY_FALLBACK = [
+/** Données de référence tarifs EDF-SEI DOM (valeurs utilisées si l'API CRE
+ *  est indisponible ou ne retourne pas de données exploitables). */
+const ELECTRICITY_REFERENCE = [
   // EDF-SEI Antilles (Guadeloupe + Martinique) — tarif base en vigueur T3 2024
   { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'GP', price: 0.2153, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI Antilles 2024' },
   { service: 'Électricité — Tarif Réglementé EDF-SEI (base)', territory: 'MQ', price: 0.2153, unit: '€/kWh', category: 'Énergie', source: 'CRE — EDF-SEI Antilles 2024' },
@@ -217,7 +219,7 @@ async function fetchEnergyPrices() {
 
   // Toujours inclure les données électricité de référence
   // Si des données live ont été trouvées, elles s'y ajoutent
-  const referenceEntries = ELECTRICITY_FALLBACK.map((t) => ({
+  const referenceEntries = ELECTRICITY_REFERENCE.map((t) => ({
     ...t,
     period,
     sourceUrl: 'https://www.cre.fr',

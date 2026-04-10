@@ -38,7 +38,11 @@ import { sleep, fetchJSONWithRetry, fetchTextWithRetry } from './utils.mjs';
 
 /** @typedef {{ productName: string; category: string; territory: string; price: number; unit: string; date: string; source: string; market?: string; origin?: string; official: boolean; }} FreshPriceEntry */
 
-/** Prix maximum raisonnable pour un produit frais/vivrier (€/kg ou €/pièce) */
+/** Prix maximum raisonnable pour un produit frais/vivrier (€/kg ou €/pièce).
+ *  Seuil volontairement élevé (999 €) pour capturer également les produits
+ *  à haute valeur unitaire (épices rares, safran, vanille de Tahiti, etc.)
+ *  sans filtrer des erreurs de saisie qui seraient de toute façon détectées
+ *  lors de la révision manuelle des anomalies. */
 const MAX_REASONABLE_FRESH_PRICE = 999;
 
 const fetchJSON = (url, label) => fetchJSONWithRetry(url, label, 'daaf');
