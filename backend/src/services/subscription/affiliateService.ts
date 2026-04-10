@@ -81,7 +81,7 @@ export class AffiliateService {
    */
   async trackAffiliateConversion(
     referralCode: string,
-    planKey: string,
+    _planKey: string,
     revenue: number
   ): Promise<void> {
     const link = await prisma.affiliateLink.findUnique({ where: { referralCode } });
