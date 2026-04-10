@@ -70,6 +70,13 @@ const RETAILER_NAME_FILTERS = [
   'monoprix',      // Monoprix — présent en Martinique (Fort-de-France)
   'ecomax',        // Ecomax — enseigne discount Antilles (GP/MQ)
   'lolo',          // Lolo — petites épiceries locales de quartier typiques des DOM (Antilles/Réunion)
+  'auchan',        // Auchan — présent à La Réunion (Grand Saint-Denis) depuis 2012
+  'franprix',      // Franprix — supérettes franchisées présentes en Martinique (Fort-de-France)
+  'netto',         // Netto — enseigne discount du groupe U, présente en GP/MQ/RE
+  'u express',     // U Express — supérettes de proximité réseau U (GP/MQ/RE/GF)
+  'coccinelle',    // Coccinelle / Vival — réseau de petites épiceries U, Antilles/Réunion
+  'g20',           // G20 — supérettes groupe Casino présentes dans les DOM urbains (GP/MQ/RE)
+  'tropic',        // Tropic / Carib — enseignes/épiceries d'import-distribution locales DOM
 ];
 
 /** Pause entre les requêtes API pour respecter les rate limits */

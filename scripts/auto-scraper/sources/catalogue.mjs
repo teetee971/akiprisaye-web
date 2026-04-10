@@ -4,7 +4,7 @@
  * ┌────────────────────────────────────────────────────────────────────────┐
  * │  LACUNE COUVERTE : Open Prices est communautaire et ne couvre pas les  │
  * │  catalogues complets des enseignes. Ce module interroge directement    │
- * │  les APIs publiques de catalogues des 8 grandes enseignes DOM-TOM      │
+ * │  les APIs publiques de catalogues des 10 grandes enseignes DOM-TOM     │
  * │  pour un panier de 25 produits courants × 5 territoires.              │
  * │                                                                         │
  * │  Gain : des centaines de relevés de prix actuels (quotidiens) avec     │
@@ -20,6 +20,8 @@
  *   - Carrefour Market: https://www.carrefour.fr/api/cm/v1/product-search
  *   - Aldi            : https://www.aldi.fr/search (GP/MQ — catalogue national)
  *   - Score Réunion   : https://www.score.re/api/v1/products/search (RE, groupe LEAL)
+ *   - Auchan          : https://www.auchan.fr/api/v2/catalog/search (RE — Grand Saint-Denis)
+ *   - Monoprix        : https://www.monoprix.fr/api/v1/products/search (MQ — Fort-de-France)
  *
  * Conformité légale :
  *   - Uniquement données publiques consultables sans authentification
@@ -345,6 +347,82 @@ const RETAILERS = [
           p.offers?.[0]?.price ?? p.priceValue ?? p.sellingPrice,
         ),
         unit: _unit(p.unit ?? p.unitOfMeasure ?? p.offers?.[0]?.unit),
+        imageUrl: _str(p.imageUrl ?? p.image?.url ?? p.photo ?? p.thumbnail),
+      })).filter((r) => r.price > 0);
+    },
+  },
+  {
+    name: 'auchan',
+    label: 'Auchan Réunion',
+    baseUrl: 'https://www.auchan.fr',
+    // Auchan est présent à La Réunion depuis 2012 (Saint-Denis Grand Marché).
+    // Auchan.fr expose une API de recherche produit utilisée par le site e-commerce.
+    territories: {
+      GP: null,
+      MQ: null,
+      RE: null,   // Auchan RE — catalogue national auchan.fr (même référentiel)
+      GF: null,
+      YT: null,
+    },
+    buildUrl(query) {
+      const p = new URLSearchParams({
+        query,
+        lang: 'fr_FR',
+        currentPage: '1',
+        pageSize: '20',
+      });
+      return `${this.baseUrl}/api/v2/catalog/search?${p.toString()}`;
+    },
+    parseResult(json) {
+      const unwrapped = json?.data ?? json?.response ?? json;
+      const items = _extractArray(unwrapped, ['products', 'results', 'items', 'hits', 'content']);
+      return items.map((p) => ({
+        ean: _str(p.ean ?? p.code ?? p.gtin ?? p.barcode ?? p.id),
+        name: _str(p.label ?? p.name ?? p.title ?? p.libelle ?? p.description),
+        brand: _str(p.brand?.label ?? p.brand ?? p.brandName ?? p.marque),
+        price: _num(
+          p.price?.value ?? p.price?.amount ?? p.price ??
+          p.offers?.[0]?.price ?? p.sellingPrice ?? p.priceValue,
+        ),
+        unit: _unit(p.price?.unit ?? p.unit ?? p.unitOfMeasure ?? p.offers?.[0]?.unit),
+        imageUrl: _str(p.media?.[0]?.url ?? p.imageUrl ?? p.image ?? p.thumbnail),
+      })).filter((r) => r.price > 0);
+    },
+  },
+  {
+    name: 'monoprix',
+    label: 'Monoprix Martinique',
+    baseUrl: 'https://www.monoprix.fr',
+    // Monoprix est présent en Martinique (Fort-de-France, centre commercial La Galleria).
+    // Monoprix.fr propose un site e-commerce avec API de recherche produit.
+    territories: {
+      GP: null,
+      MQ: null,   // Monoprix MQ — catalogue national monoprix.fr
+      RE: null,
+      GF: null,
+      YT: null,
+    },
+    buildUrl(query) {
+      const p = new URLSearchParams({
+        query,
+        page: '1',
+        pageSize: '20',
+        lang: 'fr',
+      });
+      return `${this.baseUrl}/api/v1/products/search?${p.toString()}`;
+    },
+    parseResult(json) {
+      const unwrapped = json?.data ?? json?.results ?? json;
+      const items = _extractArray(unwrapped, ['products', 'items', 'results', 'hits', 'content']);
+      return items.map((p) => ({
+        ean: _str(p.ean ?? p.gtin ?? p.code ?? p.barcode ?? p.reference),
+        name: _str(p.name ?? p.label ?? p.title ?? p.libelle ?? p.description),
+        brand: _str(p.brand ?? p.brandName ?? p.marque ?? p.manufacturer),
+        price: _num(
+          p.price?.value ?? p.price?.amount ?? p.price ??
+          p.offers?.[0]?.price ?? p.sellingPrice ?? p.unitPrice,
+        ),
+        unit: _unit(p.unit ?? p.unitOfMeasure ?? p.price?.unit ?? p.quantityText),
         imageUrl: _str(p.imageUrl ?? p.image?.url ?? p.photo ?? p.thumbnail),
       })).filter((r) => r.price > 0);
     },
