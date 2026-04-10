@@ -110,6 +110,41 @@ export async function onRequest(context) {
         lastScan: lastScanLabel,
         count: sources.services?.count ?? 0,
       },
+      {
+        name: 'Logement / Loyers DOM (DVF + ANIL + INSEE)',
+        source: 'loyer',
+        ...sourceStatus(sources.loyer, isStale),
+        lastScan: lastScanLabel,
+        count: sources.loyer?.count ?? 0,
+      },
+      {
+        name: 'Médicaments remboursables (BDPM officiel)',
+        source: 'medicaments',
+        ...sourceStatus(sources.medicaments, isStale),
+        lastScan: lastScanLabel,
+        count: sources.medicaments?.count ?? 0,
+      },
+      {
+        name: 'Octroi de mer — taux par catégorie (Conseils Régionaux DOM)',
+        source: 'octroisMer',
+        ...sourceStatus(sources.octroisMer, isStale),
+        lastScan: lastScanLabel,
+        count: sources.octroisMer?.count ?? 0,
+      },
+      {
+        name: 'COM NC/PF/WF/PM/BL/MF — IEOM / ISPF / INSEE',
+        source: 'com',
+        ...sourceStatus(sources.com, isStale),
+        lastScan: lastScanLabel,
+        count: sources.com?.count ?? 0,
+      },
+      {
+        name: 'Grossistes alimentaires DOM (MIN / FranceAgriMer / ODEADOM)',
+        source: 'grossistes',
+        ...sourceStatus(sources.grossistes, isStale),
+        lastScan: lastScanLabel,
+        count: sources.grossistes?.count ?? 0,
+      },
     ];
 
     return new Response(JSON.stringify(result), {
@@ -119,12 +154,17 @@ export async function onRequest(context) {
   } catch {
     // Fallback: return all sources as unknown when health file is unavailable
     const fallback = [
-      { name: 'Carburants (prix-carburants.gouv.fr)',                          source: 'fuel',      status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Alimentaire (Open Prices + enseignes)',                         source: 'food',      status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Catalogue enseignes (Leclerc / Intermarché / LP / Super U)',    source: 'catalogue', status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Produits frais (DAAF / OPMR / DIETS)',                         source: 'fresh',     status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Bouclier Qualité Prix (data.gouv.fr)',                          source: 'bqp',       status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
-      { name: 'Services (ARCEP / CRE / INSEE / Eau / Transport / IEDOM)',      source: 'services',  status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Carburants (prix-carburants.gouv.fr)',                             source: 'fuel',        status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Alimentaire (Open Prices + enseignes)',                            source: 'food',        status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Catalogue enseignes (Leclerc / Intermarché / LP / Super U)',       source: 'catalogue',   status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Produits frais (DAAF / OPMR / DIETS)',                            source: 'fresh',       status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Bouclier Qualité Prix (data.gouv.fr)',                             source: 'bqp',         status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Services (ARCEP / CRE / INSEE / Eau / Transport / IEDOM)',         source: 'services',    status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Logement / Loyers DOM (DVF + ANIL + INSEE)',                       source: 'loyer',       status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Médicaments remboursables (BDPM officiel)',                        source: 'medicaments', status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Octroi de mer — taux par catégorie (Conseils Régionaux DOM)',      source: 'octroisMer',  status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'COM NC/PF/WF/PM/BL/MF — IEOM / ISPF / INSEE',                    source: 'com',         status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
+      { name: 'Grossistes alimentaires DOM (MIN / FranceAgriMer / ODEADOM)',      source: 'grossistes',  status: 'offline', health: 0, lastScan: 'Inconnu', count: 0 },
     ];
     return new Response(JSON.stringify(fallback), {
       headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },

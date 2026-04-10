@@ -45,12 +45,17 @@ import admin from 'firebase-admin';
 import OpenAI from 'openai';
 import { timedSource, isScrapingAllowed } from './sources/utils.mjs';
 
-import { scrapeFuelPrices }      from './sources/fuel.mjs';
-import { scrapeFoodPrices }      from './sources/food.mjs';
-import { scrapeBQPPrices }       from './sources/bqp.mjs';
-import { scrapeServicePrices }   from './sources/services.mjs';
-import { scrapeFreshPrices }     from './sources/daaf.mjs';
-import { scrapeCataloguePrices } from './sources/catalogue.mjs';
+import { scrapeFuelPrices }        from './sources/fuel.mjs';
+import { scrapeFoodPrices }        from './sources/food.mjs';
+import { scrapeBQPPrices }         from './sources/bqp.mjs';
+import { scrapeServicePrices }     from './sources/services.mjs';
+import { scrapeFreshPrices }       from './sources/daaf.mjs';
+import { scrapeCataloguePrices }   from './sources/catalogue.mjs';
+import { scrapeLoyerPrices }       from './sources/loyer.mjs';
+import { scrapeMedicamentPrices }  from './sources/medicaments.mjs';
+import { scrapeOctroisMer }        from './sources/octroi-mer.mjs';
+import { scrapeCOMPrices }         from './sources/com.mjs';
+import { scrapeGrossistePrices }   from './sources/grossistes.mjs';
 
 const DRY_RUN   = process.argv.includes('--dry-run');
 const DEEP_SCAN = process.argv.includes('--deep-scan');
@@ -318,13 +323,21 @@ async function main() {
   const shouldRun = (s) => SOURCE_FILTER === 'all' || SOURCE_FILTER === s;
 
   console.log('📡 Lancement du scraping…\n');
-  const [rawFuel, rawFood, rawFresh, rawCatalogue, rawBQP, rawServices] = await Promise.all([
-    shouldRun('fuel')      ? scrapeFuelPrices()                         : Promise.resolve([]),
-    shouldRun('food')      ? scrapeFoodPrices({ deepScan: DEEP_SCAN })  : Promise.resolve([]),
-    shouldRun('fresh')     ? scrapeFreshPrices()                        : Promise.resolve([]),
-    shouldRun('catalogue') ? scrapeCataloguePrices()                    : Promise.resolve([]),
-    shouldRun('bqp')       ? scrapeBQPPrices()                          : Promise.resolve([]),
-    shouldRun('services')  ? scrapeServicePrices()                      : Promise.resolve([]),
+  const [
+    rawFuel, rawFood, rawFresh, rawCatalogue, rawBQP, rawServices,
+    rawLoyer, rawMedicaments, rawOctrois, rawCOM, rawGrossistes,
+  ] = await Promise.all([
+    shouldRun('fuel')         ? scrapeFuelPrices()                         : Promise.resolve([]),
+    shouldRun('food')         ? scrapeFoodPrices({ deepScan: DEEP_SCAN })  : Promise.resolve([]),
+    shouldRun('fresh')        ? scrapeFreshPrices()                        : Promise.resolve([]),
+    shouldRun('catalogue')    ? scrapeCataloguePrices()                    : Promise.resolve([]),
+    shouldRun('bqp')          ? scrapeBQPPrices()                          : Promise.resolve([]),
+    shouldRun('services')     ? scrapeServicePrices()                      : Promise.resolve([]),
+    shouldRun('loyer')        ? scrapeLoyerPrices()                        : Promise.resolve([]),
+    shouldRun('medicaments')  ? scrapeMedicamentPrices()                   : Promise.resolve([]),
+    shouldRun('octroi-mer')   ? scrapeOctroisMer()                         : Promise.resolve([]),
+    shouldRun('com')          ? scrapeCOMPrices()                          : Promise.resolve([]),
+    shouldRun('grossistes')   ? scrapeGrossistePrices()                    : Promise.resolve([]),
   ]);
 
   // ── Normalisation ─────────────────────────────────────────────────────────
@@ -333,20 +346,30 @@ async function main() {
   const foodDedup      = deduplicateFoodEntries(rawFood);
 
   const counts = {
-    fuel:      fuelAggregated.length,
-    food:      foodDedup.length,
-    fresh:     rawFresh.length,
-    catalogue: rawCatalogue.length,
-    bqp:       rawBQP.length,
-    services:  rawServices.length,
+    fuel:        fuelAggregated.length,
+    food:        foodDedup.length,
+    fresh:       rawFresh.length,
+    catalogue:   rawCatalogue.length,
+    bqp:         rawBQP.length,
+    services:    rawServices.length,
+    loyer:       rawLoyer.length,
+    medicaments: rawMedicaments.length,
+    octroisMer:  rawOctrois.length,
+    com:         rawCOM.length,
+    grossistes:  rawGrossistes.length,
   };
 
-  console.log(`   ⛽ Carburants  : ${rawFuel.length} relevés → ${counts.fuel} entrées agrégées`);
-  console.log(`   🥦 Alimentaire : ${rawFood.length} relevés → ${counts.food} après dédup`);
-  console.log(`   🌿 Frais/vivriers: ${counts.fresh} relevés`);
-  console.log(`   🛒 Catalogue   : ${counts.catalogue} relevés (Leclerc/IMC/LP/SuperU)`);
-  console.log(`   📋 BQP         : ${counts.bqp} entrées`);
-  console.log(`   📡 Services    : ${counts.services} entrées`);
+  console.log(`   ⛽ Carburants      : ${rawFuel.length} relevés → ${counts.fuel} entrées agrégées`);
+  console.log(`   🥦 Alimentaire     : ${rawFood.length} relevés → ${counts.food} après dédup`);
+  console.log(`   🌿 Frais/vivriers  : ${counts.fresh} relevés`);
+  console.log(`   🛒 Catalogue       : ${counts.catalogue} relevés (Leclerc/IMC/LP/SuperU)`);
+  console.log(`   📋 BQP             : ${counts.bqp} entrées`);
+  console.log(`   📡 Services        : ${counts.services} entrées`);
+  console.log(`   🏠 Logement        : ${counts.loyer} entrées (loyers + immobilier)`);
+  console.log(`   💊 Médicaments     : ${counts.medicaments} entrées (BDPM)`);
+  console.log(`   🏛️  Octroi de mer   : ${counts.octroisMer} taux`);
+  console.log(`   🌏 COM (NC/PF/…)   : ${counts.com} entrées IEOM/ISPF/INSEE`);
+  console.log(`   🏭 Grossistes      : ${counts.grossistes} cours de gros (MIN/FranceAgriMer/ODEADOM)`);
 
   // ── Shock detection ───────────────────────────────────────────────────────
   console.log('\n🔍 Détection des chocs de prix…');
@@ -447,6 +470,51 @@ async function main() {
       console.log('💾 catalogue-prices.json mis à jour');
     }
 
+    // ── Save loyer snapshot ───────────────────────────────────────────────
+    if (rawLoyer.length > 0) {
+      saveJSON(join(dataDir, 'loyer-prices.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'DVF + ANIL + INSEE — data.gouv.fr', autoCollected: true },
+        prices: rawLoyer,
+      });
+      console.log('💾 loyer-prices.json mis à jour');
+    }
+
+    // ── Save médicaments snapshot ─────────────────────────────────────────
+    if (rawMedicaments.length > 0) {
+      saveJSON(join(dataDir, 'medicaments-prices.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'BDPM — base-donnees-publique.medicaments.gouv.fr', autoCollected: true },
+        prices: rawMedicaments,
+      });
+      console.log('💾 medicaments-prices.json mis à jour');
+    }
+
+    // ── Save octroi de mer snapshot ───────────────────────────────────────
+    if (rawOctrois.length > 0) {
+      saveJSON(join(dataDir, 'octroi-mer.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'Conseils Régionaux DOM / DGDDI — data.gouv.fr', autoCollected: true },
+        rates: rawOctrois,
+      });
+      console.log('💾 octroi-mer.json mis à jour');
+    }
+
+    // ── Save COM snapshot ─────────────────────────────────────────────────
+    if (rawCOM.length > 0) {
+      saveJSON(join(dataDir, 'com-prices.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'IEOM / ISPF / ISEE / INSEE — NC/PF/WF/PM/BL/MF', autoCollected: true },
+        prices: rawCOM,
+      });
+      console.log('💾 com-prices.json mis à jour');
+    }
+
+    // ── Save grossistes snapshot ──────────────────────────────────────────
+    if (rawGrossistes.length > 0) {
+      saveJSON(join(dataDir, 'grossistes-prices.json'), {
+        metadata: { lastUpdated: ISO_NOW, source: 'MIN Jarry/Saint-Paul + FranceAgriMer + ODEADOM + DGCCRF', autoCollected: true },
+        prices: rawGrossistes,
+      });
+      console.log('💾 grossistes-prices.json mis à jour');
+    }
+
     // ── Write to Firestore ────────────────────────────────────────────────
     await writeScrapingResults(db, { fuel: fuelAggregated, food: foodDedup, bqp: rawBQP, services: rawServices }, shocks);
   } else {
@@ -476,6 +544,11 @@ async function main() {
       `| 🛒 Catalogue enseignes (Leclerc/IMC/LP/U) | ${counts.catalogue} relevés |`,
       `| 📋 BQP (data.gouv.fr) | ${counts.bqp} entrées officielles |`,
       `| 📡 Services (ARCEP/CRE/INSEE/Eau/Transport/IEDOM) | ${counts.services} tarifs |`,
+      `| 🏠 Logement/Loyers (DVF + ANIL + INSEE) | ${counts.loyer} entrées |`,
+      `| 💊 Médicaments (BDPM officiel) | ${counts.medicaments} prix remboursables |`,
+      `| 🏛️ Octroi de mer (Conseils Régionaux DOM) | ${counts.octroisMer} taux par catégorie |`,
+      `| 🌏 COM NC/PF/WF/PM/BL/MF (IEOM/ISPF/INSEE) | ${counts.com} indicateurs XPF/EUR |`,
+      `| 🏭 Grossistes (MIN/FranceAgriMer/ODEADOM) | ${counts.grossistes} cours de gros |`,
       '',
       allShocks.length === 0
         ? '### ✅ Prix stables — aucun choc détecté'
@@ -486,8 +559,8 @@ async function main() {
     appendFileSync(summaryPath, lines + '\n');
   }
 
-  const totalEntries = counts.fuel + counts.food + counts.fresh + counts.catalogue + counts.bqp + counts.services;
-  console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total\n`);
+  const totalEntries = counts.fuel + counts.food + counts.fresh + counts.catalogue + counts.bqp + counts.services + counts.loyer + counts.medicaments + counts.octroisMer + counts.com + counts.grossistes;
+  console.log(`\n✅ Scraping terminé — ${totalEntries} entrées collectées au total (11 sources)\n`);
 
   // ── Scraping health file ────────────────────────────────────────────────
   // Written unconditionally (even in dry-run) so the monitoring system can
@@ -498,12 +571,17 @@ async function main() {
     dryRun: DRY_RUN,
     deepScan: DEEP_SCAN,
     sources: {
-      fuel:      { count: counts.fuel,      ok: counts.fuel > 0 },
-      food:      { count: counts.food,      ok: counts.food > 0 },
-      fresh:     { count: counts.fresh,     ok: counts.fresh > 0 },
-      catalogue: { count: counts.catalogue, ok: counts.catalogue > 0 },
-      bqp:       { count: counts.bqp,       ok: counts.bqp > 0 },
-      services:  { count: counts.services,  ok: counts.services > 0 },
+      fuel:        { count: counts.fuel,        ok: counts.fuel > 0 },
+      food:        { count: counts.food,        ok: counts.food > 0 },
+      fresh:       { count: counts.fresh,       ok: counts.fresh > 0 },
+      catalogue:   { count: counts.catalogue,   ok: counts.catalogue > 0 },
+      bqp:         { count: counts.bqp,         ok: counts.bqp > 0 },
+      services:    { count: counts.services,    ok: counts.services > 0 },
+      loyer:       { count: counts.loyer,       ok: counts.loyer > 0 },
+      medicaments: { count: counts.medicaments, ok: counts.medicaments > 0 },
+      octroisMer:  { count: counts.octroisMer,  ok: counts.octroisMer > 0 },
+      com:         { count: counts.com,         ok: counts.com > 0 },
+      grossistes:  { count: counts.grossistes,  ok: counts.grossistes > 0 },
     },
     totalEntries,
     shocksDetected: allShocks.length,
