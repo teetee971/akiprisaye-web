@@ -226,7 +226,7 @@ export default function PriceEvolutionChart() {
         </div>
       </div>
 
-      <div className="price-evo-wrap" role="tabpanel">
+      <div className="price-evo-wrap" role="tabpanel" aria-label={`Évolution des prix : ${product.label}`}>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart
             data={chartData}
