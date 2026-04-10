@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import {
@@ -24,6 +24,8 @@ import {
 } from 'lucide-react'
 import { HeroImage } from '../components/ui/HeroImage'
 import { PAGE_HERO_IMAGES } from '../config/imageAssets'
+import PricingConversionBanner from '../components/PricingConversionBanner'
+import { trackConversion } from '../services/subscriptionConversionService'
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
@@ -363,6 +365,11 @@ export default function PricingPage() {
   const [marketOpen, setMarketOpen] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
+  // Track pricing page view for conversion analytics
+  useEffect(() => {
+    trackConversion({ type: 'pricing_view' })
+  }, [])
+
   function formatPrice(n: number): string {
     return n % 1 === 0 ? `${n}` : n.toFixed(2).replace('.', ',')
   }
@@ -415,6 +422,11 @@ export default function PricingPage() {
               ))}
             </div>
           </div>
+
+          {/* ====================================================== */}
+          {/* Conversion Banner (FOMO + countdown)                   */}
+          {/* ====================================================== */}
+          <PricingConversionBanner />
 
           <section className="mb-10 grid gap-4 lg:grid-cols-3">
             {[

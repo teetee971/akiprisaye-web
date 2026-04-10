@@ -91,9 +91,16 @@ jobs:
       - name: Resolve site URL
         id: resolve_site_url
         run: |
-          SITE_URL="${{ needs.deploy.outputs.deployment_url }}"
-          if [ -z "$SITE_URL" ]; then
+          # For pull_request events, always validate against the stable production URL.
+          # PR preview deployments may be protected by Cloudflare Access and return
+          # non-SPA HTML without #root, causing verifyHomepage to fail.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             SITE_URL="${{ env.DEFAULT_PREVIEW_URL }}"
+          else
+            SITE_URL="${{ needs.deploy.outputs.deployment_url }}"
+            if [ -z "$SITE_URL" ]; then
+              SITE_URL="${{ env.DEFAULT_PREVIEW_URL }}"
+            fi
           fi
           echo "site_url=$SITE_URL" >> "$GITHUB_OUTPUT"
 

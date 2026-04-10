@@ -115,6 +115,8 @@ const AuthHub = lazy(() => import('./pages/AuthHub'));
 const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Subscribe = lazy(() => import('./pages/Subscribe'));
+const SubscribeSuccess = lazy(() => import('./pages/SubscribeSuccess'));
+const SubscribeError = lazy(() => import('./pages/SubscribeError'));
 const ObservatoireTempsReel = lazy(() => import('./pages/ObservatoireTempsReel'));
 const Transparence = lazy(() => import('./pages/Transparence'));
 const SignalerAbus = lazy(() => import('./pages/SignalerAbus'));
@@ -266,6 +268,7 @@ const OutreachDashboardPage = lazy(() => import('./pages/OutreachDashboardPage')
 const CRODashboardPage = lazy(() => import('./pages/CRODashboardPage'));
 const SeoLoopDashboardPage = lazy(() => import('./pages/SeoLoopDashboardPage'));
 const RevenueDashboardPage = lazy(() => import('./pages/RevenueDashboardPage'));
+const MonetizationEcosystemPage = lazy(() => import('./pages/MonetizationEcosystemPage'));
 const ExpansionDashboardPage = lazy(() => import('./pages/ExpansionDashboardPage'));
 const AuthorityDashboardPage = lazy(() => import('./pages/AuthorityDashboardPage'));
 const GlobalDashboardPage = lazy(() => import('./pages/GlobalDashboardPage'));
@@ -273,6 +276,15 @@ const AutoSeoDashboardPage = lazy(() => import('./pages/AutoSeoDashboardPage'));
 const SEOCompetitorComparisonPage = lazy(() => import('./pages/SEOCompetitorComparisonPage'));
 const TopEconomiesPage = lazy(() => import('./pages/TopEconomiesPage'));
 const TendancesPage = lazy(() => import('./pages/TendancesPage'));
+// Monetization Engine pages
+const MonetizationDashboard = lazy(() => import('./pages/MonetizationDashboard'));
+const MarketplacePortal = lazy(() => import('./pages/MarketplacePortal'));
+const AffiliatePortal = lazy(() => import('./pages/AffiliatePortal'));
+const DataMarketplace = lazy(() => import('./pages/DataMarketplace'));
+const CorporateSales = lazy(() => import('./pages/CorporateSales'));
+const PremiumReports = lazy(() => import('./pages/PremiumReports'));
+const NearbyDeals = lazy(() => import('./pages/NearbyDeals'));
+const SaaSMarketplace = lazy(() => import('./pages/SaaSMarketplace'));
 const PopulairesPage = lazy(() => import('./pages/PopulairesPage'));
 const UserDashboardPage = lazy(() => import('./pages/UserDashboardPage'));
 const ExecutiveDashboardPage = lazy(() => import('./pages/ExecutiveDashboardPage'));
@@ -466,6 +478,8 @@ export default function App() {
                               {LEGACY_ALIAS_ROUTES}
                               <Route path="pricing" element={<Pricing />} />
                               <Route path="subscribe" element={<Subscribe />} />
+                              <Route path="subscribe/success" element={<SubscribeSuccess />} />
+                              <Route path="subscribe/error" element={<SubscribeError />} />
                               <Route path="observatoire-temps-reel" element={<ObservatoireTempsReel />} />
                               <Route path="transparence" element={<Transparence />} />
                               <Route path="signaler-abus" element={<SignalerAbus />} />
@@ -607,10 +621,20 @@ export default function App() {
                               <Route path="cro-dashboard" element={<RequireAdmin><CRODashboardPage /></RequireAdmin>} />
                               <Route path="seo-loop-dashboard" element={<RequireAdmin><SeoLoopDashboardPage /></RequireAdmin>} />
                               <Route path="revenue-dashboard" element={<RequireAdmin><RevenueDashboardPage /></RequireAdmin>} />
+                              <Route path="monetisation" element={<RequireAdmin><MonetizationEcosystemPage /></RequireAdmin>} />
                               <Route path="expansion-dashboard" element={<RequireAdmin><ExpansionDashboardPage /></RequireAdmin>} />
                               <Route path="authority-dashboard" element={<RequireAdmin><AuthorityDashboardPage /></RequireAdmin>} />
                               <Route path="global-dashboard" element={<RequireAdmin><GlobalDashboardPage /></RequireAdmin>} />
                               <Route path="auto-seo-dashboard" element={<RequireAdmin><AutoSeoDashboardPage /></RequireAdmin>} />
+                              {/* Monetization Engine routes */}
+                              <Route path="monetisation" element={<RequireAdmin><MonetizationDashboard /></RequireAdmin>} />
+                              <Route path="marketplace-portal" element={<MarketplacePortal />} />
+                              <Route path="portail-affilies" element={<AffiliatePortal />} />
+                              <Route path="data-marketplace" element={<DataMarketplace />} />
+                              <Route path="corporate" element={<CorporateSales />} />
+                              <Route path="rapports-premium" element={<PremiumReports />} />
+                              <Route path="offres-proximite" element={<NearbyDeals />} />
+                              <Route path="saas-marketplace" element={<SaaSMarketplace />} />
                               <Route path="vs/:slug" element={<SEOCompetitorComparisonPage />} />
                               <Route path="top-economies" element={<TopEconomiesPage />} />
                               <Route path="tendances" element={<TendancesPage />} />

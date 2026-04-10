@@ -9,25 +9,25 @@
  *     comment).
  *
  *  2. vite.config.ts must NOT declare `minify: 'terser'` unless `terser` is
- *     listed as a devDependency in package.json.  Omitting the installation
+ *     listed as a devDependency in package.json. Omitting the installation
  *     crashes the Vite build with "[vite:terser] terser not found".
  */
 
 // @ts-nocheck
 import fs from 'node:fs';
 import path from 'node:path';
-import { createRequire } from 'node:module';
+import vm from 'node:vm';
 import { describe, expect, it } from 'vitest';
-
-const _require = createRequire(import.meta.url);
 
 const ROOT = path.resolve(process.cwd());
 
 describe('CI regression — eslint.config.cjs', () => {
-  it('loads without SyntaxError (no premature block-comment termination via glob pattern)', async () => {
-    // Dynamically require() will throw SyntaxError if the file is broken
+  it('loads without SyntaxError (no premature block-comment termination via glob pattern)', () => {
+    const filePath = path.join(ROOT, 'eslint.config.cjs');
+    const source = fs.readFileSync(filePath, 'utf8');
+
     expect(() => {
-      _require(path.join(ROOT, 'eslint.config.cjs'));
+      new vm.Script(source, { filename: filePath });
     }).not.toThrow();
   });
 });
@@ -43,7 +43,6 @@ describe('CI regression — vite.config.ts + package.json', () => {
         Boolean(pkg.devDependencies?.terser) || Boolean(pkg.dependencies?.terser);
       expect(hasTerser).toBe(true);
     }
-    // If terser is not used, the check is vacuously true
   });
 
   it('package.json devDependencies includes terser (required by vite.config.ts)', () => {
