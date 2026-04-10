@@ -91,7 +91,11 @@ export function hasGitHubPagesSpaFallback(html) {
 }
 
 export function extractServiceWorkerVersion(source) {
-  const match = source.match(/akiprisaye-smart-cache-v(\d+)/i);
+  // Matches all naming conventions:
+  //   legacy:  akiprisaye-smart-cache-vN
+  //   current: akiprisaye-core-vN, akiprisaye-assets-vN, akiprisaye-territories-vN
+  //   minimal: akiprisaye-vN
+  const match = source.match(/akiprisaye-(?:[a-z][a-z-]*-)?v(\d+)/i);
   return match ? Number(match[1]) : null;
 }
 
@@ -431,7 +435,23 @@ async function verifyServiceWorker(siteUrl, assetPaths) {
     fail(`Service Worker introuvable à ${swPath} (HTTP ${response.status}).`);
   }
 
-  const version = extractServiceWorkerVersion(body);
+  let version = extractServiceWorkerVersion(body);
+  let resolvedSwPath = swPath;
+
+  // service-worker.js may be a compatibility wrapper that delegates to sw.js via importScripts.
+  // In that case, check sw.js for the cache version.
+  if (version === null && /importScripts/i.test(body)) {
+    const canonicalSwPath = `${basePath}sw.js`.replace(/\/+/g, '/');
+    const canonicalUrl = joinSiteUrl(siteUrl, canonicalSwPath);
+    const { response: swResponse, body: swBody } = await fetchText(canonicalUrl);
+    if (swResponse.ok) {
+      version = extractServiceWorkerVersion(swBody);
+      if (version !== null) {
+        resolvedSwPath = canonicalSwPath;
+      }
+    }
+  }
+
   if (version === null) {
     fail('Le Service Worker est servi mais sa version de cache n\'a pas pu être détectée.');
   }
@@ -440,7 +460,7 @@ async function verifyServiceWorker(siteUrl, assetPaths) {
     fail("Le Service Worker précache encore '/index.html'.");
   }
 
-  logOk(`Service Worker accessible (${swPath}) avec cache v${version}.`);
+  logOk(`Service Worker accessible (${resolvedSwPath}) avec cache v${version}.`);
 }
 
 async function verifyRoutes(siteUrl) {

@@ -77,6 +77,10 @@ describe('validate-deployment helpers', () => {
   it('extracts the service worker cache version when present', () => {
     expect(extractServiceWorkerVersion("const CACHE_NAME = 'akiprisaye-smart-cache-v5';")).toBe(5);
     expect(extractServiceWorkerVersion('const CACHE_NAME = "other-cache";')).toBeNull();
+    // Current multi-cache naming convention
+    expect(extractServiceWorkerVersion("const CORE_CACHE = `akiprisaye-core-v2`;")).toBe(2);
+    expect(extractServiceWorkerVersion("const ASSET_CACHE = `akiprisaye-assets-v3`;")).toBe(3);
+    expect(extractServiceWorkerVersion("const CACHE_NAME = `akiprisaye-v3`;")).toBe(3);
   });
 
   it('extracts repository-relative paths from the public sitemap', () => {
