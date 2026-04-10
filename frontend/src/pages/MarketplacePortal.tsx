@@ -77,7 +77,7 @@ print(prices['items'])`,
 
 const ENDPOINTS = [
   { method: 'GET', path: '/v1/prices', desc: 'Prix par territoire et catégorie', cost: '0,05€' },
-  { method: 'GET', path: '/v1/prices/{ean}', desc: 'Prix d'un produit par EAN', cost: '0,05€' },
+  { method: 'GET', path: '/v1/prices/{ean}', desc: "Prix d'un produit par EAN", cost: '0,05€' },
   { method: 'GET', path: '/v1/products/{ean}', desc: 'Fiche produit complète', cost: '0,05€' },
   { method: 'GET', path: '/v1/territories', desc: 'Liste des territoires DOM-COM', cost: 'Gratuit' },
   { method: 'POST', path: '/v1/observations', desc: 'Soumettre une observation citoyenne', cost: '0,02€' },
