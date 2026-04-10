@@ -111,6 +111,8 @@ export default defineConfig({
     // <link rel="modulepreload"> natively.  The polyfill adds ~2 kB and is
     // unnecessary for our target audience.
     modulePreload: { polyfill: false },
+    // CSS minification
+    cssMinify: true,
     // Terser minification: drop console/debugger, inline small functions
     minify: 'terser',
     terserOptions: {

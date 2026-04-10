@@ -3,7 +3,7 @@
  * Layout with sidebar navigation for admin pages
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -35,7 +35,17 @@ const navigation = [
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= 1024 : true
+  );
   const location = useLocation();
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   const isActive = (href: string) => {
     if (href === '/admin') {
@@ -65,15 +75,18 @@ export default function AdminLayout() {
           lg:translate-x-0 lg:static lg:inset-0
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
+        aria-hidden={!isDesktop && !sidebarOpen ? true : undefined}
       >
         {/* Close button (mobile only) */}
         <div className="flex items-center justify-between p-4 lg:hidden">
           <h2 className="text-lg font-semibold text-white">Menu Admin</h2>
           <button
+            type="button"
             onClick={() => setSidebarOpen(false)}
+            aria-label="Fermer le menu de navigation"
             className="p-2 rounded-lg hover:bg-white/10 transition-colors"
           >
-            <X className="w-5 h-5 text-white" />
+            <X className="w-5 h-5 text-white" aria-hidden="true" />
           </button>
         </div>
 
@@ -89,7 +102,7 @@ export default function AdminLayout() {
         </div>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1" aria-label="Navigation administration">
           {navigation.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);

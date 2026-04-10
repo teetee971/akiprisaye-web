@@ -87,6 +87,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const styles = getSeverityStyles(anomaly.severity);
   const typeLabel = getTypeLabel(anomaly.type);
+  const tooltipId = 'anomaly-badge-tooltip';
 
   return (
     <div
@@ -114,6 +115,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
         }}
         role="status"
         aria-label={`Anomalie de prix: ${anomaly.description}`}
+        aria-describedby={showTooltip ? tooltipId : undefined}
       >
         <span>{styles.icon}</span>
         <span>{typeLabel}</span>
@@ -122,6 +124,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
       {/* Tooltip */}
       {showTooltip && tooltipVisible && (
         <div
+          id={tooltipId}
           style={{
             position: 'absolute',
             top: 'calc(100% + 8px)',
@@ -141,7 +144,6 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
           }}
           role="tooltip"
         >
-          {/* Arrow */}
           <div
             style={{
               position: 'absolute',

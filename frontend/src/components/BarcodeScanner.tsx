@@ -986,9 +986,10 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               <button
                 type="submit"
                 disabled={manualInput.length < 8}
+                aria-label="Valider le code EAN"
                 className="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-colors"
               >
-                ✓
+                <span aria-hidden="true">✓</span>
               </button>
             </form>
           </div>

@@ -20,6 +20,7 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const status = getCommissionStatus();
+  const tooltipId = 'booking-link-tooltip';
 
   const colorClasses =
     status.color === 'green'
@@ -43,6 +44,7 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
           <button
             type="button"
             aria-label="En savoir plus sur les liens"
+            aria-describedby={tooltipId}
             onClick={() => setOpen((v) => !v)}
             className="ml-0.5 opacity-70 hover:opacity-100 focus:outline-none"
           >
@@ -53,6 +55,7 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
 
       {showTooltip && open && (
         <div
+          id={tooltipId}
           role="tooltip"
           className="absolute bottom-full left-0 mb-2 z-50 w-72 bg-slate-800 border border-slate-600 rounded-xl p-3 shadow-xl text-xs text-gray-300 leading-relaxed"
         >

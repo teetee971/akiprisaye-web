@@ -164,6 +164,7 @@ function EquiteCard({ entry }: { entry: EquiteEntry }) {
             aria-valuenow={entry.equiteScore}
             aria-valuemin={0}
             aria-valuemax={120}
+            aria-label={`Indice d'équité : ${entry.equiteScore} sur 120`}
           />
         </div>
 
