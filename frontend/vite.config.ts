@@ -107,6 +107,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     // Split CSS per chunk so only needed styles are loaded
     cssCodeSplit: true,
+    // Explicitly minify CSS for smaller stylesheets
+    cssMinify: true,
     // Disable the module-preload polyfill — all target browsers support
     // <link rel="modulepreload"> natively.  The polyfill adds ~2 kB and is
     // unnecessary for our target audience.

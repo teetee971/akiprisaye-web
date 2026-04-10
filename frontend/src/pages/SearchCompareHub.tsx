@@ -309,7 +309,8 @@ export default function SearchCompareHub() {
                     </button>
                     <div
                       id={tooltipId}
-                      role="tooltip"
+                      role="region"
+                      aria-label="Explication du calcul du prix"
                       className={isExpanded ? styles.tooltip : styles.tooltipHidden}
                     >
                       <p className={styles.tooltipText}>

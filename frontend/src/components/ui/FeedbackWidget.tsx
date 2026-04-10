@@ -132,7 +132,6 @@ export default function FeedbackWidget({
       {open && (
         <div
           className="fixed inset-0 z-[80] bg-black/50 p-4 backdrop-blur-[2px]"
-          role="presentation"
           onClick={(e) => { if (e.target === e.currentTarget) resetAndClose(); }}
         >
           <div

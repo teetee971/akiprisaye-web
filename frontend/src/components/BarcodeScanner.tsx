@@ -809,6 +809,10 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                     max={zoomRange.max}
                     step={zoomRange.step}
                     value={zoomValue}
+                    aria-label={`Zoom caméra : ${zoomValue.toFixed(1)}x`}
+                    aria-valuenow={zoomValue}
+                    aria-valuemin={zoomRange.min}
+                    aria-valuemax={zoomRange.max}
                     onChange={(e) => {
                       const next = Number(e.target.value);
                       setZoomValue(next);
@@ -980,6 +984,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 value={manualInput}
                 onChange={(e) => setManualInput(e.target.value.replace(/\D/g, ''))}
                 placeholder="Code EAN (8-13 chiffres)"
+                aria-label="Code EAN (8 à 13 chiffres)"
+                aria-describedby="manual-entry"
                 className="flex-1 bg-slate-800 text-white border border-slate-600 px-4 py-3 rounded-lg focus:outline-none focus:border-blue-500"
                 maxLength={13}
               />

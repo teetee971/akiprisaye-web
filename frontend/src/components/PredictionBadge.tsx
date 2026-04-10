@@ -9,6 +9,7 @@ type PredictionBadgeProps = {
 
 export default function PredictionBadge({ prediction, showTooltip = true }: PredictionBadgeProps) {
   const [tooltipVisible, setTooltipVisible] = useState(false)
+  const tooltipId = `prediction-tooltip-${prediction.status}`
 
   const getStatusConfig = (status: PredictionScore['status']) => {
     switch (status) {
@@ -49,6 +50,7 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
         onBlur={() => setTooltipVisible(false)}
         tabIndex={0}
         aria-label={`${config.label} - Probabilité: ${prediction.probability}%`}
+        aria-describedby={showTooltip ? tooltipId : undefined}
       >
         <span aria-hidden="true">{config.icon}</span>
         {config.label}
@@ -59,8 +61,10 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
 
       {showTooltip && tooltipVisible && (
         <div
+          id={tooltipId}
           className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg border border-gray-700"
           role="tooltip"
+          aria-label={`Prédiction IA ${prediction.confidence === 'high' ? 'Confiance élevée' : prediction.confidence === 'medium' ? 'Confiance moyenne' : 'Confiance faible'}`}
         >
           <div className="mb-2 font-semibold">
             Prédiction IA ({prediction.confidence === 'high' ? 'Confiance élevée' : prediction.confidence === 'medium' ? 'Confiance moyenne' : 'Confiance faible'})

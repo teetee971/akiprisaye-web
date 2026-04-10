@@ -90,6 +90,7 @@ export default function Comparateur() {
       <input
         type="text"
         placeholder="Entrer ou scanner un EAN"
+        aria-label="Code EAN du produit"
         value={ean}
         onChange={(e) => setEan(e.target.value)}
         style={{ width: "100%", padding: "0.75rem", marginBottom: "0.5rem" }}

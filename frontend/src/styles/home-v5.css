@@ -2522,9 +2522,12 @@
 
 .pvc-bar {
   height: 100%;
+  width: 100%;
   border-radius: 3px;
   background: linear-gradient(90deg, #3b82f6, #6366f1);
-  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .pvc-bar--reference {
@@ -3017,8 +3020,11 @@
 
 .choc-bar {
   height: 100%;
+  width: 100%;
   border-radius: 4px;
-  transition: width 0.5s ease;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s ease;
 }
 
 .choc-compare-row {
@@ -3284,8 +3290,11 @@
 
 .equite-bar {
   height: 100%;
+  width: 100%;
   border-radius: 6px;
-  transition: width 0.5s ease;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s ease;
 }
 
 .equite-score-row {
@@ -3725,8 +3734,11 @@
 
 .demo-compare-bar {
   height: 100%;
+  width: 100%;
   border-radius: 4px;
-  transition: width 0.6s ease;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.6s ease;
 }
 
 .demo-compare-price {
@@ -3799,8 +3811,11 @@
 
 .demo-terr-bar {
   height: 100%;
+  width: 100%;
   border-radius: 3px;
-  transition: width 0.6s ease;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.6s ease;
 }
 
 .demo-terr-pct {

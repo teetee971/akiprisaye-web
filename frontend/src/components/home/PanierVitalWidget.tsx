@@ -151,7 +151,7 @@ function PanierVitalCard({ entry, isHex, barWidth }: {
         <div className="pvc-bar-wrapper" aria-hidden="true">
           <div
             className={`pvc-bar${isHex ? ' pvc-bar--reference' : ''}${entry.highlight ? ' pvc-bar--alert' : ''}`}
-            style={{ width: `${barWidth}%` }}
+            style={{ transform: `scaleX(${barWidth / 100})` }}
           />
         </div>
 

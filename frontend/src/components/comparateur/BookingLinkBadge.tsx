@@ -43,6 +43,8 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
           <button
             type="button"
             aria-label="En savoir plus sur les liens"
+            aria-expanded={open}
+            aria-controls="booking-link-info"
             onClick={() => setOpen((v) => !v)}
             className="ml-0.5 opacity-70 hover:opacity-100 focus:outline-none"
           >
@@ -53,7 +55,9 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
 
       {showTooltip && open && (
         <div
-          role="tooltip"
+          id="booking-link-info"
+          role="region"
+          aria-label="Informations sur les liens"
           className="absolute bottom-full left-0 mb-2 z-50 w-72 bg-slate-800 border border-slate-600 rounded-xl p-3 shadow-xl text-xs text-gray-300 leading-relaxed"
         >
           <p className="font-semibold text-gray-100 mb-1 flex items-center gap-1.5">

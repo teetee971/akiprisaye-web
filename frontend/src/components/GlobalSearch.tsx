@@ -267,6 +267,7 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
           <input
             ref={inputRef}
             type="search"
+            role="combobox"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -275,9 +276,11 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
             autoComplete="off"
             spellCheck={false}
             aria-label="Recherche globale"
+            aria-expanded={results.length > 0}
             aria-autocomplete="list"
             aria-controls="global-search-results"
             aria-activedescendant={results[activeIdx] ? `gsr-${results[activeIdx].id}` : undefined}
+            aria-haspopup="listbox"
           />
           <button
             onClick={onClose}
