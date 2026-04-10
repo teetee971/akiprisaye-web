@@ -112,7 +112,7 @@ export default function Layout() {
       )}
       <AlertEvaluatorSideEffect />
       <HashScrollManager />
-      <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-2 md:pb-4">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-2 md:pb-4">
         <Outlet />
       </main>
       <FabActions />
