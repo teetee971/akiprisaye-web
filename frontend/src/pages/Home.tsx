@@ -87,7 +87,7 @@ const Home = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
               <div className="absolute bottom-4 left-5">
                 <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{promo.title}</p>
-                <h3 className="text-sm font-bold">{promo.subtitle}</h3>
+                <p className="text-sm font-bold">{promo.subtitle}</p>
               </div>
               <PlayCircle className="absolute top-4 right-4 text-white/30" size={24} />
             </button>
@@ -113,7 +113,7 @@ const Home = () => {
 
       {/* GISEMENT SOUVERAIN */}
       <div className="px-6 mb-10">
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-6 italic">Le Gisement Souverain</h2>
+        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6 italic">Le Gisement Souverain</h2>
         <div className="grid gap-3">
           {loading ? (
             <div className="flex flex-col items-center py-10 text-slate-500 gap-3">
@@ -124,9 +124,9 @@ const Home = () => {
             products.slice(0, 15).map((p: Product, i: number) => (
               <div key={p.id ?? i} className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm">
                 <div>
-                  <p className="text-[9px] font-black text-blue-500/60 uppercase mb-1">{p.category ?? 'ÉPICERIE'}</p>
-                  <h4 className="text-sm font-bold text-slate-200">{p.name}</h4>
-                  <p className="text-[10px] text-slate-500">{p.store ?? 'SUPER U'}</p>
+                  <p className="text-[9px] font-black text-blue-400 uppercase mb-1">{p.category ?? 'ÉPICERIE'}</p>
+                  <p className="text-sm font-bold text-slate-200">{p.name}</p>
+                  <p className="text-[10px] text-slate-400">{p.store ?? 'SUPER U'}</p>
                 </div>
                 <div className="text-right font-black text-[#10b981]">{p.price}€</div>
               </div>
