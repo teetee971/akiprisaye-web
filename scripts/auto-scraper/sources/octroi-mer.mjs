@@ -177,7 +177,7 @@ async function fetchOctroisLive() {
     const period = new Date().toISOString().slice(0, 7);
     for (const line of lines.slice(1, 80)) {
       const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
-      const rate  = parseFloat((cells[rateIdx] ?? '0').replace(',', '.').replace('%', ''));
+      const rate  = parseFloat((cells[rateIdx] ?? '0').replace(',', '.').replace(/%/g, ''));
       const cat   = cells[catIdx] ?? '';
       if (!cat || !Number.isFinite(rate) || rate < 0 || rate > 100) continue;
 
