@@ -113,12 +113,8 @@ export function StoreMap({
     autoFetch: false,
   });
 
-  // Request geolocation on mount
-  useEffect(() => {
-    if (permission === 'prompt') {
-      requestPermission();
-    }
-  }, [permission, requestPermission]);
+  // Request geolocation on mount is disabled — only trigger after explicit user gesture
+  // Per Lighthouse Best Practices: permissions must not be requested on page load
 
   // Update map center when position changes
   useEffect(() => {
@@ -210,6 +206,20 @@ export function StoreMap({
 
             {/* TODO: Add marker clustering layer here */}
           </MapContainer>
+
+          {/* Geolocation Button — user must explicitly click to request location */}
+          {!position && permission !== 'denied' && (
+            <div className="absolute bottom-4 left-4 z-[1000]">
+              <button
+                type="button"
+                onClick={requestPermission}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-lg font-medium hover:bg-blue-700 transition-colors"
+                aria-label="Me localiser pour trouver les magasins à proximité"
+              >
+                📍 Me localiser
+              </button>
+            </div>
+          )}
 
           {/* Heatmap Toggle */}
           {enableHeatmap && (

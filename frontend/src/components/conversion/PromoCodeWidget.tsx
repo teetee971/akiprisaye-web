@@ -89,10 +89,10 @@ export default function PromoCodeWidget({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <label className="flex items-center gap-2 text-sm font-medium text-gray-300">
+      <p className="flex items-center gap-2 text-sm font-medium text-gray-300">
         <Tag className="w-4 h-4 text-blue-400" />
         Avez-vous un code promo&nbsp;?
-      </label>
+      </p>
 
       {applied && result?.valid ? (
         <div className="flex items-center gap-3 p-3 bg-green-900/30 border border-green-500/40 rounded-lg">
