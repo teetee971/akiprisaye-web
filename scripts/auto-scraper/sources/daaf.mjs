@@ -38,6 +38,9 @@ import { sleep, fetchJSONWithRetry, fetchTextWithRetry } from './utils.mjs';
 
 /** @typedef {{ productName: string; category: string; territory: string; price: number; unit: string; date: string; source: string; market?: string; origin?: string; official: boolean; }} FreshPriceEntry */
 
+/** Prix maximum raisonnable pour un produit frais/vivrier (€/kg ou €/pièce) */
+const MAX_REASONABLE_FRESH_PRICE = 999;
+
 const fetchJSON = (url, label) => fetchJSONWithRetry(url, label, 'daaf');
 const fetchText = (url, label) => fetchTextWithRetry(url, label, 'daaf');
 
@@ -93,6 +96,15 @@ const DATAGOUV_QUERIES = [
     orgSlug: null,
   },
 ];
+
+/**
+ * Vérifie qu'un prix de produit frais est dans une plage raisonnable.
+ * @param {number} price
+ * @returns {boolean}
+ */
+function isValidFreshPrice(price) {
+  return price > 0 && price <= MAX_REASONABLE_FRESH_PRICE;
+}
 
 // ─── Fetch data.gouv.fr datasets ──────────────────────────────────────────────
 
@@ -154,7 +166,7 @@ function normalizeJSON(rows, territory, sourceUrl) {
       row.prix_detail ?? row.prix_moyen ?? '';
     const price = parseFloat(String(rawPrice).replace(',', '.'));
 
-    if (!name || price <= 0 || price > 999) continue;
+    if (!name || !isValidFreshPrice(price)) continue;
 
     entries.push({
       productName:  name,
@@ -202,7 +214,7 @@ function normalizeCSV(text, territory, sourceUrl) {
     const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
     const name  = cells[nameIdx] ?? '';
     const price = parseFloat((cells[priceIdx] ?? '0').replace(',', '.'));
-    if (!name || price <= 0 || price > 999) continue;
+    if (!name || !isValidFreshPrice(price)) continue;
 
     entries.push({
       productName: name,

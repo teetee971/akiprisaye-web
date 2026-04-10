@@ -43,13 +43,15 @@ const DOM_COUNTRIES = {
  * Ces enseignes sont sous-représentées dans les requêtes par pays car
  * elles n'ont pas de OSM ID hardcodé dans le pipeline existant.
  * Interrogées pour chaque territoire.
+ *
+ * Utiliser uniquement des formes ASCII sans accent : l'API Open Prices
+ * effectue une recherche insensible à la casse ET aux accents côté serveur
+ * (`icontains` sur PostgreSQL avec `unaccent`).
  */
 const RETAILER_NAME_FILTERS = [
   'leader price',
-  'intermarché',
   'intermarche',
   'cora',
-  'géant casino',
   'geant casino',
   'hyper u',
   'lidl',

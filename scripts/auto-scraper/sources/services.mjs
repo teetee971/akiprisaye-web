@@ -124,6 +124,9 @@ const WATER_FALLBACK = [
   { service: 'Eau potable — prix moyen', territory: 'YT', price: 3.20, unit: '€/m³', category: 'Eau', source: 'SISPEA — FNCCR 2023' },
 ];
 
+/** Prix €/kWh maximum raisonnable pour valider un tarif électricité DOM */
+const MAX_REASONABLE_KWH_PRICE = 10;
+
 /**
  * Tente d'extraire des tarifs électricité depuis un fichier CSV data.gouv.fr
  * (format CRE). Retourne un tableau vide si le format n'est pas reconnu.
@@ -154,7 +157,7 @@ function parseCRECsv(text, sourceUrl) {
     const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
     const price = parseFloat((cells[priceIdx] ?? '0').replace(',', '.'));
     const name  = cells[nameIdx] ?? '';
-    if (!name || price <= 0 || price > 10) continue; // tarif €/kWh max raisonnable
+    if (!name || price <= 0 || price > MAX_REASONABLE_KWH_PRICE) continue;
 
     let territory = 'GP';
     if (territIdx >= 0) {
@@ -336,6 +339,9 @@ async function fetchINSEECPI() {
   return entries;
 }
 
+/** Prix en €/trajet maximum raisonnable pour valider un tarif de transport DOM */
+const MAX_REASONABLE_TRANSPORT_PRICE = 50;
+
 /**
  * Tarifs de référence des transports en commun DOM-TOM 2025.
  *
@@ -403,7 +409,7 @@ async function fetchTransportTariffs() {
         const cells = line.split(sep).map((c) => c.trim().replace(/"/g, ''));
         const price = parseFloat((cells[priceIdx] ?? '0').replace(',', '.'));
         const name  = cells[nameIdx] ?? '';
-        if (!name || price <= 0 || price > 50) continue;
+        if (!name || price <= 0 || price > MAX_REASONABLE_TRANSPORT_PRICE) continue;
         liveEntries.push({
           service: name,
           category: 'Transport',
