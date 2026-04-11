@@ -1,4 +1,3 @@
-import Flyer from "./pages/Flyer";
 import { OfflineBanner } from "./components/OfflineBanner";
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { lazyPage } from './router/lazy';
@@ -43,6 +42,7 @@ const BuildInfo = lazy(() =>
 );
 
 const Home = lazy(() => import('./pages/Home'));
+const Flyer = lazy(() => import('./pages/Flyer'));
 const SearchPage = lazy(() => import('./pages/SearchPage'));
 const Carte = lazy(() => import('./pages/Carte'));
 const MapPage = lazy(() => import('./pages/MapPage'));

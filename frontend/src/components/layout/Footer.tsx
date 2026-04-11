@@ -82,7 +82,7 @@ export default function Footer() {
 
 
   return (
-    <footer id="footer" className="border-t border-slate-800 bg-slate-950">
+    <footer id="footer" aria-label="Pied de page" className="border-t border-slate-800 bg-slate-950">
       {/* ── Multi-column navigation ── */}
       <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm">

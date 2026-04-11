@@ -42,6 +42,9 @@ class ErrorBoundary extends Component {
             <img
               src={imgSrc}
               alt="A KI PRI SA YÉ"
+              loading="lazy"
+              width={64}
+              height={64}
               style={{ height: '64px', margin: '0 auto 24px' }}
             />
             

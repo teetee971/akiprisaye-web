@@ -113,13 +113,6 @@ export function StoreMap({
     autoFetch: false,
   });
 
-  // Auto-locate only when permission was already granted (avoids prompting on page load)
-  useEffect(() => {
-    if (permission === 'granted') {
-      requestPermission();
-    }
-  }, [permission, requestPermission]);
-
   // Update map center when position changes
   useEffect(() => {
     if (position) {
@@ -210,6 +203,19 @@ export function StoreMap({
 
             {/* TODO: Add marker clustering layer here */}
           </MapContainer>
+
+          {/* Locate Me Button */}
+          {permission !== 'granted' && (
+            <div className="absolute bottom-4 left-4 z-[1000]">
+              <button
+                type="button"
+                onClick={requestPermission}
+                className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-lg font-medium hover:bg-gray-100 transition-colors"
+              >
+                📍 Me localiser
+              </button>
+            </div>
+          )}
 
           {/* Heatmap Toggle */}
           {enableHeatmap && (

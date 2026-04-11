@@ -273,7 +273,7 @@ export default function ProduitChocWidget() {
                 <div className="choc-bar-wrap" aria-hidden="true">
                   <div
                     className="choc-bar"
-                    style={{ width: `${barWidth}%`, background: color }}
+                    style={{ transform: `scaleX(${barWidth / 100})`, background: color }}
                   />
                 </div>
 

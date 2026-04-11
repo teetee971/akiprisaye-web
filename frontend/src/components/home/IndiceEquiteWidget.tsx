@@ -159,7 +159,7 @@ function EquiteCard({ entry }: { entry: EquiteEntry }) {
           />
           <div
             className="equite-bar"
-            style={{ width: `${barWidth}%`, background: color }}
+            style={{ transform: `scaleX(${barWidth / 100})`, background: color }}
           />
         </div>
 

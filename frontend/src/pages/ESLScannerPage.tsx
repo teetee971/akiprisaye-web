@@ -75,7 +75,9 @@ function CameraView({ videoRef, onCapture, scanning }: {
 }) {
   return (
     <div className="relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
-      <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+      <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover">
+        <track kind="captions" src="" label="Français" srcLang="fr" default />
+      </video>
 
       {/* Aiming overlay */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
