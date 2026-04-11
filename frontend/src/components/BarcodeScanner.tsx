@@ -815,6 +815,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                       void applyZoom(next);
                     }}
                     className="w-full"
+                    aria-label={`Zoom : ${zoomValue.toFixed(1)}x`}
                   />
                 </div>
               )}
