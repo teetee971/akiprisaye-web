@@ -213,6 +213,7 @@ export default function DLCAntigaspi() {
             ))}
           </div>
           <select value={sortBy} onChange={e => setSortBy(e.target.value as 'dlc' | 'nom')}
+            aria-label="Trier les produits"
             style={{ padding: '0.35rem 0.6rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(148,163,184,0.2)', color: '#94a3b8', fontSize: '0.75rem' }}>
             <option value="dlc">Trier par date</option>
             <option value="nom">Trier par nom</option>

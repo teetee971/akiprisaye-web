@@ -438,6 +438,7 @@ const PetitsCommerces: React.FC = () => {
               value={categorie}
               onChange={e => setCategorie(e.target.value)}
               className="px-3 py-1.5 bg-slate-700/60 border border-slate-600/50 rounded-xl text-xs text-white focus:outline-none focus:border-orange-500/50"
+              aria-label="Catégorie"
             >
               {CATEGORIES.map(c => (
                 <option key={c} value={c}>{c}</option>

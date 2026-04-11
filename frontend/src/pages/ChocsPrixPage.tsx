@@ -346,6 +346,7 @@ export default function ChocsPrixPage() {
                   value={filterTerr}
                   onChange={(e) => setFilterTerr(e.target.value)}
                   className="bg-slate-800 border border-slate-600 text-white text-sm rounded-lg px-2 py-1"
+                  aria-label="Filtrer par territoire"
                 >
                   <option value="all">Tous les territoires</option>
                   {DOM_TOM_TERRITORIES.map((t) => (

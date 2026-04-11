@@ -2287,6 +2287,7 @@ const OrganigrammeGBH: React.FC = () => {
                 value={filterSector}
                 onChange={e => setFilterSector(e.target.value)}
                 className="bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
+                aria-label="Filtrer par secteur"
               >
                 <option value="">Tous les secteurs</option>
                 {sectors.map(s => <option key={s} value={s}>{s}</option>)}

@@ -102,6 +102,7 @@ export default function Alertes() {
             setCategory(nextValue);
             syncQueryString({ onlyActive, category: nextValue, severity, q });
           }}
+          aria-label="Catégorie"
         >
           {categoryOptions.map((option) => (
             <option key={option.value} value={option.value}>{option.label}</option>
@@ -116,6 +117,7 @@ export default function Alertes() {
             setSeverity(nextValue);
             syncQueryString({ onlyActive, category, severity: nextValue, q });
           }}
+          aria-label="Niveau de gravité"
         >
           {severityOptions.map((option) => (
             <option key={option.value} value={option.value}>{option.label}</option>

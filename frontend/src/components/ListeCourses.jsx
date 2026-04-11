@@ -328,6 +328,7 @@ export default function ListeCourses({ territoire = '971' }) {
                 value={produitSelectionne}
                 onChange={(e) => setProduitSelectionne(e.target.value)}
                 className="flex-1 bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white"
+                aria-label="Sélectionner un produit"
               >
                 <option value="">Sélectionner un produit</option>
                 {GENERIC_PRODUCTS

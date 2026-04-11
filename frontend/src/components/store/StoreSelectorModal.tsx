@@ -153,6 +153,7 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
                       value={serviceMode}
                       onChange={(e) => setServiceMode(e.target.value as ServiceMode)}
                       className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1 text-xs text-white"
+                      aria-label="Mode de service"
                     >
                       {(['inStore', 'drive', 'delivery'] as ServiceMode[]).map((mode) => (
                         <option key={mode} value={mode} disabled={!store.services[mode]}>

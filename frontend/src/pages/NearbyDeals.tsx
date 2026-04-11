@@ -185,6 +185,10 @@ export default function NearbyDeals() {
                 max={5000}
                 step={100}
                 value={radius}
+                aria-label={`Rayon de recherche : ${radius}m`}
+                aria-valuenow={radius}
+                aria-valuemin={100}
+                aria-valuemax={5000}
                 onChange={(e) => setRadius(Number(e.target.value))}
                 className="w-full"
               />
@@ -195,7 +199,7 @@ export default function NearbyDeals() {
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="w-4 h-4 text-gray-400" />
-              <select className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-sm flex-1">
+              <select className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-sm flex-1" aria-label="Fréquence des alertes">
                 <option value="1/day">1 alerte/jour</option>
                 <option value="3/week">3 alertes/semaine</option>
                 <option value="realtime">Temps réel</option>

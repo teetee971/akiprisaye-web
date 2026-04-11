@@ -1,9 +1,10 @@
 
-export const Select = ({ onValueChange, defaultValue, children }) => (
+export const Select = ({ onValueChange, defaultValue, children, ...props }) => (
   <select
     className="w-full p-2 border rounded border-gray-300"
     onChange={e => onValueChange(e.target.value)}
     defaultValue={defaultValue}
+    {...props}
   >
     {children}
   </select>

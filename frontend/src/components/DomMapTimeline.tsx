@@ -96,6 +96,10 @@ export default function DomMapTimeline() {
         min={0}
         max={TIMELINE.length - 1}
         value={step}
+        aria-label={`Chronologie : étape ${step + 1} sur ${TIMELINE.length} — ${TIMELINE[step]?.month ?? ''}`}
+        aria-valuenow={step}
+        aria-valuemin={0}
+        aria-valuemax={TIMELINE.length - 1}
         onChange={(e) => {
           setStep(Number(e.target.value));
           setPlaying(false);

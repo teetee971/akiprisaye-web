@@ -649,6 +649,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
                   value={newItem.category}
                   onChange={(e) => setNewItem({ ...newItem, category: e.target.value })}
                   className="bg-slate-700 border border-slate-600 rounded px-3 py-2 text-white"
+                  aria-label="Catégorie"
                   required
                 >
                   <option value="">Catégorie *</option>

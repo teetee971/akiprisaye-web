@@ -374,6 +374,7 @@ const TrainingComparator: React.FC = () => {
                       value={filters.domain || ''}
                       onChange={(e) => setFilters({ ...filters, domain: e.target.value || undefined })}
                       className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                      aria-label="Domaine de formation"
                     >
                       <option value="">Tous les domaines</option>
                       {availableDomains.map((domain) => (
@@ -393,6 +394,7 @@ const TrainingComparator: React.FC = () => {
                         });
                       }}
                       className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                      aria-label="Niveau de formation"
                     >
                       <option value="">Tous les niveaux</option>
                       <option value="CAP">CAP</option>
@@ -413,6 +415,7 @@ const TrainingComparator: React.FC = () => {
                         });
                       }}
                       className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
+                      aria-label="Mode de formation"
                     >
                       <option value="">Tous les modes</option>
                       <option value="presentiel">Présentiel</option>
