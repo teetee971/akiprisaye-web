@@ -167,7 +167,7 @@ jobs:
 
       - name: 📢 Notification échec
         if: failure()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             core.warning(`⚠️ Échec scan produit EAN: ${{ inputs.ean || inputs.eans || 'panier-base' }}`);

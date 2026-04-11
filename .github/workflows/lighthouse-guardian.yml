@@ -79,7 +79,7 @@ jobs:
 
       - name: 'Auto-réparation soft: relance du déploiement Cloudflare'
         if: ${{ steps.lighthouse.outcome == 'failure' }}
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.actions.createWorkflowDispatch({
@@ -91,7 +91,7 @@ jobs:
 
       - name: Alerte Lighthouse (issue)
         if: ${{ steps.lighthouse.outcome == 'failure' }}
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const title = `⚠️ Lighthouse Guardian en alerte — ${new Date().toISOString().slice(0, 16)} UTC`;
