@@ -78,7 +78,7 @@ body {
   -webkit-backdrop-filter: blur(14px) saturate(120%);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.2);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
@@ -95,7 +95,7 @@ body {
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
   border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Animations fluides */
@@ -213,7 +213,7 @@ body {
 button, .btn {
   position: relative;
   overflow: hidden;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
 }
 
@@ -226,14 +226,14 @@ button::before, .btn::before {
   height: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
-  transform: translate(-50%, -50%);
-  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
-              height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
 }
 
 button:hover::before, .btn:hover::before {
-  width: 300px;
-  height: 300px;
+  transform: translate(-50%, -50%) scale(10);
+  opacity: 1;
 }
 
 button:hover, .btn:hover {
@@ -253,7 +253,7 @@ button:active, .btn:active {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.75rem;
   padding: 1.5rem;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 16px -1px rgba(0, 0, 0, 0.15);
   will-change: transform;
 }
@@ -278,7 +278,7 @@ input, textarea, select {
   border-radius: 0.75rem;
   color: var(--text);
   padding: 0.75rem 1rem;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 input:hover, textarea:hover, select:hover {

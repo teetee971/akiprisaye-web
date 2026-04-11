@@ -71,7 +71,7 @@
   min-width: 48px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
   border: none;
   touch-action: manipulation;
 }
@@ -85,7 +85,7 @@
   height: 3px;
   background: var(--text);
   border-radius: 2px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
 }
 
 .burger-menu.active .burger-line:nth-child(1) {
@@ -164,7 +164,7 @@
   min-height: 48px;
   color: var(--text);
   text-decoration: none;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s, opacity 0.2s;
   border-left: 3px solid transparent;
   touch-action: manipulation;
 }
@@ -217,7 +217,7 @@
   color: var(--text);
   text-decoration: none;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.2s, opacity 0.2s;
   padding: 0.5rem 1rem;
   border-radius: 4px;
 }

@@ -163,7 +163,7 @@
     background: rgba(var(--bg-glass), var(--glass-opacity));
     backdrop-filter: blur(var(--blur-civic));
     -webkit-backdrop-filter: blur(var(--blur-civic));
-    transition: all var(--duration-normal) var(--ease-smooth);
+    transition: transform var(--duration-normal) var(--ease-smooth), opacity var(--duration-normal) var(--ease-smooth);
   }
   
   .glass-effect:hover {
@@ -200,15 +200,15 @@
   
   /* Smooth transitions - Standardized */
   .transition-smooth {
-    transition: all var(--duration-normal) var(--ease-smooth);
+    transition: transform var(--duration-normal) var(--ease-smooth), opacity var(--duration-normal) var(--ease-smooth);
   }
   
   .transition-fast {
-    transition: all var(--duration-fast) var(--ease-smooth);
+    transition: transform var(--duration-fast) var(--ease-smooth), opacity var(--duration-fast) var(--ease-smooth);
   }
   
   .transition-slow {
-    transition: all var(--duration-slow) var(--ease-smooth);
+    transition: transform var(--duration-slow) var(--ease-smooth), opacity var(--duration-slow) var(--ease-smooth);
   }
   
   /* Transform utilities with GPU acceleration */

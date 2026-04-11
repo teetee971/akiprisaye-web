@@ -158,7 +158,7 @@
   border: 2px solid rgba(34, 197, 94, 0.3);
   border-radius: 16px;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
@@ -192,7 +192,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .hero-search-btn-xxl:hover {
@@ -489,7 +489,7 @@
   background: rgba(30, 41, 59, 0.3);
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 12px;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .benefit-item:hover {
@@ -530,7 +530,7 @@
   border-radius: 20px;
   margin-bottom: 1rem;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .comparison-card:hover {
@@ -649,7 +649,7 @@
   font-weight: 600;
   text-decoration: none;
   border-radius: 12px;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
@@ -738,7 +738,7 @@
   background: rgba(30, 41, 59, 0.4);
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 12px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
 }
@@ -814,7 +814,7 @@
   background: rgba(16, 185, 129, 0.05);
   border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 20px;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .observatory-content:hover {
@@ -866,7 +866,7 @@
   border-radius: 10px;
   font-weight: 500;
   text-decoration: none;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .btn-observatory {
@@ -921,7 +921,7 @@
   border: 1px solid rgba(148, 163, 184, 0.1);
   border-radius: 12px;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .faq-item:hover {
@@ -941,7 +941,7 @@
   font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: transform 0.2s, opacity 0.2s;
 }
 
 .faq-question:hover {
@@ -993,7 +993,7 @@
   border-radius: 10px;
   font-weight: 500;
   text-decoration: none;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .btn-faq:hover {
@@ -1154,7 +1154,7 @@
   border: 1px solid rgba(148, 163, 184, 0.15);
   border-radius: 16px;
   padding: 1.5rem;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
   position: relative;
   overflow: hidden;
 }
@@ -1275,7 +1275,7 @@
   border: 1px solid rgba(148, 163, 184, 0.12);
   border-radius: 16px;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
   text-align: left;
 }
 
@@ -1366,7 +1366,7 @@
   border-radius: 12px;
   padding: 1rem 0.75rem;
   text-align: center;
-  transition: all 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .observatory-stat-item:hover {
@@ -1915,7 +1915,7 @@
   color: #94a3b8;
   font-size: 0.82rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .price-chart-tab:hover {
@@ -3443,7 +3443,7 @@
   color: #94a3b8;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .app-demo-tab:hover {

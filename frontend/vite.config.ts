@@ -100,6 +100,8 @@ export default defineConfig({
     ),
   },
   build: {
+    // Target modern browsers only — avoids legacy polyfills that inflate bundle size
+    target: 'es2020',
     // Source maps: enabled in staging/preview, disabled in production for security
     // (avoids exposing source code in browser dev tools on production)
     sourcemap: process.env.CF_PAGES === '1' ? false : (process.env.CF_PAGES_BRANCH ? 'hidden' : false),
