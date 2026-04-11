@@ -54,6 +54,7 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
       {showTooltip && open && (
         <div
           role="tooltip"
+          aria-label="Informations sur les liens"
           className="absolute bottom-full left-0 mb-2 z-50 w-72 bg-slate-800 border border-slate-600 rounded-xl p-3 shadow-xl text-xs text-gray-300 leading-relaxed"
         >
           <p className="font-semibold text-gray-100 mb-1 flex items-center gap-1.5">
