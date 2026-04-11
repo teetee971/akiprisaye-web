@@ -326,9 +326,9 @@ export default function InflationBarometerWidget() {
 
   if (loading) {
     return (
-      <section className="ibw-section section-reveal" aria-labelledby="ibw-heading">
+      <section className="ibw-section section-reveal" aria-label="Baromètre des prix">
         <div className="ibw-header">
-          <h2 id="ibw-heading" className="section-title slide-up">🌡️ Baromètre des prix</h2>
+          <h2 className="section-title slide-up">🌡️ Baromètre des prix</h2>
         </div>
         <div className="ibw-skeleton" aria-busy="true" />
       </section>

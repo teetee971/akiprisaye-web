@@ -93,6 +93,7 @@ export default function Comparateur() {
         value={ean}
         onChange={(e) => setEan(e.target.value)}
         style={{ width: "100%", padding: "0.75rem", marginBottom: "0.5rem" }}
+        aria-label="EAN ou nom du produit"
       />
 
       <button

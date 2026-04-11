@@ -61,6 +61,7 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
         <div
           className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg border border-gray-700"
           role="tooltip"
+          aria-label="Prédiction IA"
         >
           <div className="mb-2 font-semibold">
             Prédiction IA ({prediction.confidence === 'high' ? 'Confiance élevée' : prediction.confidence === 'medium' ? 'Confiance moyenne' : 'Confiance faible'})

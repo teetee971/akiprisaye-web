@@ -187,10 +187,11 @@ export default function FeedbackWidget({
             {/* Message form */}
             {mode && (
               <div className="mt-2">
-                <label className="mb-2 block text-xs font-medium text-zinc-300">
+                <label htmlFor="feedback-message" className="mb-2 block text-xs font-medium text-zinc-300">
                   {mode === 'bug' ? 'Décris le problème' : 'Décris ton idée'}
                 </label>
                 <textarea
+                  id="feedback-message"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder={placeholder}

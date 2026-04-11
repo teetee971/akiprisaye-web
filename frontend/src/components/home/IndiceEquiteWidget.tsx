@@ -160,10 +160,6 @@ function EquiteCard({ entry }: { entry: EquiteEntry }) {
           <div
             className="equite-bar"
             style={{ width: `${barWidth}%`, background: color }}
-            role="progressbar"
-            aria-valuenow={entry.equiteScore}
-            aria-valuemin={0}
-            aria-valuemax={120}
           />
         </div>
 
@@ -262,9 +258,9 @@ export default function IndiceEquiteWidget() {
 
   if (loading) {
     return (
-      <section className="equite-section section-reveal" aria-labelledby="equite-heading">
+      <section className="equite-section section-reveal" aria-label="Indice d'Équité Tarifaire">
         <div className="equite-header">
-          <h2 id="equite-heading" className="section-title slide-up">⚖️ Indice d'Équité Tarifaire</h2>
+          <h2 className="section-title slide-up">⚖️ Indice d'Équité Tarifaire</h2>
         </div>
         <div className="equite-skeleton" aria-busy="true" />
       </section>
