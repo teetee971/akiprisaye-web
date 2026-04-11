@@ -140,6 +140,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
             color: '#e2e8f0',
           }}
           role="tooltip"
+          aria-label={typeLabel}
         >
           {/* Arrow */}
           <div

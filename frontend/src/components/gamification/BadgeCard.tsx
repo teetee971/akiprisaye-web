@@ -54,6 +54,7 @@ export function BadgeCard({ badge, showProgress = false, onClick, className = ''
       onKeyDown={handleKeyDown}
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
+      aria-label={onClick ? badge.name : undefined}
     >
       {/* Badge Icon */}
       <div className="flex justify-center mb-3">
@@ -85,6 +86,11 @@ export function BadgeCard({ badge, showProgress = false, onClick, className = ''
             <div 
               className="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500"
               style={{ width: `${badge.progress}%` }}
+              role="progressbar"
+              aria-valuenow={badge.progress}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${badge.name} : ${badge.progress}% complété`}
             />
           </div>
           <div className="text-xs text-gray-600 text-center">
