@@ -81,6 +81,10 @@ describe('validate-deployment helpers', () => {
     expect(extractServiceWorkerVersion("const CORE_CACHE = `akiprisaye-core-v2`;")).toBe(2);
     expect(extractServiceWorkerVersion("const ASSET_CACHE = `akiprisaye-assets-v3`;")).toBe(3);
     expect(extractServiceWorkerVersion("const CACHE_NAME = `akiprisaye-v3`;")).toBe(3);
+    // Template-literal cache names where the interpolated value isn't in the raw source
+    expect(extractServiceWorkerVersion("const CACHE_VERSION = 'v4';")).toBe(4);
+    expect(extractServiceWorkerVersion('const CACHE_VERSION = "v7";')).toBe(7);
+    expect(extractServiceWorkerVersion('const CACHE_VERSION = `v9`;')).toBe(9);
   });
 
   it('extracts repository-relative paths from the public sitemap', () => {

@@ -95,8 +95,12 @@ export function extractServiceWorkerVersion(source) {
   //   legacy:  akiprisaye-smart-cache-vN
   //   current: akiprisaye-core-vN, akiprisaye-assets-vN, akiprisaye-territories-vN
   //   minimal: akiprisaye-vN
-  const match = source.match(/akiprisaye-(?:[a-z][a-z-]*-)?v(\d+)/i);
-  return match ? Number(match[1]) : null;
+  const nameMatch = source.match(/akiprisaye-(?:[a-z][a-z-]*-)?v(\d+)/i);
+  if (nameMatch) return Number(nameMatch[1]);
+  // Fallback: CACHE_VERSION = 'vN' (template-literal cache names whose interpolated
+  // value isn't present in the raw source text)
+  const varMatch = source.match(/CACHE_VERSION\s*=\s*['"`]v(\d+)['"`]/i);
+  return varMatch ? Number(varMatch[1]) : null;
 }
 
 /**
