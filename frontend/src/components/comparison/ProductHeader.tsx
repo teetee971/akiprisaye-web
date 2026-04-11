@@ -9,7 +9,7 @@ export function ProductHeader({ name, barcode, image }: ProductHeaderProps) {
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] overflow-hidden">
       {image && (
         <div className="h-[208px] w-full overflow-hidden">
-          <img src={image} alt={name} className="h-full w-full object-cover" />
+          <img src={image} alt={name} className="h-full w-full object-cover" width={600} height={208} loading="lazy" />
         </div>
       )}
       <div className="p-5">

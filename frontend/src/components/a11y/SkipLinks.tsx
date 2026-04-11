@@ -9,7 +9,7 @@ import '../../styles/a11y.css';
 export default function SkipLinks() {
   return (
     <div className="skip-links">
-      <a href="#main" className="skip-link">
+      <a href="#main-content" className="skip-link">
         Aller au contenu principal
       </a>
       <a href="#main-nav" className="skip-link">

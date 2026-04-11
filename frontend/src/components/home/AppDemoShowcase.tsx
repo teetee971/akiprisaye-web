@@ -106,7 +106,7 @@ function CompareScreen() {
               <div className="demo-compare-bar-wrap">
                 <div
                   className="demo-compare-bar"
-                  style={{ width: `${width}%`, background: d.color }}
+                  style={{ transform: `scaleX(${width / 100})`, background: d.color }}
                 />
               </div>
               <span className="demo-compare-price" style={{ color: d.color }}>
@@ -141,7 +141,7 @@ function TerritoireScreen() {
               <div className="demo-terr-bar-wrap">
                 <div
                   className="demo-terr-bar"
-                  style={{ width: `${barW}%`, background: t.color }}
+                  style={{ transform: `scaleX(${barW / 100})`, background: t.color }}
                 />
               </div>
               <span className="demo-terr-pct" style={{ color: t.color }}>+{t.pct}%</span>

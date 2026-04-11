@@ -46,7 +46,7 @@ const Flyer = () => {
           
           {/* QR CODE - GÉNERÉ DYNAMIQUEMENT */}
           <div className="aspect-square w-36 border-4 border-slate-100 p-2 rounded-2xl">
-            <img src={qrCodeUrl} alt="QR Code vers AkiPrisaye" className="w-full h-full" />
+            <img src={qrCodeUrl} alt="QR Code vers AkiPrisaye" className="w-full h-full" width={128} height={128} />
           </div>
 
           <div className="flex items-center gap-3 w-full border-t border-slate-100 pt-5">
@@ -62,7 +62,7 @@ const Flyer = () => {
             <ScanBarcode size={30} className="text-slate-900"/>
             <div className='w-full'>
               <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">Code-barres AkiPrisaye</p>
-              <img src="https://barcodeapi.org/api/128/971971971001" alt="Faux code-barres" className="h-6 w-full" />
+              <img src="https://barcodeapi.org/api/128/971971971001" alt="Faux code-barres" className="h-6 w-full" width={200} height={24} loading="lazy" />
             </div>
           </div>
         </div>

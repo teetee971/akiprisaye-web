@@ -33,7 +33,7 @@
 
 .skip-link {
   position: absolute;
-  top: -100px;
+  top: 0;
   left: 0;
   background: #2563eb;
   color: white;
@@ -42,11 +42,12 @@
   font-weight: 600;
   border-radius: 0 0 8px 0;
   z-index: 10000;
-  transition: top 0.3s ease;
+  transform: translateY(-200%);
+  transition: transform 0.3s ease;
 }
 
 .skip-link:focus {
-  top: 0;
+  transform: translateY(0);
   outline: 3px solid #1e40af;
   outline-offset: 2px;
 }

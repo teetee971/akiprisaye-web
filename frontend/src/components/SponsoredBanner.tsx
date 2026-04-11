@@ -54,6 +54,9 @@ export function SponsoredBanner({
           <img
             src={imageUrl}
             alt={`Sponsorisé par ${sponsor}`}
+            loading="lazy"
+            width={800}
+            height={224}
             className="w-full h-40 md:h-56 object-cover opacity-60"
           />
         )}
@@ -90,6 +93,9 @@ export function SponsoredBanner({
         <img
           src={imageUrl}
           alt={`Sponsorisé par ${sponsor}`}
+          loading="lazy"
+          width={300}
+          height={80}
           className="w-full h-20 object-cover rounded mb-2 opacity-80"
         />
       )}

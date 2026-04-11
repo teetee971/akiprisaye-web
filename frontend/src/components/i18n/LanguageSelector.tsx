@@ -104,6 +104,7 @@ export function LanguageSelector({
         <div 
           className="language-dropdown absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
           role="listbox"
+          aria-label="Sélectionner une langue"
         >
           {LANGUAGES.map(lang => (
             <button

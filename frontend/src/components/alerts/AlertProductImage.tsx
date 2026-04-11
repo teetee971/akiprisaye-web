@@ -54,6 +54,8 @@ export default function AlertProductImage({
           src={imageUrl}
           alt={alt}
           loading="lazy"
+          width={size}
+          height={size}
           className="h-full w-full object-cover"
         />
       )}

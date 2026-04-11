@@ -320,8 +320,9 @@ export default function PaniersTypes() {
         <div className="flex flex-wrap gap-3 items-center justify-between">
           <div className="flex flex-wrap gap-3 items-center">
           <div>
-            <label className="block text-xs text-slate-400 mb-1">Territoire</label>
+            <label htmlFor="paniers-territory-select" className="block text-xs text-slate-400 mb-1">Territoire</label>
             <select
+              id="paniers-territory-select"
               value={selectedTerritory}
               onChange={(e) => setSelectedTerritory(e.target.value)}
               className="bg-slate-800 border border-slate-700 text-slate-100 text-sm rounded px-2 py-1.5"

@@ -89,7 +89,7 @@ export default function PromoCodeWidget({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <label className="flex items-center gap-2 text-sm font-medium text-gray-300">
+      <label htmlFor="promo-code-input" className="flex items-center gap-2 text-sm font-medium text-gray-300">
         <Tag className="w-4 h-4 text-blue-400" />
         Avez-vous un code promo&nbsp;?
       </label>
@@ -113,6 +113,7 @@ export default function PromoCodeWidget({
       ) : (
         <div className="flex gap-2">
           <input
+            id="promo-code-input"
             type="text"
             value={code}
             onChange={(e) => {

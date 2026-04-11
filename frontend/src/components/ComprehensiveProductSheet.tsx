@@ -116,7 +116,7 @@ export default function ComprehensiveProductSheet({
 
           {/* Tabs */}
           <div className="border-b border-gray-200 dark:border-gray-700">
-            <div className="flex gap-2 px-6" role="tablist">
+            <div className="flex gap-2 px-6" role="tablist" aria-label="Sections du produit">
               {[
                 { id: 'info', label: '📋 Informations', icon: '📋' },
                 { id: 'ingredients', label: '🧪 Ingrédients', icon: '🧪' },

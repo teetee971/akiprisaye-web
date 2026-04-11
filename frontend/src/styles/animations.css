@@ -29,13 +29,20 @@
 
 /* Skeleton shimmer for image loading placeholders */
 .shimmer-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0) 0%,
+    transparent 0%,
     rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0) 100%
+    transparent 100%
   );
-  background-size: 200% 100%;
   animation: shimmer 1.8s linear infinite;
 }
 
@@ -61,8 +68,8 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -70,7 +77,8 @@
   .slide-up,
   .float-y,
   .faq-open,
-  .shimmer-bg {
+  .shimmer-bg,
+  .shimmer-bg::after {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;

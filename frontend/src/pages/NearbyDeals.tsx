@@ -195,7 +195,7 @@ export default function NearbyDeals() {
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="w-4 h-4 text-gray-400" />
-              <select className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-sm flex-1">
+              <select aria-label="Fréquence des alertes" className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-sm flex-1">
                 <option value="1/day">1 alerte/jour</option>
                 <option value="3/week">3 alertes/semaine</option>
                 <option value="realtime">Temps réel</option>
@@ -217,8 +217,9 @@ export default function NearbyDeals() {
                 <div className="text-xs text-gray-400 mt-1">Inclus : alertes push + SMS + optimisation itinéraire</div>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Email</label>
+                <label htmlFor="nearby-deals-email" className="block text-sm text-gray-400 mb-1">Email</label>
                 <input
+                  id="nearby-deals-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

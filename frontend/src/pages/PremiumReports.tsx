@@ -161,8 +161,9 @@ export default function PremiumReports() {
         {!ordered ? (
           <form onSubmit={handleOrder} className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Rapport</label>
+              <label htmlFor="premium-report-select" className="block text-sm text-gray-400 mb-1">Rapport</label>
               <select
+                id="premium-report-select"
                 value={selectedReport ?? ''}
                 onChange={(e) => setSelectedReport(e.target.value)}
                 required
@@ -175,8 +176,9 @@ export default function PremiumReports() {
               </select>
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Email de livraison</label>
+              <label htmlFor="premium-report-email" className="block text-sm text-gray-400 mb-1">Email de livraison</label>
               <input
+                id="premium-report-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

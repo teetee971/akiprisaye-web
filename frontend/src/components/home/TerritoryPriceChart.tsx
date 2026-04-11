@@ -120,7 +120,7 @@ export default function TerritoryPriceChart() {
         </div>
       </div>
 
-      <div className="price-chart-wrap" role="tabpanel">
+      <div className="price-chart-wrap" role="tabpanel" aria-label={product.label}>
         <ResponsiveContainer width="100%" height={280}>
           <BarChart data={product.data} margin={{ top: 8, right: 16, left: 0, bottom: 8 }} barCategoryGap="30%">
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" vertical={false} />

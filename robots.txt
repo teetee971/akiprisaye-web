@@ -1,11 +1,11 @@
 # A KI PRI SA YÉ — Comparateur de prix Outre-mer
-# https://teetee971.github.io/akiprisaye-web
+# https://akiprisaye-web.pages.dev/
 
 User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://teetee971.github.io/akiprisaye-web/sitemap.xml
+Sitemap: https://akiprisaye-web.pages.dev/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1
