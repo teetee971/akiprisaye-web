@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import type { Analytics } from "firebase/analytics";
 import { browserLocalPersistence, getAuth, setPersistence, type Auth } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache, type Firestore } from "firebase/firestore";
 import { getInstallations } from "firebase/installations";
 
 // Firebase web API keys are public by design — security is enforced via
@@ -82,7 +82,10 @@ try {
   void setPersistence(auth, browserLocalPersistence).catch((error) => {
     console.warn("Firebase Auth persistence fallback (local) unavailable:", error);
   });
-  db = getFirestore(app);
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache(),
+    experimentalForceLongPolling: true,
+  });
   safeInitInstallations(app);
   // Analytics requires a real browser environment and a valid measurementId.
   // Load the analytics module lazily so Node/Vitest contexts never evaluate

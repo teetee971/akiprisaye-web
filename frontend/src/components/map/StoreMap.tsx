@@ -113,9 +113,9 @@ export function StoreMap({
     autoFetch: false,
   });
 
-  // Request geolocation on mount
+  // Auto-locate only when permission was already granted (avoids prompting on page load)
   useEffect(() => {
-    if (permission === 'prompt') {
+    if (permission === 'granted') {
       requestPermission();
     }
   }, [permission, requestPermission]);
