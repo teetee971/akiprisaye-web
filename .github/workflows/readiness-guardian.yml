@@ -51,7 +51,7 @@ jobs:
 
       - name: 'Auto-réparation: relance du déploiement GitHub Pages'
         if: ${{ failure() }}
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             await github.rest.actions.createWorkflowDispatch({
@@ -63,7 +63,7 @@ jobs:
 
       - name: Alerte incident readiness (issue)
         if: ${{ failure() }}
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const title = `🚨 Readiness Guardian en échec — ${new Date().toISOString().slice(0, 16)} UTC`;

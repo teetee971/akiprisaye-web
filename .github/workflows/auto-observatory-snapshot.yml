@@ -61,7 +61,7 @@ jobs:
 
       - name: 📢 Notification en cas d'échec
         if: failure()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             core.warning('⚠️ Échec snapshot observatoire');

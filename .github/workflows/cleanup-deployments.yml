@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Supprimer les anciens déploiements GitHub Pages
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           KEEP_LAST: ${{ inputs.keep_last || '5' }}
         with:
