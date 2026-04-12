@@ -319,6 +319,9 @@ export function extractSitemapPaths(xml, siteUrl) {
       for (const u of altUrls) {
         originCount.set(u.origin, (originCount.get(u.origin) ?? 0) + 1);
       }
+      if (originCount.size === 0) {
+        return [...paths];
+      }
       const dominantOrigin = [...originCount.entries()].sort((a, b) => b[1] - a[1])[0][0];
       const dominantPathnames = altUrls
         .filter((u) => u.origin === dominantOrigin)
