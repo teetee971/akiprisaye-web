@@ -5,10 +5,12 @@
  * Both "creator" and "admin" users are granted access.
  */
 
+import type { ReactElement } from "react";
+
 import RequireRole from "./RequireRole";
 
 interface RequireCreatorProps {
-  children: JSX.Element;
+  children: ReactElement;
 }
 
 export default function RequireCreator({ children }: RequireCreatorProps) {

@@ -11,6 +11,7 @@
  *  4. Role satisfied → render children
  */
 
+import type { ReactElement } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/authHook";
 import { hasRole } from "@/auth/rbac";
@@ -18,7 +19,7 @@ import type { UserRole } from "@/auth/rbac";
 
 interface RequireRoleProps {
   role: UserRole;
-  children: JSX.Element;
+  children: ReactElement;
   redirectTo?: string;
 }
 
