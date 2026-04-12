@@ -401,23 +401,6 @@ async function main() {
     shouldRun('com')          ? scrapeCOMPrices()                          : Promise.resolve([]),
     shouldRun('grossistes')   ? scrapeGrossistePrices()                    : Promise.resolve([]),
   ]);
-  const rawFuel = fuelRes.data;
-  const rawFood = foodRes.data;
-  const rawFresh = freshRes.data;
-  const rawCatalogue = catalogueRes.data;
-  const rawHexagone = hexagoneRes.data;
-  const rawBQP = bqpRes.data;
-  const rawServices = servicesRes.data;
-  const rawLoyer = loyerRes.data;
-  const rawMedicaments = medicamentsRes.data;
-  const rawOctrois = octroiRes.data;
-  const rawCOM = comRes.data;
-  const rawGrossistes = grossistesRes.data;
-  const sourceDiagnostics = {
-    fuel: fuelRes, food: foodRes, fresh: freshRes, catalogue: catalogueRes,
-    hexagone: hexagoneRes, bqp: bqpRes, services: servicesRes, loyer: loyerRes,
-    medicaments: medicamentsRes, octroiMer: octroiRes, com: comRes, grossistes: grossistesRes,
-  };
 
   // ── Normalisation ─────────────────────────────────────────────────────────
   console.log('\n🔧 Normalisation des données…');
