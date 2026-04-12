@@ -245,6 +245,7 @@
 /simulateur-budget
 /solidarite
 /stations-proximite
+/stats
 /stats-dashboard
 /statut
 /stores
