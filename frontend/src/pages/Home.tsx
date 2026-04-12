@@ -75,7 +75,7 @@ const Home = () => {
       {/* CARROUSEL NETFLIX */}
       <div className="mb-10">
         <div className="flex gap-4 overflow-x-auto px-6 pb-4 scrollbar-hide snap-x">
-          {promos.map(promo => (
+          {promos.map((promo, idx) => (
             <button
               key={promo.id}
               type="button"
@@ -83,7 +83,7 @@ const Home = () => {
               aria-label={promo.title}
               className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer active:scale-95 transition-transform text-left"
             >
-              <img src={promo.img} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="" width={288} height={162} loading="lazy" />
+              <img src={promo.img} className="absolute inset-0 w-full h-full object-cover opacity-50" alt="" width={288} height={162} {...(idx === 0 ? { fetchPriority: 'high' } : { loading: 'lazy' })} />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
               <div className="absolute bottom-4 left-5">
                 <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{promo.title}</p>

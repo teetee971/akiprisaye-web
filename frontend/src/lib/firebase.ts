@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import type { Analytics } from "firebase/analytics";
 import { browserLocalPersistence, getAuth, setPersistence, type Auth } from "firebase/auth";
-import { initializeFirestore, persistentLocalCache, type Firestore } from "firebase/firestore";
+import { initializeFirestore, type Firestore } from "firebase/firestore";
 import { getInstallations } from "firebase/installations";
 
 // Firebase web API keys are public by design — security is enforced via
@@ -83,7 +83,6 @@ try {
     console.warn("Firebase Auth persistence fallback (local) unavailable:", error);
   });
   db = initializeFirestore(app, {
-    localCache: persistentLocalCache(),
     experimentalForceLongPolling: true,
   });
   safeInitInstallations(app);
