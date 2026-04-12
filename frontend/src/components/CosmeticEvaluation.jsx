@@ -83,7 +83,6 @@ export default function CosmeticEvaluation({ initialEan }) {
     if (initialEan && initialEan.trim()) {
       handleLoadBarcode(initialEan.trim());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialEan]);
 
   /* ---------------------------------------------------------------- */

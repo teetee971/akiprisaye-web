@@ -334,7 +334,7 @@ export default function PaniersTypes() {
             </select>
           </div>
           <div>
-            <label className="block text-xs text-slate-400 mb-1">Panier</label>
+            <p className="block text-xs text-slate-400 mb-1">Panier</p>
             <div className="flex flex-wrap gap-2">
               {PANIERS.map((p) => (
                 <button
