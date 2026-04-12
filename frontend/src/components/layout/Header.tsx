@@ -113,7 +113,7 @@ export default function Header() {
             type="button"
             onClick={() => setSearchOpen(true)}
             className="hidden sm:flex items-center gap-2 flex-1 max-w-xs mx-4 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-400 text-sm transition-colors group"
-            aria-label="Ouvrir la recherche globale (Ctrl+K)"
+            aria-label="Rechercher (Ctrl+K)"
           >
             <Search size={14} className="shrink-0" aria-hidden="true" />
             <span className="flex-1 text-left truncate">Rechercher…</span>

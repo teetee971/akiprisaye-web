@@ -104,6 +104,22 @@ describe('validate-deployment helpers', () => {
     ]);
   });
 
+  it('extracts paths from a GitHub Pages sitemap when validating against Cloudflare Pages (cross-origin fallback)', () => {
+    const sitemap = `
+      <urlset>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/</loc></url>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/comparateur</loc></url>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/paniers-types</loc></url>
+      </urlset>
+    `;
+
+    expect(extractSitemapPaths(sitemap, 'https://akiprisaye-web.pages.dev')).toEqual([
+      '/',
+      '/comparateur',
+      '/paniers-types',
+    ]);
+  });
+
   it('detects GitHub Pages and Cloudflare Pages static hosting URLs', () => {
     expect(isGitHubPagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(true);
     expect(isGitHubPagesSite('https://akiprisaye-web.pages.dev')).toBe(false);

@@ -39,7 +39,7 @@ export default function FlipStatCard({
       className={`flip-card ${className}`}
       tabIndex={0}
       role="button"
-      aria-label={`${label} : ${value}. Appuyez pour voir les détails.`}
+      aria-label={`${value} – ${label}. Appuyez pour voir les détails.`}
       onKeyDown={handleKeyDown}
     >
       <div className="flip-card-inner">

@@ -168,7 +168,7 @@ const Home = () => {
 
         {/* Badge 🇬🇵 */}
         <motion.div {...fadeUp(0)} className="flex justify-center mb-6">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-bold tracking-widest animate-pulse">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-bold tracking-widest">
             🇬🇵 100% Guadeloupe • Données citoyennes
           </span>
         </motion.div>
@@ -193,7 +193,7 @@ const Home = () => {
 
         {/* Stat choc pulsée */}
         <motion.div {...fadeUp(0.3)} className="flex justify-center mb-8">
-          <span className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-black text-sm animate-pulse">
+          <span className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-black text-sm">
             💰 Jusqu'à 40% d'écart de prix entre enseignes
           </span>
         </motion.div>

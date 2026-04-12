@@ -294,7 +294,71 @@ export function extractSitemapPaths(xml, siteUrl) {
     paths.add(normalizedPathname);
   }
 
+  // Cross-origin fallback: if no paths matched the validation site's origin (e.g. the sitemap
+  // lists GitHub Pages URLs but we are validating against Cloudflare Pages), extract paths from
+  // the dominant origin in the sitemap. The common path-segment prefix is stripped so each
+  // entry becomes a site-relative path (e.g. /akiprisaye-web/comparateur → /comparateur).
+  if (paths.size === 0 && !siteBasePath) {
+    const altUrls = [];
+    for (const match of xml.matchAll(/<loc>([^<]+)<\/loc>/gi)) {
+      const rawUrl = match[1]?.trim();
+      if (!rawUrl) {
+        continue;
+      }
+      let parsed;
+      try {
+        parsed = new URL(rawUrl);
+      } catch {
+        continue;
+      }
+      altUrls.push(parsed);
+    }
+
+    if (altUrls.length > 0) {
+      const originCount = new Map();
+      for (const u of altUrls) {
+        originCount.set(u.origin, (originCount.get(u.origin) ?? 0) + 1);
+      }
+      if (originCount.size === 0) {
+        return [...paths];
+      }
+      const dominantOrigin = [...originCount.entries()].sort((a, b) => b[1] - a[1])[0][0];
+      const dominantPathnames = altUrls
+        .filter((u) => u.origin === dominantOrigin)
+        .map((u) => u.pathname.replace(/\/+$/, '') || '/');
+
+      const prefix = sitemapCommonPathPrefix(dominantPathnames);
+      for (const pathname of dominantPathnames) {
+        const relative = pathname.slice(prefix.length) || '/';
+        paths.add(relative.startsWith('/') ? relative : `/${relative}`);
+      }
+    }
+  }
+
   return [...paths];
+}
+
+/**
+ * Returns the longest common path-segment prefix shared by all given pathnames.
+ * e.g. ['/repo/a', '/repo/b'] → '/repo'
+ *      ['/a', '/b']           → ''
+ */
+function sitemapCommonPathPrefix(pathnames) {
+  if (pathnames.length === 0) {
+    return '';
+  }
+  const segmentArrays = pathnames.map((p) => p.split('/').filter(Boolean));
+  const minLen = Math.min(...segmentArrays.map((s) => s.length));
+  const common = [];
+  for (let i = 0; i < minLen; i++) {
+    const seg = segmentArrays[0][i];
+    if (segmentArrays.every((s) => s[i] === seg)) {
+      common.push(seg);
+    } else {
+      break;
+    }
+  }
+  return common.length > 0 ? `/${common.join('/')}` : '';
 }
 
 /**
