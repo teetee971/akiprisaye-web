@@ -41,6 +41,7 @@ describe('static hosting SPA routing config', () => {
       .map((line) => line.replace(/\s+/g, ' '));
 
     expect(redirects).toEqual([
+      'http://akiprisaye-web.pages.dev/* https://akiprisaye-web.pages.dev/:splat 301',
       '/api/* /api/:splat 200',
       '/assets/* /assets/:splat 200',
       '/* /index.html 200',
