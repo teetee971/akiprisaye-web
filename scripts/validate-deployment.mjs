@@ -87,7 +87,14 @@ export function containsLegacyFallback(html) {
 }
 
 export function hasGitHubPagesSpaFallback(html) {
-  return /\?p=%2F/i.test(html) || /Redirection en cours/i.test(html);
+  // Accept the classic redirect-script fallback OR a direct React shell served
+  // via 404.html (copied from index.html). GitHub Pages returns HTTP 404 for
+  // all deep-links but serves 404.html which boots the SPA — both patterns are valid.
+  return (
+    /\?p=%2F/i.test(html) ||
+    /Redirection en cours/i.test(html) ||
+    hasReactShell(html)
+  );
 }
 
 export function extractServiceWorkerVersion(source) {
