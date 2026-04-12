@@ -407,6 +407,7 @@ export default function App() {
                               <Route path="import-ticket" element={<AdminTicketImport />} />
                               <Route path="catalogs" element={<AdminCatalogImport />} />
                               <Route path="catalogues" element={<AdminCatalogImport />} />
+                              <Route path="stats" element={<StatsDashboard />} />
                             </Route>
 
                             {/* --- MAIN SITE --- */}
