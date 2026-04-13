@@ -86,6 +86,9 @@ jobs:
             const since = twoHoursAgo.toISOString();
             const existing = await github.rest.search.issuesAndPullRequests({
               q: `label:readiness label:automatique is:open repo:${context.repo.owner}/${context.repo.repo} is:issue created:>=${since}`,
+              sort: 'created',
+              order: 'desc',
+              per_page: 1,
             });
 
             const recentIssue = existing.data.items[0] ?? null;
@@ -118,12 +121,12 @@ jobs:
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              labels: 'readiness',
+              labels: 'readiness,automatique',
               state: 'open',
               per_page: 100,
             });
 
-            for (const issue of issues) {
+            for (const issue of issues.filter((i) => !i.pull_request)) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
