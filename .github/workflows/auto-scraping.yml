@@ -50,6 +50,7 @@ permissions:
   contents: write   # Pour commiter les JSON mis à jour
   issues: write     # Pour créer des alertes si choc grave
   actions: read
+  pull-requests: write  # Pour créer la PR de mise à jour des données
 
 concurrency:
   group: scraping-auto
@@ -122,34 +123,20 @@ jobs:
             exit 0
           fi
 
-      - name: 💾 Commit des données mises à jour
+      - name: 💾 Créer PR avec données mises à jour
         if: ${{ inputs.dry_run != 'true' }}
-        run: |
-          git config user.name  "akiprisaye-bot[scraper]"
-          git config user.email "bot-scraper@akiprisaye.fr"
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: auto-scraper-data
+          base: main
+          commit-message: "🤖 [auto] Mise à jour données prix — [skip ci]"
+          add-paths: frontend/public/data/
+          title: "🤖 [auto] Mise à jour données prix DOM-TOM"
+          body: |
+            Mise à jour automatique des données prix par le scraper.
 
-          # Vérifier s'il y a des changements dans les fichiers de données
-          # git status --porcelain détecte aussi les nouveaux fichiers non suivis (ex: product-scan-*.json)
-          if [ -z "$(git status --porcelain -- frontend/public/data/)" ]; then
-            echo "ℹ️  Aucune modification de données — pas de commit"
-          else
-            CHANGED=$(git status --porcelain -- frontend/public/data/ | awk '{print $2}' | tr '\n' ' ')
-            echo "📝 Fichiers modifiés : $CHANGED"
-
-            git add frontend/public/data/fuel-prices.json \
-                    frontend/public/data/services-prices.json \
-                    frontend/public/data/bqp-prices.json \
-                    frontend/public/data/open-prices-dom.json \
-                    frontend/public/data/product-scan-*.json 2>/dev/null || true
-
-            git commit \
-              -m "🤖 [auto] Mise à jour données prix — $(date -u '+%Y-%m-%d %H:%M UTC')" \
-              -m "Sources scrapées : prix-carburants.gouv.fr, Open Prices, data.gouv.fr BQP, ARCEP/CRE/INSEE" \
-              -m "Déclencheur : ${{ github.event_name }}" \
-              -m "[skip ci]"
-            git push || echo "⚠️  Push vers main rejeté (règle de protection de branche) — données générées localement, disponibles en artifacts CI"
-            echo "✅ Données committées"
-          fi
+            **Sources :** prix-carburants.gouv.fr, Open Prices, data.gouv.fr BQP, ARCEP/CRE/INSEE
+            **Déclencheur :** ${{ github.event_name }}
 
       - name: 📢 Notification en cas d'échec
         if: failure()
