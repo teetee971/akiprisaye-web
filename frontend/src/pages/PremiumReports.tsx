@@ -126,12 +126,12 @@ export default function PremiumReports() {
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl">{report.emoji}</span>
+                  <span className="text-2xl" aria-hidden="true">{report.emoji}</span>
                   <div>
                     <h3 className="font-bold text-white">{report.title}</h3>
                     {report.popular && (
                       <span className="text-xs bg-amber-500 text-white rounded-full px-2 py-0.5">
-                        ⭐ Populaire
+                        <span aria-hidden="true">⭐ </span>Populaire
                       </span>
                     )}
                   </div>
