@@ -13,7 +13,7 @@
 
 import twilio from 'twilio';
 import type { Notification } from '../notificationTypes.js';
-import { prisma } from '../../../app.js';
+import prisma from '../../../database/prisma.js';
 
 const {
   TWILIO_ACCOUNT_SID,

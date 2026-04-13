@@ -62,6 +62,16 @@ type LWithCluster = typeof L & {
 const DEFAULT_CENTER: [number, number] = [16.265, -61.551]; // Guadeloupe
 const DEFAULT_ZOOM = 11;
 
+/** Escape HTML special characters to prevent XSS in Leaflet popups. */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 /**
  * MarkerClusterLayer — renders store markers using leaflet.markercluster.
  * Mounted inside <MapContainer> so it has access to the Leaflet map instance.
@@ -95,7 +105,7 @@ function MarkerClusterLayer({
         ? `${store.name} — indice ${store.priceIndex}`
         : store.name;
       marker.bindPopup(
-        `<strong>${store.name}</strong><br/>${store.address ?? ''}<br/>${label}`,
+        `<strong>${escapeHtml(store.name)}</strong><br/>${escapeHtml(store.address ?? '')}<br/>${escapeHtml(label)}`,
       );
       marker.on('click', () => onStoreClick(store));
       group.addLayer(marker);

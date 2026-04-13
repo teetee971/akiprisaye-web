@@ -20,8 +20,38 @@ import { SUBSCRIPTION_PLANS } from '../../types/api.js';
 
 let redisStore: Store | undefined;
 
+// Proxy store that delegates to the real Redis store once it is ready.
+// express-rate-limit calls store methods lazily (after the first request),
+// so the real store will be initialised before any method is invoked as long
+// as the app starts handling traffic after the event-loop tick that resolves
+// the dynamic import.
+const lazyStoreProxy: Store = {
+  async init(options) {
+    if (redisStore?.init) await redisStore.init(options);
+  },
+  async increment(key) {
+    if (redisStore) return redisStore.increment(key);
+    // Redis store initialisation failed or the first request arrived before
+    // the dynamic import resolved. Throwing here causes express-rate-limit to
+    // fall back gracefully to its own in-process store.
+    throw new Error('Redis store initialisation failed or timed out');
+  },
+  async decrement(key) {
+    if (redisStore?.decrement) return redisStore.decrement(key);
+  },
+  async resetKey(key) {
+    if (redisStore?.resetKey) return redisStore.resetKey(key);
+  },
+  async resetAll() {
+    if (redisStore?.resetAll) return redisStore.resetAll();
+  },
+  async get(key) {
+    if (redisStore?.get) return redisStore.get(key);
+    return undefined;
+  },
+};
+
 if (process.env.REDIS_URL) {
-  // Dynamic import so the app still boots when Redis is unavailable.
   Promise.all([
     import('ioredis'),
     import('rate-limit-redis'),
@@ -94,9 +124,9 @@ export function createDynamicRateLimit(
       });
     },
 
-    // Use Redis store when available; express-rate-limit uses its default
+    // Use Redis proxy store when available; express-rate-limit uses its default
     // memory store when `store` is undefined.
-    store: redisStore,
+    store: process.env.REDIS_URL ? lazyStoreProxy : undefined,
 
     standardHeaders: true,
     legacyHeaders: false,
