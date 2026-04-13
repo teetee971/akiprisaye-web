@@ -1,16 +1,21 @@
 /**
  * setup-github-pages-spa.mjs
  *
- * Post-build helper: copies dist/index.html → dist/404.html so that GitHub
- * Pages serves the React app shell for any route that doesn't map to a
- * physical file (e.g. /landing accessed directly without a pre-rendered page).
+ * Post-build helper that configures the dist/ directory for the target host:
  *
- * GitHub Pages returns dist/404.html for unmatched URLs.  Serving the full app
- * shell there means React Router handles the URL directly — no redirect needed.
+ * GitHub Pages (GITHUB_PAGES=true):
+ *   Copies dist/index.html → dist/404.html so that GitHub Pages serves the
+ *   React app shell for any route that doesn't map to a physical file.
+ *   GitHub Pages returns dist/404.html for unmatched URLs.
  *
- * This script is intentionally a no-op when GITHUB_PAGES !== "true" so that
- * Cloudflare Pages and local builds are unaffected (Cloudflare uses _redirects
- * `/* /index.html 200` instead).
+ * Cloudflare Pages / other hosts (GITHUB_PAGES != "true"):
+ *   Removes dist/404.html if it exists.  Vite copies public/404.html (the
+ *   legacy GitHub Pages redirect script) into dist/ during the build, but
+ *   Cloudflare Pages serves that file (with a 404 status code) for every
+ *   unmatched route, which prevents the _redirects `/* /index.html 200`
+ *   catch-all from ever running.  Deleting dist/404.html lets Cloudflare
+ *   fall through to _redirects and return HTTP 200 for SPA routes such as
+ *   /scanner, /alertes, /connexion, /observatoire.
  *
  * Called from the "postbuild" npm script in package.json.
  * The deploy-pages.yml and ci.yml workflows also run `cp dist/index.html
@@ -18,13 +23,23 @@
  * script has already written the correct content.
  */
 
-import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const isGitHubPages = process.env.GITHUB_PAGES === 'true';
 
 if (!isGitHubPages) {
-  console.log('[setup-github-pages-spa] GITHUB_PAGES !== "true" — skipping 404.html copy.');
+  // Remove the legacy GitHub Pages redirect script from dist/ so that
+  // Cloudflare Pages does not serve it as a 404 fallback.  Without this,
+  // the _redirects `/* /index.html 200` rule is never reached and SPA routes
+  // like /scanner return HTTP 404.
+  const notFoundDist = resolve('dist', '404.html');
+  if (existsSync(notFoundDist)) {
+    rmSync(notFoundDist);
+    console.log('[setup-github-pages-spa] ✓ Removed dist/404.html — Cloudflare Pages will use _redirects for SPA routing.');
+  } else {
+    console.log('[setup-github-pages-spa] dist/404.html not present — nothing to remove.');
+  }
   process.exit(0);
 }
 
