@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const actions = [
-  { to: '/search', label: 'Rechercher' },
-  { to: '/scanner?mode=ean', label: 'Scanner EAN' },
-  { to: '/scanner?mode=ticket', label: 'Scanner ticket' },
-  { to: '/faq', label: 'Aide' },
+  { to: '/search',          label: 'Rechercher',          icon: '🔍' },
+  { to: '/scanner?mode=ean', label: 'Scanner EAN',         icon: '📦' },
+  { to: '/scanner?mode=ticket', label: 'Scanner ticket',   icon: '🧾' },
+  { to: '/contribuer-prix', label: 'Signaler un prix',     icon: '📸' },
+  { to: '/faq',             label: 'Aide',                 icon: '❓' },
 ];
 
 export default function FabActions() {
@@ -49,7 +50,7 @@ export default function FabActions() {
           id="fab-actions-menu"
           role="menu"
           aria-label="Actions rapides"
-          className="mb-2 w-44 rounded-xl border border-slate-700 bg-slate-900/95 p-2 shadow-xl"
+          className="mb-2 w-48 rounded-xl border border-slate-700 bg-slate-900/95 p-2 shadow-xl"
         >
           {actions.map((action) => (
             <Link
@@ -57,8 +58,9 @@ export default function FabActions() {
               to={action.to}
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="block rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-slate-800"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-100 hover:bg-slate-800"
             >
+              <span aria-hidden="true">{action.icon}</span>
               {action.label}
             </Link>
           ))}
@@ -69,12 +71,19 @@ export default function FabActions() {
         ref={buttonRef}
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className={`rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-500 ${compact ? 'px-3 py-3 text-xs' : 'px-4 py-3 text-sm'}`}
+        className={`rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-500 ${compact ? 'p-3' : 'px-4 py-3 text-sm'}`}
         aria-expanded={open}
         aria-controls="fab-actions-menu"
         aria-label={open ? 'Fermer les actions rapides' : 'Ouvrir les actions rapides'}
       >
-        Actions
+        {compact ? (
+          <span aria-hidden="true" className="text-base leading-none">⚡</span>
+        ) : (
+          <span className="flex items-center gap-1.5">
+            <span aria-hidden="true">⚡</span>
+            Actions
+          </span>
+        )}
       </button>
     </div>
   );

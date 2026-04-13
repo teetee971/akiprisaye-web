@@ -118,7 +118,7 @@ export default function FeedbackWidget({
         aria-label="Ouvrir le module de retour utilisateur"
         onClick={handleToggle}
         className={[
-          'fixed bottom-4 right-4 z-[70]',
+          'fixed bottom-20 right-4 z-[70]',
           'inline-flex h-14 w-14 items-center justify-center',
           'rounded-2xl border border-white/10 bg-black/80 text-white shadow-lg backdrop-blur',
           'transition hover:scale-[1.02] active:scale-95',
@@ -139,7 +139,7 @@ export default function FeedbackWidget({
             role="dialog"
             aria-modal="true"
             aria-labelledby="feedback-title"
-            className="mx-auto mt-16 w-full max-w-sm rounded-2xl border border-white/10 bg-[#0a0a0f] p-4 text-white shadow-2xl"
+            className="mx-auto mt-16 w-full max-w-sm rounded-2xl border border-white/10 bg-slate-950 p-4 text-white shadow-2xl"
           >
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>

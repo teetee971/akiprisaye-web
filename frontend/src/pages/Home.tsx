@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useState, useRef } from 'react';
-import { Search, PlayCircle, Package, Loader2, RefreshCw } from 'lucide-react';
+import { Search, PlayCircle, Package, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
@@ -7,6 +7,7 @@ import { useScrollReveal } from '../hooks/useScrollReveal';
 import { SEOHead } from '../components/ui/SEOHead';
 import FlipStatCard from '../components/ui/FlipStatCard';
 import PriceLiveTicker from '../components/home/PriceLiveTicker';
+import { Skeleton } from '../components/ui/Skeleton';
 import '../styles/home-v5.css';
 
 // Lazy-loaded sections & widgets — kept out of the initial JS bundle
@@ -148,7 +149,7 @@ const Home = () => {
                 alt=""
                 width={288}
                 height={162}
-                fetchpriority={idx === 0 ? 'high' : undefined}
+                fetchPriority={idx === 0 ? 'high' : undefined}
                 loading={idx === 0 ? undefined : 'lazy'}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
@@ -185,9 +186,10 @@ const Home = () => {
         </h2>
         <div className="grid gap-3">
           {loading ? (
-            <div className="flex flex-col items-center py-10 text-slate-500 gap-3">
-              <Loader2 className="animate-spin" />
-              <p className="text-[10px] font-bold uppercase tracking-widest">Connexion au gisement...</p>
+            <div className="flex flex-col gap-3 py-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
             </div>
           ) : products && products.length > 0 ? (
             products.slice(0, 15).map((p: Product, i: number) => (
@@ -228,8 +230,10 @@ const Home = () => {
         <div id="home-extended-content" className="space-y-12 px-4 pb-8">
           <Suspense
             fallback={
-              <div className="py-8 text-center text-slate-500">
-                <Loader2 className="animate-spin mx-auto" />
+              <div className="space-y-6 py-4">
+                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-32 w-full" />
+                <Skeleton className="h-48 w-full" />
               </div>
             }
           >
