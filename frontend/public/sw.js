@@ -60,31 +60,31 @@ async function staleWhileRevalidate(request, cacheName) {
   const cached = await cache.match(request);
 
   // Lance le fetch en arrière-plan pour mettre à jour le cache
-  const fetchPromise = fetch(request).then((response) => {
-    if (response && response.ok) {
-      // Ajoute un header personnalisé pour mémoriser la date de récupération
-      const headers = new Headers(response.headers);
-      headers.set('x-sw-fetched-at', new Date().toISOString());
-      const cloned = response.clone();
-      // Reconstruit avec le header enrichi
-      cloned.text().then((body) => {
+  const fetchPromise = fetch(request)
+    .then(async (response) => {
+      if (response && response.ok) {
+        // Ajoute un header personnalisé pour mémoriser la date de récupération
+        const headers = new Headers(response.headers);
+        headers.set('x-sw-fetched-at', new Date().toISOString());
+        const cloned = response.clone();
+        // Reconstruit avec le header enrichi
+        const body = await cloned.text();
         const enriched = new Response(body, {
           status: response.status,
           statusText: response.statusText,
           headers,
         });
-        cache.put(request, enriched);
-      });
-    }
-    return response;
-  }).catch(() => null);
+        await cache.put(request, enriched);
+      }
+      return response;
+    })
+    .catch(() => new Response(null, { status: 503, statusText: 'Offline' }));
 
   // Sert le cache si disponible, sinon attend le réseau
   if (cached) {
-    fetchPromise.catch(() => null); // revalidation silencieuse
     return cached;
   }
-  return fetchPromise || new Response(null, { status: 503, statusText: 'Offline' });
+  return fetchPromise;
 }
 
 async function cacheFirst(request, cacheName) {

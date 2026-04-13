@@ -8,7 +8,6 @@ import { SumUpService } from './sumupService';
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-const mockCreate = jest.fn();
 const mockGet = jest.fn();
 const mockPost = jest.fn();
 const mockDelete = jest.fn();

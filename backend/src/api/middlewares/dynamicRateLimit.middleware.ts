@@ -20,8 +20,63 @@ import { SUBSCRIPTION_PLANS } from '../../types/api.js';
 
 let redisStore: Store | undefined;
 
+/**
+ * In-process fallback used by lazyStoreProxy while the async Redis import is
+ * still pending (or when it has permanently failed).  Keyed by the same string
+ * that express-rate-limit passes to the store, so it behaves identically to the
+ * default in-memory store – except that it is shared across all rate-limit
+ * instances created before Redis became available.
+ * ⚠️ Single-instance only – not suitable for multi-process production deploys
+ *    (those should always have REDIS_URL set so Redis initialises quickly).
+ */
+const proxyFallbackStore = new Map<string, { totalHits: number; resetTime: Date }>();
+
+/**
+ * Proxy store that delegates to the real Redis store once it is ready.
+ * While Redis is still initialising (or if it fails), the proxy falls back to
+ * an in-process map so that rate limiting continues to work instead of
+ * returning a 500 error on every request.
+ */
+const lazyStoreProxy: Store = {
+  async init(options) {
+    if (redisStore?.init) await redisStore.init(options);
+  },
+  async increment(key) {
+    if (redisStore) return redisStore.increment(key);
+    // Redis not yet ready – use in-process fallback so requests are still
+    // rate-limited rather than erroring with a 500.
+    const now = Date.now();
+    const windowMs = 24 * 60 * 60 * 1000; // conservative 24-hour window
+    let entry = proxyFallbackStore.get(key);
+    if (!entry || entry.resetTime.getTime() <= now) {
+      entry = { totalHits: 0, resetTime: new Date(now + windowMs) };
+      proxyFallbackStore.set(key, entry);
+    }
+    entry.totalHits += 1;
+    return { totalHits: entry.totalHits, resetTime: entry.resetTime };
+  },
+  async decrement(key) {
+    if (redisStore?.decrement) return redisStore.decrement(key);
+    const entry = proxyFallbackStore.get(key);
+    if (entry && entry.totalHits > 0) entry.totalHits -= 1;
+  },
+  async resetKey(key) {
+    if (redisStore?.resetKey) return redisStore.resetKey(key);
+    proxyFallbackStore.delete(key);
+  },
+  async resetAll() {
+    if (redisStore?.resetAll) return redisStore.resetAll();
+    proxyFallbackStore.clear();
+  },
+  async get(key) {
+    if (redisStore?.get) return redisStore.get(key);
+    const entry = proxyFallbackStore.get(key);
+    if (!entry || entry.resetTime.getTime() <= Date.now()) return undefined;
+    return { totalHits: entry.totalHits, resetTime: entry.resetTime };
+  },
+};
+
 if (process.env.REDIS_URL) {
-  // Dynamic import so the app still boots when Redis is unavailable.
   Promise.all([
     import('ioredis'),
     import('rate-limit-redis'),
@@ -94,9 +149,9 @@ export function createDynamicRateLimit(
       });
     },
 
-    // Use Redis store when available; express-rate-limit uses its default
+    // Use Redis proxy store when available; express-rate-limit uses its default
     // memory store when `store` is undefined.
-    store: redisStore,
+    store: process.env.REDIS_URL ? lazyStoreProxy : undefined,
 
     standardHeaders: true,
     legacyHeaders: false,

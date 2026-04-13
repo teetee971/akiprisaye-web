@@ -62,6 +62,16 @@ type LWithCluster = typeof L & {
 const DEFAULT_CENTER: [number, number] = [16.265, -61.551]; // Guadeloupe
 const DEFAULT_ZOOM = 11;
 
+/** Escape HTML special characters to prevent XSS in Leaflet popups. */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 /**
  * MarkerClusterLayer — renders store markers using leaflet.markercluster.
  * Mounted inside <MapContainer> so it has access to the Leaflet map instance.
@@ -91,27 +101,12 @@ function MarkerClusterLayer({
 
     stores.forEach((store) => {
       const marker = L.marker([store.lat, store.lon]);
-
-      const container = document.createElement('div');
-      const nameEl = document.createElement('strong');
-      nameEl.textContent = store.name;
-      container.appendChild(nameEl);
-
-      if (store.address) {
-        container.appendChild(document.createElement('br'));
-        const addrEl = document.createElement('span');
-        addrEl.textContent = store.address;
-        container.appendChild(addrEl);
-      }
-
-      if (store.priceIndex != null) {
-        container.appendChild(document.createElement('br'));
-        const indexEl = document.createElement('span');
-        indexEl.textContent = `${store.name} — indice ${store.priceIndex}`;
-        container.appendChild(indexEl);
-      }
-
-      marker.bindPopup(container);
+      const label = store.priceIndex != null
+        ? `${store.name} — indice ${store.priceIndex}`
+        : store.name;
+      marker.bindPopup(
+        `<strong>${escapeHtml(store.name)}</strong><br/>${escapeHtml(store.address ?? '')}<br/>${escapeHtml(label)}`,
+      );
       marker.on('click', () => onStoreClick(store));
       group.addLayer(marker);
     });
