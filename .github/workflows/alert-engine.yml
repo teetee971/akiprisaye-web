@@ -72,6 +72,16 @@ jobs:
             echo "product-scores.json found — skipping re-fetch"
           fi
 
+      - name: Merge observations (required by generate-alerts)
+        run: |
+          if [ ! -f data/output/merged-observations.json ]; then
+            echo "merged-observations.json not found — running fetch + merge pipeline"
+            node scripts/fetch-price-data.mjs
+            node scripts/merge-all-observations.mjs
+          else
+            echo "merged-observations.json found — skipping re-fetch"
+          fi
+
       - name: Generate alerts
         run: node scripts/generate-alerts.mjs
         env:
