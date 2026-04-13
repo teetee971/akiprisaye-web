@@ -130,12 +130,7 @@ jobs:
           branch: auto-scraper-data
           base: main
           commit-message: "🤖 [auto] Mise à jour données prix — [skip ci]"
-          add-paths: |
-            frontend/public/data/fuel-prices.json
-            frontend/public/data/services-prices.json
-            frontend/public/data/bqp-prices.json
-            frontend/public/data/open-prices-dom.json
-            frontend/public/data/product-scan-*.json
+          add-paths: frontend/public/data/
           title: "🤖 [auto] Mise à jour données prix DOM-TOM"
           body: |
             Mise à jour automatique des données prix par le scraper.
