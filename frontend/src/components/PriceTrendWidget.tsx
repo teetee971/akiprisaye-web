@@ -228,6 +228,25 @@ export default function PriceTrendWidget({
       {/* Explanation */}
       <p className="text-xs text-slate-400 leading-relaxed">{prediction.explanation}</p>
 
+      {/* Confidence interval */}
+      {prediction.confidenceLow !== null && prediction.confidenceHigh !== null && (
+        <div className="rounded-lg bg-slate-800/40 border border-slate-700/60 px-3 py-2">
+          <p className="text-xs text-slate-400 mb-1">
+            Fourchette estimée à ~30 jours (±1σ)
+          </p>
+          <p className="text-sm font-medium text-white">
+            {formatPrice(prediction.confidenceLow)}
+            <span className="mx-2 text-slate-500">→</span>
+            {formatPrice(prediction.confidenceHigh)}
+          </p>
+          {prediction.predictedPrice !== null && (
+            <p className="text-xs text-slate-500 mt-0.5">
+              Valeur centrale : {formatPrice(prediction.predictedPrice)}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Footer */}
       <div className="flex items-center justify-between text-xs text-slate-500">
         <span>
