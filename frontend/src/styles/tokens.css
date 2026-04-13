@@ -1,11 +1,13 @@
+/*
+ * tokens.css — Design tokens complémentaires
+ *
+ * Les couleurs et typographies principales sont définies dans globals.css.
+ * Ce fichier ne contient que les tokens additionnels non couverts par globals.css.
+ */
 :root {
-  --bg: #0a0a0f;
   --surface: rgba(255, 255, 255, 0.04);
   --surface-2: rgba(255, 255, 255, 0.07);
   --border: rgba(255, 255, 255, 0.10);
-  --text: #f4f4f5;
-  --muted: #71717a;
-  --success: #34d399;
   --radius-xl: 1.25rem;
   --radius-2xl: 1.75rem;
 }

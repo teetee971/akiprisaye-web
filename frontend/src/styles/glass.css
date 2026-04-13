@@ -354,16 +354,11 @@ input:focus, textarea:focus, select:focus {
   }
 }
 
-/* Dark mode - Default and Enhanced */
+/* Dark mode — applies when prefers-color-scheme: dark */
 @media (prefers-color-scheme: dark) {
   body {
-    background: #0B1220;
+    background: var(--bg, #0B1220);
   }
-}
-
-/* Always enforce dark mode by default */
-body {
-  background: #0B1220;
 }
 
 body.light {
