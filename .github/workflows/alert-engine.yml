@@ -58,14 +58,18 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Run merge (in case scraping-refresh artifact isn't available)
+      - name: Create output directory
+        run: mkdir -p data/output
+
+      - name: Run fetch + score pipeline (in case data-refresh artifact isn't available)
         run: |
-          if [ ! -f data/output/merged-observations.json ]; then
-            echo "merged-observations.json not found — running fetch + merge pipeline"
+          if [ ! -f data/output/product-scores.json ]; then
+            echo "product-scores.json not found — running full fetch + score pipeline"
             node scripts/fetch-price-data.mjs
             node scripts/merge-all-observations.mjs
+            node scripts/compute-product-scores.mjs
           else
-            echo "merged-observations.json found — skipping re-fetch"
+            echo "product-scores.json found — skipping re-fetch"
           fi
 
       - name: Generate alerts
