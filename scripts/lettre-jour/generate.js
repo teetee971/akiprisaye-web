@@ -295,7 +295,7 @@ async function main() {
 main().catch((err) => {
   const msg = err.message ?? '';
   // 429 = quota OpenAI dépassé — pas une erreur du code, sortie propre
-  if (err.status === 429 || msg.includes('429') || msg.toLowerCase().includes('quota')) {
+  if (err.status === 429 || /^429\b/.test(msg) || msg.toLowerCase().includes('quota')) {
     console.warn('⚠️  Quota OpenAI dépassé — génération ignorée ce cycle :', msg);
     process.exit(0);
   }
