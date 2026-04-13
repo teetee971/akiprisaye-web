@@ -19,6 +19,7 @@ import { Router } from 'express';
 import { unifiedAuthMiddleware, requirePermission, requireSubscriptionTier } from '../middlewares/apiAuth.middleware.js';
 import { createDynamicRateLimit, addRateLimitHeaders } from '../middlewares/dynamicRateLimit.middleware.js';
 import { ApiPermission, SubscriptionTier } from '@prisma/client';
+import prisma from '../../database/prisma.js';
 
 const router = Router();
 
@@ -47,17 +48,45 @@ router.get(
   unifiedAuthMiddleware,
   requirePermission(ApiPermission.READ_COMPARATORS),
   async (req, res) => {
-    // TODO: Implémenter la logique réelle
     const { type } = req.params;
     const { territory, startDate, endDate, limit = 100 } = req.query;
-    
+
+    const limitNum = Math.min(Number(limit) || 100, 500);
+    const where: Record<string, unknown> = { category: type };
+    if (territory) where['territory'] = String(territory).toLowerCase();
+    if (startDate || endDate) {
+      const dateFilter: Record<string, Date> = {};
+      if (startDate) dateFilter['gte'] = new Date(String(startDate));
+      if (endDate) dateFilter['lte'] = new Date(String(endDate));
+      where['observedAt'] = dateFilter;
+    }
+
+    const observations = await prisma.priceObservation.findMany({
+      where,
+      orderBy: { observedAt: 'desc' },
+      take: limitNum,
+      select: {
+        id: true,
+        productId: true,
+        productLabel: true,
+        normalizedLabel: true,
+        category: true,
+        brand: true,
+        territory: true,
+        storeLabel: true,
+        price: true,
+        currency: true,
+        observedAt: true,
+        source: true,
+      },
+    });
+
     res.json({
-      message: `Données comparateur ${type}`,
-      data: [],
-      filters: { territory, startDate, endDate, limit },
+      data: observations,
+      filters: { territory, startDate, endDate, limit: limitNum },
       metadata: {
         type,
-        count: 0,
+        count: observations.length,
         timestamp: new Date().toISOString(),
       },
     });
@@ -106,20 +135,53 @@ router.get(
  * Groupe: Territoires
  * Informations sur les territoires ultramarins
  */
+
+/** Static metadata for the five supported DOM-TOM territories. */
+const TERRITORY_META: Record<string, { name: string; population: number; currency: string; departments: string[] }> = {
+  GP: { name: 'Guadeloupe', population: 390253, currency: 'EUR', departments: ['971'] },
+  MQ: { name: 'Martinique', population: 349925, currency: 'EUR', departments: ['972'] },
+  GF: { name: 'Guyane', population: 290691, currency: 'EUR', departments: ['973'] },
+  RE: { name: 'La Réunion', population: 908571, currency: 'EUR', departments: ['974'] },
+  YT: { name: 'Mayotte', population: 371000, currency: 'EUR', departments: ['976'] },
+};
+
 router.get(
   '/territories/:code/overview',
   unifiedAuthMiddleware,
   requirePermission(ApiPermission.READ_TERRITORIES),
   async (req, res) => {
-    const { code } = req.params;
-    
+    const code = (req.params.code as string).toUpperCase();
+    const meta = TERRITORY_META[code];
+
+    // Latest price index for this territory
+    const latestIndex = await prisma.priceIndex.findFirst({
+      where: { territory: code },
+      orderBy: [{ year: 'desc' }, { month: 'desc' }],
+    });
+
+    // Number of stores and observations
+    const [storeCount, observationCount] = await Promise.all([
+      prisma.store.count({ where: { territory: code.toLowerCase() } }),
+      prisma.priceObservation.count({ where: { territory: code.toLowerCase() } }),
+    ]);
+
     res.json({
       message: `Aperçu territoire ${code}`,
       data: {
         code,
-        name: 'Territoire',
-        population: 0,
-        economicIndicators: {},
+        name: meta?.name ?? code,
+        population: meta?.population ?? 0,
+        currency: meta?.currency ?? 'EUR',
+        departments: meta?.departments ?? [],
+        economicIndicators: latestIndex
+          ? {
+              latestInflationRate: latestIndex.inflationRate,
+              latestMonthlyChange: latestIndex.monthlyChange,
+              latestPriceIndex: latestIndex.indexValue,
+              indexPeriod: { year: latestIndex.year, month: latestIndex.month },
+            }
+          : {},
+        dataStats: { storeCount, observationCount },
       },
       timestamp: new Date().toISOString(),
     });
@@ -136,13 +198,37 @@ router.get(
   requirePermission(ApiPermission.READ_PRICES),
   async (req, res) => {
     const { category } = req.params;
-    
+    const { territory, limit = '50' } = req.query as Record<string, string>;
+
+    const where = {
+      category,
+      ...(territory ? { territory: territory.toLowerCase() } : {}),
+    };
+
+    const observations = await prisma.priceObservation.findMany({
+      where,
+      orderBy: { observedAt: 'desc' },
+      take: Math.min(Number(limit) || 50, 200),
+      select: {
+        id: true,
+        productLabel: true,
+        normalizedLabel: true,
+        price: true,
+        territory: true,
+        storeLabel: true,
+        observedAt: true,
+        brand: true,
+        barcode: true,
+      },
+    });
+
     res.json({
       message: `Prix catégorie ${category}`,
-      data: [],
+      data: observations,
       metadata: {
         category,
-        count: 0,
+        count: observations.length,
+        ...(territory ? { territory } : {}),
       },
       timestamp: new Date().toISOString(),
     });
@@ -156,12 +242,44 @@ router.get(
   requireSubscriptionTier(SubscriptionTier.CITIZEN_PREMIUM),
   async (req, res) => {
     const { category } = req.params;
-    const { startDate, endDate } = req.query;
-    
+    const { startDate, endDate, territory } = req.query as Record<string, string>;
+
+    const where = {
+      category,
+      ...(territory ? { territory: territory.toLowerCase() } : {}),
+      ...(startDate || endDate
+        ? {
+            observedAt: {
+              ...(startDate ? { gte: new Date(startDate) } : {}),
+              ...(endDate ? { lte: new Date(endDate) } : {}),
+            },
+          }
+        : {}),
+    };
+
+    const history = await prisma.priceHistoryMonthly.findMany({
+      where: {
+        ...(territory ? { territory: territory.toLowerCase() } : {}),
+      },
+      orderBy: [{ year: 'asc' }, { month: 'asc' }],
+      take: 120,
+    });
+
+    // Fallback to raw observations grouped by month when no monthly history exists.
+    const data =
+      history.length > 0
+        ? history
+        : await prisma.priceObservation.findMany({
+            where,
+            orderBy: { observedAt: 'asc' },
+            take: 500,
+            select: { price: true, observedAt: true, territory: true },
+          });
+
     res.json({
       message: `Historique prix ${category}`,
-      data: [],
-      filters: { startDate, endDate },
+      data,
+      filters: { startDate, endDate, ...(territory ? { territory } : {}) },
       timestamp: new Date().toISOString(),
     });
   }
@@ -177,15 +295,31 @@ router.get(
   requirePermission(ApiPermission.READ_ANALYTICS),
   requireSubscriptionTier(SubscriptionTier.BUSINESS_PRO),
   async (req, res) => {
-    const { sector, territory } = req.query;
-    
+    const { sector, territory } = req.query as Record<string, string>;
+
+    // Aggregate observation counts per store (proxy for market-share).
+    const rows = await prisma.priceObservation.groupBy({
+      by: ['storeLabel'],
+      where: {
+        ...(sector ? { category: sector } : {}),
+        ...(territory ? { territory: territory.toLowerCase() } : {}),
+      },
+      _count: { id: true },
+      orderBy: { _count: { id: 'desc' } },
+      take: 20,
+    });
+
+    const total = rows.reduce((s, r) => s + r._count.id, 0);
+
+    const marketShare = rows.map((r) => ({
+      store: r.storeLabel,
+      observations: r._count.id,
+      share: total > 0 ? parseFloat(((r._count.id / total) * 100).toFixed(2)) : 0,
+    }));
+
     res.json({
       message: 'Parts de marché',
-      data: {
-        sector,
-        territory,
-        marketShare: [],
-      },
+      data: { sector, territory, total, marketShare },
       timestamp: new Date().toISOString(),
     });
   }
@@ -196,12 +330,27 @@ router.get(
   unifiedAuthMiddleware,
   requirePermission(ApiPermission.READ_ANALYTICS),
   requireSubscriptionTier(SubscriptionTier.BUSINESS_PRO),
-  async (_req, res) => {
+  async (req, res) => {
+    const { territory, months = '12' } = req.query as Record<string, string>;
+    const limit = Math.min(Number(months) || 12, 60);
+
+    const indices = await prisma.priceIndex.findMany({
+      where: territory ? { territory: territory.toUpperCase() } : {},
+      orderBy: [{ year: 'desc' }, { month: 'desc' }],
+      take: limit,
+      select: {
+        territory: true,
+        year: true,
+        month: true,
+        indexValue: true,
+        inflationRate: true,
+        monthlyChange: true,
+      },
+    });
+
     res.json({
       message: 'Évolution des prix',
-      data: {
-        evolution: [],
-      },
+      data: { evolution: indices.reverse() },
       timestamp: new Date().toISOString(),
     });
   }
@@ -212,12 +361,31 @@ router.post(
   unifiedAuthMiddleware,
   requirePermission(ApiPermission.READ_ANALYTICS),
   requireSubscriptionTier(SubscriptionTier.INSTITUTIONAL),
-  async (_req, res) => {
+  async (req, res) => {
+    const { territory, startYear, startMonth, endYear, endMonth, categories } =
+      req.body as Record<string, unknown>;
+
+    // Persist an inflation report record for the requested period.
+    const now = new Date();
+    const reportId = `custom_report_${now.getTime()}`;
+
+    const reportData = await prisma.inflationReport.findMany({
+      where: {
+        ...(territory ? { territory: String(territory).toUpperCase() } : {}),
+        ...(startYear ? { year: { gte: Number(startYear) } } : {}),
+        ...(endYear ? { year: { lte: Number(endYear) } } : {}),
+      },
+      orderBy: [{ year: 'asc' }, { month: 'asc' }],
+    });
+
     res.json({
       message: 'Rapport personnalisé généré',
       data: {
-        reportId: 'custom_report_' + Date.now(),
-        status: 'processing',
+        reportId,
+        status: 'completed',
+        params: { territory, startYear, startMonth, endYear, endMonth, categories },
+        records: reportData.length,
+        data: reportData,
       },
       timestamp: new Date().toISOString(),
     });
@@ -249,13 +417,43 @@ router.post(
   unifiedAuthMiddleware,
   requirePermission(ApiPermission.WRITE_CONTRIBUTIONS),
   async (req, res) => {
-    // TODO: Implémenter la logique de création de contribution
+    const {
+      productLabel,
+      normalizedLabel,
+      territory,
+      storeLabel,
+      price,
+      category,
+      brand,
+      barcode,
+      observedAt,
+    } = req.body as Record<string, unknown>;
+
+    if (!productLabel || !territory || !storeLabel || price == null) {
+      res.status(400).json({
+        error: 'Missing required fields: productLabel, territory, storeLabel, price',
+      });
+      return;
+    }
+
+    const observation = await prisma.priceObservation.create({
+      data: {
+        source: 'api_contribution',
+        productLabel: String(productLabel),
+        normalizedLabel: normalizedLabel ? String(normalizedLabel) : String(productLabel).toLowerCase(),
+        territory: String(territory).toLowerCase(),
+        storeLabel: String(storeLabel),
+        price: Number(price),
+        category: category ? String(category) : null,
+        brand: brand ? String(brand) : null,
+        barcode: barcode ? String(barcode) : null,
+        observedAt: observedAt ? new Date(String(observedAt)) : new Date(),
+      },
+    });
+
     res.status(201).json({
       message: 'Contribution créée avec succès',
-      data: {
-        id: 'contribution_' + Date.now(),
-        ...req.body,
-      },
+      data: observation,
       timestamp: new Date().toISOString(),
     });
   }

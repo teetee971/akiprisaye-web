@@ -7,6 +7,7 @@
  * Payment processor: SumUp Pro
  */
 import React, { useState, useEffect, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -212,7 +213,7 @@ export default function Subscribe() {
   const handleStep2Next = () => {
     if (!validateEmail(email)) return;
     if (!territory) {
-      alert('Veuillez sélectionner un territoire');
+      toast.error('Veuillez sélectionner un territoire');
       return;
     }
     setStep(3);

@@ -58,7 +58,7 @@ const CONFIG = {
   /** URLs à vérifier */
   siteUrls: [
     process.env.SITE_URL_GHPAGES ?? 'https://teetee971.github.io/akiprisaye-web/',
-    process.env.SITE_URL_CF ?? 'https://akiprisaye.pages.dev/',
+    process.env.SITE_URL_CF ?? 'https://akiprisaye-web.pages.dev/',
   ].filter(Boolean),
   /** Flux RSS à vérifier */
   rssFeeds: [

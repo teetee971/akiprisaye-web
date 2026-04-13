@@ -6,29 +6,42 @@
  */
 
 import type { InvoiceData, HiddenFee, FreightQuote } from '../types/freightComparison';
+import { runOCR } from './ocrService';
 
 /**
- * Extrait les données d'une facture (OCR)
- * Note: Implémentation simplifiée - nécessite intégration Tesseract.js ou API OCR
+ * Extrait les données d'une facture via OCR (Tesseract.js) ou lecture texte (PDF).
+ * Délègue à extractTextFromImage / extractTextFromPDF puis parse le texte brut.
  */
 export async function extractInvoiceData(file: File): Promise<InvoiceData | null> {
   try {
-    // TODO: Implémenter OCR réel avec Tesseract.js
-    // Pour l'instant, retourner structure de base
-    
-    console.log('OCR extraction pour:', file.name);
-    
-    // Simulation d'extraction
+    let rawText = '';
+
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if (isPdf) {
+      rawText = await extractTextFromPDF(file);
+    } else {
+      rawText = await extractTextFromImage(file);
+    }
+
+    if (!rawText.trim()) {
+      return {
+        carrier: 'Non détecté',
+        route: { origin: '', destination: '' },
+        basePrice: 0,
+        fees: [],
+        totalPaid: 0,
+        extractionConfidence: 0,
+      };
+    }
+
+    const parsed = parseInvoiceText(rawText);
     return {
-      carrier: 'Non détecté',
-      route: {
-        origin: '',
-        destination: '',
-      },
-      basePrice: 0,
-      fees: [],
-      totalPaid: 0,
-      extractionConfidence: 0.5,
+      carrier: parsed.carrier ?? 'Non détecté',
+      route: parsed.route ?? { origin: '', destination: '' },
+      basePrice: parsed.basePrice ?? 0,
+      fees: parsed.fees ?? [],
+      totalPaid: parsed.totalPaid ?? 0,
+      extractionConfidence: rawText.length > 100 ? 0.75 : 0.4,
     };
   } catch (error) {
     console.error('Error extracting invoice data:', error);
@@ -197,14 +210,30 @@ export function validateInvoiceData(data: InvoiceData): {
 }
 
 /**
- * Parse un fichier PDF pour extraire le texte
- * Note: Nécessite intégration pdf.js ou similaire
+ * Extrait le texte brut d'un fichier PDF via lecture en tant que texte.
+ * Fonctionne pour les PDF "texte" (non scannés).
+ * Pour les PDF scannés (images), utiliser extractTextFromImage sur chaque page.
  */
 export async function extractTextFromPDF(file: File): Promise<string> {
   try {
-    // TODO: Implémenter extraction PDF avec pdf.js
-    console.log('Extraction PDF pour:', file.name);
-    return '';
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const raw = e.target?.result;
+        if (typeof raw !== 'string') {
+          resolve('');
+          return;
+        }
+        // Extract human-readable ASCII/Latin runs from raw PDF bytes
+        const text = raw
+          .replace(/[^\x20-\x7E\u00A0-\u00FF\n\r]/g, ' ')
+          .replace(/ {3,}/g, ' ')
+          .trim();
+        resolve(text);
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsText(file, 'latin1');
+    });
   } catch (error) {
     console.error('Error extracting PDF text:', error);
     return '';
@@ -212,17 +241,20 @@ export async function extractTextFromPDF(file: File): Promise<string> {
 }
 
 /**
- * Parse une image pour extraire le texte (OCR)
- * Note: Nécessite intégration Tesseract.js
+ * Extrait le texte d'une image via Tesseract.js (OCR côté client, WASM).
+ * Fonctionne hors ligne grâce au Service Worker.
  */
 export async function extractTextFromImage(file: File): Promise<string> {
+  let objectUrl: string | null = null;
   try {
-    // TODO: Implémenter OCR avec Tesseract.js
-    console.log('OCR image pour:', file.name);
-    return '';
+    objectUrl = URL.createObjectURL(file);
+    const result = await runOCR(objectUrl, 'fra', { receiptMode: true });
+    return result.success ? result.rawText : '';
   } catch (error) {
-    console.error('Error extracting image text:', error);
+    console.error('Error extracting image text via OCR:', error);
     return '';
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
   }
 }
 

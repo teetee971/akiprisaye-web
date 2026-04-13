@@ -120,22 +120,15 @@ export default function DataMarketplace() {
       {/* Reports Grid */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {REPORTS.map((report) => (
-          <div
+          <button
             key={report.id}
-            role="button"
-            tabIndex={0}
-            className={`bg-white/5 border rounded-xl p-6 cursor-pointer transition-all ${
+            type="button"
+            className={`w-full text-left bg-white/5 border rounded-xl p-6 cursor-pointer transition-all ${
               selectedReport === report.id
                 ? 'border-blue-500/50 ring-2 ring-blue-500/30'
                 : 'border-white/10 hover:border-white/20'
             }`}
             onClick={() => setSelectedReport(report.id)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setSelectedReport(report.id);
-              }
-            }}
           >
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -167,7 +160,7 @@ export default function DataMarketplace() {
                 </li>
               ))}
             </ul>
-          </div>
+          </button>
         ))}
       </div>
 

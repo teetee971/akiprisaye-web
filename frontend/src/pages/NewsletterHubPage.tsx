@@ -11,6 +11,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Bell, BookOpen, Calendar, Zap, ChevronRight, CheckCircle } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 import { SEOHead } from '../components/ui/SEOHead';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -72,11 +74,22 @@ function SubscribeForm({ newsletterId }: { newsletterId?: string }) {
   const toggle = (id: string) =>
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || selected.length === 0) return;
-    // Simulate subscription (backend not yet implemented)
-    setTimeout(() => setStatus('success'), 600);
+    setStatus('idle');
+    try {
+      if (!db) throw new Error('Firestore unavailable');
+      await addDoc(collection(db, 'newsletter_subscriptions'), {
+        email: email.toLowerCase().trim(),
+        newsletters: selected,
+        subscribedAt: serverTimestamp(),
+        active: true,
+      });
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
   };
 
   if (status === 'success') {
@@ -133,8 +146,14 @@ function SubscribeForm({ newsletterId }: { newsletterId?: string }) {
         disabled={!email || selected.length === 0}
         className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium rounded-lg text-sm transition-colors flex items-center justify-center gap-2"
       >
-        <Bell size={16} /> S'abonner gratuitement
+        <Bell size={16} /> S&apos;abonner gratuitement
       </button>
+
+      {status === 'error' && (
+        <p className="text-sm text-red-400 text-center" role="alert">
+          Une erreur s&apos;est produite. Veuillez réessayer.
+        </p>
+      )}
 
       <p className="text-xs text-gray-500 text-center">
         Données non partagées. Désinscription en un clic. Conforme RGPD.

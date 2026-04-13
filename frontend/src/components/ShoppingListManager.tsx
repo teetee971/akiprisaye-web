@@ -171,7 +171,9 @@ export function ShoppingListManager() {
                     <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                       {selectedList.name}
                     </h2>
-                    <button className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+                    <button
+                      aria-label={`Renommer la liste "${selectedList.name}"`}
+                      className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
                       <Edit2 className="w-5 h-5" />
                     </button>
                   </div>

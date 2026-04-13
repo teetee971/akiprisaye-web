@@ -18,9 +18,9 @@
  */
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { GlassCard } from '../ui/glass-card';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
-
 interface ProductSuggestion {
   id: string;
   name: string;
@@ -140,7 +140,7 @@ export function SmartShoppingList() {
       safeLocalStorage.setJSON('shoppingList:v1', list);
       
       // Show feedback (in real app, would use toast notification)
-      alert(`✅ "${product.name}" ajouté à votre liste de courses`);
+      toast.success(`"${product.name}" ajouté à votre liste de courses`);
     }
   };
 

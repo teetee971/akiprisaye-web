@@ -246,11 +246,30 @@ export async function getExportData(options: ExportOptions): Promise<InflationEx
 
       // Include metro comparison if requested
       if (options.includeMetroComparison) {
-        // TODO: Fetch actual metro comparison data
-        data.metroComparison = {
-          metroIndex: 100,
-          priceGapPercent: 0,
-        };
+        // Compute average metro reference price for the territory's basket in
+        // this period, then derive the gap against the DOM-TOM index value.
+        const metroRefs = await prisma.metroReferencePrice.findMany({
+          where: { year: index.year, month: index.month },
+        });
+
+        if (metroRefs.length > 0) {
+          const avgMetroPrice =
+            metroRefs.reduce((sum, r) => sum + r.averagePrice, 0) / metroRefs.length;
+          // Express metro average as an index relative to base 100.
+          // We use the same base value as the territory index.
+          const metroIndex = (avgMetroPrice / index.baseValue) * 100;
+          const priceGapPercent =
+            metroIndex > 0
+              ? ((index.indexValue - metroIndex) / metroIndex) * 100
+              : 0;
+          data.metroComparison = {
+            metroIndex: parseFloat(metroIndex.toFixed(2)),
+            priceGapPercent: parseFloat(priceGapPercent.toFixed(2)),
+          };
+        } else {
+          // No metro reference data available for this period.
+          data.metroComparison = { metroIndex: 100, priceGapPercent: 0 };
+        }
       }
 
       exportData.push(data);

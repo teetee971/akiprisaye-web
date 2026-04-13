@@ -66,12 +66,12 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            const title = `🚨 Readiness Guardian en échec — ${new Date().toISOString().slice(0, 16)} UTC`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const body = [
               'La vérification de conformité 24/24 a échoué.',
               '',
               `- Workflow: ${context.workflow}`,
-              `- Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              `- Run: ${runUrl}`,
               '- Auto-réparation tentée: relance de `deploy-pages.yml` sur `main`.',
               '',
               'Actions recommandées:',
@@ -80,10 +80,68 @@ jobs:
               '3. Relancer manuellement si nécessaire.',
             ].join('\n');
 
-            await github.rest.issues.create({
+            // Éviter les doublons : chercher une issue ouverte avec le label readiness
+            // créée dans les dernières 2 heures.
+            const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+            const since = twoHoursAgo.toISOString();
+            const existing = await github.rest.search.issuesAndPullRequests({
+              q: `label:readiness label:automatique is:open repo:${context.repo.owner}/${context.repo.repo} is:issue created:>=${since}`,
+              sort: 'created',
+              order: 'desc',
+              per_page: 1,
+            });
+
+            const recentIssue = existing.data.items[0] ?? null;
+
+            if (recentIssue) {
+              core.info(`ℹ️ Issue readiness déjà ouverte (#${recentIssue.number}) — ajout d'un commentaire`);
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: recentIssue.number,
+                body: `🔄 Nouvel échec détecté — ${new Date().toISOString().slice(0, 16)} UTC\n\n- Run: ${runUrl}`,
+              });
+            } else {
+              const title = `🚨 Readiness Guardian en échec — ${new Date().toISOString().slice(0, 16)} UTC`;
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['monitoring', 'automatique', 'readiness'],
+              });
+            }
+
+      - name: Fermer issues readiness résolues
+        if: ${{ success() }}
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title,
-              body,
-              labels: ['monitoring', 'automatique', 'readiness'],
+              labels: 'readiness,automatique',
+              state: 'open',
+              per_page: 100,
             });
+
+            for (const issue of issues.filter((i) => !i.pull_request)) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `✅ Résolu automatiquement — le Readiness Guardian est repassé au vert le ${new Date().toISOString().slice(0, 16)} UTC.\n\n- Run: ${runUrl}`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+                state_reason: 'completed',
+              });
+            }
+
+            if (issues.length > 0) {
+              core.info(`✅ ${issues.length} issue(s) readiness fermée(s)`);
+            }

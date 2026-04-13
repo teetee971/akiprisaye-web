@@ -161,9 +161,58 @@ export class ShoppingListService {
       
       return new Blob([content], { type: 'text/plain' });
     }
-    
-    // TODO: Implement PDF export with jspdf
-    return new Blob(['PDF not implemented yet'], { type: 'application/pdf' });
+
+    // PDF: generate a printable HTML document and return as a Blob.
+    // The browser can print/save it as a real PDF via Ctrl+P or window.print().
+    const createdAt = new Date(list.createdAt).toLocaleDateString('fr-FR');
+    const rows = list.items
+      .map(
+        (item, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${item.productName ?? ''}</td>
+          <td style="text-align:center">${item.quantity}</td>
+          <td>${item.priority}</td>
+          <td>${item.notes ?? ''}</td>
+        </tr>`,
+      )
+      .join('');
+
+    const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>${list.name}</title>
+  <style>
+    body { font-family: Arial, sans-serif; color: #111; padding: 32px; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    .meta { font-size: 12px; color: #666; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; }
+    td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    @media print { body { padding: 0; } }
+  </style>
+</head>
+<body>
+  <h1>${list.name}</h1>
+  <p class="meta">Territoire&nbsp;: ${list.territory ?? '—'} · Créée le&nbsp;: ${createdAt} · ${list.items.length} article(s)</p>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Produit</th>
+        <th>Qté</th>
+        <th>Priorité</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+</body>
+</html>`;
+
+    return new Blob([html], { type: 'text/html; charset=utf-8' });
   }
 
   /**

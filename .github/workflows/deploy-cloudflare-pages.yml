@@ -74,6 +74,17 @@ jobs:
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
           VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
 
+      - name: Remove dist/404.html for Cloudflare Pages
+        # Vite copies public/404.html (GitHub Pages SPA redirect script) into
+        # dist/404.html during the build. Cloudflare Pages serves that file
+        # (with a 404 status) for every unmatched route such as /scanner,
+        # /alertes, /connexion — which prevents the _redirects `/* /index.html 200`
+        # SPA catch-all from ever running. Removing dist/404.html lets Cloudflare
+        # fall through to _redirects and return HTTP 200 for these SPA routes.
+        # The postbuild script (setup-github-pages-spa.mjs) also does this, but
+        # this step serves as an explicit, visible safety net.
+        run: rm -f dist/404.html
+
       - name: Deploy to Cloudflare Pages
         id: deployment
         uses: cloudflare/pages-action@v1
@@ -91,16 +102,15 @@ jobs:
       - name: Resolve site URL
         id: resolve_site_url
         run: |
-          # For pull_request events, always validate against the stable production URL.
-          # PR preview deployments may be protected by Cloudflare Access and return
-          # non-SPA HTML without #root, causing verifyHomepage to fail.
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
+          # Always use the deployment URL produced by the deploy job.
+          # For PR preview deployments that are protected by Cloudflare Access the
+          # validate script handles this gracefully (isCloudflareAccessPage → skipped
+          # with a warning rather than a hard failure).  Falling back to the static
+          # production alias would incorrectly test a stale deployment instead of the
+          # code under review.
+          SITE_URL="${{ needs.deploy.outputs.deployment_url }}"
+          if [ -z "$SITE_URL" ]; then
             SITE_URL="${{ env.DEFAULT_PREVIEW_URL }}"
-          else
-            SITE_URL="${{ needs.deploy.outputs.deployment_url }}"
-            if [ -z "$SITE_URL" ]; then
-              SITE_URL="${{ env.DEFAULT_PREVIEW_URL }}"
-            fi
           fi
           echo "site_url=$SITE_URL" >> "$GITHUB_OUTPUT"
 

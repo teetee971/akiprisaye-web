@@ -14,6 +14,7 @@
  */
 
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { TrendingUp, TrendingDown, Minus, Info, AlertCircle, CheckCircle } from 'lucide-react';
 import type { ProductSheet } from '../services/productPhotoAnalysisService';
 
@@ -560,7 +561,7 @@ export default function ComprehensiveProductSheet({
               <button
                 onClick={() => {
                   // Export functionality could be added here
-                  alert('Fonctionnalité d\'export à venir');
+                  toast('Fonctionnalité d\'export à venir', { icon: '📥' });
                 }}
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
               >

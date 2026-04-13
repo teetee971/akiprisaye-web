@@ -58,15 +58,17 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Run merge (in case scraping-refresh artifact isn't available)
+      - name: Create output directory
+        run: mkdir -p data/output
+
+      - name: Run full fetch + score + merge pipeline
+        # data/output/ is gitignored so product-scores.json and merged-observations.json
+        # are never present at checkout. Always run the full pipeline unconditionally.
         run: |
-          if [ ! -f data/output/merged-observations.json ]; then
-            echo "merged-observations.json not found — running fetch + merge pipeline"
-            node scripts/fetch-price-data.mjs
-            node scripts/merge-all-observations.mjs
-          else
-            echo "merged-observations.json found — skipping re-fetch"
-          fi
+          node scripts/fetch-price-data.mjs
+          node scripts/normalize-price-data.mjs
+          node scripts/compute-product-scores.mjs
+          node scripts/merge-all-observations.mjs
 
       - name: Generate alerts
         run: node scripts/generate-alerts.mjs

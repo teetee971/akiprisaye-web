@@ -55,19 +55,20 @@ module.exports = [
   /* ── 4. jsx-a11y recommended (full recommended config applied globally) ── */
   // Accessibilité (jsx-a11y) — recommandé, en 'warn' tant que la dette n'est pas soldée.
   // Ne pas désactiver : les violations restent visibles dans la sortie lint.
-  // État mars 2026 : label-has-associated-control → 0 erreurs ; ~17 warnings restants.
-  // Cible : passer à 'error' une fois la dette soldée (Lot 2/3).
+  // État avril 2026 : 0 violations dans tout le codebase.
+  // Règles sans violation → passées en 'error' ; autres restent en 'warn' jusqu'à correction.
   jsxA11y.flatConfigs.recommended,
   {
     rules: {
-      // Règles jsx-a11y rétrogradées en 'warn' (dette existante, non bloquante en CI).
+      // Règles jsx-a11y : 0 violations — passées en 'error' (bloquant en CI).
+      'jsx-a11y/click-events-have-key-events': 'error',
+      'jsx-a11y/no-static-element-interactions': 'error',
+      'jsx-a11y/no-autofocus': 'error',
+      'jsx-a11y/no-noninteractive-tabindex': 'error',
+      // Règles jsx-a11y rétrogradées en 'warn' (dette résiduelle).
       'jsx-a11y/label-has-associated-control': 'warn',
-      'jsx-a11y/click-events-have-key-events': 'warn',
-      'jsx-a11y/no-static-element-interactions': 'warn',
       'jsx-a11y/img-redundant-alt': 'warn',
       'jsx-a11y/no-noninteractive-element-interactions': 'warn',
-      'jsx-a11y/no-autofocus': 'warn',
-      'jsx-a11y/no-noninteractive-tabindex': 'warn',
       'jsx-a11y/no-noninteractive-element-to-interactive-role': 'warn',
     },
   },

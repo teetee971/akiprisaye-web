@@ -234,8 +234,8 @@ export function PriceBreakdownChart({ data = null }) {
         </ResponsiveContainer>
         
         <div className="flex flex-col justify-center space-y-3">
-          {breakdownData.map((item, index) => (
-            <div key={index} className="flex items-center justify-between">
+          {breakdownData.map((item) => (
+            <div key={item.name} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div 
                   className="w-4 h-4 rounded"
