@@ -136,11 +136,7 @@ jobs:
             CHANGED=$(git status --porcelain -- frontend/public/data/ | awk '{print $2}' | tr '\n' ' ')
             echo "📝 Fichiers modifiés : $CHANGED"
 
-            git add frontend/public/data/fuel-prices.json \
-                    frontend/public/data/services-prices.json \
-                    frontend/public/data/bqp-prices.json \
-                    frontend/public/data/open-prices-dom.json \
-                    frontend/public/data/product-scan-*.json 2>/dev/null || true
+            git add frontend/public/data/
 
             git commit \
               -m "🤖 [auto] Mise à jour données prix — $(date -u '+%Y-%m-%d %H:%M UTC')" \
