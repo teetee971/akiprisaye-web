@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Share2, Download, Eye } from 'lucide-react';
 import { useTiPanier } from '../hooks/useTiPanier';
@@ -173,12 +174,12 @@ export default function BasketComparisonPage() {
       } catch (err) {
         // User cancelled or error - fallback to clipboard
         await navigator.clipboard.writeText(`${text}\n${url}`);
-        alert('Lien copié dans le presse-papiers !');
+        toast.success('Lien copié dans le presse-papiers !');
       }
     } else {
       // Fallback: copy to clipboard
       await navigator.clipboard.writeText(`${text}\n${url}`);
-      alert('Lien copié dans le presse-papiers !');
+      toast.success('Lien copié dans le presse-papiers !');
     }
   };
 

@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export type PermissionState = 'prompt' | 'granted' | 'denied' | 'unknown';
 
@@ -77,7 +78,7 @@ export default function CameraPermissionHandler({
         setPermissionState('denied');
       } else if (error.name === 'NotFoundError') {
         // No camera available
-        alert('Aucune caméra détectée sur cet appareil.');
+        toast.error('Aucune caméra détectée sur cet appareil.');
         onUseFallback();
       } else {
         setPermissionState('denied');
@@ -117,7 +118,7 @@ export default function CameraPermissionHandler({
       instructions += "3. Autorisez l'accès";
     }
     
-    alert(instructions);
+    toast(instructions, { icon: 'ℹ️', duration: 6000 });
   }
 
   // If permission already granted, show children

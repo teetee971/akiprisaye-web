@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import {
   generateAssistantResponse,
   createUserMessage,
@@ -34,7 +35,7 @@ export default function AssistantChat() {
     
     // Check for prohibited content
     if (isProhibitedQuery(query)) {
-      alert('⚠️ Cette question contient un contenu interdit.');
+      toast.error('⚠️ Cette question contient un contenu interdit.');
       return;
     }
     

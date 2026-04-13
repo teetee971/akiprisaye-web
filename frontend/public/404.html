@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <title>A KI PRI SA YÉ — Redirection en cours</title>
     <script type="text/javascript">
-      // Redirection SPA pour GitHub Pages
-      // Target: https://teetee971.github.io/akiprisaye-web/
+      // Redirection SPA : redirige vers la racine du site courant
       var l = window.location;
+      var path = l.pathname.split('/').slice(1).join('/');
       l.replace(
-        l.protocol + '//' + 'teetee971.github.io/akiprisaye-web' + '/?p=/' +
-        l.pathname.split('/').slice(2).join('/').replace(/&/g, '~and~') +
+        l.protocol + '//' + l.host + '/?p=/' +
+        path.replace(/&/g, '~and~') +
         (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
         l.hash
       );

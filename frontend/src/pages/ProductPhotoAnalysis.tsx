@@ -12,6 +12,7 @@
  */
 
 import { useState, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { Camera, Upload, ArrowLeft, Loader } from 'lucide-react';
 import { analyzeProductPhoto, type ProductPhotoAnalysisResult } from '../services/productPhotoAnalysisService';
 import ComprehensiveProductSheet from '../components/ComprehensiveProductSheet';
@@ -45,7 +46,7 @@ export default function ProductPhotoAnalysis() {
 
     // Check file type
     if (!file.type.startsWith('image/')) {
-      alert('Veuillez sélectionner une image');
+      toast.error('Veuillez sélectionner une image');
       return;
     }
 

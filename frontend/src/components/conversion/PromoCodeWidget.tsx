@@ -50,7 +50,7 @@ export default function PromoCodeWidget({
       };
 
       const normalizedResult: PromoResult =
-        resp.ok && data.success !== false && data.valid === true && typeof data.discount === 'number'
+        resp.ok && data.success !== false && data.valid === true && typeof data.discount === 'number' && data.discount > 0
           ? {
               valid: true,
               discount: data.discount,
@@ -64,7 +64,9 @@ export default function PromoCodeWidget({
               message:
                 data.message ||
                 data.error ||
-                'Impossible de valider le code. Réessayez.',
+                (data.valid === true && (data.discount ?? 0) <= 0
+                  ? 'Ce code ne confère aucune réduction.'
+                  : 'Impossible de valider le code. Réessayez.'),
             };
 
       setResult(normalizedResult);
