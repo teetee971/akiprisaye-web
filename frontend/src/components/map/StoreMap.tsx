@@ -49,6 +49,16 @@ interface StoreMapProps {
   showNearbyList?: boolean;
 }
 
+/** Minimal interface for leaflet.markercluster (no @types available) */
+interface MarkerClusterGroupInstance extends L.FeatureGroup {
+  clearLayers(): this;
+  addLayer(layer: L.Layer): this;
+}
+
+type LWithCluster = typeof L & {
+  markerClusterGroup: (opts?: object) => MarkerClusterGroupInstance;
+};
+
 const DEFAULT_CENTER: [number, number] = [16.265, -61.551]; // Guadeloupe
 const DEFAULT_ZOOM = 11;
 
@@ -64,12 +74,12 @@ function MarkerClusterLayer({
   onStoreClick: (store: Store) => void;
 }) {
   const map = useMap();
-  const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
+  const clusterGroupRef = useRef<MarkerClusterGroupInstance | null>(null);
 
   useEffect(() => {
     // Create or reuse the cluster group
     if (!clusterGroupRef.current) {
-      clusterGroupRef.current = (L as unknown as { markerClusterGroup: (opts?: object) => L.MarkerClusterGroup }).markerClusterGroup({
+      clusterGroupRef.current = (L as unknown as LWithCluster).markerClusterGroup({
         chunkedLoading: true,
         maxClusterRadius: 60,
       });

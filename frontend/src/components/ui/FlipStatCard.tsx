@@ -23,7 +23,7 @@ export default function FlipStatCard({
   icon,
   className = '',
 }: FlipStatCardProps) {
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       // Toggle a CSS class that forces the flip (same as :focus-within)

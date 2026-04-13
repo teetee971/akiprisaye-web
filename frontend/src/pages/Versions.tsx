@@ -10,9 +10,17 @@ const BUILD_ENV: string = import.meta.env.VITE_BUILD_ENV ?? 'development';
 
 const APP_VERSIONS = [
   {
-    version: 'v4.7.0',
+    version: 'v4.7.1',
     date: 'avril 2026',
     label: 'latest',
+    title: 'Corrections TypeScript — StoreMap & FlipStatCard',
+    description: 'Correction de 3 erreurs TypeScript de compilation : StoreMap.tsx — remplacement de L.MarkerClusterGroup (absent de @types/leaflet) par une interface locale MarkerClusterGroupInstance + alias de type LWithCluster ; FlipStatCard.tsx — type du gestionnaire onKeyDown aligné sur KeyboardEvent<HTMLButtonElement> (était HTMLDivElement). Zéro erreur tsc --noEmit. Bump monorepo 4.7.0 → 4.7.1.',
+    changelog: null,
+  },
+  {
+    version: 'v4.7.0',
+    date: 'avril 2026',
+    label: null,
     title: 'Ghostwriter OS v6 — Historique des posts & briefing audience',
     description: 'Ghostwriter Social passe en v6 : historique des 10 derniers posts générés persisté en localStorage (lecture+écriture), affiché dans une section dédiée de l\'Espace Créateur avec date, aperçu et action copier individuelle. Le briefing audience (buildCreatorBriefing) confirme le signal territoire en temps réel. Le post porte désormais la date du jour en clair. Badges severity HIGH/MEDIUM sur toutes les alertes Predator. Version package.json alignée sur 4.7.0.',
     changelog: null,
