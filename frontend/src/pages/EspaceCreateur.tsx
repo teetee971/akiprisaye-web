@@ -101,8 +101,27 @@ const EspaceCreateur: React.FC = () => {
       notableDrops: drops,
       notableIncreases: increases,
       topProduct,
+      date: new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
     });
   }, [byTerritory, byInterest, predatorAlerts, ghostwriterPriceSignal]);
+
+  const audienceBriefing = useMemo(
+    () =>
+      buildCreatorBriefing({
+        topTerritory: byTerritory[0],
+        topInterest: byInterest[0],
+        topTerritoryHistoricalInterest: byTerritory[0]?.topInterests[0]
+          ? {
+              territory: byTerritory[0].code ?? '',
+              interest: byTerritory[0].topInterests[0].key,
+              name: byTerritory[0].topInterests[0].name,
+              emoji: byTerritory[0].topInterests[0].emoji,
+              totalViews: byTerritory[0].topInterests[0].online,
+            }
+          : undefined,
+      }),
+    [byTerritory, byInterest],
+  );
 
   const handleCopyGhostwriterPost = useCallback(() => {
     navigator.clipboard.writeText(ghostwriterPost);
@@ -184,6 +203,11 @@ const EspaceCreateur: React.FC = () => {
         <div className="whitespace-pre-wrap font-sans text-sm text-slate-300 bg-slate-950 p-5 rounded-xl border border-slate-800 leading-relaxed">
           {ghostwriterPost}
         </div>
+        {audienceBriefing && (
+          <p className="mt-3 text-xs text-violet-300/70 italic border-t border-slate-800 pt-3">
+            💡 {audienceBriefing}
+          </p>
+        )}
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -300,7 +324,14 @@ const EspaceCreateur: React.FC = () => {
           )}
           {predatorAlerts.map((alert) => (
             <div key={alert.id} className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <p className="text-sm font-bold text-white">{alert.targetName}</p>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-block text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${alert.severity === 'high' ? 'bg-red-600 text-white' : 'bg-amber-500 text-slate-900'}`}
+                >
+                  {alert.severity}
+                </span>
+                <p className="text-sm font-bold text-white">{alert.targetName}</p>
+              </div>
               <p className="text-xs text-slate-400">{alert.message}</p>
             </div>
           ))}

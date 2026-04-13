@@ -61,8 +61,13 @@ export function generateDailyPost(data: GhostwriterDailyPostData): string {
 
   const highlights = [drops, increases].filter(Boolean).join(' | ');
 
+  const dateLabel =
+    typeof payload.date === 'string' && payload.date.trim().length > 0
+      ? payload.date
+      : new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
   return [
-    `📊 Point prix du jour — ${territory}`,
+    `📊 Point prix du ${dateLabel} — ${territory}`,
     `Tendance "${topCategory}" : ${trend} (${absDelta}%) sur les dernières observations.`,
     `Produit à suivre : ${topProduct}.`,
     highlights || 'Alerte utile : surveillez les promotions de proximité cette semaine.',
