@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { getUserPosition, calculateDistancesBatch, isGeolocationAvailable } from '../utils/geoLocation';
 import { solveShoppingRoute } from '../utils/routeOptimization';
 import { getSuggestedProducts } from '../utils/productSuggestions';
@@ -55,7 +56,7 @@ export default function ListeCourses({ territoire = '971' }) {
   // Fonction GPS (locale uniquement) - optimisée avec callbacks
   const activerGPS = useCallback(async () => {
     if (!consentementGPS) {
-      alert('Vous devez accepter l\'utilisation de votre localisation pour cette fonctionnalité.');
+      toast.error("Vous devez accepter l'utilisation de votre localisation pour cette fonctionnalité.");
       return;
     }
 
@@ -459,9 +460,9 @@ export default function ListeCourses({ territoire = '971' }) {
               </p>
             ) : (
               <div className="space-y-3">
-                {recommandations.slice(0, 5).map((rec, index) => (
+                {recommandations.slice(0, 5).map((rec) => (
                   <div
-                    key={index}
+                    key={rec.magasin.id || `${rec.magasin.enseigne}_${rec.magasin.distance}`}
                     className={`border rounded-lg p-4 ${
                       rec.pertinence.niveau === 'Prioritaire'
                         ? 'bg-green-900/20 border-green-500/30'
@@ -489,8 +490,8 @@ export default function ListeCourses({ territoire = '971' }) {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      {rec.pertinence.raisons.map((raison, i) => (
-                        <p key={i} className="text-xs text-slate-400">• {raison}</p>
+                      {rec.pertinence.raisons.map((raison) => (
+                        <p key={raison} className="text-xs text-slate-400">• {raison}</p>
                       ))}
                     </div>
                   </div>

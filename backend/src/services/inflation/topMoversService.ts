@@ -4,6 +4,7 @@
  */
 
 import { Territory, ProductCategory } from '../../config/inflationConfig.js';
+import prisma from '../../database/prisma.js';
 
 /**
  * Price mover data
@@ -31,56 +32,99 @@ export interface TopMoversResult {
 }
 
 /**
- * Get products with biggest price changes
+ * Get products with biggest price changes between two consecutive months
  */
 export async function getTopMovers(
   territory: Territory,
   year: number,
   month: number,
-  _limit: number = 10
+  limit: number = 10
 ): Promise<TopMoversResult> {
-  try {
-    // In production, this would query actual product price data
-    // For now, returning mock data structure
-    
-    const topIncreases: PriceMover[] = [];
-    const topDecreases: PriceMover[] = [];
+  // Determine the previous period
+  const prevMonth = month === 1 ? 12 : month - 1;
+  const prevYear = month === 1 ? year - 1 : year;
 
-    // TODO: Implement actual queries when product price data is available
-    console.log(`[TopMovers] Getting top movers for ${territory} ${year}-${month}`);
+  // Fetch current-month and previous-month history for this territory
+  const [current, previous] = await Promise.all([
+    prisma.priceHistoryMonthly.findMany({
+      where: { territory: territory.toLowerCase(), year, month },
+      include: { product: { select: { displayName: true, category: true, productKey: true } } },
+    }),
+    prisma.priceHistoryMonthly.findMany({
+      where: { territory: territory.toLowerCase(), year: prevYear, month: prevMonth },
+      select: { productId: true, avgPrice: true },
+    }),
+  ]);
 
-    return {
+  const prevMap = new Map(previous.map((p) => [p.productId, p.avgPrice]));
+
+  const movers: PriceMover[] = [];
+
+  for (const entry of current) {
+    const prevPrice = prevMap.get(entry.productId);
+    if (prevPrice == null || prevPrice === 0) continue;
+
+    const change = entry.avgPrice - prevPrice;
+    const changePercent = (change / prevPrice) * 100;
+
+    movers.push({
+      productCode: entry.product.productKey,
+      productName: entry.product.displayName,
+      category: (entry.product.category as ProductCategory) ?? ('other' as ProductCategory),
+      currentPrice: entry.avgPrice,
+      previousPrice: prevPrice,
+      change,
+      changePercent,
       territory,
-      year,
-      month,
-      topIncreases,
-      topDecreases,
-    };
-  } catch (error) {
-    console.error('[TopMovers] Error getting top movers:', error);
-    throw error;
+    });
   }
+
+  movers.sort((a, b) => b.changePercent - a.changePercent);
+
+  return {
+    territory,
+    year,
+    month,
+    topIncreases: movers.filter((m) => m.changePercent > 0).slice(0, limit),
+    topDecreases: movers
+      .filter((m) => m.changePercent < 0)
+      .sort((a, b) => a.changePercent - b.changePercent)
+      .slice(0, limit),
+  };
 }
 
 /**
- * Track price movements over time
+ * Track price movements over time for a product
  */
 export async function trackPriceMovements(
   territory: Territory,
   productCode: string,
-  _months: number = 12
+  months: number = 12
 ): Promise<Array<{ year: number; month: number; price: number; change: number }>> {
-  try {
-    const movements: Array<{ year: number; month: number; price: number; change: number }> = [];
-    
-    // TODO: Implement actual price tracking
-    console.log(`[TopMovers] Tracking price movements for ${productCode} in ${territory}`);
+  // Find the product by productKey
+  const product = await prisma.product.findFirst({
+    where: { productKey: productCode },
+    select: { id: true },
+  });
 
-    return movements;
-  } catch (error) {
-    console.error('[TopMovers] Error tracking price movements:', error);
-    throw error;
+  if (!product) {
+    return [];
   }
+
+  const records = await prisma.priceHistoryMonthly.findMany({
+    where: { productId: product.id, territory: territory.toLowerCase() },
+    orderBy: [{ year: 'desc' }, { month: 'desc' }],
+    take: months,
+    select: { year: true, month: true, avgPrice: true },
+  });
+
+  records.reverse(); // chronological order
+
+  return records.map((r, idx) => {
+    const prev = records[idx - 1];
+    const change = prev ? r.avgPrice - prev.avgPrice : 0;
+    return { year: r.year, month: r.month, price: r.avgPrice, change };
+  });
 }
 
 /**
@@ -88,38 +132,68 @@ export async function trackPriceMovements(
  */
 export async function identifyAtRiskProducts(
   territory: Territory,
-  threshold: number = 5 // 5% increase threshold
+  threshold: number = 5
 ): Promise<PriceMover[]> {
-  try {
-    const atRiskProducts: PriceMover[] = [];
-    
-    // TODO: Implement risk detection algorithm
-    console.log(`[TopMovers] Identifying at-risk products in ${territory} (threshold: ${threshold}%)`);
-
-    return atRiskProducts;
-  } catch (error) {
-    console.error('[TopMovers] Error identifying at-risk products:', error);
-    throw error;
-  }
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  const result = await getTopMovers(territory, year, month, 50);
+  return result.topIncreases.filter((p) => p.changePercent >= threshold);
 }
 
 /**
- * Get products with sustained trends
+ * Get products with sustained trends over consecutive months
  */
 export async function getProductsWithSustainedTrends(
-  _territory: Territory,
+  territory: Territory,
   direction: 'up' | 'down',
   consecutiveMonths: number = 3
 ): Promise<PriceMover[]> {
-  try {
-    const trendinProducts: PriceMover[] = [];
-    
-    // TODO: Implement trend detection
-    console.log(`[TopMovers] Finding products with ${direction} trends over ${consecutiveMonths} months`);
+  const now = new Date();
+  let year = now.getFullYear();
+  let month = now.getMonth() + 1;
 
-    return trendinProducts;
-  } catch (error) {
-    console.error('[TopMovers] Error getting sustained trends:', error);
-    throw error;
+  // Collect movers for consecutive periods
+  const periods: Map<string, number[]> = new Map();
+
+  for (let i = 0; i < consecutiveMonths + 1; i++) {
+    const result = await getTopMovers(territory, year, month, 100);
+    const movers = direction === 'up' ? result.topIncreases : result.topDecreases;
+
+    for (const m of movers) {
+      if (!periods.has(m.productCode)) {
+        periods.set(m.productCode, []);
+      }
+      periods.get(m.productCode)!.push(m.changePercent);
+    }
+
+    // Go back one month
+    month--;
+    if (month === 0) {
+      month = 12;
+      year--;
+    }
   }
+
+  // Find products that appear in all requested consecutive periods
+  const sustained: PriceMover[] = [];
+  const latest = await getTopMovers(territory, now.getFullYear(), now.getMonth() + 1, 100);
+  const latestMap = new Map(
+    [...latest.topIncreases, ...latest.topDecreases].map((m) => [m.productCode, m])
+  );
+
+  for (const [code, changes] of periods) {
+    if (changes.length >= consecutiveMonths) {
+      const allInDirection = direction === 'up'
+        ? changes.every((c) => c > 0)
+        : changes.every((c) => c < 0);
+
+      if (allInDirection) {
+        const mover = latestMap.get(code);
+        if (mover) sustained.push(mover);
+      }
+    }
+  }
+
+  return sustained;
 }

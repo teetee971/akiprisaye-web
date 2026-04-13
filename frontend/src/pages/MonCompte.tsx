@@ -1,5 +1,6 @@
 // src/pages/MonCompte.tsx
 import React, { useState, useEffect } from "react";
+import toast from 'react-hot-toast';
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -59,7 +60,7 @@ export default function MonCompte() {
       await signOutUser();
       navigate("/");
     } catch (err) {
-      alert("Erreur lors de la déconnexion : " + err);
+      toast.error('Erreur lors de la déconnexion : ' + err);
     }
   };
 

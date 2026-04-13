@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../ui/glass-card';
 import { exportOpenData, getExportStatistics } from '../../services/openDataExportService';
@@ -148,11 +149,11 @@ export default function ObservatoireDashboard() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       } else {
-        alert(`Export échoué: ${result.error}`);
+        toast.error(`Export échoué : ${result.error}`);
       }
     } catch (error) {
       console.error('Export failed:', error);
-      alert('Erreur lors de l\'export');
+      toast.error("Erreur lors de l'export");
     } finally {
       setExporting(false);
     }

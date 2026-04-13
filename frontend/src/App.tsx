@@ -330,7 +330,7 @@ function LoadingFallback() {
         <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="Logo" className="h-16 mb-4" width="64" height="64" />
         <h1 className="text-xl font-bold mb-2">Chargement bloqué</h1>
         <p className="text-slate-400 mb-4">L'application met trop de temps à charger.</p>
-        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
+        <button type="button" onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
           Recharger la page
         </button>
       </div>
@@ -355,7 +355,7 @@ export default function App() {
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-4">
         <h1 className="text-xl font-bold mb-2">Erreur d'initialisation</h1>
         <p className="text-red-400 mb-4">{providerError.message}</p>
-        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
+        <button type="button" onClick={() => window.location.reload()} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700">
           Recharger
         </button>
       </div>

@@ -4,7 +4,8 @@ import { Link, Navigate } from 'react-router-dom';
 import { BarChart3, Bell, BrainCircuit, Building2, Clock3, Crown, RefreshCw, Wrench, Users, Key } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { getDailyStats } from '../utils/priceClickTracker';
-import { generateDailyPost } from '../services/ghostwriterService';
+import { generateDailyPost, getGhostwriterHistory, saveGhostwriterPost } from '../services/ghostwriterService';
+import type { GhostwriterHistoryEntry } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
 import type { InterestStats, TerritoryInterestStat, TerritoryStats } from '../hooks/useVisitorStats';
@@ -54,6 +55,7 @@ const EspaceCreateur: React.FC = () => {
   const [predatorScanning, setPredatorScanning] = useState(false);
   const [predatorAlerts, setPredatorAlerts] = useState(() => getPredatorSeedAlerts());
   const [predatorLastScan, setPredatorLastScan] = useState<string | null>(null);
+  const [postHistory, setPostHistory] = useState<GhostwriterHistoryEntry[]>(() => getGhostwriterHistory());
 
   const weeklyStats = useMemo(() => getDailyStats(7), []);
   const monthlyStats = useMemo(() => getDailyStats(30), []);
@@ -81,18 +83,57 @@ const EspaceCreateur: React.FC = () => {
   const ghostwriterPriceSignal = ghostwriterRevenueTrend ?? 0;
 
   const ghostwriterPost = useMemo(() => {
+    const drops = predatorAlerts
+      .filter((a) => a.deltaPercent < 0)
+      .map((a) => ({ name: a.targetName, changePct: a.deltaPercent }));
+    const increases = predatorAlerts
+      .filter((a) => a.deltaPercent > 0)
+      .map((a) => ({ name: a.targetName, changePct: a.deltaPercent }));
+    const avgDelta =
+      predatorAlerts.length > 0
+        ? predatorAlerts.reduce((sum, a) => sum + a.deltaPercent, 0) / predatorAlerts.length
+        : ghostwriterPriceSignal;
+    const topProduct =
+      predatorAlerts.length > 0 ? predatorAlerts[0].targetName : undefined;
+
     return generateDailyPost({
       territory: byTerritory[0]?.name ?? 'Guadeloupe',
       topCategory: byInterest[0]?.name ?? 'produits frais',
-      averagePriceChangePct: analytics.monthlyCtr * 100,
+      averagePriceChangePct: avgDelta,
+      notableDrops: drops,
+      notableIncreases: increases,
+      topProduct,
+      date: new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
     });
-  }, [byTerritory, byInterest, analytics.monthlyCtr]);
+  }, [byTerritory, byInterest, predatorAlerts, ghostwriterPriceSignal]);
+
+  const audienceBriefing = useMemo(
+    () =>
+      buildCreatorBriefing({
+        topTerritory: byTerritory[0],
+        topInterest: byInterest[0],
+        topTerritoryHistoricalInterest: byTerritory[0]?.topInterests[0]
+          ? {
+              territory: byTerritory[0].code ?? '',
+              interest: byTerritory[0].topInterests[0].key,
+              name: byTerritory[0].topInterests[0].name,
+              emoji: byTerritory[0].topInterests[0].emoji,
+              totalViews: byTerritory[0].topInterests[0].online,
+            }
+          : undefined,
+      }),
+    [byTerritory, byInterest],
+  );
 
   const handleCopyGhostwriterPost = useCallback(() => {
     navigator.clipboard.writeText(ghostwriterPost);
     setGhostwriterCopied(true);
     setTimeout(() => setGhostwriterCopied(false), 2000);
-  }, [ghostwriterPost]);
+    const entry = saveGhostwriterPost(ghostwriterPost, audienceBriefing);
+    setPostHistory((prev) =>
+      prev.length > 0 && prev[0].id === entry.id ? prev : [entry, ...prev].slice(0, 10),
+    );
+  }, [ghostwriterPost, audienceBriefing]);
 
   const handleScan = useCallback(async () => {
     if (typeof window === 'undefined') return;
@@ -165,10 +206,52 @@ const EspaceCreateur: React.FC = () => {
             {ghostwriterCopied ? 'Copié !' : 'Copier le texte'}
           </button>
         </div>
-        <pre className="whitespace-pre-wrap text-sm text-slate-300 bg-slate-950 p-5 rounded-xl border border-slate-800">
+        <div className="whitespace-pre-wrap font-sans text-sm text-slate-300 bg-slate-950 p-5 rounded-xl border border-slate-800 leading-relaxed">
           {ghostwriterPost}
-        </pre>
+        </div>
+        {audienceBriefing && (
+          <p className="mt-3 text-xs text-violet-300/70 italic border-t border-slate-800 pt-3">
+            💡 {audienceBriefing}
+          </p>
+        )}
       </section>
+
+      {postHistory.length > 0 && (
+        <section className="mb-8 rounded-3xl border border-slate-700/40 bg-slate-900/30 p-6">
+          <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Clock3 size={14} /> Historique posts ({postHistory.length})
+          </h2>
+          <div className="space-y-3">
+            {postHistory.map((entry) => (
+              <details key={entry.id} className="group bg-slate-950/70 rounded-xl border border-slate-800 overflow-hidden">
+                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none select-none hover:bg-slate-900/50 transition">
+                  <span className="text-xs text-slate-400">
+                    {new Date(entry.generatedAt).toLocaleString('fr-FR', {
+                      weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+                    })}
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono truncate max-w-[60%] text-right">
+                    {entry.post.split('\n')[0]}
+                  </span>
+                </summary>
+                <div className="px-4 pb-4 pt-2 border-t border-slate-800">
+                  <pre className="whitespace-pre-wrap text-xs text-slate-300 leading-relaxed mb-3">{entry.post}</pre>
+                  {entry.briefing && (
+                    <p className="text-[11px] text-violet-300/60 italic mb-3">💡 {entry.briefing}</p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => { void navigator.clipboard.writeText(entry.post); }}
+                    className="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded-lg transition"
+                  >
+                    Copier
+                  </button>
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <article className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-md">
@@ -284,7 +367,14 @@ const EspaceCreateur: React.FC = () => {
           )}
           {predatorAlerts.map((alert) => (
             <div key={alert.id} className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <p className="text-sm font-bold text-white">{alert.targetName}</p>
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-block text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${alert.severity === 'high' ? 'bg-red-600 text-white' : 'bg-amber-500 text-slate-900'}`}
+                >
+                  {alert.severity}
+                </span>
+                <p className="text-sm font-bold text-white">{alert.targetName}</p>
+              </div>
               <p className="text-xs text-slate-400">{alert.message}</p>
             </div>
           ))}

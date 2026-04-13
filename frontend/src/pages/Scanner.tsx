@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import BarcodeScanner from '../components/BarcodeScanner';
 import ProductDetails from '../components/products/ProductDetails';
@@ -132,7 +133,7 @@ export default function Scanner() {
         timestamp: new Date().toISOString(),
       });
       safeLocalStorage.setJSON('unrecognizedScans', savedScans);
-      alert('Code enregistré localement pour revue ultérieure');
+      toast.success('Code enregistré localement pour revue ultérieure');
       handleReset();
     } else if (behavior === 'show_empty') {
       // Show empty product page (already handled by not_found state)

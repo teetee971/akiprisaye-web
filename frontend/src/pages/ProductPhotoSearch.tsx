@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { Camera, Upload, Search, RefreshCw, ShoppingCart, Globe, Store, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
 import {
@@ -91,11 +92,11 @@ export default function ProductPhotoSearch() {
 
   const handleFile = useCallback(async (file: File) => {
     if (!ACCEPTED_TYPES.includes(file.type)) {
-      alert('Format non supporté. Utilisez JPEG, PNG ou WebP.');
+      toast.error('Format non supporté. Utilisez JPEG, PNG ou WebP.');
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
-      alert('Image trop grande (max 15 Mo).');
+      toast.error('Image trop grande (max 15 Mo).');
       return;
     }
 

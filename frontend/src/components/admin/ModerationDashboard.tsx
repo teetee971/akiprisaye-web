@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { 
   getPendingContributions, 
   moderateContribution
@@ -58,7 +59,7 @@ export default function ModerationDashboard() {
       setModerationNotes('');
     } catch (error) {
       console.error('Failed to moderate:', error);
-      alert('Erreur lors de la modération');
+      toast.error('Erreur lors de la modération');
     } finally {
       setIsModeratingId(null);
     }

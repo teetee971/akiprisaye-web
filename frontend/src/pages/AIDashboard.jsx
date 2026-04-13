@@ -234,9 +234,9 @@ export default function AIDashboard() {
           
           {recommendations.length > 0 ? (
             <div className="space-y-3">
-              {recommendations.map((rec, index) => (
+              {recommendations.map((rec) => (
                 <div
-                  key={index}
+                  key={rec.message || rec.priority + rec.category}
                   className={`border-l-4 p-4 rounded ${getPriorityColor(rec.priority)}`}
                 >
                   <div className="flex items-start">

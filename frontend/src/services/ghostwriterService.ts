@@ -61,11 +61,75 @@ export function generateDailyPost(data: GhostwriterDailyPostData): string {
 
   const highlights = [drops, increases].filter(Boolean).join(' | ');
 
+  const dateLabel =
+    typeof payload.date === 'string' && payload.date.trim().length > 0
+      ? payload.date
+      : new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
   return [
-    `📊 Point prix du jour — ${territory}`,
-    `Les ${topCategory} sont ${trend} (${absDelta}%) sur les dernières observations.`,
+    `📊 Point prix du ${dateLabel} — ${territory}`,
+    `Tendance "${topCategory}" : ${trend} (${absDelta}%) sur les dernières observations.`,
     `Produit à suivre : ${topProduct}.`,
     highlights || 'Alerte utile : surveillez les promotions de proximité cette semaine.',
-    'Vous voulez plus d’analyses locales chaque matin ? 🪷',
+    "Vous voulez plus d'analyses locales chaque matin ? 🪷",
   ].join('\n');
+}
+
+// ─── Historique des posts (localStorage) ──────────────────────────────────────
+
+export interface GhostwriterHistoryEntry {
+  id: string;
+  generatedAt: string;
+  post: string;
+  briefing?: string;
+}
+
+const STORAGE_KEY = 'ghostwriter_post_history';
+const MAX_HISTORY = 10;
+
+function loadHistory(): GhostwriterHistoryEntry[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    return parsed as GhostwriterHistoryEntry[];
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(entries: GhostwriterHistoryEntry[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(entries.slice(0, MAX_HISTORY)));
+  } catch {
+    // ignore quota errors
+  }
+}
+
+/**
+ * Retourne les entrées de l'historique (les 10 plus récentes, ordre anti-chronologique).
+ */
+export function getGhostwriterHistory(): GhostwriterHistoryEntry[] {
+  return loadHistory();
+}
+
+/**
+ * Sauvegarde un post généré dans l'historique localStorage.
+ * Déduplique par contenu exact (évite les doublons en cas de re-render).
+ */
+export function saveGhostwriterPost(post: string, briefing?: string): GhostwriterHistoryEntry {
+  const existing = loadHistory();
+  if (existing.length > 0 && existing[0].post === post) return existing[0];
+
+  const entry: GhostwriterHistoryEntry = {
+    id: Date.now().toString(36),
+    generatedAt: new Date().toISOString(),
+    post,
+    briefing,
+  };
+  saveHistory([entry, ...existing]);
+  return entry;
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 import {
   getProductByEan,
   getPricesByEan,
@@ -45,7 +46,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
   // Request GPS location (opt-in only)
   const requestLocation = () => {
     if (!gpsConsent) {
-      alert('Vous devez donner votre consentement explicite pour utiliser la géolocalisation.');
+      toast.error('Vous devez donner votre consentement explicite pour utiliser la géolocalisation.');
       return;
     }
 
@@ -80,7 +81,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
   // Add item to shopping list
   const addItemToList = () => {
     if (!newItem.product_name || !newItem.category) {
-      alert('Nom du produit et catégorie sont obligatoires');
+      toast.error('Nom du produit et catégorie sont obligatoires');
       return;
     }
 
@@ -170,7 +171,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
   // Optimize shopping route based on selected mode
   const optimizeShoppingRoute = async () => {
     if (!userLocation) {
-      alert('Veuillez activer la géolocalisation d\'abord');
+      toast.error("Veuillez activer la géolocalisation d'abord");
       return;
     }
 
@@ -468,7 +469,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
 
   // Export to PDF
   const exportToPDF = () => {
-    alert('Fonctionnalité d\'export PDF à venir');
+    toast("Fonctionnalité d'export PDF à venir", { icon: '📄' });
     // TODO: Implement PDF export
   };
 
@@ -515,7 +516,7 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
     };
 
     setSavedRoutes([...savedRoutes, route]);
-    alert('Route sauvegardée!');
+    toast.success('Route sauvegardée !');
   };
 
   const noOptimizationData =

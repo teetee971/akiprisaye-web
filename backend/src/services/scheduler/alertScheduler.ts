@@ -7,6 +7,7 @@ import * as cron from 'node-cron';
 import { alertService } from '../alerts/alertService.js';
 import { alertEngine } from '../alerts/alertEngine.js';
 import { notificationService } from '../notifications/notificationService.js';
+import prisma from '../../database/prisma.js';
 
 class AlertScheduler {
   private jobs: Map<string, cron.ScheduledTask> = new Map();
@@ -82,18 +83,69 @@ class AlertScheduler {
   }
 
   /**
-   * Send weekly digest to users
+   * Send weekly digest to users with active alerts
    */
   private async sendWeeklyDigest(): Promise<void> {
     try {
       console.log('[Scheduler] Sending weekly digest...');
-      
-      // TODO: Implement weekly digest logic
-      // 1. Gather price changes for the week
-      // 2. Generate digest for each user
-      // 3. Send via email
-      
-      console.log('[Scheduler] Weekly digest sent');
+
+      // Gather all users who have active price alerts
+      const activeAlerts = await alertService.getActiveAlerts();
+      const userIds = [...new Set(activeAlerts.map((a) => a.userId))];
+
+      let sentCount = 0;
+
+      for (const userId of userIds) {
+        try {
+          // Fetch user email
+          const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { email: true, name: true },
+          });
+
+          if (!user?.email) continue;
+
+          // Collect price changes from the last 7 days for this user's alert products
+          const userAlerts = activeAlerts.filter((a) => a.userId === userId);
+          const productIds = [...new Set(userAlerts.map((a) => a.productId))];
+
+          const weekAgo = new Date(Date.now() - 7 * 86_400_000);
+
+          const recentChanges = await prisma.priceObservation.findMany({
+            where: {
+              productId: { in: productIds },
+              observedAt: { gte: weekAgo },
+            },
+            orderBy: { observedAt: 'desc' },
+            include: {
+              product: { select: { displayName: true } },
+            },
+            distinct: ['productId'],
+          });
+
+          if (recentChanges.length === 0) continue;
+
+          // Build digest notification
+          const productLines = recentChanges
+            .map((obs) => `- ${obs.product?.displayName ?? obs.productLabel}: ${obs.price.toFixed(2)}€`)
+            .join('\n');
+
+          await notificationService.sendNotification({
+            userId,
+            type: 'WEEKLY_SUMMARY',
+            channel: 'EMAIL',
+            title: '📊 Votre récap hebdo A KI PRI SA YÉ',
+            body: `Bonjour ${user.name ?? ''},\n\nVoici les derniers prix observés pour vos produits suivis :\n\n${productLines}\n\nBonne semaine !`,
+            data: { productCount: recentChanges.length },
+          });
+
+          sentCount++;
+        } catch (userError) {
+          console.error(`[Scheduler] Failed to send digest to user ${userId}:`, userError);
+        }
+      }
+
+      console.log(`[Scheduler] Weekly digest sent to ${sentCount}/${userIds.length} users`);
     } catch (error) {
       console.error('[Scheduler] Error sending weekly digest:', error);
     }

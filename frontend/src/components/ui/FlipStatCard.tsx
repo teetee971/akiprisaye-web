@@ -23,7 +23,7 @@ export default function FlipStatCard({
   icon,
   className = '',
 }: FlipStatCardProps) {
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       // Toggle a CSS class that forces the flip (same as :focus-within)
@@ -35,10 +35,9 @@ export default function FlipStatCard({
   }, []);
 
   return (
-    <div
+    <button
+      type="button"
       className={`flip-card ${className}`}
-      tabIndex={0}
-      role="button"
       aria-label={`${value} – ${label}. Appuyez pour voir les détails.`}
       onKeyDown={handleKeyDown}
     >
@@ -54,6 +53,6 @@ export default function FlipStatCard({
           <div className="flip-card-back-text">{backContent}</div>
         </div>
       </div>
-    </div>
+    </button>
   );
 }

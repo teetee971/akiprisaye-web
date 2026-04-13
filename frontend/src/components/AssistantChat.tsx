@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import {
   generateAssistantResponse,
   createUserMessage,
@@ -34,7 +35,7 @@ export default function AssistantChat() {
     
     // Check for prohibited content
     if (isProhibitedQuery(query)) {
-      alert('⚠️ Cette question contient un contenu interdit.');
+      toast.error('Cette question contient un contenu interdit.');
       return;
     }
     
@@ -230,6 +231,7 @@ export default function AssistantChat() {
               <button
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim() || isTyping}
+                aria-label="Envoyer le message"
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-700 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors"
               >
                 ↑
