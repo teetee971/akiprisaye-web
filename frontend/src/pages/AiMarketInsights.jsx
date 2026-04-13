@@ -200,8 +200,8 @@ export default function AiMarketInsights() {
           <div className="mt-4 pt-4 border-t border-current/20">
             <h3 className="text-sm font-semibold mb-2">💡 Recommandations IA</h3>
             <ul className="space-y-1">
-              {data.recommendations?.map((rec, index) => (
-                <li key={index} className="text-sm">
+              {data.recommendations?.map((rec) => (
+                <li key={rec} className="text-sm">
                   • {rec}
                 </li>
               ))}

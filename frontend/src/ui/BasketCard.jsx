@@ -61,12 +61,20 @@ export default function BasketCard({ basket, selectedTerritories }) {
   const trend = getTrend(primaryTerritory, 'week', String(basket.id));
 
   return (
-    <div
+    <article
       role="button"
       tabIndex={0}
       onClick={handleCardClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } }}
-      className="bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden hover:border-blue-500 transition cursor-pointer"
+      onKeyDown={(e) => {
+        if (e.currentTarget !== e.target) {
+          return;
+        }
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
+      className="w-full text-left bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden hover:border-blue-500 transition cursor-pointer"
     >
       {/* Image */}
       <div className="relative h-48 bg-slate-800">
@@ -149,6 +157,7 @@ export default function BasketCard({ basket, selectedTerritories }) {
 
         {/* Action Button */}
         <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             handleViewOnMap();
@@ -158,6 +167,6 @@ export default function BasketCard({ basket, selectedTerritories }) {
           📍 Voir sur la carte
         </button>
       </div>
-    </div>
+    </article>
   );
 }

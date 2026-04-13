@@ -6,6 +6,8 @@
  * Never exposes stack traces, HTTP codes, or technical details to users
  */
 
+import toast from 'react-hot-toast';
+
 export interface UserFriendlyError {
   title: string;
   message: string;

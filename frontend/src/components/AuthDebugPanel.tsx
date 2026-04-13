@@ -165,8 +165,8 @@ export default function AuthDebugPanel() {
           {events.length > 0 && (
             <div style={{ marginTop: 4, borderTop: '1px solid #334155', paddingTop: 4 }}>
               <div style={{ color: '#64748b', marginBottom: 2 }}>Events ({events.length}):</div>
-              {events.slice(-6).map((e, i) => (
-                <div key={i} style={{ color: eventColour(e.event), overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {events.slice(-6).map((e) => (
+                <div key={`${e.ts}_${e.event}`} style={{ color: eventColour(e.event), overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {shortTs(e.ts)} {e.event}
                 </div>
               ))}

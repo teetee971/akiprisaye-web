@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';

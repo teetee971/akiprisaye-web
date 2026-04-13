@@ -106,18 +106,11 @@ export function NearbyStoresList({
   return (
     <div className="space-y-2">
       {displayStores.map((store) => (
-        <div
+        <button
           key={store.id}
-          className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow cursor-pointer"
+          type="button"
+          className="w-full text-left bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow cursor-pointer"
           onClick={() => onStoreClick?.(store)}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onStoreClick?.(store);
-            }
-          }}
         >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1">
@@ -192,7 +185,7 @@ export function NearbyStoresList({
               </button>
             )}
           </div>
-        </div>
+        </button>
       ))}
 
       {/* Show count if limited */}
