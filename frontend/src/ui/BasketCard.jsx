@@ -65,7 +65,15 @@ export default function BasketCard({ basket, selectedTerritories }) {
       role="button"
       tabIndex={0}
       onClick={handleCardClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardClick(); } }}
+      onKeyDown={(e) => {
+        if (e.currentTarget !== e.target) {
+          return;
+        }
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
       className="w-full text-left bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden hover:border-blue-500 transition cursor-pointer"
     >
       {/* Image */}
