@@ -174,6 +174,7 @@ export default function EnhancedSearch({
           aria-controls={listboxId}
           aria-activedescendant={activeIndex >= 0 ? getOptionId(activeIndex) : undefined}
           aria-describedby="enhanced-search-instructions"
+          aria-label="Rechercher un produit"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -258,6 +259,7 @@ export default function EnhancedSearch({
           ref={listboxRef}
           id={listboxId}
           role="listbox"
+          aria-label="Résultats de recherche produits"
           className="absolute z-20 mt-2 w-full bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-96 overflow-auto"
         >
           {results.map((result, index) => {
