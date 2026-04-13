@@ -14,6 +14,7 @@
  */
 
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Bell, BellOff, Plus, Trash2, Edit } from 'lucide-react';
 import { useAlerts } from '../../hooks/useAlerts';
 import type { Alert, Territory } from '../../types/comparatorCommon';
@@ -42,6 +43,7 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
 }) => {
   const { alerts, statistics, toggleAlertStatus, deleteAlert, loading } = useAlerts(userId);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   // Filter alerts for this comparator
   const comparatorAlerts = alerts.filter((alert) => alert.comparatorType === comparatorType);
@@ -58,17 +60,27 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
   };
 
   /**
-   * Handle delete alert
+   * Handle delete alert — first tap requests confirmation via toast, second tap confirms
    */
   const handleDelete = async (alertId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette alerte ?')) {
+    if (pendingDeleteId !== alertId) {
+      setPendingDeleteId(alertId);
+      toast('Appuyez à nouveau pour confirmer la suppression.', {
+        icon: '🗑️',
+        duration: 3000,
+        id: `delete-${alertId}`,
+      });
+      setTimeout(() => setPendingDeleteId(null), 3000);
       return;
     }
 
+    setPendingDeleteId(null);
     try {
       await deleteAlert(alertId);
+      toast.success('Alerte supprimée.');
     } catch (err) {
       console.error('Error deleting alert:', err);
+      toast.error('Impossible de supprimer l\'alerte.');
     }
   };
 

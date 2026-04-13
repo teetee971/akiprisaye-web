@@ -17,6 +17,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { GlassCard } from '../ui/glass-card';
 
 interface TerritorySignal {
@@ -136,21 +137,20 @@ export function TerritorySignal() {
 
   const shareSignal = (signal: TerritorySignal) => {
     const text = `${signal.icon} ${signal.title} en ${stats?.territoryName}\n\n${signal.description}\n\nSource: Observatoire A KI PRI SA YÉ`;
-    
+    const copyToClipboard = () => {
+      navigator.clipboard.writeText(text).then(() => {
+        toast.success('Signal copié dans le presse-papier');
+      });
+    };
+
     if (navigator.share) {
       navigator.share({
         title: 'Signal Prix Territoire',
         text: text,
         url: window.location.href
-      }).catch(() => {
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText(text);
-        alert('✅ Signal copié dans le presse-papier');
-      });
+      }).catch(copyToClipboard);
     } else {
-      // Fallback: copy to clipboard
-      navigator.clipboard.writeText(text);
-      alert('✅ Signal copié dans le presse-papier');
+      copyToClipboard();
     }
   };
 

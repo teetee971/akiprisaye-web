@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { getUserPosition, calculateDistancesBatch, isGeolocationAvailable } from '../utils/geoLocation';
 import { solveShoppingRoute } from '../utils/routeOptimization';
 import { getSuggestedProducts } from '../utils/productSuggestions';
@@ -55,7 +56,7 @@ export default function ListeCourses({ territoire = '971' }) {
   // Fonction GPS (locale uniquement) - optimisée avec callbacks
   const activerGPS = useCallback(async () => {
     if (!consentementGPS) {
-      alert('Vous devez accepter l\'utilisation de votre localisation pour cette fonctionnalité.');
+      toast.error('Vous devez accepter l\'utilisation de votre localisation pour cette fonctionnalité.');
       return;
     }
 

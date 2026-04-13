@@ -203,11 +203,17 @@ export function handleProductError(error: unknown): UserFriendlyError {
 }
 
 /**
- * Display error toast/notification (integration point for toast library)
+ * Display error toast/notification
  */
 export function showErrorToUser(error: UserFriendlyError) {
-  // For now, use a simple alert
-  // TODO: Replace with toast notification library
-  const icon = error.type === 'error' ? '❌' : error.type === 'warning' ? '⚠️' : 'ℹ️';
-  alert(`${icon} ${error.title}\n\n${error.message}`);
+  import('react-hot-toast').then(({ default: toast }) => {
+    const message = `${error.title} — ${error.message}`;
+    if (error.type === 'error') {
+      toast.error(message);
+    } else if (error.type === 'warning') {
+      toast(message, { icon: '⚠️' });
+    } else {
+      toast(message, { icon: 'ℹ️' });
+    }
+  });
 }
