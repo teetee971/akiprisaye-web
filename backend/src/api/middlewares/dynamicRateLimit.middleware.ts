@@ -20,34 +20,59 @@ import { SUBSCRIPTION_PLANS } from '../../types/api.js';
 
 let redisStore: Store | undefined;
 
-// Proxy store that delegates to the real Redis store once it is ready.
-// express-rate-limit calls store methods lazily (after the first request),
-// so the real store will be initialised before any method is invoked as long
-// as the app starts handling traffic after the event-loop tick that resolves
-// the dynamic import.
+/**
+ * In-process fallback used by lazyStoreProxy while the async Redis import is
+ * still pending (or when it has permanently failed).  Keyed by the same string
+ * that express-rate-limit passes to the store, so it behaves identically to the
+ * default in-memory store – except that it is shared across all rate-limit
+ * instances created before Redis became available.
+ * ⚠️ Single-instance only – not suitable for multi-process production deploys
+ *    (those should always have REDIS_URL set so Redis initialises quickly).
+ */
+const proxyFallbackStore = new Map<string, { totalHits: number; resetTime: Date }>();
+
+/**
+ * Proxy store that delegates to the real Redis store once it is ready.
+ * While Redis is still initialising (or if it fails), the proxy falls back to
+ * an in-process map so that rate limiting continues to work instead of
+ * returning a 500 error on every request.
+ */
 const lazyStoreProxy: Store = {
   async init(options) {
     if (redisStore?.init) await redisStore.init(options);
   },
   async increment(key) {
     if (redisStore) return redisStore.increment(key);
-    // Redis store initialisation failed or the first request arrived before
-    // the dynamic import resolved. Throwing here causes express-rate-limit to
-    // fall back gracefully to its own in-process store.
-    throw new Error('Redis store initialisation failed or timed out');
+    // Redis not yet ready – use in-process fallback so requests are still
+    // rate-limited rather than erroring with a 500.
+    const now = Date.now();
+    const windowMs = 24 * 60 * 60 * 1000; // conservative 24-hour window
+    let entry = proxyFallbackStore.get(key);
+    if (!entry || entry.resetTime.getTime() <= now) {
+      entry = { totalHits: 0, resetTime: new Date(now + windowMs) };
+      proxyFallbackStore.set(key, entry);
+    }
+    entry.totalHits += 1;
+    return { totalHits: entry.totalHits, resetTime: entry.resetTime };
   },
   async decrement(key) {
     if (redisStore?.decrement) return redisStore.decrement(key);
+    const entry = proxyFallbackStore.get(key);
+    if (entry && entry.totalHits > 0) entry.totalHits -= 1;
   },
   async resetKey(key) {
     if (redisStore?.resetKey) return redisStore.resetKey(key);
+    proxyFallbackStore.delete(key);
   },
   async resetAll() {
     if (redisStore?.resetAll) return redisStore.resetAll();
+    proxyFallbackStore.clear();
   },
   async get(key) {
     if (redisStore?.get) return redisStore.get(key);
-    return undefined;
+    const entry = proxyFallbackStore.get(key);
+    if (!entry || entry.resetTime.getTime() <= Date.now()) return undefined;
+    return { totalHits: entry.totalHits, resetTime: entry.resetTime };
   },
 };
 
