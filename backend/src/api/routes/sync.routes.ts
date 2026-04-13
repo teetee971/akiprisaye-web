@@ -30,8 +30,8 @@ const syncTriggerRateLimiter = rateLimit({
 });
 
 // All sync routes are admin-only
-router.use(unifiedAuthMiddleware, requirePermission(ApiPermission.ADMIN));
 router.use(syncTriggerRateLimiter);
+router.use(unifiedAuthMiddleware, requirePermission(ApiPermission.ADMIN));
 
 /**
  * POST /api/sync/openfoodfacts/trigger
