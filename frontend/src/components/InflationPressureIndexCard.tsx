@@ -128,6 +128,7 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
               aria-valuenow={ilpp.score}
               aria-valuemin={0}
               aria-valuemax={100}
+              aria-label={`Indice de pression inflationniste : ${ilpp.score} sur 100`}
             />
           </div>
           

@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react'
 
 type ScanCameraProps = {
-  videoRef: React.RefObject<HTMLVideoElement>
+  videoRef: React.RefObject<HTMLVideoElement | null>
   isScanning: boolean
   error: string | null
   onStartScan: () => void

@@ -69,13 +69,15 @@ function MethodTab({
 // ─── Camera view ──────────────────────────────────────────────────────────────
 
 function CameraView({ videoRef, onCapture, scanning }: {
-  videoRef: React.RefObject<HTMLVideoElement>;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
   onCapture: () => void;
   scanning: boolean;
 }) {
   return (
     <div className="relative rounded-2xl overflow-hidden bg-black aspect-[4/3]">
-      <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+      <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover">
+        <track kind="captions" src="" label="Français" srcLang="fr" default />
+      </video>
 
       {/* Aiming overlay */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -539,6 +541,7 @@ export default function ESLScannerPage() {
               {pricesResult.product.imageUrl && (
                 <img src={pricesResult.product.imageUrl} alt={pricesResult.product.name}
                   className="w-14 h-14 object-contain rounded-xl bg-white/10 flex-shrink-0"
+                  width={56} height={56} loading="lazy"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               )}
               <div>

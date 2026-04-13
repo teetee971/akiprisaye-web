@@ -82,7 +82,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           SITE_URL_GHPAGES: 'https://teetee971.github.io/akiprisaye-web/'
-          SITE_URL_CF: 'https://akiprisaye.pages.dev/'
+          SITE_URL_CF: 'https://akiprisaye-web.pages.dev/'
         run: |
           if [ "${{ inputs.dry_run }}" = "true" ]; then
             node monitor.mjs --dry-run

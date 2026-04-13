@@ -207,9 +207,9 @@ export default function ProduitChocWidget() {
 
   if (loading) {
     return (
-      <section className="choc-section section-reveal" aria-labelledby="choc-heading">
+      <section className="choc-section section-reveal" aria-label="Chocs de Prix DOM">
         <div className="choc-header">
-          <h2 id="choc-heading" className="section-title slide-up">🔥 Chocs de Prix DOM</h2>
+          <h2 className="section-title slide-up">🔥 Chocs de Prix DOM</h2>
         </div>
         <div className="choc-skeleton" aria-busy="true" />
       </section>
@@ -273,7 +273,7 @@ export default function ProduitChocWidget() {
                 <div className="choc-bar-wrap" aria-hidden="true">
                   <div
                     className="choc-bar"
-                    style={{ width: `${barWidth}%`, background: color }}
+                    style={{ transform: `scaleX(${barWidth / 100})`, background: color }}
                   />
                 </div>
 

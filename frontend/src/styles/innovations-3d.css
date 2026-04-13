@@ -123,10 +123,12 @@
    CSS animated SVG-style clip-path morphing shape.
    ─────────────────────────────────────────────────────────────── */
 
+/* Compositable blob animation using transform (avoids non-composited border-radius paint) */
 .blob-decoration {
   position: absolute;
   pointer-events: none;
   z-index: 0;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
   animation: blob-morph 12s ease-in-out infinite;
   will-change: transform;
 }
@@ -137,14 +139,13 @@
   right: -60px;
   top: -80px;
   background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.08));
-  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
 }
 
 @keyframes blob-morph {
-  0%,100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-  25%      { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-  50%      { border-radius: 50% 60% 30% 60% / 30% 40% 60% 70%; }
-  75%      { border-radius: 40% 60% 50% 50% / 40% 50% 60% 50%; }
+  0%,100% { transform: scale(1) rotate(0deg); }
+  25%      { transform: scale(1.05) rotate(12deg); }
+  50%      { transform: scale(0.95) rotate(-8deg); }
+  75%      { transform: scale(1.03) rotate(5deg); }
 }
 
 /* ───────────────────────────────────────────────────────────────
@@ -476,23 +477,27 @@
   content: '';
   position: absolute;
   inset: -1px;
+  top: -1px;
+  bottom: -1px;
+  left: -100%;
+  width: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, transparent, #10b981, transparent);
-  background-size: 200% 100%;
-  animation: border-scan-anim 2.5s linear infinite;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s;
   z-index: 0;
+  will-change: transform;
 }
 
 .border-scan:focus-within::after {
+  animation: border-scan-anim 2.5s linear infinite;
   opacity: 1;
 }
 
 @keyframes border-scan-anim {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(300%); }
 }
 
 /* ───────────────────────────────────────────────────────────────

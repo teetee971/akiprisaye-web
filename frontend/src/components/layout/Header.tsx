@@ -102,7 +102,7 @@ export default function Header() {
       <Suspense fallback={null}>
         <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       </Suspense>
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
+      <header id="main-nav" tabIndex={-1} className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <Link to="/" className="flex items-center" aria-label="Accueil">
             <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="A KI PRI SA YÉ" className="h-8 w-auto" width="32" height="32" />
@@ -113,11 +113,11 @@ export default function Header() {
             type="button"
             onClick={() => setSearchOpen(true)}
             className="hidden sm:flex items-center gap-2 flex-1 max-w-xs mx-4 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-400 text-sm transition-colors group"
-            aria-label="Ouvrir la recherche globale (Ctrl+K)"
+            aria-label="Rechercher (Ctrl+K)"
           >
             <Search size={14} className="shrink-0" aria-hidden="true" />
             <span className="flex-1 text-left truncate">Rechercher…</span>
-            <kbd className="hidden lg:block text-xs px-1.5 py-0.5 rounded border border-slate-700 bg-slate-800 font-mono text-slate-500 group-hover:border-slate-600">⌘K</kbd>
+            <kbd className="hidden lg:block text-xs px-1.5 py-0.5 rounded border border-slate-700 bg-slate-800 font-mono text-slate-300 group-hover:border-slate-600">⌘K</kbd>
           </button>
 
           <div className="flex items-center gap-1.5">
@@ -164,7 +164,7 @@ export default function Header() {
                   className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-2 py-1.5 text-slate-100 hover:bg-slate-800 transition-colors"
                   aria-label="Mon compte"
                   aria-expanded={accountOpen}
-                  aria-haspopup="true"
+                  aria-haspopup="menu"
                 >
                   {/* Avatar circle */}
                   <span className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold flex-shrink-0 ${
@@ -295,7 +295,6 @@ export default function Header() {
 
       {open && (
         <nav
-          id="main-nav"
           ref={navRef}
           aria-label="Navigation principale"
           className="border-t border-slate-800 bg-slate-900 px-4 py-2"

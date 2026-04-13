@@ -74,7 +74,7 @@ jobs:
           echo "removed=$removed" >> "$GITHUB_OUTPUT"
 
       - name: Publication du rapport de revue
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           TS_NOCHECK: ${{ steps.ts-nocheck.outputs.count }}
           CONSOLE_LOG: ${{ steps.consolelog.outputs.count }}

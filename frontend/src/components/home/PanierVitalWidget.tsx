@@ -151,7 +151,7 @@ function PanierVitalCard({ entry, isHex, barWidth }: {
         <div className="pvc-bar-wrapper" aria-hidden="true">
           <div
             className={`pvc-bar${isHex ? ' pvc-bar--reference' : ''}${entry.highlight ? ' pvc-bar--alert' : ''}`}
-            style={{ width: `${barWidth}%` }}
+            style={{ transform: `scaleX(${barWidth / 100})` }}
           />
         </div>
 
@@ -250,9 +250,9 @@ export default function PanierVitalWidget() {
 
   if (loading) {
     return (
-      <section className="panier-vital-section section-reveal" aria-labelledby="panier-vital-heading">
+      <section className="panier-vital-section section-reveal" aria-label="Indice panier vital">
         <div className="panier-vital-header">
-          <h2 id="panier-vital-heading" className="section-title slide-up">
+          <h2 className="section-title slide-up">
             ⏱️ Indice panier vital
           </h2>
         </div>

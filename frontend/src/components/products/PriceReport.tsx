@@ -15,7 +15,7 @@
  * - Moderation before publication
  */
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 // Configuration constants
 const MAX_PRICE_LIMIT = 10000; // Maximum reasonable price in euros
@@ -48,35 +48,39 @@ export default function PriceReport({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  
+  const [locationLoading, setLocationLoading] = useState(false);
+
   /**
-   * Request geolocation on component mount
+   * Request geolocation on user gesture (not on mount)
    */
-  useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-          });
-          setLocationError(null);
-        },
-        (err) => {
-          console.error('Geolocation error:', err);
-          setLocationError('Impossible d\'obtenir votre position. Veuillez l\'activer dans vos paramètres.');
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-        }
-      );
-    } else {
+  const requestLocation = () => {
+    if (!('geolocation' in navigator)) {
       setLocationError('Géolocalisation non disponible sur cet appareil');
+      return;
     }
-  }, []);
+    setLocationLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+        });
+        setLocationError(null);
+        setLocationLoading(false);
+      },
+      (err) => {
+        console.error('Geolocation error:', err);
+        setLocationError('Impossible d\'obtenir votre position. Veuillez l\'activer dans vos paramètres.');
+        setLocationLoading(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  };
 
   /**
    * Validate price input
@@ -300,13 +304,33 @@ export default function PriceReport({
                   📍 Position enregistrée (précision: {Math.round(location.accuracy)}m)
                 </p>
               ) : locationError ? (
-                <p className="text-orange-700 dark:text-orange-300">
-                  ⚠️ {locationError}
-                </p>
+                <div>
+                  <p className="text-orange-700 dark:text-orange-300 mb-2">
+                    ⚠️ {locationError}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={requestLocation}
+                    disabled={locationLoading}
+                    className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {locationLoading ? 'Localisation...' : 'Réessayer'}
+                  </button>
+                </div>
               ) : (
-                <p className="text-gray-700 dark:text-gray-300">
-                  📡 Récupération de votre position...
-                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-gray-500 dark:text-gray-400">
+                    📡 Position non partagée (optionnelle)
+                  </p>
+                  <button
+                    type="button"
+                    onClick={requestLocation}
+                    disabled={locationLoading}
+                    className="text-xs px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {locationLoading ? 'Localisation...' : 'Localiser'}
+                  </button>
+                </div>
               )}
             </div>
           </div>

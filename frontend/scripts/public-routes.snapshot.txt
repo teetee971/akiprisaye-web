@@ -178,6 +178,7 @@
 /outreach
 /p/:id
 /panier
+/paniers-types
 /parametres
 /perimetre
 /petits-commerces
@@ -244,6 +245,7 @@
 /simulateur-budget
 /solidarite
 /stations-proximite
+/stats
 /stats-dashboard
 /statut
 /stores

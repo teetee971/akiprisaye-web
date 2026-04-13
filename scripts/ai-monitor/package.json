@@ -8,7 +8,7 @@
     "dry-run": "node monitor.mjs --dry-run"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "dependencies": {
     "firebase-admin": "^12.1.0",

@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import Joyride, { CallBackProps, STATUS, Step, Locale } from 'react-joyride';
+import { Joyride, EventData, STATUS, Step, Locale } from 'react-joyride';
 import { useOnboarding } from '../context/OnboardingContext';
 
 // Traduction française pour React Joyride
@@ -34,7 +34,7 @@ const tourSteps: Step[] = [
       </div>
     ),
     placement: 'center',
-    disableBeacon: true,
+    skipBeacon: true,
   },
   {
     target: 'nav a[href*="carte"], nav a[href="#/carte"]',
@@ -87,7 +87,7 @@ const tourSteps: Step[] = [
       </div>
     ),
     placement: 'bottom',
-    disableBeacon: true,
+    skipBeacon: true,
   },
   {
     target: 'body',
@@ -123,7 +123,7 @@ export default function OnboardingTour() {
     }
   }, [isTourActive]);
 
-  const handleJoyrideCallback = (data: CallBackProps) => {
+  const handleJoyrideCallback = (data: EventData) => {
     const { status, action } = data;
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
 
@@ -145,19 +145,20 @@ export default function OnboardingTour() {
       steps={tourSteps}
       run={run}
       continuous
-      showProgress
-      showSkipButton
       locale={locale}
-      callback={handleJoyrideCallback}
+      onEvent={handleJoyrideCallback}
+      options={{
+        showProgress: true,
+        buttons: ['back', 'close', 'primary', 'skip'],
+        overlayClickAction: false,
+        overlayColor: 'rgba(0, 0, 0, 0.5)',
+        primaryColor: '#1d4ed8', // blue-700 — WCAG AA contrast ≥4.5:1 with white
+        textColor: '#1e293b', // slate-800
+        backgroundColor: '#ffffff',
+        arrowColor: '#ffffff',
+        zIndex: 10000,
+      }}
       styles={{
-        options: {
-          primaryColor: '#1d4ed8', // blue-700 — WCAG AA contrast ≥4.5:1 with white
-          textColor: '#1e293b', // slate-800
-          backgroundColor: '#ffffff',
-          arrowColor: '#ffffff',
-          overlayColor: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 10000,
-        },
         tooltip: {
           borderRadius: 8,
           fontSize: 15,
@@ -165,7 +166,7 @@ export default function OnboardingTour() {
         tooltipContainer: {
           textAlign: 'left',
         },
-        buttonNext: {
+        buttonPrimary: {
           backgroundColor: '#1d4ed8', // blue-700 — WCAG AA contrast ≥4.5:1 with white
           fontSize: 14,
           fontWeight: 600,
@@ -182,13 +183,6 @@ export default function OnboardingTour() {
           fontSize: 14,
         },
       }}
-      floaterProps={{
-        disableAnimation: false,
-      }}
-      // Accessibilité
-      disableOverlayClose
-      spotlightClicks={false}
-      disableScrolling={false}
     />
   );
 }

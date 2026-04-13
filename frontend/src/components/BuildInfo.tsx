@@ -51,7 +51,7 @@ export function BuildInfo() {
     >
       <Link
         to="/version"
-        className="hover:text-slate-400 transition-colors"
+        className="hover:text-slate-400 transition-colors inline-flex items-center justify-end min-h-[44px] min-w-[44px] px-1"
         title={`Commit : ${data.commit}\nBranche : ${data.branch}\nBuild : ${data.builtAt}`}
       >
         {data.shortCommit} · {date}
