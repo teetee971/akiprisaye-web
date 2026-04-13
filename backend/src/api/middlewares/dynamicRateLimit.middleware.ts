@@ -29,8 +29,8 @@ if (process.env.REDIS_URL) {
     const client = new Redis(process.env.REDIS_URL!, { lazyConnect: true });
     client.on('error', (err: Error) => console.warn('[RateLimit] Redis error:', err.message));
     redisStore = new RedisStore({
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      sendCommand: (...args: any[]) => client.call(...(args as [string, ...string[]])) as Promise<any>,
+      sendCommand: (...args: string[]): Promise<boolean | number | string | Array<boolean | number | string>> =>
+        client.call(...(args as [string, ...string[]])) as Promise<boolean | number | string | Array<boolean | number | string>>,
     });
     console.info('[RateLimit] Using Redis store for rate limiting');
   }).catch((err: unknown) => {

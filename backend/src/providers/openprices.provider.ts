@@ -60,7 +60,8 @@ interface OpenPricesProductSearchResponse {
   items?: OpenPricesProductApiItem[];
 }
 
-// ─── Public functions ─────────────────────────────────────────────────────────
+/** Timeout for all outbound Open Prices API requests (ms). */
+const OPEN_PRICES_API_TIMEOUT_MS = 5000;
 
 /**
  * Search for products by name or barcode using the Open Prices product endpoint.
@@ -81,7 +82,7 @@ export async function searchOpenPrices(query: string): Promise<OpenPriceProduct[
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'AKiPriSaYe/1.0 (contact@akiprisaye.fr)' },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(OPEN_PRICES_API_TIMEOUT_MS),
     });
 
     if (!res.ok) return [];
@@ -126,7 +127,7 @@ export async function fetchPriceObservations(
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'AKiPriSaYe/1.0 (contact@akiprisaye.fr)' },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(OPEN_PRICES_API_TIMEOUT_MS),
     });
 
     if (!res.ok) return [];
