@@ -81,12 +81,28 @@ const EspaceCreateur: React.FC = () => {
   const ghostwriterPriceSignal = ghostwriterRevenueTrend ?? 0;
 
   const ghostwriterPost = useMemo(() => {
+    const drops = predatorAlerts
+      .filter((a) => a.deltaPercent < 0)
+      .map((a) => ({ name: a.targetName, changePct: a.deltaPercent }));
+    const increases = predatorAlerts
+      .filter((a) => a.deltaPercent > 0)
+      .map((a) => ({ name: a.targetName, changePct: a.deltaPercent }));
+    const avgDelta =
+      predatorAlerts.length > 0
+        ? predatorAlerts.reduce((sum, a) => sum + a.deltaPercent, 0) / predatorAlerts.length
+        : ghostwriterPriceSignal;
+    const topProduct =
+      predatorAlerts.length > 0 ? predatorAlerts[0].targetName : undefined;
+
     return generateDailyPost({
       territory: byTerritory[0]?.name ?? 'Guadeloupe',
       topCategory: byInterest[0]?.name ?? 'produits frais',
-      averagePriceChangePct: analytics.monthlyCtr * 100,
+      averagePriceChangePct: avgDelta,
+      notableDrops: drops,
+      notableIncreases: increases,
+      topProduct,
     });
-  }, [byTerritory, byInterest, analytics.monthlyCtr]);
+  }, [byTerritory, byInterest, predatorAlerts, ghostwriterPriceSignal]);
 
   const handleCopyGhostwriterPost = useCallback(() => {
     navigator.clipboard.writeText(ghostwriterPost);
