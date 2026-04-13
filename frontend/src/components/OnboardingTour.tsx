@@ -4,7 +4,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Joyride, EventData, STATUS, Step, Locale } from 'react-joyride';
+import { Joyride, EventData, STATUS, Step } from 'react-joyride';
+import type { Locale } from 'react-joyride';
 import { useOnboarding } from '../context/OnboardingContext';
 
 // Traduction française pour React Joyride
