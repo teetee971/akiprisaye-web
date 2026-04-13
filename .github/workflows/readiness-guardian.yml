@@ -123,23 +123,21 @@ jobs:
               per_page: 100,
             });
 
-            await Promise.all(
-              issues.map(async (issue) => {
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issue.number,
-                  body: `✅ Résolu automatiquement — le Readiness Guardian est repassé au vert le ${new Date().toISOString().slice(0, 16)} UTC.\n\n- Run: ${runUrl}`,
-                });
-                await github.rest.issues.update({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issue.number,
-                  state: 'closed',
-                  state_reason: 'completed',
-                });
-              }),
-            );
+            for (const issue of issues) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `✅ Résolu automatiquement — le Readiness Guardian est repassé au vert le ${new Date().toISOString().slice(0, 16)} UTC.\n\n- Run: ${runUrl}`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+                state_reason: 'completed',
+              });
+            }
 
             if (issues.length > 0) {
               core.info(`✅ ${issues.length} issue(s) readiness fermée(s)`);
