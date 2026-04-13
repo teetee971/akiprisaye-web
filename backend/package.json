@@ -1,6 +1,6 @@
 {
   "name": "akiprisaye-backend",
-  "version": "4.6.1",
+  "version": "4.7.0",
   "description": "Backend institutionnel pour A KI PRI SA YÉ - Gestion entreprises et données légales",
   "main": "dist/app.js",
   "type": "module",
