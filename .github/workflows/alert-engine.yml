@@ -66,7 +66,7 @@ jobs:
           if [ ! -f data/output/product-scores.json ]; then
             echo "product-scores.json not found — running full fetch + score pipeline"
             node scripts/fetch-price-data.mjs
-            node scripts/merge-all-observations.mjs
+            node scripts/normalize-price-data.mjs
             node scripts/compute-product-scores.mjs
           else
             echo "product-scores.json found — skipping re-fetch"
