@@ -61,21 +61,20 @@ async function staleWhileRevalidate(request, cacheName) {
 
   // Lance le fetch en arrière-plan pour mettre à jour le cache
   const fetchPromise = fetch(request)
-    .then((response) => {
+    .then(async (response) => {
       if (response && response.ok) {
         // Ajoute un header personnalisé pour mémoriser la date de récupération
         const headers = new Headers(response.headers);
         headers.set('x-sw-fetched-at', new Date().toISOString());
         const cloned = response.clone();
         // Reconstruit avec le header enrichi
-        cloned.text().then((body) => {
-          const enriched = new Response(body, {
-            status: response.status,
-            statusText: response.statusText,
-            headers,
-          });
-          cache.put(request, enriched);
+        const body = await cloned.text();
+        const enriched = new Response(body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers,
         });
+        await cache.put(request, enriched);
       }
       return response;
     })
