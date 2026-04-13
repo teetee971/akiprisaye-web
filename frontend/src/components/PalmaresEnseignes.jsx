@@ -18,10 +18,6 @@ export function PalmaresEnseignes({ territoire = null }) {
     fetchRankings();
   }, [territoire, sortBy]);
 
-  /**
-   * Fetch store rankings from Firestore
-   * TODO: Connect to real data
-   */
   async function fetchRankings() {
     setLoading(true);
 

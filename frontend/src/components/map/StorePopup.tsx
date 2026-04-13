@@ -26,6 +26,7 @@ export default function StorePopup({
             <img
               src={store.chainLogo}
               alt={store.chain}
+              loading="lazy"
               className="h-8 mb-2 object-contain"
             />
           )}

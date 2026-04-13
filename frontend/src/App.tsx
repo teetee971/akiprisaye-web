@@ -437,7 +437,7 @@ export default function App() {
                               <Route path="inscription-pro" element={<InscriptionPro />} />
                               <Route path="espace-pro" element={<EspacePro />} />
                               <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
-                              <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<div>Chargement...</div>}><EspaceCreateur /></Suspense></RequireCreator>} />
+                              <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<LoadingFallback />}><EspaceCreateur /></Suspense></RequireCreator>} />
                               <Route path="activation-createur" element={<ActivationCreateur />} />
                               <Route path="scanner" element={<ScannerHub />} />
                               <Route path="scan-ean" element={<ScanEAN />} />

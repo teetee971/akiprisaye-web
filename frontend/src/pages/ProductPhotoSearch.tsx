@@ -224,6 +224,7 @@ export default function ProductPhotoSearch() {
               <img
                 src={preview}
                 alt="Aperçu analysé"
+                loading="lazy"
                 className="max-h-48 mx-auto rounded-xl object-contain bg-slate-800"
               />
             )}
@@ -295,6 +296,7 @@ export default function ProductPhotoSearch() {
                     <img
                       src={product.image}
                       alt={product.name ?? 'Produit'}
+                      loading="lazy"
                       className="w-24 h-24 rounded-xl object-contain bg-white p-1 flex-shrink-0"
                     />
                   ) : (

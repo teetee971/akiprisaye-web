@@ -46,6 +46,7 @@ export function SponsoredSearchResult({
         <img
           src={imageUrl}
           alt={productName}
+          loading="lazy"
           className="w-14 h-14 object-cover rounded-lg shrink-0"
         />
       )}

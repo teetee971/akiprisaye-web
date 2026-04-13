@@ -101,6 +101,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
             <img
               src={displayImageUrl}
               alt={product.nom}
+              loading="lazy"
               className="w-full h-full object-contain"
               onError={(e) => {
                 // Fallback if image fails to load - but only attempt once to prevent infinite loops
@@ -278,6 +279,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                   <img
                     src={photo.thumbnail || photo.url}
                     alt={`Utilisateur ${index + 1}`}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 </button>
@@ -350,6 +352,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
             <img
               src={product.userPhotos[selectedPhotoIndex].url}
               alt={`Vue ${selectedPhotoIndex + 1}`}
+              loading="lazy"
               className="w-full h-auto rounded-lg"
             />
             {product.userPhotos.length > 1 && (
