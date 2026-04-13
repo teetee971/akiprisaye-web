@@ -328,7 +328,7 @@ export default function MonetizationEcosystemPage() {
         noIndex
       />
 
-      <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 text-zinc-100">
+      <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-6xl space-y-8">
 
           {/* Header */}

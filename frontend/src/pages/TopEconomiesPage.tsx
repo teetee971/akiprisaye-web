@@ -187,7 +187,7 @@ export default function TopEconomiesPage() {
   };
   
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8">
       <SEOHead
         title={`Top économies courses en ${territoryName} — Comparateur`}
         description={`Découvrez les meilleures économies sur vos courses en ${territoryName}. Jusqu'à ${formatEur(products[0]?.savings || 7)} d'économie par produit. Comparez les prix dans les supermarchés locaux.`}

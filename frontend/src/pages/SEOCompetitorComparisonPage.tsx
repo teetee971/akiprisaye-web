@@ -286,7 +286,7 @@ export default function SEOCompetitorComparisonPage() {
         jsonLd={jsonLd}
       />
 
-      <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 text-zinc-100">
+      <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-4xl space-y-8">
           <nav className="flex items-center gap-2 text-xs text-zinc-600">
             <Link to="/" className="hover:text-zinc-400">Accueil</Link>

@@ -10,6 +10,31 @@ import PriceLiveTicker from '../components/home/PriceLiveTicker';
 import { Skeleton } from '../components/ui/Skeleton';
 import '../styles/home-v5.css';
 
+/** Minimal territory map for the persistent pill — mirrors TERRITORIES */
+const TERRITORY_DISPLAY: Record<string, { flag: string; name: string }> = {
+  gp: { flag: '🇬🇵', name: 'Guadeloupe' },
+  mq: { flag: '🇲🇶', name: 'Martinique' },
+  gf: { flag: '🇬🇫', name: 'Guyane' },
+  re: { flag: '🇷🇪', name: 'La Réunion' },
+  yt: { flag: '🇾🇹', name: 'Mayotte' },
+  nc: { flag: '🇳🇨', name: 'Nouvelle-Calédonie' },
+  pf: { flag: '🇵🇫', name: 'Polynésie française' },
+  bl: { flag: '🇧🇱', name: 'Saint-Barthélemy' },
+  mf: { flag: '🇲🇫', name: 'Saint-Martin' },
+  pm: { flag: '🇵🇲', name: 'Saint-Pierre-et-Miquelon' },
+  wf: { flag: '🇼🇫', name: 'Wallis-et-Futuna' },
+  fr: { flag: '🇫🇷', name: 'France métro.' },
+};
+
+function readStoredTerritory(): string | null {
+  try {
+    const raw = localStorage.getItem('akiprisaye-territory');
+    return raw ? raw.toLowerCase() : null;
+  } catch {
+    return null;
+  }
+}
+
 // Lazy-loaded sections & widgets — kept out of the initial JS bundle
 const HowItWorksSection    = lazy(() => import('./home-v5/HowItWorksSection'));
 const ObservatorySection   = lazy(() => import('./home-v5/ObservatorySection'));
@@ -46,6 +71,9 @@ const Home = () => {
   const [search, setSearch] = useState('');
   const [showExtendedHome, setShowExtendedHome] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [activeTerritoryCode, setActiveTerritoryCode] = useState<string | null>(
+    readStoredTerritory
+  );
   const navigate = useNavigate();
   const { products, loading, error, reloadProducts } = useApp();
   const pageRef = useRef<HTMLDivElement>(null);
@@ -64,6 +92,14 @@ const Home = () => {
 
   const handleToggleFaq = (index: number) => {
     setExpandedFaq((prev) => (prev === index ? null : index));
+  };
+
+  const handleTerritorySelect = (code: string) => {
+    try {
+      localStorage.setItem('akiprisaye-territory', code);
+    } catch { /* */ }
+    setActiveTerritoryCode(code);
+    navigate(`/recherche-produits?territoire=${code.toUpperCase()}`);
   };
 
   return (
@@ -112,6 +148,56 @@ const Home = () => {
           v4.6.20 • SOUVERAINE ✅
         </div>
         <h1 className="text-4xl font-black italic uppercase tracking-tighter">Aki Pri Sa Yé</h1>
+      </div>
+
+      {/* ── TERRITOIRE ACTIF ───────────────────────────────────────── */}
+      <div className="px-6 pb-4" aria-label="Territoire sélectionné">
+        {activeTerritoryCode && TERRITORY_DISPLAY[activeTerritoryCode] ? (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Territoire :
+            </span>
+            <button
+              type="button"
+              onClick={() => navigate(`/recherche-produits?territoire=${activeTerritoryCode.toUpperCase()}`)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/20 transition-colors"
+            >
+              <span aria-hidden="true">{TERRITORY_DISPLAY[activeTerritoryCode].flag}</span>
+              {TERRITORY_DISPLAY[activeTerritoryCode].name}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                try { localStorage.removeItem('akiprisaye-territory'); } catch { /* */ }
+                setActiveTerritoryCode(null);
+              }}
+              className="text-[10px] text-slate-600 hover:text-slate-400 underline"
+              aria-label="Changer de territoire"
+            >
+              changer
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Territoire :
+            </span>
+            <div className="flex gap-1.5 flex-wrap">
+              {Object.entries(TERRITORY_DISPLAY).slice(0, 6).map(([code, t]) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => handleTerritorySelect(code)}
+                  className="rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition-colors"
+                  aria-label={t.name}
+                  title={t.name}
+                >
+                  <span aria-hidden="true">{t.flag}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── STATS FLIP CARDS ───────────────────────────────────────── */}

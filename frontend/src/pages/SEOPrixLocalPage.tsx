@@ -259,7 +259,7 @@ export default function SEOPrixLocalPage() {
   const canonical      = `${SITE_URL}/prix/${slug}`;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title={seoTitle}
         description={seoDescription}

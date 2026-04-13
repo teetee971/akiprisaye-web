@@ -84,7 +84,7 @@ const TERRITORY_ADVICE: Array<{ code: string; name: string; slug: string; best: 
 
 export default function ComparateurSuperMarchesDOM() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title="Comparateur supermarchés DOM-TOM 2026 : Carrefour, Leclerc, Super U, Leader Price"
         description="Comparatif complet des 5 grandes enseignes dans les DOM-TOM. Prix moyens, forces et faiblesses de chaque supermarché en Guadeloupe, Martinique, Guyane, La Réunion et Mayotte."

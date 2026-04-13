@@ -277,7 +277,7 @@ export default function ProductPage() {
   // ── Loading skeleton ────────────────────────────────────────────────────────
   if (compareLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+      <div className="min-h-screen bg-slate-950 px-4 py-8">
         <div className="mx-auto max-w-2xl space-y-4">
           <Skeleton className="h-48" />
           <Skeleton className="h-28" />
@@ -290,7 +290,7 @@ export default function ProductPage() {
   // ── Not found ───────────────────────────────────────────────────────────────
   if (!compareData?.product) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0f]">
+      <div className="flex min-h-screen items-center justify-center bg-slate-950">
         <p className="text-zinc-400">Produit introuvable.</p>
       </div>
     );
@@ -303,7 +303,7 @@ export default function ProductPage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8">
       <div className="mx-auto max-w-2xl space-y-4">
 
         {/* ── Product identity ──────────────────────────────────────────────── */}

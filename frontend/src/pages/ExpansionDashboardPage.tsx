@@ -58,7 +58,7 @@ export default function ExpansionDashboardPage() {
   return (
     <>
       <SEOHead title="Expansion Dashboard" description="Suggestions d'expansion territoriale SEO." noIndex />
-      <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 text-zinc-100">
+      <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-4xl space-y-8">
 
           <div>

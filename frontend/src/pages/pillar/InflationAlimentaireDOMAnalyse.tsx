@@ -46,7 +46,7 @@ export default function InflationAlimentaireDOMAnalyse() {
   const latestData = MONTHLY_DATA[MONTHLY_DATA.length - 1];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title="Inflation alimentaire DOM-TOM 2024-2026 : données et analyse"
         description="Analyse complète de l'inflation alimentaire dans les DOM (Guadeloupe, Martinique, Guyane, La Réunion, Mayotte). Données mensuelles, impact sur les familles, comparaison avec la métropole."

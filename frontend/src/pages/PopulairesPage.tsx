@@ -228,7 +228,7 @@ export default function PopulairesPage() {
   };
   
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8">
       <SEOHead
         title={`Produits populaires ${territoryName} — Top courses`}
         description={`Découvrez les produits les plus consultés en ${territoryName}. Top ${products.length} des courses préférées avec comparatif de prix.`}

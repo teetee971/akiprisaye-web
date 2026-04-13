@@ -95,7 +95,7 @@ const WEEKLY_STRATEGY = [
 
 export default function OuFaireCoursesDOMPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title="Où faire ses courses dans les DOM ? Guide pratique par catégorie 2026"
         description="Guide pratique pour bien faire ses courses dans les DOM-TOM. Quel supermarché choisir pour la viande, les légumes, l'épicerie ? Stratégies économies par catégorie de produits."
