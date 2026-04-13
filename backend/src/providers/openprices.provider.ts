@@ -47,17 +47,63 @@ interface OpenPricesApiResponse {
   items?: OpenPricesApiPrice[];
 }
 
+interface OpenPricesProductApiItem {
+  id?: string | number;
+  code?: string;
+  product_name?: string;
+  product_name_fr?: string;
+  image_url?: string;
+  brands?: string;
+}
+
+interface OpenPricesProductSearchResponse {
+  items?: OpenPricesProductApiItem[];
+}
+
 // ─── Public functions ─────────────────────────────────────────────────────────
 
 /**
- * Stub — always resolves to an empty list.
- * Replace the body with a real fetch once the Open Prices search API
- * is stable and has reliable DROM-COM territory coverage.
+ * Search for products by name or barcode using the Open Prices product endpoint.
  *
- * @param _query - product name or barcode (unused until wired)
+ * Uses the Open Food Facts / Open Prices products API at:
+ *   https://prices.openfoodfacts.org/api/v1/products?search=<query>&page_size=10
+ *
+ * Returns an empty array on any network or parse error.
+ *
+ * @param query - product name or barcode
  */
-export async function searchOpenPrices(_query: string): Promise<OpenPriceProduct[]> {
-  return [];
+export async function searchOpenPrices(query: string): Promise<OpenPriceProduct[]> {
+  if (!query.trim()) return [];
+
+  const encoded = encodeURIComponent(query.trim());
+  const url = `https://prices.openfoodfacts.org/api/v1/products?search=${encoded}&page_size=10`;
+
+  try {
+    const res = await fetch(url, {
+      headers: { 'User-Agent': 'AKiPriSaYe/1.0 (contact@akiprisaye.fr)' },
+      signal: AbortSignal.timeout(5000),
+    });
+
+    if (!res.ok) return [];
+
+    const data = (await res.json()) as OpenPricesProductSearchResponse;
+
+    return (data.items ?? [])
+      .filter(
+        (item): item is OpenPricesProductApiItem & { code: string } =>
+          typeof item.code === 'string' && item.code.length > 0,
+      )
+      .map((item) => ({
+        id: String(item.id ?? item.code),
+        name: item.product_name_fr ?? item.product_name ?? item.code,
+        barcode: item.code,
+        image: item.image_url,
+        brand: item.brands,
+        source: 'open_prices' as const,
+      }));
+  } catch {
+    return [];
+  }
 }
 
 /**
