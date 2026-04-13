@@ -63,9 +63,9 @@ export function generateDailyPost(data: GhostwriterDailyPostData): string {
 
   return [
     `📊 Point prix du jour — ${territory}`,
-    `Les ${topCategory} sont ${trend} (${absDelta}%) sur les dernières observations.`,
+    `Tendance "${topCategory}" : ${trend} (${absDelta}%) sur les dernières observations.`,
     `Produit à suivre : ${topProduct}.`,
     highlights || 'Alerte utile : surveillez les promotions de proximité cette semaine.',
-    'Vous voulez plus d’analyses locales chaque matin ? 🪷',
+    "Vous voulez plus d'analyses locales chaque matin ? 🪷",
   ].join('\n');
 }
