@@ -377,9 +377,9 @@ export default function CosmeticEvaluation({ initialEan }) {
               <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
                 <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Avertissements</h2>
                 <div className="space-y-3">
-                  {evaluation.warnings.map((warning, index) => (
+                  {evaluation.warnings.map((warning) => (
                     <div
-                      key={index}
+                      key={warning.message}
                       className={`p-4 rounded-lg border-l-4 ${
                         warning.level === 'error'
                           ? 'bg-red-50 border-red-500 dark:bg-red-900/20'
@@ -433,9 +433,9 @@ export default function CosmeticEvaluation({ initialEan }) {
                     Aucun ingrédient dans cette catégorie pour ce produit.
                   </p>
                 )}
-                {displayedIngredients.map((ingredient, index) => (
+                {displayedIngredients.map((ingredient) => (
                   <div
-                    key={index}
+                    key={ingredient.inciName}
                     className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     {/* Nom + risk level */}
@@ -526,8 +526,8 @@ export default function CosmeticEvaluation({ initialEan }) {
               </button>
               {showSources && (
                 <div className="mt-4 space-y-3">
-                  {Object.values(databases).map((db, index) => (
-                    <div key={index} className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                  {Object.values(databases).map((db) => (
+                    <div key={db.name} className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
                       <a href={db.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
                         <ExternalLink className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                         <div>
@@ -553,8 +553,8 @@ export default function CosmeticEvaluation({ initialEan }) {
               </button>
               {showRegulations && (
                 <div className="mt-4 space-y-3">
-                  {Object.values(regulations).map((reg, index) => (
-                    <div key={index} className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                  {Object.values(regulations).map((reg) => (
+                    <div key={reg.name} className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
                       <a href={reg.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
                         <BookOpen className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                         <div>

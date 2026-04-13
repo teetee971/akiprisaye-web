@@ -5,6 +5,7 @@
  * Civic Glass design - Professional, transparent, institutional
  */
 import React from 'react';
+import toast from 'react-hot-toast';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
 import { CivicButton } from '@/components/ui/CivicButton';
@@ -295,7 +296,7 @@ export default function LicenceInstitution() {
               <CivicButton
                 variant="primary"
                 className="w-full"
-                onClick={() => alert('Dossier institutionnel en cours de génération. Contact: institutions@akiprisaye.fr')}
+                onClick={() => toast('Dossier institutionnel en cours de génération. Contact : institutions@akiprisaye.fr', { icon: '📄', duration: 6000 })}
               >
                 Télécharger le PDF
               </CivicButton>
