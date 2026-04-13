@@ -192,7 +192,7 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
           {/* Data points */}
           {data.map((d, i) => (
             <circle
-              key={i}
+              key={d.date}
               cx={(i / (data.length - 1)) * chartWidth}
               cy={getY(d.price)}
               r="4"

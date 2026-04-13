@@ -189,6 +189,7 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
       {/* GPS Button */}
       {!position && (
         <button
+          type="button"
           onClick={requestLocation}
           disabled={loading}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"

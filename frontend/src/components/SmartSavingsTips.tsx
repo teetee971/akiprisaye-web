@@ -161,11 +161,11 @@ export default function SmartSavingsTips({
         <span className="ml-auto text-xs text-slate-500">Données Observatoire</span>
       </div>
       <div className="divide-y divide-slate-800">
-        {tips.map((tip, i) => {
+        {tips.map((tip) => {
           const { bg, text, Icon } = ICON_CONFIG[tip.icon];
           return (
             <button
-              key={i}
+              key={tip.product}
               type="button"
               onClick={() => navigate(`/comparateur?q=${encodeURIComponent(tip.product)}`)}
               className="w-full px-4 py-3 flex items-start gap-3 text-left hover:bg-slate-800/60 transition-colors cursor-pointer"

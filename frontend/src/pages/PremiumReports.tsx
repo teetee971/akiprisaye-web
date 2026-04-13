@@ -107,22 +107,15 @@ export default function PremiumReports() {
         {PREMIUM_REPORTS.map((report) => {
           const ReportIcon = report.icon;
           return (
-            <div
+            <button
               key={report.id}
-              role="button"
-              tabIndex={0}
-              className={`border rounded-xl p-5 cursor-pointer transition-all ${
+              type="button"
+              className={`w-full text-left border rounded-xl p-5 cursor-pointer transition-all ${
                 selectedReport === report.id
                   ? 'bg-amber-900/20 border-amber-500/40 ring-2 ring-amber-500/30'
                   : 'bg-white/5 border-white/10 hover:border-white/20'
               }`}
               onClick={() => setSelectedReport(report.id)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setSelectedReport(report.id);
-                }
-              }}
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -147,7 +140,7 @@ export default function PremiumReports() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </button>
           );
         })}
       </div>

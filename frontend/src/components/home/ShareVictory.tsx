@@ -1,5 +1,6 @@
  
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Share2, Download, Copy, Check, TrendingUp } from 'lucide-react';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
@@ -72,7 +73,7 @@ export const ShareVictory: React.FC = () => {
 
   const handleDownloadImage = () => {
     // In production, would generate and download image
-    alert('Fonctionnalité de téléchargement d\'image à venir !\n\nUne belle image sera générée avec vos économies.');
+    toast('Fonctionnalité de téléchargement d\'image à venir !', { icon: '🖼️' });
   };
 
   if (!victoryData || victoryData.monthlySavings < 5) {

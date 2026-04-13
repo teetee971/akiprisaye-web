@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
@@ -95,7 +96,7 @@ export default function Settings() {
         document.cookie = name + "=; expires=" + expires + "; path=/; domain=" + window.location.hostname;
       });
       
-      alert('Toutes les données locales ont été supprimées. La page va se recharger.');
+      toast.success('Toutes les données locales ont été supprimées.');
       window.location.reload();
     }
   }

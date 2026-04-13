@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 
 export type PermissionState = 'prompt' | 'granted' | 'denied' | 'unknown';
 
@@ -24,6 +25,7 @@ export default function CameraPermissionHandler({
 }: CameraPermissionHandlerProps) {
   const [permissionState, setPermissionState] = useState<PermissionState>('unknown');
   const [isRequesting, setIsRequesting] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
 
   // Check initial permission state
   useEffect(() => {
@@ -77,7 +79,7 @@ export default function CameraPermissionHandler({
         setPermissionState('denied');
       } else if (error.name === 'NotFoundError') {
         // No camera available
-        alert('Aucune caméra détectée sur cet appareil.');
+        toast.error('Aucune caméra détectée sur cet appareil.');
         onUseFallback();
       } else {
         setPermissionState('denied');
@@ -88,36 +90,34 @@ export default function CameraPermissionHandler({
   }
 
   function openSystemSettings() {
-    // Guard for non-browser environments
-    if (typeof navigator === 'undefined') {
-      return;
-    }
-    
+    setShowInstructions(true);
+  }
+
+  function getSystemInstructions(): string[] {
+    if (typeof navigator === 'undefined') return [];
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isAndroid = /Android/.test(navigator.userAgent);
-    
-    let instructions = "Pour activer la caméra :\n\n";
-    
     if (isIOS) {
-      instructions += "iOS :\n";
-      instructions += "1. Ouvrez Réglages\n";
-      instructions += "2. Recherchez votre navigateur (Safari/Chrome)\n";
-      instructions += "3. Activez l'accès à la Caméra";
+      return [
+        'Ouvrez Réglages',
+        'Recherchez votre navigateur (Safari/Chrome)',
+        "Activez l'accès à la Caméra",
+      ];
     } else if (isAndroid) {
-      instructions += "Android :\n";
-      instructions += "1. Ouvrez Paramètres\n";
-      instructions += "2. Applications\n";
-      instructions += "3. Sélectionnez votre navigateur\n";
-      instructions += "4. Autorisations\n";
-      instructions += "5. Activez la Caméra";
+      return [
+        'Ouvrez Paramètres',
+        'Applications',
+        'Sélectionnez votre navigateur',
+        'Autorisations',
+        'Activez la Caméra',
+      ];
     } else {
-      instructions += "Bureau :\n";
-      instructions += "1. Cliquez sur l'icône de cadenas/info dans la barre d'adresse\n";
-      instructions += "2. Cherchez 'Caméra'\n";
-      instructions += "3. Autorisez l'accès";
+      return [
+        "Cliquez sur l'icône de cadenas/info dans la barre d'adresse",
+        "Cherchez 'Caméra'",
+        "Autorisez l'accès",
+      ];
     }
-    
-    alert(instructions);
   }
 
   // If permission already granted, show children
@@ -186,6 +186,7 @@ export default function CameraPermissionHandler({
           
           <div className="space-y-2">
             <button
+              type="button"
               onClick={openSystemSettings}
               className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
             >
@@ -193,10 +194,22 @@ export default function CameraPermissionHandler({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              Ouvrir les paramètres
+              Voir les instructions
             </button>
+
+            {showInstructions && (
+              <div className="rounded-lg bg-gray-50 dark:bg-slate-700 p-4 text-sm text-gray-800 dark:text-gray-200" role="note">
+                <p className="font-semibold mb-2">Pour activer la caméra :</p>
+                <ol className="list-decimal list-inside space-y-1">
+                  {getSystemInstructions().map((step, idx) => (
+                    <li key={idx}>{step}</li>
+                  ))}
+                </ol>
+              </div>
+            )}
             
             <button
+              type="button"
               onClick={onUseFallback}
               className="w-full border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-semibold py-3 px-4 rounded-lg transition-colors"
             >

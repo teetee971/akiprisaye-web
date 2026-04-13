@@ -133,23 +133,16 @@ export default function CorporateSales() {
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         {PACKAGES.map((pkg) => {
           return (
-            <div
+            <button
               key={pkg.type}
-              role="button"
-              tabIndex={0}
+              type="button"
               aria-pressed={selectedType === pkg.type}
-              className={`border rounded-xl p-6 cursor-pointer transition-all ${
+              className={`w-full text-left border rounded-xl p-6 cursor-pointer transition-all ${
                 selectedType === pkg.type
                   ? `${pkg.bgColor} ring-2 ring-current`
                   : 'bg-white/5 border-white/10 hover:border-white/20'
               }`}
               onClick={() => setSelectedType(pkg.type === selectedType ? null : pkg.type)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  setSelectedType(pkg.type === selectedType ? null : pkg.type);
-                }
-              }}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
@@ -175,7 +168,7 @@ export default function CorporateSales() {
               </ul>
               <div className="text-xs text-gray-500">💡 Potentiel : {pkg.potentialMRR}</div>
               <div className="text-xs text-gray-600 mt-1">Ex : {pkg.examples.join(', ')}</div>
-            </div>
+            </button>
           );
         })}
       </div>
