@@ -1,13 +1,8 @@
 /**
  * Validation Routes
- * 
- * API endpoints for product validation queue management
- * 
- * TODO: Add authentication middleware before production deployment
- * These endpoints mutate product data and should be restricted to:
- * - Moderator/Admin users only (JWT + RBAC)
- * - Proper permission checks (PRODUCT_APPROVE, PRODUCT_REJECT, PRODUCT_MERGE)
- * See existing auth middleware pattern in backend/src/api/middlewares/auth.middleware.ts
+ *
+ * API endpoints for product validation queue management.
+ * All routes require a valid JWT with the ADMIN permission.
  */
 
 import { Router, Request, Response } from 'express';
@@ -19,10 +14,18 @@ import {
   rejectProduct,
   mergeProduct,
 } from '../../services/products/validationQueue.js';
+import {
+  unifiedAuthMiddleware,
+  requirePermission,
+} from '../middlewares/apiAuth.middleware.js';
+import { ApiPermission } from '@prisma/client';
 
 type ProductStatus = 'PENDING_REVIEW' | 'VALIDATED' | 'REJECTED' | 'MERGED';
 
 const router = Router();
+
+// All validation routes are admin-only
+router.use(unifiedAuthMiddleware, requirePermission(ApiPermission.ADMIN));
 
 /**
  * GET /api/validation/queue

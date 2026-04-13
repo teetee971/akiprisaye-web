@@ -19,6 +19,7 @@ import { Router } from 'express';
 import { unifiedAuthMiddleware, requirePermission, requireSubscriptionTier } from '../middlewares/apiAuth.middleware.js';
 import { createDynamicRateLimit, addRateLimitHeaders } from '../middlewares/dynamicRateLimit.middleware.js';
 import { ApiPermission, SubscriptionTier } from '@prisma/client';
+import prisma from '../../database/prisma.js';
 
 const router = Router();
 
@@ -47,17 +48,45 @@ router.get(
   unifiedAuthMiddleware,
   requirePermission(ApiPermission.READ_COMPARATORS),
   async (req, res) => {
-    // TODO: Implémenter la logique réelle
     const { type } = req.params;
     const { territory, startDate, endDate, limit = 100 } = req.query;
-    
+
+    const limitNum = Math.min(Number(limit) || 100, 500);
+    const where: Record<string, unknown> = { category: type };
+    if (territory) where['territory'] = String(territory).toLowerCase();
+    if (startDate || endDate) {
+      const dateFilter: Record<string, Date> = {};
+      if (startDate) dateFilter['gte'] = new Date(String(startDate));
+      if (endDate) dateFilter['lte'] = new Date(String(endDate));
+      where['observedAt'] = dateFilter;
+    }
+
+    const observations = await prisma.priceObservation.findMany({
+      where,
+      orderBy: { observedAt: 'desc' },
+      take: limitNum,
+      select: {
+        id: true,
+        productId: true,
+        productLabel: true,
+        normalizedLabel: true,
+        category: true,
+        brand: true,
+        territory: true,
+        storeLabel: true,
+        price: true,
+        currency: true,
+        observedAt: true,
+        source: true,
+      },
+    });
+
     res.json({
-      message: `Données comparateur ${type}`,
-      data: [],
-      filters: { territory, startDate, endDate, limit },
+      data: observations,
+      filters: { territory, startDate, endDate, limit: limitNum },
       metadata: {
         type,
-        count: 0,
+        count: observations.length,
         timestamp: new Date().toISOString(),
       },
     });
@@ -249,13 +278,43 @@ router.post(
   unifiedAuthMiddleware,
   requirePermission(ApiPermission.WRITE_CONTRIBUTIONS),
   async (req, res) => {
-    // TODO: Implémenter la logique de création de contribution
+    const {
+      productLabel,
+      normalizedLabel,
+      territory,
+      storeLabel,
+      price,
+      category,
+      brand,
+      barcode,
+      observedAt,
+    } = req.body as Record<string, unknown>;
+
+    if (!productLabel || !territory || !storeLabel || price == null) {
+      res.status(400).json({
+        error: 'Missing required fields: productLabel, territory, storeLabel, price',
+      });
+      return;
+    }
+
+    const observation = await prisma.priceObservation.create({
+      data: {
+        source: 'api_contribution',
+        productLabel: String(productLabel),
+        normalizedLabel: normalizedLabel ? String(normalizedLabel) : String(productLabel).toLowerCase(),
+        territory: String(territory).toLowerCase(),
+        storeLabel: String(storeLabel),
+        price: Number(price),
+        category: category ? String(category) : null,
+        brand: brand ? String(brand) : null,
+        barcode: barcode ? String(barcode) : null,
+        observedAt: observedAt ? new Date(String(observedAt)) : new Date(),
+      },
+    });
+
     res.status(201).json({
       message: 'Contribution créée avec succès',
-      data: {
-        id: 'contribution_' + Date.now(),
-        ...req.body,
-      },
+      data: observation,
       timestamp: new Date().toISOString(),
     });
   }
