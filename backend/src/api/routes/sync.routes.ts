@@ -6,6 +6,7 @@
  */
 
 import { Router, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import prisma from '../../database/prisma.js';
 import { syncOrchestrator } from '../../services/sync/syncOrchestrator.js';
 import { syncScheduler } from '../../services/scheduler/syncScheduler.js';
@@ -17,8 +18,20 @@ import { ApiPermission } from '@prisma/client';
 
 const router = Router();
 
+const syncTriggerRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // limit manual sync triggers per admin client per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many sync trigger requests, please try again later.',
+  },
+});
+
 // All sync routes are admin-only
 router.use(unifiedAuthMiddleware, requirePermission(ApiPermission.ADMIN));
+router.use(syncTriggerRateLimiter);
 
 /**
  * POST /api/sync/openfoodfacts/trigger
