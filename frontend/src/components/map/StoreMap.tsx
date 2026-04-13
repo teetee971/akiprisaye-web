@@ -91,12 +91,27 @@ function MarkerClusterLayer({
 
     stores.forEach((store) => {
       const marker = L.marker([store.lat, store.lon]);
-      const label = store.priceIndex != null
-        ? `${store.name} — indice ${store.priceIndex}`
-        : store.name;
-      marker.bindPopup(
-        `<strong>${store.name}</strong><br/>${store.address ?? ''}<br/>${label}`,
-      );
+
+      const container = document.createElement('div');
+      const nameEl = document.createElement('strong');
+      nameEl.textContent = store.name;
+      container.appendChild(nameEl);
+
+      if (store.address) {
+        container.appendChild(document.createElement('br'));
+        const addrEl = document.createElement('span');
+        addrEl.textContent = store.address;
+        container.appendChild(addrEl);
+      }
+
+      if (store.priceIndex != null) {
+        container.appendChild(document.createElement('br'));
+        const indexEl = document.createElement('span');
+        indexEl.textContent = `${store.name} — indice ${store.priceIndex}`;
+        container.appendChild(indexEl);
+      }
+
+      marker.bindPopup(container);
       marker.on('click', () => onStoreClick(store));
       group.addLayer(marker);
     });
