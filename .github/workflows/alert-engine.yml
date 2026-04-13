@@ -61,26 +61,14 @@ jobs:
       - name: Create output directory
         run: mkdir -p data/output
 
-      - name: Run fetch + score pipeline (in case data-refresh artifact isn't available)
+      - name: Run full fetch + score + merge pipeline
+        # data/output/ is gitignored so product-scores.json and merged-observations.json
+        # are never present at checkout. Always run the full pipeline unconditionally.
         run: |
-          if [ ! -f data/output/product-scores.json ]; then
-            echo "product-scores.json not found — running full fetch + score pipeline"
-            node scripts/fetch-price-data.mjs
-            node scripts/normalize-price-data.mjs
-            node scripts/compute-product-scores.mjs
-          else
-            echo "product-scores.json found — skipping re-fetch"
-          fi
-
-      - name: Merge observations (required by generate-alerts)
-        run: |
-          if [ ! -f data/output/merged-observations.json ]; then
-            echo "merged-observations.json not found — running fetch + merge pipeline"
-            node scripts/fetch-price-data.mjs
-            node scripts/merge-all-observations.mjs
-          else
-            echo "merged-observations.json found — skipping re-fetch"
-          fi
+          node scripts/fetch-price-data.mjs
+          node scripts/normalize-price-data.mjs
+          node scripts/compute-product-scores.mjs
+          node scripts/merge-all-observations.mjs
 
       - name: Generate alerts
         run: node scripts/generate-alerts.mjs
