@@ -245,7 +245,7 @@ router.get('/stores/:id/price-index', async (req: Request, res: Response) => {
 
         const territoryObs = await prisma.priceObservation.findMany({
           where: {
-            storeId: { in: allStoreIds },
+            storeId: { in: allStoreIds, not: null },
             normalizedLabel: { in: referenceBasket },
           },
           orderBy: { observedAt: 'desc' },
@@ -336,7 +336,7 @@ router.get('/heatmap', async (req: Request, res: Response) => {
     // Latest price per store × normalised label
     const allObs = await prisma.priceObservation.findMany({
       where: {
-        storeId: { in: dbStoreIds },
+        storeId: { in: dbStoreIds, not: null },
         normalizedLabel: { in: referenceBasket },
       },
       orderBy: { observedAt: 'desc' },
