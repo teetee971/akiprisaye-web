@@ -6,6 +6,7 @@
  */
 
 import { Router, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import {
   getValidationQueue,
   getValidationStats,
@@ -24,8 +25,15 @@ type ProductStatus = 'PENDING_REVIEW' | 'VALIDATED' | 'REJECTED' | 'MERGED';
 
 const router = Router();
 
-// All validation routes are admin-only
-router.use(unifiedAuthMiddleware, requirePermission(ApiPermission.ADMIN));
+const validationRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// All validation routes are admin-only and rate-limited
+router.use(validationRateLimiter, unifiedAuthMiddleware, requirePermission(ApiPermission.ADMIN));
 
 /**
  * GET /api/validation/queue
