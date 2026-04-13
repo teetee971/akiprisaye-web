@@ -83,7 +83,6 @@ async function staleWhileRevalidate(request, cacheName) {
 
   // Sert le cache si disponible, sinon attend le réseau
   if (cached) {
-    fetchPromise.catch(() => {}); // revalidation silencieuse
     return cached;
   }
   return fetchPromise;
