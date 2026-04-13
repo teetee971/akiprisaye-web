@@ -26,6 +26,7 @@ on:
 permissions:
   contents: write
   issues: write
+  pull-requests: write  # Pour créer la PR de mise à jour des prix carburants
 
 concurrency:
   group: auto-update-prices
@@ -77,22 +78,20 @@ jobs:
             node collect.mjs
           fi
 
-      - name: 💾 Commit fuel-prices.json
+      - name: 💾 Créer PR avec prix carburants mis à jour
         if: ${{ inputs.dry_run != 'true' }}
-        run: |
-          git config user.name  "akiprisaye-bot[prices]"
-          git config user.email "bot-prices@akiprisaye.fr"
-          if ! git diff --quiet frontend/public/data/fuel-prices.json; then
-            git add frontend/public/data/fuel-prices.json
-            git commit \
-              -m "⛽ [auto] Prix carburants DOM-TOM — $(date -u '+%Y-%m-%d')" \
-              -m "Source : prix-carburants.gouv.fr" \
-              -m "Territoires : GP, MQ, GF, RE, YT" \
-              -m "[skip ci]"
-            git push || echo "⚠️  Push vers main rejeté (règle de protection de branche) — données générées localement, disponibles en artifacts CI"
-          else
-            echo "ℹ️  Aucune modification fuel-prices.json"
-          fi
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          branch: auto-prices-update
+          base: main
+          commit-message: "⛽ [auto] Prix carburants DOM-TOM — [skip ci]"
+          add-paths: frontend/public/data/fuel-prices.json
+          title: "⛽ [auto] Mise à jour prix carburants DOM-TOM"
+          body: |
+            Mise à jour automatique des prix carburants DOM-TOM.
+
+            **Source :** prix-carburants.gouv.fr
+            **Territoires :** GP, MQ, GF, RE, YT
 
       - name: 📢 Notification en cas d'échec
         if: failure()

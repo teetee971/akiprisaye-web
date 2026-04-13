@@ -296,6 +296,12 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('❌ Erreur fatale :', err.message);
+  const msg = err.message ?? '';
+  // 429 = quota OpenAI dépassé — pas une erreur du code, sortie propre
+  if (err.status === 429 || msg.includes('429') || msg.toLowerCase().includes('quota')) {
+    console.warn('⚠️  Quota OpenAI dépassé — génération ignorée ce cycle :', msg);
+    process.exit(0);
+  }
+  console.error('❌ Erreur fatale :', msg);
   process.exit(1);
 });
