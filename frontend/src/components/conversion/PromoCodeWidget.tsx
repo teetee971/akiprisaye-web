@@ -139,7 +139,9 @@ export default function PromoCodeWidget({
       {result && !applied && (
         <div
           className={`flex items-start gap-2 text-sm px-3 py-2 rounded-lg ${
-            result.valid
+            result.valid && result.discount === 0
+              ? 'bg-amber-900/20 text-amber-300'
+              : result.valid
               ? 'bg-green-900/20 text-green-300'
               : 'bg-red-900/20 text-red-300'
           }`}
@@ -149,8 +151,12 @@ export default function PromoCodeWidget({
           ) : (
             <XCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
           )}
-          <span>{result.message}</span>
-          {result.usesRemaining !== undefined && result.valid && (
+          <span>
+            {result.valid && result.discount === 0
+              ? 'Code valide mais aucune remise applicable à ce plan'
+              : result.message}
+          </span>
+          {result.usesRemaining !== undefined && result.valid && result.discount > 0 && (
             <span className="ml-auto text-xs text-gray-400">
               {result.usesRemaining} util. restantes
             </span>

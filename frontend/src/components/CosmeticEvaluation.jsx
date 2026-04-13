@@ -70,6 +70,7 @@ export default function CosmeticEvaluation({ initialEan }) {
   const [category, setCategory] = useState('Crème visage');
   const [inciList, setInciList] = useState('');
   const [evaluation, setEvaluation] = useState(null);
+  const [formError, setFormError] = useState('');
   const [showSources, setShowSources] = useState(false);
   const [showRegulations, setShowRegulations] = useState(false);
   const [activeHazardFilter, setActiveHazardFilter] = useState(null);
@@ -116,9 +117,10 @@ export default function CosmeticEvaluation({ initialEan }) {
   const handleEvaluate = (e) => {
     e.preventDefault();
     if (!productName.trim() || !inciList.trim()) {
-      alert('Veuillez renseigner le nom du produit et la liste INCI.');
+      setFormError('Veuillez renseigner le nom du produit et la liste INCI.');
       return;
     }
+    setFormError('');
     setActiveHazardFilter(null);
     const result = evaluateProduct(productName, category, inciList);
     setEvaluation(result);
@@ -274,6 +276,11 @@ export default function CosmeticEvaluation({ initialEan }) {
               <Shield className="w-5 h-5" />
               Analyser la composition
             </button>
+            {formError && (
+              <p role="alert" className="text-red-600 dark:text-red-400 text-sm mt-2 text-center">
+                {formError}
+              </p>
+            )}
           </form>
         </div>
 
