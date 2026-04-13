@@ -256,6 +256,7 @@ router.get('/stores/:id/price-index', async (req: Request, res: Response) => {
         // Sum per-store basket totals for average
         const storeTotals = new Map<string, number>();
         for (const obs of territoryObs) {
+          if (!obs.storeId) continue;
           storeTotals.set(obs.storeId, (storeTotals.get(obs.storeId) ?? 0) + obs.price);
         }
         const totals = [...storeTotals.values()].filter((t) => t > 0);
@@ -346,6 +347,7 @@ router.get('/heatmap', async (req: Request, res: Response) => {
     // Build per-store basket totals
     const storeTotals = new Map<string, { total: number; count: number }>();
     for (const obs of allObs) {
+      if (!obs.storeId) continue;
       const existing = storeTotals.get(obs.storeId) ?? { total: 0, count: 0 };
       storeTotals.set(obs.storeId, {
         total: existing.total + obs.price,
