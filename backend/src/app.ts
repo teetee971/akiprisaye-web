@@ -26,6 +26,7 @@ import opendataRoutes from './api/routes/opendata.routes.js';
 // API Gateway routes
 import apiKeyRoutes from './api/routes/apiKey.routes.js';
 import v1Routes from './api/v1/index.js';
+import publicApiRoutes from './api/routes/publicApi.js';
 // Phase 7: Infrastructure routes
 import geocodingRoutes from './routes/geocoding.js';
 import storesRoutes from './routes/stores.js';
@@ -196,6 +197,9 @@ app.use('/api/auth', authRoutes);
 
 // API Gateway v1 (authentification requise)
 app.use('/api/v1', v1Routes);
+
+// Public API v1 — open access with optional API key
+app.use('/api/v1', publicApiRoutes);
 
 // API Keys management (JWT authentification uniquement)
 app.use('/api/api-keys', apiKeyRoutes);

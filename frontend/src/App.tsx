@@ -16,6 +16,8 @@ import RequireAuth from './components/auth/RequireAuth';
 import RequireCreator from './components/auth/RequireCreator';
 import RequireAdmin from './components/auth/RequireAdmin';
 import { logDebug } from './utils/logger';
+import { registerServiceWorker, captureInstallPrompt } from './services/pwaService';
+import { PWAInstallBanner } from './components/ui/PWAInstallBanner';
 
 const _langProviderImport = import('./context/LanguageProvider');
 
@@ -246,6 +248,11 @@ const ProducteursLocaux = lazy(() => import('./pages/ProducteursLocaux'));
 const MarchesLocaux = lazy(() => import('./pages/MarchesLocaux'));
 const AnalyseFactures = lazy(() => import('./pages/AnalyseFactures'));
 const DetectionFraude = lazy(() => import('./pages/DetectionFraude'));
+const FraudDetection = lazy(() => import('./pages/FraudDetection'));
+const AlertesPredictives = lazy(() => import('./pages/AlertesPredictives'));
+const Partenaires = lazy(() => import('./pages/Partenaires'));
+const APIInstitutionnelle = lazy(() => import('./pages/APIInstitutionnelle'));
+const APIKeyDashboard = lazy(() => import('./pages/APIKeyDashboard'));
 const EvaluationMagasins = lazy(() => import('./pages/EvaluationMagasins'));
 const PortailDeveloppeurs = lazy(() => import('./pages/PortailDeveloppeurs'));
 const ChocsPrixPage = lazy(() => import('./pages/ChocsPrixPage'));
@@ -353,6 +360,8 @@ export default function App() {
   useEffect(() => {
     const fallback = document.getElementById('loading-fallback');
     if (fallback) fallback.style.display = 'none';
+    captureInstallPrompt();
+    registerServiceWorker();
   }, []);
 
   if (providerError) {
@@ -605,6 +614,11 @@ export default function App() {
                               <Route path="marches-locaux" element={<MarchesLocaux />} />
                               <Route path="analyse-factures" element={<AnalyseFactures />} />
                               <Route path="detection-fraude" element={<DetectionFraude />} />
+                              <Route path="admin/fraude" element={<RequireAdmin><FraudDetection /></RequireAdmin>} />
+                              <Route path="alertes-predictives" element={<AlertesPredictives />} />
+                              <Route path="admin/partenaires" element={<RequireAdmin><Partenaires /></RequireAdmin>} />
+                              <Route path="api-docs" element={<APIInstitutionnelle />} />
+                              <Route path="api-keys" element={<APIKeyDashboard />} />
                               <Route path="evaluation-magasins" element={<EvaluationMagasins />} />
                               <Route path="portail-developpeurs" element={<PortailDeveloppeurs />} />
                               <Route path="chocs-prix" element={<ChocsPrixPage />} />
@@ -668,6 +682,7 @@ export default function App() {
                           <OnboardingTour />
                           <Suspense fallback={null}><HelpButton /></Suspense>
                           <ToastProvider />
+                          <PWAInstallBanner />
                           <AuthDebugPanel />
                           <Suspense fallback={null}><BuildInfo /></Suspense>
                         </Suspense>
