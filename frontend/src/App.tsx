@@ -220,6 +220,7 @@ const InscriptionProBatiment = lazy(() => import('./pages/InscriptionProBatiment
 const AdminInseeImport = lazy(() => import('./pages/admin/AdminInseeImport'));
 const AdminTicketImport = lazy(() => import('./pages/admin/AdminTicketImport'));
 const AdminCatalogImport = lazy(() => import('./pages/admin/AdminCatalogImport'));
+const AdminAutomationDashboard = lazy(() => import('./pages/admin/AdminAutomationDashboard'));
 const RoadmapPage = lazy(() => import('./pages/RoadmapPage'));
 const DossierInvestisseurs = lazy(() => import('./pages/DossierInvestisseurs'));
 const ChecklistProduction = lazy(() => import('./pages/ChecklistProduction'));
@@ -407,6 +408,7 @@ export default function App() {
                               <Route path="import-ticket" element={<AdminTicketImport />} />
                               <Route path="catalogs" element={<AdminCatalogImport />} />
                               <Route path="catalogues" element={<AdminCatalogImport />} />
+                              <Route path="automation" element={<AdminAutomationDashboard />} />
                               <Route path="stats" element={<StatsDashboard />} />
                             </Route>
 
