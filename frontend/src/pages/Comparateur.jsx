@@ -237,6 +237,24 @@ export default function Comparateur() {
   }, [sorted]);
   const bestPrice = sorted[0] ?? null;
 
+  // DOM/métropole gap indicator — source: INSEE Enquête Budget de famille DOM 2017/2018
+  const DOM_SURCOUT_ALIMENTAIRE = {
+    gp: 13, // Guadeloupe
+    mq: 11, // Martinique
+    gf: 17, // Guyane
+    re: 12, // La Réunion
+    yt: 14, // Mayotte
+    pm: 25, // Saint-Pierre-et-Miquelon
+    bl: 45, // Saint-Barthélemy
+    mf: 20, // Saint-Martin
+  };
+  const domGapInfo = useMemo(() => {
+    const surcout = DOM_SURCOUT_ALIMENTAIRE[territory];
+    if (!surcout || !averagePrice) return null;
+    const refMetropole = averagePrice / (1 + surcout / 100);
+    return { surcout, refMetropole };
+  }, [territory, averagePrice]);
+
   const onSearch = async (event) => {
     event.preventDefault();
     setError('');
@@ -510,6 +528,18 @@ export default function Comparateur() {
         <p className="text-xs text-slate-400">
           Astuce : essayez un terme plus générique (ex : “lait”, “riz”, “huile”) ou le code-barres.
         </p>
+      )}
+      {domGapInfo && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <p className="text-xs text-amber-200 font-semibold">📊 Indicateur DOM / Métropole</p>
+            <p className="text-xs text-amber-100 mt-0.5">
+              Référence estimée en métropole : <strong>{domGapInfo.refMetropole.toFixed(2)} €</strong>
+              &nbsp;·&nbsp; Surcoût alimentaire DOM : <strong>+{domGapInfo.surcout} %</strong>
+            </p>
+          </div>
+          <p className="text-[10px] text-amber-300/70 italic">Source : INSEE — Enquête BDF DOM 2017/2018</p>
+        </div>
       )}
       {comparisonInsight && (
         <div className="rounded border border-emerald-300/50 bg-emerald-50/60 dark:bg-emerald-900/20 px-3 py-2 text-sm">
