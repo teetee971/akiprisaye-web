@@ -13,6 +13,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import MapFilters from './MapFilters';
 import PriceHeatmap from './PriceHeatmap';
 import NearbyStoresList from './NearbyStoresList';
+import MarkerClusterLayer from './MarkerClusterLayer';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { useNearbyStores } from '../../hooks/useNearbyStores';
 import { getStoreHours } from '../../services/storeHoursService';
@@ -201,7 +202,11 @@ export function StoreMap({
               <PriceHeatmap points={heatmapPoints} visible={showHeatmap} />
             )}
 
-            {/* TODO: Add marker clustering layer here */}
+            {/* Marker Cluster Layer */}
+            <MarkerClusterLayer
+              stores={displayedStores}
+              onMarkerClick={handleStoreClick}
+            />
           </MapContainer>
 
           {/* Locate Me Button */}

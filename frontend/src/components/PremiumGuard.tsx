@@ -72,7 +72,7 @@ export function PremiumGuard({ feature, children, fallback }: PremiumGuardProps)
         type="button"
         className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl"
         onClick={() => {
-          // TODO: Navigate to subscription page or trigger Google Play Billing
+          window.location.assign('/pricing');
         }}
       >
         <Sparkles className="w-5 h-5" />
