@@ -238,6 +238,9 @@ const TerritoryHub = lazy(() => import('./pages/TerritoryHub'));
 const TerritoryScanner = lazy(() => import('./pages/TerritoryScanner'));
 const GuideIntelligentTerritoires = lazy(() => import('./pages/GuideIntelligentTerritoires'));
 const ARScannerPage = lazy(() => import('./pages/ARScannerPage'));
+const ScannerAR = lazy(() => import('./pages/ScannerAR'));
+const PortailAPIdev = lazy(() => import('./pages/PortailAPIdev'));
+const AppMobile = lazy(() => import('./pages/AppMobile'));
 const ChaineFourniture = lazy(() => import('./pages/ChaineFourniture'));
 const CommerceSocial = lazy(() => import('./pages/CommerceSocial'));
 const FicheEntreprise = lazy(() => import('./pages/FicheEntreprise'));
@@ -604,6 +607,9 @@ export default function App() {
                               <Route path="territoire/:territory/scanner" element={<TerritoryScanner />} />
                               <Route path="guide-territoire" element={<GuideIntelligentTerritoires />} />
                               <Route path="ar-scanner" element={<ARScannerPage />} />
+                              <Route path="scanner-ar" element={<ScannerAR />} />
+                              <Route path="portail-api" element={<PortailAPIdev />} />
+                              <Route path="app-mobile" element={<AppMobile />} />
                               <Route path="chaine-fourniture" element={<ChaineFourniture />} />
                               <Route path="chaine-approvisionnement" element={<SupplyChain />} />
                               <Route path="commerce-social" element={<CommerceSocial />} />
