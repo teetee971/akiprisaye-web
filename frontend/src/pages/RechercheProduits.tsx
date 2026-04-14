@@ -869,7 +869,7 @@ export function PriceSearchResults({
 }
 
 export default function RechercheProduits() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
   const { favorites, removeFavorite } = useFavorites();
@@ -1026,6 +1026,9 @@ export default function RechercheProduits() {
     setQuery('');
     setBarcode('');
     setCachedAt(null);
+    setHasAutoSearched(false);
+    // Clean URL params so re-visiting the page won't replay the old search
+    setSearchParams({}, { replace: true });
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

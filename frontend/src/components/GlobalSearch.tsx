@@ -220,18 +220,24 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     const max = results.length;
-    if (!max) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIdx((i) => (i + 1) % max);
+      if (max) setActiveIdx((i) => (i + 1) % max);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveIdx((i) => (i - 1 + max) % max);
+      if (max) setActiveIdx((i) => (i - 1 + max) % max);
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (results[activeIdx]) handleSelect(results[activeIdx]);
+      if (max && results[activeIdx]) {
+        handleSelect(results[activeIdx]);
+      } else if (query.trim()) {
+        // Free-text fallback: search in product price database
+        saveRecentSearch(query.trim());
+        onClose();
+        navigate(`/recherche-produits?q=${encodeURIComponent(query.trim())}`);
+      }
     }
-  }, [results, activeIdx, handleSelect]);
+  }, [results, activeIdx, handleSelect, query, onClose, navigate]);
 
   // Scroll active item into view
   useEffect(() => {
@@ -385,10 +391,21 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
 
           {/* No results */}
           {query.trim() && results.length === 0 && (
-            <div className="py-10 px-4 text-center">
-               <div className="text-3xl mb-3">Recherche</div>
+            <div className="py-8 px-4 text-center">
+              <div className="text-3xl mb-3">🔍</div>
               <p className="text-sm text-slate-400 mb-1">Aucun résultat pour <strong className="text-slate-200">« {query} »</strong></p>
-              <p className="text-xs text-slate-500">Essayez un autre terme ou parcourez les rubriques du menu.</p>
+              <p className="text-xs text-slate-500 mb-4">Essayez un autre terme ou parcourez les rubriques du menu.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  saveRecentSearch(query.trim());
+                  onClose();
+                  navigate(`/recherche-produits?q=${encodeURIComponent(query.trim())}`);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"
+              >
+                💰 Rechercher le prix de « {query} »
+              </button>
             </div>
           )}
         </div>
