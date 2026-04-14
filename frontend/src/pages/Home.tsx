@@ -54,6 +54,16 @@ const VideoVieChere        = lazy(() => import('../components/home/VideoVieChere
 const PriceExplainerBanner = lazy(() => import('../components/home/PriceExplainerBanner'));
 const LettreHebdoWidget    = lazy(() => import('../components/home/LettreHebdoWidget'));
 const LettreJourWidget     = lazy(() => import('../components/home/LettreJourWidget'));
+// "Effet Waouh" widgets — built, now integrated
+const ConseilBudgetDuJour      = lazy(() => import('../components/home/ConseilBudgetDuJour'));
+const PersonalizedDealOfDay    = lazy(() => import('../components/home/PersonalizedDealOfDay'));
+const DailyShockCard           = lazy(() => import('../components/home/DailyShockCard').then((m) => ({ default: m.DailyShockCard })));
+const AnonymousSocialComparison = lazy(() => import('../components/home/AnonymousSocialComparison'));
+const MonthlySavingsDashboard  = lazy(() => import('../components/home/MonthlySavingsDashboard').then((m) => ({ default: m.MonthlySavingsDashboard })));
+const TerritorySignal          = lazy(() => import('../components/home/TerritorySignal').then((m) => ({ default: m.TerritorySignal })));
+const SmartShoppingList        = lazy(() => import('../components/home/SmartShoppingList').then((m) => ({ default: m.SmartShoppingList })));
+const ShareVictory             = lazy(() => import('../components/home/ShareVictory'));
+const ProofStats               = lazy(() => import('../components/home/ProofStats'));
 
 const HOME_STATS = [
   { value: '12',     label: 'Territoires', backContent: "12 départements et territoires d'outre-mer couverts", icon: '🗺️' },
@@ -285,6 +295,20 @@ const Home = () => {
         </div>
       </div>
 
+      {/* ── CONSEIL DU JOUR ───────────────────────────────────────── */}
+      <div className="px-6 mb-6">
+        <Suspense fallback={<Skeleton className="h-20 w-full" />}>
+          <ConseilBudgetDuJour />
+        </Suspense>
+      </div>
+
+      {/* ── OFFRE PERSONNALISÉE DU JOUR ────────────────────────────── */}
+      <div className="px-6 mb-6">
+        <Suspense fallback={<Skeleton className="h-28 w-full" />}>
+          <PersonalizedDealOfDay />
+        </Suspense>
+      </div>
+
       {/* ── GISEMENT SOUVERAIN ─────────────────────────────────────── */}
       <div className="bento-grid-section mb-10">
         <p className="bento-grid-title">Le Gisement Souverain</p>
@@ -341,16 +365,25 @@ const Home = () => {
               </div>
             }
           >
-            {/* Social proof */}
-            <section className="text-center py-6">
-              <h2 className="text-lg font-semibold text-white mb-2">ce que disent nos utilisateurs</h2>
-              <p className="text-sm text-slate-400">
-                Des milliers de familles DOM-TOM font confiance à notre observatoire chaque semaine.
-              </p>
+            {/* Social proof — données citoyennes agrégées */}
+            <section aria-label="Données de la communauté">
+              <Suspense fallback={<Skeleton className="h-16 w-full" />}>
+                <ProofStats />
+              </Suspense>
             </section>
+
+            {/* Comparaison communautaire anonyme */}
+            <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+              <AnonymousSocialComparison />
+            </Suspense>
 
             {/* Observatoire citoyen */}
             <ObservatorySection />
+
+            {/* Hausses de la semaine */}
+            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <DailyShockCard />
+            </Suspense>
 
             {/* Comment ça marche */}
             <HowItWorksSection />
@@ -361,11 +394,26 @@ const Home = () => {
             {/* Indice équité */}
             <IndiceEquiteWidget />
 
+            {/* Tableau de bord économies mensuelles */}
+            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <MonthlySavingsDashboard />
+            </Suspense>
+
+            {/* Liste de courses intelligente */}
+            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <SmartShoppingList />
+            </Suspense>
+
             {/* Surcoût par catégorie */}
             <CategoryOvercostChart />
 
             {/* Carte des prix par territoire */}
             <TerritoryPriceChart />
+
+            {/* Signaux territoire — alertes communautaires */}
+            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <TerritorySignal />
+            </Suspense>
 
             {/* Évolution des prix */}
             <PriceEvolutionChart />
@@ -384,6 +432,11 @@ const Home = () => {
 
             {/* Démo application */}
             <AppDemoShowcase />
+
+            {/* Partager ses victoires */}
+            <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+              <ShareVictory />
+            </Suspense>
 
             {/* FAQ */}
             <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={handleToggleFaq} />
