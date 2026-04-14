@@ -194,7 +194,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
             <div className="quality-bar">
               <div
                 className="quality-fill"
-                style={{ width: `${metadata.qualite_moyenne}%` }}
+                style={{ transform: `scaleX(${metadata.qualite_moyenne / 100})` }}
               ></div>
             </div>
           </div>
