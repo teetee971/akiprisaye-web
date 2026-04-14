@@ -1,9 +1,10 @@
-import { Menu, Search, X, User, LogOut, Crown, Shield, ChevronDown, Bell } from 'lucide-react';
+import { Menu, Moon, Search, Sun, X, User, LogOut, Crown, Shield, ChevronDown, Bell } from 'lucide-react';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { getShoppingListCount } from '../../store/useShoppingListStore';
 import { useGlobalSearchShortcut } from '../../hooks/useGlobalSearchShortcut';
 import { useAuth } from '../../context/authHook';
+import { useTheme } from '../../context/ThemeContext';
 
 // Non-critical heavy components — lazy-loaded so they don't block initial paint
 const GlobalSearch = lazy(() => import('../GlobalSearch'));
@@ -32,6 +33,7 @@ export default function Header() {
   const navigate = useNavigate();
 
   const { user, userRole, isAdmin, isCreator, signOutUser, loading } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const onStorage = () => setCount(getShoppingListCount());
@@ -145,6 +147,21 @@ export default function Header() {
             }>
               <NotificationCenter />
             </Suspense>
+
+            {/* ── Dark / Light mode toggle ───────────────────────── */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="rounded-lg border border-slate-700 p-2 text-slate-100 hover:bg-slate-800 transition-colors"
+              aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
+              title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+            >
+              {theme === 'dark' ? (
+                <Sun size={18} aria-hidden="true" />
+              ) : (
+                <Moon size={18} aria-hidden="true" />
+              )}
+            </button>
 
             {/* ── Account button ─────────────────────────────────── */}
             {loading ? (
@@ -362,6 +379,22 @@ export default function Header() {
                   <User size={14} /> Se connecter / Créer un compte
                 </Link>
               )}
+            </li>
+
+            {/* Theme toggle — always visible in mobile menu */}
+            <li className="border-t border-slate-800 mt-2 pt-2">
+              <button
+                type="button"
+                onClick={() => { closeMenu(); toggleTheme(); }}
+                className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800 transition-colors"
+                aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
+              >
+                {theme === 'dark' ? (
+                  <><Sun size={14} aria-hidden="true" /> Mode clair</>
+                ) : (
+                  <><Moon size={14} aria-hidden="true" /> Mode sombre</>
+                )}
+              </button>
             </li>
           </ul>
         </nav>

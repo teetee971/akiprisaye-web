@@ -16,6 +16,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
+import { ThemeProvider } from '../context/ThemeContext';
 
 /* ── Shared mock navigate ──────────────────────────────────────────────── */
 const mockNavigate = vi.fn();
@@ -449,9 +450,11 @@ describe('layout/Header', () => {
     authState = makeAuthMock({ user: null });
 
     render(
-      <MemoryRouter>
-        <LayoutHeader />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter>
+          <LayoutHeader />
+        </MemoryRouter>
+      </ThemeProvider>,
     );
 
     expect(screen.getByRole('link', { name: /se connecter/i })).toBeTruthy();
@@ -461,9 +464,11 @@ describe('layout/Header', () => {
     authState = makeAuthMock({ loading: true, authFlowState: 'resolving', authResolved: false, user: null });
 
     render(
-      <MemoryRouter>
-        <LayoutHeader />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter>
+          <LayoutHeader />
+        </MemoryRouter>
+      </ThemeProvider>,
     );
 
     // The skeleton replaces the "Se connecter" button while auth is resolving.
@@ -482,9 +487,11 @@ describe('layout/Header', () => {
     authState = makeAuthMock({ user: fakeUser, signOutUser: vi.fn() });
 
     render(
-      <MemoryRouter>
-        <LayoutHeader />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter>
+          <LayoutHeader />
+        </MemoryRouter>
+      </ThemeProvider>,
     );
 
     // Avatar button is accessible as "Mon compte"
@@ -503,9 +510,11 @@ describe('layout/Header', () => {
     authState = makeAuthMock({ user: fakeUser, signOutUser: vi.fn() });
 
     render(
-      <MemoryRouter>
-        <LayoutHeader />
-      </MemoryRouter>,
+      <ThemeProvider>
+        <MemoryRouter>
+          <LayoutHeader />
+        </MemoryRouter>
+      </ThemeProvider>,
     );
 
     // Open the mobile navigation menu
