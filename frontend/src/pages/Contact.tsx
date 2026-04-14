@@ -59,7 +59,7 @@ export default function Contact() {
     const mailtoUrl = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     toast.success('Votre messagerie va s’ouvrir pour envoyer le message.');
-    window.location.href = mailtoUrl;
+    window.open(mailtoUrl);
   };
 
   return (

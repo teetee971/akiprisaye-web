@@ -94,7 +94,7 @@ export default function ContactCollectivites() {
       const body = encodeURIComponent(
         `Organisme: ${formData.organisme}\nType: ${formData.typeOrganisme}\nContact: ${formData.nom} (${formData.fonction})\nEmail: ${formData.email}\nTéléphone: ${formData.telephone}\nTerritoire: ${formData.territoire}\n\nMessage:\n${formData.message}`,
       );
-      window.location.href = `mailto:contact@akiprisaye.fr?subject=${subject}&body=${body}`;
+      window.open(`mailto:contact@akiprisaye.fr?subject=${subject}&body=${body}`);
     }
     
     setSubmitted(true);
