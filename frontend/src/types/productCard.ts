@@ -5,6 +5,9 @@ export interface ProductCard {
   quantity?: string;
   categories?: string[];
   images: Array<{ type: 'front' | 'ingredients' | 'nutrition' | 'other'; url: string }>;
+  nutriscore?: string;
+  ecoscore?: string;
+  ingredientsText?: string;
   source: 'open_food_facts';
   updatedAt: string;
 }

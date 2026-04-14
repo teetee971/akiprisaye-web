@@ -98,10 +98,13 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
       brand: (p.brands as string) || null,
       quantity: (p.quantity as string) || null,
       imageUrl: (p.image_front_url as string) || (p.image_url as string) || null,
+      imageIngredientsUrl: (p.image_ingredients_url as string) || null,
+      imageNutritionUrl: (p.image_nutrition_url as string) || null,
       categories: Array.isArray(p.categories_tags) ? p.categories_tags : [],
       nutriscore: (p.nutriscore_grade as string) || null,
       ecoscore: (p.ecoscore_grade as string) || null,
-      raw: p,
+      ingredientsText:
+        (p.ingredients_text_fr as string) || (p.ingredients_text as string) || null,
     };
 
     const response = jsonResponse({ ok: true, data: normalized }, {

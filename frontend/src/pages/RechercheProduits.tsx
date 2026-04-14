@@ -317,6 +317,7 @@ export function PriceResults({
   onFavoriteToast?: (message: string) => void;
 }) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const [ingredientsOpen, setIngredientsOpen] = useState(false);
   const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
 
   const interval = result.prices?.[0];
@@ -372,8 +373,13 @@ export function PriceResults({
               brand?: string | null;
               quantity?: string | null;
               imageUrl?: string | null;
+              imageIngredientsUrl?: string | null;
+              imageNutritionUrl?: string | null;
               categories?: string[];
               found?: boolean;
+              nutriscore?: string | null;
+              ecoscore?: string | null;
+              ingredientsText?: string | null;
             };
             // legacy shape kept for safety
             product?: ProductCard;
@@ -387,10 +393,11 @@ export function PriceResults({
             setProductCard(null);
             return;
           }
-          // Map to ProductCard shape
-          const images: ProductCard['images'] = d.imageUrl
-            ? [{ type: 'front', url: d.imageUrl }]
-            : [];
+          // Map to ProductCard shape — collect all available images
+          const images: ProductCard['images'] = [];
+          if (d.imageUrl) images.push({ type: 'front', url: d.imageUrl });
+          if (d.imageIngredientsUrl) images.push({ type: 'ingredients', url: d.imageIngredientsUrl });
+          if (d.imageNutritionUrl) images.push({ type: 'nutrition', url: d.imageNutritionUrl });
           const cats = (d.categories ?? []).map((c: string) =>
             c.replace(/^[a-z]{2}:/, '').replace(/-/g, ' '),
           );
@@ -401,6 +408,9 @@ export function PriceResults({
             quantity: d.quantity ?? undefined,
             categories: cats.length > 0 ? cats : undefined,
             images,
+            nutriscore: d.nutriscore ?? undefined,
+            ecoscore: d.ecoscore ?? undefined,
+            ingredientsText: d.ingredientsText ?? undefined,
             source: 'open_food_facts',
             updatedAt: new Date().toISOString(),
           });
@@ -663,19 +673,63 @@ export function PriceResults({
           </div>
         )}
 
+        {/* Nutri-Score + Éco-Score badges */}
+        {(productCard?.nutriscore || productCard?.ecoscore) && (
+          <div className="flex flex-wrap gap-3 items-center">
+            {productCard.nutriscore && (() => {
+              const g = productCard.nutriscore.toUpperCase();
+              const colorMap: Record<string, string> = {
+                A: 'bg-green-500 text-white',
+                B: 'bg-lime-400 text-black',
+                C: 'bg-yellow-400 text-black',
+                D: 'bg-orange-500 text-white',
+                E: 'bg-red-600 text-white',
+              };
+              const cls = colorMap[g] ?? 'bg-slate-600 text-white';
+              return (
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cls}`} title="Nutri-Score">
+                  🥗 Nutri-Score <strong>{g}</strong>
+                </span>
+              );
+            })()}
+            {productCard.ecoscore && (() => {
+              const g = productCard.ecoscore.toUpperCase();
+              const colorMap: Record<string, string> = {
+                A: 'bg-green-700 text-white',
+                B: 'bg-green-500 text-white',
+                C: 'bg-yellow-500 text-black',
+                D: 'bg-orange-600 text-white',
+                E: 'bg-red-700 text-white',
+              };
+              const cls = colorMap[g] ?? 'bg-slate-600 text-white';
+              return (
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cls}`} title="Éco-Score">
+                  🌿 Éco-Score <strong>{g}</strong>
+                </span>
+              );
+            })()}
+          </div>
+        )}
+
         {productImages.length > 0 ? (
-          <div className="grid grid-cols-2 gap-2">
+          <div className={productImages.length === 1 ? '' : 'grid grid-cols-2 gap-2'}>
             {productImages.map((img) => (
-              <OptimizedImage
-                key={img.url}
-                src={img.url}
-                alt={productTitle}
-                className="rounded-xl object-cover w-full h-32 bg-slate-800"
-                loading="lazy"
-                onError={(event) => {
-                  event.currentTarget.src = getProductImageFallback({ productName: productTitle });
-                }}
-              />
+              <div key={img.url} className="relative">
+                <OptimizedImage
+                  src={img.url}
+                  alt={img.type === 'ingredients' ? `Ingrédients — ${productTitle}` : img.type === 'nutrition' ? `Tableau nutritionnel — ${productTitle}` : productTitle}
+                  className={`rounded-xl object-contain w-full bg-slate-800 ${productImages.length === 1 ? 'h-40' : 'h-32'}`}
+                  loading="lazy"
+                  onError={(event) => {
+                    event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+                  }}
+                />
+                {img.type !== 'front' && (
+                  <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
+                    {img.type === 'ingredients' ? 'Ingrédients' : 'Nutrition'}
+                  </span>
+                )}
+              </div>
             ))}
           </div>
         ) : (
@@ -688,6 +742,26 @@ export function PriceResults({
               event.currentTarget.src = getProductImageFallback({ productName: productTitle });
             }}
           />
+        )}
+
+        {/* Ingrédients texte (accordéon) */}
+        {productCard?.ingredientsText && (
+          <div className="border border-slate-700 rounded-xl overflow-hidden">
+            <button
+              type="button"
+              className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 hover:bg-slate-700 transition-colors text-sm font-medium text-left"
+              aria-expanded={ingredientsOpen}
+              onClick={() => setIngredientsOpen((o) => !o)}
+            >
+              <span>🧪 Ingrédients</span>
+              <span className="text-slate-400 text-xs" aria-hidden="true">{ingredientsOpen ? '▲' : '▼'}</span>
+            </button>
+            {ingredientsOpen && (
+              <div className="px-4 py-3 bg-slate-900 text-xs text-slate-300 leading-relaxed">
+                {productCard.ingredientsText}
+              </div>
+            )}
+          </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
@@ -907,6 +981,147 @@ export function PriceSearchResults({
   }
 }
 
+// ── Barcode scanner modal using native BarcodeDetector / ZXing ────────────
+type BarcodeScannerModalProps = {
+  onDetected: (ean: string) => void;
+  onClose: () => void;
+};
+
+function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [status, setStatus] = useState<'requesting' | 'scanning' | 'error'>('requesting');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const start = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+        });
+        if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play();
+        }
+        setStatus('scanning');
+        scanLoop();
+      } catch {
+        if (!cancelled) {
+          setErrorMsg('Accès à la caméra refusé. Autorisez la caméra puis réessayez.');
+          setStatus('error');
+        }
+      }
+    };
+
+    const scanLoop = async () => {
+      const video = videoRef.current;
+      if (!video || cancelled) return;
+
+      // Native BarcodeDetector API (Chromium 83+, Android Chrome)
+      if ('BarcodeDetector' in window) {
+        type BarcodeDetectorLike = { detect: (src: HTMLVideoElement) => Promise<Array<{ rawValue: string }>> };
+        const detector = new (window as unknown as { BarcodeDetector: new (opts: object) => BarcodeDetectorLike }).BarcodeDetector({
+          formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'],
+        });
+        const tick = async () => {
+          if (cancelled || video.readyState < 2) { rafRef.current = requestAnimationFrame(tick); return; }
+          try {
+            const codes = await detector.detect(video);
+            if (codes.length > 0) { onDetected(codes[0].rawValue); return; }
+          } catch { /* ignore */ }
+          rafRef.current = requestAnimationFrame(tick);
+        };
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+
+      // ZXing fallback
+      try {
+        const { BrowserMultiFormatReader } = await import('@zxing/browser');
+        const reader = new BrowserMultiFormatReader();
+        if (videoRef.current && streamRef.current) {
+          const result = await reader.decodeOnceFromStream(streamRef.current, videoRef.current ?? undefined);
+          if (!cancelled) onDetected(result.getText());
+        }
+      } catch {
+        if (!cancelled) {
+          setErrorMsg("Scan impossible sur ce navigateur. Saisissez le code-barres manuellement.");
+          setStatus('error');
+        }
+      }
+    };
+
+    void start();
+
+    return () => {
+      cancelled = true;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Scanner un code-barres"
+    >
+      <div className="relative bg-slate-900 rounded-2xl overflow-hidden w-full max-w-sm mx-4 shadow-2xl">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+          <span className="font-semibold text-sm">📷 Scanner un code-barres</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-slate-400 hover:text-white text-xl leading-none"
+            aria-label="Fermer le scanner"
+          >✕</button>
+        </div>
+        {status === 'error' ? (
+          <div className="p-6 text-center text-sm text-red-400 space-y-3">
+            <p>{errorMsg}</p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-slate-800 rounded-xl text-slate-200 text-xs hover:bg-slate-700"
+            >Fermer</button>
+          </div>
+        ) : (
+          <div className="relative aspect-[4/3] bg-black">
+            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              playsInline
+              muted
+              aria-label="Flux caméra pour scanner le code-barres"
+            />
+            {status === 'scanning' && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-48 h-24 border-2 border-blue-400 rounded-lg opacity-70" aria-hidden="true" />
+              </div>
+            )}
+            {status === 'requesting' && (
+              <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-sm">
+                Accès caméra en cours…
+              </div>
+            )}
+          </div>
+        )}
+        <p className="text-xs text-slate-500 text-center py-2 px-4">
+          Pointez la caméra vers un code-barres EAN
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function RechercheProduits() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -927,6 +1142,7 @@ export default function RechercheProduits() {
   const [hasAutoSearched, setHasAutoSearched] = useState(false);
   const [cachedAt, setCachedAt] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const [premiumVisualRef, premiumVisualVisible] = useIntersectionObserver({ rootMargin: '200px', threshold: 0.01 });
   const hasSearchInput = Boolean(barcode.trim() || query.trim());
   const canSearch = hasSearchInput && !loading;
@@ -1059,6 +1275,24 @@ export default function RechercheProduits() {
     setHasAutoSearched(true);
   }, [barcode, query, hasAutoSearched, readCache, runSearch, territory]);
 
+  // Search-as-you-type: debounce 400ms after user stops typing (only when there is already a result)
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevQueryRef = useRef({ query, barcode });
+  useEffect(() => {
+    const prev = prevQueryRef.current;
+    const changed = prev.query !== query || prev.barcode !== barcode;
+    prevQueryRef.current = { query, barcode };
+    if (!changed || !hasAutoSearched) return;
+    if (!barcode.trim() && !query.trim()) return;
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = setTimeout(() => {
+      void runSearch({ source: barcode.trim() ? 'barcode' : 'text' });
+    }, 400);
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, [query, barcode, hasAutoSearched, runSearch]);
+
   const handleReset = () => {
     setResult(null);
     setError(null);
@@ -1176,19 +1410,28 @@ export default function RechercheProduits() {
                   else { setQuery(v); setBarcode(''); }
                 }}
                 placeholder="Nom produit ou code-barres (EAN)…"
-                className="w-full rounded-xl bg-slate-950 border border-slate-600 focus:border-blue-500 outline-none pl-10 pr-4 py-3 text-white text-base"
+                className="w-full rounded-xl bg-slate-950 border border-slate-600 focus:border-blue-500 outline-none pl-10 pr-20 py-3 text-white text-base"
                 aria-label="Rechercher un produit par nom ou code-barres"
                 autoComplete="off"
                 inputMode="search"
               />
-              {(query || barcode) && (
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                {(query || barcode) && (
+                  <button
+                    type="button"
+                    onClick={() => { setQuery(''); setBarcode(''); }}
+                    className="text-slate-400 hover:text-white text-lg leading-none p-1"
+                    aria-label="Effacer la recherche"
+                  >✕</button>
+                )}
                 <button
                   type="button"
-                  onClick={() => { setQuery(''); setBarcode(''); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-lg leading-none"
-                  aria-label="Effacer la recherche"
-                >✕</button>
-              )}
+                  onClick={() => setScannerOpen(true)}
+                  className="text-slate-400 hover:text-blue-400 text-xl leading-none p-1"
+                  aria-label="Scanner un code-barres avec la caméra"
+                  title="Scanner un code-barres"
+                >📷</button>
+              </div>
             </div>
 
             {/* Popular product chips */}
@@ -1323,6 +1566,19 @@ export default function RechercheProduits() {
           >
             {toastMessage}
           </div>
+        )}
+
+        {/* ── Barcode scanner modal ──────────────────────────────────── */}
+        {scannerOpen && (
+          <BarcodeScannerModal
+            onDetected={(ean) => {
+              setBarcode(ean);
+              setQuery('');
+              setScannerOpen(false);
+              void runSearch({ source: 'barcode', query: '', barcode: ean });
+            }}
+            onClose={() => setScannerOpen(false)}
+          />
         )}
       </div>
     </div>
