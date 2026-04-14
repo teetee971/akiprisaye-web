@@ -7,9 +7,11 @@
  */
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Zap, Key, Code2, Shield, CheckCircle, Copy, ChevronRight, ExternalLink } from 'lucide-react';
+import { Zap, Key, Code2, Shield, CheckCircle, Copy, ChevronRight, ExternalLink, ShoppingBag } from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 const API_TIERS = [
   {
@@ -140,19 +142,26 @@ export default function MarketplacePortal() {
       </Helmet>
 
       {/* Hero */}
-      <div className="max-w-6xl mx-auto mb-12 text-center">
-        <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-2 mb-4">
-          <Zap className="w-4 h-4 text-emerald-400" />
-          <span className="text-emerald-400 text-sm">API Marketplace</span>
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          Données de Prix DOM-TOM<br />
-          <span className="text-emerald-400">en temps réel</span>
-        </h1>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-          Intégrez les prix de 250k+ produits dans 12 territoires directement dans votre application.
-          API RESTful, SDKs Node.js &amp; Python, documentation complète.
-        </p>
+      <div className="max-w-6xl mx-auto mb-12">
+        <HeroImage
+          src={PAGE_HERO_IMAGES.marketplacePortal}
+          alt="Marketplace enseignes DOM-TOM — données de prix en temps réel"
+          gradient="from-slate-950 to-emerald-900"
+          height="h-44 sm:h-56"
+        >
+          <div className="flex items-center gap-2 mb-1">
+            <ShoppingBag className="w-5 h-5 text-emerald-300 drop-shadow" />
+            <span className="text-xs font-semibold uppercase tracking-widest text-emerald-300">
+              API Marketplace
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-white drop-shadow">
+            Données de Prix DOM-TOM en temps réel
+          </h1>
+          <p className="text-emerald-100 text-sm mt-1 drop-shadow">
+            250k+ produits · 12 territoires · API RESTful · SDKs Node.js &amp; Python
+          </p>
+        </HeroImage>
       </div>
 
       {/* Pricing Tiers */}
