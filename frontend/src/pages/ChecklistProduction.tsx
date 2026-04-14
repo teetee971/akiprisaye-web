@@ -75,8 +75,9 @@ const CHECKLIST: ChecklistSection[] = [
       { label: 'Routes legacy aliases en place (backward compatibility)', status: 'done', priority: 'haute' },
       { label: 'BASE_URL Vite correct selon l\'env (Cloudflare vs GitHub Pages)', status: 'done', priority: 'haute' },
       { label: 'Suppression des fichiers obsolètes et @ts-nocheck', status: 'done', priority: 'moyenne' },
-      { label: 'Indicateur DOM / métropole pour les comparateurs de prix', status: 'todo', priority: 'moyenne', note: 'Prévu V1' },
-      { label: 'Optimisation GPS liste de courses (meilleur compromis prix/distance)', status: 'todo', priority: 'basse', note: 'Prévu V1' },
+      { label: 'Indicateur DOM / métropole pour les comparateurs de prix', status: 'done', priority: 'moyenne', note: 'EcartHexagone + DomMetroGapIndicator intégrés dans Comparateur, CatalogueItem, ComparaisonEnseignes, PaniersTypes' },
+      { label: 'Optimisation GPS liste de courses (meilleur compromis prix/distance)', status: 'done', priority: 'basse', note: 'SmartShoppingList : solveShoppingRoute + 4 modes (cheapest/distance/balanced/single)' },
+      { label: 'Export PDF de la liste de courses optimisée', status: 'done', priority: 'basse', note: 'SmartShoppingList : exportToPDF via jsPDF (dynamique)' },
     ],
   },
   {
