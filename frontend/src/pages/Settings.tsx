@@ -17,7 +17,6 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
-import toast from 'react-hot-toast';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
