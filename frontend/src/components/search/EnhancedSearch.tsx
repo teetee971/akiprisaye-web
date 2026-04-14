@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { searchProducts } from '../../services/enhancedPriceService';
 import ProductImage from '../product/ProductImage';
 import type { ProductSearchResult, EnhancedSearchFilters } from '../../types/enhancedPrice';
@@ -32,6 +33,7 @@ export default function EnhancedSearch({
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const navigate = useNavigate();
   
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxRef = useRef<HTMLUListElement>(null);
@@ -242,8 +244,9 @@ export default function EnhancedSearch({
                   Le produit n'est pas dans notre base ?
                 </p>
                 <button
+                  type="button"
                   className="text-sm text-blue-600 hover:text-blue-700 underline"
-                  onClick={() => window.location.href = '/contribuer'}
+                  onClick={() => navigate('/contribuer')}
                 >
                   Soyez le premier à contribuer →
                 </button>

@@ -24,7 +24,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   HardHat, Home, TreePine, Wrench, Lock, Unlock,
   ChevronLeft, AlertTriangle, Star, Clock, Calculator,
@@ -3216,6 +3216,7 @@ function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCo
 const TERRITORY_STORAGE_KEY = 'akp:batiment:territory';
 
 export default function CalculateurBatiment() {
+  const navigate = useNavigate();
   const [trialState, setTrialState]         = useState<BatimentTrialState>(() => getBatimentTrialState());
   const [showPaywall, setShowPaywall]        = useState(false);
   const [territory, setTerritory]           = useState<TerritoryCode | null>(() => {

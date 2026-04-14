@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getBadges, type ConversionProduct } from '../../engine/conversionEngine';
 import {
   trackConversionEvent,
@@ -25,6 +26,7 @@ const URGENCY_MAP: Record<string, UrgencyVariant> = {
 
 export function DominantProductCard({ product, hero = false }: DominantProductCardProps) {
   const [confirmed, setConfirmed] = useState(false);
+  const navigate = useNavigate();
   const badges  = getBadges(product);
   const variant = getCTAVariant();
   const ctaLabel = CTA_LABELS[variant];
@@ -75,7 +77,7 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
     if (url && url !== '/comparateur') {
       window.open(url, '_blank', 'noopener,noreferrer');
     } else {
-      window.location.href = '/comparateur';
+      navigate('/comparateur');
     }
   }
 
@@ -145,6 +147,7 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
 
         {/* CTA button */}
         <button
+          type="button"
           onClick={handleClick}
           className={`w-full font-bold rounded-xl active:scale-95 transition-transform bg-green-600 hover:bg-green-500 text-white ${
             hero ? 'py-3.5 text-base' : 'py-2.5 text-sm'

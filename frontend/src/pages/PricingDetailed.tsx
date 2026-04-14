@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
 import { CivicButton } from '@/components/ui/CivicButton';
@@ -65,6 +66,7 @@ const accessLevels = [
 ];
 
 export default function PricingDetailed() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <GlassContainer className="max-w-7xl mx-auto p-8">
@@ -160,9 +162,9 @@ export default function PricingDetailed() {
                   className="w-full"
                   onClick={() => {
                     if (level.id === 'INSTITUTIONAL') {
-                      window.location.href = '/contact?subject=licence-institutionnelle';
+                      navigate('/contact?subject=licence-institutionnelle');
                     } else {
-                      window.location.href = `/subscribe?level=${level.id}`;
+                      navigate(`/subscribe?level=${level.id}`);
                     }
                   }}
                 >
