@@ -363,8 +363,47 @@ export function PriceResults({
             setProductCard(null);
             return;
           }
-          const payload = (await response.json()) as { product?: ProductCard };
-          setProductCard(payload.product ?? null);
+          // /api/product (Pages Function) returns { ok, data: { name, brand, imageUrl, categories, ... } }
+          const payload = (await response.json()) as {
+            ok?: boolean;
+            data?: {
+              barcode?: string;
+              name?: string | null;
+              brand?: string | null;
+              quantity?: string | null;
+              imageUrl?: string | null;
+              categories?: string[];
+              found?: boolean;
+            };
+            // legacy shape kept for safety
+            product?: ProductCard;
+          };
+          if (payload.product) {
+            setProductCard(payload.product);
+            return;
+          }
+          const d = payload.data;
+          if (!d?.found) {
+            setProductCard(null);
+            return;
+          }
+          // Map to ProductCard shape
+          const images: ProductCard['images'] = d.imageUrl
+            ? [{ type: 'front', url: d.imageUrl }]
+            : [];
+          const cats = (d.categories ?? []).map((c: string) =>
+            c.replace(/^[a-z]{2}:/, '').replace(/-/g, ' '),
+          );
+          setProductCard({
+            barcode: d.barcode ?? barcode,
+            title: d.name ?? barcode,
+            brand: d.brand ?? undefined,
+            quantity: d.quantity ?? undefined,
+            categories: cats.length > 0 ? cats : undefined,
+            images,
+            source: 'open_food_facts',
+            updatedAt: new Date().toISOString(),
+          });
         } catch {
           setProductCard(null);
         }
