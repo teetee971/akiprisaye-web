@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Star, MapPin, ThumbsUp, ShoppingBag, Search, SlidersHorizontal, X, Filter } from 'lucide-react';
+import { Flag, Star, MapPin, ThumbsUp, ShoppingBag, Search, SlidersHorizontal, X, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -694,6 +694,7 @@ export default function EvaluationMagasins() {
   const [selectedTerritory, setSelectedTerritory] = useState('Tous');
   const [searchQuery, setSearchQuery] = useState('');
   const [userRatings, setUserRatings] = useState<UserStoreRating[]>([]);
+  const [reportedStores, setReportedStores] = useState<Set<string>>(new Set());
   const [form, setForm] = useState({
     storeName: '',
     territory: 'Guadeloupe',
@@ -725,6 +726,10 @@ export default function EvaluationMagasins() {
     setRatingSubmitted(true);
     setShowForm(false);
     setForm({ storeName: '', territory: 'Guadeloupe', sector: 'Alimentaire', service: 0, proprete: 0, disponibilite: 0, comment: '' });
+  };
+
+  const handleReport = (storeId: string) => {
+    setReportedStores((prev) => new Set([...prev, storeId]));
   };
 
   const filteredBase = EXAMPLE_RATINGS.filter((s) => {
@@ -1054,6 +1059,18 @@ export default function EvaluationMagasins() {
                           <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                           <span className="text-xs font-bold text-gray-700">{avgRatingFrom(u.ratings).toFixed(1)} / 5</span>
                         </div>
+                        {reportedStores.has(`user-${u.storeName}`) ? (
+                          <span className="text-xs text-gray-400 italic">✓ Signalé</span>
+                        ) : (
+                          <button
+                            onClick={() => handleReport(`user-${u.storeName}`)}
+                            aria-label={`Signaler l'avis pour ${u.storeName}`}
+                            className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            <Flag className="w-3 h-3" />
+                            Signaler
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1111,6 +1128,21 @@ export default function EvaluationMagasins() {
                           <span className="text-gray-600">Disponibilité</span>
                           <StarRating value={store.ratings.disponibilite} />
                         </div>
+                      </div>
+                      {/* Modération */}
+                      <div className="mt-3 pt-3 border-t border-gray-100 flex justify-end">
+                        {reportedStores.has(store.id) ? (
+                          <span className="text-xs text-gray-400 italic">✓ Signalement transmis</span>
+                        ) : (
+                          <button
+                            onClick={() => handleReport(store.id)}
+                            aria-label={`Signaler l'avis pour ${store.name}`}
+                            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            <Flag className="w-3.5 h-3.5" />
+                            Signaler cet avis
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

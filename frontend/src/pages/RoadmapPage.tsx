@@ -117,7 +117,7 @@ const MODULES: RoadmapModule[] = [
       { label: 'Alertes sanitaires & rappels produits', done: true },
       { label: 'Page dédiée par alerte', done: true },
       { label: 'Bouton "Signaler un produit"', done: true },
-      { label: 'Rapport exportable (PDF / CSV)', done: false },
+      { label: 'Rapport exportable (PDF / CSV)', done: true },
     ],
   },
   {
@@ -223,7 +223,7 @@ const MODULES: RoadmapModule[] = [
       { label: 'Validation et suivi des devis B2G', done: true },
       { label: 'Tableau de bord analytics', done: true },
       { label: 'Checklist de conformité production', done: true },
-      { label: 'Logs et audit sécurité', done: false },
+      { label: 'Logs et audit sécurité', done: true },
     ],
   },
   {
@@ -412,7 +412,7 @@ const MODULES: RoadmapModule[] = [
       { label: 'Formulaire de notation (service, propreté, disponibilité)', done: true },
       { label: 'Affichage des notes agrégées sur la fiche magasin', done: true },
       { label: 'Classement des magasins par territoire', done: true },
-      { label: 'Modération des avis citoyens', done: false },
+      { label: 'Modération des avis citoyens', done: true },
     ],
   },
   {

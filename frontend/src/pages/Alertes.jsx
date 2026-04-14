@@ -1,8 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import AlertProductImage from '../components/alerts/AlertProductImage';
 import { useStoreSelection } from '../context/StoreSelectionContext';
 import { getAlerts } from '../services/alertsService';
+
+/** Convert an array of alert objects to a RFC-4180 CSV string. */
+function alertsToCSV(alerts) {
+  const headers = ['id', 'title', 'severity', 'status', 'category', 'brand', 'ean', 'lot', 'publishedAt', 'reason'];
+  const escape = (val) => {
+    if (val == null) return '';
+    const s = String(val).replace(/"/g, '""');
+    return /[",\n\r]/.test(s) ? `"${s}"` : s;
+  };
+  const rows = alerts.map((a) =>
+    headers.map((h) => escape(a[h])).join(',')
+  );
+  return [headers.join(','), ...rows].join('\r\n');
+}
+
+/** Trigger a CSV file download in the browser. */
+function downloadCSV(csv, filename) {
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 const severityOptions = [
   { value: '', label: 'Toutes sévérités' },
@@ -30,6 +55,12 @@ export default function Alertes() {
   const [q, setQ] = useState(searchParams.get('q') ?? '');
   const [alerts, setAlerts] = useState([]);
   const [metadata, setMetadata] = useState(null);
+
+  const handleExportCSV = useCallback(() => {
+    const csv = alertsToCSV(alerts);
+    const date = new Date().toISOString().slice(0, 10);
+    downloadCSV(csv, `alertes-sanitaires-${territory}-${date}.csv`);
+  }, [alerts, territory]);
 
   useEffect(() => {
     let mounted = true;
@@ -134,6 +165,18 @@ export default function Alertes() {
           }}
         />
       </section>
+
+      {/* Export CSV */}
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={handleExportCSV}
+          disabled={alerts.length === 0}
+          aria-label="Télécharger le rapport CSV des alertes"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-600 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium transition disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          ⬇ Télécharger rapport CSV ({alerts.length})
+        </button>
+      </div>
 
       <section className="space-y-3">
         {alerts.map((alert) => (

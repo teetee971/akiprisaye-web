@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Store, Package, DollarSign, MapPin, Bot, Activity, Zap, ShieldCheck, Bell, ExternalLink, RefreshCw, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Store, Package, DollarSign, MapPin, Bot, Activity, Zap, ShieldCheck, Bell, ExternalLink, RefreshCw, CheckCircle, XCircle, Clock, ShieldAlert, LogIn, Trash2, UserCheck, KeyRound, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../../components/ui/glass-card';
 import { getStores } from '@/services/admin/storeAdminService';
@@ -16,6 +16,41 @@ import {
   getAutomationStatus,
   type AutomationStatus,
 } from '@/services/admin/automationStatusService';
+
+// ── Audit log types & seed data ────────────────────────────────────────────────
+
+type AuditSeverity = 'info' | 'warning' | 'critical';
+
+interface AuditEntry {
+  id: string;
+  at: Date;
+  actor: string;
+  action: string;
+  target: string;
+  severity: AuditSeverity;
+  ip?: string;
+}
+
+const AUDIT_SEED: AuditEntry[] = [
+  { id: 'a1', at: new Date(Date.now() - 4 * 60 * 1000), actor: 'admin@akiprisaye.re', action: 'CONNEXION', target: 'session', severity: 'info', ip: '82.64.12.3' },
+  { id: 'a2', at: new Date(Date.now() - 18 * 60 * 1000), actor: 'admin@akiprisaye.re', action: 'SUPPRESSION_PRODUIT', target: 'produit #4821 — Yaourt Danone', severity: 'warning', ip: '82.64.12.3' },
+  { id: 'a3', at: new Date(Date.now() - 47 * 60 * 1000), actor: 'moderateur@akiprisaye.re', action: 'VALIDATION_CONTRIBUTION', target: 'contribution #992 — Leclerc Jarry', severity: 'info', ip: '41.202.7.14' },
+  { id: 'a4', at: new Date(Date.now() - 2 * 3600 * 1000), actor: 'system', action: 'SCRAPING_ECHEC', target: 'source: fuel-prices.json', severity: 'critical' },
+  { id: 'a5', at: new Date(Date.now() - 4 * 3600 * 1000), actor: 'admin@akiprisaye.re', action: 'CHANGEMENT_ROLE', target: 'user pro@enseigne.gp → ROLE: pro', severity: 'warning', ip: '82.64.12.3' },
+  { id: 'a6', at: new Date(Date.now() - 6 * 3600 * 1000), actor: 'system', action: 'TENTATIVE_ACCES_REFUSE', target: 'route /admin — user inconnu', severity: 'critical', ip: '185.220.101.45' },
+  { id: 'a7', at: new Date(Date.now() - 8 * 3600 * 1000), actor: 'admin@akiprisaye.re', action: 'EXPORT_DONNEES', target: 'alertes-sanitaires-gp-2026-04-14.csv', severity: 'info', ip: '82.64.12.3' },
+  { id: 'a8', at: new Date(Date.now() - 24 * 3600 * 1000), actor: 'admin@akiprisaye.re', action: 'CONNEXION', target: 'session', severity: 'info', ip: '82.64.12.3' },
+];
+
+const AUDIT_ACTION_META: Record<string, { icon: React.ComponentType<{ className?: string }>; label: string }> = {
+  CONNEXION: { icon: LogIn, label: 'Connexion' },
+  SUPPRESSION_PRODUIT: { icon: Trash2, label: 'Suppression produit' },
+  VALIDATION_CONTRIBUTION: { icon: UserCheck, label: 'Validation contribution' },
+  SCRAPING_ECHEC: { icon: AlertTriangle, label: 'Échec scraping' },
+  CHANGEMENT_ROLE: { icon: KeyRound, label: 'Changement de rôle' },
+  TENTATIVE_ACCES_REFUSE: { icon: ShieldAlert, label: 'Accès refusé' },
+  EXPORT_DONNEES: { icon: CheckCircle, label: 'Export de données' },
+};
 
 interface DashboardStats {
   storesCount: number;
@@ -50,6 +85,8 @@ export default function AdminDashboard() {
   const [territoryFilter, setTerritoryFilter] = useState<string>('ALL');
   const [automationStatus, setAutomationStatus] = useState<AutomationStatus | null>(null);
   const [automationLoading, setAutomationLoading] = useState(true);
+  const [auditEntries] = useState<AuditEntry[]>(AUDIT_SEED);
+  const [auditFilter, setAuditFilter] = useState<AuditSeverity | 'all'>('all');
   const lastUpdated = new Intl.DateTimeFormat('fr-FR', {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -625,6 +662,74 @@ export default function AdminDashboard() {
           </div>
         </GlassCard>
       </div>
+
+      {/* Security Audit Log */}
+      <GlassCard className="border-slate-400/20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
+              Journal d&apos;audit sécurité
+            </h2>
+          </div>
+          <div className="flex gap-1.5 flex-wrap">
+            {(['all', 'info', 'warning', 'critical'] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setAuditFilter(f)}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
+                  auditFilter === f
+                    ? f === 'critical'
+                      ? 'bg-red-500/30 border-red-400/50 text-red-200'
+                      : f === 'warning'
+                        ? 'bg-amber-500/30 border-amber-400/50 text-amber-200'
+                        : 'bg-slate-600/60 border-slate-400/50 text-slate-100'
+                    : 'bg-transparent border-white/10 text-slate-400 hover:border-white/20'
+                }`}
+              >
+                {f === 'all' ? 'Tous' : f === 'critical' ? '🔴 Critique' : f === 'warning' ? '🟡 Attention' : 'ℹ️ Info'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-2" aria-label="Journal d'audit sécurité">
+          {auditEntries
+            .filter((e) => auditFilter === 'all' || e.severity === auditFilter)
+            .map((entry) => {
+              const meta = AUDIT_ACTION_META[entry.action] ?? { icon: ShieldAlert, label: entry.action };
+              const IconComp = meta.icon;
+              const severityClass =
+                entry.severity === 'critical'
+                  ? 'border-red-500/30 bg-red-500/10 text-red-300'
+                  : entry.severity === 'warning'
+                    ? 'border-amber-500/30 bg-amber-500/10 text-amber-300'
+                    : 'border-white/10 bg-white/5 text-slate-400';
+              return (
+                <div
+                  key={entry.id}
+                  className={`flex items-start gap-3 p-3 rounded-xl border ${severityClass}`}
+                >
+                  <IconComp className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                      <span className="text-xs font-semibold text-slate-200">{meta.label}</span>
+                      <span className="text-xs text-slate-400 truncate">{entry.target}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-x-3 mt-1 text-xs text-slate-500">
+                      <span>{entry.actor}</span>
+                      {entry.ip && <span>IP {entry.ip}</span>}
+                      <span>{new Intl.DateTimeFormat('fr-FR', { timeStyle: 'short', dateStyle: 'short' }).format(entry.at)}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          {auditEntries.filter((e) => auditFilter === 'all' || e.severity === auditFilter).length === 0 && (
+            <p className="text-sm text-slate-500 py-4 text-center">Aucun événement pour ce filtre.</p>
+          )}
+        </div>
+      </GlassCard>
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-24 sm:pb-0">
