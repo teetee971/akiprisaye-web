@@ -33,6 +33,20 @@ export default function RecherchePrix() {
   const [receiptAnalysis, setReceiptAnalysis] = useState<ReceiptAnalysisResult | null>(null);
   const [showQuickScan, setShowQuickScan] = useState(false);
   
+  // Auto-redirect to results page if a query or barcode is provided in URL params
+  useEffect(() => {
+    const q = searchParams.get('q');
+    const ean = searchParams.get('ean');
+    if (q) {
+      navigate(`/recherche-produits?q=${encodeURIComponent(q)}`, { replace: true });
+      return;
+    }
+    if (ean) {
+      navigate(`/recherche-produits?ean=${encodeURIComponent(ean)}`, { replace: true });
+      return;
+    }
+  }, [searchParams, navigate]);
+
   // Check for source parameter (e.g., ?source=ticket)
   useEffect(() => {
     const source = searchParams.get('source');
