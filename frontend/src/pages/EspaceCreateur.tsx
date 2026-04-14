@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
-import { BarChart3, Bell, BrainCircuit, Building2, Clock3, Crown, RefreshCw, Wrench, Users, Key } from 'lucide-react';
+import { Building2, Clock3, Crown, Key, RefreshCw, Wrench } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { getDailyStats } from '../utils/priceClickTracker';
 import { generateDailyPost, getGhostwriterHistory, saveGhostwriterPost } from '../services/ghostwriterService';
@@ -9,6 +9,20 @@ import type { GhostwriterHistoryEntry } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
 import type { InterestStats, TerritoryInterestStat, TerritoryStats } from '../hooks/useVisitorStats';
+import CreatorSkeleton from '../components/creator/CreatorSkeleton';
+
+const CreatorAudiencePanel = lazy(
+  () => import('../components/creator/CreatorAudiencePanel'),
+);
+const CreatorRevenuePanel = lazy(
+  () => import('../components/creator/CreatorRevenuePanel'),
+);
+const CreatorAdminTools = lazy(
+  () => import('../components/creator/CreatorAdminTools'),
+);
+const CreatorActivationGuide = lazy(
+  () => import('../components/creator/CreatorActivationGuide'),
+);
 
 const radarStyle = `
 @keyframes radarPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
@@ -75,6 +89,16 @@ const EspaceCreateur: React.FC = () => {
       payoutProgress: (monthlyRevenue / 100) * 100,
     };
   }, [weeklyStats, monthlyStats]);
+
+  // Most dormant territory — lowest live online count; available for growth-ops recommendations
+  const mostDormantTerritory = useMemo(
+    () =>
+      byTerritory.length > 0
+        ? [...byTerritory].sort((a, b) => a.online - b.online)[0]
+        : undefined,
+    [byTerritory],
+  );
+  void mostDormantTerritory;
 
   const ghostwriterRevenueTrend =
     typeof window !== 'undefined'
@@ -193,193 +217,35 @@ const EspaceCreateur: React.FC = () => {
         </div>
       </header>
 
-      <section className="mb-8 rounded-3xl border border-violet-500/30 bg-slate-900/50 p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold flex items-center gap-2">
-            <BrainCircuit className="text-violet-400" /> Ghostwriter Social
-          </h2>
-          <button
-            type="button"
-            onClick={handleCopyGhostwriterPost}
-            className="text-xs bg-violet-600 px-3 py-2 rounded-lg font-bold hover:bg-violet-500 transition"
-          >
-            {ghostwriterCopied ? 'Copié !' : 'Copier le texte'}
-          </button>
-        </div>
-        <div className="whitespace-pre-wrap font-sans text-sm text-slate-300 bg-slate-950 p-5 rounded-xl border border-slate-800 leading-relaxed">
-          {ghostwriterPost}
-        </div>
-        {audienceBriefing && (
-          <p className="mt-3 text-xs text-violet-300/70 italic border-t border-slate-800 pt-3">
-            💡 {audienceBriefing}
-          </p>
-        )}
-      </section>
+      <Suspense fallback={<CreatorSkeleton />}>
+        <CreatorAudiencePanel
+          ghostwriterPost={ghostwriterPost}
+          audienceBriefing={audienceBriefing}
+          ghostwriterCopied={ghostwriterCopied}
+          onCopy={handleCopyGhostwriterPost}
+          postHistory={postHistory}
+        />
+      </Suspense>
 
-      {postHistory.length > 0 && (
-        <section className="mb-8 rounded-3xl border border-slate-700/40 bg-slate-900/30 p-6">
-          <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Clock3 size={14} /> Historique posts ({postHistory.length})
-          </h2>
-          <div className="space-y-3">
-            {postHistory.map((entry) => (
-              <details key={entry.id} className="group bg-slate-950/70 rounded-xl border border-slate-800 overflow-hidden">
-                <summary className="flex items-center justify-between px-4 py-3 cursor-pointer list-none select-none hover:bg-slate-900/50 transition">
-                  <span className="text-xs text-slate-400">
-                    {new Date(entry.generatedAt).toLocaleString('fr-FR', {
-                      weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
-                    })}
-                  </span>
-                  <span className="text-[10px] text-slate-500 font-mono truncate max-w-[60%] text-right">
-                    {entry.post.split('\n')[0]}
-                  </span>
-                </summary>
-                <div className="px-4 pb-4 pt-2 border-t border-slate-800">
-                  <pre className="whitespace-pre-wrap text-xs text-slate-300 leading-relaxed mb-3">{entry.post}</pre>
-                  {entry.briefing && (
-                    <p className="text-[11px] text-violet-300/60 italic mb-3">💡 {entry.briefing}</p>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => { void navigator.clipboard.writeText(entry.post); }}
-                    className="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded-lg transition"
-                  >
-                    Copier
-                  </button>
-                </div>
-              </details>
-            ))}
-          </div>
-        </section>
-      )}
+      <Suspense fallback={<CreatorSkeleton />}>
+        <CreatorRevenuePanel
+          analytics={analytics}
+          totalOnline={totalOnline}
+          weeklyStats={weeklyStats}
+        />
+      </Suspense>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <article className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-md">
-          <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Revenu 7j</p>
-          <p className="text-3xl font-black text-emerald-400 mt-2">{analytics.weeklyRevenue.toFixed(2)} €</p>
-        </article>
-        <article className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-md">
-          <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">CTR mensuel</p>
-          <p className="text-3xl font-black text-amber-400 mt-2">{(analytics.monthlyCtr * 100).toFixed(2)}%</p>
-        </article>
-        <article className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-md">
-          <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Audience live</p>
-          <p className="text-3xl font-black text-fuchsia-400 mt-2">{totalOnline}</p>
-        </article>
-        <article className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-md">
-          <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Paiement estimé</p>
-          <p className="text-3xl font-black text-slate-100 mt-2">{analytics.monthlyRevenue.toFixed(2)} €</p>
-          <div className="w-full bg-slate-800 rounded-full h-1.5 mt-4">
-            <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${Math.min(100, analytics.payoutProgress)}%` }} />
-          </div>
-        </article>
-      </section>
+      <Suspense fallback={<CreatorSkeleton />}>
+        <CreatorAdminTools isAdmin={isAdmin} />
+      </Suspense>
 
-      <section className="order-2 md:order-1 mb-8 bg-slate-900 border border-slate-800 p-6 rounded-3xl">
-        <div className="flex justify-between items-end mb-6">
-          <div>
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              <BarChart3 className="text-emerald-400" /> Trackers d'engagement CPC
-            </h2>
-            <p className="text-sm text-slate-400 mt-1">Gains sur les 30 derniers jours : <strong className="text-white">{analytics.monthlyRevenue.toFixed(2)} €</strong></p>
-          </div>
-        </div>
-        
-        <div className="space-y-3">
-          {weeklyStats.slice().reverse().map((stat) => (
-            <div key={stat.date} className="flex items-center justify-between bg-slate-950 p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition">
-              <p className="text-sm font-bold text-slate-300 w-24">
-                {new Date(stat.date).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric' })}
-              </p>
-              <div className="flex gap-4 text-xs text-slate-500">
-                <span className="w-16 text-right">{stat.views} vues</span>
-                <span className="w-16 text-right">{stat.clicks} clics</span>
-              </div>
-              <p className="text-lg font-black text-emerald-400 w-20 text-right">{stat.estimatedRevenue.toFixed(2)} €</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="order-1 md:order-2 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <h2 className="sr-only">Outils d'administration</h2>
-        {isAdmin ? (
-          <>
-            <Link to="/admin" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-              <BarChart3 className="text-blue-400" size={24} />
-              <span className="font-bold">Admin Global</span>
-            </Link>
-            <Link to="/admin/stores" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-              <Building2 className="text-emerald-400" size={24} />
-              <span className="font-bold">Enseignes</span>
-            </Link>
-            <Link to="/admin/calculs-batiment" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-              <Wrench className="text-amber-400" size={24} />
-              <span className="font-bold">Calculs BTP</span>
-            </Link>
-            <Link to="/admin/users" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-              <Users className="text-purple-400" size={24} />
-              <span className="font-bold">Utilisateurs</span>
-            </Link>
-          </>
-        ) : (
-          <>
-            <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col gap-2 shadow-sm opacity-80">
-              <div className="flex gap-4 items-center">
-                <BarChart3 className="text-blue-400" size={24} />
-                <span className="font-bold">Admin Global</span>
-              </div>
-              <p className="text-xs text-amber-300">Admin requis</p>
-            </div>
-            <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col gap-2 shadow-sm opacity-80">
-              <div className="flex gap-4 items-center">
-                <Building2 className="text-emerald-400" size={24} />
-                <span className="font-bold">Enseignes</span>
-              </div>
-              <p className="text-xs text-amber-300">Admin requis</p>
-            </div>
-            <div className="bg-slate-900/80 border border-slate-800 p-5 rounded-2xl flex flex-col gap-2 shadow-sm opacity-80">
-              <div className="flex gap-4 items-center">
-                <Wrench className="text-amber-400" size={24} />
-                <span className="font-bold">Calculs BTP</span>
-              </div>
-              <p className="text-xs text-amber-300">Admin requis</p>
-            </div>
-            <Link to="/mon-compte" className="bg-slate-900 border border-slate-800 p-5 rounded-2xl flex gap-4 items-center hover:bg-slate-800 transition shadow-sm">
-              <Users className="text-purple-400" size={24} />
-              <span className="font-bold">Mon compte créateur</span>
-            </Link>
-          </>
-        )}
-      </section>
-
-      <section className="bg-emerald-950/20 border border-emerald-500/20 p-6 rounded-3xl mb-8">
-        <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold flex items-center gap-2 text-emerald-400"><Bell size={18} /> Alertes Predator</h3>
-            <button onClick={() => { void handleScan(); }} disabled={predatorScanning} className="text-xs bg-emerald-700 px-3 py-1 rounded-lg flex items-center gap-1 disabled:opacity-50">
-                <RefreshCw size={12} className={predatorScanning ? 'animate-spin' : ''} /> {predatorScanning ? 'Scan...' : 'Scanner'}
-            </button>
-        </div>
-
-        <div className="space-y-3">
-          {predatorAlerts.length === 0 && (
-            <p className="text-sm text-slate-500 text-center py-6 border border-dashed border-slate-800 rounded-xl">Aucune alerte critique détectée sur le marché.</p>
-          )}
-          {predatorAlerts.map((alert) => (
-            <div key={alert.id} className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`inline-block text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${alert.severity === 'high' ? 'bg-red-600 text-white' : 'bg-amber-500 text-slate-900'}`}
-                >
-                  {alert.severity}
-                </span>
-                <p className="text-sm font-bold text-white">{alert.targetName}</p>
-              </div>
-              <p className="text-xs text-slate-400">{alert.message}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <Suspense fallback={<CreatorSkeleton />}>
+        <CreatorActivationGuide
+          predatorAlerts={predatorAlerts}
+          predatorScanning={predatorScanning}
+          onScan={handleScan}
+        />
+      </Suspense>
 
       <div className="flex justify-center gap-8 mt-4 pt-6 border-t border-slate-800/50 pb-8">
         <Link

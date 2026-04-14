@@ -210,3 +210,40 @@ jobs:
           path: frontend/.lighthouseci/lighthouse-scores.json
           retention-days: 90
           if-no-files-found: warn
+
+  audit-head:
+    needs: [deploy, validate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Resolve audit target URL
+        id: resolve_url
+        run: |
+          AUDIT_TARGET="${{ needs.deploy.outputs.deployment_url }}"
+          if [ -z "$AUDIT_TARGET" ]; then
+            AUDIT_TARGET="${{ env.DEFAULT_PREVIEW_URL }}"
+          fi
+          echo "audit_url=$AUDIT_TARGET" >> "$GITHUB_OUTPUT"
+
+      - name: Run audit:head
+        working-directory: frontend
+        run: node scripts/audit-head.mjs "${{ steps.resolve_url.outputs.audit_url }}"
+        continue-on-error: true
+
+      - name: Upload audit-head report
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-head-report
+          path: frontend/audit-head-report.json
+          if-no-files-found: ignore
+          retention-days: 30
