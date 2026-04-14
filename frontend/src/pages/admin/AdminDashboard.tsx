@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Store, Package, DollarSign, MapPin } from 'lucide-react';
+import { Store, Package, DollarSign, MapPin, Bot, Activity, Zap, ShieldCheck, Bell, ExternalLink, RefreshCw, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../../components/ui/glass-card';
 import { getStores } from '@/services/admin/storeAdminService';
@@ -12,6 +12,10 @@ import { getProducts } from '@/services/admin/productAdminService';
 import { getPendingContributions } from '@/services/contributionService';
 import { getAdminDashboardOverview } from '@/services/admin/adminDashboardService';
 import { activateIncidentMode, clearIncidentMode } from '@/services/incidentMode';
+import {
+  getAutomationStatus,
+  type AutomationStatus,
+} from '@/services/admin/automationStatusService';
 
 interface DashboardStats {
   storesCount: number;
@@ -44,6 +48,8 @@ export default function AdminDashboard() {
   const [activityFilter, setActivityFilter] = useState<'all' | RecentActivity['type']>('all');
   const [periodFilter, setPeriodFilter] = useState<'24h' | '7d' | '30d'>('7d');
   const [territoryFilter, setTerritoryFilter] = useState<string>('ALL');
+  const [automationStatus, setAutomationStatus] = useState<AutomationStatus | null>(null);
+  const [automationLoading, setAutomationLoading] = useState(true);
   const lastUpdated = new Intl.DateTimeFormat('fr-FR', {
     dateStyle: 'medium',
     timeStyle: 'short',
@@ -51,6 +57,10 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     loadDashboardData(true);
+    // Load automation status in parallel
+    getAutomationStatus()
+      .then(setAutomationStatus)
+      .finally(() => setAutomationLoading(false));
   }, []);
 
   const loadDashboardData = async (withPageLoader = false): Promise<void> => {
@@ -271,7 +281,11 @@ export default function AdminDashboard() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
+    setAutomationLoading(true);
     await loadDashboardData();
+    getAutomationStatus()
+      .then(setAutomationStatus)
+      .finally(() => setAutomationLoading(false));
   };
 
   if (loading) {
@@ -306,6 +320,127 @@ export default function AdminDashboard() {
           </button>
         </div>
       </div>
+
+      {/* Automation Status Widget */}
+      <GlassCard className="border-indigo-500/30">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Bot className="w-5 h-5 text-indigo-400" />
+            <h2 className="text-lg font-semibold text-slate-100">Automatisation — État live</h2>
+            {automationLoading && (
+              <RefreshCw className="w-3.5 h-3.5 text-slate-400 animate-spin" />
+            )}
+          </div>
+          <Link
+            to="/admin/automation"
+            className="flex items-center gap-1.5 text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            Tableau de bord complet
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {/* Scrapers */}
+          <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-3">
+            <Activity className={`w-7 h-7 shrink-0 ${
+              !automationStatus
+                ? 'text-slate-500'
+                : automationStatus.scraping.staleness === 'stale'
+                  ? 'text-red-400'
+                  : automationStatus.scraping.staleness === 'fresh'
+                    ? 'text-emerald-400'
+                    : 'text-yellow-400'
+            }`} />
+            <div>
+              <p className="text-lg font-bold text-white leading-none">
+                {automationLoading
+                  ? '…'
+                  : `${automationStatus?.scraping.sources.filter((s) => s.ok).length ?? 0}/${automationStatus?.scraping.sources.length ?? 0}`}
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">Sources OK</p>
+            </div>
+          </div>
+
+          {/* Workflows */}
+          <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-3">
+            <Zap className="w-7 h-7 shrink-0 text-yellow-400" />
+            <div>
+              <p className="text-lg font-bold text-white leading-none">
+                {automationLoading
+                  ? '…'
+                  : (() => {
+                      const runs = automationStatus?.workflows ?? [];
+                      const ok = runs.filter((w) => w.conclusion === 'success').length;
+                      return `${ok}/${runs.length}`;
+                    })()}
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">Workflows OK</p>
+            </div>
+          </div>
+
+          {/* Moderation pending */}
+          <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-3">
+            <ShieldCheck className={`w-7 h-7 shrink-0 ${
+              (automationStatus?.moderation.pending ?? 0) > 0 ? 'text-orange-400' : 'text-emerald-400'
+            }`} />
+            <div>
+              <p className="text-lg font-bold text-white leading-none">
+                {automationLoading ? '…' : automationStatus?.moderation.pending ?? 0}
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">En attente</p>
+            </div>
+          </div>
+
+          {/* Alerts 24h */}
+          <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-3">
+            <Bell className="w-7 h-7 shrink-0 text-purple-400" />
+            <div>
+              <p className="text-lg font-bold text-white leading-none">
+                {automationLoading ? '…' : automationStatus?.alerts.triggeredLast24h ?? 0}
+              </p>
+              <p className="text-xs text-slate-400 mt-0.5">Alertes / 24h</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Last workflow runs summary */}
+        {!automationLoading && automationStatus && automationStatus.workflows.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {automationStatus.workflows.slice(0, 5).map((run) => {
+              const isOk = run.conclusion === 'success';
+              const isRunning = run.status === 'in_progress';
+              const isFail = run.conclusion === 'failure';
+              return (
+                <a
+                  key={run.id}
+                  href={run.htmlUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs border transition-colors ${
+                    isRunning
+                      ? 'bg-blue-500/15 border-blue-400/30 text-blue-300'
+                      : isOk
+                        ? 'bg-emerald-500/15 border-emerald-400/30 text-emerald-300'
+                        : isFail
+                          ? 'bg-red-500/15 border-red-400/30 text-red-300'
+                          : 'bg-slate-700/40 border-slate-600/30 text-slate-400'
+                  }`}
+                >
+                  {isRunning
+                    ? <RefreshCw className="w-3 h-3 animate-spin" />
+                    : isOk
+                      ? <CheckCircle className="w-3 h-3" />
+                      : isFail
+                        ? <XCircle className="w-3 h-3" />
+                        : <Clock className="w-3 h-3" />}
+                  {run.name}
+                </a>
+              );
+            })}
+          </div>
+        )}
+      </GlassCard>
 
       {/* Alert Priority */}
       <GlassCard className="border-red-400/30">
