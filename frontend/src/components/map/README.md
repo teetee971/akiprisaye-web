@@ -134,7 +134,7 @@ Custom styles in `map.css`:
 ## Dependencies
 
 - `leaflet` ^1.9.4
-- `react-leaflet` ^4.2.1
+- `react-leaflet` ^5.0.0
 - `leaflet.markercluster` ^1.5.3
 - `@types/leaflet` ^1.9.21
 

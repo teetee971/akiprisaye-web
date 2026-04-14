@@ -30,26 +30,26 @@ export default function TerritoryKeyIndicators({ territory }: Props) {
       </div>
 
       <Block title="Produits les plus chers">
-        {data.topIncreases.map((p, i) => (
-          <Line key={i} label={p.productName ?? 'Produit'} value={`${p.price.toFixed(2)} €`} />
+        {data.topIncreases.map((p) => (
+          <Line key={`${p.productName ?? 'Produit'}_${p.price}`} label={p.productName ?? 'Produit'} value={`${p.price.toFixed(2)} €`} />
         ))}
       </Block>
 
       <Block title="Produits les moins chers">
-        {data.topDecreases.map((p, i) => (
-          <Line key={i} label={p.productName ?? 'Produit'} value={`${p.price.toFixed(2)} €`} />
+        {data.topDecreases.map((p) => (
+          <Line key={`${p.productName ?? 'Produit'}_${p.price}`} label={p.productName ?? 'Produit'} value={`${p.price.toFixed(2)} €`} />
         ))}
       </Block>
 
       <Block title="Enseignes les moins chères">
-        {data.cheapestStores.map((s, i) => (
-          <Line key={i} label={s.store} value={`${s.avgPrice.toFixed(2)} €`} />
+        {data.cheapestStores.map((s) => (
+          <Line key={s.store} label={s.store} value={`${s.avgPrice.toFixed(2)} €`} />
         ))}
       </Block>
 
       <Block title="Enseignes les plus chères">
-        {data.mostExpensiveStores.map((s, i) => (
-          <Line key={i} label={s.store} value={`${s.avgPrice.toFixed(2)} €`} />
+        {data.mostExpensiveStores.map((s) => (
+          <Line key={s.store} label={s.store} value={`${s.avgPrice.toFixed(2)} €`} />
         ))}
       </Block>
     </section>

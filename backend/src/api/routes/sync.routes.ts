@@ -1,21 +1,37 @@
 /**
  * Sync Routes
- * 
- * API endpoints for synchronization management
- * 
- * TODO: Add authentication middleware before production deployment
- * These endpoints trigger external API calls and should be restricted to:
- * - Admin users only (JWT + RBAC)
- * - Rate limited per user
- * See existing auth middleware pattern in backend/src/api/middlewares/auth.middleware.ts
+ *
+ * API endpoints for synchronization management.
+ * All routes require a valid JWT with the ADMIN permission.
  */
 
 import { Router, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import prisma from '../../database/prisma.js';
 import { syncOrchestrator } from '../../services/sync/syncOrchestrator.js';
 import { syncScheduler } from '../../services/scheduler/syncScheduler.js';
+import {
+  unifiedAuthMiddleware,
+  requirePermission,
+} from '../middlewares/apiAuth.middleware.js';
+import { ApiPermission } from '@prisma/client';
 
 const router = Router();
+
+const syncTriggerRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // limit manual sync triggers per admin client per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    error: 'Too many sync trigger requests, please try again later.',
+  },
+});
+
+// All sync routes are admin-only
+router.use(syncTriggerRateLimiter);
+router.use(unifiedAuthMiddleware, requirePermission(ApiPermission.ADMIN));
 
 /**
  * POST /api/sync/openfoodfacts/trigger

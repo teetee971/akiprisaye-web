@@ -292,7 +292,36 @@ async function main() {
   console.log(`\n🎉 Briefing "${doc.titre}" publié pour le ${dateLabel}`);
 }
 
+function isOpenAIQuotaError(err) {
+  if (!err || typeof err !== 'object') return false;
+
+  const msg = String(err.message ?? '').toLowerCase();
+  const code = String(err.code ?? '').toLowerCase();
+  const type = String(err.type ?? err.error?.type ?? '').toLowerCase();
+  const name = String(err.name ?? '').toLowerCase();
+  const status = err.status ?? err.response?.status;
+
+  if (status !== 429) return false;
+
+  return (
+    code === 'rate_limit_exceeded' ||
+    type.includes('rate_limit') ||
+    name.includes('openai') ||
+    msg.includes('openai') ||
+    msg.includes('rate limit') ||
+    msg.includes('too many requests') ||
+    msg.includes('insufficient_quota')
+  );
+}
+
 main().catch((err) => {
-  console.error('❌ Erreur fatale :', err.message);
+  const msg = err?.message ?? '';
+  // 429 OpenAI uniquement = quota/rate limit dépassé — pas une erreur du code, sortie propre
+  if (isOpenAIQuotaError(err)) {
+    console.warn('⚠️  Quota OpenAI dépassé — génération ignorée ce cycle :', msg);
+    process.exit(0);
+  }
+  console.error('❌ Erreur fatale :', msg);
+  console.error(err?.stack ?? err);
   process.exit(1);
 });

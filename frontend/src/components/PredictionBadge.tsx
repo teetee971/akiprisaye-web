@@ -40,14 +40,13 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
 
   return (
     <div className="relative inline-block">
-      <span
+      <button
+        type="button"
         className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${config.bgColor} ${config.textColor} cursor-help`}
-        role="button"
         onMouseEnter={() => setTooltipVisible(true)}
         onMouseLeave={() => setTooltipVisible(false)}
         onFocus={() => setTooltipVisible(true)}
         onBlur={() => setTooltipVisible(false)}
-        tabIndex={0}
         aria-label={`${config.label} - Probabilité: ${prediction.probability}%`}
       >
         <span aria-hidden="true">{config.icon}</span>
@@ -55,7 +54,7 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
         <span className="ml-1 text-[10px] opacity-80">
           {prediction.probability}%
         </span>
-      </span>
+      </button>
 
       {showTooltip && tooltipVisible && (
         <div

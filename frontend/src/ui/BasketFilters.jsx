@@ -179,6 +179,7 @@ export default function BasketFilters({ filters, onFilterChange }) {
       {/* Reset Button */}
       <div className="mt-4 pt-4 border-t border-slate-700">
         <button
+          type="button"
           onClick={() => onFilterChange({ 
             selectedTerritories: [territories[0]?.code], 
             territory: undefined,

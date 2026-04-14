@@ -35,35 +35,9 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
     e.stopPropagation();
     onValidate?.(product.id, isValid);
   };
-  
-  return (
-    <div
-      className="product-card"
-      role="button"
-      tabIndex={onClick ? 0 : undefined}
-      onClick={onClick}
-      onKeyDown={(e) => { if (onClick && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onClick(); } }}
-      style={{
-        background: '#1e293b',
-        border: '1px solid #334155',
-        borderRadius: '12px',
-        padding: '12px',
-        cursor: onClick ? 'pointer' : 'default',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-      }}
-      onMouseEnter={(e) => {
-        if (onClick) {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (onClick) {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = 'none';
-        }
-      }}
-    >
+
+  const cardContent = (
+    <>
       {/* Photo */}
       {mainPhoto ? (
         <div style={{
@@ -257,6 +231,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
               marginTop: '8px'
             }}>
               <button
+                type="button"
                 onClick={(e) => handleValidation(e, true)}
                 style={{
                   flex: 1,
@@ -276,6 +251,7 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
                 👍 Prix correct
               </button>
               <button
+                type="button"
                 onClick={(e) => handleValidation(e, false)}
                 style={{
                   flex: 1,
@@ -298,6 +274,44 @@ export function ProductCard({ product, onClick, onValidate, anomalies }: Product
           )}
         </div>
       </div>
+    </>
+  );
+
+  const cardStyle = {
+    background: '#1e293b',
+    border: '1px solid #334155',
+    borderRadius: '12px',
+    padding: '12px',
+  };
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className="product-card w-full text-left"
+        onClick={onClick}
+        style={{
+          ...cardStyle,
+          cursor: 'pointer',
+          transition: 'transform 0.2s, box-shadow 0.2s',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+      >
+        {cardContent}
+      </button>
+    );
+  }
+
+  return (
+    <div className="product-card" style={{ ...cardStyle, cursor: 'default' }}>
+      {cardContent}
     </div>
   );
 }
