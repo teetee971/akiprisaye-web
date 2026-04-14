@@ -1,7 +1,7 @@
  
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import FavoritesPanel from '../components/search/FavoritesPanel';
 import SearchHistoryPanel from '../components/search/SearchHistoryPanel';
 import { useFavorites, type FavoriteItem } from '../hooks/useFavorites';
@@ -333,6 +333,7 @@ export function PriceResults({
     : result.productName || 'Produit favori';
   const favoriteActive = isFavorite(favoriteId);
   const [productCard, setProductCard] = useState<ProductCard | null>(null);
+  const [textProductImageUrl, setTextProductImageUrl] = useState<string | null>(null);
 
   // Seed from pre-loaded observations (from seedProvider / priceSearch); API call supplements
   const [apiPrices, setApiPrices] = useState<ApiPriceObservation[]>(
@@ -346,50 +347,73 @@ export function PriceResults({
     }
 
     const barcode = searchBarcode?.trim();
-    if (!barcode) {
-      setProductCard(null);
-      return;
-    }
-
     const controller = new AbortController();
     const territory = (result.territory ?? 'gp').trim();
 
-    const loadProductCard = async () => {
-      try {
-        const response = await fetch(`/api/product?barcode=${encodeURIComponent(barcode)}`, {
-          signal: controller.signal,
-        });
-        if (!response.ok) {
+    if (barcode) {
+      // Barcode search: load full product card + prices from API
+      setTextProductImageUrl(null);
+
+      const loadProductCard = async () => {
+        try {
+          const response = await fetch(`/api/product?barcode=${encodeURIComponent(barcode)}`, {
+            signal: controller.signal,
+          });
+          if (!response.ok) {
+            setProductCard(null);
+            return;
+          }
+          const payload = (await response.json()) as { product?: ProductCard };
+          setProductCard(payload.product ?? null);
+        } catch {
           setProductCard(null);
-          return;
         }
-        const payload = (await response.json()) as { product?: ProductCard };
-        setProductCard(payload.product ?? null);
-      } catch {
-        setProductCard(null);
-      }
-    };
+      };
 
-    const loadPrices = async () => {
-      try {
-        const response = await fetch(
-          `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
-          { signal: controller.signal },
-        );
-        if (!response.ok) return;
-        const payload = (await response.json()) as ApiPricesResponse;
-        if (Array.isArray(payload.observations) && payload.observations.length > 0) {
-          // Merge API results on top of seed data (API takes priority)
-          setApiPrices(payload.observations);
+      const loadPrices = async () => {
+        try {
+          const response = await fetch(
+            `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
+            { signal: controller.signal },
+          );
+          if (!response.ok) return;
+          const payload = (await response.json()) as ApiPricesResponse;
+          if (Array.isArray(payload.observations) && payload.observations.length > 0) {
+            // Merge API results on top of seed data (API takes priority)
+            setApiPrices(payload.observations);
+          }
+        } catch {
+          // API unavailable – keep seed observations already set above
         }
-      } catch {
-        // API unavailable – keep seed observations already set above
-      }
-    };
+      };
 
-    void Promise.all([loadProductCard(), loadPrices()]);
+      void Promise.all([loadProductCard(), loadPrices()]);
+    } else {
+      // Text search: no product card, but try to fetch an image via product-image worker
+      setProductCard(null);
+      const textQuery = (searchQuery ?? result.productName ?? '').trim();
+      if (textQuery) {
+        const loadTextImage = async () => {
+          try {
+            const response = await fetch(
+              `/api/product-image?q=${encodeURIComponent(textQuery)}`,
+              { signal: controller.signal },
+            );
+            if (!response.ok) return;
+            const payload = (await response.json()) as { imageUrl?: string | null };
+            if (payload.imageUrl) {
+              setTextProductImageUrl(payload.imageUrl);
+            }
+          } catch {
+            // silently ignore — fallback image remains
+          }
+        };
+        void loadTextImage();
+      }
+    }
+
     return () => controller.abort();
-  }, [result.observations, result.territory, searchBarcode]);
+  }, [result.observations, result.territory, searchBarcode, searchQuery, result.productName]);
 
   const productTitle = productCard?.title || result.productName || 'Produit analysé';
   const productImages = productCard?.images ?? [];
@@ -579,6 +603,27 @@ export function PriceResults({
           </div>
         </div>
 
+        {/* Brand / categories metadata (only when productCard is loaded from barcode) */}
+        {(productCard?.brand || (productCard?.categories && productCard.categories.length > 0)) && (
+          <div className="flex flex-wrap gap-2 text-xs">
+            {productCard?.brand && (
+              <span className="bg-slate-800 border border-slate-700 rounded-full px-3 py-1 text-slate-300">
+                🏷️ {productCard.brand}
+              </span>
+            )}
+            {productCard?.quantity && (
+              <span className="bg-slate-800 border border-slate-700 rounded-full px-3 py-1 text-slate-300">
+                ⚖️ {productCard.quantity}
+              </span>
+            )}
+            {productCard?.categories?.slice(0, 3).map((cat) => (
+              <span key={cat} className="bg-indigo-900/40 border border-indigo-700/40 rounded-full px-3 py-1 text-indigo-300">
+                {cat}
+              </span>
+            ))}
+          </div>
+        )}
+
         {productImages.length > 0 ? (
           <div className="grid grid-cols-2 gap-2">
             {productImages.map((img) => (
@@ -596,10 +641,13 @@ export function PriceResults({
           </div>
         ) : (
           <OptimizedImage
-            src={getProductImageFallback({ productName: productTitle })}
+            src={textProductImageUrl ?? getProductImageFallback({ productName: productTitle })}
             alt={productTitle}
             className="rounded-xl object-cover w-full h-40 bg-slate-800"
             loading="lazy"
+            onError={(event) => {
+              event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+            }}
           />
         )}
 
@@ -821,15 +869,12 @@ export function PriceSearchResults({
 }
 
 export default function RechercheProduits() {
-  const params = useMemo(
-    () => new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search),
-    [],
-  );
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
   const { favorites, removeFavorite } = useFavorites();
-  const [query, setQuery] = useState(params.get('q') ?? '');
-  const [barcode, setBarcode] = useState(params.get('ean') ?? '');
+  const [query, setQuery] = useState(searchParams.get('q') ?? '');
+  const [barcode, setBarcode] = useState(searchParams.get('ean') ?? '');
   const [territory, setTerritory] = useState<TerritoryCode>(
     () => (getPreferredTerritory() as TerritoryCode) ?? 'gp'
   );
@@ -851,6 +896,22 @@ export default function RechercheProduits() {
     setToastMessage(message);
     window.setTimeout(() => setToastMessage(null), 1400);
   }, []);
+
+  // React to URL changes driven by SPA navigation (e.g. GlobalSearch → /recherche-produits?q=lait)
+  const prevSearchParamsKey = useRef(searchParams.toString());
+  useEffect(() => {
+    const current = searchParams.toString();
+    if (current === prevSearchParamsKey.current) return;
+    prevSearchParamsKey.current = current;
+    const newQ = searchParams.get('q') ?? '';
+    const newEan = searchParams.get('ean') ?? '';
+    setQuery(newQ);
+    setBarcode(newEan);
+    setResult(null);
+    setError(null);
+    setCachedAt(null);
+    setHasAutoSearched(false);
+  }, [searchParams]);
 
   const buildCacheKey = useCallback((input?: {
     query?: string;
