@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ShareButton from '../components/comparateur/ShareButton';
 import PaywallModal from '../components/PaywallModal';
 import { useAuth } from '../context/AuthContext';
 import { useQuota } from '../hooks/useQuota';
@@ -463,6 +464,11 @@ export default function Comparateur() {
               {sorted.length} résultat{sorted.length > 1 ? 's' : ''}
             </span>
             <Link className="text-blue-400 text-sm hover:underline" to="/historique">Voir historique</Link>
+            <ShareButton
+              title="Comparateur de prix — A KI PRI SA YÉ"
+              description="Comparez les prix des produits dans votre territoire ultramarin"
+              variant="compact"
+            />
           </div>
         </div>
         <div className="flex flex-wrap gap-2 pt-1">
