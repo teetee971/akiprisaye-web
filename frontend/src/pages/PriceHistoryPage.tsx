@@ -1,6 +1,7 @@
 /**
  * Price History Page
  * Display price evolution charts and statistics — multi-month & multi-year view.
+ * v2: CSV/PDF export + multi-product comparison overlay.
  */
 
 import { useState, useEffect, useMemo } from 'react';
@@ -25,9 +26,98 @@ import {
 import { TERRITORIES, getTerritoryLabel } from '../services/territoryNormalizationService';
 import type { PriceHistoryPoint, Timeframe } from '../types/priceHistory';
 
+// ─── Export helpers ───────────────────────────────────────────────────────────
+
+function exportHistoryCSV(trendSeries: PriceTrendSeries[], territory: string) {
+  if (trendSeries.length === 0) return;
+  const rows: string[][] = [['Territoire', 'Produit', 'Catégorie', 'Mois', 'Prix moy.', 'Prix min', 'Prix max', 'Obs.']];
+  trendSeries.forEach((ts) => {
+    ts.monthly.forEach((m) => {
+      rows.push([territory, ts.productName, ts.category, m.month, m.avgPrice.toFixed(2), m.minPrice.toFixed(2), m.maxPrice.toFixed(2), String(m.observationCount ?? '')]);
+    });
+  });
+  const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `historique-prix-${territory}-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function exportHistoryPDF(trendSeries: PriceTrendSeries[], territory: string) {
+  const { jsPDF } = await import('jspdf');
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const now = new Date();
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, 297, 28, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(14);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Historique des Prix — A KI PRI SA YÉ', 14, 11);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Territoire : ${territory} | Généré le ${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`, 14, 20);
+
+  let y = 34;
+  trendSeries.slice(0, 15).forEach((ts, tsIdx) => {
+    if (y > 170) { doc.addPage(); y = 14; }
+    doc.setFillColor(30, 58, 138);
+    doc.rect(0, y - 4, 297, 10, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${tsIdx + 1}. ${ts.productName} — ${ts.category}`, 14, y + 3);
+    y += 12;
+
+    const headers = ['Mois', 'Prix moy.', 'Min', 'Max', 'Obs.'];
+    const colX = [14, 70, 110, 150, 190];
+    doc.setFillColor(51, 65, 85);
+    doc.rect(0, y - 4, 297, 9, 'F');
+    doc.setTextColor(200, 210, 220);
+    doc.setFontSize(7);
+    headers.forEach((h, i) => doc.text(h, colX[i], y + 2));
+    y += 9;
+
+    doc.setFont('helvetica', 'normal');
+    ts.monthly.slice(-12).forEach((m, ri) => {
+      if (y > 185) { doc.addPage(); y = 14; }
+      doc.setFillColor(ri % 2 === 0 ? 15 : 22, ri % 2 === 0 ? 23 : 33, ri % 2 === 0 ? 42 : 54);
+      doc.rect(0, y - 4, 297, 8, 'F');
+      doc.setTextColor(200, 210, 220);
+      doc.text(m.month, colX[0], y + 1);
+      doc.text(`${m.avgPrice.toFixed(2)} €`, colX[1], y + 1);
+      doc.setTextColor(74, 222, 128);
+      doc.text(`${m.minPrice.toFixed(2)} €`, colX[2], y + 1);
+      doc.setTextColor(252, 165, 165);
+      doc.text(`${m.maxPrice.toFixed(2)} €`, colX[3], y + 1);
+      doc.setTextColor(200, 210, 220);
+      doc.text(String(m.observationCount ?? ''), colX[4], y + 1);
+      y += 8;
+    });
+    y += 4;
+  });
+
+  // Footer
+  const pages = doc.getNumberOfPages();
+  for (let p = 1; p <= pages; p++) {
+    doc.setPage(p);
+    doc.setFontSize(6);
+    doc.setTextColor(100, 116, 139);
+    doc.text('A KI PRI SA YÉ — Données observatoire public', 14, 205);
+    doc.text(`Page ${p}/${pages}`, 280, 205);
+  }
+
+  doc.save(`historique-prix-${territory}-${now.toISOString().slice(0, 10)}.pdf`);
+}
+
 // ─── View modes ───────────────────────────────────────────────────────────────
 
-type ViewMode = 'monthly' | 'annual' | 'per-product';
+type ViewMode = 'monthly' | 'annual' | 'per-product' | 'compare';
 
 const TIMEFRAME_MONTHS: Record<string, number> = {
   '3m': 3,
@@ -64,6 +154,9 @@ export default function PriceHistoryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  // Multi-product comparison: set of selected product keys
+  const [compareKeys, setCompareKeys] = useState<Set<string>>(new Set());
 
   // ─── Load legacy chart data ────────────────────────────────────────────────
   useEffect(() => {
@@ -133,6 +226,31 @@ export default function PriceHistoryPage() {
     setSelectedTerritory((t) => t); // trigger re-render via dependency
     setError(false);
     setLoading(true);
+  };
+
+  const handleExportCSV = () => {
+    exportHistoryCSV(trendSeries, selectedTerritory.toUpperCase());
+  };
+
+  const handleExportPDF = async () => {
+    setExporting(true);
+    try {
+      await exportHistoryPDF(trendSeries, selectedTerritory.toUpperCase());
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const toggleCompare = (productKey: string) => {
+    setCompareKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(productKey)) {
+        next.delete(productKey);
+      } else {
+        next.add(productKey);
+      }
+      return next;
+    });
   };
 
   // ─── Render helpers ───────────────────────────────────────────────────────
@@ -229,16 +347,35 @@ export default function PriceHistoryPage() {
 
             {/* View mode */}
             <div className="flex gap-1 bg-white dark:bg-slate-800 rounded-lg border border-slate-300 dark:border-slate-600 p-1">
-              {(['monthly', 'annual', 'per-product'] as ViewMode[]).map((vm) => (
+              {(['monthly', 'annual', 'per-product', 'compare'] as ViewMode[]).map((vm) => (
                 <button
                   key={vm}
                   onClick={() => setViewMode(vm)}
                   className={`px-3 py-1 rounded text-sm font-medium transition-colors ${viewMode === vm ? 'bg-blue-600 text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'}`}
                 >
-                  {vm === 'monthly' ? 'Mensuel' : vm === 'annual' ? 'Annuel' : 'Par produit'}
+                  {vm === 'monthly' ? 'Mensuel' : vm === 'annual' ? 'Annuel' : vm === 'per-product' ? 'Par produit' : '⚖️ Comparer'}
                 </button>
               ))}
             </div>
+
+            {/* Export buttons */}
+            {!loading && !error && trendSeries.length > 0 && (
+              <div className="flex gap-1 ml-auto">
+                <button
+                  onClick={handleExportCSV}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-green-600 text-green-600 dark:text-green-400 bg-white dark:bg-slate-800 hover:bg-green-50 dark:hover:bg-green-900/20 text-xs font-medium transition-colors"
+                >
+                  📥 CSV
+                </button>
+                <button
+                  onClick={handleExportPDF}
+                  disabled={exporting}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-red-600 text-red-600 dark:text-red-400 bg-white dark:bg-slate-800 hover:bg-red-50 dark:hover:bg-red-900/20 text-xs font-medium transition-colors disabled:opacity-50"
+                >
+                  {exporting ? '⏳' : '📄'} PDF
+                </button>
+              </div>
+            )}
 
             {/* Filters toggle */}
             {(categories.length > 0 || enseignes.length > 0) && (
@@ -414,6 +551,78 @@ export default function PriceHistoryPage() {
                   </table>
                 </div>
               )}
+            </div>
+          ) : viewMode === 'compare' ? (
+            // ─── Multi-product comparison ──────────────────────────────────
+            <div className="space-y-4">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+                <h2 className="font-semibold text-slate-900 dark:text-white mb-1">⚖️ Comparaison multi-produits</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                  Sélectionnez jusqu'à 5 produits pour comparer leur évolution de prix sur le même graphique.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {trendSeries.map((ts) => {
+                    const isSelected = compareKeys.has(ts.productKey);
+                    return (
+                      <button
+                        key={ts.productKey}
+                        onClick={() => toggleCompare(ts.productKey)}
+                        disabled={!isSelected && compareKeys.size >= 5}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                          isSelected
+                            ? 'bg-blue-600 border-blue-600 text-white'
+                            : compareKeys.size >= 5
+                              ? 'bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-400 cursor-not-allowed'
+                              : 'bg-white dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-blue-500'
+                        }`}
+                      >
+                        {ts.productName}
+                      </button>
+                    );
+                  })}
+                </div>
+                {compareKeys.size === 0 ? (
+                  <p className="text-sm text-slate-400 text-center py-8">Sélectionnez des produits ci-dessus pour démarrer la comparaison.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    {/* Build months union */}
+                    {(() => {
+                      const selectedSeries = trendSeries.filter((ts) => compareKeys.has(ts.productKey));
+                      const allMonths = [...new Set(selectedSeries.flatMap((ts) => ts.monthly.map((m) => m.month)))].sort();
+                      const COLORS = ['#3b82f6', '#f97316', '#22c55e', '#a855f7', '#ef4444'];
+                      return (
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="text-xs text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+                              <th className="text-left py-2 pr-3">Mois</th>
+                              {selectedSeries.map((ts, i) => (
+                                <th key={ts.productKey} className="text-right py-2 px-2" style={{ color: COLORS[i] }}>
+                                  {ts.productName.slice(0, 18)}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {allMonths.map((month, ri) => (
+                              <tr key={month} className={`border-b border-slate-100 dark:border-slate-800 ${ri % 2 === 0 ? '' : 'bg-slate-50 dark:bg-slate-900/20'}`}>
+                                <td className="py-1.5 pr-3 text-slate-600 dark:text-slate-400 font-medium">{month}</td>
+                                {selectedSeries.map((ts, i) => {
+                                  const m = ts.monthly.find((x) => x.month === month);
+                                  return (
+                                    <td key={ts.productKey} className="py-1.5 px-2 text-right font-medium" style={{ color: COLORS[i] }}>
+                                      {m ? `${m.avgPrice.toFixed(2)} €` : '—'}
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             // ─── Monthly chart (default) ───────────────────────────────────

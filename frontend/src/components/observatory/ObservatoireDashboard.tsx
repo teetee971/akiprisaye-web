@@ -1,20 +1,115 @@
  
 /**
- * Observatoire Dashboard - v3.0
- * 
+ * Observatoire Dashboard - v3.1
+ *
  * Public observatory of prices for citizens, media, and institutions
- * Read-only, aggregated data with CSV/JSON exports
- * 
+ * Read-only, aggregated data with CSV/JSON/PDF exports + automatic market alerts
+ *
  * @module ObservatoireDashboard
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../ui/glass-card';
 import { exportOpenData, getExportStatistics } from '../../services/openDataExportService';
 import type { OpenDataExportRequest } from '../../types/openData';
 import type { TerritoryCode } from '../../types/extensions';
+
+// ── PDF export helper (no external runtime dep beyond jspdf already in package.json) ──
+async function exportObservatoirePDF(
+  stats: PriceStats[],
+  territory: string,
+  exportStats: Record<string, unknown> | null,
+): Promise<void> {
+  const { jsPDF } = await import('jspdf');
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+  // Header
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, 297, 30, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Observatoire Public des Prix — A KI PRI SA YÉ', 14, 12);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Rapport généré le ${dateStr} à ${timeStr} | Territoire : ${territory === 'all' ? 'Tous' : territory}`, 14, 22);
+
+  // Stats summary bar
+  if (exportStats) {
+    doc.setFillColor(30, 41, 59);
+    doc.rect(0, 30, 297, 18, 'F');
+    doc.setTextColor(148, 163, 184);
+    doc.setFontSize(8);
+    const summaries = [
+      `Produits suivis : ${exportStats.products ?? 0}`,
+      `Prix enregistrés : ${exportStats.prices ?? 0}`,
+      `Territoires : ${(exportStats.territories as unknown[])?.length ?? 0}`,
+      `Enseignes : ${exportStats.stores ?? 0}`,
+    ];
+    summaries.forEach((s, i) => doc.text(s, 14 + i * 70, 41));
+  }
+
+  // Table header
+  const colX = [14, 45, 100, 135, 170, 205, 245];
+  const headers = ['EAN', 'Produit', 'Catégorie', 'Prix moy.', 'Min / Max', 'Évol. 30j', 'Mise à jour'];
+  doc.setFillColor(59, 130, 246);
+  doc.rect(0, 52, 297, 10, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  headers.forEach((h, i) => doc.text(h, colX[i], 59));
+
+  // Table rows
+  doc.setFont('helvetica', 'normal');
+  let y = 66;
+  const rowH = 8;
+  const maxRows = Math.min(stats.length, 60);
+  for (let i = 0; i < maxRows; i++) {
+    const item = stats[i];
+    if (y > 195) {
+      doc.addPage();
+      y = 14;
+    }
+    const rowColor = i % 2 === 0 ? [15, 23, 42] : [22, 33, 54];
+    doc.setFillColor(rowColor[0], rowColor[1], rowColor[2]);
+    doc.rect(0, y - 5, 297, rowH, 'F');
+    doc.setTextColor(200, 210, 220);
+    doc.text(item.ean?.slice(0, 13) ?? '', colX[0], y);
+    doc.text(item.productName.slice(0, 28), colX[1], y);
+    doc.text(item.category.slice(0, 18), colX[2], y);
+    doc.text(`${item.avgPrice.toFixed(2)} €`, colX[3], y);
+    doc.text(`${item.minPrice.toFixed(2)} / ${item.maxPrice.toFixed(2)} €`, colX[4], y);
+    const sign = item.priceChange30d >= 0 ? '+' : '';
+    doc.setTextColor(item.priceChange30d > 0 ? 252 : 74, item.priceChange30d > 0 ? 165 : 222, item.priceChange30d > 0 ? 165 : 128);
+    doc.text(`${sign}${item.priceChange30d.toFixed(1)}%`, colX[5], y);
+    doc.setTextColor(200, 210, 220);
+    doc.text(new Date(item.lastUpdate).toLocaleDateString('fr-FR'), colX[6], y);
+    y += rowH;
+  }
+
+  // Footer
+  doc.setFillColor(15, 23, 42);
+  const pages = doc.getNumberOfPages();
+  for (let p = 1; p <= pages; p++) {
+    doc.setPage(p);
+    doc.setFontSize(7);
+    doc.setTextColor(100, 116, 139);
+    doc.text(
+      'A KI PRI SA YÉ — Service Public Numérique | Données factuelles observées, aucune garantie',
+      14,
+      205,
+    );
+    doc.text(`Page ${p}/${pages}`, 280, 205);
+  }
+
+  doc.save(`observatoire-rapport-${now.toISOString().slice(0, 10)}.pdf`);
+}
 
 interface PriceStats {
   productName: string;
@@ -27,17 +122,43 @@ interface PriceStats {
   ean: string;
 }
 
+// Alert threshold: products with absolute 30-day change ≥ this value trigger an automatic alert
+const ALERT_THRESHOLD_PCT = 5;
+
+interface MarketAlert {
+  productName: string;
+  category: string;
+  priceChange30d: number;
+  avgPrice: number;
+  severity: 'warning' | 'critical';
+}
+
 export default function ObservatoireDashboard() {
   const [loading, setLoading] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [stats, setStats] = useState<PriceStats[]>([]);
-  const [exportStats, setExportStats] = useState<any>(null);
-  
+  const [exportStats, setExportStats] = useState<Record<string, unknown> | null>(null);
+
   // Filters
   const [selectedTerritory, setSelectedTerritory] = useState<TerritoryCode | 'all'>('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchEAN, setSearchEAN] = useState<string>('');
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
+
+  // Automatic market alerts — derived from price data
+  const marketAlerts = useMemo<MarketAlert[]>(() => {
+    return stats
+      .filter((s) => Math.abs(s.priceChange30d) >= ALERT_THRESHOLD_PCT)
+      .sort((a, b) => Math.abs(b.priceChange30d) - Math.abs(a.priceChange30d))
+      .slice(0, 10)
+      .map((s) => ({
+        productName: s.productName,
+        category: s.category,
+        priceChange30d: s.priceChange30d,
+        avgPrice: s.avgPrice,
+        severity: Math.abs(s.priceChange30d) >= 10 ? 'critical' : 'warning',
+      }));
+  }, [stats]);
 
   useEffect(() => {
     loadStatistics();
@@ -124,7 +245,20 @@ export default function ObservatoireDashboard() {
     }
   };
 
-  const handleExport = async (format: 'csv' | 'json') => {
+  const handleExport = async (format: 'csv' | 'json' | 'pdf') => {
+    if (format === 'pdf') {
+      setExporting(true);
+      try {
+        await exportObservatoirePDF(filteredStats, selectedTerritory, exportStats);
+        toast.success('Rapport PDF généré');
+      } catch (err) {
+        console.error('PDF export failed:', err);
+        toast.error('Erreur lors de la génération PDF');
+      } finally {
+        setExporting(false);
+      }
+      return;
+    }
     setExporting(true);
     try {
       const request: OpenDataExportRequest = {
@@ -179,7 +313,7 @@ export default function ObservatoireDashboard() {
             </p>
           </div>
           <div className="text-right text-sm text-gray-400">
-            <div>Version: v3.0</div>
+            <div>Version: v3.1</div>
             <div>Dernière mise à jour: {new Date().toLocaleDateString('fr-FR')}</div>
           </div>
         </div>
@@ -205,19 +339,19 @@ export default function ObservatoireDashboard() {
           <h2 className="text-xl font-semibold mb-4">📈 Statistiques globales</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-              <div className="text-2xl font-bold text-blue-400">{exportStats.products || 0}</div>
+              <div className="text-2xl font-bold text-blue-400">{(exportStats.products as number) || 0}</div>
               <div className="text-sm text-gray-400">Produits suivis</div>
             </div>
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-              <div className="text-2xl font-bold text-green-400">{exportStats.prices || 0}</div>
+              <div className="text-2xl font-bold text-green-400">{(exportStats.prices as number) || 0}</div>
               <div className="text-sm text-gray-400">Prix enregistrés</div>
             </div>
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-              <div className="text-2xl font-bold text-purple-400">{exportStats.territories?.length || 0}</div>
+              <div className="text-2xl font-bold text-purple-400">{(exportStats.territories as unknown[])?.length || 0}</div>
               <div className="text-sm text-gray-400">Territoires</div>
             </div>
             <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-              <div className="text-2xl font-bold text-yellow-400">{exportStats.stores || 0}</div>
+              <div className="text-2xl font-bold text-yellow-400">{(exportStats.stores as number) || 0}</div>
               <div className="text-sm text-gray-400">Enseignes</div>
             </div>
           </div>
@@ -298,6 +432,39 @@ export default function ObservatoireDashboard() {
         </div>
       </GlassCard>
 
+      {/* Automatic Market Alerts */}
+      {marketAlerts.length > 0 && (
+        <GlassCard>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            🚨 Alertes marchés automatiques
+            <span className="text-sm font-normal text-gray-400">(variations ≥ {ALERT_THRESHOLD_PCT}% sur 30 jours)</span>
+          </h2>
+          <div className="space-y-2">
+            {marketAlerts.map((alert, idx) => (
+              <div
+                key={idx}
+                className={`flex items-center justify-between p-3 rounded-lg border ${
+                  alert.severity === 'critical'
+                    ? 'bg-red-900/20 border-red-500/40'
+                    : 'bg-yellow-900/20 border-yellow-500/40'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">{alert.severity === 'critical' ? '🔴' : '🟡'}</span>
+                  <div>
+                    <div className="font-medium text-sm">{alert.productName}</div>
+                    <div className="text-xs text-gray-400">{alert.category} · Prix moy. {alert.avgPrice.toFixed(2)} €</div>
+                  </div>
+                </div>
+                <div className={`font-bold text-lg ${alert.priceChange30d > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                  {alert.priceChange30d > 0 ? '+' : ''}{alert.priceChange30d.toFixed(1)}%
+                </div>
+              </div>
+            ))}
+          </div>
+        </GlassCard>
+      )}
+
       {/* Price Table */}
       <GlassCard>
         <div className="flex items-center justify-between mb-4">
@@ -316,6 +483,13 @@ export default function ObservatoireDashboard() {
               className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-sm font-medium transition-colors"
             >
               {exporting ? 'Export...' : '📥 Export JSON'}
+            </button>
+            <button
+              onClick={() => handleExport('pdf')}
+              disabled={exporting}
+              className="px-4 py-2 bg-red-700 hover:bg-red-600 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-sm font-medium transition-colors"
+            >
+              {exporting ? 'Génération...' : '📄 Rapport PDF'}
             </button>
           </div>
         </div>

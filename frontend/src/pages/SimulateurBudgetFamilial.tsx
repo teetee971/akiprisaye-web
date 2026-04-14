@@ -17,6 +17,136 @@ import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 import { SEOHead } from '../components/ui/SEOHead';
+
+// ─── PDF export helper ───────────────────────────────────────────────────────────
+
+async function exportBudgetPDF(params: {
+  terr: { flag: string; label: string; code: string };
+  adultes: number;
+  enfants: number;
+  revenuNet: number;
+  budget: {
+    loyer: number; alimentation: number; carburant: number; assurances: number;
+    telecom: number; energieFact: number; scolarite: number; allocs: number;
+    totalCharges: number; revenuTotal: number; resteVivre: number; tauxContrainte: number; resteFR: number;
+  };
+  chargeItems: { label: string; value: number; src: string }[];
+}) {
+  const { jsPDF } = await import('jspdf');
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const now = new Date();
+  const { terr, adultes, enfants, revenuNet, budget, chargeItems } = params;
+
+  // Header
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, 210, 32, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(15);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Simulateur Budget Familial — A KI PRI SA YÉ', 14, 13);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Généré le ${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`, 14, 22);
+  doc.text(`${terr.flag} ${terr.label} · ${adultes} adulte${adultes > 1 ? 's' : ''} · ${enfants} enfant${enfants !== 1 ? 's' : ''} · Revenu net : ${revenuNet.toLocaleString('fr-FR')} €/mois`, 14, 29);
+
+  // Summary cards
+  let y = 42;
+  const cardW = 85;
+  const resteColor: [number, number, number] = budget.resteVivre < 0 ? [239, 68, 68] : budget.resteVivre < 300 ? [249, 115, 22] : [34, 197, 94];
+  doc.setFillColor(30, 41, 59);
+  doc.rect(14, y, cardW, 28, 'F');
+  doc.setTextColor(100, 116, 139);
+  doc.setFontSize(8);
+  doc.text('Reste pour vivre / mois', 18, y + 8);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...resteColor);
+  doc.text(`${budget.resteVivre < 0 ? '−' : ''}${Math.abs(budget.resteVivre).toLocaleString('fr-FR')} €`, 18, y + 20);
+
+  doc.setFillColor(30, 41, 59);
+  doc.rect(111, y, cardW, 28, 'F');
+  doc.setTextColor(100, 116, 139);
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Revenus totaux / mois', 115, y + 8);
+  doc.setFontSize(18);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(34, 197, 94);
+  doc.text(`${budget.revenuTotal.toLocaleString('fr-FR')} €`, 115, y + 20);
+  y += 36;
+
+  // Charges table
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(241, 245, 249);
+  doc.text('Dépenses contraintes mensuelles', 14, y);
+  y += 6;
+
+  chargeItems.filter((c) => c.value > 0).forEach((item, i) => {
+    doc.setFillColor(i % 2 === 0 ? 22 : 30, i % 2 === 0 ? 33 : 41, i % 2 === 0 ? 54 : 59);
+    doc.rect(14, y - 4, 182, 8, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(200, 210, 220);
+    doc.text(item.label.slice(0, 45), 18, y + 1);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${item.value.toLocaleString('fr-FR')} €`, 183, y + 1, { align: 'right' });
+    y += 8;
+  });
+
+  // Total
+  doc.setFillColor(59, 130, 246);
+  doc.rect(14, y - 4, 182, 9, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.text('Total charges mensuelles', 18, y + 2);
+  doc.text(`${budget.totalCharges.toLocaleString('fr-FR')} €`, 183, y + 2, { align: 'right' });
+  y += 14;
+
+  // DOM vs Métropole comparison
+  if (terr.code !== 'fr') {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(241, 245, 249);
+    doc.text('Comparaison DOM vs Métropole (France)', 14, y);
+    y += 7;
+    doc.setFillColor(22, 33, 54);
+    doc.rect(14, y - 4, 182, 28, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(`Reste pour vivre — ${terr.flag} ${terr.label}`, 18, y + 2);
+    doc.setTextColor(...resteColor);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${budget.resteVivre < 0 ? '−' : ''}${Math.abs(budget.resteVivre).toLocaleString('fr-FR')} €/mois`, 183, y + 2, { align: 'right' });
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(148, 163, 184);
+    doc.text('Reste pour vivre — 🇫🇷 France métropolitaine', 18, y + 12);
+    const frColor: [number, number, number] = budget.resteFR < 0 ? [239, 68, 68] : [34, 197, 94];
+    doc.setTextColor(...frColor);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${budget.resteFR < 0 ? '−' : ''}${Math.abs(budget.resteFR).toLocaleString('fr-FR')} €/mois`, 183, y + 12, { align: 'right' });
+    const diff = budget.resteVivre - budget.resteFR;
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(148, 163, 184);
+    doc.text('Écart DOM vs Métropole', 18, y + 22);
+    doc.setTextColor(diff >= 0 ? 34 : 239, diff >= 0 ? 197 : 68, diff >= 0 ? 94 : 68);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${diff >= 0 ? '+' : ''}${diff.toLocaleString('fr-FR')} €/mois`, 183, y + 22, { align: 'right' });
+    y += 36;
+  }
+
+  // Footer
+  doc.setFontSize(6);
+  doc.setTextColor(100, 116, 139);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Sources : INSEE RDL 2021 · IEDOM 2023 · CAF 2024 · DGCCRF BQP 2024 · Estimations indicatives', 14, 286);
+  doc.text('A KI PRI SA YÉ — Service Public Numérique', 14, 291);
+
+  doc.save(`budget-familial-${terr.code}-${now.toISOString().slice(0, 10)}.pdf`);
+}
+
 // ─── Territory data ─────────────────────────────────────────────────────────────
 
 interface TerritoryData {
@@ -75,6 +205,7 @@ export default function SimulateurBudgetFamilial() {
   const [adultes, setAdultes] = useState(2);
   const [enfants, setEnfants] = useState(1);
   const [revenuNet, setRevenuNet] = useState(2200);
+  const [exporting, setExporting] = useState(false);
 
   const terr = TERRITORIES.find(t => t.code === terrCode)!;
 
@@ -117,6 +248,15 @@ export default function SimulateurBudgetFamilial() {
     { label: 'Énergie (électricité + eau)', value: budget.energieFact, color: '#10b981', icon: '💡', src: 'EDF / IEDOM', url: 'https://www.iedom.fr/' },
     { label: `Scolarité / cantine (${enfants} enfant${enfants > 1 ? 's' : ''})`, value: budget.scolarite, color: '#f43f5e', icon: '🎒', src: 'Estimation CAF', url: 'https://www.caf.fr/' },
   ];
+
+  const handleExportPDF = async () => {
+    setExporting(true);
+    try {
+      await exportBudgetPDF({ terr, adultes, enfants, revenuNet, budget, chargeItems });
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <>
@@ -238,6 +378,40 @@ export default function SimulateurBudgetFamilial() {
           </div>
         </div>
 
+        {/* DOM vs Métropole detailed comparison */}
+        {terr.code !== 'fr' && (() => {
+          const terrFR = TERRITORIES.find(t => t.code === 'fr')!;
+          const diff = budget.resteVivre - budget.resteFR;
+          const diffSign = diff >= 0 ? '+' : '';
+          return (
+            <div style={{ padding: '1rem 1.25rem', borderRadius: 14, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(59,130,246,0.25)', marginBottom: '1.25rem' }}>
+              <p style={{ margin: '0 0 0.8rem', fontSize: '0.78rem', color: '#93c5fd', fontWeight: 600 }}>
+                📊 Panier type DOM vs Métropole — Comparaison mensuelle
+              </p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.8rem' }}>
+                <div style={{ padding: '0.65rem 0.8rem', borderRadius: 9, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.3)' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginBottom: '0.2rem' }}>{terr.flag} {terr.label}</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f1f5f9' }}>{budget.totalCharges.toLocaleString('fr-FR')} €/mois</div>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginTop: '0.15rem' }}>surcoût alim. +{terr.alimentationSurcoût}%</div>
+                </div>
+                <div style={{ padding: '0.65rem 0.8rem', borderRadius: 9, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(148,163,184,0.15)' }}>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginBottom: '0.2rem' }}>🇫🇷 {terrFR.label}</div>
+                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f1f5f9' }}>
+                    {(budget.totalCharges - (budget.alimentation - Math.round(320 * (1 + (adultes - 1) * 0.5 + enfants * 0.3)))).toLocaleString('fr-FR')} €/mois
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginTop: '0.15rem' }}>surcoût alim. +0%</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0.75rem', borderRadius: 8, background: diff >= 0 ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)', border: `1px solid ${diff >= 0 ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)'}` }}>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Reste pour vivre en {terr.label} vs Métropole</span>
+                <span style={{ fontSize: '0.9rem', fontWeight: 800, color: diff >= 0 ? '#22c55e' : '#ef4444' }}>
+                  {diffSign}{diff.toLocaleString('fr-FR')} €/mois
+                </span>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Disclaimer */}
         <div style={{ padding: '0.8rem 1rem', borderRadius: 10, background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)', marginBottom: '1.5rem' }}>
           <p style={{ margin: 0, fontSize: '0.72rem', color: '#92400e', lineHeight: 1.6 }}>
@@ -250,6 +424,13 @@ export default function SimulateurBudgetFamilial() {
         </div>
 
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button
+            onClick={handleExportPDF}
+            disabled={exporting}
+            style={{ padding: '0.55rem 1.2rem', borderRadius: 8, background: exporting ? 'rgba(71,85,105,0.8)' : 'rgba(220,38,38,0.8)', color: '#fff', fontSize: '0.82rem', fontWeight: 700, border: 'none', cursor: exporting ? 'not-allowed' : 'pointer' }}
+          >
+            {exporting ? '⏳ Génération...' : '📄 Exporter PDF'}
+          </button>
           <Link to="/calculateur-octroi" style={{ padding: '0.55rem 1.2rem', borderRadius: 8, background: 'rgba(99,102,241,0.75)', color: '#fff', fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none' }}>
             🧮 Calculateur octroi de mer
           </Link>

@@ -59,6 +59,17 @@ export default function Messagerie() {
   const [newText, setNewText] = useState('');
   const [sending, setSending] = useState(false);
 
+  // Archiving & export
+  const [archivedIds, setArchivedIds] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem('akiprisaye_archived_convs');
+      return new Set(stored ? JSON.parse(stored) : []);
+    } catch {
+      return new Set();
+    }
+  });
+  const [showArchived, setShowArchived] = useState(false);
+
   // New conversation panel
   const [showNewConv, setShowNewConv] = useState(false);
   const [searchEmail, setSearchEmail] = useState('');
@@ -127,6 +138,47 @@ export default function Messagerie() {
       setSending(false);
     }
   }, [user, activeConvId, newText, sending, activeConv]);
+
+  const toggleArchive = (convId: string) => {
+    setArchivedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(convId)) {
+        next.delete(convId);
+      } else {
+        next.add(convId);
+        if (activeConvId === convId) setActiveConvId(null);
+      }
+      try {
+        localStorage.setItem('akiprisaye_archived_convs', JSON.stringify([...next]));
+      } catch { /* ignore */ }
+      return next;
+    });
+  };
+
+  const exportConversationCSV = () => {
+    if (messages.length === 0 || !activeConv || !user) return;
+    const name = displayName(activeConv, user.uid);
+    const rows = [
+      ['De', 'À', 'Message', 'Date'],
+      ...messages.map((m) => {
+        const isMe = m.from === user.uid;
+        const fromLabel = isMe ? (user.displayName || user.email || 'Moi') : name;
+        const toLabel = isMe ? name : (user.displayName || user.email || 'Moi');
+        const date = m.at?.toDate ? m.at.toDate().toLocaleString('fr-FR') : '';
+        return [fromLabel, toLabel, m.text.replace(/"/g, '""'), date];
+      }),
+    ];
+    const csv = rows.map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `conversation-${name.replace(/\s+/g, '_')}-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -301,48 +353,73 @@ export default function Messagerie() {
                 </p>
               </div>
             ) : (
-              <ul className="flex-1 overflow-y-auto divide-y divide-slate-800">
-                {conversations.map((conv) => {
-                  const name = displayName(conv, user.uid);
-                  const unreadCount = conv.unread[user.uid] ?? 0;
-                  const isActive = conv.id === activeConvId;
-                  return (
-                    <li key={conv.id}>
-                      <button
-                        className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-colors ${
-                          isActive ? 'bg-slate-800' : 'hover:bg-slate-800/60'
-                        }`}
-                        onClick={() => setActiveConvId(conv.id)}
-                      >
-                        {/* Avatar */}
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                          {name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-1">
-                            <span className={`font-semibold truncate text-sm ${unreadCount > 0 ? 'text-white' : 'text-slate-300'}`}>
-                              {name}
-                            </span>
-                            <span className="text-xs text-slate-500 flex-shrink-0">
-                              {formatTime(conv.lastAt)}
-                            </span>
+              <>
+                {/* Archive toggle */}
+                {archivedIds.size > 0 && (
+                  <button
+                    onClick={() => setShowArchived((v) => !v)}
+                    className="px-4 py-2 text-xs text-slate-500 hover:text-slate-300 border-b border-slate-800 text-left flex items-center gap-1 transition-colors"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8" /></svg>
+                    {showArchived ? 'Masquer les archivées' : `Voir les archivées (${archivedIds.size})`}
+                  </button>
+                )}
+                <ul className="flex-1 overflow-y-auto divide-y divide-slate-800">
+                  {conversations
+                    .filter((c) => showArchived ? archivedIds.has(c.id) : !archivedIds.has(c.id))
+                    .map((conv) => {
+                      const name = displayName(conv, user.uid);
+                      const unreadCount = conv.unread[user.uid] ?? 0;
+                      const isActive = conv.id === activeConvId;
+                      const isArchived = archivedIds.has(conv.id);
+                      return (
+                        <li key={conv.id}>
+                          <div className={`flex items-center pr-1 ${isActive ? 'bg-slate-800' : 'hover:bg-slate-800/60'}`}>
+                            <button
+                              className="flex-1 text-left px-4 py-3 flex items-start gap-3 transition-colors"
+                              onClick={() => setActiveConvId(conv.id)}
+                            >
+                              {/* Avatar */}
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                                {name.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-1">
+                                  <span className={`font-semibold truncate text-sm ${unreadCount > 0 ? 'text-white' : 'text-slate-300'}`}>
+                                    {name}
+                                    {isArchived && <span className="ml-1 text-yellow-500 text-xs">📦</span>}
+                                  </span>
+                                  <span className="text-xs text-slate-500 flex-shrink-0">
+                                    {formatTime(conv.lastAt)}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between gap-1 mt-0.5">
+                                  <p className={`text-xs truncate ${unreadCount > 0 ? 'text-slate-300' : 'text-slate-500'}`}>
+                                    {conv.lastMessage || 'Démarrer la conversation…'}
+                                  </p>
+                                  {unreadCount > 0 && (
+                                    <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full text-xs text-white font-bold flex items-center justify-center">
+                                      {unreadCount > 9 ? '9+' : unreadCount}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </button>
+                            {/* Archive quick button */}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); toggleArchive(conv.id); }}
+                              title={isArchived ? 'Désarchiver' : 'Archiver'}
+                              className="p-2 text-slate-600 hover:text-yellow-400 transition-colors"
+                              aria-label={isArchived ? 'Désarchiver la conversation' : 'Archiver la conversation'}
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8" /></svg>
+                            </button>
                           </div>
-                          <div className="flex items-center justify-between gap-1 mt-0.5">
-                            <p className={`text-xs truncate ${unreadCount > 0 ? 'text-slate-300' : 'text-slate-500'}`}>
-                              {conv.lastMessage || 'Démarrer la conversation…'}
-                            </p>
-                            {unreadCount > 0 && (
-                              <span className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full text-xs text-white font-bold flex items-center justify-center">
-                                {unreadCount > 9 ? '9+' : unreadCount}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
+                        </li>
+                      );
+                    })}
+                </ul>
+              </>
             )}
           </aside>
 
@@ -363,7 +440,24 @@ export default function Messagerie() {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
                       {displayName(activeConv, user.uid).charAt(0).toUpperCase()}
                     </div>
-                    <span className="font-semibold text-white text-sm">{displayName(activeConv, user.uid)}</span>
+                    <span className="font-semibold text-white text-sm flex-1">{displayName(activeConv, user.uid)}</span>
+                    <button
+                      onClick={exportConversationCSV}
+                      disabled={messages.length === 0}
+                      title="Exporter la conversation en CSV"
+                      className="text-slate-400 hover:text-green-400 disabled:opacity-30 transition-colors p-1"
+                      aria-label="Exporter la conversation"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    </button>
+                    <button
+                      onClick={() => activeConvId && toggleArchive(activeConvId)}
+                      title={activeConvId && archivedIds.has(activeConvId) ? 'Désarchiver' : 'Archiver la conversation'}
+                      className="text-slate-400 hover:text-yellow-400 transition-colors p-1"
+                      aria-label="Archiver/désarchiver"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8" /></svg>
+                    </button>
                   </>
                 )}
               </div>
