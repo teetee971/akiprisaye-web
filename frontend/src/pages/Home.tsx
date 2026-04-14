@@ -9,6 +9,7 @@ import FlipStatCard from '../components/ui/FlipStatCard';
 import PriceLiveTicker from '../components/home/PriceLiveTicker';
 import { Skeleton } from '../components/ui/Skeleton';
 import '../styles/home-v5.css';
+import '../styles/home-bento.css';
 
 /** Minimal territory map for the persistent pill — mirrors TERRITORIES */
 const TERRITORY_DISPLAY: Record<string, { flag: string; name: string }> = {
@@ -265,11 +266,28 @@ const Home = () => {
         </div>
       </form>
 
+      {/* ── OBSERVATOIRE EN DIRECT ─────────────────────────────────── */}
+      <div className="bento-grid-section mb-4" aria-label="Observatoire des prix">
+        <p className="bento-grid-title">Observatoire en direct</p>
+        <div className="bento-grid" style={{ gridAutoRows: 'auto' }}>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <ProduitChocWidget />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <InflationBarometerWidget />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <PanierVitalWidget />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <StoreRankingWidget />
+          </Suspense>
+        </div>
+      </div>
+
       {/* ── GISEMENT SOUVERAIN ─────────────────────────────────────── */}
-      <div className="px-6 mb-10">
-        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-6 italic">
-          Le Gisement Souverain
-        </h2>
+      <div className="bento-grid-section mb-10">
+        <p className="bento-grid-title">Le Gisement Souverain</p>
         <div className="grid gap-3">
           {loading ? (
             <div className="flex flex-col gap-3 py-4">
@@ -281,7 +299,7 @@ const Home = () => {
             products.slice(0, 15).map((p: Product, i: number) => (
               <div
                 key={p.id ?? i}
-                className="bg-slate-800/30 border border-slate-700/30 p-4 rounded-2xl flex justify-between items-center backdrop-blur-sm"
+                className="bento-card flex-row justify-between items-center"
               >
                 <div>
                   <p className="text-[9px] font-black text-blue-400 uppercase mb-1">{p.category ?? 'ÉPICERIE'}</p>
@@ -339,18 +357,6 @@ const Home = () => {
 
             {/* Pourquoi les prix sont plus élevés */}
             <PriceExplainerBanner />
-
-            {/* Chocs de prix */}
-            <ProduitChocWidget />
-
-            {/* Baromètre inflation */}
-            <InflationBarometerWidget />
-
-            {/* Classement enseignes */}
-            <StoreRankingWidget />
-
-            {/* Panier vital en minutes de SMIC */}
-            <PanierVitalWidget />
 
             {/* Indice équité */}
             <IndiceEquiteWidget />
