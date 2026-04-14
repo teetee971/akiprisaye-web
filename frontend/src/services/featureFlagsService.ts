@@ -75,8 +75,10 @@ export function getDefaultFeatureFlags(): UserFeatureFlags {
  * In the future, this will check user subscription status from database.
  */
 export function getUserFeatureFlags(userId?: string): UserFeatureFlags {
-  // For now, everyone gets free mode
-  // TODO: In the future, check user subscription in database
+  // Feature flags are currently determined by environment variables (`VITE_FEATURE_*`).
+  // When a subscription backend is in place, pass userId to a server endpoint and
+  // merge the returned plan flags on top of these defaults.
+  void userId;
   return getDefaultFeatureFlags();
 }
 

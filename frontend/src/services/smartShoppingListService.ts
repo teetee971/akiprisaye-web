@@ -162,8 +162,38 @@ export class ShoppingListService {
       return new Blob([content], { type: 'text/plain' });
     }
     
-    // TODO: Implement PDF export with jspdf
-    return new Blob(['PDF not implemented yet'], { type: 'application/pdf' });
+    // PDF export via jsPDF (dynamic import to keep main bundle lean)
+    const { jsPDF } = await import('jspdf');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+    pdf.setFontSize(16);
+    pdf.text(`Liste : ${list.name}`, 14, 20);
+    pdf.setFontSize(11);
+    pdf.text(`Créée le : ${new Date(list.createdAt).toLocaleDateString('fr-FR')}`, 14, 28);
+    pdf.text(`Territoire : ${list.territory}`, 14, 35);
+    pdf.setLineWidth(0.3);
+    pdf.line(14, 38, 196, 38);
+
+    let y = 44;
+    pdf.setFontSize(12);
+    list.items.forEach((item, i) => {
+      if (y > 270) {
+        pdf.addPage();
+        y = 20;
+      }
+      const label = `${i + 1}. ${item.productName}  ×${item.quantity}`;
+      pdf.text(label, 14, y);
+      if (item.notes) {
+        pdf.setFontSize(10);
+        pdf.text(`   ${item.notes}`, 14, y + 5);
+        pdf.setFontSize(12);
+        y += 12;
+      } else {
+        y += 8;
+      }
+    });
+
+    return new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
   }
 
   /**

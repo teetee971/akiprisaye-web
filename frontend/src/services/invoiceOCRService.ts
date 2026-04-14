@@ -9,26 +9,32 @@ import type { InvoiceData, HiddenFee, FreightQuote } from '../types/freightCompa
 
 /**
  * Extrait les données d'une facture (OCR)
- * Note: Implémentation simplifiée - nécessite intégration Tesseract.js ou API OCR
+ * Dispatche vers extractTextFromImage ou extractTextFromPDF selon le type MIME,
+ * puis parse le texte extrait en données structurées.
  */
 export async function extractInvoiceData(file: File): Promise<InvoiceData | null> {
   try {
-    // TODO: Implémenter OCR réel avec Tesseract.js
-    // Pour l'instant, retourner structure de base
-    
-    console.log('OCR extraction pour:', file.name);
-    
-    // Simulation d'extraction
+    let rawText = '';
+    if (file.type === 'application/pdf') {
+      rawText = await extractTextFromPDF(file);
+    } else {
+      rawText = await extractTextFromImage(file);
+    }
+
+    const parsed = parseInvoiceText(rawText);
+
     return {
-      carrier: 'Non détecté',
+      carrier: parsed.carrier ?? 'Non détecté',
       route: {
-        origin: '',
-        destination: '',
+        origin: parsed.route?.origin ?? '',
+        destination: parsed.route?.destination ?? '',
       },
-      basePrice: 0,
-      fees: [],
-      totalPaid: 0,
-      extractionConfidence: 0.5,
+      basePrice: parsed.basePrice ?? 0,
+      fees: parsed.fees ?? [],
+      totalPaid: parsed.totalPaid ?? 0,
+      extractionConfidence: rawText.length > 50 ? 0.75 : 0.3,
+      weight: parsed.weight,
+      trackingNumber: parsed.trackingNumber,
     };
   } catch (error) {
     console.error('Error extracting invoice data:', error);
@@ -197,14 +203,28 @@ export function validateInvoiceData(data: InvoiceData): {
 }
 
 /**
- * Parse un fichier PDF pour extraire le texte
- * Note: Nécessite intégration pdf.js ou similaire
+ * Parse un fichier PDF pour extraire le texte.
+ * Utilise pdf.js (pdfjs-dist) via dynamic import pour ne pas alourdir le bundle.
  */
 export async function extractTextFromPDF(file: File): Promise<string> {
   try {
-    // TODO: Implémenter extraction PDF avec pdf.js
-    console.log('Extraction PDF pour:', file.name);
-    return '';
+    const arrayBuffer = await file.arrayBuffer();
+    // Dynamic import – pdfjs-dist is already a transitive dependency of several packages
+    const pdfjsLib = await import('pdfjs-dist');
+    // Point the worker to the CDN copy to avoid bundling the heavy worker script
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const textParts: string[] = [];
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map((item) => ('str' in item ? (item as { str: string }).str : ''))
+        .join(' ');
+      textParts.push(pageText);
+    }
+    return textParts.join('\n');
   } catch (error) {
     console.error('Error extracting PDF text:', error);
     return '';
@@ -213,13 +233,21 @@ export async function extractTextFromPDF(file: File): Promise<string> {
 
 /**
  * Parse une image pour extraire le texte (OCR)
- * Note: Nécessite intégration Tesseract.js
+ * Utilise Tesseract.js pour la reconnaissance optique de caractères.
  */
 export async function extractTextFromImage(file: File): Promise<string> {
   try {
-    // TODO: Implémenter OCR avec Tesseract.js
-    console.log('OCR image pour:', file.name);
-    return '';
+    // Dynamic import to avoid bloating the main bundle (Tesseract is large)
+    const { createWorker } = await import('tesseract.js');
+    const imageUrl = URL.createObjectURL(file);
+    const worker = await createWorker('fra+eng');
+    try {
+      const { data } = await worker.recognize(imageUrl);
+      return data.text ?? '';
+    } finally {
+      await worker.terminate();
+      URL.revokeObjectURL(imageUrl);
+    }
   } catch (error) {
     console.error('Error extracting image text:', error);
     return '';

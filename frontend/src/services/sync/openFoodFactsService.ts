@@ -11,10 +11,42 @@ import type {
   Product,
   QuantityParsed,
 } from './types';
+import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
 const OFF_API_BASE = 'https://world.openfoodfacts.org';
 const OFF_API_V2_BASE = `${OFF_API_BASE}/api/v2`;
 const OFF_SEARCH_BASE = `${OFF_API_BASE}/cgi`;
+
+const LOCAL_PRODUCTS_KEY = 'akiprisaye_off_products';
+
+/** Persist a mapped product to localStorage. Deduplicates by EAN. */
+function saveProductLocally(product: Partial<Product>): void {
+  if (!product.ean) return;
+  const stored = safeLocalStorage.getJSON<Record<string, Partial<Product>>>(LOCAL_PRODUCTS_KEY, {});
+  const existing = stored[product.ean] ?? {};
+  stored[product.ean] = {
+    ...existing,
+    ...product,
+    metadata: {
+      ...(existing.metadata ?? {}),
+      ...(product.metadata ?? {}),
+      lastSync: new Date().toISOString(),
+    },
+  };
+  safeLocalStorage.setJSON(LOCAL_PRODUCTS_KEY, stored);
+}
+
+/** Retrieve a product from the local cache by EAN. Returns undefined if not found. */
+export function getLocalProduct(ean: string): Partial<Product> | undefined {
+  const stored = safeLocalStorage.getJSON<Record<string, Partial<Product>>>(LOCAL_PRODUCTS_KEY, {});
+  return stored[ean];
+}
+
+/** Return all locally cached EAN codes. */
+export function getLocalProductEANs(): string[] {
+  const stored = safeLocalStorage.getJSON<Record<string, Partial<Product>>>(LOCAL_PRODUCTS_KEY, {});
+  return Object.keys(stored);
+}
 
 // Rate limiting: 100 req/min max
 const RATE_LIMIT_DELAY = 600; // ms between requests
@@ -251,10 +283,9 @@ export async function syncProduct(ean: string): Promise<SyncResult> {
       return result;
     }
 
-    // TODO: Implémenter la logique de sauvegarde dans la base locale
-    // Pour l'instant, on mappe juste le produit
+    // Persist the mapped product to localStorage for offline use
     const mappedProduct = mapOFFToProduct(offProduct);
-    console.log('Product mapped:', mappedProduct);
+    saveProductLocally(mappedProduct);
 
     result.success = true;
     result.itemsProcessed = 1;

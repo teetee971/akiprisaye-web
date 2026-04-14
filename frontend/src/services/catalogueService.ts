@@ -13,12 +13,49 @@ export type Product = {
 
 export type CatalogueItemRaw = Product
 
-// Fetch catalogue from a source (placeholder)
+// In-memory cache to avoid redundant network fetches within a session
+const _cache: Map<string, Product[]> = new Map()
+
+/**
+ * Fetch catalogue from an HTTP source or the bundled data JSON.
+ * Falls back to empty array on any network / parse error.
+ */
 export async function fetchCatalogue(source?: string): Promise<Product[]> {
-  // TODO: implement real fetching (HTTP, cloud storage, etc.)
-  // For now return an empty array to allow other parts to compile.
-  console.info('fetchCatalogue called', { source })
-  return []
+  const url = source ?? '/data/catalogue-prices.json'
+
+  const cached = _cache.get(url)
+  if (cached) return cached
+
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      console.warn('[catalogueService] fetchCatalogue: non-OK response', response.status, url)
+      return []
+    }
+
+    const raw: unknown = await response.json()
+
+    // Accept both a direct array or an object wrapping { products: [] }
+    let records: Product[] = []
+    if (Array.isArray(raw)) {
+      records = raw as Product[]
+    } else if (raw && typeof raw === 'object' && Array.isArray((raw as Record<string, unknown>).products)) {
+      records = (raw as Record<string, unknown>).products as Product[]
+    } else if (raw && typeof raw === 'object' && Array.isArray((raw as Record<string, unknown>).items)) {
+      records = (raw as Record<string, unknown>).items as Product[]
+    }
+
+    _cache.set(url, records)
+    return records
+  } catch (error) {
+    console.warn('[catalogueService] fetchCatalogue error', error)
+    return []
+  }
+}
+
+/** Clear the in-memory session cache (useful for tests or forced refresh). */
+export function clearCatalogueCache(): void {
+  _cache.clear()
 }
 
 // Basic validation of catalogue entries
@@ -44,6 +81,7 @@ export function indexProducts(records: Product[]): Record<string, Product> {
 
 export default {
   fetchCatalogue,
+  clearCatalogueCache,
   validateCatalogue,
   indexProducts,
 }

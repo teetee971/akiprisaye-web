@@ -13,6 +13,7 @@ import type {
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 import { openPricesService } from './openPricesService';
 import { syncLoggerService } from './syncLogger';
+import { syncProduct, getLocalProductEANs } from './openFoodFactsService';
 
 const STORAGE_KEY = 'akiprisaye_sync_jobs';
 const CONFIG_KEY = 'akiprisaye_sync_config';
@@ -63,9 +64,10 @@ export function setSchedulerConfig(config: Partial<SyncSchedulerConfig>): void {
 async function syncOpenFoodFactsProducts(): Promise<SyncResult> {
   syncLoggerService.logMessage('sync-off-products', 'info', 'Starting OpenFoodFacts sync...');
 
-  // TODO: Récupérer la liste des EAN à synchroniser depuis la base locale
-  // Pour l'instant, on fait un sync vide
-  const result: SyncResult = {
+  const config = getSchedulerConfig();
+  const eans = getLocalProductEANs().slice(0, config.maxProductsPerSync);
+
+  const aggregate: SyncResult = {
     success: true,
     itemsProcessed: 0,
     itemsAdded: 0,
@@ -77,14 +79,24 @@ async function syncOpenFoodFactsProducts(): Promise<SyncResult> {
     duration: 0,
   };
 
-  result.endTime = new Date();
-  result.duration = result.endTime.getTime() - result.startTime.getTime();
+  for (const ean of eans) {
+    const result = await syncProduct(ean);
+    aggregate.itemsProcessed += result.itemsProcessed;
+    aggregate.itemsAdded += result.itemsAdded;
+    aggregate.itemsUpdated += result.itemsUpdated;
+    aggregate.itemsSkipped += result.itemsSkipped;
+    aggregate.errors.push(...result.errors);
+    if (!result.success) aggregate.success = false;
+  }
 
-  syncLoggerService.logMessage('sync-off-products', 'info', 
-    `Completed: ${result.itemsAdded} added, ${result.itemsUpdated} updated, ${result.errors.length} errors`
+  aggregate.endTime = new Date();
+  aggregate.duration = aggregate.endTime.getTime() - aggregate.startTime.getTime();
+
+  syncLoggerService.logMessage('sync-off-products', 'info',
+    `Completed: ${aggregate.itemsAdded} added, ${aggregate.itemsUpdated} updated, ${aggregate.errors.length} errors`
   );
 
-  return result;
+  return aggregate;
 }
 
 /**

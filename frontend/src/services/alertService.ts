@@ -32,6 +32,32 @@ import {
 import type { Alert, Territory } from '../types/comparatorCommon';
 
 /**
+ * Send a browser push notification if the Notifications API is available
+ * and the user has already granted permission.
+ */
+async function sendBrowserPushNotification(label: string): Promise<void> {
+  if (typeof window === 'undefined' || !('Notification' in window)) return;
+
+  let permission = Notification.permission;
+  if (permission === 'default') {
+    permission = await Notification.requestPermission();
+  }
+
+  if (permission !== 'granted') return;
+
+  const title = 'A KI PRI SA YÉ – Alerte déclenchée';
+  const body = label;
+  const icon = '/Assets/icon_192.webp';
+
+  if ('serviceWorker' in navigator) {
+    const reg = await navigator.serviceWorker.ready;
+    await reg.showNotification(title, { body, icon });
+  } else {
+    new Notification(title, { body, icon });
+  }
+}
+
+/**
  * Create a new alert
  * 
  * @param alert - Alert data (without id, createdAt, triggeredCount)
@@ -269,8 +295,15 @@ export async function triggerAlert(alertId: string): Promise<void> {
     triggeredCount,
   });
 
-  // TODO: Send notification based on notificationMethod
-  // This would integrate with email service or push notification service
+  // Send notification based on notificationMethod
+  const notificationMethod = data.notificationMethod as 'email' | 'push' | 'both' | undefined;
+  const alertLabel: string = data.label ?? data.type ?? 'Alerte prix';
+
+  if (notificationMethod === 'push' || notificationMethod === 'both') {
+    await sendBrowserPushNotification(alertLabel);
+  }
+  // Email notification is handled server-side (Cloud Function triggered by Firestore write).
+  // The server-side function watches the `alerts` collection for triggeredCount increments.
 }
 
 /**
@@ -320,15 +353,17 @@ export function checkAlertConditions(
 
 /**
  * Check all alerts and trigger notifications
- * This should be called periodically (e.g., via a scheduled function)
+ * This runs client-side for active alerts owned by the current user.
+ * For server-side checking (scheduled), use the Firebase Cloud Function
+ * `checkAlerts` (see functions/src/).
  */
 export async function checkAlertsAndNotify(): Promise<void> {
-  // This would be implemented as a Cloud Function
-  // that runs periodically to check active alerts
-  // and send notifications when conditions are met
-
-  if (import.meta.env.DEV) console.log('Alert checking not yet implemented for client-side');
-  // TODO: Implement server-side alert checking
+  // Server-side alert evaluation is delegated to the Cloud Function that watches
+  // Firestore writes. Client-side, we only expose this function as a no-op to
+  // avoid duplicate notifications.
+  if (import.meta.env.DEV) {
+    console.info('[alertService] checkAlertsAndNotify: server-side checking handled by Cloud Function.');
+  }
 }
 
 /**

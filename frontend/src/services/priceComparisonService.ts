@@ -22,6 +22,7 @@ import type {
 } from '../types/priceComparison';
 import type { Territory, DataSource } from '../types/priceAlerts';
 import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
+import { getLocalProduct } from './sync/openFoodFactsService';
 
 /**
  * Configuration constants for price comparison service
@@ -61,14 +62,13 @@ export function comparePricesByEAN(
   // Rank stores with price differences
   const rankings = rankStorePrices(sortedPrices, aggregation);
 
-  // Extract product information from first price point
-  // Note: productName should ideally be fetched from a product database service
-  // For now, it's left empty and should be populated by the caller if needed
+  // Extract product information: look up the local OFF cache first
+  const localProduct = getLocalProduct(ean);
   const product: ProductIdentifier = {
     ean: ean,
-    productName: '', // TODO: Fetch from product database service
-    category: undefined,
-    brand: undefined,
+    productName: localProduct?.nom ?? '',
+    category: localProduct?.categorie,
+    brand: localProduct?.marque,
   };
 
   // Generate metadata
