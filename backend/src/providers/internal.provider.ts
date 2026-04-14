@@ -2,9 +2,10 @@
  * Internal provider
  *
  * Returns price observations sourced from the internal database.
- * Currently a stub; wire to the DB when the price-observation schema
- * is finalised.
+ * Queries the PriceObservation table via Prisma.
  */
+
+import prisma from '../database/prisma.js';
 
 /** A price observation row returned by the internal provider. */
 export interface InternalObservation {
@@ -17,11 +18,36 @@ export interface InternalObservation {
 }
 
 /** Fetch internal observations for a product query in a territory. */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function internalProvider(
-  _query: string,
-  _territory: string,
+  query: string,
+  territory: string,
 ): Promise<InternalObservation[]> {
-  // TODO: wire real DB query (e.g. Prisma select on price_observation table)
-  return [];
+  const rows = await prisma.priceObservation.findMany({
+    where: {
+      territory: territory.toLowerCase(),
+      OR: [
+        { productLabel: { contains: query, mode: 'insensitive' } },
+        { normalizedLabel: { contains: query, mode: 'insensitive' } },
+        { barcode: query },
+      ],
+    },
+    orderBy: { observedAt: 'desc' },
+    take: 100,
+    select: {
+      storeLabel: true,
+      territory: true,
+      price: true,
+      currency: true,
+      observedAt: true,
+    },
+  });
+
+  return rows.map((row) => ({
+    retailer: row.storeLabel,
+    territory: row.territory,
+    price: row.price,
+    currency: (row.currency ?? 'EUR') as 'EUR',
+    observedAt: row.observedAt.toISOString(),
+    source: 'internal' as const,
+  }));
 }

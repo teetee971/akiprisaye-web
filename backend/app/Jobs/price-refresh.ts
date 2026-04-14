@@ -22,11 +22,47 @@ import type { ScrapeResult } from '../../src/scrapers/base.scraper.js';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-/** Notify on job failure — extend with email/webhook/Sentry as needed. */
-function notifyAdmin(jobName: string, error: unknown): void {
+/** Notify on job failure via SendGrid (if configured) or console fallback. */
+async function notifyAdmin(jobName: string, error: unknown): Promise<void> {
   const msg = error instanceof Error ? error.message : String(error);
   console.error(`[CRON][${jobName}] ⚠️  Admin notification: job failed — ${msg}`);
-  // TODO: integrate with alerting service (email, Slack webhook, Sentry, etc.)
+
+  const apiKey = process.env.SENDGRID_API_KEY;
+  const adminEmail = process.env.ADMIN_ALERT_EMAIL;
+  const fromEmail = process.env.FROM_EMAIL ?? 'noreply@akiprisaye.fr';
+
+  if (!apiKey || !adminEmail) {
+    return;
+  }
+
+  try {
+    const body = JSON.stringify({
+      personalizations: [{ to: [{ email: adminEmail }] }],
+      from: { email: fromEmail },
+      subject: `[AkiPriSaYé] 🚨 Cron job failed: ${jobName}`,
+      content: [
+        {
+          type: 'text/plain',
+          value: `Le job cron "${jobName}" a échoué.\n\nErreur : ${msg}\n\nHeure : ${new Date().toISOString()}`,
+        },
+      ],
+    });
+
+    const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body,
+    });
+
+    if (!res.ok) {
+      console.error(`[CRON][${jobName}] Alert email failed: HTTP ${res.status}`);
+    }
+  } catch (sendErr) {
+    console.error(`[CRON][${jobName}] Could not send alert email:`, sendErr);
+  }
 }
 
 // ── Main job function ──────────────────────────────────────────────────────────
@@ -98,7 +134,7 @@ export async function runPriceRefreshJob(): Promise<{
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error('[CRON][price-refresh] Fatal error:', msg);
-    notifyAdmin('price-refresh', err);
+    await notifyAdmin('price-refresh', err);
     return { success: false, totalObservations, totalErrors, results: summary, error: msg };
   }
 }

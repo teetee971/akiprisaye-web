@@ -57,6 +57,90 @@ export interface ElectricityFilters extends Omit<ServiceFilters, 'specificFilter
   estimatedAnnualConsumption?: number;
 }
 
+/**
+ * Shape of each entry in the services-prices.json data file
+ * published by the auto-scraper pipeline.
+ */
+interface ServicesPriceEntry {
+  type?: string;
+  provider?: string;
+  territory?: string;
+  pricePerKwh?: number;
+  subscriptionMonthly?: number;
+  tariffOption?: string;
+  powerKva?: number;
+  validFrom?: string;
+  source?: string;
+}
+
+/** URL of the published services data (set via SERVICES_DATA_URL env var or falls back to GitHub Pages). */
+const SERVICES_DATA_URL =
+  process.env.SERVICES_DATA_URL ??
+  'https://teetee971.github.io/akiprisaye-web/data/services-prices.json';
+
+/** In-memory cache to avoid re-fetching within the same process lifetime. */
+let productionOfferCache: ServiceOffer[] | null = null;
+let productionOfferCacheTs = 0;
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+/**
+ * Fetch electricity offers from the published services-prices.json file.
+ * Results are cached in memory for CACHE_TTL_MS milliseconds.
+ */
+async function fetchProductionOffers(): Promise<ServiceOffer[]> {
+  const now = Date.now();
+  if (productionOfferCache !== null && now - productionOfferCacheTs < CACHE_TTL_MS) {
+    return productionOfferCache;
+  }
+
+  try {
+    const res = await fetch(SERVICES_DATA_URL, {
+      headers: { 'User-Agent': 'AKiPriSaYe-backend/1.0' },
+      signal: AbortSignal.timeout(10_000),
+    });
+
+    if (!res.ok) {
+      console.warn(`[ElectricityService] services data fetch failed: HTTP ${res.status}`);
+      return productionOfferCache ?? [];
+    }
+
+    const raw = (await res.json()) as ServicesPriceEntry[];
+    const entries = Array.isArray(raw) ? raw : [];
+
+    const offers: ServiceOffer[] = entries
+      .filter((e) => e.type === 'electricity' && e.provider && e.territory)
+      .map((e, idx): ServiceOffer => {
+        const specs: ElectricitySpecifications = {
+          powerSubscribed: e.powerKva ?? 6,
+          tariffOption: (e.tariffOption as ElectricitySpecifications['tariffOption']) ?? 'base',
+          subscriptionPriceMonthly: e.subscriptionMonthly ?? 0,
+          pricePerKwhPeak: e.pricePerKwh ?? 0,
+        };
+
+        const estimatedMonthlyCost =
+          specs.subscriptionPriceMonthly + (5000 / 12) * specs.pricePerKwhPeak;
+
+        return {
+          id: `elec-${e.territory}-${e.provider}-${idx}`.replace(/\s+/g, '-').toLowerCase(),
+          providerName: e.provider!,
+          offerName: `${e.provider} – ${e.tariffOption ?? 'base'} ${e.powerKva ?? 6} kVA`,
+          priceIncludingTax: Math.round(estimatedMonthlyCost * 100) / 100,
+          territory: e.territory! as Territory,
+          specifications: specs as unknown as Record<string, string | number | boolean>,
+          source: (e.source ?? 'CRE') as unknown as DataSource,
+          validFrom: e.validFrom ? new Date(e.validFrom) : new Date(),
+        };
+      });
+
+    productionOfferCache = offers;
+    productionOfferCacheTs = now;
+    return offers;
+  } catch (err) {
+    console.error('[ElectricityService] failed to load production offers:', err);
+    return productionOfferCache ?? [];
+  }
+}
+
 export class ElectricityComparisonService extends ServiceComparisonCore {
   private static instance: ElectricityComparisonService;
   private mockData: ServiceOffer[] = [];
@@ -76,20 +160,22 @@ export class ElectricityComparisonService extends ServiceComparisonCore {
   }
 
   /**
-   * Configure les données mockées (pour développement/test)
-   * En production, cette méthode sera remplacée par une connexion à une vraie source de données
+   * Override mock data (used in tests / local development).
+   * When set, production data fetch is bypassed.
    */
   public setMockData(offers: ServiceOffer[]): void {
     this.mockData = offers;
   }
 
   /**
-   * Récupère les offres depuis la source de données
-   * TODO: Remplacer par une vraie source de données en production
+   * Récupère les offres depuis la source de données.
+   * En production, charge depuis services-prices.json (scraper pipeline).
+   * En test/dev, utilise les données mock injectées via setMockData().
    */
   protected async fetchOffers(filters: ServiceFilters): Promise<ServiceOffer[]> {
-    // En production, cette méthode interrogera une base de données ou une API
-    let offers = [...this.mockData];
+    let offers = this.mockData.length > 0
+      ? [...this.mockData]
+      : await fetchProductionOffers();
 
     // Filtrage par territoire
     if (filters.territories && filters.territories.length > 0) {
@@ -226,3 +312,5 @@ export function createElectricityOffer(
     validFrom,
   };
 }
+
+

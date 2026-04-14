@@ -43,6 +43,62 @@ function adminJson(data: unknown, status = 200): Response {
   return json(data, status, { 'Cache-Control': 'no-store' });
 }
 
+/**
+ * Verify a HS256 JWT Bearer token and extract the `sub` claim as the user ID.
+ *
+ * Returns `null` when:
+ * - No Authorization: Bearer header is present.
+ * - JWT_SECRET is not configured in the environment.
+ * - The signature is invalid or the token has expired.
+ */
+async function verifyJwtBearer(request: Request, jwtSecret: string | undefined): Promise<string | null> {
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return null;
+  }
+  const token = authHeader.slice(7).trim();
+  if (!jwtSecret || !token) {
+    return null;
+  }
+
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    return null;
+  }
+
+  try {
+    const [headerB64, payloadB64, sigB64] = parts;
+
+    const key = await crypto.subtle.importKey(
+      'raw',
+      new TextEncoder().encode(jwtSecret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['verify'],
+    );
+
+    const sigBytes = Uint8Array.from(atob(sigB64.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+    const dataBytes = new TextEncoder().encode(`${headerB64}.${payloadB64}`);
+
+    const valid = await crypto.subtle.verify('HMAC', key, sigBytes, dataBytes);
+    if (!valid) {
+      return null;
+    }
+
+    const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/'))) as Record<string, unknown>;
+
+    // Check expiry
+    if (typeof payload.exp === 'number' && Date.now() / 1000 > payload.exp) {
+      return null;
+    }
+
+    const sub = payload.sub;
+    return typeof sub === 'string' && sub.length > 0 ? sub : null;
+  } catch {
+    return null;
+  }
+}
+
 function toAggregateView(aggregate: PriceAggregateRecord) {
   return {
     territory: aggregate.territory,
@@ -158,7 +214,7 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
 
       await upsertSubscriptionByPayPalId(env.PRICE_DB, {
         userId,
-        plan: mapPayPalPlanIdToInternalPlan(event.resource?.plan_id),
+        plan: mapPayPalPlanIdToInternalPlan(event.resource?.plan_id, env),
         status,
         paypalSubscriptionId: subscriptionId,
         payerId: event.resource?.subscriber?.payer_id,
@@ -171,16 +227,27 @@ export async function handleRequest(request: Request, env: Env, ctx: ExecutionCo
     }
 
     if (request.method === 'GET' && url.pathname === '/v1/me/subscription') {
-      if (!assertSubscriptionLookupToken(request, env.PRICE_ADMIN_TOKEN)) {
-        return withCors(json({ error: 'unauthorized' }, 401), origin, env);
+      // Prefer JWT Bearer token authentication when JWT_SECRET is configured.
+      // Falls back to the legacy X-Admin-Token + user_id query param for
+      // server-to-server calls (e.g. from the backend).
+      let userId: string | null = null;
+
+      if (env.JWT_SECRET) {
+        userId = await verifyJwtBearer(request, env.JWT_SECRET);
+        if (!userId) {
+          return withCors(json({ error: 'unauthorized' }, 401), origin, env);
+        }
+      } else {
+        // Legacy path: admin token + explicit user_id query param
+        if (!assertSubscriptionLookupToken(request, env.PRICE_ADMIN_TOKEN)) {
+          return withCors(json({ error: 'unauthorized' }, 401), origin, env);
+        }
+        userId = url.searchParams.get('user_id');
+        if (!userId) {
+          return withCors(json({ error: 'missing_user_id' }, 400), origin, env);
+        }
       }
 
-      const userId = url.searchParams.get('user_id');
-      if (!userId) {
-        return withCors(json({ error: 'missing_user_id' }, 400), origin, env);
-      }
-
-      // TODO: remplacer user_id query param par une authentification utilisateur (JWT/session).
       const subscription = await getSubscriptionByUserId(env.PRICE_DB, userId);
       if (!subscription) {
         return withCors(json({ status: 'FREE' }, 200), origin, env);

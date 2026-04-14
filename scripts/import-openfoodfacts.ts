@@ -92,53 +92,33 @@ async function importProductsFromOpenFoodFacts(
         const existing = await prisma.product.findUnique({
           where: { barcode: offProduct.code },
         });
-        
+
         if (existing) {
           skipped++;
           continue;
         }
-        
-        // Note: This assumes a Brand exists. In a real scenario, you'd need to:
-        // 1. Either create a default brand
-        // 2. Or associate products with existing brands
-        // 3. Or skip brand requirement for now
-        
-        // For this implementation, we'll skip the actual database insert
-        // as it requires proper brand setup. Instead, log what would be imported.
-        
-        console.log(`Would import: ${offProduct.code} - ${offProduct.product_name || 'Unknown'}`);
-        
-        /* TODO: Uncomment when database and brands are properly configured.
-         * Requirements before enabling:
-         * 1. Ensure Brand entities exist in the database
-         * 2. Either create a default brand or associate products with existing brands
-         * 3. Update brandId below to reference a valid Brand.id
-         * 
-         * Note: The Product model requires a brandId foreign key.
-         * You can either:
-         * - Create a generic "Open Food Facts" brand for imported products
-         * - Map products to specific brands based on offProduct.brands
-         * - Skip products without matching brands
-         */
-        
-        /* Example database insert (uncomment and configure):
+
+        const displayName = offProduct.product_name || 'Produit sans nom';
+        const normalizedLabel = displayName.toLowerCase().trim();
+        const productKey = `off-${offProduct.code}`;
+
         await prisma.product.create({
           data: {
-            brandId: 'YOUR_BRAND_ID', // Replace with valid brand ID
-            name: offProduct.product_name || 'Produit sans nom',
-            category: offProduct.categories?.split(',')[0]?.trim() || 'Autre',
+            productKey,
+            displayName,
+            rawLabel: displayName,
+            normalizedLabel,
+            brand: offProduct.brands?.split(',')[0]?.trim() ?? null,
+            category: offProduct.categories?.split(',')[0]?.trim() ?? null,
             barcode: offProduct.code,
-            imageUrl: offProduct.image_url || offProduct.image_small_url || null,
-            description: offProduct.quantity || null,
-            isActive: true,
+            primaryImageUrl: offProduct.image_small_url ?? offProduct.image_url ?? null,
           },
         });
-        */
-        
+
         imported++;
-        
+
         if (imported % 100 === 0) {
-          console.log(`✅ Processed ${imported} products...`);
+          console.log(`✅ Imported ${imported} products...`);
         }
       } catch (error) {
         errors++;
@@ -146,13 +126,10 @@ async function importProductsFromOpenFoodFacts(
       }
     }
     
-    console.log(`\n✅ Import simulation complete!`);
-    console.log(`   📊 Would import: ${imported}`);
+    console.log(`\n✅ Import complete!`);
+    console.log(`   📊 Imported: ${imported}`);
     console.log(`   ⏭️  Skipped: ${skipped}`);
     console.log(`   ❌ Errors: ${errors}`);
-    console.log(`\n⚠️  Note: Actual database insert is commented out.`);
-    console.log(`   To enable, uncomment the prisma.product.create() call`);
-    console.log(`   and ensure proper brand configuration exists.`);
     
   } catch (error) {
     console.error('❌ Fatal error:', error);

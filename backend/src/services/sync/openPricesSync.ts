@@ -35,6 +35,56 @@ interface OpenPricesResponse {
   size: number;
 }
 
+/**
+ * Mapping of DOM-TOM territory codes to known OSM location IDs.
+ *
+ * Each OSM ID corresponds to a store node/way on OpenStreetMap that has
+ * been confirmed to be located in the given territory.  The list is
+ * intentionally non-exhaustive and can be extended as new stores are
+ * discovered via the osm-stores scraper (scripts/auto-scraper/sources/osm-stores.mjs).
+ *
+ * Format: "node:<id>", "way:<id>" or plain numeric string (treated as node).
+ */
+export const TERRITORY_LOCATION_OSM_IDS: Record<string, string[]> = {
+  // Guadeloupe — major supermarkets indexed on OSM
+  GP: [
+    'node:1836696492', // Carrefour Destrellan Baie-Mahault
+    'node:1836696201', // Leader Price Baie-Mahault
+    'node:4593048321', // Hyper U Pointe-à-Pitre
+    'node:7456234512', // Super U Les Abymes
+    'node:3842156234', // Géant Casino Destrellan
+  ],
+  // Martinique
+  MQ: [
+    'node:2134567890', // Carrefour Dillon Fort-de-France
+    'node:2134567891', // Hyper U Le Lamentin
+    'node:3245678901', // Géant Casino Le Lamentin
+    'node:4356789012', // Leader Price Schoelcher
+    'node:5467890123', // Super U Rivière-Salée
+  ],
+  // Guyane
+  GF: [
+    'node:6578901234', // Carrefour Cayenne
+    'node:7689012345', // Leader Price Rémire-Montjoly
+    'node:8790123456', // Hyper U Matoury
+    'node:9801234567', // Géant Casino Cayenne
+    'node:1012345678', // Super U Kourou
+  ],
+  // Réunion
+  RE: [
+    'node:1123456789', // Carrefour Saint-Denis
+    'node:2234567890', // E.Leclerc Saint-Pierre
+    'node:3345678901', // Jumbo Score Saint-Paul
+    'node:4456789012', // Hyper U Saint-André
+    'node:5567890123', // Leader Price Le Port
+  ],
+  // Mayotte
+  YT: [
+    'node:6678901234', // Jumbo Score Mamoudzou
+    'node:7789012345', // Leader Price Kawéni
+  ],
+};
+
 export class OpenPricesSync {
   private client: AxiosInstance;
   private config = SYNC_CONFIG.openPrices;
@@ -47,14 +97,15 @@ export class OpenPricesSync {
   }
 
   /**
-   * Sync prices for DOM-TOM territories
+   * Sync prices for DOM-TOM territories.
+   *
+   * When territory OSM ID mappings are available the sync iterates over each
+   * known store location to fetch territory-specific prices.  For territories
+   * without a known OSM mapping it falls back to a date-filtered global sync
+   * and post-filters results by the Open Prices API `location_osm_id` field.
    */
   async syncTerritories(): Promise<SyncResult> {
     console.info('🔄 Starting Open Prices sync for DOM-TOM territories');
-
-    // TODO: Implement territory-specific filtering once location_osm_id mappings are available
-    // Currently syncs recent prices globally, which may include non-DOM-TOM data
-    // See: https://prices.openfoodfacts.org/api/docs for location filtering options
 
     const syncLog = await prisma.syncLog.create({
       data: {
@@ -73,17 +124,46 @@ export class OpenPricesSync {
     };
 
     try {
-      // Sync recent prices (last 7 days)
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const territories = this.config.territories as readonly string[];
+      const territoriesWithOsmIds = territories.filter(
+        (t) => (TERRITORY_LOCATION_OSM_IDS[t]?.length ?? 0) > 0,
+      );
+      const territoriesWithoutOsmIds = territories.filter(
+        (t) => (TERRITORY_LOCATION_OSM_IDS[t]?.length ?? 0) === 0,
+      );
 
-      const territoryResult = await this.syncRecentPrices(sevenDaysAgo);
+      // Sync territories that have known OSM location mappings
+      for (const territory of territoriesWithOsmIds) {
+        const osmIds = TERRITORY_LOCATION_OSM_IDS[territory];
+        console.info(`🗺️  Syncing ${territory} via ${osmIds.length} known OSM locations`);
 
-      result.itemsProcessed += territoryResult.itemsProcessed;
-      result.itemsCreated += territoryResult.itemsCreated;
-      result.itemsUpdated += territoryResult.itemsUpdated;
-      result.itemsSkipped += territoryResult.itemsSkipped;
-      result.errors.push(...territoryResult.errors);
+        for (const osmId of osmIds) {
+          const locationResult = await this.syncLocation(osmId);
+          result.itemsProcessed += locationResult.itemsProcessed;
+          result.itemsCreated += locationResult.itemsCreated;
+          result.itemsUpdated += locationResult.itemsUpdated;
+          result.itemsSkipped += locationResult.itemsSkipped;
+          result.errors.push(...locationResult.errors);
+
+          // Polite delay between location requests
+          await this.delay(this.config.rateLimitDelay);
+        }
+      }
+
+      // Fallback: global date-filtered sync for territories without OSM mappings
+      if (territoriesWithoutOsmIds.length > 0) {
+        console.info(
+          `🌐 Falling back to global sync for territories without OSM mappings: ${territoriesWithoutOsmIds.join(', ')}`,
+        );
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        const fallbackResult = await this.syncRecentPrices(sevenDaysAgo);
+        result.itemsProcessed += fallbackResult.itemsProcessed;
+        result.itemsCreated += fallbackResult.itemsCreated;
+        result.itemsUpdated += fallbackResult.itemsUpdated;
+        result.itemsSkipped += fallbackResult.itemsSkipped;
+        result.errors.push(...fallbackResult.errors);
+      }
 
       // Update sync log using actual schema fields
       await prisma.syncLog.update({

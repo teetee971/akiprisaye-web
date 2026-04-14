@@ -18,6 +18,12 @@ export interface Env {
   PAYPAL_CLIENT_SECRET: string;
   PAYPAL_WEBHOOK_ID: string;
   PAYPAL_ENV: 'sandbox' | 'live';
+  /** PayPal plan ID for the PREMIUM_MONTHLY subscription tier. */
+  PAYPAL_PREMIUM_PLAN_ID?: string;
+  /** PayPal plan ID for the PRO_MONTHLY subscription tier. */
+  PAYPAL_PRO_PLAN_ID?: string;
+  /** Secret used to verify HS256 JWT tokens for user subscription lookups. */
+  JWT_SECRET?: string;
 }
 
 export type ReceiptJobStatus = 'created' | 'processing' | 'completed' | 'failed';
