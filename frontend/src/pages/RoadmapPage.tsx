@@ -42,6 +42,17 @@ import {
 type ModuleStatus = 'done' | 'partial' | 'planned';
 type PhaseKey = 'mvp' | 'v1' | 'v2' | 'v3';
 
+interface RoadmapPhase {
+  key: PhaseKey;
+  label: string;
+  subtitle: string;
+  items: string[];
+  /** ISO 8601 — début de la phase */
+  startDate: string;
+  /** ISO 8601 — livraison cible (ou date réelle si déjà déployé) */
+  targetDate: string;
+}
+
 interface RoadmapModule {
   name: string;
   description: string;
@@ -431,11 +442,13 @@ const MODULES: RoadmapModule[] = [
   },
 ];
 
-const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] }[] = [
+const PHASES: RoadmapPhase[] = [
   {
     key: 'mvp',
     label: 'MVP',
     subtitle: 'Plateforme opérationnelle — Déployée',
+    startDate: '2026-01-14T09:00',
+    targetDate: '2026-04-07T17:00',
     items: [
       'Comparateur de prix multi-enseignes, multi-territoires',
       'Scanner EAN + OCR tickets de caisse',
@@ -453,6 +466,8 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
     key: 'v1',
     label: 'V1',
     subtitle: 'Monétisation & institutionnel — En cours',
+    startDate: '2026-04-07T09:00',
+    targetDate: '2026-06-30T17:00',
     items: [
       'Marketplace enseignes payante (opérationnelle)',
       'Abonnements citoyens + Pro + Business',
@@ -468,6 +483,8 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
     key: 'v2',
     label: 'V2',
     subtitle: 'Extension territoriale & partenariats — Planifiée',
+    startDate: '2026-07-01T09:00',
+    targetDate: '2026-10-31T17:00',
     items: [
       'Extension aux COM éloignées (Polynésie, Nouvelle-Calédonie…)',
       'Partenariats formels avec observatoires officiels',
@@ -483,6 +500,8 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
     key: 'v3',
     label: 'V3',
     subtitle: 'Nouvelles fonctionnalités & intelligence augmentée — Partiellement déployé',
+    startDate: '2026-04-14T10:00',
+    targetDate: '2027-02-28T17:00',
     items: [
       'Guide intelligent des territoires alimenté par IA ✅',
       'Scanner AR de rayons (TensorFlow.js / Google Vision) ⚙️',
@@ -838,6 +857,38 @@ export default function RoadmapPage() {
                     </span>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 leading-snug">{phase.subtitle}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                        <span>
+                          🗓 Début :{' '}
+                          <time dateTime={phase.startDate}>
+                            {new Date(phase.startDate).toLocaleDateString('fr-FR', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}{' '}
+                            à{' '}
+                            {new Date(phase.startDate).toLocaleTimeString('fr-FR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </time>
+                        </span>
+                        <span>
+                          🏁 {phase.key === 'mvp' ? 'Livré' : 'Cible'} :{' '}
+                          <time dateTime={phase.targetDate}>
+                            {new Date(phase.targetDate).toLocaleDateString('fr-FR', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}{' '}
+                            à{' '}
+                            {new Date(phase.targetDate).toLocaleTimeString('fr-FR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </time>
+                        </span>
+                      </p>
                     </div>
                     {phase.key === 'mvp' && (
                       <span className="flex-shrink-0 text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">
