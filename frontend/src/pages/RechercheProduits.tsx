@@ -9,7 +9,7 @@ import { useSearchHistory, type SearchHistoryEntry, type SearchHistoryType } fro
 import { searchProductPrices } from '../services/priceSearch/priceSearch.service';
 import type { PriceSearchResult, TerritoryCode } from '../services/priceSearch/price.types';
 import type { ScanData, ScanHubResult } from '../types/scanHubResult';
-import type { ProductCard } from '../types/productCard';
+import type { ProductCard, ProductNutriments } from '../types/productCard';
 import { TipsPanel } from '../features/tips/ui/TipsPanel';
 import type { TipContext } from '../features/tips';
 import { getProductImageFallback } from '../utils/productImageFallback';
@@ -55,6 +55,32 @@ const buildSearchLabel = (queryValue: string, barcodeValue: string) => {
     return `EAN ${barcodeValue}`;
   }
   return queryValue || 'Recherche';
+};
+
+const NOVA_META: Record<number, { label: string; color: string; desc: string }> = {
+  1: { label: 'NOVA 1', color: 'bg-green-600 text-white', desc: 'Aliment non transformé' },
+  2: { label: 'NOVA 2', color: 'bg-lime-500 text-black', desc: 'Ingrédient culinaire transformé' },
+  3: { label: 'NOVA 3', color: 'bg-orange-500 text-white', desc: 'Aliment transformé' },
+  4: { label: 'NOVA 4', color: 'bg-red-600 text-white', desc: 'Ultra-transformé' },
+};
+
+const shareProduct = async (title: string, barcode?: string) => {
+  const url = barcode
+    ? `${window.location.origin}${window.location.pathname}?ean=${encodeURIComponent(barcode)}`
+    : window.location.href;
+  if ('share' in navigator && typeof navigator.share === 'function') {
+    try {
+      await (navigator as Navigator & { share: (data: object) => Promise<void> }).share({ title: `AkiPriSaYé — ${title}`, url });
+    } catch {
+      // user cancelled or browser denied — silent
+    }
+  } else {
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // clipboard unavailable
+    }
+  }
 };
 
 const buildProductFavoriteId = (params: {
@@ -318,6 +344,8 @@ export function PriceResults({
 }) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [ingredientsOpen, setIngredientsOpen] = useState(false);
+  const [nutritionOpen, setNutritionOpen] = useState(false);
+  const [lightboxImg, setLightboxImg] = useState<{ url: string; alt: string } | null>(null);
   const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
 
   const interval = result.prices?.[0];
@@ -380,6 +408,17 @@ export function PriceResults({
               nutriscore?: string | null;
               ecoscore?: string | null;
               ingredientsText?: string | null;
+              novaGroup?: number | null;
+              nutriments?: {
+                energy_100g?: number | null;
+                fat_100g?: number | null;
+                saturatedFat_100g?: number | null;
+                carbohydrates_100g?: number | null;
+                sugars_100g?: number | null;
+                fiber_100g?: number | null;
+                proteins_100g?: number | null;
+                salt_100g?: number | null;
+              } | null;
             };
             // legacy shape kept for safety
             product?: ProductCard;
@@ -411,6 +450,19 @@ export function PriceResults({
             nutriscore: d.nutriscore ?? undefined,
             ecoscore: d.ecoscore ?? undefined,
             ingredientsText: d.ingredientsText ?? undefined,
+            novaGroup: d.novaGroup ?? undefined,
+            nutriments: d.nutriments
+              ? {
+                  energy_100g: d.nutriments.energy_100g ?? null,
+                  fat_100g: d.nutriments.fat_100g ?? null,
+                  saturatedFat_100g: d.nutriments.saturatedFat_100g ?? null,
+                  carbohydrates_100g: d.nutriments.carbohydrates_100g ?? null,
+                  sugars_100g: d.nutriments.sugars_100g ?? null,
+                  fiber_100g: d.nutriments.fiber_100g ?? null,
+                  proteins_100g: d.nutriments.proteins_100g ?? null,
+                  salt_100g: d.nutriments.salt_100g ?? null,
+                }
+              : undefined,
             source: 'open_food_facts',
             updatedAt: new Date().toISOString(),
           });
@@ -673,10 +725,10 @@ export function PriceResults({
           </div>
         )}
 
-        {/* Nutri-Score + Éco-Score badges */}
-        {(productCard?.nutriscore || productCard?.ecoscore) && (
-          <div className="flex flex-wrap gap-3 items-center">
-            {productCard.nutriscore && (() => {
+        {/* Nutri-Score + Éco-Score + NOVA badges + Share */}
+        {(productCard?.nutriscore || productCard?.ecoscore || productCard?.novaGroup) && (
+          <div className="flex flex-wrap gap-2 items-center">
+            {productCard?.nutriscore && (() => {
               const g = productCard.nutriscore.toUpperCase();
               const colorMap: Record<string, string> = {
                 A: 'bg-green-500 text-white',
@@ -692,7 +744,7 @@ export function PriceResults({
                 </span>
               );
             })()}
-            {productCard.ecoscore && (() => {
+            {productCard?.ecoscore && (() => {
               const g = productCard.ecoscore.toUpperCase();
               const colorMap: Record<string, string> = {
                 A: 'bg-green-700 text-white',
@@ -708,40 +760,78 @@ export function PriceResults({
                 </span>
               );
             })()}
+            {productCard?.novaGroup && NOVA_META[productCard.novaGroup] && (() => {
+              const meta = NOVA_META[productCard.novaGroup as number];
+              return (
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${meta.color}`} title={meta.desc}>
+                  🏭 {meta.label}
+                </span>
+              );
+            })()}
+            <button
+              type="button"
+              onClick={() => void shareProduct(productTitle, productCard?.barcode ?? searchBarcode ?? undefined)}
+              className="ml-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              aria-label="Partager ce produit"
+              title={'share' in navigator ? 'Partager' : 'Copier le lien'}
+            >
+              🔗 {'share' in navigator ? 'Partager' : 'Copier le lien'}
+            </button>
           </div>
         )}
 
         {productImages.length > 0 ? (
           <div className={productImages.length === 1 ? '' : 'grid grid-cols-2 gap-2'}>
-            {productImages.map((img) => (
-              <div key={img.url} className="relative">
-                <OptimizedImage
-                  src={img.url}
-                  alt={img.type === 'ingredients' ? `Ingrédients — ${productTitle}` : img.type === 'nutrition' ? `Tableau nutritionnel — ${productTitle}` : productTitle}
-                  className={`rounded-xl object-contain w-full bg-slate-800 ${productImages.length === 1 ? 'h-40' : 'h-32'}`}
-                  loading="lazy"
-                  onError={(event) => {
-                    event.currentTarget.src = getProductImageFallback({ productName: productTitle });
-                  }}
-                />
-                {img.type !== 'front' && (
-                  <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">
-                    {img.type === 'ingredients' ? 'Ingrédients' : 'Nutrition'}
-                  </span>
-                )}
-              </div>
-            ))}
+            {productImages.map((img) => {
+              const alt = img.type === 'ingredients' ? `Ingrédients — ${productTitle}` : img.type === 'nutrition' ? `Tableau nutritionnel — ${productTitle}` : productTitle;
+              return (
+                <div key={img.url} className="relative">
+                  <button
+                    type="button"
+                    className="block w-full rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label={`Agrandir l'image : ${alt}`}
+                    onClick={() => setLightboxImg({ url: img.url, alt })}
+                  >
+                    <OptimizedImage
+                      src={img.url}
+                      alt={alt}
+                      className={`rounded-xl object-contain w-full bg-slate-800 ${productImages.length === 1 ? 'h-40' : 'h-32'}`}
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+                      }}
+                    />
+                  </button>
+                  {img.type !== 'front' && (
+                    <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none">
+                      {img.type === 'ingredients' ? 'Ingrédients' : 'Nutrition'}
+                    </span>
+                  )}
+                  <span className="absolute top-1 right-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none" aria-hidden="true">🔍</span>
+                </div>
+              );
+            })}
           </div>
         ) : (
-          <OptimizedImage
-            src={textProductImageUrl ?? getProductImageFallback({ productName: productTitle })}
-            alt={productTitle}
-            className="rounded-xl object-cover w-full h-40 bg-slate-800"
-            loading="lazy"
-            onError={(event) => {
-              event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+          <button
+            type="button"
+            className="block w-full rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label={`Agrandir l'image : ${productTitle}`}
+            onClick={() => {
+              const src = textProductImageUrl ?? getProductImageFallback({ productName: productTitle });
+              setLightboxImg({ url: src, alt: productTitle });
             }}
-          />
+          >
+            <OptimizedImage
+              src={textProductImageUrl ?? getProductImageFallback({ productName: productTitle })}
+              alt={productTitle}
+              className="rounded-xl object-cover w-full h-40 bg-slate-800"
+              loading="lazy"
+              onError={(event) => {
+                event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+              }}
+            />
+          </button>
         )}
 
         {/* Ingrédients texte (accordéon) */}
@@ -761,6 +851,81 @@ export function PriceResults({
                 {productCard.ingredientsText}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Tableau nutritionnel (accordéon) */}
+        {productCard?.nutriments && (() => {
+          const n = productCard.nutriments as ProductNutriments;
+          const rows: Array<{ label: string; value: number | null; unit: string }> = [
+            { label: 'Énergie', value: n.energy_100g, unit: 'kcal' },
+            { label: 'Matières grasses', value: n.fat_100g, unit: 'g' },
+            { label: 'dont saturées', value: n.saturatedFat_100g, unit: 'g' },
+            { label: 'Glucides', value: n.carbohydrates_100g, unit: 'g' },
+            { label: 'dont sucres', value: n.sugars_100g, unit: 'g' },
+            { label: 'Fibres', value: n.fiber_100g, unit: 'g' },
+            { label: 'Protéines', value: n.proteins_100g, unit: 'g' },
+            { label: 'Sel', value: n.salt_100g, unit: 'g' },
+          ].filter((row) => row.value !== null && row.value !== undefined);
+          if (rows.length === 0) return null;
+          return (
+            <div className="border border-slate-700 rounded-xl overflow-hidden">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 hover:bg-slate-700 transition-colors text-sm font-medium text-left"
+                aria-expanded={nutritionOpen}
+                onClick={() => setNutritionOpen((o) => !o)}
+              >
+                <span>📊 Valeurs nutritionnelles <span className="text-slate-400 text-xs font-normal">pour 100 g</span></span>
+                <span className="text-slate-400 text-xs" aria-hidden="true">{nutritionOpen ? '▲' : '▼'}</span>
+              </button>
+              {nutritionOpen && (
+                <table className="w-full text-xs bg-slate-900" role="table" aria-label="Valeurs nutritionnelles pour 100 g">
+                  <tbody>
+                    {rows.map((row, i) => (
+                      <tr key={row.label} className={i % 2 === 0 ? 'bg-slate-900' : 'bg-slate-800/50'}>
+                        <td className={`px-4 py-2 text-slate-300 ${row.label.startsWith('dont') ? 'pl-7' : ''}`}>{row.label}</td>
+                        <td className="px-4 py-2 text-right font-medium text-white">
+                          {typeof row.value === 'number' ? `${row.value.toFixed(1)} ${row.unit}` : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* Image lightbox */}
+        {lightboxImg && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+            role="dialog"
+            aria-modal="true"
+            aria-label={lightboxImg.alt}
+            onClick={() => setLightboxImg(null)}
+            onKeyDown={(e) => { if (e.key === 'Escape') setLightboxImg(null); }}
+            tabIndex={-1}
+          >
+            <div className="relative max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()} role="presentation">
+              <button
+                type="button"
+                onClick={() => setLightboxImg(null)}
+                className="absolute -top-10 right-0 text-white text-2xl leading-none p-2 hover:text-slate-300"
+                aria-label="Fermer l'image"
+              >✕</button>
+              <img
+                src={lightboxImg.url}
+                alt={lightboxImg.alt}
+                className="w-full max-h-[80vh] object-contain rounded-xl bg-slate-900"
+                onError={(event) => {
+                  event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+                }}
+              />
+              <p className="text-center text-xs text-slate-400 mt-2">{lightboxImg.alt}</p>
+            </div>
           </div>
         )}
 

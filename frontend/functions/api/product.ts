@@ -105,6 +105,22 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
       ecoscore: (p.ecoscore_grade as string) || null,
       ingredientsText:
         (p.ingredients_text_fr as string) || (p.ingredients_text as string) || null,
+      novaGroup: typeof p.nova_group === 'number' ? (p.nova_group as number) : null,
+      nutriments: (() => {
+        const n = p.nutriments as Record<string, number> | undefined;
+        if (!n) return null;
+        const pick = (key: string) => (typeof n[key] === 'number' ? n[key] : null);
+        return {
+          energy_100g: pick('energy-kcal_100g') ?? pick('energy_100g'),
+          fat_100g: pick('fat_100g'),
+          saturatedFat_100g: pick('saturated-fat_100g'),
+          carbohydrates_100g: pick('carbohydrates_100g'),
+          sugars_100g: pick('sugars_100g'),
+          fiber_100g: pick('fiber_100g'),
+          proteins_100g: pick('proteins_100g'),
+          salt_100g: pick('salt_100g'),
+        };
+      })(),
     };
 
     const response = jsonResponse({ ok: true, data: normalized }, {
