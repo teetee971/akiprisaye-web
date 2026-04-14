@@ -43,7 +43,6 @@ import { join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import admin from 'firebase-admin';
 import OpenAI from 'openai';
-import { timedSource, isScrapingAllowed } from './sources/utils.mjs';
 
 import { scrapeFuelPrices }        from './sources/fuel.mjs';
 import { scrapeFoodPrices }        from './sources/food.mjs';
@@ -380,7 +379,6 @@ async function main() {
 
   // ── Scraping en parallèle ─────────────────────────────────────────────────
   const shouldRun = (s) => SOURCE_FILTER === 'all' || SOURCE_FILTER === s;
-  const runSource = (name, fn) => timedSource(name, () => shouldRun(name) ? fn() : Promise.resolve([]));
 
   console.log('📡 Lancement du scraping…\n');
   const [

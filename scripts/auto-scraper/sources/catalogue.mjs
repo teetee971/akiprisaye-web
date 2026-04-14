@@ -227,9 +227,7 @@ const RETAILERS = [
     territories: {
       GP: '97163',  // Cora Baie-Mahault (Guadeloupe)
       MQ: '97232',  // Cora Le Lamentin (Martinique)
-      RE: null,
-      GF: null,
-      YT: null,
+      // Cora n'est pas présent en RE, GF, YT
     },
     buildUrl(query, storeId) {
       const p = new URLSearchParams({ q: query, page: '1', pageSize: '20', lang: 'fr' });
@@ -293,9 +291,7 @@ const RETAILERS = [
     territories: {
       GP: null,   // Aldi GP — pas de code magasin exposé dans l'API publique
       MQ: null,   // Aldi MQ — même situation
-      RE: null,
-      GF: null,
-      YT: null,
+      // Aldi n'est pas présent en RE, GF, YT
     },
     buildUrl(query) {
       // Aldi France utilise un endpoint de recherche headless (Commerce Layer / Algolia).
@@ -325,11 +321,8 @@ const RETAILERS = [
     // Score et Jumbo Score sont les leaders de la grande distribution à La Réunion
     // (groupe LEAL). Score.re exploite un site e-commerce avec catalogue en ligne.
     territories: {
-      GP: null,
-      MQ: null,
       RE: null,   // Score est spécifique RE — pas de code PDV requis, catalogue national
-      GF: null,
-      YT: null,
+      // Score (groupe LEAL) n'est pas présent en GP, MQ, GF, YT
     },
     buildUrl(query) {
       const p = new URLSearchParams({ q: query, page: '1', pageSize: '20' });
@@ -358,11 +351,8 @@ const RETAILERS = [
     // Auchan est présent à La Réunion depuis 2012 (Saint-Denis Grand Marché).
     // Auchan.fr expose une API de recherche produit utilisée par le site e-commerce.
     territories: {
-      GP: null,
-      MQ: null,
       RE: null,   // Auchan RE — catalogue national auchan.fr (même référentiel)
-      GF: null,
-      YT: null,
+      // Auchan n'est pas présent en GP, MQ, GF, YT (DOM)
     },
     buildUrl(query) {
       const p = new URLSearchParams({
@@ -396,11 +386,8 @@ const RETAILERS = [
     // Monoprix est présent en Martinique (Fort-de-France, centre commercial La Galleria).
     // Monoprix.fr propose un site e-commerce avec API de recherche produit.
     territories: {
-      GP: null,
       MQ: null,   // Monoprix MQ — catalogue national monoprix.fr
-      RE: null,
-      GF: null,
-      YT: null,
+      // Monoprix n'est pas présent en GP, RE, GF, YT (DOM)
     },
     buildUrl(query) {
       const p = new URLSearchParams({
@@ -436,9 +423,7 @@ const RETAILERS = [
     territories: {
       GP: 'guadeloupe',
       MQ: 'martinique',
-      RE: null,
-      GF: null,
-      YT: null,
+      // 123.click (E.Leclerc Drive DOM) est spécifique aux Antilles — pas de service en RE, GF, YT
     },
     buildUrl(query, zone) {
       const p = new URLSearchParams({ q: query, pageSize: '20' });
@@ -581,6 +566,8 @@ export async function scrapeCataloguePrices() {
     let retailerTotal = 0;
 
     for (const territory of territories) {
+      // Skip territories where this retailer doesn't operate
+      if (!(territory in retailer.territories)) continue;
       for (const query of PANIER_QUERIES) {
         const entries = await scrapeOne(retailer, query, territory);
         if (entries.length > 0) {

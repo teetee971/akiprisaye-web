@@ -20,6 +20,7 @@ import {
   toLeafletHeatFormat,
 } from '../../services/stores/heatmapService.js';
 import { calculateDistance, calculateTravelTime } from '../../utils/geoUtils.js';
+import prisma from '../../database/prisma.js';
 
 const router = express.Router();
 
@@ -199,21 +200,91 @@ router.get('/stores/:id/price-index', async (req: Request, res: Response) => {
       });
     }
 
-    // TODO: Load actual price data and calculate index
-    // For now, return mock data
+    // Load actual price data from DB and calculate index
+    // Fetch the latest price observation per normalised product label for this store
+    const dbStore = await prisma.store.findFirst({
+      where: { normalizedName: store.name.toLowerCase().replace(/\s+/g, '_') },
+      select: { id: true, territory: true },
+    });
+
+    const referenceBasket = getReferenceBasket();
+    let priceIndex = 50;
+    let basketTotal = 0;
+    let productsFound = 0;
+    let territoryAverage = 0;
+    const missingProducts: string[] = [];
+
+    if (dbStore) {
+      // Get the most recent price for each basket item in this store
+      const observations = await prisma.priceObservation.findMany({
+        where: { storeId: dbStore.id },
+        orderBy: { observedAt: 'desc' },
+        distinct: ['normalizedLabel'],
+        select: { normalizedLabel: true, price: true },
+      });
+
+      const priceMap = new Map(observations.map((o) => [o.normalizedLabel, o.price]));
+
+      for (const item of referenceBasket) {
+        const price = priceMap.get(item);
+        if (price != null) {
+          basketTotal += price;
+          productsFound++;
+        } else {
+          missingProducts.push(item);
+        }
+      }
+
+      // Compute territory average basket price
+      if (productsFound > 0) {
+        const allStores = await prisma.store.findMany({
+          where: { territory: dbStore.territory },
+          select: { id: true },
+        });
+        const allStoreIds = allStores.map((s) => s.id);
+
+        const territoryObs = await prisma.priceObservation.findMany({
+          where: {
+            storeId: { in: allStoreIds, not: null },
+            normalizedLabel: { in: referenceBasket },
+          },
+          orderBy: { observedAt: 'desc' },
+          distinct: ['storeId', 'normalizedLabel'],
+          select: { storeId: true, normalizedLabel: true, price: true },
+        });
+
+        // Sum per-store basket totals for average
+        const storeTotals = new Map<string, number>();
+        for (const obs of territoryObs) {
+          if (!obs.storeId) continue;
+          storeTotals.set(obs.storeId, (storeTotals.get(obs.storeId) ?? 0) + obs.price);
+        }
+        const totals = [...storeTotals.values()].filter((t) => t > 0);
+        if (totals.length > 0) {
+          territoryAverage = totals.reduce((s, t) => s + t, 0) / totals.length;
+        }
+
+        if (territoryAverage > 0) {
+          // Index: 50 = territory average; <50 = cheaper; >50 = more expensive
+          priceIndex = Math.round(50 * (basketTotal / territoryAverage));
+          priceIndex = Math.max(0, Math.min(100, priceIndex));
+        }
+      }
+    }
+
     return res.json({
       success: true,
       data: {
         storeId: id,
         storeName: store.name,
-        priceIndex: 50, // Mock value
-        category: 'medium',
-        basketTotal: 0,
-        territoryAverage: 0,
-        missingProducts: [],
-        productsFound: 0,
-        productsTotal: 10,
-        referenceBasket: getReferenceBasket(),
+        priceIndex,
+        category: priceIndex < 45 ? 'cheap' : priceIndex > 55 ? 'expensive' : 'medium',
+        basketTotal,
+        territoryAverage,
+        missingProducts,
+        productsFound,
+        productsTotal: referenceBasket.length,
+        referenceBasket,
       },
     });
   } catch (error) {
@@ -250,13 +321,57 @@ router.get('/heatmap', async (req: Request, res: Response) => {
       (store) => store.territory.toLowerCase().includes(territoryLower)
     );
 
-    // TODO: Load actual price indices
-    // For now, generate mock price indices
+    // Load actual price indices from DB
     const priceIndices = new Map<string, number>();
-    stores.forEach((store, index) => {
-      // Generate mock price index (0-100)
-      priceIndices.set(store.id, (index * 7) % 100);
+
+    // Fetch territory average basket price for normalisation
+    const territoryStores = await prisma.store.findMany({
+      where: { territory: territoryLower },
+      select: { id: true, normalizedName: true },
     });
+    const storeIdByName = new Map(territoryStores.map((s) => [s.normalizedName, s.id]));
+    const dbStoreIds = territoryStores.map((s) => s.id);
+    const referenceBasket = getReferenceBasket();
+
+    // Latest price per store × normalised label
+    const allObs = await prisma.priceObservation.findMany({
+      where: {
+        storeId: { in: dbStoreIds, not: null },
+        normalizedLabel: { in: referenceBasket },
+      },
+      orderBy: { observedAt: 'desc' },
+      distinct: ['storeId', 'normalizedLabel'],
+      select: { storeId: true, normalizedLabel: true, price: true },
+    });
+
+    // Build per-store basket totals
+    const storeTotals = new Map<string, { total: number; count: number }>();
+    for (const obs of allObs) {
+      if (!obs.storeId) continue;
+      const existing = storeTotals.get(obs.storeId) ?? { total: 0, count: 0 };
+      storeTotals.set(obs.storeId, {
+        total: existing.total + obs.price,
+        count: existing.count + 1,
+      });
+    }
+
+    const totalsArr = [...storeTotals.values()]
+      .filter((s) => s.count >= referenceBasket.length * 0.5)
+      .map((s) => s.total);
+    const territoryAvg =
+      totalsArr.length > 0 ? totalsArr.reduce((a, b) => a + b, 0) / totalsArr.length : 0;
+
+    for (const store of stores) {
+      const normalised = store.name.toLowerCase().replace(/\s+/g, '_');
+      const dbId = storeIdByName.get(normalised);
+      if (dbId && storeTotals.has(dbId) && territoryAvg > 0) {
+        const { total, count } = storeTotals.get(dbId)!;
+        if (count >= referenceBasket.length * 0.5) {
+          const idx = Math.max(0, Math.min(100, Math.round(50 * (total / territoryAvg))));
+          priceIndices.set(store.id, idx);
+        }
+      }
+    }
 
     const heatmapData = generateHeatmapData(stores, priceIndices, territory);
     const config = getHeatmapConfig(heatmapData);

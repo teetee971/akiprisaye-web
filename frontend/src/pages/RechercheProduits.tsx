@@ -32,6 +32,8 @@ const TERRITORIES: { code: TerritoryCode; label: string; flag: string }[] = [
   { code: 'mf', label: 'St-Martin', flag: '🌺' },
 ];
 
+const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
+
 const POPULAR_SEARCHES: { label: string; query?: string; ean?: string; emoji: string }[] = [
   { label: 'Coca-Cola', query: 'Coca-Cola', emoji: '🥤' },
   { label: 'Coca Zero', query: 'Coca-Cola Zero', emoji: '🫙' },
@@ -242,7 +244,6 @@ export function PartialPriceState({
   onReturnToHub: () => void;
 }) {
   const interval = result.prices?.[0];
-  const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
   const confidence = result.confidence ?? 0;
   const observations = interval?.priceCount ?? 0;
   const territoryLabel = getTerritoryLabel(result.territory);
@@ -362,7 +363,8 @@ export function PriceResults({
     : result.productName || 'Produit favori';
   const favoriteActive = isFavorite(favoriteId);
   const [productCard, setProductCard] = useState<ProductCard | null>(null);
-  const [textProductImageUrl, setTextProductImageUrl] = useState<string | null>(null);
+  // Resolved image URL from product-image worker (text query fallback)
+  const [resolvedImageUrl, setResolvedImageUrl] = useState<string | null>(null);
 
   // Seed from pre-loaded observations (from seedProvider / priceSearch); API call supplements
   const [apiPrices, setApiPrices] = useState<ApiPriceObservation[]>(
@@ -376,148 +378,96 @@ export function PriceResults({
     }
 
     const barcode = searchBarcode?.trim();
+    const textQuery = searchQuery?.trim();
+
+    // Nothing to look up — clear card and bail out
+    if (!barcode && !textQuery) {
+      setProductCard(null);
+      return;
+    }
+
     const controller = new AbortController();
     const territory = (result.territory ?? 'gp').trim();
 
-    if (barcode) {
-      // Barcode search: load full product card + prices from API
-      setTextProductImageUrl(null);
+    // SWR: serve stale card from sessionStorage immediately while fresh data loads
+    const cardCacheKey = barcode
+      ? `product-card:ean:${barcode}`
+      : `product-card:q:${textQuery!.toLowerCase()}`;
+    try {
+      const stale = sessionStorage.getItem(cardCacheKey);
+      if (stale) setProductCard(JSON.parse(stale) as ProductCard);
+    } catch { /* ignore */ }
 
-      const loadProductCard = async () => {
-        try {
-          const response = await fetch(`/api/product?barcode=${encodeURIComponent(barcode)}`, {
-            signal: controller.signal,
-          });
-          if (!response.ok) {
-            setProductCard(null);
-            return;
-          }
-          // /api/product (Pages Function) returns { ok, data: { name, brand, imageUrl, categories, ... } }
-          const payload = (await response.json()) as {
-            ok?: boolean;
-            data?: {
-              barcode?: string;
-              name?: string | null;
-              brand?: string | null;
-              quantity?: string | null;
-              imageUrl?: string | null;
-              imageIngredientsUrl?: string | null;
-              imageNutritionUrl?: string | null;
-              categories?: string[];
-              found?: boolean;
-              nutriscore?: string | null;
-              ecoscore?: string | null;
-              ingredientsText?: string | null;
-              novaGroup?: number | null;
-              nutriments?: {
-                energy_100g?: number | null;
-                fat_100g?: number | null;
-                saturatedFat_100g?: number | null;
-                carbohydrates_100g?: number | null;
-                sugars_100g?: number | null;
-                fiber_100g?: number | null;
-                proteins_100g?: number | null;
-                salt_100g?: number | null;
-              } | null;
-            };
-            // legacy shape kept for safety
-            product?: ProductCard;
-          };
-          if (payload.product) {
-            setProductCard(payload.product);
-            return;
-          }
-          const d = payload.data;
-          if (!d?.found) {
-            setProductCard(null);
-            return;
-          }
-          // Map to ProductCard shape — collect all available images
-          const images: ProductCard['images'] = [];
-          if (d.imageUrl) images.push({ type: 'front', url: d.imageUrl });
-          if (d.imageIngredientsUrl) images.push({ type: 'ingredients', url: d.imageIngredientsUrl });
-          if (d.imageNutritionUrl) images.push({ type: 'nutrition', url: d.imageNutritionUrl });
-          const cats = (d.categories ?? []).map((c: string) =>
-            c.replace(/^[a-z]{2}:/, '').replace(/-/g, ' '),
-          );
-          setProductCard({
-            barcode: d.barcode ?? barcode,
-            title: d.name ?? barcode,
-            brand: d.brand ?? undefined,
-            quantity: d.quantity ?? undefined,
-            categories: cats.length > 0 ? cats : undefined,
-            images,
-            nutriscore: d.nutriscore ?? undefined,
-            ecoscore: d.ecoscore ?? undefined,
-            ingredientsText: d.ingredientsText ?? undefined,
-            novaGroup: d.novaGroup ?? undefined,
-            nutriments: d.nutriments
-              ? {
-                  energy_100g: d.nutriments.energy_100g ?? null,
-                  fat_100g: d.nutriments.fat_100g ?? null,
-                  saturatedFat_100g: d.nutriments.saturatedFat_100g ?? null,
-                  carbohydrates_100g: d.nutriments.carbohydrates_100g ?? null,
-                  sugars_100g: d.nutriments.sugars_100g ?? null,
-                  fiber_100g: d.nutriments.fiber_100g ?? null,
-                  proteins_100g: d.nutriments.proteins_100g ?? null,
-                  salt_100g: d.nutriments.salt_100g ?? null,
-                }
-              : undefined,
-            source: 'open_food_facts',
-            updatedAt: new Date().toISOString(),
-          });
-        } catch {
-          setProductCard(null);
+    const loadProductCard = async () => {
+      try {
+        const url = barcode
+          ? `/api/product?barcode=${encodeURIComponent(barcode)}`
+          : `/api/product?q=${encodeURIComponent(textQuery!)}`;
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) return;
+        const payload = (await response.json()) as { product?: ProductCard };
+        const card = payload.product ?? null;
+        setProductCard(card);
+        if (card) {
+          try { sessionStorage.setItem(cardCacheKey, JSON.stringify(card)); } catch { /* ignore */ }
         }
-      };
-
-      const loadPrices = async () => {
-        try {
-          const response = await fetch(
-            `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
-            { signal: controller.signal },
-          );
-          if (!response.ok) return;
-          const payload = (await response.json()) as ApiPricesResponse;
-          if (Array.isArray(payload.observations) && payload.observations.length > 0) {
-            // Merge API results on top of seed data (API takes priority)
-            setApiPrices(payload.observations);
-          }
-        } catch {
-          // API unavailable – keep seed observations already set above
-        }
-      };
-
-      void Promise.all([loadProductCard(), loadPrices()]);
-    } else {
-      // Text search: no product card, but try to fetch an image via product-image worker
-      setProductCard(null);
-      const textQuery = (searchQuery ?? result.productName ?? '').trim();
-      if (textQuery) {
-        const loadTextImage = async () => {
-          try {
-            const response = await fetch(
-              `/api/product-image?q=${encodeURIComponent(textQuery)}`,
-              { signal: controller.signal },
-            );
-            if (!response.ok) return;
-            const payload = (await response.json()) as { imageUrl?: string | null };
-            if (payload.imageUrl) {
-              setTextProductImageUrl(payload.imageUrl);
-            }
-          } catch {
-            // silently ignore — fallback image remains
-          }
-        };
-        void loadTextImage();
+      } catch {
+        // Keep stale card if already shown; clear only for barcode searches where null is explicit
+        if (barcode) setProductCard(null);
       }
-    }
+    };
 
+    const loadPrices = async () => {
+      if (!barcode) return; // price observations require a barcode
+      try {
+        const response = await fetch(
+          `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
+          { signal: controller.signal },
+        );
+        if (!response.ok) return;
+        const payload = (await response.json()) as ApiPricesResponse;
+        if (Array.isArray(payload.observations) && payload.observations.length > 0) {
+          // Merge API results on top of seed data (API takes priority)
+          setApiPrices(payload.observations);
+        }
+      } catch {
+        // API unavailable – keep seed observations already set above
+      }
+    };
+
+    // Fetch a real product image via the product-image worker when a text query is used
+    const loadProductImage = async () => {
+      const label = textQuery || result.productName;
+      if (!label) return;
+      const imgCacheKey = `product-img:${label.toLowerCase()}`;
+      try {
+        const cached = sessionStorage.getItem(imgCacheKey);
+        if (cached) { setResolvedImageUrl(cached); return; }
+      } catch { /* ignore */ }
+      try {
+        const params = new URLSearchParams({ q: label, lang: 'fr', limit: '1' });
+        const resp = await fetch(`/api/product-image?${params.toString()}`, { signal: controller.signal });
+        if (!resp.ok) return;
+        const data = (await resp.json()) as { imageUrl?: string | null };
+        if (data.imageUrl) {
+          setResolvedImageUrl(data.imageUrl);
+          try { sessionStorage.setItem(imgCacheKey, data.imageUrl); } catch { /* ignore */ }
+        }
+      } catch { /* non-critical */ }
+    };
+
+    void Promise.all([loadProductCard(), loadPrices(), loadProductImage()]);
     return () => controller.abort();
-  }, [result.observations, result.territory, searchBarcode, searchQuery, result.productName]);
+  }, [result.observations, result.productName, result.territory, searchBarcode, searchQuery]);
 
   const productTitle = productCard?.title || result.productName || 'Produit analysé';
-  const productImages = productCard?.images ?? [];
+  // Use card images when available; fall back to image resolved from the product-image worker
+  const productImages: ProductCard['images'] =
+    productCard?.images && productCard.images.length > 0
+      ? productCard.images
+      : resolvedImageUrl
+        ? [{ type: 'front' as const, url: resolvedImageUrl }]
+        : [];
 
   const rawPricedObservations = useMemo(
     () =>
@@ -818,12 +768,12 @@ export function PriceResults({
             className="block w-full rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label={`Agrandir l'image : ${productTitle}`}
             onClick={() => {
-              const src = textProductImageUrl ?? getProductImageFallback({ productName: productTitle });
+              const src = resolvedImageUrl ?? getProductImageFallback({ productName: productTitle });
               setLightboxImg({ url: src, alt: productTitle });
             }}
           >
             <OptimizedImage
-              src={textProductImageUrl ?? getProductImageFallback({ productName: productTitle })}
+              src={resolvedImageUrl ?? getProductImageFallback({ productName: productTitle })}
               alt={productTitle}
               className="rounded-xl object-cover w-full h-40 bg-slate-800"
               loading="lazy"
@@ -1399,8 +1349,16 @@ export default function RechercheProduits() {
 
     setLoading(true);
     setError(null);
-    setResult(null);
     setCachedAt(null);
+
+    // SWR: show stale cached result immediately so the UI isn't blank while fetching
+    const staleCache = readCache({ query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
+    if (staleCache?.payload) {
+      setResult(staleCache.payload);
+      setCachedAt(staleCache.cachedAt);
+    } else {
+      setResult(null);
+    }
 
     try {
       const response = await searchProductPrices({
@@ -1410,6 +1368,7 @@ export default function RechercheProduits() {
       });
       const mapped = mapPriceSearchResult(response);
       setResult(mapped);
+      setCachedAt(null);
       writeCache(mapped, { query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
     } catch (err: any) {
       console.error('Price search error:', err);
@@ -1417,7 +1376,7 @@ export default function RechercheProduits() {
     } finally {
       setLoading(false);
     }
-  }, [addEntry, barcode, query, territory, writeCache]);
+  }, [addEntry, barcode, query, readCache, territory, writeCache]);
 
   const handleSearch = useCallback(async () => {
     const searchType = barcode.trim() ? 'barcode' : 'text';

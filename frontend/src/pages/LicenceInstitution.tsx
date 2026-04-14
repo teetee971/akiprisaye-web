@@ -6,6 +6,7 @@
  */
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
 import { CivicButton } from '@/components/ui/CivicButton';
@@ -297,7 +298,7 @@ export default function LicenceInstitution() {
               <CivicButton
                 variant="primary"
                 className="w-full"
-                onClick={() => alert('Dossier institutionnel en cours de génération. Contact: institutions@akiprisaye.fr')}
+                onClick={() => toast('Dossier institutionnel en cours de génération. Contact : institutions@akiprisaye.fr', { icon: '📄', duration: 5000 })}
               >
                 Télécharger le PDF
               </CivicButton>

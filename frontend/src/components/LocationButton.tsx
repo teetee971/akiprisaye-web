@@ -115,6 +115,7 @@ export default function LocationButton({
     <div className={`space-y-3 ${className}`}>
       {/* Location Button */}
       <button
+        type="button"
         onClick={handleActivateLocation}
         disabled={disabled || loading || !!position}
         className={`

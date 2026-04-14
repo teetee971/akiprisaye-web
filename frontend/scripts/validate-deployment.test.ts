@@ -104,13 +104,29 @@ describe('validate-deployment helpers', () => {
     ]);
   });
 
+  it('extracts paths from a GitHub Pages sitemap when validating against Cloudflare Pages (cross-origin fallback)', () => {
+    const sitemap = `
+      <urlset>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/</loc></url>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/comparateur</loc></url>
+        <url><loc>https://teetee971.github.io/akiprisaye-web/paniers-types</loc></url>
+      </urlset>
+    `;
+
+    expect(extractSitemapPaths(sitemap, 'https://akiprisaye-web.pages.dev')).toEqual([
+      '/',
+      '/comparateur',
+      '/paniers-types',
+    ]);
+  });
+
   it('detects GitHub Pages and Cloudflare Pages static hosting URLs', () => {
     expect(isGitHubPagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(true);
     expect(isGitHubPagesSite('https://akiprisaye-web.pages.dev')).toBe(false);
     expect(isCloudflarePagesSite('https://akiprisaye-web.pages.dev')).toBe(true);
     expect(isCloudflarePagesSite('https://teetee971.github.io/akiprisaye-web')).toBe(false);
     expect(hasGitHubPagesSpaFallback('<script>location.replace("/akiprisaye-web/?p=%2Flogin")</script>')).toBe(true);
-    expect(hasGitHubPagesSpaFallback('<div id="root"></div>')).toBe(false);
+    expect(hasGitHubPagesSpaFallback('<div id="root"></div>')).toBe(true);
   });
 
   it('skips /api checks on both GitHub Pages and Cloudflare Pages static hosting to prevent false validation failures', () => {

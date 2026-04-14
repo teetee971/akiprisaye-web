@@ -5,6 +5,7 @@
 
 import sgMail from '@sendgrid/mail';
 import type { Notification } from '../notificationTypes.js';
+import prisma from '../../../database/prisma.js';
 
 // Initialize SendGrid (will be configured via env)
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
@@ -123,13 +124,14 @@ class EmailChannel {
   }
 
   /**
-   * Get user data
-   * TODO: Implement based on actual user service
+   * Get user data from the database
    */
-  private async getUser(_userId: string): Promise<{ email: string } | null> {
-    // This would query the user database
-    // For now, return a placeholder
-    return { email: 'user@example.com' };
+  private async getUser(userId: string): Promise<{ email: string } | null> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+    return user;
   }
 }
 

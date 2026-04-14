@@ -460,9 +460,9 @@ export default function ListeCourses({ territoire = '971' }) {
               </p>
             ) : (
               <div className="space-y-3">
-                {recommandations.slice(0, 5).map((rec, index) => (
+                {recommandations.slice(0, 5).map((rec) => (
                   <div
-                    key={index}
+                    key={rec.magasin.id || `${rec.magasin.enseigne}_${rec.magasin.distance}`}
                     className={`border rounded-lg p-4 ${
                       rec.pertinence.niveau === 'Prioritaire'
                         ? 'bg-green-900/20 border-green-500/30'
@@ -490,8 +490,8 @@ export default function ListeCourses({ territoire = '971' }) {
                       </div>
                     </div>
                     <div className="space-y-1">
-                      {rec.pertinence.raisons.map((raison, i) => (
-                        <p key={i} className="text-xs text-slate-400">• {raison}</p>
+                      {rec.pertinence.raisons.map((raison) => (
+                        <p key={raison} className="text-xs text-slate-400">• {raison}</p>
                       ))}
                     </div>
                   </div>

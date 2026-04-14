@@ -85,7 +85,7 @@ export function FauxBonsPlan() {
           
           return (
             <Card 
-              key={index}
+              key={format.label || index}
               className={`p-6 border-2 ${
                 isBest 
                   ? 'border-green-400 dark:border-green-600' 

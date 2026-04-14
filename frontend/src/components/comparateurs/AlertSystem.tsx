@@ -14,11 +14,10 @@
  */
 
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
 import { Bell, BellOff, Plus, Trash2, X } from 'lucide-react';
 import { useAlerts } from '../../hooks/useAlerts';
 import type { Alert, Territory } from '../../types/comparatorCommon';
-import { getTerritoryLabel } from '../../utils/territoryMapper';
+import { TERRITORIES, getTerritoryLabel } from '../../utils/territoryMapper';
 
 export interface AlertSystemProps {
   /** User ID */
@@ -41,72 +40,92 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
   comparatorType,
   availableAlertTypes = [],
 }) => {
-  const { alerts, statistics, createAlert, toggleAlertStatus, deleteAlert, loading } = useAlerts(userId);
+  const { alerts, statistics, toggleAlertStatus, deleteAlert, createAlert, loading } =
+    useAlerts(userId);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-
-  // New alert form state
-  const [formType, setFormType] = useState(availableAlertTypes[0]?.id ?? 'price_threshold');
-  const [formLabel, setFormLabel] = useState('');
-  const [formTerritory, setFormTerritory] = useState<Territory>('GP');
-  const [formThreshold, setFormThreshold] = useState('');
-  const [formOperator, setFormOperator] = useState<'below' | 'above'>('below');
-  const [formNotification, setFormNotification] = useState<'email' | 'push' | 'both'>('email');
+  const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [formState, setFormState] = useState({
+    type: availableAlertTypes[0]?.id || 'price_threshold',
+    territory: 'GP' as Territory,
+    threshold: '',
+    operator: 'below' as 'below' | 'above',
+    notificationMethod: 'email' as 'email' | 'push' | 'both',
+    label: '',
+  });
 
   // Filter alerts for this comparator
   const comparatorAlerts = alerts.filter((alert) => alert.comparatorType === comparatorType);
 
   /**
-   * Reset form fields to their default values
-   */
-  const resetForm = () => {
-    setFormType(availableAlertTypes[0]?.id ?? 'price_threshold');
-    setFormLabel('');
-    setFormTerritory('GP');
-    setFormThreshold('');
-    setFormOperator('below');
-    setFormNotification('email');
-    setShowCreateForm(false);
-  };
-
-  /**
    * Handle create alert form submission
    */
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleCreateAlert = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
+    setFormError(null);
+    setSaving(true);
     try {
-      const conditions: Record<string, unknown> =
-        formType === 'price_threshold'
-          ? { threshold: Number(formThreshold), operator: formOperator }
-          : formType === 'significant_change'
-          ? { threshold: Number(formThreshold) }
-          : {};
+      const conditions: Record<string, unknown> = {};
+      if (formState.type === 'price_threshold') {
+        const parsed = parseFloat(formState.threshold);
+        if (isNaN(parsed)) {
+          setFormError('Veuillez saisir un seuil numérique valide.');
+          setSaving(false);
+          return;
+        }
+        conditions.threshold = parsed;
+        conditions.operator = formState.operator;
+      } else if (formState.type === 'significant_change') {
+        const parsed = parseFloat(formState.threshold);
+        if (isNaN(parsed) || parsed <= 0) {
+          setFormError('Veuillez saisir un pourcentage de variation valide (> 0).');
+          setSaving(false);
+          return;
+        }
+        conditions.threshold = parsed;
+      }
 
       await createAlert({
         userId,
         comparatorType,
-        type: formType,
-        territory: formTerritory,
+        type: formState.type,
+        territory: formState.territory,
         conditions,
-        notificationMethod: formNotification,
+        notificationMethod: formState.notificationMethod,
         active: true,
-        label: formLabel.trim() || undefined,
+        label: formState.label.trim() || undefined,
       });
-      toast.success('Alerte créée avec succès.');
-      resetForm();
-    } catch (err) {
-      console.error('Error creating alert:', err);
-      toast.error('Impossible de créer l\'alerte.');
+
+      setShowCreateForm(false);
+      setFormState({
+        type: availableAlertTypes[0]?.id || 'price_threshold',
+        territory: 'GP',
+        threshold: '',
+        operator: 'below',
+        notificationMethod: 'email',
+        label: '',
+      });
+    } catch {
+      setFormError('Erreur lors de la création de l\'alerte. Veuillez réessayer.');
     } finally {
-      setSubmitting(false);
+      setSaving(false);
     }
   };
 
   /**
-   * Handle toggle alert
+   * Standard alert types when none provided via props
    */
+  const resolvedAlertTypes =
+    availableAlertTypes.length > 0
+      ? availableAlertTypes
+      : [
+          { id: 'price_threshold', name: 'Seuil de prix', description: 'Alerte quand le prix passe sous ou au-dessus d\'un seuil' },
+          { id: 'availability', name: 'Disponibilité', description: 'Alerte quand un produit devient disponible' },
+          { id: 'significant_change', name: 'Variation significative', description: 'Alerte quand le prix change brusquement' },
+          { id: 'new_item', name: 'Nouvel élément', description: 'Alerte quand un nouvel élément est ajouté' },
+        ];
+
+
   const handleToggle = async (alertId: string, currentState: boolean) => {
     try {
       await toggleAlertStatus(alertId, !currentState);
@@ -116,27 +135,17 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
   };
 
   /**
-   * Handle delete alert — first tap requests confirmation via toast, second tap confirms
+   * Handle delete alert
    */
   const handleDelete = async (alertId: string) => {
-    if (pendingDeleteId !== alertId) {
-      setPendingDeleteId(alertId);
-      toast('Appuyez à nouveau pour confirmer la suppression.', {
-        icon: '🗑️',
-        duration: 3000,
-        id: `delete-${alertId}`,
-      });
-      setTimeout(() => setPendingDeleteId(null), 3000);
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette alerte ?')) {
       return;
     }
 
-    setPendingDeleteId(null);
     try {
       await deleteAlert(alertId);
-      toast.success('Alerte supprimée.');
     } catch (err) {
       console.error('Error deleting alert:', err);
-      toast.error('Impossible de supprimer l\'alerte.');
     }
   };
 
@@ -183,162 +192,174 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
       </div>
 
       {/* Create Alert Button */}
-      {!showCreateForm && (
-        <button
-          type="button"
-          onClick={() => setShowCreateForm(true)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-        >
-          <Plus className="w-5 h-5" aria-hidden="true" />
-          Créer une nouvelle alerte
-        </button>
-      )}
+      <button
+        onClick={() => setShowCreateForm(!showCreateForm)}
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+      >
+        <Plus className="w-5 h-5" />
+        Créer une nouvelle alerte
+      </button>
 
-      {/* Create Alert Form */}
+      {/* Create Form */}
       {showCreateForm && (
         <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-100">Nouvelle alerte</h3>
             <button
               type="button"
-              onClick={resetForm}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-gray-100 hover:bg-slate-700 transition-colors"
+              onClick={() => setShowCreateForm(false)}
+              className="p-1 text-gray-400 hover:text-gray-200 transition-colors"
               aria-label="Fermer le formulaire"
             >
-              <X className="w-4 h-4" aria-hidden="true" />
+              <X className="w-5 h-5" />
             </button>
           </div>
 
-          <form onSubmit={handleCreate} className="space-y-4">
-            {/* Alert label */}
+          <form onSubmit={handleCreateAlert} className="space-y-4">
+            {/* Label */}
             <div>
-              <label htmlFor="alert-label" className="block text-sm font-medium text-gray-300 mb-1">
-                Libellé <span className="text-gray-500">(optionnel)</span>
+              <label htmlFor="alert-label" className="block text-sm text-gray-300 mb-1">
+                Libellé (optionnel)
               </label>
               <input
                 id="alert-label"
                 type="text"
-                value={formLabel}
-                onChange={(e) => setFormLabel(e.target.value)}
-                maxLength={80}
-                placeholder="ex. : Sucre 1 kg trop cher"
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-gray-100 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500"
+                value={formState.label}
+                onChange={(e) => setFormState((s) => ({ ...s, label: e.target.value }))}
+                placeholder="Ex : Riz long grain Leclerc MQ"
+                className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder-gray-500"
               />
             </div>
 
             {/* Alert type */}
-            {availableAlertTypes.length > 0 && (
-              <div>
-                <label htmlFor="alert-type" className="block text-sm font-medium text-gray-300 mb-1">
-                  Type d'alerte
-                </label>
-                <select
-                  id="alert-type"
-                  value={formType}
-                  onChange={(e) => setFormType(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-gray-100 text-sm focus:outline-none focus:border-blue-500"
-                >
-                  {availableAlertTypes.map((t) => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
+            <div>
+              <label htmlFor="alert-type" className="block text-sm text-gray-300 mb-1">
+                Type d&apos;alerte <span className="text-red-400">*</span>
+              </label>
+              <select
+                id="alert-type"
+                value={formState.type}
+                onChange={(e) => setFormState((s) => ({ ...s, type: e.target.value }))}
+                className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+              >
+                {resolvedAlertTypes.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-            {/* Threshold (for price_threshold and significant_change types) */}
-            {(formType === 'price_threshold' || formType === 'significant_change') && (
-              <div className="grid grid-cols-2 gap-3">
-                {formType === 'price_threshold' && (
-                  <div>
-                    <label htmlFor="alert-operator" className="block text-sm font-medium text-gray-300 mb-1">
+            {/* Territory */}
+            <div>
+              <label htmlFor="alert-territory" className="block text-sm text-gray-300 mb-1">
+                Territoire <span className="text-red-400">*</span>
+              </label>
+              <select
+                id="alert-territory"
+                value={formState.territory}
+                onChange={(e) =>
+                  setFormState((s) => ({ ...s, territory: e.target.value as Territory }))
+                }
+                className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+              >
+                {Object.values(TERRITORIES).map((t) => (
+                  <option key={t.code} value={t.code}>
+                    {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Threshold (price_threshold / significant_change) */}
+            {(formState.type === 'price_threshold' || formState.type === 'significant_change') && (
+              <div className="flex gap-3">
+                {formState.type === 'price_threshold' && (
+                  <div className="flex-1">
+                    <label htmlFor="alert-operator" className="block text-sm text-gray-300 mb-1">
                       Condition
                     </label>
                     <select
                       id="alert-operator"
-                      value={formOperator}
-                      onChange={(e) => setFormOperator(e.target.value as 'below' | 'above')}
-                      className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-gray-100 text-sm focus:outline-none focus:border-blue-500"
+                      value={formState.operator}
+                      onChange={(e) =>
+                        setFormState((s) => ({
+                          ...s,
+                          operator: e.target.value as 'below' | 'above',
+                        }))
+                      }
+                      className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
                     >
                       <option value="below">Prix ≤</option>
                       <option value="above">Prix ≥</option>
                     </select>
                   </div>
                 )}
-                <div>
-                  <label htmlFor="alert-threshold" className="block text-sm font-medium text-gray-300 mb-1">
-                    {formType === 'price_threshold' ? 'Seuil (€)' : 'Variation (%)'}
+                <div className="flex-1">
+                  <label htmlFor="alert-threshold" className="block text-sm text-gray-300 mb-1">
+                    {formState.type === 'price_threshold' ? 'Seuil (€)' : 'Variation (%)'}
+                    <span className="text-red-400"> *</span>
                   </label>
                   <input
                     id="alert-threshold"
                     type="number"
-                    required
-                    min={0}
-                    step={formType === 'price_threshold' ? 0.01 : 1}
-                    value={formThreshold}
-                    onChange={(e) => setFormThreshold(e.target.value)}
-                    placeholder={formType === 'price_threshold' ? 'ex. : 2.50' : 'ex. : 10'}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-gray-100 placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500"
+                    inputMode="decimal"
+                    min="0"
+                    step={formState.type === 'significant_change' ? '1' : '0.01'}
+                    value={formState.threshold}
+                    onChange={(e) => setFormState((s) => ({ ...s, threshold: e.target.value }))}
+                    placeholder={formState.type === 'price_threshold' ? '2.99' : '10'}
+                    className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 placeholder-gray-500"
                   />
                 </div>
               </div>
             )}
 
-            {/* Territory */}
+            {/* Notification method */}
             <div>
-              <label htmlFor="alert-territory" className="block text-sm font-medium text-gray-300 mb-1">
-                Territoire
+              <label htmlFor="alert-notif" className="block text-sm text-gray-300 mb-1">
+                Notification
               </label>
               <select
-                id="alert-territory"
-                value={formTerritory}
-                onChange={(e) => setFormTerritory(e.target.value as Territory)}
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-600 text-gray-100 text-sm focus:outline-none focus:border-blue-500"
+                id="alert-notif"
+                value={formState.notificationMethod}
+                onChange={(e) =>
+                  setFormState((s) => ({
+                    ...s,
+                    notificationMethod: e.target.value as 'email' | 'push' | 'both',
+                  }))
+                }
+                className="w-full bg-slate-800 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
               >
-                {(['GP', 'MQ', 'GF', 'RE', 'YT', 'NC', 'PF', 'WF', 'MF', 'BL', 'PM'] as Territory[]).map((t) => (
-                  <option key={t} value={t}>{getTerritoryLabel(t)}</option>
-                ))}
+                <option value="email">E-mail</option>
+                <option value="push">Notification push</option>
+                <option value="both">Les deux</option>
               </select>
             </div>
 
-            {/* Notification method */}
-            <div>
-              <fieldset>
-                <legend className="block text-sm font-medium text-gray-300 mb-2">Notification</legend>
-                <div className="flex flex-wrap gap-3">
-                  {([
-                    { value: 'email', label: 'E-mail' },
-                    { value: 'push', label: 'Push' },
-                    { value: 'both', label: 'E-mail + Push' },
-                  ] as const).map(({ value, label }) => (
-                    <label key={value} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="notification-method"
-                        value={value}
-                        checked={formNotification === value}
-                        onChange={() => setFormNotification(value)}
-                        className="accent-blue-500"
-                      />
-                      <span className="text-sm text-gray-300">{label}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-            </div>
+            {formError && (
+              <p className="text-sm text-red-400" role="alert">
+                {formError}
+              </p>
+            )}
 
-            {/* Actions */}
             <div className="flex gap-3 pt-1">
               <button
                 type="submit"
-                disabled={submitting}
-                className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium transition-colors"
+                disabled={saving}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition-colors"
               >
-                {submitting ? 'Enregistrement…' : 'Créer l\'alerte'}
+                {saving ? (
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Plus className="w-4 h-4" />
+                )}
+                {saving ? 'Enregistrement…' : 'Créer l\'alerte'}
               </button>
               <button
                 type="button"
-                onClick={resetForm}
-                className="px-4 py-2.5 border border-slate-600 text-gray-300 hover:bg-slate-800 rounded-lg text-sm transition-colors"
+                onClick={() => setShowCreateForm(false)}
+                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-gray-200 rounded-lg font-medium text-sm transition-colors"
               >
                 Annuler
               </button>

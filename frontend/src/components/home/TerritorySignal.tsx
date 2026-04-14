@@ -137,20 +137,21 @@ export function TerritorySignal() {
 
   const shareSignal = (signal: TerritorySignal) => {
     const text = `${signal.icon} ${signal.title} en ${stats?.territoryName}\n\n${signal.description}\n\nSource: Observatoire A KI PRI SA YÉ`;
-    const copyToClipboard = () => {
-      navigator.clipboard.writeText(text).then(() => {
-        toast.success('Signal copié dans le presse-papier');
-      });
-    };
-
+    
     if (navigator.share) {
       navigator.share({
         title: 'Signal Prix Territoire',
         text: text,
         url: window.location.href
-      }).catch(copyToClipboard);
+      }).catch(() => {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(text);
+        toast.success('Signal copié dans le presse-papier');
+      });
     } else {
-      copyToClipboard();
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(text);
+      toast.success('Signal copié dans le presse-papier');
     }
   };
 

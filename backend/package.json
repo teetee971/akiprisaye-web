@@ -1,11 +1,11 @@
 {
   "name": "akiprisaye-backend",
-  "version": "4.6.1",
+  "version": "4.7.1",
   "description": "Backend institutionnel pour A KI PRI SA YÉ - Gestion entreprises et données légales",
   "main": "dist/app.js",
   "type": "module",
   "engines": {
-    "node": ">=20.19.0"
+    "node": ">=22.0.0"
   },
   "scripts": {
     "dev": "tsx watch src/app.ts",
@@ -38,11 +38,14 @@
     "express-rate-limit": "^7.4.1",
     "firebase-functions": "^7.2.2",
     "fuse.js": "^7.1.0",
+    "ioredis": "^5.10.1",
     "jsonwebtoken": "^9.0.2",
     "node-cron": "^4.2.1",
+    "rate-limit-redis": "^4.3.1",
     "stripe": "^14.21.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "twilio": "^5.13.1",
     "web-push": "^3.6.7",
     "zod": "^3.23.8"
   },

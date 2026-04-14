@@ -194,6 +194,7 @@ export default function PricingComparator({ highlightPlanId }: PricingComparator
         <div className="inline-flex items-center gap-1 bg-white/[0.06] border border-white/10 rounded-xl p-1">
           <button
             onClick={() => setCycle('monthly')}
+            aria-pressed={cycle === 'monthly'}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
               cycle === 'monthly'
                 ? 'bg-blue-600 text-white'
@@ -204,6 +205,7 @@ export default function PricingComparator({ highlightPlanId }: PricingComparator
           </button>
           <button
             onClick={() => setCycle('yearly')}
+            aria-pressed={cycle === 'yearly'}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
               cycle === 'yearly'
                 ? 'bg-blue-600 text-white'

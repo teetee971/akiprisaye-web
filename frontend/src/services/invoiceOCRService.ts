@@ -6,35 +6,42 @@
  */
 
 import type { InvoiceData, HiddenFee, FreightQuote } from '../types/freightComparison';
+import { runOCR } from './ocrService';
 
 /**
- * Extrait les données d'une facture (OCR)
- * Dispatche vers extractTextFromImage ou extractTextFromPDF selon le type MIME,
- * puis parse le texte extrait en données structurées.
+ * Extrait les données d'une facture via OCR (Tesseract.js) ou lecture texte (PDF).
+ * Délègue à extractTextFromImage / extractTextFromPDF puis parse le texte brut.
  */
 export async function extractInvoiceData(file: File): Promise<InvoiceData | null> {
   try {
     let rawText = '';
-    if (file.type === 'application/pdf') {
+
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+    if (isPdf) {
       rawText = await extractTextFromPDF(file);
     } else {
       rawText = await extractTextFromImage(file);
     }
 
-    const parsed = parseInvoiceText(rawText);
+    if (!rawText.trim()) {
+      return {
+        carrier: 'Non détecté',
+        route: { origin: '', destination: '' },
+        basePrice: 0,
+        fees: [],
+        totalPaid: 0,
+        extractionConfidence: 0,
+      };
+    }
 
+    const parsed = parseInvoiceText(rawText);
     return {
       carrier: parsed.carrier ?? 'Non détecté',
-      route: {
-        origin: parsed.route?.origin ?? '',
-        destination: parsed.route?.destination ?? '',
-      },
+      route: parsed.route ?? { origin: '', destination: '' },
       basePrice: parsed.basePrice ?? 0,
       fees: parsed.fees ?? [],
       totalPaid: parsed.totalPaid ?? 0,
-      extractionConfidence: rawText.length > 50 ? 0.75 : 0.3,
-      weight: parsed.weight,
-      trackingNumber: parsed.trackingNumber,
+      extractionConfidence: rawText.length > 100 ? 0.75 : 0.4,
     };
   } catch (error) {
     console.error('Error extracting invoice data:', error);
@@ -203,28 +210,30 @@ export function validateInvoiceData(data: InvoiceData): {
 }
 
 /**
- * Parse un fichier PDF pour extraire le texte.
- * Utilise pdf.js (pdfjs-dist) via dynamic import pour ne pas alourdir le bundle.
+ * Extrait le texte brut d'un fichier PDF via lecture en tant que texte.
+ * Fonctionne pour les PDF "texte" (non scannés).
+ * Pour les PDF scannés (images), utiliser extractTextFromImage sur chaque page.
  */
 export async function extractTextFromPDF(file: File): Promise<string> {
   try {
-    const arrayBuffer = await file.arrayBuffer();
-    // Dynamic import – pdfjs-dist is already a transitive dependency of several packages
-    const pdfjsLib = await import('pdfjs-dist');
-    // Point the worker to the CDN copy to avoid bundling the heavy worker script
-    pdfjsLib.GlobalWorkerOptions.workerSrc =
-      `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    const textParts: string[] = [];
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items
-        .map((item) => ('str' in item ? (item as { str: string }).str : ''))
-        .join(' ');
-      textParts.push(pageText);
-    }
-    return textParts.join('\n');
+    return await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const raw = e.target?.result;
+        if (typeof raw !== 'string') {
+          resolve('');
+          return;
+        }
+        // Extract human-readable ASCII/Latin runs from raw PDF bytes
+        const text = raw
+          .replace(/[^\x20-\x7E\u00A0-\u00FF\n\r]/g, ' ')
+          .replace(/ {3,}/g, ' ')
+          .trim();
+        resolve(text);
+      };
+      reader.onerror = () => reject(reader.error);
+      reader.readAsText(file, 'latin1');
+    });
   } catch (error) {
     console.error('Error extracting PDF text:', error);
     return '';
@@ -232,25 +241,20 @@ export async function extractTextFromPDF(file: File): Promise<string> {
 }
 
 /**
- * Parse une image pour extraire le texte (OCR)
- * Utilise Tesseract.js pour la reconnaissance optique de caractères.
+ * Extrait le texte d'une image via Tesseract.js (OCR côté client, WASM).
+ * Fonctionne hors ligne grâce au Service Worker.
  */
 export async function extractTextFromImage(file: File): Promise<string> {
+  let objectUrl: string | null = null;
   try {
-    // Dynamic import to avoid bloating the main bundle (Tesseract is large)
-    const { createWorker } = await import('tesseract.js');
-    const imageUrl = URL.createObjectURL(file);
-    const worker = await createWorker('fra+eng');
-    try {
-      const { data } = await worker.recognize(imageUrl);
-      return data.text ?? '';
-    } finally {
-      await worker.terminate();
-      URL.revokeObjectURL(imageUrl);
-    }
+    objectUrl = URL.createObjectURL(file);
+    const result = await runOCR(objectUrl, 'fra', { receiptMode: true });
+    return result.success ? result.rawText : '';
   } catch (error) {
-    console.error('Error extracting image text:', error);
+    console.error('Error extracting image text via OCR:', error);
     return '';
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
   }
 }
 

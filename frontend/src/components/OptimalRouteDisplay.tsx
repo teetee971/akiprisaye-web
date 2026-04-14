@@ -41,6 +41,7 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
         <div className="flex items-center gap-2">
           {userPosition && (
             <button
+              type="button"
               onClick={() => setShowMap(!showMap)}
               className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors flex items-center gap-1"
               aria-label={showMap ? "Masquer la carte" : "Voir sur la carte"}
@@ -50,6 +51,7 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
             </button>
           )}
           <button
+            type="button"
             onClick={() => setShowComparison(!showComparison)}
             className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors flex items-center gap-1"
             aria-label={showComparison ? "Masquer la comparaison" : "Voir avant/après"}
@@ -59,6 +61,7 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
           </button>
           {onClose && (
             <button
+              type="button"
               onClick={onClose}
               className="text-gray-400 hover:text-gray-300 text-sm px-2"
               aria-label="Fermer l'itinéraire optimisé"

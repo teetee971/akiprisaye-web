@@ -109,8 +109,8 @@ export function NutritionalAnalysis({
                 Points d'attention
               </h4>
               <ul className="space-y-1">
-                {warnings.map((warning, i) => (
-                  <li key={i} className="text-sm text-orange-800 dark:text-orange-200">
+                {warnings.map((warning) => (
+                  <li key={warning} className="text-sm text-orange-800 dark:text-orange-200">
                     • {warning}
                   </li>
                 ))}
@@ -169,6 +169,7 @@ export function NutritionalAnalysis({
       {additives.length > 0 && (
         <div className="mb-6">
           <button
+            type="button"
             onClick={() => setExpanded(!expanded)}
             className="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
           >
@@ -180,9 +181,9 @@ export function NutritionalAnalysis({
 
           {expanded && (
             <div className="mt-3 space-y-2">
-              {additives.map((additive, i) => (
+              {additives.map((additive) => (
                 <div 
-                  key={i}
+                  key={additive.code}
                   className="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
                 >
                   {additive.level === 'safe' && (
@@ -211,7 +212,7 @@ export function NutritionalAnalysis({
 
       {/* Comparison with Similar Products */}
       <div className="text-center">
-        <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
+        <button type="button" className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
           Comparer avec des produits similaires
         </button>
       </div>

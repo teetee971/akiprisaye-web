@@ -6,6 +6,8 @@
  * Never exposes stack traces, HTTP codes, or technical details to users
  */
 
+import toast from 'react-hot-toast';
+
 export interface UserFriendlyError {
   title: string;
   message: string;
@@ -206,8 +208,9 @@ export function handleProductError(error: unknown): UserFriendlyError {
  * Display error toast/notification
  */
 export function showErrorToUser(error: UserFriendlyError) {
+  const icon = error.type === 'error' ? '❌' : error.type === 'warning' ? '⚠️' : 'ℹ️';
   import('react-hot-toast').then(({ default: toast }) => {
-    const message = `${error.title} — ${error.message}`;
+    const message = `${icon} ${error.title} — ${error.message}`;
     if (error.type === 'error') {
       toast.error(message);
     } else if (error.type === 'warning') {
@@ -215,5 +218,8 @@ export function showErrorToUser(error: UserFriendlyError) {
     } else {
       toast(message, { icon: 'ℹ️' });
     }
+  }).catch(() => {
+    console.error(`[ErrorHandler] ${error.title}: ${error.message}`);
+    alert(`${icon} ${error.title} — ${error.message}`);
   });
 }

@@ -69,7 +69,7 @@ function MethodTab({
 // ─── Camera view ──────────────────────────────────────────────────────────────
 
 function CameraView({ videoRef, onCapture, scanning }: {
-  videoRef: React.RefObject<HTMLVideoElement>;
+  videoRef: React.RefObject<HTMLVideoElement | null>;
   onCapture: () => void;
   scanning: boolean;
 }) {
