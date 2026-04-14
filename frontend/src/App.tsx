@@ -10,6 +10,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
+import { TerritoryProvider } from './context/TerritoryContext';
 import { AppProvider } from './context/AppContext';
 import RequireAuth from './components/auth/RequireAuth';
 import RequireCreator from './components/auth/RequireCreator';
@@ -237,6 +238,9 @@ const GuideIntelligentTerritoires = lazy(() => import('./pages/GuideIntelligentT
 const ARScannerPage = lazy(() => import('./pages/ARScannerPage'));
 const ChaineFourniture = lazy(() => import('./pages/ChaineFourniture'));
 const CommerceSocial = lazy(() => import('./pages/CommerceSocial'));
+const FicheEntreprise = lazy(() => import('./pages/FicheEntreprise'));
+const SupplyChain = lazy(() => import('./pages/SupplyChain'));
+const ComparateurTransport = lazy(() => import('./pages/ComparateurTransport'));
 const PetitsCommerces = lazy(() => import('./pages/PetitsCommerces'));
 const ProducteursLocaux = lazy(() => import('./pages/ProducteursLocaux'));
 const MarchesLocaux = lazy(() => import('./pages/MarchesLocaux'));
@@ -370,6 +374,7 @@ export default function App() {
           <ThemeProvider>
             <AuthProvider>
               <OnboardingProvider>
+                <TerritoryProvider>
                 <StoreSelectionProvider>
                   <AppProvider>
                     <Suspense fallback={null}>
@@ -591,7 +596,10 @@ export default function App() {
                               <Route path="guide-territoire" element={<GuideIntelligentTerritoires />} />
                               <Route path="ar-scanner" element={<ARScannerPage />} />
                               <Route path="chaine-fourniture" element={<ChaineFourniture />} />
+                              <Route path="chaine-approvisionnement" element={<SupplyChain />} />
                               <Route path="commerce-social" element={<CommerceSocial />} />
+                              <Route path="fiche-entreprise/:id" element={<FicheEntreprise />} />
+                              <Route path="comparateur-transport" element={<ComparateurTransport />} />
                               <Route path="petits-commerces" element={<PetitsCommerces />} />
                               <Route path="producteurs-locaux" element={<ProducteursLocaux />} />
                               <Route path="marches-locaux" element={<MarchesLocaux />} />
@@ -668,6 +676,7 @@ export default function App() {
                     </Suspense>
                   </AppProvider>
                 </StoreSelectionProvider>
+                </TerritoryProvider>
               </OnboardingProvider>
             </AuthProvider>
           </ThemeProvider>

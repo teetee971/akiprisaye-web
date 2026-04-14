@@ -9,6 +9,8 @@ import { Trophy, TrendingUp, MapPin, Award } from 'lucide-react';
 import { LevelBadge } from './LevelBadge';
 import { UserRankBadge } from './UserRankBadge';
 import type { LeaderboardEntry } from '../../types/gamification';
+import { TERRITORIES } from '../../constants/territories';
+import type { TerritoryCode } from '../../constants/territories';
 
 interface LeaderboardTableProps {
   entries: LeaderboardEntry[];
@@ -124,12 +126,26 @@ export function LeaderboardTable({
                   {/* Territory */}
                   {showTerritory && (
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {entry.territory && (
-                        <div className="flex items-center gap-1 text-sm text-gray-600">
-                          <MapPin size={14} />
-                          <span>{entry.territory}</span>
-                        </div>
-                      )}
+                      {entry.territory && (() => {
+                        const code = entry.territory.toLowerCase() as TerritoryCode;
+                        const terr = TERRITORIES[code];
+                        return (
+                          <div className="flex items-center gap-1.5 text-sm text-gray-600">
+                            {terr ? (
+                              <>
+                                <span>{terr.flag}</span>
+                                <span className="font-medium">{terr.name}</span>
+                                <span className="text-xs text-gray-400">({terr.type})</span>
+                              </>
+                            ) : (
+                              <>
+                                <MapPin size={14} />
+                                <span>{entry.territory}</span>
+                              </>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </td>
                   )}
 
