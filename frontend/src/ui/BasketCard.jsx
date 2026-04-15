@@ -61,7 +61,7 @@ export default function BasketCard({ basket, selectedTerritories }) {
   const trend = getTrend(primaryTerritory, 'week', String(basket.id));
 
   return (
-    <article
+    <div
       role="button"
       tabIndex={0}
       onClick={handleCardClick}
@@ -167,6 +167,6 @@ export default function BasketCard({ basket, selectedTerritories }) {
           📍 Voir sur la carte
         </button>
       </div>
-    </article>
+    </div>
   );
 }

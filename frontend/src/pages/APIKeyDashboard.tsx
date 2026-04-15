@@ -212,8 +212,9 @@ export default function APIKeyDashboard() {
         <h2 className='text-base font-semibold text-gray-900 dark:text-white mb-4'>Générer une nouvelle clé</h2>
         <div className='flex flex-wrap gap-3 items-end'>
           <div className='flex-1 min-w-[200px]'>
-            <label className='text-xs text-gray-500 dark:text-gray-400 block mb-1'>Label</label>
+            <label htmlFor='new-key-label' className='text-xs text-gray-500 dark:text-gray-400 block mb-1'>Label</label>
             <input
+              id='new-key-label'
               type='text'
               placeholder='Mon application'
               value={newLabel}
@@ -222,8 +223,9 @@ export default function APIKeyDashboard() {
             />
           </div>
           <div>
-            <label className='text-xs text-gray-500 dark:text-gray-400 block mb-1'>Plan</label>
+            <label htmlFor='new-key-plan' className='text-xs text-gray-500 dark:text-gray-400 block mb-1'>Plan</label>
             <select
+              id='new-key-plan'
               value={newPlan}
               onChange={(e) => setNewPlan(e.target.value as 'free' | 'pro')}
               className='text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'

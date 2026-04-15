@@ -1178,7 +1178,6 @@ function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) 
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -1209,7 +1208,6 @@ function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) 
           </div>
         ) : (
           <div className="relative aspect-[4/3] bg-black">
-            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <video
               ref={videoRef}
               className="w-full h-full object-cover"
