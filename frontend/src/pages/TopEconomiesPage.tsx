@@ -15,15 +15,13 @@ import { SEOHead } from '../components/ui/SEOHead';
 import { Skeleton } from '../components/ui/Skeleton';
 import { formatEur } from '../utils/currency';
 import {
-  generateProductSlug,
   getTerritoryName,
   SITE_URL,
 } from '../utils/seoHelpers';
-import { getTopViewedProducts } from '../utils/priceClickTracker';
 
-// ── Mock data for top savings (to be replaced with API) ───────────────────────
+// ── Static savings data with real EANs ───────────────────────────────────────
 interface SavingsProduct {
-  id: string;
+  ean: string;           // real EAN-13 — links to /produit/:ean
   name: string;
   brand?: string;
   category: string;
@@ -34,24 +32,21 @@ interface SavingsProduct {
   storeCount: number;
 }
 
-function getMockSavingsProducts(territory: string): SavingsProduct[] {
-  // In production, this would fetch from API sorted by savings potential
-  const products = [
-    { id: '1', name: 'Riz Uncle Ben\'s 1kg', brand: 'Uncle Ben\'s', category: 'Épicerie', minPrice: 2.45, maxPrice: 4.29, bestRetailer: 'Leader Price' },
-    { id: '2', name: 'Coca-Cola 1.5L', brand: 'Coca-Cola', category: 'Boissons', minPrice: 1.89, maxPrice: 2.99, bestRetailer: 'Carrefour' },
-    { id: '3', name: 'Couches Pampers T4 x60', brand: 'Pampers', category: 'Bébé', minPrice: 14.99, maxPrice: 22.50, bestRetailer: 'Super U' },
-    { id: '4', name: 'Huile Tournesol 1L', category: 'Épicerie', minPrice: 2.15, maxPrice: 3.49, bestRetailer: 'E.Leclerc' },
-    { id: '5', name: 'Yaourt Nature x12', brand: 'Danone', category: 'Produits Laitiers', minPrice: 3.45, maxPrice: 4.99, bestRetailer: 'Carrefour' },
-    { id: '6', name: 'Lessive Skip 40 doses', brand: 'Skip', category: 'Entretien', minPrice: 8.99, maxPrice: 13.50, bestRetailer: 'E.Leclerc' },
-    { id: '7', name: 'Café Carte Noire 250g', brand: 'Carte Noire', category: 'Épicerie', minPrice: 4.25, maxPrice: 6.49, bestRetailer: 'Leader Price' },
-    { id: '8', name: 'Eau Cristaline 6x1.5L', brand: 'Cristaline', category: 'Boissons', minPrice: 2.19, maxPrice: 3.29, bestRetailer: 'Super U' },
-  ].map((p, i) => ({
-    ...p,
-    savings: +(p.maxPrice - p.minPrice).toFixed(2),
-    storeCount: 3 + Math.floor(Math.random() * 5),
-  }));
-  
-  return products.sort((a, b) => b.savings - a.savings);
+const BASE_PRODUCTS: Omit<SavingsProduct, 'savings'>[] = [
+  { ean: '3017620422003', name: 'Nutella 750g',            brand: "Ferrero",      category: 'Épicerie',         minPrice: 5.99,  maxPrice: 9.49,  bestRetailer: 'Leader Price', storeCount: 6 },
+  { ean: '5449000000996', name: 'Coca-Cola 1.5L',          brand: 'Coca-Cola',    category: 'Boissons',         minPrice: 1.89,  maxPrice: 2.99,  bestRetailer: 'Carrefour',    storeCount: 7 },
+  { ean: '4015400276388', name: 'Pampers Baby-Dry T4 x44', brand: 'Pampers',      category: 'Bébé',             minPrice: 14.99, maxPrice: 22.50, bestRetailer: 'Super U',      storeCount: 5 },
+  { ean: '3011360006528', name: 'Huile Tournesol Lesieur 1L', brand: 'Lesieur',   category: 'Épicerie',         minPrice: 2.15,  maxPrice: 3.49,  bestRetailer: 'E.Leclerc',    storeCount: 6 },
+  { ean: '3033490009893', name: 'Yaourt Danone Nature x12', brand: 'Danone',      category: 'Produits Laitiers',minPrice: 3.45,  maxPrice: 4.99,  bestRetailer: 'Carrefour',    storeCount: 5 },
+  { ean: '8710908476556', name: 'Lessive Skip 40 doses',   brand: 'Skip',         category: 'Entretien',        minPrice: 8.99,  maxPrice: 13.50, bestRetailer: 'E.Leclerc',    storeCount: 6 },
+  { ean: '3228021360021', name: 'Café Carte Noire 250g',   brand: 'Carte Noire',  category: 'Épicerie',         minPrice: 4.25,  maxPrice: 6.49,  bestRetailer: 'Leader Price', storeCount: 4 },
+  { ean: '3270190042027', name: 'Eau Cristaline 6×1.5L',   brand: 'Cristaline',   category: 'Boissons',         minPrice: 2.19,  maxPrice: 3.29,  bestRetailer: 'Super U',      storeCount: 7 },
+];
+
+function getMockSavingsProducts(_territory: string): SavingsProduct[] {
+  return BASE_PRODUCTS
+    .map((p) => ({ ...p, savings: +(p.maxPrice - p.minPrice).toFixed(2) }))
+    .sort((a, b) => b.savings - a.savings);
 }
 
 // ── Savings card component ────────────────────────────────────────────────────
@@ -66,7 +61,7 @@ function SavingsCard({ product, territory, rank }: SavingsCardProps) {
   
   return (
     <Link
-      to={`/produit/${product.id}?territory=${territory}`}
+      to={`/produit/${product.ean}?territory=${territory}`}
       className="group relative rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-all hover:border-emerald-400/30 hover:bg-white/[0.05]"
     >
       {/* Rank badge */}
@@ -182,7 +177,7 @@ export default function TopEconomiesPage() {
       '@type': 'ListItem',
       position: i + 1,
       name: p.name,
-      url: `${SITE_URL}/produit/${p.id}?territory=${territory}`,
+      url: `${SITE_URL}/produit/${p.ean}?territory=${territory}`,
     })),
   };
   
