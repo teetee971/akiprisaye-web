@@ -111,14 +111,27 @@ export function trackRetailerClick(
   clicks.push({ barcode, retailer, territory, price, clickedAt: Date.now() });
   writeJson(KEY_CLICKS, prune(clicks));
 
-  // Firestore (fire-and-forget)
-  trackClickToFirestore({
-    retailer,
-    barcode,
-    territory,
-    price,
-    pageUrl: typeof window !== 'undefined' ? window.location.pathname : '',
-  });
+  // Firestore (fire-and-forget / best-effort)
+  try {
+    const firestoreResult = trackClickToFirestore({
+      retailer,
+      barcode,
+      territory,
+      price,
+      pageUrl: typeof window !== 'undefined' ? window.location.pathname : '',
+    });
+
+    if (
+      firestoreResult &&
+      typeof (firestoreResult as Promise<unknown>).catch === 'function'
+    ) {
+      void (firestoreResult as Promise<unknown>).catch(() => {
+        // Ignore Firestore failures so local click tracking is unaffected.
+      });
+    }
+  } catch {
+    // Ignore Firestore failures so local click tracking is unaffected.
+  }
 }
 
 /**
