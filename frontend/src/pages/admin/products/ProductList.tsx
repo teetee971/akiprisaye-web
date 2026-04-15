@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table';
 import { Package, Edit, Trash2, Plus, Search, Image as ImageIcon } from 'lucide-react';
 import { GlassCard } from '@/components/ui/glass-card';
-import { getProducts, deleteProduct, type Product } from '@/services/admin/productAdminService';
+import { getProducts, deleteProduct, getProductsStatic, type Product } from '@/services/admin/productAdminService';
 import type { ProductCategory } from '@/types/product';
 import toast from 'react-hot-toast';
 import { getAdminDegradedModeReason, isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
@@ -56,15 +56,35 @@ export function ProductList() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const fetchProducts = useCallback(async () => {
-    if (isDegradedMode) {
-      setProducts([]);
-      setLoading(false);
-      setError(degradedReason);
-      return;
-    }
     setLoading(true);
     setError(null);
     try {
+      if (isDegradedMode) {
+        const all = await getProductsStatic();
+        let filtered = all;
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          filtered = filtered.filter(
+            (p) => p.name.toLowerCase().includes(q) || p.ean?.includes(q) || p.brand?.toLowerCase().includes(q),
+          );
+        }
+        if (categoryFilter) {
+          filtered = filtered.filter((p) => p.category === categoryFilter);
+        }
+        if (brandFilter) {
+          const b = brandFilter.toLowerCase();
+          filtered = filtered.filter((p) => p.brand?.toLowerCase().includes(b));
+        }
+        if (hasEanFilter === true) {
+          filtered = filtered.filter((p) => Boolean(p.ean));
+        }
+        const start = (currentPage - 1) * 20;
+        setProducts(filtered.slice(start, start + 20));
+        setTotal(filtered.length);
+        setTotalPages(Math.max(1, Math.ceil(filtered.length / 20)));
+        return;
+      }
+
       const filters = {
         search: searchQuery || undefined,
         category: categoryFilter || undefined,
@@ -81,7 +101,7 @@ export function ProductList() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchQuery, categoryFilter, brandFilter, hasEanFilter, degradedReason, isDegradedMode]);
+  }, [currentPage, searchQuery, categoryFilter, brandFilter, hasEanFilter, isDegradedMode]);
 
   const handleDelete = useCallback(async (id: string, name: string) => {
     if (!window.confirm(`Êtes-vous sûr de vouloir supprimer "${name}" ?`)) {

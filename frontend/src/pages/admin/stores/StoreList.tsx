@@ -21,6 +21,7 @@ import toast from 'react-hot-toast';
 import { GlassCard } from '../../../components/ui/glass-card';
 import {
   getStores,
+  getStoresStatic,
   deleteStore,
   type Store,
   type StoreSearchFilters,

@@ -6,6 +6,51 @@ import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { makeDeterministicId, receiptSchema, type ReceiptPayload, zodErrorToMessage } from './importSchemas';
 import { getAdminDegradedModeReason, isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
+import { runOCR } from '@/services/ocrService';
+import { parseReceipt } from '@/services/receiptParser';
+
+/** Convert DD/MM/YYYY (from receiptParser) → YYYY-MM-DD */
+function normalizeDate(d?: string): string {
+  if (!d) return new Date().toISOString().slice(0, 10);
+  const parts = d.split(/[/\-.]/);
+  if (parts.length === 3) {
+    const [dd, mm, yyyy] = parts;
+    if (yyyy && yyyy.length === 4) return `${yyyy}-${mm.padStart(2, '0')}-${dd.padStart(2, '0')}`;
+  }
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Run local OCR scan on a File and return the structured ticket JSON string */
+async function localOcrScan(file: File): Promise<string> {
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const ocrResult = await runOCR(objectUrl, 'fra', { receiptMode: true, timeout: 45000 });
+    if (!ocrResult.success || !ocrResult.rawText) {
+      throw new Error(ocrResult.error ?? 'Échec OCR');
+    }
+    const parsed = parseReceipt(ocrResult.rawText);
+    const json = {
+      store: {
+        name: parsed.storeName ?? 'Enseigne inconnue',
+        address: parsed.storeAddress ?? '',
+        territory: 'GP',
+      },
+      transaction: {
+        date: normalizeDate(parsed.date),
+        ticket_id: parsed.receiptNumber ?? String(Date.now()),
+        total_amount: parsed.total ?? parsed.checksum.computed,
+      },
+      items: parsed.items.map((item) => ({
+        name: item.name,
+        price: item.price,
+        quantity: item.qty ?? 1,
+      })),
+    };
+    return JSON.stringify(json, null, 2);
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
 
 const SAMPLE_JSON = `{\n  "store": { "name": "SHILO H INTERNATIONAL", "address": "65 RUE BRION", "territory": "GP" },\n  "transaction": { "date": "2026-03-11", "ticket_id": "1610669", "total_amount": 37.46 },\n  "items": [{ "name": "COCA COLA 2L", "price": 3.49, "quantity": 1 }]\n}`;
 
@@ -25,18 +70,28 @@ export default function AdminTicketImport() {
     if (!file) return;
     setLoading(true); setErrorMessage(null);
     try {
-      const formData = new FormData(); formData.append('image', file);
-      const res = await fetch('/api/scan-price', { method: 'POST', body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Erreur scan');
-      setJsonInput(JSON.stringify(data?.json || data, null, 2));
-      toast.success('Scan ticket réussi');
-    } catch (e: any) {
-      if (isDegradedMode) {
-        setErrorMessage('Scan IA indisponible sur la preview statique. Utilisez un environnement avec backend/API activé.');
-      } else {
-        setErrorMessage(e.message || 'Erreur Gemini API.');
+      // Try backend API first (when not in degraded/static mode)
+      if (!isDegradedMode) {
+        const formData = new FormData(); formData.append('image', file);
+        const res = await fetch('/api/scan-price', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'Erreur scan');
+        setJsonInput(JSON.stringify(data?.json || data, null, 2));
+        toast.success('Scan ticket réussi');
+        return;
       }
+      // Fallback: local Tesseract OCR (works in static preview without backend)
+      toast('🔍 Analyse OCR locale en cours…', { duration: 3000 });
+      const jsonStr = await localOcrScan(file);
+      setJsonInput(jsonStr);
+      toast.success('Scan OCR local réussi — vérifiez et corrigez si besoin');
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Erreur scan';
+      setErrorMessage(
+        isDegradedMode
+          ? `Scan OCR local échoué : ${msg}. Essayez une photo plus nette ou saisissez le JSON manuellement.`
+          : msg,
+      );
     } finally { setLoading(false); if (event.target) event.target.value = ''; }
   };
 
@@ -75,7 +130,9 @@ export default function AdminTicketImport() {
         <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={async (e) => { const t = await e.target.files?.[0]?.text(); if (t) setJsonInput(t); }} />
         <input ref={photoInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoUpload} />
         <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-slate-800 rounded-lg">Charger un .json</button>
-        <button type="button" onClick={() => photoInputRef.current?.click()} disabled={isDegradedMode} className="px-4 py-2 bg-purple-600 rounded-lg disabled:opacity-50">Scanner photo</button>
+        <button type="button" onClick={() => photoInputRef.current?.click()} className="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-500 transition-colors">
+          {isDegradedMode ? 'Scanner photo (OCR local)' : 'Scanner photo'}
+        </button>
         <button type="button" onClick={() => { setJsonInput(SAMPLE_JSON); setParsedPayload(null); setErrorMessage(null); }} className="px-4 py-2 bg-slate-800 rounded-lg"><RotateCcw className="w-4 h-4" /></button>
       </div>
       <div className="space-y-2">
