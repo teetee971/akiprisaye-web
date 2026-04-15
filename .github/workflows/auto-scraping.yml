@@ -156,14 +156,30 @@ jobs:
             const date = new Date().toLocaleString('fr-FR', { timeZone: 'America/Guadeloupe' });
             const todayIso = new Date().toISOString().slice(0,10);
             core.warning(`⚠️ Échec du scraping automatique — ${date}`);
-
-            // Fermer toutes les anciennes issues scraping ouvertes
-            const oldIssues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'scraping,automatique,alerte',
-              per_page: 50,
+            // Fermer les anciennes issues de scraping (plus de MAX_AGE_DAYS jours)
+            const MAX_AGE_DAYS = 3;
+            const cutoff = new Date(Date.now() - MAX_AGE_DAYS * 24 * 60 * 60 * 1000);
+            const cutoffDate = cutoff.toISOString().slice(0, 10);
+            const oldIssues = await github.paginate(
+              github.rest.search.issuesAndPullRequests,
+              {
+                q: `[AUTO] Échec scraping in:title repo:${context.repo.owner}/${context.repo.repo} is:open is:issue label:automatique created:<${cutoffDate}`,
+                per_page: 100
+              }
+            );
+            for (const issue of oldIssues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+                state_reason: 'not_planned'
+              });
+              core.info(`Fermé issue #${issue.number} (${issue.title})`);
+            }
+            // Éviter les doublons : vérifier si une issue est déjà ouverte pour aujourd'hui
+            const existing = await github.rest.search.issuesAndPullRequests({
+              q: `[AUTO] Échec scraping données prix — ${todayIso} in:title repo:${context.repo.owner}/${context.repo.repo} is:open is:issue label:scraping label:automatique label:alerte`
             });
 
             // Créer la nouvelle issue

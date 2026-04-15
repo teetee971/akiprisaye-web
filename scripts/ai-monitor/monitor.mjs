@@ -453,6 +453,70 @@ async function findExistingAlertIssue(token, dateStr) {
   }
 }
 
+/** Maximum age in days before an open monitoring issue is auto-closed. */
+const MONITORING_ISSUE_MAX_AGE_DAYS = 3;
+
+/**
+ * Close monitoring issues older than MONITORING_ISSUE_MAX_AGE_DAYS to prevent tracker pollution.
+ * Uses pagination and a created:<cutoff date filter to handle large numbers of issues.
+ */
+async function closeOldMonitoringIssues(token) {
+  try {
+    const cutoff = new Date(Date.now() - MONITORING_ISSUE_MAX_AGE_DAYS * 24 * 60 * 60 * 1000);
+    const cutoffDate = cutoff.toISOString().slice(0, 10);
+    const labelFilter = MONITORING_ISSUE_LABELS.map((l) => `label:${l}`).join(' ');
+    const query = encodeURIComponent(
+      `[MONITORING] Score in:title repo:${CONFIG.repo} is:open is:issue created:<${cutoffDate} ${labelFilter}`,
+    );
+
+    let page = 1;
+    while (true) {
+      const res = await fetchWithTimeout(
+        `https://api.github.com/search/issues?q=${query}&sort=created&order=asc&per_page=100&page=${page}`,
+        10_000,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+          },
+        },
+      );
+      if (!res.ok) return;
+
+      const data = await res.json();
+      const items = data.items ?? [];
+      if (items.length === 0) break;
+
+      for (const issue of items) {
+        const patchRes = await fetchWithTimeout(
+          `https://api.github.com/repos/${CONFIG.repo}/issues/${issue.number}`,
+          10_000,
+          {
+            method: 'PATCH',
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+              'X-GitHub-Api-Version': '2022-11-28',
+            },
+            body: JSON.stringify({ state: 'closed', state_reason: 'not_planned' }),
+          },
+        );
+        if (patchRes.ok) {
+          console.log(`🗑️  Issue #${issue.number} fermée (> ${MONITORING_ISSUE_MAX_AGE_DAYS} jours) : ${issue.title}`);
+        } else {
+          const errBody = await patchRes.text().catch(() => '');
+          console.warn(`⚠️  Impossible de fermer l'issue #${issue.number} (HTTP ${patchRes.status}) : ${errBody}`);
+        }
+      }
+
+      if (items.length < 100) break;
+      page += 1;
+    }
+  } catch (err) {
+    console.warn('⚠️  Impossible de fermer les anciennes issues monitoring :', err.message);
+  }
+}
+
 async function createAlertIssue(report) {
   const token = process.env.GITHUB_TOKEN;
   if (!token || DRY_RUN) return;
@@ -461,6 +525,9 @@ async function createAlertIssue(report) {
   const errors = report.checks.filter((c) => c.status === 'error');
   const warns = report.checks.filter((c) => c.status === 'warn');
   const dateStr = ISO_NOW.slice(0, 10);
+
+  // Close old monitoring issues (> 3 days) before creating a new one.
+  await closeOldMonitoringIssues(token);
 
   // Deduplicate: update the existing open issue for today instead of creating a new one.
   const existingIssue = await findExistingAlertIssue(token, dateStr);
