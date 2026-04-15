@@ -12,7 +12,12 @@
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
-    "fast-xml-parser": "^4.5.4",
+    "fast-xml-parser": "^4.5.5",
     "firebase-admin": "^12.1.0"
+  },
+  "overrides": {
+    "@google-cloud/storage": {
+      "fast-xml-parser": "^5.5.6"
+    }
   }
 }
