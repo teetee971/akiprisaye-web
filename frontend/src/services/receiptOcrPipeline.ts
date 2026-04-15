@@ -423,6 +423,9 @@ export function normalizeReceipt(
 export function matchProductsInReceipt(
   receipt: Omit<ReceiptRecord, 'id' | 'createdAt' | 'updatedAt' | 'checksum'>,
 ): Omit<ReceiptRecord, 'id' | 'createdAt' | 'updatedAt' | 'checksum'> {
+  // Per-call cache: avoid duplicate lookups for repeated labels on the same ticket
+  const labelCache = new Map<string, string | null>();
+
   const matchedItems: ReceiptItem[] = receipt.items.map((item) => {
     // 1. Recherche par EAN si disponible
     if (item.barcode) {
@@ -432,12 +435,23 @@ export function matchProductsInReceipt(
       }
     }
 
-    // 2. Recherche par nom normalisé
+    // 2. Recherche par nom normalisé.
+    // Seuil : libellé ≥ 4 caractères ET au moins 2 termes pour éviter
+    // les faux positifs sur des labels courts/bruités (ex: "LT 1", "X2").
     const query = item.normalizedLabel ?? item.rawLabel;
-    if (query && query.length >= 2) {
-      const results = searchProductsByName(query) as Array<{ ean?: string }>;
-      if (results.length > 0 && results[0].ean) {
-        return { ...item, productMatchId: results[0].ean };
+    if (query) {
+      const terms = query.trim().split(/\s+/).filter(Boolean);
+      if (query.length >= 4 && terms.length >= 2) {
+        const cached = labelCache.get(query);
+        if (cached !== undefined) {
+          return { ...item, productMatchId: cached };
+        }
+        const results = searchProductsByName(query) as Array<{ ean?: string }>;
+        const matchId = (results.length > 0 && results[0].ean) ? results[0].ean : null;
+        labelCache.set(query, matchId);
+        if (matchId) {
+          return { ...item, productMatchId: matchId };
+        }
       }
     }
 

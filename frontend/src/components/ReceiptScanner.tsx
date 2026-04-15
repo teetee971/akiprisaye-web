@@ -22,6 +22,7 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, Upload, X, AlertCircle, CheckCircle, Info, TrendingUp, TrendingDown, Minus, Store, MapPin, Plus, Images } from 'lucide-react';
 import { scanReceipt, type ReceiptAnalysisResult } from '../services/receiptScanService';
+import { findProductByEan } from '../data/seedProducts';
 
 /**
  * Constants
@@ -723,13 +724,21 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                     <div className="text-white font-medium mb-1 whitespace-pre-wrap break-words">
                       {line.normalizedLabel}
                     </div>
+                    {line.productMatchId && (() => {
+                      const matched = findProductByEan(line.productMatchId) as { name?: string; size?: string } | null;
+                      return matched?.name ? (
+                        <div className="text-xs text-green-400 mb-1">
+                          ✓ {matched.name}{matched.size ? ` ${matched.size}` : ''}
+                        </div>
+                      ) : null;
+                    })()}
                     <div className="flex items-center gap-4 text-xs text-gray-400">
                       <span>Confiance: {line.confidence}%</span>
                       {line.quantity && <span>Qté: {line.quantity}</span>}
                       {line.productMatchId && (
                         <button
                           type="button"
-                          onClick={() => navigate(`/produit/${line.productMatchId}`)}
+                          onClick={() => navigate(`/produit/${encodeURIComponent(line.productMatchId!)}`)}
                           className="text-blue-400 underline hover:text-blue-300"
                         >
                           Voir fiche produit
@@ -849,13 +858,21 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                     <div className="flex-1 min-w-0 pr-3">
                       {/* SECURITY: OCR text rendered as plain text to prevent XSS */}
                       <p className="text-white text-sm font-medium truncate">{line.normalizedLabel}</p>
+                      {line.productMatchId && (() => {
+                        const matched = findProductByEan(line.productMatchId) as { name?: string; size?: string } | null;
+                        return matched?.name ? (
+                          <p className="text-xs text-green-400 truncate">
+                            ✓ {matched.name}{matched.size ? ` ${matched.size}` : ''}
+                          </p>
+                        ) : null;
+                      })()}
                       {line.quantity && line.quantity > 1 && (
                         <p className="text-xs text-gray-400">Qté : {line.quantity}</p>
                       )}
                       {line.productMatchId && (
                         <button
                           type="button"
-                          onClick={() => navigate(`/produit/${line.productMatchId}`)}
+                          onClick={() => navigate(`/produit/${encodeURIComponent(line.productMatchId!)}`)}
                           className="text-xs text-blue-400 underline hover:text-blue-300"
                         >
                           Voir fiche produit
