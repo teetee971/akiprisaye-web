@@ -246,14 +246,35 @@ export default function ProduitPage() {
   /* ---------------------------------------------------------------- */
   /* Rendu                                                              */
   /* ---------------------------------------------------------------- */
-  if (!ean) {
+  if (!ean || ean.length < 8 || !/^\d+$/.test(ean)) {
     return (
       <div className="max-w-3xl mx-auto p-6 text-center">
         <AlertCircle className="w-12 h-12 text-orange-500 mx-auto mb-4" />
-        <p className="text-slate-700 dark:text-slate-300">Code EAN manquant.</p>
-        <Link to="/comparateur" className="text-blue-600 hover:underline">
-          ← Retour comparateur
-        </Link>
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Produit introuvable</h1>
+        <p className="text-slate-500 dark:text-slate-400 mb-1">
+          {!ean
+            ? 'Code EAN manquant.'
+            : `Code EAN invalide : « ${ean} » (minimum 8 chiffres requis).`}
+        </p>
+        <p className="text-sm text-slate-400 dark:text-slate-500 mb-6">
+          Vérifiez le lien ou utilisez le comparateur pour rechercher un produit.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link
+            to={-1 as unknown as string}
+            onClick={(e) => { e.preventDefault(); history.back(); }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors font-medium"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour
+          </Link>
+          <Link
+            to="/comparateur"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            Rechercher un produit
+          </Link>
+        </div>
       </div>
     );
   }

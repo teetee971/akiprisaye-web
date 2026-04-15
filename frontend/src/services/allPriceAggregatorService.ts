@@ -398,7 +398,36 @@ export async function aggregateAllPrices(
   if (observationPrices.length === 0) warnings.push('Aucune observation citoyenne enregistrée pour ce produit');
 
   // Merge all prices
-  const allPrices = [...webPrices, ...firestorePrices, ...observationPrices, ...realtimePrices, ...retailerPrices];
+  let allPrices = [...webPrices, ...firestorePrices, ...observationPrices, ...realtimePrices, ...retailerPrices];
+
+  // Fallback: if no local prices found, use observatoire JSON data (citizen price snapshots)
+  const hasLocalData = firestorePrices.length > 0 || observationPrices.length > 0 || realtimePrices.length > 0;
+  if (!hasLocalData) {
+    try {
+      const { getObservatoirePricesForEan } = await import('./realDataService');
+      const productNameForMatch = (productInfo?.name) ?? undefined;
+      const obsPrices = await getObservatoirePricesForEan(ean, productNameForMatch);
+      if (obsPrices.length > 0) {
+        const fallbackPrices: AggregatedPrice[] = obsPrices.map((obs, i) => ({
+          id: `obs-fallback-${i}`,
+          merchant: obs.storeName + (obs.commune ? ` (${obs.commune})` : ''),
+          price: obs.price,
+          currency: 'EUR' as const,
+          isPromo: false,
+          observedAt: obs.observedAt,
+          source: 'fallback' as PriceSource,
+          reliability: 0.8,
+          territory: obs.territory,
+        }));
+        allPrices = [...allPrices, ...fallbackPrices];
+        // Remove the "Aucune observation" warning since we found fallback data
+        const idx = warnings.indexOf('Aucune observation citoyenne enregistrée pour ce produit');
+        if (idx !== -1) warnings.splice(idx, 1);
+      }
+    } catch {
+      // Non-blocking: observatoire fallback is best-effort
+    }
+  }
 
   // Deduplicate: if same merchant + same price (rounded to cent), keep most reliable
   const deduped = new Map<string, AggregatedPrice>();

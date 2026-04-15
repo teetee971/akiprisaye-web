@@ -27,7 +27,7 @@ const FINGERPRINTED_ASSET_PATTERN =
   /\/assets\/.+\.[a-f0-9]{8,}\.(js|css|png|jpg|jpeg|gif|svg|webp|woff2?)$/i;
 // Fichiers de données mis à jour par le scraper (stale-while-revalidate)
 const DATA_JSON_PATTERN =
-  /\/data\/(fuel-prices|catalogue-prices|open-prices-dom|fresh-prices|bqp-prices|services-prices|loyer-prices|medicaments-prices|octroi-mer|com-prices|grossistes-prices|scraping-health)\.json$/;
+  /\/data\/(catalogue|actualites|fuel-prices|catalogue-prices|open-prices-dom|fresh-prices|bqp-prices|services-prices|loyer-prices|medicaments-prices|octroi-mer|com-prices|grossistes-prices|scraping-health|enhanced-prices|historique-prix|expanded-prices)\.json$/;
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

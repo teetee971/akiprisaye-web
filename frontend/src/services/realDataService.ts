@@ -308,3 +308,92 @@ export function buildMonthlyData(
 
   return result;
 }
+
+// ─── Observatoire data ────────────────────────────────────────────────────────
+
+export interface ObservatoireObservation {
+  storeName: string;
+  price: number;
+  territory: string;
+  commune?: string;
+  observedAt: string;
+}
+
+interface ObservatoireEntry {
+  commune?: string;
+  enseigne: string;
+  produit: string;
+  ean?: string;
+  prix: number;
+  categorie?: string;
+}
+
+interface ObservatoireFile {
+  territoire: string;
+  date_snapshot: string;
+  donnees: ObservatoireEntry[];
+}
+
+const OBSERVATOIRE_FILES = [
+  'data/observatoire/guadeloupe_2026-02.json',
+  'data/observatoire/guadeloupe_2026-01.json',
+];
+
+/**
+ * Load observatoire JSON files and return price observations for a given EAN.
+ * Falls back to fuzzy product-name matching when no EAN match is found.
+ */
+export async function getObservatoirePricesForEan(
+  ean: string,
+  productName?: string,
+): Promise<ObservatoireObservation[]> {
+  const results: ObservatoireObservation[] = [];
+
+  for (const path of OBSERVATOIRE_FILES) {
+    const data = await fetchJson<ObservatoireFile>(path);
+    if (!data?.donnees) continue;
+
+    const territoire = data.territoire ?? 'DOM';
+    const dateSnapshot = data.date_snapshot ?? new Date().toISOString().slice(0, 10);
+
+    for (const entry of data.donnees) {
+      const eanMatch = entry.ean === ean;
+      const nameMatch =
+        !eanMatch &&
+        productName &&
+        entry.produit
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .includes(
+            productName
+              .toLowerCase()
+              .normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')
+              .split(' ')[0] ?? '',
+          );
+
+      if (eanMatch || nameMatch) {
+        results.push({
+          storeName: entry.enseigne,
+          price: entry.prix,
+          territory: territoire,
+          commune: entry.commune,
+          observedAt: `${dateSnapshot}T00:00:00.000Z`,
+        });
+      }
+    }
+  }
+
+  // Deduplicate by store, keep lowest price per store
+  const byStore = new Map<string, ObservatoireObservation>();
+  for (const obs of results) {
+    const key = obs.storeName;
+    const existing = byStore.get(key);
+    if (!existing || obs.price < existing.price) {
+      byStore.set(key, obs);
+    }
+  }
+
+  return Array.from(byStore.values()).sort((a, b) => a.price - b.price);
+}

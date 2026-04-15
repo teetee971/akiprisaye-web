@@ -87,19 +87,38 @@ try {
   });
   safeInitInstallations(app);
   // Analytics requires a real browser environment and a valid measurementId.
-  // Load the analytics module lazily so Node/Vitest contexts never evaluate
-  // firebase/analytics internals that assume window/document are available.
+  // Load the analytics module lazily after the page has fully loaded so it
+  // never blocks the critical rendering path (~60 KB deferred).
   if (typeof window !== "undefined" && typeof document !== "undefined" && firebaseConfig.measurementId) {
-    void import("firebase/analytics")
-      .then(async ({ getAnalytics, isSupported }) => {
-        if (!app) return;
-        const supported = await isSupported().catch(() => false);
-        if (!supported) return;
-        analytics = getAnalytics(app);
-      })
-      .catch((error) => {
-        console.warn("Firebase analytics unavailable:", error);
-      });
+    const initAnalytics = () => {
+      void import("firebase/analytics")
+        .then(async ({ getAnalytics, isSupported }) => {
+          if (!app) return;
+          const supported = await isSupported().catch(() => false);
+          if (!supported) return;
+          analytics = getAnalytics(app);
+        })
+        .catch((error) => {
+          console.warn("Firebase analytics unavailable:", error);
+        });
+    };
+
+    const scheduleIdle = (cb: () => void) => {
+      const win = window as Window & {
+        requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => void;
+      };
+      if (typeof win.requestIdleCallback === "function") {
+        win.requestIdleCallback(cb, { timeout: 5_000 });
+      } else {
+        setTimeout(cb, 2_000);
+      }
+    };
+
+    if (document.readyState === "complete") {
+      scheduleIdle(initAnalytics);
+    } else {
+      window.addEventListener("load", () => scheduleIdle(initAnalytics), { once: true });
+    }
   }
 } catch (error) {
   firebaseError = error instanceof Error ? error.message : "Unknown Firebase initialization error";

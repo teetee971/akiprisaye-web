@@ -1,6 +1,11 @@
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const SITE_URL = "https://teetee971.github.io/akiprisaye-web";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, "..");
+
+const SITE_URL = process.env.SITE_URL || "https://teetee971.github.io/akiprisaye-web";
 
 // ── Static pages ──────────────────────────────────────────────────────────────
 const staticPages = [
@@ -229,8 +234,58 @@ retailers.forEach(retailer => {
 
 sitemap += "</urlset>";
 
-// Write sitemap.xml
-fs.writeFileSync("sitemap.xml", sitemap);
+// ── Write sitemap.xml ─────────────────────────────────────────────────────────
+
+// Collect real EANs from data files
+function readJson(filePath) {
+  try { return JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch { return null; }
+}
+function isValidEan(ean) {
+  return typeof ean === 'string' && /^\d{8,14}$/.test(ean);
+}
+const eans = new Set();
+// enhanced-prices.json
+const enhanced = readJson(path.join(ROOT, 'frontend/public/data/enhanced-prices.json'));
+if (enhanced?.products) {
+  for (const p of enhanced.products) { if (isValidEan(p.ean)) eans.add(p.ean); }
+}
+// observatoire JSON files
+const obsDir = path.join(ROOT, 'data/observatoire');
+if (fs.existsSync(obsDir)) {
+  for (const file of fs.readdirSync(obsDir)) {
+    if (!file.endsWith('.json')) continue;
+    const data = readJson(path.join(obsDir, file));
+    if (data?.donnees) {
+      for (const entry of data.donnees) { if (isValidEan(entry.ean)) eans.add(entry.ean); }
+    }
+  }
+}
+// catalogue.json
+const catalogue = readJson(path.join(ROOT, 'frontend/public/data/catalogue.json'));
+if (Array.isArray(catalogue)) {
+  for (const p of catalogue) { if (isValidEan(p.ean)) eans.add(p.ean); }
+}
+if (eans.size > 0) {
+  const today = new Date().toISOString().slice(0, 10);
+  sitemap = sitemap.replace("</urlset>", "");
+  for (const ean of Array.from(eans).sort()) {
+    sitemap += `  <url>
+    <loc>${SITE_URL}/produit/${ean}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+`;
+  }
+  sitemap += "</urlset>";
+  console.log(`  - ${eans.size} fiches produits EAN (/produit/<ean>)`);
+}
+
+// Write sitemap.xml (root + frontend/public/)
+fs.writeFileSync(path.join(ROOT, "sitemap.xml"), sitemap);
+const frontendSitemap = path.join(ROOT, 'frontend/public/sitemap.xml');
+fs.writeFileSync(frontendSitemap, sitemap);
+console.log(`✔ sitemap.xml écrit → sitemap.xml + frontend/public/sitemap.xml`);
 
 // Generate robots.txt with sitemap reference
 const robotsTxt = `# A KI PRI SA YÉ — Comparateur de prix Outre-mer
