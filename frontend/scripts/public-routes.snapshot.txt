@@ -10,7 +10,6 @@
 /admin
 /admin/fraude
 /admin/partenaires
-/admin/sync
 /ai-dashboard
 /ai-insights
 /alertes
