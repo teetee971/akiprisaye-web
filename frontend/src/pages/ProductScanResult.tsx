@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { fetchOffProductDetails, type OffProductUiModel } from '../services/openFoodFacts';
 import { fetchProductPrices, type PriceListing } from '../services/photoProductSearchService';
 import { saveReport, getReportsByBarcode } from '../services/localStore';
-import type { LocalPriceReport } from '../types/localProduct';
+import type { LocalPriceReport, OcrExtracted } from '../types/localProduct';
 import PriceTrendWidget from '../components/PriceTrendWidget';
 import ShareButton from '../components/comparateur/ShareButton';
 
@@ -209,6 +209,14 @@ interface ReportFormProps {
 
 type UnitType = 'unit' | 'kg' | 'l';
 
+const MAX_PHOTOS = 5;
+
+interface PhotoEntry {
+  dataUrl: string;
+  ocrStatus: 'idle' | 'running' | 'done' | 'error';
+  ocrData?: OcrExtracted;
+}
+
 function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFormProps) {
   const today = new Date().toISOString().slice(0, 10);
   const [price, setPrice] = useState('');
@@ -217,24 +225,78 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
   const [observedAt, setObservedAt] = useState(today);
   const [note, setNote] = useState('');
   const [isPromo, setIsPromo] = useState(false);
-  const [proofPhoto, setProofPhoto] = useState<string | null>(null);
-  const [photoLoading, setPhotoLoading] = useState(false);
+  const [photos, setPhotos] = useState<PhotoEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const handlePhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhotoLoading(true);
-    try {
-      const dataUrl = await resizeImageToDataUrl(file);
-      setProofPhoto(dataUrl);
-    } catch {
-      setError('Impossible de traiter la photo.');
-    } finally {
-      setPhotoLoading(false);
+  /* Apply OCR suggestion to form fields (only if field is still empty) */
+  const applySuggestion = useCallback((ocr: OcrExtracted) => {
+    if (!price && ocr.detectedPrices && ocr.detectedPrices.length > 0) {
+      setPrice(String(ocr.detectedPrices[0]));
     }
+    if (!store && ocr.detectedStore) {
+      setStore(ocr.detectedStore);
+    }
+    if (observedAt === today && ocr.detectedDate) {
+      setObservedAt(ocr.detectedDate);
+    }
+  }, [price, store, observedAt, today]);
+
+  const handlePhotos = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+
+    const remaining = MAX_PHOTOS - photos.length;
+    const toProcess = files.slice(0, remaining);
+
+    // Resize all selected files and add as 'idle' entries immediately
+    const newEntries: PhotoEntry[] = [];
+    for (const file of toProcess) {
+      try {
+        const dataUrl = await resizeImageToDataUrl(file);
+        newEntries.push({ dataUrl, ocrStatus: 'idle' });
+      } catch {
+        // skip unprocessable file
+      }
+    }
+
+    if (newEntries.length === 0) return;
+
+    setPhotos((prev) => {
+      const updated = [...prev, ...newEntries];
+      // Start OCR for each new photo
+      newEntries.forEach((entry, i) => {
+        const idx = prev.length + i;
+        runOcrOnPhoto(entry.dataUrl, idx, updated.length);
+      });
+      return updated;
+    });
+
+    // Reset file input so the same file can be re-selected
+    e.target.value = '';
+  };
+
+  const runOcrOnPhoto = async (dataUrl: string, idx: number, _total: number) => {
+    // Mark as running
+    setPhotos((prev) => prev.map((p, i) => i === idx ? { ...p, ocrStatus: 'running' } : p));
+    try {
+      const { extractFromPhoto } = await import('../services/photoOcrExtractor');
+      const ocrData = await extractFromPhoto(dataUrl, 25000);
+      setPhotos((prev) => {
+        const updated = prev.map((p, i) =>
+          i === idx ? { ...p, ocrStatus: 'done' as const, ocrData } : p,
+        );
+        return updated;
+      });
+      applySuggestion(ocrData);
+    } catch {
+      setPhotos((prev) => prev.map((p, i) => i === idx ? { ...p, ocrStatus: 'error' as const } : p));
+    }
+  };
+
+  const removePhoto = (idx: number) => {
+    setPhotos((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -244,6 +306,9 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
     if (!store.trim()) { setError('Indiquer le magasin'); return; }
     setError(null);
 
+    const proofPhotos = photos.map((p) => p.dataUrl);
+    const ocrData = photos.map((p) => p.ocrData).filter(Boolean) as OcrExtracted[];
+
     saveReport({
       barcode,
       territory,
@@ -252,8 +317,9 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
       store: store.trim(),
       observedAt,
       note: note.trim() || undefined,
-      ...(isPromo ? ({ isPromo: true } as any) : {}),
-      ...(proofPhoto ? { proofPhoto } : {}),
+      ...(isPromo ? ({ isPromo: true } as Record<string, unknown>) : {}),
+      ...(proofPhotos.length > 0 ? { proofPhotos, proofPhoto: proofPhotos[0] } : {}),
+      ...(ocrData.length > 0 ? { ocrData } : {}),
     });
 
     setSaved(true);
@@ -264,9 +330,12 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
     return (
       <div className="rounded-xl border border-green-700 bg-green-500/10 p-4 text-center space-y-2">
         <p className="text-green-300 font-semibold">✅ Prix enregistré localement, merci !</p>
+        {photos.length > 0 && (
+          <p className="text-xs text-green-400">{photos.length} photo{photos.length > 1 ? 's' : ''} · {photos.filter(p => p.ocrData).length} analysée{photos.filter(p => p.ocrData).length > 1 ? 's' : ''} par OCR</p>
+        )}
         <button
           type="button"
-          onClick={() => { setSaved(false); setPrice(''); setStore(''); setNote(''); setProofPhoto(null); }}
+          onClick={() => { setSaved(false); setPrice(''); setStore(''); setNote(''); setPhotos([]); }}
           className="text-xs px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white"
         >
           Signaler un autre prix
@@ -275,10 +344,107 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
     );
   }
 
+  const anyOcrRunning = photos.some(p => p.ocrStatus === 'running');
+
   return (
     <form onSubmit={handleSubmit} className="space-y-3 text-sm">
       <div className="text-xs text-slate-400 bg-slate-800/50 px-3 py-2 rounded-lg">
         Produit : <span className="text-white font-medium">{productName}</span>
+      </div>
+
+      {/* ── Multi-photo section ── */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-slate-300">
+            📸 Photos preuves ({photos.length}/{MAX_PHOTOS})
+          </span>
+          {photos.length < MAX_PHOTOS && (
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="text-xs px-3 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-600 text-white"
+            >
+              + Ajouter
+            </button>
+          )}
+        </div>
+
+        {photos.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {photos.map((p, i) => (
+              <div key={i} className="relative group">
+                <img
+                  src={p.dataUrl}
+                  alt={`Photo ${i + 1}`}
+                  className="w-16 h-16 rounded-lg object-cover border border-slate-600"
+                />
+                {/* OCR status badge */}
+                <span className={`absolute top-0.5 left-0.5 text-[9px] px-1 rounded font-bold ${
+                  p.ocrStatus === 'running' ? 'bg-yellow-500 text-black animate-pulse' :
+                  p.ocrStatus === 'done'    ? 'bg-green-500 text-white' :
+                  p.ocrStatus === 'error'   ? 'bg-red-500 text-white' :
+                  'bg-slate-600 text-white'
+                }`}>
+                  {p.ocrStatus === 'running' ? 'OCR…' :
+                   p.ocrStatus === 'done'    ? '✓ OCR' :
+                   p.ocrStatus === 'error'   ? '✗' :
+                   `#${i + 1}`}
+                </span>
+                {/* Remove button */}
+                <button
+                  type="button"
+                  onClick={() => removePhoto(i)}
+                  className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-600 text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                  aria-label={`Supprimer la photo ${i + 1}`}
+                >
+                  ×
+                </button>
+                {/* OCR tooltip */}
+                {p.ocrStatus === 'done' && p.ocrData && (
+                  <div className="absolute bottom-full left-0 mb-1 z-10 hidden group-hover:block w-48 rounded-lg bg-slate-900 border border-slate-600 p-2 text-[10px] text-slate-300 shadow-xl">
+                    {p.ocrData.detectedStore && <p>🏪 {p.ocrData.detectedStore}</p>}
+                    {p.ocrData.detectedPrices && p.ocrData.detectedPrices.length > 0 && (
+                      <p>💶 {p.ocrData.detectedPrices.slice(0, 3).map(v => `${v}€`).join(', ')}</p>
+                    )}
+                    {p.ocrData.detectedDate && <p>📅 {p.ocrData.detectedDate}</p>}
+                    {p.ocrData.detectedProducts && p.ocrData.detectedProducts.length > 0 && (
+                      <p className="truncate">📦 {p.ocrData.detectedProducts[0]}</p>
+                    )}
+                    <p className="text-slate-500 mt-0.5">Confiance: {Math.round(p.ocrData.confidence)}%</p>
+                  </div>
+                )}
+              </div>
+            ))}
+            {/* Add more slot */}
+            {photos.length < MAX_PHOTOS && (
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="w-16 h-16 rounded-lg border-2 border-dashed border-slate-600 hover:border-purple-500 text-slate-500 hover:text-purple-400 flex items-center justify-center text-2xl transition-colors"
+                aria-label="Ajouter une photo"
+              >
+                +
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* OCR suggestions banner */}
+        {anyOcrRunning && (
+          <p className="text-xs text-yellow-400 animate-pulse">
+            🔍 Analyse OCR en cours… les champs seront pré-remplis automatiquement
+          </p>
+        )}
+
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          capture="environment"
+          multiple
+          onChange={handlePhotos}
+          className="hidden"
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -341,32 +507,6 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
         <span className="text-xs text-slate-300">🏷️ Prix en promotion</span>
       </label>
 
-      {/* Photo proof */}
-      <div className="space-y-1">
-        <span className="text-xs font-medium text-slate-300">📸 Photo preuve (optionnel)</span>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            disabled={photoLoading}
-            className="text-xs px-3 py-2 rounded-lg bg-purple-700 hover:bg-purple-600 text-white"
-          >
-            {photoLoading ? 'Traitement…' : proofPhoto ? '📷 Changer photo' : '📷 Prendre / ajouter'}
-          </button>
-          {proofPhoto && (
-            <img src={proofPhoto} alt="Preuve" className="h-10 w-10 rounded-lg object-cover border border-slate-600" />
-          )}
-        </div>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={handlePhoto}
-          className="hidden"
-        />
-      </div>
-
       <label className="block space-y-1">
         <span className="text-xs font-medium text-slate-300">Note (optionnel)</span>
         <textarea
@@ -383,10 +523,10 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
 
       <button
         type="submit"
-        disabled={!price || !store}
+        disabled={!price || !store || anyOcrRunning}
         className="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm disabled:opacity-50"
       >
-        Enregistrer ce prix
+        {anyOcrRunning ? '⏳ OCR en cours…' : 'Enregistrer ce prix'}
       </button>
 
       <p className="text-xs text-slate-500 text-center">
@@ -404,6 +544,7 @@ interface CommunityPricesProps {
 
 function CommunityPrices({ barcode, refreshKey }: CommunityPricesProps) {
   const [reports, setReports] = useState<LocalPriceReport[]>([]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     setReports(getReportsByBarcode(barcode));
@@ -415,33 +556,101 @@ function CommunityPrices({ barcode, refreshKey }: CommunityPricesProps) {
     <section className="rounded-xl border border-slate-700 p-4">
       <h3 className="text-lg font-semibold mb-3">📋 Prix signalés localement ({reports.length})</h3>
       <ul className="space-y-2">
-        {reports.map((r) => (
-          <li key={r.id} className="rounded-lg border border-slate-700 bg-slate-800/40 p-3 text-sm flex gap-3 items-start">
-            {r.proofPhoto && (
-              <img
-                src={r.proofPhoto}
-                alt="Preuve photo"
-                className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-slate-600"
-              />
-            )}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-1">
-                <span className="font-bold text-emerald-400 text-base">
-                  {formatPrice(r.price, r.currency)}
-                  {r.unit && r.unit !== 'unit' ? `/${r.unit}` : ''}
-                </span>
-                <span className="text-xs text-slate-500">{formatDate(r.observedAt)}</span>
+        {reports.map((r) => {
+          const photos = r.proofPhotos ?? (r.proofPhoto ? [r.proofPhoto] : []);
+          const hasOcr = r.ocrData && r.ocrData.length > 0;
+          const isExpanded = expandedId === r.id;
+          return (
+            <li key={r.id} className="rounded-lg border border-slate-700 bg-slate-800/40 p-3 text-sm">
+              <div className="flex gap-3 items-start">
+                {/* Thumbnails */}
+                {photos.length > 0 && (
+                  <div className="flex gap-1 flex-shrink-0">
+                    {photos.slice(0, 3).map((src, i) => (
+                      <img
+                        key={i}
+                        src={src}
+                        alt={`Photo ${i + 1}`}
+                        className="w-12 h-12 rounded-lg object-cover border border-slate-600"
+                      />
+                    ))}
+                    {photos.length > 3 && (
+                      <div className="w-12 h-12 rounded-lg border border-slate-600 bg-slate-700 flex items-center justify-center text-xs text-slate-300">
+                        +{photos.length - 3}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="font-bold text-emerald-400 text-base">
+                      {formatPrice(r.price, r.currency)}
+                      {r.unit && r.unit !== 'unit' ? `/${r.unit}` : ''}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {hasOcr && (
+                        <span className="text-[10px] bg-blue-500/20 text-blue-300 px-1.5 py-0.5 rounded-full">
+                          🔍 OCR
+                        </span>
+                      )}
+                      <span className="text-xs text-slate-500">{formatDate(r.observedAt)}</span>
+                    </div>
+                  </div>
+                  {r.store && <p className="text-xs text-slate-300 truncate">🏪 {r.store}</p>}
+                  {(r as Record<string, unknown>).isPromo && (
+                    <span className="inline-block text-[10px] bg-orange-500/20 text-orange-300 px-1.5 py-0.5 rounded-full mt-0.5">
+                      🏷️ Promo
+                    </span>
+                  )}
+                  {r.note && <p className="text-xs text-slate-500 mt-0.5 truncate">{r.note}</p>}
+                  {/* OCR details toggle */}
+                  {hasOcr && (
+                    <button
+                      type="button"
+                      onClick={() => setExpandedId(isExpanded ? null : r.id)}
+                      className="text-[10px] text-blue-400 hover:text-blue-300 mt-1"
+                    >
+                      {isExpanded ? '▲ Masquer données OCR' : '▼ Voir données OCR'}
+                    </button>
+                  )}
+                </div>
               </div>
-              {r.store && <p className="text-xs text-slate-300 truncate">🏪 {r.store}</p>}
-              {(r as any).isPromo && (
-                <span className="inline-block text-[10px] bg-orange-500/20 text-orange-300 px-1.5 py-0.5 rounded-full mt-0.5">
-                  🏷️ Promo
-                </span>
+              {/* OCR data panel */}
+              {isExpanded && r.ocrData && r.ocrData.length > 0 && (
+                <div className="mt-2 pt-2 border-t border-slate-700 space-y-2">
+                  {r.ocrData.map((ocr, i) => (
+                    <div key={i} className="rounded-lg bg-slate-900 p-2 text-xs space-y-0.5">
+                      <p className="font-semibold text-slate-400">📷 Photo {i + 1} — Confiance {Math.round(ocr.confidence)}%</p>
+                      {ocr.detectedStore && <p className="text-slate-300">🏪 {ocr.detectedStore}</p>}
+                      {ocr.detectedPrices && ocr.detectedPrices.length > 0 && (
+                        <p className="text-slate-300">💶 {ocr.detectedPrices.map(p => `${p}€`).join(', ')}</p>
+                      )}
+                      {ocr.detectedDate && <p className="text-slate-300">📅 {ocr.detectedDate}</p>}
+                      {ocr.detectedProducts && ocr.detectedProducts.length > 0 && (
+                        <div>
+                          <p className="text-slate-400">📦 Produits détectés:</p>
+                          <ul className="list-disc list-inside text-slate-300 ml-2">
+                            {ocr.detectedProducts.slice(0, 5).map((name, j) => (
+                              <li key={j} className="truncate">{name}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {ocr.rawText && (
+                        <details className="mt-1">
+                          <summary className="text-slate-500 cursor-pointer">Texte brut OCR</summary>
+                          <pre className="mt-1 text-[9px] text-slate-400 whitespace-pre-wrap break-words max-h-32 overflow-y-auto">
+                            {ocr.rawText.slice(0, 500)}{ocr.rawText.length > 500 ? '…' : ''}
+                          </pre>
+                        </details>
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
-              {r.note && <p className="text-xs text-slate-500 mt-0.5 truncate">{r.note}</p>}
-            </div>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
     </section>
   );
