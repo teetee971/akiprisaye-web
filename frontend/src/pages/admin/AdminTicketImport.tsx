@@ -84,7 +84,7 @@ export default function AdminTicketImport() {
       </div>
       <div className="flex gap-4">
         <button type="button" onClick={handleAnalyze} className="px-6 py-2 bg-blue-500 text-slate-950 font-bold rounded-lg hover:bg-blue-400">Analyser le ticket</button>
-        <button type="button" onClick={handleSave} disabled={!parsedPayload || loading || isDegradedMode} className="px-6 py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg disabled:opacity-50">
+        <button type="button" onClick={handleSave} disabled={!parsedPayload || loading} className="px-6 py-2 bg-emerald-500 text-slate-950 font-bold rounded-lg disabled:opacity-50">
           {loading ? <Loader2 className="animate-spin w-5 h-5" /> : 'Enregistrer en base de données'}
         </button>
       </div>
