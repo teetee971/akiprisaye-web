@@ -238,7 +238,12 @@ sitemap += "</urlset>";
 
 // Collect real EANs from data files
 function readJson(filePath) {
-  try { return JSON.parse(fs.readFileSync(filePath, 'utf8')); } catch { return null; }
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } catch (err) {
+    if (err.code !== 'ENOENT') console.warn(`[sitemap] Warning: could not parse ${filePath}:`, err.message);
+    return null;
+  }
 }
 function isValidEan(ean) {
   return typeof ean === 'string' && /^\d{8,14}$/.test(ean);
@@ -266,12 +271,12 @@ if (Array.isArray(catalogue)) {
   for (const p of catalogue) { if (isValidEan(p.ean)) eans.add(p.ean); }
 }
 if (eans.size > 0) {
-  const today = new Date().toISOString().slice(0, 10);
+  const lastModDate = new Date().toISOString().slice(0, 10);
   sitemap = sitemap.replace("</urlset>", "");
   for (const ean of Array.from(eans).sort()) {
     sitemap += `  <url>
     <loc>${SITE_URL}/produit/${ean}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${lastModDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
