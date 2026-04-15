@@ -13,9 +13,11 @@ import 'leaflet/dist/leaflet.css';
 import { GlassCard } from '../../../components/ui/glass-card';
 import {
   getStore,
+  getStoreStatic,
   deleteStore,
   type Store,
 } from '../../../services/admin/storeAdminService';
+import { isStaticPreviewEnv } from '../../../services/admin/runtimeEnv';
 import type { TerritoryCode } from '../../../types/extensions';
 import { StoreOpenStatus } from '../../../components/store/StoreOpenStatus';
 import { StoreHoursDisplay } from '../../../components/store/StoreHoursDisplay';
@@ -63,7 +65,10 @@ export default function StoreDetail() {
   const loadStore = async () => {
     try {
       setLoading(true);
-      const data = await getStore(id!);
+      const data = isStaticPreviewEnv()
+        ? await getStoreStatic(id!)
+        : await getStore(id!);
+      if (!data) throw new Error('Enseigne introuvable');
       setStore(data);
     } catch (error) {
       toast.error('Erreur lors du chargement de l\'enseigne');

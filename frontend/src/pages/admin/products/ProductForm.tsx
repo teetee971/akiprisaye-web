@@ -8,9 +8,11 @@ import {
   createProduct,
   updateProduct,
   getProduct,
+  getProductStatic,
   searchOpenFoodFacts,
   type CreateProductInput,
 } from '@/services/admin/productAdminService';
+import { isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
 import type { ProductCategory, Unit } from '@/types/product';
 import { Package, Save, X, Search, Camera } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -116,7 +118,10 @@ export function ProductForm() {
   const loadProduct = async (productId: string) => {
     setLoading(true);
     try {
-      const product = await getProduct(productId);
+      const product = isStaticPreviewEnv()
+        ? await getProductStatic(productId)
+        : await getProduct(productId);
+      if (!product) throw new Error('Produit introuvable');
       reset({
         name: product.name,
         brand: product.brand || '',

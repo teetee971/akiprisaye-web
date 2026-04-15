@@ -15,9 +15,11 @@ import {
   createStore,
   updateStore,
   getStore,
+  getStoreStatic,
   type CreateStoreInput,
   type UpdateStoreInput,
 } from '../../../services/admin/storeAdminService';
+import { isStaticPreviewEnv } from '../../../services/admin/runtimeEnv';
 import { geocodeAddress } from '../../../services/geocodingService';
 import type { TerritoryCode } from '../../../types/extensions';
 
@@ -114,7 +116,10 @@ export default function StoreForm() {
   const loadStore = async () => {
     try {
       setLoading(true);
-      const store = await getStore(id!);
+      const store = isStaticPreviewEnv()
+        ? await getStoreStatic(id!)
+        : await getStore(id!);
+      if (!store) throw new Error('Enseigne introuvable');
       setValue('name', store.name);
       setValue('brandId', store.brandId);
       setValue('address', store.address);

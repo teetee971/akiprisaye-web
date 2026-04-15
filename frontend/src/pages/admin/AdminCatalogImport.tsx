@@ -6,6 +6,42 @@ import { doc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { catalogSchema, type CatalogPayload, makeDeterministicId, zodErrorToMessage } from './importSchemas';
 import { getAdminDegradedModeReason, isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
+import { runOCR } from '@/services/ocrService';
+
+/** Run local OCR on a catalog photo and return a best-effort JSON string */
+async function localCatalogOcrScan(file: File): Promise<string> {
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const ocrResult = await runOCR(objectUrl, 'fra', { timeout: 45000 });
+    if (!ocrResult.success || !ocrResult.rawText) {
+      throw new Error(ocrResult.error ?? 'Échec OCR');
+    }
+    // Extract price lines from raw OCR text and build a minimal catalog JSON
+    const lines = ocrResult.rawText.split('\n').map((l) => l.trim()).filter(Boolean);
+    const priceRe = /(.+?)\s+(\d+[.,]\d{2})\s*€?$/;
+    const products: { name: string; price: number; category: string }[] = [];
+    for (const line of lines) {
+      const m = line.match(priceRe);
+      if (m) {
+        products.push({ name: m[1].trim(), price: parseFloat(m[2].replace(',', '.')), category: 'Divers' });
+      }
+    }
+    const json = {
+      campaign: {
+        name: 'Import OCR local',
+        retailers: ['Inconnu'],
+        validity_start: new Date().toISOString().slice(0, 10),
+        validity_end: new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10),
+        territory: 'GP',
+      },
+      stores_applicable: [],
+      products: products.length > 0 ? products : [{ name: 'Produit détecté', price: 0, category: 'Divers' }],
+    };
+    return JSON.stringify(json, null, 2);
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
 
 const SAMPLE_CATALOG_JSON = `{\n  "campaign": {\n    "name": "Coliprix Mars 2026",\n    "retailers": ["Coliprix", "MaximaX"],\n    "validity_start": "2026-03-15",\n    "validity_end": "2026-03-30",\n    "territory": "GP"\n  },\n  "stores_applicable": ["Pointe-à-Pitre", "Abymes"],\n  "products": [\n    {\n      "category": "Boissons",\n      "name": "Jus d'orange 1L",\n      "brand": "Tropicana",\n      "price": 2.99,\n      "unit_price_text": "2,99€/L",\n      "origin": "UE"\n    }\n  ]\n}`;
 
@@ -25,18 +61,26 @@ export default function AdminCatalogImport() {
     if (!file) return;
     setIsLoading(true); setAnalysisError(null);
     try {
-      const formData = new FormData(); formData.append('image', file);
-      const res = await fetch('/api/scan-price', { method: 'POST', body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Erreur scan');
-      setJsonInput(JSON.stringify(data?.json || data, null, 2));
-      toast.success('Scan réussi');
-    } catch (e: any) {
-      if (isDegradedMode) {
-        setAnalysisError('Scan IA indisponible sur la preview statique. Utilisez un environnement avec backend/API activé.');
-      } else {
-        setAnalysisError(e.message || 'Erreur Gemini API.');
+      if (!isDegradedMode) {
+        const formData = new FormData(); formData.append('image', file);
+        const res = await fetch('/api/scan-price', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || 'Erreur scan');
+        setJsonInput(JSON.stringify(data?.json || data, null, 2));
+        toast.success('Scan réussi');
+        return;
       }
+      toast('🔍 Analyse OCR locale en cours…', { duration: 3000 });
+      const jsonStr = await localCatalogOcrScan(file);
+      setJsonInput(jsonStr);
+      toast.success('Scan OCR local réussi — vérifiez et ajustez si besoin');
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Erreur scan';
+      setAnalysisError(
+        isDegradedMode
+          ? `Scan OCR local échoué : ${msg}. Essayez une photo plus nette.`
+          : msg,
+      );
     } finally { setIsLoading(false); if (event.target) event.target.value = ''; }
   };
 
@@ -76,7 +120,9 @@ export default function AdminCatalogImport() {
         <input ref={fileInputRef} type="file" accept=".json" className="hidden" onChange={async (e) => { const text = await e.target.files?.[0]?.text(); if (text) setJsonInput(text); }} />
         <input ref={photoInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handlePhotoUpload} />
         <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 bg-slate-800 rounded-lg border border-slate-700 flex items-center gap-2">Charger un .json</button>
-        <button type="button" onClick={() => photoInputRef.current?.click()} disabled={isDegradedMode} className="px-4 py-2 bg-purple-600 rounded-lg flex items-center gap-2 disabled:opacity-50">Scanner photo</button>
+        <button type="button" onClick={() => photoInputRef.current?.click()} className="px-4 py-2 bg-purple-600 rounded-lg flex items-center gap-2 hover:bg-purple-500 transition-colors">
+          {isDegradedMode ? 'Scanner photo (OCR local)' : 'Scanner photo'}
+        </button>
         <button type="button" onClick={() => { setJsonInput(SAMPLE_CATALOG_JSON); setParsedCatalog(null); setAnalysisError(null); }} className="px-4 py-2 bg-slate-800 rounded-lg"><RotateCcw className="w-4 h-4" /></button>
       </div>
       <div className="space-y-2">

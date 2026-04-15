@@ -56,6 +56,11 @@ export async function getStoresStatic(): Promise<Store[]> {
   }
 }
 
+export async function getStoreStatic(id: string): Promise<Store | null> {
+  const all = await getStoresStatic();
+  return all.find((s) => s.id === id) ?? null;
+}
+
 export interface Store {
   id: string;
   name: string;

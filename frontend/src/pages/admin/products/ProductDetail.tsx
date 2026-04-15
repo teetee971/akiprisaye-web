@@ -3,9 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/glass-card';
 import {
   getProduct,
+  getProductStatic,
   deleteProduct,
   type Product,
 } from '@/services/admin/productAdminService';
+import { isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
 import {
   Edit,
   Trash2,
@@ -35,7 +37,10 @@ export function ProductDetail() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getProduct(productId);
+      const data = isStaticPreviewEnv()
+        ? await getProductStatic(productId)
+        : await getProduct(productId);
+      if (!data) throw new Error('Produit introuvable');
       setProduct(data);
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to load product');

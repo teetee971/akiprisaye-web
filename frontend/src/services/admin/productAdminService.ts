@@ -71,6 +71,11 @@ export async function getProductsStatic(): Promise<Product[]> {
   }
 }
 
+export async function getProductStatic(id: string): Promise<Product | null> {
+  const all = await getProductsStatic();
+  return all.find((p) => p.id === id) ?? null;
+}
+
 export interface Product {
   id: string;
   name: string;

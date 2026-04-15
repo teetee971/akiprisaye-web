@@ -7,11 +7,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { Store, Package, DollarSign, MapPin, Bot, Activity, Zap, ShieldCheck, Bell, ExternalLink, RefreshCw, CheckCircle, XCircle, Clock, ShieldAlert, LogIn, Trash2, UserCheck, KeyRound, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../../components/ui/glass-card';
-import { getStores } from '@/services/admin/storeAdminService';
-import { getProducts } from '@/services/admin/productAdminService';
+import { getStores, getStoresStatic } from '@/services/admin/storeAdminService';
+import { getProducts, getProductsStatic } from '@/services/admin/productAdminService';
 import { getPendingContributions } from '@/services/contributionService';
 import { getAdminDashboardOverview } from '@/services/admin/adminDashboardService';
 import { activateIncidentMode, clearIncidentMode } from '@/services/incidentMode';
+import { isStaticPreviewEnv, getAdminDegradedModeReason } from '@/services/admin/runtimeEnv';
 import {
   getAutomationStatus,
   type AutomationStatus,
@@ -71,6 +72,8 @@ interface RecentActivity {
 }
 
 export default function AdminDashboard() {
+  const isDegradedMode = isStaticPreviewEnv();
+  const degradedReason = getAdminDegradedModeReason();
   const [stats, setStats] = useState<DashboardStats>({
     storesCount: 0,
     productsCount: 0,
@@ -101,12 +104,26 @@ export default function AdminDashboard() {
   }, []);
 
   const loadDashboardData = async (withPageLoader = false): Promise<void> => {
-    if (withPageLoader) {
-      setLoading(true);
-    }
+    if (withPageLoader) setLoading(true);
 
     try {
-      if (withPageLoader) setLoading(true);
+      // Static preview: use local JSON data directly, skip all API calls
+      if (isDegradedMode) {
+        const [stores, products] = await Promise.all([
+          getStoresStatic(),
+          getProductsStatic(),
+        ]);
+        setStats({
+          storesCount: stores.length,
+          productsCount: products.length,
+          pricesCount: 0,
+          territoriesCount: new Set(stores.map((s) => s.territory)).size,
+        });
+        setRecentActivity([]);
+        clearIncidentMode();
+        return;
+      }
+
       try {
         const overview = await getAdminDashboardOverview({
           period: periodFilter,
@@ -335,6 +352,12 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
+      {/* Degraded mode banner */}
+      {isDegradedMode && (
+        <div className="p-3 rounded-lg border border-amber-400/40 bg-amber-900/20 text-amber-200 text-sm">
+          {degradedReason} — Les statistiques affichées proviennent des données statiques locales.
+        </div>
+      )}
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-slate-100 mb-2">
