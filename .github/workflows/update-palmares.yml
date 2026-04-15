@@ -1,0 +1,100 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# 🏆 Mise à jour quotidienne du Palmarès des Enseignes
+# ──────────────────────────────────────────────────────────────────────────────
+#
+# Calcule les classements d'enseignes à partir des données scrapées et maintient
+# un historique glissant de 90 jours dans frontend/public/data/palmares.json.
+#
+# Déclenchement :
+#   - Automatique : chaque jour à 7h00 UTC (après le scraping à 6h)
+#   - Manuel      : "Run workflow" depuis l'onglet Actions
+#
+# Sortie :
+#   - frontend/public/data/palmares.json  mis à jour + commité dans main
+# ──────────────────────────────────────────────────────────────────────────────
+
+name: 🏆 Mise à jour Palmarès Enseignes
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # Chaque jour à 7h UTC (après le scraping à 6h)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Simulation (pas d''écriture)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-palmares
+  cancel-in-progress: false
+
+jobs:
+  update-palmares:
+    name: 🏆 Calcul & archivage palmarès
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: 🏆 Calculer le palmarès
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            node scripts/update-palmares.mjs --dry-run
+          else
+            node scripts/update-palmares.mjs
+          fi
+
+      - name: 💾 Commiter la mise à jour
+        if: ${{ inputs.dry_run != 'true' }}
+        run: |
+          git config user.name  "akiprisaye-bot[palmares]"
+          git config user.email "bot-palmares@akiprisaye.fr"
+
+          if [ -z "$(git status --porcelain -- frontend/public/data/palmares.json)" ]; then
+            echo "ℹ️  palmares.json inchangé — pas de commit"
+          else
+            git add frontend/public/data/palmares.json
+            git commit \
+              -m "🏆 [auto] Palmarès mis à jour — $(date -u '+%Y-%m-%d')" \
+              -m "[skip ci]"
+            git push || echo "⚠️  Push rejeté — données disponibles localement"
+            echo "✅ palmares.json commité"
+          fi
+
+      - name: 📊 Résumé
+        run: |
+          echo "## 🏆 Palmarès — $(date -u '+%Y-%m-%d')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f frontend/public/data/palmares.json ]; then
+            HISTORY=$(node -e "
+              const d = JSON.parse(require('fs').readFileSync('frontend/public/data/palmares.json','utf8'));
+              process.stdout.write(String((d.history ?? []).length));
+            " 2>/dev/null || echo '?')
+            echo "| Champ | Valeur |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Territoires | 6 |" >> $GITHUB_STEP_SUMMARY
+            echo "| Entrées historique | $HISTORY |" >> $GITHUB_STEP_SUMMARY
+            echo "| Fichier | \`frontend/public/data/palmares.json\` |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 📢 Notification en cas d'échec
+        if: failure()
+        uses: actions/github-script@v9
+        with:
+          script: |
+            core.warning('⚠️ Échec mise à jour palmarès — ' + new Date().toISOString().slice(0,10));
