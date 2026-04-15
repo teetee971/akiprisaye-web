@@ -116,12 +116,23 @@ export function trackRetailerClick(
 
   // Firestore (fire-and-forget)
   try {
+    const normalizedTerritory = territory.trim();
+    if (!normalizedTerritory) {
+      return;
+    }
+
+    const normalizedBarcode = barcode.trim();
+    const pageUrl =
+      typeof window !== 'undefined' && window.location.pathname
+        ? window.location.pathname
+        : undefined;
+
     trackClickToFirestore({
       retailer,
-      barcode,
-      territory,
+      territory: normalizedTerritory,
       price,
-      pageUrl: typeof window !== 'undefined' ? window.location.pathname : '',
+      ...(normalizedBarcode ? { barcode: normalizedBarcode } : {}),
+      ...(pageUrl ? { pageUrl } : {}),
     });
   } catch {
     // Silently ignore — localStorage is the primary store
