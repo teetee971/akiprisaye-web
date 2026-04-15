@@ -63,7 +63,7 @@ async function getRealSavingsProducts(_territory: string): Promise<SavingsProduc
       const savings = +(catMax - p.price).toFixed(2);
       const slug = nameToSlug(p.name);
       return {
-        ean: `/recherche?q=${encodeURIComponent(p.name)}`,
+        ean: `/recherche-produits?q=${encodeURIComponent(p.name)}`,
         name: p.name,
         category: p.category,
         minPrice: p.price,
