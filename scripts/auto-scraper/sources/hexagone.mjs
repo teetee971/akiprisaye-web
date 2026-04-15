@@ -257,12 +257,23 @@ async function scrapeOne(retailer, query) {
       },
     });
 
-    if (!res || !res.ok) continue;
+    if (!res || !res.ok) {
+      if (res?.status >= 400 && res?.status < 500) {
+        console.log(`  ⚠️  [hexagone] ${retailer.label} HTTP ${res.status} — code magasin inconnu ou API indisponible`);
+      }
+      continue;
+    }
 
     let json;
     try { json = await res.json(); } catch { continue; }
 
-    allParsed.push(...retailer.parseResult(json));
+    let parsed;
+    try { parsed = retailer.parseResult(json); } catch (err) {
+      console.log(`  ⚠️  [hexagone] ${retailer.label} erreur de parsing : ${err.message}`);
+      continue;
+    }
+
+    allParsed.push(...parsed);
     await sleep(200);
   }
 
@@ -298,13 +309,21 @@ export async function scrapeHexagonePrices() {
     console.log(`  📦 [hexagone] ${retailer.label}…`);
     let retailerTotal = 0;
 
-    for (const query of PANIER_QUERIES) {
-      const entries = await scrapeOne(retailer, query);
-      if (entries.length > 0) {
-        allEntries.push(...entries);
-        retailerTotal += entries.length;
+    try {
+      for (const query of PANIER_QUERIES) {
+        try {
+          const entries = await scrapeOne(retailer, query);
+          if (entries.length > 0) {
+            allEntries.push(...entries);
+            retailerTotal += entries.length;
+          }
+        } catch (err) {
+          console.log(`  ⚠️  [hexagone] ${retailer.label} / "${query}" erreur : ${err.message}`);
+        }
+        await sleep(200);
       }
-      await sleep(200);
+    } catch (err) {
+      console.log(`  ⚠️  [hexagone] Enseigne ${retailer.label} indisponible : ${err.message}`);
     }
 
     console.log(`  ✅ [hexagone] ${retailer.label} : ${retailerTotal} relevés`);

@@ -518,13 +518,22 @@ async function scrapeOne(retailer, query, territory) {
     },
   });
 
-  if (!res || !res.ok) return [];
+  if (!res || !res.ok) {
+    if (res?.status >= 400 && res?.status < 500) {
+      console.log(`  ⚠️  [catalogue] ${retailer.label} / ${territory} HTTP ${res.status} — code magasin inconnu ou API indisponible`);
+    }
+    return [];
+  }
 
   let json;
   try { json = await res.json(); } catch { return []; }
 
   const today = new Date().toISOString().slice(0, 10);
-  const parsed = retailer.parseResult(json);
+  let parsed;
+  try { parsed = retailer.parseResult(json); } catch (err) {
+    console.log(`  ⚠️  [catalogue] ${retailer.label} / ${territory} erreur de parsing : ${err.message}`);
+    return [];
+  }
 
   return parsed.map((p) => ({
     ean:         p.ean,
@@ -565,21 +574,29 @@ export async function scrapeCataloguePrices() {
     console.log(`  📦 [catalogue] ${retailer.label}…`);
     let retailerTotal = 0;
 
-    for (const territory of territories) {
-      // Skip territories where this retailer doesn't operate
-      if (!(territory in retailer.territories)) continue;
-      for (const query of PANIER_QUERIES) {
-        const entries = await scrapeOne(retailer, query, territory);
-        if (entries.length > 0) {
-          allEntries.push(...entries);
-          retailerTotal += entries.length;
+    try {
+      for (const territory of territories) {
+        // Skip territories where this retailer doesn't operate
+        if (!(territory in retailer.territories)) continue;
+        for (const query of PANIER_QUERIES) {
+          try {
+            const entries = await scrapeOne(retailer, query, territory);
+            if (entries.length > 0) {
+              allEntries.push(...entries);
+              retailerTotal += entries.length;
+            }
+          } catch (err) {
+            console.log(`  ⚠️  [catalogue] ${retailer.label} / ${territory} / "${query}" erreur : ${err.message}`);
+          }
+          // Petit délai supplémentaire entre deux produits (poli)
+          await sleep(200);
         }
-        // Petit délai supplémentaire entre deux produits (poli)
-        await sleep(200);
+        console.log(`       ${territory}: ${allEntries.filter((e) => e.retailer === retailer.label && e.territory === territory).length} produits`);
+        // Pause entre territoires
+        await sleep(500);
       }
-      console.log(`       ${territory}: ${allEntries.filter((e) => e.retailer === retailer.label && e.territory === territory).length} produits`);
-      // Pause entre territoires
-      await sleep(500);
+    } catch (err) {
+      console.log(`  ⚠️  [catalogue] Enseigne ${retailer.label} indisponible : ${err.message}`);
     }
 
     console.log(`  ✅ [catalogue] ${retailer.label} : ${retailerTotal} relevés collectés`);
