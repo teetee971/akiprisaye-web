@@ -244,7 +244,6 @@ export default function Actualites() {
                   href={retailerUrl ?? '#'}
                   target="_blank"
                   rel="noopener noreferrer sponsored"
-                  role="listitem"
                   aria-label={`Offre partenaire : ${item.title}`}
                   className="flex-none w-56 snap-start rounded-xl border border-amber-500/20 bg-slate-900/80 hover:bg-amber-900/20 active:scale-95 transition-all p-3 flex flex-col gap-1.5"
                 >
