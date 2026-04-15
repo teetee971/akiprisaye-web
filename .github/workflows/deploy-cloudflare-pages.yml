@@ -37,14 +37,6 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      - name: Resolve lighthouse target URL
-        run: |
-          LHCI_TARGET="${{ needs.deploy.outputs.deployment_url }}"
-          if [ -z "$LHCI_TARGET" ]; then
-            LHCI_TARGET="${{ env.DEFAULT_PREVIEW_URL }}"
-          fi
-          echo "LHCI_URL=$LHCI_TARGET" >> "$GITHUB_ENV"
-
       - name: Validate Firebase API key secret (fail-fast before build)
         run: |
           WRONG_PART_A="AIzaSyDf_mB8z"

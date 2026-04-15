@@ -20,6 +20,7 @@ jobs:
   monitor:
     name: Vérification conformité 24/24
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,7 +67,19 @@ jobs:
         uses: actions/github-script@v9
         with:
           script: |
-            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            // Granularité jour : une seule issue par jour pour éviter l'accumulation
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const title = `🚨 Readiness Guardian en échec — ${dateStr}`;
+
+            // Éviter les doublons : vérifier si une issue est déjà ouverte pour aujourd'hui
+            const existing = await github.rest.search.issuesAndPullRequests({
+              q: `${title} in:title repo:${context.repo.owner}/${context.repo.repo} is:open is:issue label:readiness`
+            });
+            if (existing.data.total_count > 0) {
+              core.info(`ℹ️ Issue readiness déjà ouverte pour le ${dateStr} — pas de doublon créé`);
+              return;
+            }
+
             const body = [
               'La vérification de conformité 24/24 a échoué.',
               '',
