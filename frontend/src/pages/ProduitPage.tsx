@@ -40,6 +40,7 @@ import { aggregateAllPrices, type AggregatedPrice, type ProductInfo } from '../s
 import type { PriceHistoryPoint, Timeframe } from '../types/priceHistory';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import ShareButton from '../components/comparateur/ShareButton';
 
 /* ------------------------------------------------------------------ */
 /* Badge source                                                         */
@@ -309,13 +310,12 @@ export default function ProduitPage() {
             ) : (
               <div className="flex items-start gap-4">
                 {/* Image produit */}
-                {productImage && (
-                  <img
-                    src={productImage}
-                    alt={productName}
-                    className="w-20 h-20 object-contain rounded-lg border border-slate-200 dark:border-slate-700 bg-white flex-shrink-0"
-                  />
-                )}
+                <img
+                  src={productImage ?? '/images/product-fallback.svg'}
+                  alt={productName}
+                  className="w-20 h-20 object-contain rounded-lg border border-slate-200 dark:border-slate-700 bg-white flex-shrink-0"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/images/product-fallback.svg'; }}
+                />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -401,6 +401,12 @@ export default function ProduitPage() {
                       >
                         <Flag className="w-5 h-5" />
                       </button>
+                      <ShareButton
+                        title={productName}
+                        description={`Comparez les prix de ${productName} dans les supermarchés DOM-TOM`}
+                        productId={ean}
+                        variant="compact"
+                      />
                     </div>
                   </div>
                 </div>
