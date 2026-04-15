@@ -348,8 +348,10 @@ export async function runOCR(
   let worker: OCRWorkerLike | null = null;
   
   // Log mode for debugging
-  console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`);
-  console.log('[OCR] Asset paths', { WORKER_PATH, CORE_PATH, LANG_PATH, lang: effectiveLang });
+  if (import.meta.env.DEV) {
+    console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`);
+    console.log('[OCR] Asset paths', { WORKER_PATH, CORE_PATH, LANG_PATH, lang: effectiveLang });
+  }
 
   let timeoutTriggered = false;
 

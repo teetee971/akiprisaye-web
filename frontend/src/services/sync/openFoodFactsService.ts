@@ -330,7 +330,7 @@ export async function bulkSync(eans: string[]): Promise<BulkSyncResult> {
     const batchEnd = Math.min(batchStart + batchSize, eans.length);
     const batchEans = eans.slice(batchStart, batchEnd);
 
-    console.log(`Processing batch ${i + 1}/${batches}...`);
+    if (import.meta.env.DEV) console.log(`Processing batch ${i + 1}/${batches}...`);
 
     for (const ean of batchEans) {
       const syncResult = await syncProduct(ean);
