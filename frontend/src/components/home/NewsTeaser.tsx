@@ -128,65 +128,67 @@ export default function NewsTeaser() {
       </div>
 
       {/* Horizontal scroll strip */}
-      <div className="flex gap-3 overflow-x-auto pb-2 snap-x -mx-1 px-1" role="list">
+      <ul className="flex gap-3 overflow-x-auto pb-2 snap-x -mx-1 px-1 list-none p-0 m-0">
         {articles.map((article) => (
-          <Link
-            key={article.id}
-            to="/actualites"
-            role="listitem"
-            className={`flex-none w-52 snap-start rounded-xl border active:scale-95 transition-all p-3 flex flex-col gap-1.5 text-left ${
-              article.isSponsored
-                ? 'border-amber-500/30 bg-amber-900/15 hover:bg-amber-900/25'
-                : 'border-white/8 bg-slate-800/60 hover:bg-slate-700/70'
-            }`}
-            aria-label={`Actualité : ${article.title}`}
-          >
-            {/* Category pill + impact dot */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {article.isSponsored ? (
-                <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold bg-amber-500/20 text-amber-300">
-                  🏪 Partenaire
-                </span>
-              ) : (
-                <span
-                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${CATEGORY_COLORS[article.category] ?? 'bg-slate-500/20 text-slate-300'}`}
-                >
-                  {article.icon} {article.category}
-                </span>
-              )}
-              {article.impact && article.impact !== 'info' && (
-                <span className={`text-[10px] font-bold ${IMPACT_COLORS[article.impact] ?? ''}`}>
-                  {article.impact === 'fort' ? '🔴' : '🟡'}
-                </span>
-              )}
-              {article.verified && !article.isSponsored && (
-                <span className="text-[10px] text-emerald-400" title="Source vérifiée">✓</span>
-              )}
-            </div>
+          <li key={article.id} className="flex-none">
+            <Link
+              to="/actualites"
+              className={`w-52 snap-start rounded-xl border active:scale-95 transition-all p-3 flex flex-col gap-1.5 text-left ${
+                article.isSponsored
+                  ? 'border-amber-500/30 bg-amber-900/15 hover:bg-amber-900/25'
+                  : 'border-white/8 bg-slate-800/60 hover:bg-slate-700/70'
+              }`}
+              aria-label={`Actualité : ${article.title}`}
+            >
+              {/* Category pill + impact dot */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {article.isSponsored ? (
+                  <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold bg-amber-500/20 text-amber-300">
+                    🏪 Partenaire
+                  </span>
+                ) : (
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${CATEGORY_COLORS[article.category] ?? 'bg-slate-500/20 text-slate-300'}`}
+                  >
+                    {article.icon} {article.category}
+                  </span>
+                )}
+                {article.impact && article.impact !== 'info' && (
+                  <span className={`text-[10px] font-bold ${IMPACT_COLORS[article.impact] ?? ''}`}>
+                    {article.impact === 'fort' ? '🔴' : '🟡'}
+                  </span>
+                )}
+                {article.verified && !article.isSponsored && (
+                  <span className="text-[10px] text-emerald-400" title="Source vérifiée">✓</span>
+                )}
+              </div>
 
-            {/* Headline */}
-            <p className="text-xs font-semibold text-slate-100 leading-snug line-clamp-3">
-              {article.title}
-            </p>
+              {/* Headline */}
+              <p className="text-xs font-semibold text-slate-100 leading-snug line-clamp-3">
+                {article.title}
+              </p>
 
-            {/* Date */}
-            <p className="text-[10px] text-slate-500 mt-auto">
-              {formatShortDate(article.date)}
-            </p>
-          </Link>
+              {/* Date */}
+              <p className="text-[10px] text-slate-500 mt-auto">
+                {formatShortDate(article.date)}
+              </p>
+            </Link>
+          </li>
         ))}
 
         {/* "Voir toutes" CTA card */}
-        <Link
-          to="/actualites"
-          className="flex-none w-36 snap-start rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 transition-all p-3 flex flex-col items-center justify-center gap-2 text-center"
-          aria-label="Voir toutes les actualités"
-        >
-          <span className="text-2xl" role="img" aria-hidden="true">📰</span>
-          <span className="text-xs font-bold text-blue-300">Toutes les actus</span>
-          <span className="text-[10px] text-blue-400">→</span>
-        </Link>
-      </div>
+        <li className="flex-none">
+          <Link
+            to="/actualites"
+            className="w-36 snap-start rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 transition-all p-3 flex flex-col items-center justify-center gap-2 text-center"
+            aria-label="Voir toutes les actualités"
+          >
+            <span className="text-2xl" role="img" aria-hidden="true">📰</span>
+            <span className="text-xs font-bold text-blue-300">Toutes les actus</span>
+            <span className="text-[10px] text-blue-400">→</span>
+          </Link>
+        </li>
+      </ul>
 
       {/* Freshness indicator */}
       {lastUpdated && (
