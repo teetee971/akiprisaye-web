@@ -19,6 +19,7 @@
  */
 
 import React, { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Camera, Upload, X, AlertCircle, CheckCircle, Info, TrendingUp, TrendingDown, Minus, Store, MapPin, Plus, Images } from 'lucide-react';
 import { scanReceipt, type ReceiptAnalysisResult } from '../services/receiptScanService';
 
@@ -97,6 +98,7 @@ function mergeAnalysisResults(results: ReceiptAnalysisResult[]): ReceiptAnalysis
 }
 
 export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptScannerProps) {
+  const navigate = useNavigate();
   const [step, setStep] = useState<ScanStep>('capture');
   // Multi-photo: array of blob URLs
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
@@ -724,6 +726,15 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                     <div className="flex items-center gap-4 text-xs text-gray-400">
                       <span>Confiance: {line.confidence}%</span>
                       {line.quantity && <span>Qté: {line.quantity}</span>}
+                      {line.productMatchId && (
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/produit/${line.productMatchId}`)}
+                          className="text-blue-400 underline hover:text-blue-300"
+                        >
+                          Voir fiche produit
+                        </button>
+                      )}
                     </div>
                   </div>
                   <div className="text-right">
@@ -840,6 +851,15 @@ export default function ReceiptScanner({ onAnalysisComplete, onClose }: ReceiptS
                       <p className="text-white text-sm font-medium truncate">{line.normalizedLabel}</p>
                       {line.quantity && line.quantity > 1 && (
                         <p className="text-xs text-gray-400">Qté : {line.quantity}</p>
+                      )}
+                      {line.productMatchId && (
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/produit/${line.productMatchId}`)}
+                          className="text-xs text-blue-400 underline hover:text-blue-300"
+                        >
+                          Voir fiche produit
+                        </button>
                       )}
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">

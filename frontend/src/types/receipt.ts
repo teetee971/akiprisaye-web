@@ -252,6 +252,8 @@ export interface ReceiptOcrPriceObservation {
   brand?: string;
   /** Code-barres */
   barcode?: string | null;
+  /** EAN de la fiche produit du catalogue correspondante (null si non trouvé) */
+  productMatchId?: string | null;
   /** Quantité */
   quantity?: number;
   /** Unité */
