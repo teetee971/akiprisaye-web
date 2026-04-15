@@ -10,7 +10,7 @@
 
 /* eslint-disable no-restricted-globals */
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 
 const CORE_CACHE = `akiprisaye-core-${CACHE_VERSION}`;
 const ASSET_CACHE = `akiprisaye-assets-${CACHE_VERSION}`;
@@ -18,7 +18,12 @@ const TERRITORY_CACHE = `akiprisaye-territories-${CACHE_VERSION}`;
 const DATA_CACHE = `akiprisaye-data-${CACHE_VERSION}`;
 
 // Important : ne pas inclure index.html ici (sinon le test échoue)
-const BASE_PATH = '/akiprisaye-web/';
+// Détection automatique selon le scope du SW :
+//   - GitHub Pages → scope se termine par '/akiprisaye-web/'
+//   - Cloudflare Pages / local → scope se termine par '/'
+const BASE_PATH = self.registration.scope.endsWith('/akiprisaye-web/')
+  ? '/akiprisaye-web/'
+  : '/';
 const CORE_ASSETS = [BASE_PATH, `${BASE_PATH}manifest.webmanifest`];
 
 // Patterns
@@ -137,7 +142,14 @@ self.addEventListener('fetch', (event) => {
 
   // 1) API : toujours no-store (conforme au test)
   if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) {
-    event.respondWith(fetch(request, { cache: 'no-store' }));
+    event.respondWith(
+      fetch(request, { cache: 'no-store' }).catch(() =>
+        new Response(JSON.stringify({ error: 'API unavailable' }), {
+          status: 503,
+          headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+        })
+      )
+    );
     return;
   }
 

@@ -20,7 +20,7 @@ const API_ENDPOINTS = [
   { method: 'GET', path: '/api/indice', desc: 'Indice IEVR — panier essentiel Guadeloupe', status: 'live' },
   { method: 'GET', path: '/api/prices/realtime', desc: 'Prix temps réel par EAN et territoire (OpenPrices)', status: 'live' },
   { method: 'GET', path: '/api/prices/feed', desc: 'Flux de prix par territoire, date et page', status: 'live' },
-  { method: 'GET', path: 'https://akiprisaye-web.pages.dev/api/health', desc: 'Statut de santé de l\'API', status: 'live' },
+  { method: 'GET', path: '/api/health', desc: 'Statut de santé de l\'API', status: 'live' },
   { method: 'POST', path: '/api/browser-rendering/crawl', desc: 'Beta Cloudflare Browser Rendering : crawl asynchrone HTML / Markdown / JSON structuré (max 50 pages, bearer token serveur)', status: 'live' },
   { method: 'GET', path: '/api/browser-rendering/crawl?id=:jobId', desc: 'Suivi paginé d\'un job de crawl (>10 Mo) et statuts running/completed/errored', status: 'live' },
   { method: 'GET', path: '/api/v1/prices', desc: 'Prix des produits par territoire et enseigne (V1)', status: 'planned' },
