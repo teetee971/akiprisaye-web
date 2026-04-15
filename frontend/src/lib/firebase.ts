@@ -83,7 +83,7 @@ try {
     console.warn("Firebase Auth persistence fallback (local) unavailable:", error);
   });
   db = initializeFirestore(app, {
-    experimentalForceLongPolling: true,
+    experimentalAutoDetectLongPolling: true,
   });
   safeInitInstallations(app);
   // Analytics requires a real browser environment and a valid measurementId.

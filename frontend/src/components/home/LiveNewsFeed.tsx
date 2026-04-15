@@ -94,7 +94,7 @@ export default function LiveNewsFeed() {
       {/* Section banner image */}
       <div className="section-context-banner">
         <img
-          src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=900&q=75"
+          src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=900&q=60"
           alt="Journaux et presse économique — actualités outre-mer"
           className="section-context-banner-img"
           loading="lazy"

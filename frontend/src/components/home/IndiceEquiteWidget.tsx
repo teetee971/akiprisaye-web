@@ -276,7 +276,7 @@ export default function IndiceEquiteWidget() {
       {/* Section banner image */}
       <div className="section-context-banner">
         <img
-          src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fm=webp&fit=crop&w=900&q=75"
+          src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fm=webp&fit=crop&w=900&q=60"
           alt="Balance symbolisant l'équité tarifaire — droit des consommateurs outre-mer"
           className="section-context-banner-img"
           loading="lazy"

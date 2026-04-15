@@ -336,7 +336,7 @@ export default function StoreRankingWidget() {
       {/* Section banner image */}
       <div className="section-context-banner">
         <img
-          src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=900&q=75"
+          src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=900&q=60"
           alt="Rayon supermarché outre-mer — comparaison des prix entre enseignes"
           className="section-context-banner-img"
           loading="lazy"
