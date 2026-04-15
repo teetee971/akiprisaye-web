@@ -4,13 +4,12 @@
     <meta charset="utf-8">
     <title>A KI PRI SA YÉ — Redirection en cours</title>
     <script type="text/javascript">
-      // GitHub Pages SPA fallback : redirige les deep links vers la racine du site
-      // en passant le chemin dans le paramètre ?p= lu par index.html au démarrage.
-      var segmentCount = 1; // nombre de segments du base path (/akiprisaye-web/)
+      // Redirection SPA vers GitHub Pages : https://teetee971.github.io/akiprisaye-web/
       var l = window.location;
+      var path = l.pathname.slice(1).split('/').slice(1).join('/');
       l.replace(
-        'https://teetee971.github.io/akiprisaye-web/' +
-        '?p=/' + l.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~') +
+        'https://teetee971.github.io/akiprisaye-web/?p=/' +
+        path.replace(/&/g, '~and~') +
         (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
         l.hash
       );
