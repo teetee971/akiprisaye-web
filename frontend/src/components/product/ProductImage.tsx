@@ -56,6 +56,8 @@ export default function ProductImage({
 
   // Fetch real product image by barcode when no images prop is supplied
   useEffect(() => {
+    setFetchedImageUrl(null);
+    setFetchedSource(null);
     if (images || !barcode) return;
 
     const controller = new AbortController();
@@ -176,7 +178,7 @@ export default function ProductImage({
       )}
       
       {/* Fallback indicator */}
-      {imageError && !fetchedImageUrl && fallbackImage && size !== 'thumbnail' && (
+      {fallbackImage && imageUrl === fallbackImage && size !== 'thumbnail' && (
         <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
           <span role="img" aria-label="Catégorie">🏷️</span>
           <span>Image par catégorie</span>

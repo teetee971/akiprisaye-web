@@ -12,7 +12,8 @@
       var BASE = '/akiprisaye-web';
       var ROOT = 'https://teetee971.github.io/akiprisaye-web/';
       var l = window.location;
-      var path = l.pathname.slice(BASE.length) || '/';
+      var pathname = l.pathname;
+      var path = (pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname) || '/';
       l.replace(
         ROOT + '?p=' + path.replace(/&/g, '~and~') +
         (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
