@@ -1,0 +1,83 @@
+name: 🧹 Nettoyage issues monitoring automatiques
+
+on:
+  schedule:
+    - cron: '50 5 * * *'   # 5h50 UTC, avant le scraping de 6h
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Simulation (affiche sans fermer)'
+        required: false
+        default: 'false'
+        type: boolean
+      max_age_hours:
+        description: 'Âge minimum des issues à fermer (heures)'
+        required: false
+        default: '24'
+        type: string
+
+permissions:
+  issues: write
+
+jobs:
+  cleanup:
+    name: 🗑️ Fermer les issues automatiques obsolètes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 🧹 Nettoyer issues monitoring
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const isDryRun = '${{ inputs.dry_run }}' === 'true';
+            const maxAgeHours = parseInt('${{ inputs.max_age_hours }}' || '24');
+            const cutoff = new Date(Date.now() - maxAgeHours * 60 * 60 * 1000);
+
+            const labelSets = [
+              ['monitoring', 'automatique', 'alerte-ia'],
+              ['scraping', 'automatique', 'alerte'],
+            ];
+
+            let totalClosed = 0;
+
+            for (const labels of labelSets) {
+              const issues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                labels: labels.join(','),
+                per_page: 100,
+                sort: 'created',
+                direction: 'asc',
+              });
+
+              // Garder la plus récente ouverte, fermer les autres
+              const toClose = issues.data
+                .filter(i => new Date(i.created_at) < cutoff)
+                .slice(0, -1); // garder la dernière
+
+              for (const issue of toClose) {
+                core.info(`${isDryRun ? '[DRY RUN] ' : ''}Fermeture issue #${issue.number}: ${issue.title}`);
+                if (!isDryRun) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    body: `🧹 Fermée automatiquement par le workflow de nettoyage (âge > ${maxAgeHours}h).`
+                  });
+                  await github.rest.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    state: 'closed',
+                    state_reason: 'not_planned'
+                  });
+                  totalClosed++;
+                }
+              }
+            }
+
+            core.summary.addHeading('🧹 Nettoyage issues monitoring', 2);
+            core.summary.addRaw(`**Issues fermées :** ${isDryRun ? '(simulation)' : totalClosed}`);
+            await core.summary.write();
