@@ -181,14 +181,30 @@ jobs:
             const existing = await github.rest.search.issuesAndPullRequests({
               q: `[AUTO] Échec scraping données prix — ${todayIso} in:title repo:${context.repo.owner}/${context.repo.repo} is:open is:issue label:scraping label:automatique label:alerte`
             });
-            if (existing.data.total_count > 0) {
-              core.info(`ℹ️ Issue scraping déjà ouverte pour le ${todayIso} — pas de doublon créé`);
-              return;
-            }
-            await github.rest.issues.create({
+
+            // Créer la nouvelle issue
+            const newIssue = await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `🚨 [AUTO] Échec scraping données prix — ${todayIso}`,
-              body: `Le scraping automatique a échoué.\n\n**Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\n**Actions à mener :**\n- Vérifier les sources de données\n- Contrôler les secrets GitHub\n- Relancer manuellement si nécessaire`,
+              body: `Le scraping automatique a échoué.\n\n**Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}\n\n**Actions à mener :**\n- Vérifier les logs du workflow\n- Vérifier la disponibilité des sources\n- Relancer manuellement si nécessaire`,
               labels: ['scraping', 'automatique', 'alerte']
             });
+
+            // Fermer les anciennes après création de la nouvelle
+            for (const issue of oldIssues.data) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `✅ Fermée automatiquement — remplacée par #${newIssue.data.number} (${todayIso})`
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+                state_reason: 'not_planned'
+              });
+            }
+            core.info(`✅ Issue créée: #${newIssue.data.number} — ${oldIssues.data.length} anciennes fermées`);
