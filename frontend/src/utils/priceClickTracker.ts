@@ -8,7 +8,7 @@
  *   - product page views (barcode + name)
  *   - retailer click-throughs from price rows
  *
- * Data is capped (max 50 entries) and aged out after 30 days
+ * Data is capped (max 500 entries) and aged out after 30 days
  * so it never grows unbounded.
  *
  * RGPD: data never leaves the browser. No network call is made.
@@ -21,7 +21,7 @@ import { safeLocalStorage } from './safeLocalStorage';
 
 const KEY_VIEWS    = 'akp:price:views:v1';
 const KEY_CLICKS   = 'akp:price:clicks:v1';
-const MAX_ENTRIES  = 50;
+const MAX_ENTRIES  = 500;
 const TTL_MS       = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 // ── Types ─────────────────────────────────────────────────────────────────────
