@@ -23,17 +23,29 @@
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 
+// Générer un suffixe aléatoire avec une source cryptographiquement sûre (navigateur)
+function getSecureRandomSuffix(length = 7): string {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const bytes = new Uint8Array(length);
+  if (typeof globalThis !== 'undefined' && globalThis.crypto?.getRandomValues) {
+    globalThis.crypto.getRandomValues(bytes);
+    return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('');
+  }
+  // Fallback défensif (ne devrait pas arriver en navigateur moderne)
+  return `${Date.now().toString(36)}`.slice(-length);
+}
+
 // Générer un sessionId anonyme (non persisté, non lié à l'utilisateur)
 function getAnonymousSessionId(): string {
   const key = 'akp:session:anon';
   try {
     const existing = sessionStorage.getItem(key);
     if (existing) return existing;
-    const id = `anon_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    const id = `anon_${Date.now()}_${getSecureRandomSuffix(7)}`;
     sessionStorage.setItem(key, id);
     return id;
   } catch {
-    return `anon_${Date.now()}`;
+    return `anon_${Date.now()}_${getSecureRandomSuffix(7)}`;
   }
 }
 
