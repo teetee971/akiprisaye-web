@@ -44,4 +44,6 @@ export interface LocalPriceReport {
   ocrData?: OcrExtracted[];
   /** @deprecated use proofPhotos[0] instead */
   proofPhoto?: string;
+  /** Promotional price flag (set by OCR pipeline) */
+  isPromo?: boolean;
 }

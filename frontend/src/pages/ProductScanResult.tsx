@@ -375,8 +375,7 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
               <div key={i} className="relative group">
                 <img
                   src={p.dataUrl}
-                  alt={`Photo ${i + 1}`}
-                  className="w-16 h-16 rounded-lg object-cover border border-slate-600"
+                  alt={`Miniature ${i + 1}`}
                 />
                 {/* OCR status badge */}
                 <span className={`absolute top-0.5 left-0.5 text-[9px] px-1 rounded font-bold ${
@@ -570,8 +569,7 @@ function CommunityPrices({ barcode, refreshKey }: CommunityPricesProps) {
                       <img
                         key={i}
                         src={src}
-                        alt={`Photo ${i + 1}`}
-                        className="w-12 h-12 rounded-lg object-cover border border-slate-600"
+                        alt={`Miniature ${i + 1}`}
                       />
                     ))}
                     {photos.length > 3 && (
@@ -597,7 +595,7 @@ function CommunityPrices({ barcode, refreshKey }: CommunityPricesProps) {
                     </div>
                   </div>
                   {r.store && <p className="text-xs text-slate-300 truncate">🏪 {r.store}</p>}
-                  {(r as Record<string, unknown>).isPromo && (
+                  {r.isPromo && (
                     <span className="inline-block text-[10px] bg-orange-500/20 text-orange-300 px-1.5 py-0.5 rounded-full mt-0.5">
                       🏷️ Promo
                     </span>

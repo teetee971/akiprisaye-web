@@ -221,7 +221,7 @@ function CatalogueTile({ product: p, categoryEmojis, tagStyles }: CatalogueTileP
         <span className="font-black text-emerald-400">{p.price}€</span>
 
         {/* Share button */}
-        <div className="relative" ref={shareRef} onClick={(e) => e.stopPropagation()}>
+        <div className="relative" role="presentation" ref={shareRef} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); setShowShare((v) => !v); }}
