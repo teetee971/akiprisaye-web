@@ -19,7 +19,7 @@ export default function OptimizedImage({
       alt={alt ?? ''}
       loading={loading}
       decoding={decoding}
-      {...{ fetchpriority: fetchPriority }}
+      fetchPriority={fetchPriority}
       onLoad={(event) => {
         setLoaded(true);
         onLoad?.(event);
