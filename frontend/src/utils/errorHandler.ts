@@ -218,5 +218,8 @@ export function showErrorToUser(error: UserFriendlyError) {
     } else {
       toast(message, { icon: 'ℹ️' });
     }
+  }).catch(() => {
+    console.error(`[ErrorHandler] ${error.title}: ${error.message}`);
+    alert(`${icon} ${error.title} — ${error.message}`);
   });
 }

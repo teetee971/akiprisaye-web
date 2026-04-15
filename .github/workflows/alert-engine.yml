@@ -46,10 +46,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: 'npm'
@@ -76,7 +76,12 @@ jobs:
           SITE_URL: https://teetee971.github.io/akiprisaye-web
 
       - name: Generate top deals export
-        run: node scripts/export-top-deals.mjs
+        run: |
+          if [ -f data/output/product-scores.json ]; then
+            node scripts/export-top-deals.mjs
+          else
+            echo "⚠️ product-scores.json absent — étape export-top-deals ignorée"
+          fi
 
       - name: Generate social posts
         run: node scripts/generate-social-posts.mjs --count=10
@@ -112,7 +117,7 @@ jobs:
           echo "_All outputs are artifacts for human review — nothing is auto-posted._" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload alert artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: price-alerts-${{ github.run_id }}
           path: |

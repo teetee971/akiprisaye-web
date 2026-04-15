@@ -155,7 +155,7 @@ export default function SEOBrandPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title={`Prix ${brandName} en ${territoryName} — Tous les produits comparés`}
         description={`Comparez les prix de tous les produits ${brandName} en ${territoryName}. Meilleur prix dès ${formatEur(bestPrice)}. ${products.length} produits comparés dans ${RETAILERS.length} enseignes.`}

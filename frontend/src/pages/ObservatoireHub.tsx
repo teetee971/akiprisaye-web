@@ -1,7 +1,8 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { BarChart3, Search, Award, Database, TrendingUp, BarChart2, Store, Globe, Download, FileText, ShoppingCart, ChevronUp, ChevronDown, Minus, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { GlassCard } from '../components/ui/glass-card';
 import { HeroImage } from '../components/ui/HeroImage';
 import { TERRITORIES, type TerritoryCode } from '../constants/territories';
@@ -14,11 +15,48 @@ const HERO_IMG = 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto
 
 type ObservatoireTab = 'dashboard' | 'diagnostic' | 'palmares' | 'donnees';
 
+// ── CSV export helper ────────────────────────────────────────────────────────
+
+function exportObservatoireCSV(territory: TerritoryCode) {
+  const palmares = OBSERVATOIRE_PALMARES.find((p) => p.territory === territory);
+  if (!palmares) return;
+
+  const escapeField = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+  const BOM = '\uFEFF';
+
+  const header = ['Territoire', 'Mise à jour', 'Catégorie', 'Enseigne', 'Score', 'Tendance', 'Note'];
+  const rows: string[][] = [];
+
+  for (const entry of palmares.lowestPrices) {
+    rows.push([territory.toUpperCase(), palmares.updatedAt, 'Prix les plus bas', entry.name, String(entry.score), entry.change, entry.note]);
+  }
+  for (const entry of palmares.bestValue) {
+    rows.push([territory.toUpperCase(), palmares.updatedAt, 'Meilleur rapport qualité-prix', entry.name, String(entry.score), entry.change, entry.note]);
+  }
+  for (const entry of palmares.widestSelection) {
+    rows.push([territory.toUpperCase(), palmares.updatedAt, 'Plus grande sélection', entry.name, String(entry.score), entry.change, entry.note]);
+  }
+
+  const csv = [header, ...rows].map((r) => r.map(escapeField).join(',')).join('\r\n');
+  const blob = new Blob([BOM + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `observatoire-${territory}-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function ObservatoireHub() {
   const [activeTab, setActiveTab] = useState<ObservatoireTab>('dashboard');
   const [selectedTerritory, setSelectedTerritory] = useState<TerritoryCode>('gp');
   const palmares = getPalmaresForTerritory(selectedTerritory);
   const palmaresUpdatedAt = palmares?.updatedAt ?? '—';
+
+  const handleExportCSV = useCallback(() => {
+    exportObservatoireCSV(selectedTerritory);
+    toast.success('Rapport CSV téléchargé');
+  }, [selectedTerritory]);
 
   const renderChangeBadge = (change: 'up' | 'down' | 'stable') => {
     if (change === 'up') {
@@ -387,13 +425,14 @@ export default function ObservatoireHub() {
                   <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
                     <Download className="w-7 h-7 text-blue-400 mb-2" aria-hidden="true" />
                     <h3 className="font-semibold text-base mb-1 text-white">Export de données</h3>
-                    <p className="text-gray-400 text-sm mb-3">Téléchargez les données au format CSV, JSON ou Excel</p>
-                    <Link
-                      to="/donnees-publiques"
+                    <p className="text-gray-400 text-sm mb-3">Téléchargez le palmarès du territoire sélectionné au format CSV</p>
+                    <button
+                      type="button"
+                      onClick={handleExportCSV}
                       className="inline-block px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
                     >
-                      Télécharger
-                    </Link>
+                      Télécharger CSV
+                    </button>
                   </div>
                   <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
                     <BarChart2 className="w-7 h-7 text-emerald-400 mb-2" aria-hidden="true" />

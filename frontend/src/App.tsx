@@ -10,11 +10,14 @@ import { ThemeProvider } from './context/ThemeContext';
 import { OnboardingProvider } from './context/OnboardingContext';
 import { ToastProvider } from './components/Toast/ToastProvider';
 import { StoreSelectionProvider } from './context/StoreSelectionContext';
+import { TerritoryProvider } from './context/TerritoryContext';
 import { AppProvider } from './context/AppContext';
 import RequireAuth from './components/auth/RequireAuth';
 import RequireCreator from './components/auth/RequireCreator';
 import RequireAdmin from './components/auth/RequireAdmin';
 import { logDebug } from './utils/logger';
+import { registerServiceWorker, captureInstallPrompt } from './services/pwaService';
+import { PWAInstallBanner } from './components/ui/PWAInstallBanner';
 
 const _langProviderImport = import('./context/LanguageProvider');
 
@@ -220,6 +223,7 @@ const InscriptionProBatiment = lazy(() => import('./pages/InscriptionProBatiment
 const AdminInseeImport = lazy(() => import('./pages/admin/AdminInseeImport'));
 const AdminTicketImport = lazy(() => import('./pages/admin/AdminTicketImport'));
 const AdminCatalogImport = lazy(() => import('./pages/admin/AdminCatalogImport'));
+const AdminAutomationDashboard = lazy(() => import('./pages/admin/AdminAutomationDashboard'));
 const RoadmapPage = lazy(() => import('./pages/RoadmapPage'));
 const DossierInvestisseurs = lazy(() => import('./pages/DossierInvestisseurs'));
 const ChecklistProduction = lazy(() => import('./pages/ChecklistProduction'));
@@ -234,13 +238,24 @@ const TerritoryHub = lazy(() => import('./pages/TerritoryHub'));
 const TerritoryScanner = lazy(() => import('./pages/TerritoryScanner'));
 const GuideIntelligentTerritoires = lazy(() => import('./pages/GuideIntelligentTerritoires'));
 const ARScannerPage = lazy(() => import('./pages/ARScannerPage'));
+const ScannerAR = lazy(() => import('./pages/ScannerAR'));
+const PortailAPIdev = lazy(() => import('./pages/PortailAPIdev'));
+const AppMobile = lazy(() => import('./pages/AppMobile'));
 const ChaineFourniture = lazy(() => import('./pages/ChaineFourniture'));
 const CommerceSocial = lazy(() => import('./pages/CommerceSocial'));
+const FicheEntreprise = lazy(() => import('./pages/FicheEntreprise'));
+const SupplyChain = lazy(() => import('./pages/SupplyChain'));
+const ComparateurTransport = lazy(() => import('./pages/ComparateurTransport'));
 const PetitsCommerces = lazy(() => import('./pages/PetitsCommerces'));
 const ProducteursLocaux = lazy(() => import('./pages/ProducteursLocaux'));
 const MarchesLocaux = lazy(() => import('./pages/MarchesLocaux'));
 const AnalyseFactures = lazy(() => import('./pages/AnalyseFactures'));
 const DetectionFraude = lazy(() => import('./pages/DetectionFraude'));
+const FraudDetection = lazy(() => import('./pages/FraudDetection'));
+const AlertesPredictives = lazy(() => import('./pages/AlertesPredictives'));
+const Partenaires = lazy(() => import('./pages/Partenaires'));
+const APIInstitutionnelle = lazy(() => import('./pages/APIInstitutionnelle'));
+const APIKeyDashboard = lazy(() => import('./pages/APIKeyDashboard'));
 const EvaluationMagasins = lazy(() => import('./pages/EvaluationMagasins'));
 const PortailDeveloppeurs = lazy(() => import('./pages/PortailDeveloppeurs'));
 const ChocsPrixPage = lazy(() => import('./pages/ChocsPrixPage'));
@@ -348,6 +363,8 @@ export default function App() {
   useEffect(() => {
     const fallback = document.getElementById('loading-fallback');
     if (fallback) fallback.style.display = 'none';
+    captureInstallPrompt();
+    registerServiceWorker();
   }, []);
 
   if (providerError) {
@@ -369,6 +386,7 @@ export default function App() {
           <ThemeProvider>
             <AuthProvider>
               <OnboardingProvider>
+                <TerritoryProvider>
                 <StoreSelectionProvider>
                   <AppProvider>
                     <Suspense fallback={null}>
@@ -407,6 +425,7 @@ export default function App() {
                               <Route path="import-ticket" element={<AdminTicketImport />} />
                               <Route path="catalogs" element={<AdminCatalogImport />} />
                               <Route path="catalogues" element={<AdminCatalogImport />} />
+                              <Route path="automation" element={<AdminAutomationDashboard />} />
                               <Route path="stats" element={<StatsDashboard />} />
                             </Route>
 
@@ -437,7 +456,7 @@ export default function App() {
                               <Route path="inscription-pro" element={<InscriptionPro />} />
                               <Route path="espace-pro" element={<EspacePro />} />
                               <Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />
-                              <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<div>Chargement...</div>}><EspaceCreateur /></Suspense></RequireCreator>} />
+                              <Route path="espace-createur" element={<RequireCreator><Suspense fallback={<LoadingFallback />}><EspaceCreateur /></Suspense></RequireCreator>} />
                               <Route path="activation-createur" element={<ActivationCreateur />} />
                               <Route path="scanner" element={<ScannerHub />} />
                               <Route path="scan-ean" element={<ScanEAN />} />
@@ -588,13 +607,24 @@ export default function App() {
                               <Route path="territoire/:territory/scanner" element={<TerritoryScanner />} />
                               <Route path="guide-territoire" element={<GuideIntelligentTerritoires />} />
                               <Route path="ar-scanner" element={<ARScannerPage />} />
+                              <Route path="scanner-ar" element={<ScannerAR />} />
+                              <Route path="portail-api" element={<PortailAPIdev />} />
+                              <Route path="app-mobile" element={<AppMobile />} />
                               <Route path="chaine-fourniture" element={<ChaineFourniture />} />
+                              <Route path="chaine-approvisionnement" element={<SupplyChain />} />
                               <Route path="commerce-social" element={<CommerceSocial />} />
+                              <Route path="fiche-entreprise/:id" element={<FicheEntreprise />} />
+                              <Route path="comparateur-transport" element={<ComparateurTransport />} />
                               <Route path="petits-commerces" element={<PetitsCommerces />} />
                               <Route path="producteurs-locaux" element={<ProducteursLocaux />} />
                               <Route path="marches-locaux" element={<MarchesLocaux />} />
                               <Route path="analyse-factures" element={<AnalyseFactures />} />
                               <Route path="detection-fraude" element={<DetectionFraude />} />
+                              <Route path="admin/fraude" element={<RequireAdmin><FraudDetection /></RequireAdmin>} />
+                              <Route path="alertes-predictives" element={<AlertesPredictives />} />
+                              <Route path="admin/partenaires" element={<RequireAdmin><Partenaires /></RequireAdmin>} />
+                              <Route path="api-docs" element={<APIInstitutionnelle />} />
+                              <Route path="api-keys" element={<APIKeyDashboard />} />
                               <Route path="evaluation-magasins" element={<EvaluationMagasins />} />
                               <Route path="portail-developpeurs" element={<PortailDeveloppeurs />} />
                               <Route path="chocs-prix" element={<ChocsPrixPage />} />
@@ -658,6 +688,7 @@ export default function App() {
                           <OnboardingTour />
                           <Suspense fallback={null}><HelpButton /></Suspense>
                           <ToastProvider />
+                          <PWAInstallBanner />
                           <AuthDebugPanel />
                           <Suspense fallback={null}><BuildInfo /></Suspense>
                         </Suspense>
@@ -666,6 +697,7 @@ export default function App() {
                     </Suspense>
                   </AppProvider>
                 </StoreSelectionProvider>
+                </TerritoryProvider>
               </OnboardingProvider>
             </AuthProvider>
           </ThemeProvider>

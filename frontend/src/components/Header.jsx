@@ -79,6 +79,7 @@ export default function Header() {
               <img
                 src={user.photoURL}
                 alt="Avatar"
+                loading="lazy"
                 referrerPolicy="no-referrer"
                 className="w-7 h-7 rounded-full object-cover border border-slate-600 flex-shrink-0"
               />

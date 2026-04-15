@@ -228,6 +228,7 @@ export default function ProductPhotoUpload({
               <img
                 src={preview}
                 alt="Aperçu"
+                loading="lazy"
                 className="w-full h-64 object-contain bg-gray-100 dark:bg-gray-900 rounded-xl"
               />
               <button

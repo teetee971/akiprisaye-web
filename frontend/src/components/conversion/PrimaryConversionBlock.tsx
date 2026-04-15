@@ -13,6 +13,7 @@
  *   - logEvent tracking
  */
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getBestDeal,
   getBadges,
@@ -41,6 +42,7 @@ interface PrimaryConversionBlockProps {
 
 export function PrimaryConversionBlock({ products = [] }: PrimaryConversionBlockProps) {
   const [confirmed, setConfirmed] = useState(false);
+  const navigate = useNavigate();
 
   const best = getBestDeal(products);
 
@@ -102,7 +104,7 @@ export function PrimaryConversionBlock({ products = [] }: PrimaryConversionBlock
     if (url && url !== '/comparateur') {
       window.open(url, '_blank', 'noopener,noreferrer');
     } else {
-      window.location.href = '/comparateur';
+      navigate('/comparateur');
     }
   }
 
@@ -184,6 +186,7 @@ export function PrimaryConversionBlock({ products = [] }: PrimaryConversionBlock
 
         {/* Primary CTA — full width, high contrast */}
         <button
+          type="button"
           onClick={handleClick}
           className="w-full bg-green-500 hover:bg-green-400 text-black font-extrabold text-base py-4 rounded-xl active:scale-95 transition-transform shadow-lg animate-pulse-once"
         >

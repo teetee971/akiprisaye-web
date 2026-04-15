@@ -5,6 +5,7 @@ import safeLocalStorage from "../utils/safeLocalStorage";
 
 import { SEOHead } from '../components/ui/SEOHead';
 import { HeroImage } from '../components/ui/HeroImage';
+import ShareButton from '../components/comparateur/ShareButton';
 type PanierItem = {
   produit: string;
   prix_moyen: number;
@@ -131,9 +132,16 @@ export default function Observatoire() {
           </p>
         </HeroImage>
         {/* Header compact — title shown in hero above */}
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <a href="/methodologie" className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition text-sm font-semibold">Méthodologie</a>
           <a href="/transparence" className="px-4 py-2 rounded-lg border border-slate-700 hover:border-slate-500 transition text-sm">Transparence</a>
+          <div className="ml-auto">
+            <ShareButton
+              title="Observatoire des prix — A KI PRI SA YÉ"
+              description={`Données citoyennes · ${data?.territoire ?? 'Outre-mer'} · ${data?.periode ?? ''}`}
+              variant="compact"
+            />
+          </div>
         </div>
         {/* Meta */}
         <section className="rounded-xl border border-slate-800 bg-slate-900/70 p-6 grid gap-4 md:grid-cols-2">

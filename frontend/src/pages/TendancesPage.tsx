@@ -196,7 +196,7 @@ export default function TendancesPage() {
   };
   
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8">
       <SEOHead
         title={`Tendances prix courses ${territoryName} — Évolution des prix`}
         description={`Suivez les tendances de prix en ${territoryName}. Produits les plus recherchés, hausses et baisses de prix. Inflation moyenne : ${avgIncrease.toFixed(1)}% ce mois.`}

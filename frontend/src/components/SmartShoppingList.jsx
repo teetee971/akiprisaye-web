@@ -468,9 +468,119 @@ export default function SmartShoppingList({ territoire = 'Guadeloupe' }) {
   };
 
   // Export to PDF
-  const exportToPDF = () => {
-    toast('Fonctionnalité d\'export PDF à venir', { icon: '📄' });
-    // TODO: Implement PDF export
+  const exportToPDF = async () => {
+    if (!optimizationResults) return;
+
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const now = new Date();
+      const modeName = OPTIMIZATION_MODES[optimizationResults.mode?.toUpperCase()]?.name || optimizationResults.mode || 'Optimisé';
+
+      // ── Header ──────────────────────────────────────────────────────────────
+      doc.setFillColor(15, 23, 42);
+      doc.rect(0, 0, 210, 28, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Plan de courses — A KI PRI SA YÉ', 14, 11);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.text(
+        `Territoire : ${territoire} | Mode : ${modeName} | Généré le ${now.toLocaleDateString('fr-FR')} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`,
+        14,
+        20,
+      );
+
+      // ── Summary bar ─────────────────────────────────────────────────────────
+      let y = 34;
+      doc.setFillColor(30, 58, 138);
+      doc.rect(0, y - 4, 210, 10, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text(
+        `Total : ${optimizationResults.totalPrice.toFixed(2)} €   |   ${optimizationResults.storesCount} magasin(s)   |   ${shoppingList.length} article(s)`,
+        14,
+        y + 2,
+      );
+      y += 14;
+
+      // ── Breakdown per store ──────────────────────────────────────────────────
+      optimizationResults.breakdown.forEach(({ store, items }) => {
+        if (y > 260) { doc.addPage(); y = 14; }
+
+        // Store header
+        doc.setFillColor(51, 65, 85);
+        doc.rect(0, y - 4, 210, 9, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        const storeDist = store.distance != null ? ` — ${store.distance.toFixed(1)} km` : '';
+        doc.text(`🏬 ${store.name}${storeDist}`, 14, y + 1);
+        y += 11;
+
+        // Column headers
+        const colX = [14, 100, 130, 160, 185];
+        doc.setFillColor(71, 85, 105);
+        doc.rect(0, y - 4, 210, 7, 'F');
+        doc.setTextColor(200, 210, 220);
+        doc.setFontSize(7);
+        ['Produit', 'Qté', 'Prix unit.', 'Total', 'Date obs.'].forEach((h, i) =>
+          doc.text(h, colX[i], y),
+        );
+        y += 8;
+
+        items.forEach(({ product, price, observedDate }, ri) => {
+          if (y > 270) { doc.addPage(); y = 14; }
+          doc.setFillColor(ri % 2 === 0 ? 15 : 22, ri % 2 === 0 ? 23 : 33, ri % 2 === 0 ? 42 : 54);
+          doc.rect(0, y - 4, 210, 7, 'F');
+          doc.setTextColor(200, 210, 220);
+          doc.setFontSize(7);
+          doc.setFont('helvetica', 'normal');
+          const productName = (product.product_name || '').slice(0, 38);
+          const qty = String(product.quantity_needed ?? 1);
+          const unitPrice = `${price.toFixed(2)} €`;
+          const total = `${(price * (product.quantity_needed ?? 1)).toFixed(2)} €`;
+          const dateStr = observedDate ? new Date(observedDate).toLocaleDateString('fr-FR') : '—';
+          doc.text(productName, colX[0], y);
+          doc.text(qty, colX[1], y);
+          doc.text(unitPrice, colX[2], y);
+          doc.setTextColor(74, 222, 128);
+          doc.text(total, colX[3], y);
+          doc.setTextColor(180, 190, 200);
+          doc.text(dateStr, colX[4], y);
+          y += 7;
+        });
+
+        // Store subtotal
+        const storeTotal = items.reduce((s, { product, price }) => s + price * (product.quantity_needed ?? 1), 0);
+        doc.setTextColor(251, 191, 36);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(8);
+        doc.text(`Sous-total ${store.name} : ${storeTotal.toFixed(2)} €`, colX[2], y + 2);
+        y += 9;
+      });
+
+      // ── Footer ───────────────────────────────────────────────────────────────
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let p = 1; p <= pageCount; p++) {
+        doc.setPage(p);
+        doc.setFontSize(6);
+        doc.setTextColor(100, 116, 139);
+        doc.text(
+          `A KI PRI SA YÉ — données indicatives, sous réserve de disponibilité en magasin | Page ${p}/${pageCount}`,
+          14,
+          293,
+        );
+      }
+
+      doc.save(`plan-courses-${territoire.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`);
+      toast.success('PDF téléchargé !', { icon: '📄' });
+    } catch (err) {
+      console.error('[PDF export]', err);
+      toast.error('Erreur lors de la génération du PDF.');
+    }
   };
 
   // Export to CSV

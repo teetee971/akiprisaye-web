@@ -152,6 +152,7 @@ export default function ComprehensiveProductSheet({
                     <img
                       src={productSheet.imageUrl}
                       alt={productSheet.name}
+                      loading="lazy"
                       className="w-full h-full object-contain"
                     />
                   </div>

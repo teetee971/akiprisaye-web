@@ -98,10 +98,29 @@ export const onRequestGet: PagesFunction = async ({ request }) => {
       brand: (p.brands as string) || null,
       quantity: (p.quantity as string) || null,
       imageUrl: (p.image_front_url as string) || (p.image_url as string) || null,
+      imageIngredientsUrl: (p.image_ingredients_url as string) || null,
+      imageNutritionUrl: (p.image_nutrition_url as string) || null,
       categories: Array.isArray(p.categories_tags) ? p.categories_tags : [],
       nutriscore: (p.nutriscore_grade as string) || null,
       ecoscore: (p.ecoscore_grade as string) || null,
-      raw: p,
+      ingredientsText:
+        (p.ingredients_text_fr as string) || (p.ingredients_text as string) || null,
+      novaGroup: typeof p.nova_group === 'number' ? (p.nova_group as number) : null,
+      nutriments: (() => {
+        const n = p.nutriments as Record<string, number> | undefined;
+        if (!n) return null;
+        const pick = (key: string) => (typeof n[key] === 'number' ? n[key] : null);
+        return {
+          energy_100g: pick('energy-kcal_100g') ?? pick('energy_100g'),
+          fat_100g: pick('fat_100g'),
+          saturatedFat_100g: pick('saturated-fat_100g'),
+          carbohydrates_100g: pick('carbohydrates_100g'),
+          sugars_100g: pick('sugars_100g'),
+          fiber_100g: pick('fiber_100g'),
+          proteins_100g: pick('proteins_100g'),
+          salt_100g: pick('salt_100g'),
+        };
+      })(),
     };
 
     const response = jsonResponse({ ok: true, data: normalized }, {

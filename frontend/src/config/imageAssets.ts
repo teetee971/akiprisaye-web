@@ -386,6 +386,8 @@ export const PAGE_HERO_IMAGES = {
   evaluationMagasins: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Portail développeurs — code / terminal / API */
   portailDeveloppeurs: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  /** Marketplace enseignes — retail store / marketplace hall */
+  marketplacePortal: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Petits commerces — small local shop / boutique in Caribbean */
   petitsCommerces: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Producteurs locaux — tropical farmers market / fresh local produce */

@@ -28,6 +28,7 @@ import {
   Loader2,
   Globe,
   RefreshCw,
+  ShoppingBag,
 } from 'lucide-react';
 import { PriceHistoryChart } from '../components/PriceHistoryChart';
 import PriceReport from '../components/products/PriceReport';
@@ -37,6 +38,8 @@ import { useGeolocation } from '../hooks/useGeolocation';
 import { calculateDistancesBatch, formatDistance } from '../utils/geoLocation';
 import { aggregateAllPrices, type AggregatedPrice, type ProductInfo } from '../services/allPriceAggregatorService';
 import type { PriceHistoryPoint, Timeframe } from '../types/priceHistory';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 /* ------------------------------------------------------------------ */
 /* Badge source                                                         */
@@ -277,6 +280,24 @@ export default function ProduitPage() {
               Retour comparateur
             </Link>
           </nav>
+
+          {/* ---- Hero ---- */}
+          <HeroImage
+            src={PAGE_HERO_IMAGES.produit}
+            alt="Fiche produit — comparaison des prix"
+            gradient="from-slate-950 to-blue-900"
+            height="h-28 sm:h-36"
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <ShoppingBag className="w-4 h-4 text-blue-300 drop-shadow" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-blue-300">
+                Fiche produit
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-white drop-shadow line-clamp-1">
+              {productName || `Produit EAN ${ean ?? ''}`}
+            </h1>
+          </HeroImage>
 
           {/* ---- En-tête produit ---- */}
           <header className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">

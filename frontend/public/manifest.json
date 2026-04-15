@@ -1,15 +1,20 @@
 {
-  "short_name": "Akiprisaye",
-  "name": "Akiprisaye - Market Domination",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    }
-  ],
-  "start_url": ".",
+  "name": "A KI PRI SA YÉ",
+  "short_name": "AKIPRISAYE",
+  "description": "Observatoire des prix pour les territoires d'Outre-mer",
+  "start_url": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "orientation": "any",
+  "categories": ["shopping", "finance"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    { "name": "Comparateur", "url": "/comparateur", "description": "Comparer les prix" },
+    { "name": "Scanner", "url": "/scanner", "description": "Scanner un produit" }
+  ]
 }

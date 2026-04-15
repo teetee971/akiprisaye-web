@@ -75,20 +75,20 @@ const SEARCH_INDEX: SearchResult[] = [
   { id: 'terr-pf',  type: 'territory', label: 'Polynésie française', description: 'Prix et actualités en Polynésie française', icon: 'P', to: '/comparaison-territoires?t=pf', keywords: ['polynésie', 'tahiti', 'papeete', 'moorea'] },
   { id: 'terr-fr',  type: 'territory', label: 'Métropole',           description: 'Prix en France métropolitaine',             icon: 'F', to: '/comparaison-territoires?t=fr', keywords: ['france', 'métropole', 'hexagone', 'paris', 'lyon', 'marseille'] },
   // ── Produits courants ─────────────────────────────────────────────────────────
-  { id: 'prod-lait',       type: 'product', label: 'Lait',              description: 'Comparer le prix du lait',               icon: 'L', to: '/search?q=lait',          keywords: ['lait', 'litre', 'demi-écrémé', 'entier'] },
-  { id: 'prod-riz',        type: 'product', label: 'Riz',               description: 'Comparer le prix du riz',                icon: 'R', to: '/search?q=riz',           keywords: ['riz', 'kg', 'blanc', 'brun', 'basmati'] },
-  { id: 'prod-huile',      type: 'product', label: 'Huile',             description: 'Comparer le prix de l\'huile',           icon: 'H', to: '/search?q=huile',         keywords: ['huile', 'tournesol', 'olive', 'friture'] },
-  { id: 'prod-pain',       type: 'product', label: 'Pain',              description: 'Comparer le prix du pain',               icon: 'P', to: '/search?q=pain',          keywords: ['pain', 'baguette', 'miche', 'boulangerie'] },
-  { id: 'prod-sucre',      type: 'product', label: 'Sucre',             description: 'Comparer le prix du sucre',              icon: 'S', to: '/search?q=sucre',         keywords: ['sucre', 'blanc', 'roux', 'canne', 'kg'] },
-  { id: 'prod-poulet',     type: 'product', label: 'Poulet',            description: 'Comparer le prix du poulet',             icon: 'P', to: '/search?q=poulet',        keywords: ['poulet', 'kg', 'entier', 'escalope', 'viande'] },
-  { id: 'prod-poisson',    type: 'product', label: 'Poisson',           description: 'Comparer le prix du poisson',            icon: 'P', to: '/search?q=poisson',       keywords: ['poisson', 'filet', 'thon', 'saumon', 'tilapia'] },
-  { id: 'prod-eau',        type: 'product', label: 'Eau minérale',      description: 'Comparer le prix de l\'eau',             icon: 'E', to: '/search?q=eau',           keywords: ['eau', 'minérale', 'bouteille', 'litre', 'plate', 'gazeuse'] },
-  { id: 'prod-yaourt',     type: 'product', label: 'Yaourt',            description: 'Comparer le prix des yaourts',           icon: 'Y', to: '/search?q=yaourt',        keywords: ['yaourt', 'yogurt', 'nature', 'fruits', 'danone'] },
-  { id: 'prod-beurre',     type: 'product', label: 'Beurre',            description: 'Comparer le prix du beurre',             icon: 'B', to: '/search?q=beurre',        keywords: ['beurre', 'doux', 'demi-sel', 'tartine'] },
-  { id: 'prod-farine',     type: 'product', label: 'Farine',            description: 'Comparer le prix de la farine',          icon: 'F', to: '/search?q=farine',        keywords: ['farine', 'blé', 'maïs', 'kg', 't45', 't65'] },
-  { id: 'prod-pates',      type: 'product', label: 'Pâtes',             description: 'Comparer le prix des pâtes',             icon: 'P', to: '/search?q=pates',         keywords: ['pâtes', 'spaghetti', 'tagliatelle', 'penne', 'macaroni'] },
-  { id: 'prod-cafe',       type: 'product', label: 'Café',              description: 'Comparer le prix du café',               icon: 'C', to: '/search?q=cafe',          keywords: ['café', 'moulu', 'grain', 'expresso', 'nespresso'] },
-  { id: 'prod-savon',      type: 'product', label: 'Savon / Lessive',   description: 'Comparer le prix des produits ménagers', icon: 'S', to: '/search?q=lessive',       keywords: ['savon', 'lessive', 'nettoyant', 'détergent', 'ménager'] },
+  { id: 'prod-lait',       type: 'product', label: 'Lait',              description: 'Comparer le prix du lait',               icon: 'L', to: '/recherche-produits?q=lait',          keywords: ['lait', 'litre', 'demi-écrémé', 'entier'] },
+  { id: 'prod-riz',        type: 'product', label: 'Riz',               description: 'Comparer le prix du riz',                icon: 'R', to: '/recherche-produits?q=riz',           keywords: ['riz', 'kg', 'blanc', 'brun', 'basmati'] },
+  { id: 'prod-huile',      type: 'product', label: 'Huile',             description: 'Comparer le prix de l\'huile',           icon: 'H', to: '/recherche-produits?q=huile',         keywords: ['huile', 'tournesol', 'olive', 'friture'] },
+  { id: 'prod-pain',       type: 'product', label: 'Pain',              description: 'Comparer le prix du pain',               icon: 'P', to: '/recherche-produits?q=pain',          keywords: ['pain', 'baguette', 'miche', 'boulangerie'] },
+  { id: 'prod-sucre',      type: 'product', label: 'Sucre',             description: 'Comparer le prix du sucre',              icon: 'S', to: '/recherche-produits?q=sucre',         keywords: ['sucre', 'blanc', 'roux', 'canne', 'kg'] },
+  { id: 'prod-poulet',     type: 'product', label: 'Poulet',            description: 'Comparer le prix du poulet',             icon: 'P', to: '/recherche-produits?q=poulet',        keywords: ['poulet', 'kg', 'entier', 'escalope', 'viande'] },
+  { id: 'prod-poisson',    type: 'product', label: 'Poisson',           description: 'Comparer le prix du poisson',            icon: 'P', to: '/recherche-produits?q=poisson',       keywords: ['poisson', 'filet', 'thon', 'saumon', 'tilapia'] },
+  { id: 'prod-eau',        type: 'product', label: 'Eau minérale',      description: 'Comparer le prix de l\'eau',             icon: 'E', to: '/recherche-produits?q=eau',           keywords: ['eau', 'minérale', 'bouteille', 'litre', 'plate', 'gazeuse'] },
+  { id: 'prod-yaourt',     type: 'product', label: 'Yaourt',            description: 'Comparer le prix des yaourts',           icon: 'Y', to: '/recherche-produits?q=yaourt',        keywords: ['yaourt', 'yogurt', 'nature', 'fruits', 'danone'] },
+  { id: 'prod-beurre',     type: 'product', label: 'Beurre',            description: 'Comparer le prix du beurre',             icon: 'B', to: '/recherche-produits?q=beurre',        keywords: ['beurre', 'doux', 'demi-sel', 'tartine'] },
+  { id: 'prod-farine',     type: 'product', label: 'Farine',            description: 'Comparer le prix de la farine',          icon: 'F', to: '/recherche-produits?q=farine',        keywords: ['farine', 'blé', 'maïs', 'kg', 't45', 't65'] },
+  { id: 'prod-pates',      type: 'product', label: 'Pâtes',             description: 'Comparer le prix des pâtes',             icon: 'P', to: '/recherche-produits?q=pates',         keywords: ['pâtes', 'spaghetti', 'tagliatelle', 'penne', 'macaroni'] },
+  { id: 'prod-cafe',       type: 'product', label: 'Café',              description: 'Comparer le prix du café',               icon: 'C', to: '/recherche-produits?q=cafe',          keywords: ['café', 'moulu', 'grain', 'expresso', 'nespresso'] },
+  { id: 'prod-savon',      type: 'product', label: 'Savon / Lessive',   description: 'Comparer le prix des produits ménagers', icon: 'S', to: '/recherche-produits?q=lessive',       keywords: ['savon', 'lessive', 'nettoyant', 'détergent', 'ménager'] },
   // ── Magasins (extraction depuis la page évaluation) ──────────────────────────
   { id: 'store-carrefour', type: 'store', label: 'Carrefour Désirade',        description: 'ZAC de Jarry, Baie-Mahault · Guadeloupe',           icon: 'C', to: '/evaluation-magasins?store=1',  keywords: ['carrefour', 'désirade', 'jarry', 'guadeloupe', 'supermarché'] },
   { id: 'store-champion',  type: 'store', label: 'Champion Lamentin',         description: 'Galeria, Le Lamentin · Martinique',                 icon: 'C', to: '/evaluation-magasins?store=2',  keywords: ['champion', 'lamentin', 'martinique', 'supermarché'] },
@@ -220,18 +220,24 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     const max = results.length;
-    if (!max) return;
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setActiveIdx((i) => (i + 1) % max);
+      if (max) setActiveIdx((i) => (i + 1) % max);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setActiveIdx((i) => (i - 1 + max) % max);
+      if (max) setActiveIdx((i) => (i - 1 + max) % max);
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (results[activeIdx]) handleSelect(results[activeIdx]);
+      if (max && results[activeIdx]) {
+        handleSelect(results[activeIdx]);
+      } else if (query.trim()) {
+        // Free-text fallback: search in product price database
+        saveRecentSearch(query.trim());
+        onClose();
+        navigate(`/recherche-produits?q=${encodeURIComponent(query.trim())}`);
+      }
     }
-  }, [results, activeIdx, handleSelect]);
+  }, [results, activeIdx, handleSelect, query, onClose, navigate]);
 
   // Scroll active item into view
   useEffect(() => {
@@ -385,10 +391,21 @@ export default function GlobalSearch({ isOpen, onClose, initialQuery = '' }: Glo
 
           {/* No results */}
           {query.trim() && results.length === 0 && (
-            <div className="py-10 px-4 text-center">
-               <div className="text-3xl mb-3">Recherche</div>
+            <div className="py-8 px-4 text-center">
+              <div className="text-3xl mb-3">🔍</div>
               <p className="text-sm text-slate-400 mb-1">Aucun résultat pour <strong className="text-slate-200">« {query} »</strong></p>
-              <p className="text-xs text-slate-500">Essayez un autre terme ou parcourez les rubriques du menu.</p>
+              <p className="text-xs text-slate-500 mb-4">Essayez un autre terme ou parcourez les rubriques du menu.</p>
+              <button
+                type="button"
+                onClick={() => {
+                  saveRecentSearch(query.trim());
+                  onClose();
+                  navigate(`/recherche-produits?q=${encodeURIComponent(query.trim())}`);
+                }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"
+              >
+                💰 Rechercher le prix de « {query} »
+              </button>
             </div>
           )}
         </div>

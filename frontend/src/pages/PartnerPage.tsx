@@ -65,7 +65,7 @@ export default function PartnerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-slate-950 text-white">
       <SEOHead
         title="Devenir partenaire — A KI PRI SA YÉ"
         description="Augmentez votre visibilité locale et attirez plus de clients en Guadeloupe et dans les DOM. Offres partenaires pour enseignes et marques."

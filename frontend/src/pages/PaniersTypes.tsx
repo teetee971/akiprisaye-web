@@ -333,8 +333,8 @@ export default function PaniersTypes() {
               <option value={METRO_TERRITORY.labelFull}>{METRO_TERRITORY.flag} {METRO_TERRITORY.label} (seule)</option>
             </select>
           </div>
-          <div>
-            <p className="block text-xs text-slate-400 mb-1">Panier</p>
+          <div role="group" aria-labelledby="panier-group-label">
+            <span id="panier-group-label" className="block text-xs text-slate-400 mb-1">Panier</span>
             <div className="flex flex-wrap gap-2">
               {PANIERS.map((p) => (
                 <button

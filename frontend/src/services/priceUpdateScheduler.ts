@@ -65,14 +65,15 @@ export async function loadPriceData(): Promise<boolean> {
     }
   } catch (error) {
     console.info('Fallback sur données locales')
-  }
-
-  // Fallback: les données locales sont toujours disponibles
+  }  // Fallback: les données locales sont toujours disponibles
   return false
 }
 
+let _autoUpdateId: ReturnType<typeof setInterval> | null = null
+
 /**
- * Initialise le système de mise à jour automatique
+ * Initialise le système de mise à jour automatique.
+ * Idempotent : n'installe l'intervalle qu'une seule fois.
  */
 export function initAutoUpdate(): void {
   // Vérifier et charger au démarrage
@@ -80,8 +81,9 @@ export function initAutoUpdate(): void {
     loadPriceData()
   }
 
-  // Planifier les mises à jour ultérieures
-  setInterval(() => {
+  // Planifier les mises à jour ultérieures (une seule instance)
+  if (_autoUpdateId !== null) return
+  _autoUpdateId = setInterval(() => {
     if (needsUpdate()) {
       loadPriceData()
     }

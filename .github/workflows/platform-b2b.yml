@@ -12,10 +12,10 @@ jobs:
   build-b2b:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: 'npm'
@@ -38,7 +38,7 @@ jobs:
           echo "All B2B outputs present"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: platform-b2b-outputs
           path: |

@@ -152,7 +152,7 @@ export default function SEOEnseignePrixPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title={`Prix ${profile.displayName} en ${territoryName} — Top produits du moment`}
         description={`Découvrez les meilleurs prix chez ${profile.displayName} en ${territoryName}. Top 10 produits comparés, avis clients, philosophie tarifaire et conseils économies.`}

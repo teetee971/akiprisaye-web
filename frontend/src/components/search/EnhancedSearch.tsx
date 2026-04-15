@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { searchProducts } from '../../services/enhancedPriceService';
 import ProductImage from '../product/ProductImage';
 import type { ProductSearchResult, EnhancedSearchFilters } from '../../types/enhancedPrice';
@@ -32,6 +33,7 @@ export default function EnhancedSearch({
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [searchPerformed, setSearchPerformed] = useState(false);
+  const navigate = useNavigate();
   
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxRef = useRef<HTMLUListElement>(null);
@@ -174,6 +176,7 @@ export default function EnhancedSearch({
           aria-controls={listboxId}
           aria-activedescendant={activeIndex >= 0 ? getOptionId(activeIndex) : undefined}
           aria-describedby="enhanced-search-instructions"
+          aria-label="Rechercher un produit"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -241,8 +244,9 @@ export default function EnhancedSearch({
                   Le produit n'est pas dans notre base ?
                 </p>
                 <button
+                  type="button"
                   className="text-sm text-blue-600 hover:text-blue-700 underline"
-                  onClick={() => window.location.href = '/contribuer'}
+                  onClick={() => navigate('/contribuer')}
                 >
                   Soyez le premier à contribuer →
                 </button>
@@ -258,6 +262,7 @@ export default function EnhancedSearch({
           ref={listboxRef}
           id={listboxId}
           role="listbox"
+          aria-label="Résultats de recherche produits"
           className="absolute z-20 mt-2 w-full bg-white border-2 border-gray-200 rounded-xl shadow-xl max-h-96 overflow-auto"
         >
           {results.map((result, index) => {

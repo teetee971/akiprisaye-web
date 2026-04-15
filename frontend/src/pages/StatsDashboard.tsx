@@ -232,7 +232,7 @@ export default function StatsDashboard() {
   
   if (!stats) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+      <div className="min-h-screen bg-slate-950 px-4 py-8">
         <div className="mx-auto max-w-4xl">
           <div className="animate-pulse">
             <div className="h-8 bg-white/10 rounded w-1/3 mb-6" />
@@ -248,7 +248,7 @@ export default function StatsDashboard() {
   }
   
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8">
       <SEOHead
         title="Tableau de bord — Statistiques"
         description="Analysez vos statistiques de conversion et revenus estimés"

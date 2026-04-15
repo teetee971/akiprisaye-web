@@ -34,7 +34,8 @@ export function useProductSearch(query: string): ProductSearchState {
     }
 
     let isActive = true;
-    // TODO: Add AbortController support to PriceAggregator for proper request cancellation
+    // Request cancellation is handled via the `isActive` flag below.
+    // If PriceAggregator gains an AbortSignal overload, pass controller.signal here.
     const timer = window.setTimeout(() => {
       setState((prev) => ({
         ...prev,

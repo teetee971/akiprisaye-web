@@ -5,7 +5,8 @@
  */
 
 import React, { useState } from 'react';
-import { Trophy, Filter, ArrowLeft, RefreshCw, MapPin, Calendar } from 'lucide-react';
+import { Trophy, Filter, ArrowLeft, RefreshCw, MapPin, Calendar, Gift, CheckCircle, AlertCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLeaderboard } from '../hooks/useLeaderboard';
 import { HeroImage } from '../components/ui/HeroImage';
@@ -220,7 +221,98 @@ export default function LeaderboardPage() {
             </div>
           </div>
         )}
+
+        {/* Parrainage Section */}
+        <ParrainageSection userId={userId} />
       </div>
+    </div>
+  );
+}
+
+// ── Parrainage Section ──────────────────────────────────────────────────────
+
+const REFERRALS_KEY = 'akiprisaye_referral_used';
+
+function loadUsedReferrals(): string[] {
+  try {
+    return JSON.parse(localStorage.getItem(REFERRALS_KEY) ?? '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveUsedReferrals(codes: string[]) {
+  localStorage.setItem(REFERRALS_KEY, JSON.stringify(codes));
+}
+
+function ParrainageSection({ userId }: { userId: string }) {
+  const [code, setCode] = useState('');
+  const [usedCodes, setUsedCodes] = useState<string[]>(loadUsedReferrals);
+
+  function handleVerify() {
+    const trimmed = code.trim().toUpperCase();
+    if (!trimmed) { toast.error('Veuillez saisir un code'); return; }
+    if (usedCodes.includes(trimmed)) {
+      toast.error(`Code "${trimmed}" déjà utilisé`);
+      return;
+    }
+    if (trimmed.startsWith('AKI-')) {
+      const updated = [trimmed, ...usedCodes];
+      setUsedCodes(updated);
+      saveUsedReferrals(updated);
+      setCode('');
+      toast.success(`✅ Code valide ! +50 XP ajoutés à votre compte`);
+    } else {
+      toast.error(`Code "${trimmed}" invalide — Les codes valides commencent par "AKI-"`);
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-xl shadow-md p-6 mt-6">
+      <div className="flex items-center gap-3 mb-4">
+        <Gift size={22} className="text-yellow-500" />
+        <h2 className="text-lg font-semibold text-gray-900">Mes parrainages</h2>
+      </div>
+
+      <div className="flex gap-2 mb-4">
+        <input
+          type="text"
+          placeholder="Code parrainage (ex: AKI-XXXXX)"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
+          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+        />
+        <button
+          onClick={handleVerify}
+          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5"
+        >
+          <CheckCircle size={16} />
+          Vérifier
+        </button>
+      </div>
+
+      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-xs text-blue-700 mb-4 flex items-start gap-2">
+        <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
+        <span>Les codes valides commencent par <strong>AKI-</strong> et donnent <strong>+50 XP</strong></span>
+      </div>
+
+      {usedCodes.length > 0 && (
+        <div>
+          <p className="text-sm font-medium text-gray-700 mb-2">Codes utilisés :</p>
+          <div className="flex flex-wrap gap-2">
+            {usedCodes.map((c) => (
+              <span
+                key={c}
+                className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-xs px-2.5 py-1 rounded-full font-medium"
+              >
+                <CheckCircle size={12} />
+                {c} (+50 XP)
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,11 +1,96 @@
+/*
+ * tokens.css — Design tokens complémentaires
+ *
+ * Les couleurs et typographies principales sont définies dans globals.css.
+ * Ce fichier contient les tokens additionnels : surfaces, semantic palette,
+ * shadows, spacing scale, light mode overrides.
+ */
+
+/* ─── Base extra tokens ────────────────────────────────────────────────── */
 :root {
-  --bg: #0a0a0f;
+  /* Surfaces (glass layers) */
   --surface: rgba(255, 255, 255, 0.04);
   --surface-2: rgba(255, 255, 255, 0.07);
+  --surface-3: rgba(255, 255, 255, 0.11);
   --border: rgba(255, 255, 255, 0.10);
-  --text: #f4f4f5;
-  --muted: #71717a;
-  --success: #34d399;
+  --border-strong: rgba(255, 255, 255, 0.18);
+
+  /* Radius extended */
   --radius-xl: 1.25rem;
   --radius-2xl: 1.75rem;
+  --radius-3xl: 2.25rem;
+  --radius-full: 9999px;
+
+  /* Spacing scale (base 4 px) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Shadows — semantic */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.30), 0 2px 6px rgba(0, 0, 0, 0.20);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.40), 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.50), 0 8px 24px rgba(0, 0, 0, 0.30);
+  --shadow-glow-blue: 0 0 24px rgba(58, 122, 254, 0.35);
+  --shadow-glow-teal: 0 0 24px rgba(46, 196, 182, 0.35);
+  --shadow-glow-green: 0 0 24px rgba(34, 197, 94, 0.30);
+  --shadow-glow-red: 0 0 24px rgba(239, 68, 68, 0.30);
+
+  /* Semantic status colors (RGB triplets for alpha compositing) */
+  --status-success: 34 197 94;       /* green-500 */
+  --status-warning: 234 179 8;       /* yellow-500 */
+  --status-error: 239 68 68;         /* red-500 */
+  --status-info: 58 122 254;         /* institutional blue */
+  --status-neutral: 148 163 184;     /* slate-400 */
+
+  /* Brand palette (RGB triplets) */
+  --brand-primary: 58 122 254;       /* #3A7AFE — Institutional blue */
+  --brand-secondary: 46 196 182;     /* #2EC4B6 — Teal civic */
+  --brand-accent: 99 102 241;        /* indigo */
+
+  /* Transition helpers */
+  --transition-colors: color var(--duration-normal) var(--ease-smooth),
+                       background-color var(--duration-normal) var(--ease-smooth),
+                       border-color var(--duration-normal) var(--ease-smooth);
+  --transition-transform: transform var(--duration-normal) var(--ease-smooth);
+  --transition-opacity: opacity var(--duration-normal) var(--ease-smooth);
+  --transition-all: all var(--duration-normal) var(--ease-smooth);
 }
+
+/* ─── Light mode surface overrides ─────────────────────────────────────── */
+[data-theme="light"],
+.light:not([data-theme="dark"]) {
+  --surface: rgba(0, 0, 0, 0.04);
+  --surface-2: rgba(0, 0, 0, 0.06);
+  --surface-3: rgba(0, 0, 0, 0.09);
+  --border: rgba(0, 0, 0, 0.10);
+  --border-strong: rgba(0, 0, 0, 0.18);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.10), 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.20), 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --surface: rgba(0, 0, 0, 0.04);
+    --surface-2: rgba(0, 0, 0, 0.06);
+    --surface-3: rgba(0, 0, 0, 0.09);
+    --border: rgba(0, 0, 0, 0.10);
+    --border-strong: rgba(0, 0, 0, 0.18);
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.10), 0 1px 2px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.10);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.20), 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+}
+

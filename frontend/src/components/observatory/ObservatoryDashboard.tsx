@@ -7,6 +7,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ObservatoryDashboard.css';
 import type {
   IndicatorSnapshot,
@@ -39,6 +40,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTerritory, setSelectedTerritory] = useState<TerritoryCode | undefined>(territoire);
+  const navigate = useNavigate();
 
   const normalizeSnapshot = useCallback((loaded: IndicatorSnapshot): IndicatorSnapshot => {
     return {
@@ -113,11 +115,8 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         <p>Les premières données seront publiées prochainement.</p>
         {message && <p className="mt-2">{message}</p>}
         <button
-          onClick={() => {
-            if (typeof window !== 'undefined') {
-              window.location.href = '/observatoire/methodologie';
-            }
-          }}
+          type="button"
+          onClick={() => navigate('/observatoire/methodologie')}
         >
           Comprendre le projet
         </button>
@@ -195,7 +194,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
             <div className="quality-bar">
               <div
                 className="quality-fill"
-                style={{ width: `${metadata.qualite_moyenne}%` }}
+                style={{ transform: `scaleX(${metadata.qualite_moyenne / 100})` }}
               ></div>
             </div>
           </div>

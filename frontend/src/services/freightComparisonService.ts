@@ -23,6 +23,7 @@ import {
   INSURANCE_RATE,
   URGENCY_SURCHARGE,
 } from '../constants/freightRates';
+import { getContributionsByRoute } from './freightContributionService';
 
 /**
  * Calcule l'octroi de mer pour un territoire
@@ -102,7 +103,16 @@ export async function simulateFreightQuote(
     
     // Calculer l'agrégation
     const aggregation = calculateRouteAggregation(route, quotes);
-    
+
+    // Compter les contributions citoyennes pour cette route
+    let contributionsCount = 0;
+    try {
+      const contributions = await getContributionsByRoute(route.origin, route.destination);
+      contributionsCount = contributions.length;
+    } catch {
+      // Non-fatal: we'll show 0 contributions if Firestore is unavailable
+    }
+
     return {
       route,
       package: packageDetails,
@@ -112,7 +122,7 @@ export async function simulateFreightQuote(
       comparisonDate: new Date().toISOString(),
       metadata: {
         totalCarriers: quotes.length,
-        contributionsCount: 0, // TODO: Compter les contributions réelles
+        contributionsCount,
         dataSource: 'Données officielles transporteurs + contributions citoyennes',
         methodology: 'v1.0.0',
         disclaimer: 'Observer, pas vendre. Aucun lien d\'affiliation. Données transparentes.',

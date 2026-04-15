@@ -42,6 +42,17 @@ import {
 type ModuleStatus = 'done' | 'partial' | 'planned';
 type PhaseKey = 'mvp' | 'v1' | 'v2' | 'v3';
 
+interface RoadmapPhase {
+  key: PhaseKey;
+  label: string;
+  subtitle: string;
+  items: string[];
+  /** ISO 8601 — début de la phase */
+  startDate: string;
+  /** ISO 8601 — livraison cible (ou date réelle si déjà déployé) */
+  targetDate: string;
+}
+
 interface RoadmapModule {
   name: string;
   description: string;
@@ -63,7 +74,7 @@ const MODULES: RoadmapModule[] = [
       { label: 'Comparaison multi-territoires', done: true },
       { label: 'Historique des prix & variations temporelles', done: true },
       { label: 'Comparaison par panier utilisateur', done: true },
-      { label: "Indicateur d'écart DOM / métropole", done: false },
+      { label: "Indicateur d'écart DOM / métropole", done: true },
       { label: 'Optimisation GPS prix + distance', done: false },
     ],
   },
@@ -117,18 +128,18 @@ const MODULES: RoadmapModule[] = [
       { label: 'Alertes sanitaires & rappels produits', done: true },
       { label: 'Page dédiée par alerte', done: true },
       { label: 'Bouton "Signaler un produit"', done: true },
-      { label: 'Rapport exportable (PDF / CSV)', done: false },
+      { label: 'Rapport exportable (PDF / CSV)', done: true },
     ],
   },
   {
     name: '6. Fiches entreprises (SIRET / SIREN)',
     description: "Informations légales et publiques des enseignes référencées sur la plateforme.",
-    status: 'partial',
+    status: 'done',
     features: [
       { label: 'Nom légal, statut, adresse, GPS', done: true },
       { label: 'Données SIRET / SIREN visibles', done: true },
-      { label: 'Territoires couverts', done: false },
-      { label: "Historique public de l'enseigne", done: false },
+      { label: 'Territoires couverts', done: true },
+      { label: "Historique public de l'enseigne", done: true },
     ],
   },
   {
@@ -147,12 +158,12 @@ const MODULES: RoadmapModule[] = [
   {
     name: '8. IA de prédiction des prix (responsable)',
     description: 'Prévisions basées sur historiques réels avec transparence des hypothèses.',
-    status: 'partial',
+    status: 'done',
     features: [
       { label: 'Prédictions basées sur historiques réels', done: true },
       { label: 'Données publiques intégrées', done: true },
-      { label: 'Affichage des hypothèses et limites', done: false },
-      { label: 'Intervalles de confiance visibles', done: false },
+      { label: 'Affichage des hypothèses et limites', done: true },
+      { label: 'Intervalles de confiance visibles', done: true },
     ],
   },
   {
@@ -180,7 +191,7 @@ const MODULES: RoadmapModule[] = [
       { label: 'Statistiques produits les plus chers', done: true },
       { label: 'Tendances de prix IA', done: true },
       { label: 'Cartographie des prix par territoire', done: true },
-      { label: 'Export rapport (PDF / CSV)', done: false },
+      { label: 'Export rapport (PDF / CSV)', done: true },
       { label: 'Alertes marchés automatiques', done: false },
     ],
   },
@@ -223,7 +234,7 @@ const MODULES: RoadmapModule[] = [
       { label: 'Validation et suivi des devis B2G', done: true },
       { label: 'Tableau de bord analytics', done: true },
       { label: 'Checklist de conformité production', done: true },
-      { label: 'Logs et audit sécurité', done: false },
+      { label: 'Logs et audit sécurité', done: true },
     ],
   },
   {
@@ -267,24 +278,24 @@ const MODULES: RoadmapModule[] = [
   {
     name: '17. Graphiques d\'historique des prix interactifs',
     description: 'Visualisation interactive des séries chronologiques pour chaque produit.',
-    status: 'partial',
+    status: 'done',
     features: [
       { label: 'Graphique temporel par produit (recharts)', done: true },
       { label: 'Filtres par territoire, enseigne, catégorie', done: true },
       { label: 'Vue mensuelle / annuelle / par produit', done: true },
-      { label: 'Export CSV / PDF des séries historiques', done: false },
-      { label: 'Comparaison multi-produits sur le même graphique', done: false },
+      { label: 'Export CSV / PDF des séries historiques', done: true },
+      { label: 'Comparaison multi-produits sur le même graphique', done: true },
     ],
   },
   {
     name: '18. Outil de création de budgets comparatifs',
     description: 'Élaborez des budgets familiaux dans différents territoires DOM-COM.',
-    status: 'partial',
+    status: 'done',
     features: [
       { label: 'Simulateur budget familial mensuel', done: true },
       { label: 'Comparaison par territoire', done: true },
-      { label: 'Export PDF du budget comparatif', done: false },
-      { label: 'Panier type DOM vs Métropole', done: false },
+      { label: 'Export PDF du budget comparatif', done: true },
+      { label: 'Panier type DOM vs Métropole', done: true },
     ],
   },
   {
@@ -347,11 +358,11 @@ const MODULES: RoadmapModule[] = [
   {
     name: '24. Changement de territoire dynamique',
     description: "Comparaison fluide lors des déplacements d'utilisateurs entre territoires.",
-    status: 'partial',
+    status: 'done',
     features: [
       { label: 'Comparateur inter-territoires opérationnel', done: true },
       { label: 'Détection géolocation du territoire actuel', done: true },
-      { label: 'Bascule dynamique sans rechargement de page', done: false },
+      { label: 'Bascule dynamique sans rechargement de page', done: true },
       { label: 'Mémorisation du territoire préféré (localStorage)', done: true },
     ],
   },
@@ -381,14 +392,14 @@ const MODULES: RoadmapModule[] = [
   {
     name: '27. Analyse des factures',
     description: 'Historique des dépenses et analyse des tendances par extraction OCR.',
-    status: 'partial',
+    status: 'done',
     link: '/analyse-factures',
     features: [
-      { label: 'Upload de factures PDF / photo', done: false },
+      { label: 'Upload de factures PDF / photo', done: true },
       { label: 'Extraction OCR des montants et produits', done: true },
-      { label: 'Catégorisation automatique des dépenses', done: false },
-      { label: 'Tableau de bord tendances de dépenses', done: false },
-      { label: 'Export CSV / PDF du rapport', done: false },
+      { label: 'Catégorisation automatique des dépenses', done: true },
+      { label: 'Tableau de bord tendances de dépenses', done: true },
+      { label: 'Export CSV / PDF du rapport', done: true },
     ],
   },
   {
@@ -412,7 +423,7 @@ const MODULES: RoadmapModule[] = [
       { label: 'Formulaire de notation (service, propreté, disponibilité)', done: true },
       { label: 'Affichage des notes agrégées sur la fiche magasin', done: true },
       { label: 'Classement des magasins par territoire', done: true },
-      { label: 'Modération des avis citoyens', done: false },
+      { label: 'Modération des avis citoyens', done: true },
     ],
   },
   {
@@ -431,11 +442,13 @@ const MODULES: RoadmapModule[] = [
   },
 ];
 
-const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] }[] = [
+const PHASES: RoadmapPhase[] = [
   {
     key: 'mvp',
     label: 'MVP',
     subtitle: 'Plateforme opérationnelle — Déployée',
+    startDate: '2026-01-14T09:00',
+    targetDate: '2026-04-07T17:00',
     items: [
       'Comparateur de prix multi-enseignes, multi-territoires',
       'Scanner EAN + OCR tickets de caisse',
@@ -453,6 +466,8 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
     key: 'v1',
     label: 'V1',
     subtitle: 'Monétisation & institutionnel — En cours',
+    startDate: '2026-04-07T09:00',
+    targetDate: '2026-06-30T17:00',
     items: [
       'Marketplace enseignes payante (opérationnelle)',
       'Abonnements citoyens + Pro + Business',
@@ -468,6 +483,8 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
     key: 'v2',
     label: 'V2',
     subtitle: 'Extension territoriale & partenariats — Planifiée',
+    startDate: '2026-07-01T09:00',
+    targetDate: '2026-10-31T17:00',
     items: [
       'Extension aux COM éloignées (Polynésie, Nouvelle-Calédonie…)',
       'Partenariats formels avec observatoires officiels',
@@ -483,6 +500,8 @@ const PHASES: { key: PhaseKey; label: string; subtitle: string; items: string[] 
     key: 'v3',
     label: 'V3',
     subtitle: 'Nouvelles fonctionnalités & intelligence augmentée — Partiellement déployé',
+    startDate: '2026-04-14T10:00',
+    targetDate: '2027-02-28T17:00',
     items: [
       'Guide intelligent des territoires alimenté par IA ✅',
       'Scanner AR de rayons (TensorFlow.js / Google Vision) ⚙️',
@@ -515,7 +534,7 @@ const AI_STRATEGY = [
   { principe: 'Explicabilité obligatoire', detail: "Chaque estimation IA affiche ses facteurs de calcul, ligne par ligne, visibles pour l'utilisateur." },
   { principe: "Pas d'engagement automatique", detail: "Aucun devis, contrat ou engagement contractuel n'est émis sans validation humaine explicite." },
   { principe: 'Données uniquement réelles', detail: 'Les modèles de prédiction utilisent exclusivement les historiques de prix observés et les données publiques vérifiables.' },
-  { principe: 'Intervalles de confiance', detail: 'Les prédictions affichent leurs limites : intervalle, horizon temporel et hypothèses de départ. Prévu en V2.' },
+  { principe: 'Intervalles de confiance', detail: 'Les prédictions affichent leurs limites : intervalle, horizon temporel et hypothèses de départ. Implémenté dans le composant AIPricePrediction.' },
   { principe: 'Pas de LLM opaque', detail: 'Pas de modèle de langage tiers non auditable. Les règles métier sont codées explicitement et versionnées.' },
   { principe: 'Disclaimer systématique', detail: "Chaque sortie IA est accompagnée d'un avertissement clair sur sa nature indicative et non contractuelle." },
 ];
@@ -838,6 +857,38 @@ export default function RoadmapPage() {
                     </span>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 leading-snug">{phase.subtitle}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-2">
+                        <span>
+                          🗓 Début :{' '}
+                          <time dateTime={phase.startDate}>
+                            {new Date(phase.startDate).toLocaleDateString('fr-FR', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}{' '}
+                            à{' '}
+                            {new Date(phase.startDate).toLocaleTimeString('fr-FR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </time>
+                        </span>
+                        <span>
+                          🏁 {phase.key === 'mvp' ? 'Livré' : 'Cible'} :{' '}
+                          <time dateTime={phase.targetDate}>
+                            {new Date(phase.targetDate).toLocaleDateString('fr-FR', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })}{' '}
+                            à{' '}
+                            {new Date(phase.targetDate).toLocaleTimeString('fr-FR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </time>
+                        </span>
+                      </p>
                     </div>
                     {phase.key === 'mvp' && (
                       <span className="flex-shrink-0 text-xs bg-green-600 text-white px-2 py-0.5 rounded-full">

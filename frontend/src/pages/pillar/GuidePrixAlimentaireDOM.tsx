@@ -36,7 +36,7 @@ const jsonLd = {
 
 export default function GuidePrixAlimentaireDOM() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title="Guide complet des prix alimentaires dans les DOM-TOM 2026"
         description="Tout sur les prix alimentaires en Guadeloupe, Martinique, Guyane, La Réunion et Mayotte. Comparatif supermarchés, conseils économies, données inflation 2026."

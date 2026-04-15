@@ -10,7 +10,7 @@
  * Response:
  *   { history: Array<{ date: string; price: number }> }
  *
- * Phase 2 TODO: replace generated mock data with real DB query.
+ * Data source: real DB queries via historyService (PriceObservation + PriceHistoryMonthly).
  */
 
 import { Router, Request, Response } from 'express';

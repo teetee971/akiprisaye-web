@@ -12,12 +12,14 @@
  */
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ievrData from '../data/ievr-data.json';
 import { getTerritoryStatus } from '../utils/ievrCalculations';
 import { Card } from './ui/card.jsx';
 
 export function DossierMedia() {
   const [selectedFormat] = useState('html');
+  const navigate = useNavigate();
 
   // Prepare territory data with labels
   const territoriesWithStatus = Object.entries(ievrData.territories)
@@ -68,7 +70,8 @@ export function DossierMedia() {
           🖨️ Imprimer / Sauvegarder PDF
         </button>
         <button
-          onClick={() => window.location.href = '/ievr'}
+          type="button"
+          onClick={() => navigate('/ievr')}
           className="px-6 py-3 bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-semibold transition-colors"
         >
           📄 Télécharger méthodologie

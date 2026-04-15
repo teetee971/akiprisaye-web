@@ -1,4 +1,4 @@
-import { CheckCircle2, Clock3, Database, FileText, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Clock3, Database, FileText, Mail, ShieldCheck } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { SEOHead } from '../components/ui/SEOHead';
@@ -182,6 +182,73 @@ export default function Transparence() {
                     Présenté comme un chantier progressif, pas comme une promesse déjà totalement livrée.
                   </p>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          {/* RGPD — Données personnelles */}
+          <section className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-6" aria-labelledby="rgpd-title">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="rounded-xl bg-violet-950/70 p-2 text-violet-300">
+                <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+              </div>
+              <h2 id="rgpd-title" className="text-lg font-semibold text-white">Données personnelles &amp; RGPD</h2>
+            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              {/* Durée de conservation */}
+              <div className="space-y-3 text-sm leading-6 text-slate-300">
+                <h3 className="font-semibold text-white">Durée de conservation</h3>
+                <ul className="space-y-2">
+                  <li className="flex gap-3">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80" aria-hidden="true" />
+                    <span><strong className="text-slate-200">Compte utilisateur :</strong> données conservées jusqu'à suppression du compte ou 3 ans d'inactivité.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80" aria-hidden="true" />
+                    <span><strong className="text-slate-200">Signalements de prix :</strong> données pseudonymisées et conservées 24 mois maximum.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80" aria-hidden="true" />
+                    <span><strong className="text-slate-200">Historiques de scan :</strong> stockés localement (localStorage) — supprimés à la désinscription ou à la demande.</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80" aria-hidden="true" />
+                    <span><strong className="text-slate-200">Logs d'accès :</strong> conservés 12 mois maximum à des fins de sécurité et de débogage.</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* DPO & exercice des droits */}
+              <div className="space-y-3 text-sm leading-6 text-slate-300">
+                <h3 className="font-semibold text-white">Vos droits &amp; contact DPO</h3>
+                <p>
+                  Conformément au RGPD (articles 15 à 22), vous disposez d'un droit d'accès, de rectification,
+                  d'effacement, de portabilité et d'opposition au traitement de vos données personnelles.
+                </p>
+                <p>
+                  Pour exercer vos droits ou contacter notre délégué·e à la protection des données (DPO), 
+                  adressez votre demande à :
+                </p>
+                <a
+                  href="mailto:contact@akiprisaye.re"
+                  className="inline-flex items-center gap-2 rounded-lg border border-violet-700/50 bg-violet-950/40 px-4 py-2.5 text-sm font-medium text-violet-300 transition-colors hover:bg-violet-900/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+                  aria-label="Envoyer un email au DPO — contact@akiprisaye.re"
+                >
+                  <Mail className="h-4 w-4" aria-hidden="true" />
+                  contact@akiprisaye.re
+                </a>
+                <p className="text-xs text-slate-400">
+                  Réponse sous 30 jours. En cas de non-réponse, vous pouvez saisir la{' '}
+                  <a
+                    href="https://www.cnil.fr/fr/plaintes"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 hover:text-slate-300"
+                  >
+                    CNIL
+                  </a>
+                  .
+                </p>
               </div>
             </div>
           </section>

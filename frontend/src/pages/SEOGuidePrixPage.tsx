@@ -132,7 +132,7 @@ export default function SEOGuidePrixPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8 pb-24 sm:pb-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title={`Guide prix ${productName} en ${territoryName} 2026 — Historique & conseils`}
         description={`Guide complet : prix ${productName} en ${territoryName}, historique des prix, comparaison enseignes, conseils pour payer moins cher. Meilleur prix : ${formatEur(bestPrice.price)} chez ${bestPrice.retailer}.`}

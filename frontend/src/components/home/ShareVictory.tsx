@@ -72,8 +72,7 @@ export const ShareVictory: React.FC = () => {
   };
 
   const handleDownloadImage = () => {
-    // In production, would generate and download image
-    toast('Fonctionnalité de téléchargement d\'image à venir !', { icon: '🖼️' });
+    toast('Fonctionnalité de téléchargement d\'image à venir — une belle image sera générée avec vos économies.', { icon: '🖼️' });
   };
 
   if (!victoryData || victoryData.monthlySavings < 5) {

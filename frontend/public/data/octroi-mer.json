@@ -1,0 +1,609 @@
+{
+  "metadata": {
+    "lastUpdated": "2026-04-14T18:50:52.141Z",
+    "source": "Conseils Régionaux DOM / DGDDI — data.gouv.fr",
+    "autoCollected": true
+  },
+  "rates": [
+    {
+      "category": "Alimentation — produits de base (riz, farine, sucre)",
+      "territory": "GP",
+      "rate": 0,
+      "unit": "%",
+      "regime": "exonere",
+      "applicableTo": "Importations alimentaires 1ère nécessité",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits de base (riz, farine, sucre)",
+      "territory": "MQ",
+      "rate": 0,
+      "unit": "%",
+      "regime": "exonere",
+      "applicableTo": "Importations alimentaires 1ère nécessité",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits de base (riz, farine, sucre)",
+      "territory": "RE",
+      "rate": 2.5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Importations alimentaires 1ère nécessité",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits de base (riz, farine, sucre)",
+      "territory": "GF",
+      "rate": 0,
+      "unit": "%",
+      "regime": "exonere",
+      "applicableTo": "Importations alimentaires 1ère nécessité",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits de base (riz, farine, sucre)",
+      "territory": "YT",
+      "rate": 0,
+      "unit": "%",
+      "regime": "exonere",
+      "applicableTo": "Importations alimentaires 1ère nécessité",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits transformés et conserves",
+      "territory": "GP",
+      "rate": 9.5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Conserves, plats préparés, biscuits importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits transformés et conserves",
+      "territory": "MQ",
+      "rate": 9.5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Conserves, plats préparés, biscuits importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits transformés et conserves",
+      "territory": "RE",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Conserves, plats préparés, biscuits importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits transformés et conserves",
+      "territory": "GF",
+      "rate": 11,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Conserves, plats préparés, biscuits importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Alimentation — produits transformés et conserves",
+      "territory": "YT",
+      "rate": 5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Conserves, plats préparés, biscuits importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons alcoolisées",
+      "territory": "GP",
+      "rate": 30,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Bières, vins, spiritueux importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons alcoolisées",
+      "territory": "MQ",
+      "rate": 28,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Bières, vins, spiritueux importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons alcoolisées",
+      "territory": "RE",
+      "rate": 25,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Bières, vins, spiritueux importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons alcoolisées",
+      "territory": "GF",
+      "rate": 28,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Bières, vins, spiritueux importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons alcoolisées",
+      "territory": "YT",
+      "rate": 20,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Bières, vins, spiritueux importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons non alcoolisées (sodas, jus)",
+      "territory": "GP",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Sodas, jus, eaux aromatisées importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons non alcoolisées (sodas, jus)",
+      "territory": "MQ",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Sodas, jus, eaux aromatisées importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons non alcoolisées (sodas, jus)",
+      "territory": "RE",
+      "rate": 7,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Sodas, jus, eaux aromatisées importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons non alcoolisées (sodas, jus)",
+      "territory": "GF",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Sodas, jus, eaux aromatisées importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Boissons non alcoolisées (sodas, jus)",
+      "territory": "YT",
+      "rate": 5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Sodas, jus, eaux aromatisées importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Hygiène-Beauté — cosmétiques et soins importés",
+      "territory": "GP",
+      "rate": 12,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Shampooings, crèmes, parfums importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Hygiène-Beauté — cosmétiques et soins importés",
+      "territory": "MQ",
+      "rate": 12,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Shampooings, crèmes, parfums importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Hygiène-Beauté — cosmétiques et soins importés",
+      "territory": "RE",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Shampooings, crèmes, parfums importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Hygiène-Beauté — cosmétiques et soins importés",
+      "territory": "GF",
+      "rate": 14,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Shampooings, crèmes, parfums importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Hygiène-Beauté — cosmétiques et soins importés",
+      "territory": "YT",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Shampooings, crèmes, parfums importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Droguerie — entretien et nettoyage importés",
+      "territory": "GP",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Lessives, détergents, produits nettoyants importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Droguerie — entretien et nettoyage importés",
+      "territory": "MQ",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Lessives, détergents, produits nettoyants importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Droguerie — entretien et nettoyage importés",
+      "territory": "RE",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Lessives, détergents, produits nettoyants importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Droguerie — entretien et nettoyage importés",
+      "territory": "GF",
+      "rate": 12,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Lessives, détergents, produits nettoyants importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Droguerie — entretien et nettoyage importés",
+      "territory": "YT",
+      "rate": 6,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Lessives, détergents, produits nettoyants importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Électroménager — gros appareils ménagers",
+      "territory": "GP",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Réfrigérateurs, lave-linge, machines importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Électroménager — gros appareils ménagers",
+      "territory": "MQ",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Réfrigérateurs, lave-linge, machines importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Électroménager — gros appareils ménagers",
+      "territory": "RE",
+      "rate": 7.5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Réfrigérateurs, lave-linge, machines importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Électroménager — gros appareils ménagers",
+      "territory": "GF",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Réfrigérateurs, lave-linge, machines importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Électroménager — gros appareils ménagers",
+      "territory": "YT",
+      "rate": 5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Réfrigérateurs, lave-linge, machines importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "High-tech / Informatique / Téléphonie",
+      "territory": "GP",
+      "rate": 8.5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Smartphones, ordinateurs, tablettes importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "High-tech / Informatique / Téléphonie",
+      "territory": "MQ",
+      "rate": 8.5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Smartphones, ordinateurs, tablettes importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "High-tech / Informatique / Téléphonie",
+      "territory": "RE",
+      "rate": 7.5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Smartphones, ordinateurs, tablettes importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "High-tech / Informatique / Téléphonie",
+      "territory": "GF",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Smartphones, ordinateurs, tablettes importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "High-tech / Informatique / Téléphonie",
+      "territory": "YT",
+      "rate": 5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Smartphones, ordinateurs, tablettes importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Textile — habillement et chaussures importés",
+      "territory": "GP",
+      "rate": 14,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Vêtements, chaussures importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Textile — habillement et chaussures importés",
+      "territory": "MQ",
+      "rate": 14,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Vêtements, chaussures importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Textile — habillement et chaussures importés",
+      "territory": "RE",
+      "rate": 12,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Vêtements, chaussures importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Textile — habillement et chaussures importés",
+      "territory": "GF",
+      "rate": 16,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Vêtements, chaussures importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Textile — habillement et chaussures importés",
+      "territory": "YT",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Vêtements, chaussures importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Matériaux de construction importés",
+      "territory": "GP",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Ciment, acier, bois, matériaux de construction",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Matériaux de construction importés",
+      "territory": "MQ",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Ciment, acier, bois, matériaux de construction",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Matériaux de construction importés",
+      "territory": "RE",
+      "rate": 9,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Ciment, acier, bois, matériaux de construction",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Matériaux de construction importés",
+      "territory": "GF",
+      "rate": 12,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Ciment, acier, bois, matériaux de construction",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Matériaux de construction importés",
+      "territory": "YT",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Ciment, acier, bois, matériaux de construction",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Véhicules automobiles neufs importés",
+      "territory": "GP",
+      "rate": 14,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Voitures particulières et utilitaires neufs",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Véhicules automobiles neufs importés",
+      "territory": "MQ",
+      "rate": 14,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Voitures particulières et utilitaires neufs",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Véhicules automobiles neufs importés",
+      "territory": "RE",
+      "rate": 12,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Voitures particulières et utilitaires neufs",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Véhicules automobiles neufs importés",
+      "territory": "GF",
+      "rate": 15,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Voitures particulières et utilitaires neufs",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Véhicules automobiles neufs importés",
+      "territory": "YT",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Voitures particulières et utilitaires neufs",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Médicaments OTC / Parapharmacie non remboursables",
+      "territory": "GP",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Médicaments OTC, compléments alimentaires importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Médicaments OTC / Parapharmacie non remboursables",
+      "territory": "MQ",
+      "rate": 8,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Médicaments OTC, compléments alimentaires importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Médicaments OTC / Parapharmacie non remboursables",
+      "territory": "RE",
+      "rate": 7,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Médicaments OTC, compléments alimentaires importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Médicaments OTC / Parapharmacie non remboursables",
+      "territory": "GF",
+      "rate": 10,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Médicaments OTC, compléments alimentaires importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    },
+    {
+      "category": "Médicaments OTC / Parapharmacie non remboursables",
+      "territory": "YT",
+      "rate": 5,
+      "unit": "%",
+      "regime": "general",
+      "applicableTo": "Médicaments OTC, compléments alimentaires importés",
+      "period": "2026-04",
+      "sourceUrl": "https://www.douane.gouv.fr/demarche/connaitre-loctroi-de-mer"
+    }
+  ]
+}

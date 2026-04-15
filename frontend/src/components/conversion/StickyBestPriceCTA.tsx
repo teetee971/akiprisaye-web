@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { ConversionProduct } from '../../engine/conversionEngine';
 import { getBadges } from '../../engine/conversionEngine';
 import {
@@ -18,6 +19,7 @@ export function StickyBestPriceCTA({ product, onAfterClick }: StickyBestPriceCTA
   const badges   = getBadges(product);
   const abVariant = getCTAVariant();
   const ctaLabel  = CTA_LABELS[abVariant];
+  const navigate  = useNavigate();
 
   function handleClick() {
     const pageUrl = typeof window !== 'undefined' ? window.location.href : '/';
@@ -45,7 +47,7 @@ export function StickyBestPriceCTA({ product, onAfterClick }: StickyBestPriceCTA
     if (affiliateUrl && affiliateUrl !== '/comparateur') {
       window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
     } else {
-      window.location.href = '/comparateur';
+      navigate('/comparateur');
     }
   }
 
@@ -85,6 +87,7 @@ export function StickyBestPriceCTA({ product, onAfterClick }: StickyBestPriceCTA
 
         {/* CTA button */}
         <button
+          type="button"
           onClick={handleClick}
           className="w-full bg-white text-emerald-800 font-bold text-sm rounded-xl py-3 active:scale-95 transition-transform"
         >

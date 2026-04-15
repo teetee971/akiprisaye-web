@@ -281,7 +281,7 @@ export function StoreMap({
               <PriceHeatmap points={heatmapPoints} visible={showHeatmap} />
             )}
 
-            {/* Marker Clustering Layer */}
+            {/* Marker Cluster Layer */}
             {displayedStores.length > 0 && (
               <MarkerClusterLayer
                 stores={displayedStores}

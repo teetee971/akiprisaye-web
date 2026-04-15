@@ -64,7 +64,7 @@ export default function ConversionStickyBar({
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden">
       {/* Blur backdrop */}
-      <div className="border-t border-white/10 bg-[#0a0a0f]/95 px-4 py-3 backdrop-blur-md">
+      <div className="border-t border-white/10 bg-slate-950/95 px-4 py-3 backdrop-blur-md">
         {/* Sub-label */}
         <p className="mb-1.5 text-center text-[10px] text-zinc-600">
           Prix mis à jour aujourd'hui

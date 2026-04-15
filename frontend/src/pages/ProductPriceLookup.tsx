@@ -77,6 +77,7 @@ function ProductCard({ product, scannedAt }: {
         <img
           src={product.imageUrl}
           alt={product.name}
+          loading="lazy"
           className="w-20 h-20 object-contain rounded-xl bg-white/10 flex-shrink-0"
           onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
         />

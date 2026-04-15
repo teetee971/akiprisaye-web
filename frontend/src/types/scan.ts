@@ -97,9 +97,8 @@ export interface ScanResult {
 
   /**
    * Données du produit trouvé (si applicable)
-   * TODO: Replace with proper Product type from product.ts when available
    */
-  product?: unknown;
+  product?: import('./product').Product;
 
   /**
    * Message d'erreur (si applicable)

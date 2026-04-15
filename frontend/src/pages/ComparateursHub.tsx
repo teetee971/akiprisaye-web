@@ -65,6 +65,7 @@ const SPECIALIZED = [
   { path: '/comparateur-materiaux-batiment', icon: HardHat,  label: 'Matériaux BTP',     color: 'text-orange-400',   bg: 'bg-orange-500/10 border-orange-500/30', desc: 'Ciment, acier, bois, tôles, PVC…' },
   { path: '/comparateur-services',        icon: Wifi,        label: 'Télécoms / Services', color: 'text-indigo-400', bg: 'bg-indigo-500/10 border-indigo-500/30', desc: 'Internet, mobile, eau, électricité' },
   { path: '/comparateur-supermarches-dom', icon: ShoppingCart, label: 'Supermarchés DOM',   color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/30', desc: 'Comparer les prix entre grandes surfaces des DOM' },
+  { path: '/comparateur-transport',       icon: Navigation,  label: 'Transport',           color: 'text-lime-400',    bg: 'bg-lime-500/10 border-lime-500/30',      desc: 'Bus, taxi, transport en commun DOM' },
 ];
 
 // ── Recherche-prix sub-comparators ─────────────────────────────────────────────

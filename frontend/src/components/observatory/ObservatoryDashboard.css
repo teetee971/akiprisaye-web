@@ -157,8 +157,10 @@
 
 .quality-fill {
   height: 100%;
+  width: 100%;
   background: white;
-  transition: width 0.3s ease;
+  transform-origin: left center;
+  transition: transform 0.3s ease;
 }
 
 /* Indicator Sections */

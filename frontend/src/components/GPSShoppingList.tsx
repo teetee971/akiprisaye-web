@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { MapPin, ShoppingCart, TrendingDown, Navigation } from 'lucide-react';
 import { getUserPosition, calculateDistancesBatch, type GeoPosition } from '../utils/geoLocation';
+import { RouteOptimizer } from './RouteOptimizer';
 
 // Default update time computed once at module load for demo purposes
 // In production, this would be the actual last data update timestamp
@@ -296,6 +297,11 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
       <p className="text-[10px] text-gray-500 mt-4 italic">
         ℹ️ Calculs basés sur les prix réels des magasins et l'estimation de consommation moyenne (6L/100km).
       </p>
+
+      {/* Route Optimizer panel */}
+      <div className="mt-6">
+        <RouteOptimizer />
+      </div>
     </div>
   );
 }

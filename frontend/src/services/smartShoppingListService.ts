@@ -161,58 +161,39 @@ export class ShoppingListService {
       
       return new Blob([content], { type: 'text/plain' });
     }
+    
+    // PDF export via jsPDF (dynamic import to keep main bundle lean)
+    const { jsPDF } = await import('jspdf');
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-    // PDF: generate a printable HTML document and return as a Blob.
-    // The browser can print/save it as a real PDF via Ctrl+P or window.print().
-    const createdAt = new Date(list.createdAt).toLocaleDateString('fr-FR');
-    const rows = list.items
-      .map(
-        (item, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${item.productName ?? ''}</td>
-          <td style="text-align:center">${item.quantity}</td>
-          <td>${item.priority}</td>
-          <td>${item.notes ?? ''}</td>
-        </tr>`,
-      )
-      .join('');
+    pdf.setFontSize(16);
+    pdf.text(`Liste : ${list.name}`, 14, 20);
+    pdf.setFontSize(11);
+    pdf.text(`Créée le : ${new Date(list.createdAt).toLocaleDateString('fr-FR')}`, 14, 28);
+    pdf.text(`Territoire : ${list.territory}`, 14, 35);
+    pdf.setLineWidth(0.3);
+    pdf.line(14, 38, 196, 38);
 
-    const html = `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <title>${list.name}</title>
-  <style>
-    body { font-family: Arial, sans-serif; color: #111; padding: 32px; }
-    h1 { font-size: 22px; margin-bottom: 4px; }
-    .meta { font-size: 12px; color: #666; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { background: #1e293b; color: #fff; padding: 8px 10px; text-align: left; }
-    td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; }
-    tr:nth-child(even) td { background: #f8fafc; }
-    @media print { body { padding: 0; } }
-  </style>
-</head>
-<body>
-  <h1>${list.name}</h1>
-  <p class="meta">Territoire&nbsp;: ${list.territory ?? '—'} · Créée le&nbsp;: ${createdAt} · ${list.items.length} article(s)</p>
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Produit</th>
-        <th>Qté</th>
-        <th>Priorité</th>
-        <th>Notes</th>
-      </tr>
-    </thead>
-    <tbody>${rows}</tbody>
-  </table>
-</body>
-</html>`;
+    let y = 44;
+    pdf.setFontSize(12);
+    list.items.forEach((item, i) => {
+      if (y > 270) {
+        pdf.addPage();
+        y = 20;
+      }
+      const label = `${i + 1}. ${item.productName}  ×${item.quantity}`;
+      pdf.text(label, 14, y);
+      if (item.notes) {
+        pdf.setFontSize(10);
+        pdf.text(`   ${item.notes}`, 14, y + 5);
+        pdf.setFontSize(12);
+        y += 12;
+      } else {
+        y += 8;
+      }
+    });
 
-    return new Blob([html], { type: 'text/html; charset=utf-8' });
+    return new Blob([pdf.output('arraybuffer')], { type: 'application/pdf' });
   }
 
   /**

@@ -57,9 +57,11 @@ const PREMIUM_STATUS_KEY = 'akiprisaye_premium_status';
 
 /**
  * Get current subscription status
- * 
- * For now, returns CITOYEN (free) tier by default
- * TODO: Integrate with Google Play Billing API
+ *
+ * Returns CITOYEN (free) tier by default on web.
+ * On Android, checks localStorage first; Google Play Billing will be integrated
+ * via the Capacitor plugin (com.getcapacitor.community.billing) when the app
+ * is published to Play Store.
  */
 export async function getSubscriptionStatus(): Promise<SubscriptionStatus> {
   // Default to free tier

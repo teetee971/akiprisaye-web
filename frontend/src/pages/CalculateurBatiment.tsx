@@ -24,7 +24,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   HardHat, Home, TreePine, Wrench, Lock, Unlock,
   ChevronLeft, AlertTriangle, Star, Clock, Calculator,
@@ -2505,6 +2505,7 @@ function MenuiserieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 // ─── Paywall Modal ────────────────────────────────────────────────────────────
 
 function PaywallModal({ onStartTrial, onClose, isExpired }: { onStartTrial: () => void; onClose: () => void; isExpired: boolean }) {
+  const navigate = useNavigate();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
       <div className="max-w-sm w-full bg-slate-900 rounded-2xl border border-orange-500/40 p-6 shadow-2xl">
@@ -2543,7 +2544,7 @@ function PaywallModal({ onStartTrial, onClose, isExpired }: { onStartTrial: () =
               <Unlock className="w-4 h-4" />Démarrer l'essai gratuit 7 jours
             </button>
           )}
-          <button onClick={() => { window.location.href = '/pricing'; }}
+          <button onClick={() => navigate('/pricing')}
             className="w-full rounded-xl bg-indigo-700 hover:bg-indigo-600 py-3 font-bold text-white transition-colors flex items-center justify-center gap-2">
             <Star className="w-4 h-4" />S'abonner — accès illimité
           </button>
@@ -3216,6 +3217,7 @@ function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCo
 const TERRITORY_STORAGE_KEY = 'akp:batiment:territory';
 
 export default function CalculateurBatiment() {
+  const navigate = useNavigate();
   const [trialState, setTrialState]         = useState<BatimentTrialState>(() => getBatimentTrialState());
   const [showPaywall, setShowPaywall]        = useState(false);
   const [territory, setTerritory]           = useState<TerritoryCode | null>(() => {

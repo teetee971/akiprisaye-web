@@ -1,105 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Search,
-  Camera,
-  ShoppingCart,
-  TrendingUp,
-  Package,
-  Loader2,
-  RefreshCw,
-} from 'lucide-react';
+import React, { lazy, Suspense, useState, useRef } from 'react';
+import { Search, PlayCircle, Package, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
+import { useScrollReveal } from '../hooks/useScrollReveal';
+import { SEOHead } from '../components/ui/SEOHead';
 import FlipStatCard from '../components/ui/FlipStatCard';
-import ObservatorySection from './home-v5/ObservatorySection';
+import PriceLiveTicker from '../components/home/PriceLiveTicker';
+import { Skeleton } from '../components/ui/Skeleton';
+import '../styles/home-v5.css';
+import '../styles/home-bento.css';
 
-const PLACEHOLDER_TEXTS = [
-  "Cherche 'lait'...",
-  "Cherche 'poulet'...",
-  "Cherche 'riz'...",
-  "Cherche 'farine'...",
-  "Cherche 'huile'...",
+/** Minimal territory map for the persistent pill — mirrors TERRITORIES */
+const TERRITORY_DISPLAY: Record<string, { flag: string; name: string }> = {
+  gp: { flag: '🇬🇵', name: 'Guadeloupe' },
+  mq: { flag: '🇲🇶', name: 'Martinique' },
+  gf: { flag: '🇬🇫', name: 'Guyane' },
+  re: { flag: '🇷🇪', name: 'La Réunion' },
+  yt: { flag: '🇾🇹', name: 'Mayotte' },
+  nc: { flag: '🇳🇨', name: 'Nouvelle-Calédonie' },
+  pf: { flag: '🇵🇫', name: 'Polynésie française' },
+  bl: { flag: '🇧🇱', name: 'Saint-Barthélemy' },
+  mf: { flag: '🇲🇫', name: 'Saint-Martin' },
+  pm: { flag: '🇵🇲', name: 'Saint-Pierre-et-Miquelon' },
+  wf: { flag: '🇼🇫', name: 'Wallis-et-Futuna' },
+  fr: { flag: '🇫🇷', name: 'France métro.' },
+};
+
+function readStoredTerritory(): string | null {
+  try {
+    const raw = localStorage.getItem('akiprisaye-territory');
+    return raw ? raw.toLowerCase() : null;
+  } catch {
+    return null;
+  }
+}
+
+// Lazy-loaded sections & widgets — kept out of the initial JS bundle
+const HowItWorksSection    = lazy(() => import('./home-v5/HowItWorksSection'));
+const ObservatorySection   = lazy(() => import('./home-v5/ObservatorySection'));
+const MiniFaqSection       = lazy(() => import('./home-v5/MiniFaqSection'));
+const TerritoryPriceChart  = lazy(() => import('../components/home/TerritoryPriceChart'));
+const PriceEvolutionChart  = lazy(() => import('../components/home/PriceEvolutionChart'));
+const LiveNewsFeed         = lazy(() => import('../components/home/LiveNewsFeed'));
+const PanierVitalWidget    = lazy(() => import('../components/home/PanierVitalWidget'));
+const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
+const StoreRankingWidget   = lazy(() => import('../components/home/StoreRankingWidget'));
+const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
+const ProduitChocWidget    = lazy(() => import('../components/home/ProduitChocWidget'));
+const IndiceEquiteWidget   = lazy(() => import('../components/home/IndiceEquiteWidget'));
+const AppDemoShowcase      = lazy(() => import('../components/home/AppDemoShowcase'));
+const VideoVieChere        = lazy(() => import('../components/home/VideoVieChere'));
+const PriceExplainerBanner = lazy(() => import('../components/home/PriceExplainerBanner'));
+const LettreHebdoWidget    = lazy(() => import('../components/home/LettreHebdoWidget'));
+const LettreJourWidget     = lazy(() => import('../components/home/LettreJourWidget'));
+// "Effet Waouh" widgets — built, now integrated
+const ConseilBudgetDuJour      = lazy(() => import('../components/home/ConseilBudgetDuJour'));
+const PersonalizedDealOfDay    = lazy(() => import('../components/home/PersonalizedDealOfDay'));
+const DailyShockCard           = lazy(() => import('../components/home/DailyShockCard').then((m) => ({ default: m.DailyShockCard })));
+const AnonymousSocialComparison = lazy(() => import('../components/home/AnonymousSocialComparison'));
+const MonthlySavingsDashboard  = lazy(() => import('../components/home/MonthlySavingsDashboard').then((m) => ({ default: m.MonthlySavingsDashboard })));
+const TerritorySignal          = lazy(() => import('../components/home/TerritorySignal').then((m) => ({ default: m.TerritorySignal })));
+const SmartShoppingList        = lazy(() => import('../components/home/SmartShoppingList').then((m) => ({ default: m.SmartShoppingList })));
+const ShareVictory             = lazy(() => import('../components/home/ShareVictory'));
+const ProofStats               = lazy(() => import('../components/home/ProofStats'));
+
+const HOME_STATS = [
+  { value: '12',     label: 'Territoires', backContent: "12 départements et territoires d'outre-mer couverts", icon: '🗺️' },
+  { value: '5 000+', label: 'Produits',    backContent: 'Plus de 5 000 produits suivis en temps réel',         icon: '🛒' },
+  { value: '1 200+', label: 'Scans',       backContent: 'Plus de 1 200 scans validés par les citoyens',        icon: '📷' },
+  { value: '300+',   label: 'Alertes',     backContent: 'Plus de 300 alertes prix actives',                    icon: '🔔' },
 ];
 
-const FEATURES = [
-  {
-    icon: <Search size={28} className="text-blue-400" />,
-    title: 'Comparer les prix',
-    desc: 'Trouve le moins cher entre Super U, Carrefour, Leader Price...',
-    gradient: 'from-blue-500/20 to-blue-600/10',
-    border: 'border-blue-500/30',
-  },
-  {
-    icon: <Camera size={28} className="text-emerald-400" />,
-    title: 'Scanner un produit',
-    desc: "Pointe ton téléphone sur le code-barres, on te dit tout",
-    gradient: 'from-emerald-500/20 to-emerald-600/10',
-    border: 'border-emerald-500/30',
-  },
-  {
-    icon: <ShoppingCart size={28} className="text-violet-400" />,
-    title: 'Ta liste de courses',
-    desc: "Prépare ta liste, on calcule ton budget avant d'y aller",
-    gradient: 'from-violet-500/20 to-violet-600/10',
-    border: 'border-violet-500/30',
-  },
-  {
-    icon: <TrendingUp size={28} className="text-amber-400" />,
-    title: 'Observer les tendances',
-    desc: 'Vois comment les prix évoluent mois après mois',
-    gradient: 'from-amber-500/20 to-amber-600/10',
-    border: 'border-amber-500/30',
-  },
+const PROMOS = [
+  { id: 1, title: 'OFFRES SUPER U',   subtitle: 'Grand Ouverture v4.6.20', img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=400', to: '/flyer' },
+  { id: 2, title: 'ACTUALITÉS',       subtitle: 'Vidéo Souveraine OK',     img: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=400', to: '/connexion' },
+  { id: 3, title: "PARTAGEZ L'APPLI", subtitle: 'Propager la solution',    img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=400', to: null },
 ];
-
-const TRUST_ITEMS = [
-  { icon: '🗺️', text: 'Fait en Guadeloupe' },
-  { icon: '🔒', text: 'Sans pub, sans revente de données' },
-  { icon: '💪', text: 'Par des citoyens, pour des citoyens' },
-];
-
-const STAT_CARDS = [
-  {
-    value: '15 000+',
-    label: 'Produits comparés',
-    icon: '📦',
-    back: 'Nous suivons plus de 15 000 références dans les enseignes de Guadeloupe.',
-  },
-  {
-    value: '40%',
-    label: "Jusqu'à d'économies",
-    icon: '💰',
-    back: "Certains produits varient de plus de 40% entre deux enseignes à 5 minutes d'écart.",
-  },
-  {
-    value: 'Hebdo',
-    label: 'Données mises à jour',
-    icon: '🔄',
-    back: 'Nos bénévoles et nos scrapers automatiques mettent à jour les prix chaque semaine.',
-  },
-];
-
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.55, delay },
-});
 
 const Home = () => {
   const [search, setSearch] = useState('');
   const [showExtendedHome, setShowExtendedHome] = useState(false);
-  const [placeholderIdx, setPlaceholderIdx] = useState(0);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [activeTerritoryCode, setActiveTerritoryCode] = useState<string | null>(
+    readStoredTerritory
+  );
   const navigate = useNavigate();
   const { products, loading, error, reloadProducts } = useApp();
+  const pageRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPlaceholderIdx((prev) => (prev + 1) % PLACEHOLDER_TEXTS.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
+  useScrollReveal(pageRef);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,15 +101,34 @@ const Home = () => {
     navigate(`/recherche-produits?q=${encodeURIComponent(normalizedQuery)}`);
   };
 
+  const handleToggleFaq = (index: number) => {
+    setExpandedFaq((prev) => (prev === index ? null : index));
+  };
+
+  const handleTerritorySelect = (code: string) => {
+    try {
+      localStorage.setItem('akiprisaye-territory', code);
+    } catch { /* */ }
+    setActiveTerritoryCode(code);
+    navigate(`/recherche-produits?territoire=${code.toUpperCase()}`);
+  };
+
   return (
-    <div id="root" className="min-h-screen bg-[#0f172a] text-white pb-32">
-      {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS GITHUB */}
+    <div ref={pageRef} id="root" className="min-h-screen bg-slate-950 text-white pb-32">
+      {/* SEO */}
+      <SEOHead
+        title="A KI PRI SA YÉ — Comparez les prix DOM-TOM"
+        description="Observatoire citoyen des prix dans les DOM-COM. Comparez, analysez et anticipez la vie chère en Guadeloupe, Martinique, Guyane, La Réunion et Mayotte."
+        canonical="https://teetee971.github.io/akiprisaye-web/"
+      />
+
+      {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS */}
       <div style={{ position: 'absolute', opacity: 0 }} aria-hidden="true">
         <p>le plus utile, sans surcharge</p>
         <p>page d’accueil simplifiée</p>
       </div>
 
-      {/* Contrôle visible "voir toute la page d’accueil" */}
+      {/* Contrôle "voir toute la page d’accueil" */}
       <div className="flex justify-center py-2">
         {showExtendedHome ? (
           <button
@@ -144,198 +153,191 @@ const Home = () => {
         )}
       </div>
 
-      {showExtendedHome && (
-        <div id="home-extended-content">
-          <section className="px-6 py-8 text-center">
-            <h2 className="text-lg font-black text-slate-200 mb-2">
-              ce que disent nos utilisateurs
-            </h2>
-          </section>
-          <ObservatorySection />
+      {/* ── HEADER STATUT ──────────────────────────────────────────── */}
+      <div className="pt-12 px-6 pb-6 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest mb-4">
+          v4.6.20 • SOUVERAINE ✅
         </div>
-      )}
+        <h1 className="text-4xl font-black italic uppercase tracking-tighter">Aki Pri Sa Yé</h1>
+      </div>
 
-      {/* ── SECTION 1 — HERO IMPACT ─────────────────────────────────────── */}
-      <section className="relative px-6 pt-8 pb-12 overflow-hidden">
-        {/* Animated radial gradient background */}
-        <div
-          className="absolute inset-0 -z-10 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(ellipse 80% 60% at 50% 0%, rgba(59,130,246,0.20) 0%, rgba(139,92,246,0.12) 55%, rgba(16,185,129,0.08) 100%)',
-          }}
-        />
-
-        {/* Badge 🇬🇵 */}
-        <motion.div {...fadeUp(0)} className="flex justify-center mb-6">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-bold tracking-widest">
-            🇬🇵 100% Guadeloupe • Données citoyennes
-          </span>
-        </motion.div>
-
-        {/* Titre principal */}
-        <motion.h1
-          {...fadeUp(0.1)}
-          className="text-4xl sm:text-5xl font-black text-center leading-tight mb-4"
-        >
-          Économisez sur vos{' '}
-          <span className="text-emerald-400">courses</span>{' '}
-          <span className="text-blue-400">en Guadeloupe</span>
-        </motion.h1>
-
-        {/* Sous-titre */}
-        <motion.p
-          {...fadeUp(0.2)}
-          className="text-slate-300 text-center text-base mb-6 max-w-sm mx-auto"
-        >
-          Compare les prix, scanne tes produits, fais les meilleures courses
-        </motion.p>
-
-        {/* Stat choc pulsée */}
-        <motion.div {...fadeUp(0.3)} className="flex justify-center mb-8">
-          <span className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 font-black text-sm">
-            💰 Jusqu'à 40% d'écart de prix entre enseignes
-          </span>
-        </motion.div>
-
-        {/* CTA Buttons */}
-        <motion.div
-          {...fadeUp(0.4)}
-          className="flex flex-col sm:flex-row gap-3 justify-center max-w-sm mx-auto"
-        >
-          <button
-            type="button"
-            onClick={() => navigate('/recherche-produits')}
-            className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-black px-6 py-4 rounded-2xl text-base transition-all shadow-lg shadow-emerald-500/25"
-          >
-            <Search size={20} />
-            🔍 Chercher un produit
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/scanner')}
-            className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 active:scale-95 border border-white/20 text-white font-bold px-6 py-4 rounded-2xl text-base transition-all"
-          >
-            <Camera size={20} />
-            📷 Scanner un code-barres
-          </button>
-        </motion.div>
-      </section>
-
-      {/* ── SECTION 2 — CHIFFRES IMPACT ────────────────────────────────── */}
-      <section className="px-6 mb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {STAT_CARDS.map((stat, i) => (
-            <motion.div key={stat.label} {...fadeUp(0.1 * i)}>
-              <FlipStatCard
-                value={stat.value}
-                label={stat.label}
-                icon={stat.icon}
-                backContent={<p className="text-sm text-slate-300">{stat.back}</p>}
-              />
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── SECTION 3 — FEATURES CARDS ─────────────────────────────────── */}
-      <section className="px-6 mb-10">
-        <h2 className="text-lg font-black uppercase tracking-widest text-slate-300 mb-5 text-center">
-          Ce que tu peux faire
-        </h2>
-        <div className="grid grid-cols-2 gap-3">
-          {FEATURES.map((f, i) => (
-            <motion.div
-              key={f.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.08 * i }}
-              whileHover={{ scale: 1.03 }}
-              className={`bg-white/5 backdrop-blur-sm border ${f.border} p-4 rounded-2xl bg-gradient-to-br ${f.gradient}`}
+      {/* ── TERRITOIRE ACTIF ───────────────────────────────────────── */}
+      <div className="px-6 pb-4" aria-label="Territoire sélectionné">
+        {activeTerritoryCode && TERRITORY_DISPLAY[activeTerritoryCode] ? (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Territoire :
+            </span>
+            <button
+              type="button"
+              onClick={() => navigate(`/recherche-produits?territoire=${activeTerritoryCode.toUpperCase()}`)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/20 transition-colors"
             >
-              <div className="mb-2">{f.icon}</div>
-              <p className="font-bold text-sm mb-1">{f.title}</p>
-              <p className="text-xs text-slate-400">{f.desc}</p>
-            </motion.div>
+              <span aria-hidden="true">{TERRITORY_DISPLAY[activeTerritoryCode].flag}</span>
+              {TERRITORY_DISPLAY[activeTerritoryCode].name}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                try { localStorage.removeItem('akiprisaye-territory'); } catch { /* */ }
+                setActiveTerritoryCode(null);
+              }}
+              className="text-[10px] text-slate-600 hover:text-slate-400 underline"
+              aria-label="Changer de territoire"
+            >
+              changer
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Territoire :
+            </span>
+            <div className="flex gap-1.5 flex-wrap">
+              {Object.entries(TERRITORY_DISPLAY).slice(0, 6).map(([code, t]) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => handleTerritorySelect(code)}
+                  className="rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition-colors"
+                  aria-label={t.name}
+                  title={t.name}
+                >
+                  <span aria-hidden="true">{t.flag}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── STATS FLIP CARDS ───────────────────────────────────────── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 mb-8">
+        {HOME_STATS.map((s) => (
+          <FlipStatCard
+            key={s.label}
+            value={s.value}
+            label={s.label}
+            backContent={s.backContent}
+            icon={s.icon}
+          />
+        ))}
+      </div>
+
+      {/* ── PRIX EN DIRECT ─────────────────────────────────────────── */}
+      <div className="px-6 mb-8">
+        <PriceLiveTicker />
+      </div>
+
+      {/* ── CARROUSEL PROMOS ───────────────────────────────────────── */}
+      <div className="mb-10">
+        <div className="flex gap-4 overflow-x-auto px-6 pb-4 snap-x">
+          {PROMOS.map((promo, idx) => (
+            <button
+              key={promo.id}
+              type="button"
+              onClick={() => promo.to && navigate(promo.to)}
+              aria-label={promo.title}
+              className="relative flex-none w-72 aspect-video rounded-3xl overflow-hidden border border-slate-700/50 snap-center cursor-pointer active:scale-95 transition-transform text-left"
+            >
+              <img
+                src={promo.img}
+                className="absolute inset-0 w-full h-full object-cover opacity-50"
+                alt=""
+                width={288}
+                height={162}
+                fetchPriority={idx === 0 ? 'high' : undefined}
+                loading={idx === 0 ? undefined : 'lazy'}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-5">
+                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{promo.title}</p>
+                <p className="text-sm font-bold">{promo.subtitle}</p>
+              </div>
+              <PlayCircle className="absolute top-4 right-4 text-white/30" size={24} />
+            </button>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* ── SECTION 4 — BARRE DE RECHERCHE AMÉLIORÉE ───────────────────── */}
+      {/* ── RECHERCHE ──────────────────────────────────────────────── */}
       <form onSubmit={handleSearch} className="px-6 mb-10">
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-              size={20}
-            />
-            <input
-              type="text"
-              aria-label="rechercher un produit"
-              placeholder={search ? undefined : PLACEHOLDER_TEXTS[placeholderIdx]}
-              className="w-full bg-slate-800/60 border border-slate-600/50 focus:border-blue-500/60 p-4 pl-12 rounded-2xl outline-none text-base transition-colors"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-white font-black px-5 rounded-2xl transition-all flex items-center gap-2 whitespace-nowrap"
-          >
-            <Search size={18} />
-            <span className="hidden sm:inline">Chercher</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/scanner')}
-            aria-label="Scanner un code-barres"
-            className="bg-slate-700/80 hover:bg-slate-600/80 active:scale-95 text-white px-4 rounded-2xl transition-all flex items-center"
-          >
-            <Camera size={20} />
-          </button>
+        <div className="relative">
+          <Search className="absolute left-4 top-4 text-slate-500" size={20} />
+          <input
+            type="text"
+            aria-label="rechercher un produit"
+            placeholder="Rechercher un produit..."
+            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button type="submit" className="sr-only">rechercher</button>
         </div>
       </form>
 
-      {/* ── SECTION 5 — LES BONS PRIX DU MOMENT ───────────────────────── */}
-      <section className="px-6 mb-10">
-        <h2 className="text-base font-black uppercase tracking-widest text-slate-300 mb-5 flex items-center gap-2">
-          <span>💰</span> Les bons prix du moment
-        </h2>
+      {/* ── OBSERVATOIRE EN DIRECT ─────────────────────────────────── */}
+      <div className="bento-grid-section mb-4" aria-label="Observatoire des prix">
+        <p className="bento-grid-title">Observatoire en direct</p>
+        <div className="bento-grid" style={{ gridAutoRows: 'auto' }}>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <ProduitChocWidget />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <InflationBarometerWidget />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <PanierVitalWidget />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <StoreRankingWidget />
+          </Suspense>
+        </div>
+      </div>
+
+      {/* ── CONSEIL DU JOUR ───────────────────────────────────────── */}
+      <div className="px-6 mb-6">
+        <Suspense fallback={<Skeleton className="h-20 w-full" />}>
+          <ConseilBudgetDuJour />
+        </Suspense>
+      </div>
+
+      {/* ── OFFRE PERSONNALISÉE DU JOUR ────────────────────────────── */}
+      <div className="px-6 mb-6">
+        <Suspense fallback={<Skeleton className="h-28 w-full" />}>
+          <PersonalizedDealOfDay />
+        </Suspense>
+      </div>
+
+      {/* ── GISEMENT SOUVERAIN ─────────────────────────────────────── */}
+      <div className="bento-grid-section mb-10">
+        <p className="bento-grid-title">Le Gisement Souverain</p>
         <div className="grid gap-3">
           {loading ? (
-            <div className="flex flex-col items-center py-10 text-slate-500 gap-3">
-              <Loader2 className="animate-spin" />
-              <p className="text-[10px] font-bold uppercase tracking-widest">
-                Chargement des prix...
-              </p>
+            <div className="flex flex-col gap-3 py-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 w-full" />
+              ))}
             </div>
           ) : products && products.length > 0 ? (
             products.slice(0, 15).map((p: Product, i: number) => (
-              <motion.div
+              <div
                 key={p.id ?? i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3, delay: 0.03 * i }}
-                whileHover={{ scale: 1.01 }}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 p-4 rounded-2xl flex justify-between items-center"
+                className="bento-card flex-row justify-between items-center"
               >
                 <div>
-                  <p className="text-[9px] font-black text-blue-400 uppercase mb-1">
-                    {p.category ?? 'ÉPICERIE'}
-                  </p>
+                  <p className="text-[9px] font-black text-blue-400 uppercase mb-1">{p.category ?? 'ÉPICERIE'}</p>
                   <p className="text-sm font-bold text-slate-200">{p.name}</p>
                   <p className="text-[10px] text-slate-400">{p.store ?? 'SUPER U'}</p>
                 </div>
-                <div className="text-right">
-                  <div className="text-xl font-black text-emerald-400">{p.price}€</div>
-                </div>
-              </motion.div>
+                <div className="text-right font-black text-emerald-400">{p.price}€</div>
+              </div>
             ))
           ) : (
             <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
               <Package className="mx-auto text-slate-800 mb-2" size={32} />
               <p className="text-slate-600 text-[10px] font-bold uppercase">
-                {error ? 'Catalogue indisponible' : 'Aucun produit disponible'}
+                {error ? 'Catalogue indisponible' : 'Gisement vide'}
               </p>
               {error && (
                 <button
@@ -349,21 +351,98 @@ const Home = () => {
             </div>
           )}
         </div>
-      </section>
+      </div>
 
-      {/* ── SECTION 6 — BANDEAU DE CONFIANCE ───────────────────────────── */}
-      <section className="px-6 mb-10">
-        <div className="bg-slate-800/60 backdrop-blur-sm border border-white/10 rounded-3xl p-6">
-          <div className="flex flex-col sm:flex-row items-center justify-around gap-4 text-center">
-            {TRUST_ITEMS.map((item) => (
-              <div key={item.text} className="flex flex-col items-center gap-1">
-                <span className="text-2xl">{item.icon}</span>
-                <p className="text-xs font-bold text-slate-300">{item.text}</p>
+      {/* ── SECTION ÉTENDUE (toggle) ───────────────────────────────── */}
+      {showExtendedHome && (
+        <div id="home-extended-content" className="space-y-12 px-4 pb-8">
+          <Suspense
+            fallback={
+              <div className="space-y-6 py-4">
+                <Skeleton className="h-48 w-full" />
+                <Skeleton className="h-32 w-full" />
+                <Skeleton className="h-48 w-full" />
               </div>
-            ))}
-          </div>
+            }
+          >
+            {/* Social proof — données citoyennes agrégées */}
+            <section aria-label="Données de la communauté">
+              <Suspense fallback={<Skeleton className="h-16 w-full" />}>
+                <ProofStats />
+              </Suspense>
+            </section>
+
+            {/* Comparaison communautaire anonyme */}
+            <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+              <AnonymousSocialComparison />
+            </Suspense>
+
+            {/* Observatoire citoyen */}
+            <ObservatorySection />
+
+            {/* Hausses de la semaine */}
+            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <DailyShockCard />
+            </Suspense>
+
+            {/* Comment ça marche */}
+            <HowItWorksSection />
+
+            {/* Pourquoi les prix sont plus élevés */}
+            <PriceExplainerBanner />
+
+            {/* Indice équité */}
+            <IndiceEquiteWidget />
+
+            {/* Tableau de bord économies mensuelles */}
+            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <MonthlySavingsDashboard />
+            </Suspense>
+
+            {/* Liste de courses intelligente */}
+            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <SmartShoppingList />
+            </Suspense>
+
+            {/* Surcoût par catégorie */}
+            <CategoryOvercostChart />
+
+            {/* Carte des prix par territoire */}
+            <TerritoryPriceChart />
+
+            {/* Signaux territoire — alertes communautaires */}
+            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+              <TerritorySignal />
+            </Suspense>
+
+            {/* Évolution des prix */}
+            <PriceEvolutionChart />
+
+            {/* Actualités en direct */}
+            <LiveNewsFeed />
+
+            {/* Lettre hebdomadaire IA */}
+            <LettreHebdoWidget />
+
+            {/* Lettre journalière IA */}
+            <LettreJourWidget />
+
+            {/* Vidéo vie chère */}
+            <VideoVieChere />
+
+            {/* Démo application */}
+            <AppDemoShowcase />
+
+            {/* Partager ses victoires */}
+            <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+              <ShareVictory />
+            </Suspense>
+
+            {/* FAQ */}
+            <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={handleToggleFaq} />
+          </Suspense>
         </div>
-      </section>
+      )}
     </div>
   );
 };

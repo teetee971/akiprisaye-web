@@ -360,7 +360,7 @@ export default function SEOCategoryPage() {
   // Category not found
   if (!categoryInfo) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+      <div className="min-h-screen bg-slate-950 px-4 py-8">
         <SEOHead
           title="Catégorie non trouvée"
           description="La catégorie demandée n'existe pas."
@@ -387,7 +387,7 @@ export default function SEOCategoryPage() {
   }
   
   return (
-    <div className="min-h-screen bg-[#0a0a0f] px-4 py-8">
+    <div className="min-h-screen bg-slate-950 px-4 py-8">
       <SEOHead
         title={seoTitle}
         description={seoDescription}

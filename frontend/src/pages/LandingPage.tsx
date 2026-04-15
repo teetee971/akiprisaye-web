@@ -183,7 +183,7 @@ export default function LandingPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-slate-950 text-white">
       <SEOHead
         title="Trouvez le produit le moins cher en Guadeloupe et Martinique en 10 secondes"
         description="Comparez les prix entre Carrefour, E.Leclerc et Super U — trouvez l'offre la moins chère en 10 secondes. Gratuit, sans inscription."

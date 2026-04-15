@@ -168,3 +168,58 @@ self.addEventListener('fetch', (event) => {
   // 6) Le reste : network-first léger
   event.respondWith(networkFirst(request, CORE_CACHE, '/'));
 });
+
+// Deferred sync — flush offline price-report queue when connectivity is restored
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'akiprisaye-sync-queue') {
+    event.waitUntil(flushSyncQueue());
+  }
+});
+
+async function flushSyncQueue() {
+  const clients = await self.clients.matchAll();
+  clients.forEach((client) => {
+    client.postMessage({ type: 'SW_SYNC_START' });
+  });
+  // The actual flush is handled in pwaService.ts via syncOfflineQueue()
+  clients.forEach((client) => {
+    client.postMessage({ type: 'SW_SYNC_DONE' });
+  });
+}
+
+// Push notifications
+self.addEventListener('push', (event) => {
+  let data = { title: 'A KI PRI SA YÉ', body: 'Nouveau prix détecté !' };
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch {
+      data.body = event.data.text();
+    }
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      tag: 'akiprisaye-price-alert',
+      data: { url: '/' },
+    }),
+  );
+});
+
+// Notification click — focus or open the app
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = (event.notification.data && event.notification.data.url) || '/';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === targetUrl && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(targetUrl);
+    }),
+  );
+});

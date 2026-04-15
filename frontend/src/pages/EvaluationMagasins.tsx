@@ -1,11 +1,12 @@
 /**
  * EvaluationMagasins — Notation des magasins par les utilisateurs
  * Route : /evaluation-magasins
+ * Module 29 — Évaluation des magasins par les utilisateurs
  */
 
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Star, MapPin, ThumbsUp, ShoppingBag, Search, SlidersHorizontal, X, Filter } from 'lucide-react';
+import { Flag, Star, MapPin, ThumbsUp, ShoppingBag, Search, SlidersHorizontal, X, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -15,661 +16,14 @@ import {
   avgRatingFrom,
   type UserStoreRating,
 } from '../services/storeRatingsService';
+import {
+  type StoreRating,
+  EXAMPLE_RATINGS,
+  ALL_SECTORS,
+  ALL_TERRITORIES,
+  SECTOR_META,
+} from '../data/evaluationMagasinsData';
 
-// ── Données exemple ───────────────────────────────────────────────────────────
-
-interface StoreRating {
-  id: string;
-  name: string;
-  territory: string;
-  address: string;
-  sector: string;
-  sectorEmoji: string;
-  sectorColor: string;
-  storeImage: string;
-  ratings: { service: number; proprete: number; disponibilite: number };
-  totalReviews: number;
-  lastReview: string;
-}
-
-const EXAMPLE_RATINGS: StoreRating[] = [
-  {
-    id: '1',
-    name: 'Carrefour Désirade',
-    territory: 'Guadeloupe',
-    address: 'ZAC de Jarry, Baie-Mahault',
-    sector: 'Alimentaire',
-    sectorEmoji: '🛒',
-    sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.3, proprete: 4.1, disponibilite: 4.2 },
-    totalReviews: 142,
-    lastReview: '2024-12-10',
-  },
-  {
-    id: '2',
-    name: 'Champion Lamentin',
-    territory: 'Martinique',
-    address: 'Centre Commercial Galeria, Le Lamentin',
-    sector: 'Alimentaire',
-    sectorEmoji: '🛒',
-    sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.0, proprete: 3.9, disponibilite: 3.7 },
-    totalReviews: 89,
-    lastReview: '2024-12-08',
-  },
-  {
-    id: '3',
-    name: 'Leader Price Saint-Denis',
-    territory: 'La Réunion',
-    address: 'Rue du Maréchal Leclerc, Saint-Denis',
-    sector: 'Alimentaire',
-    sectorEmoji: '🛒',
-    sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.5, proprete: 3.8, disponibilite: 4.0 },
-    totalReviews: 61,
-    lastReview: '2024-12-05',
-  },
-  {
-    id: '4',
-    name: 'Monoprix Nouméa Centre',
-    territory: 'Nouvelle-Calédonie',
-    address: "Rue de l'Alma, Nouméa",
-    sector: 'Alimentaire',
-    sectorEmoji: '🛒',
-    sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.2, proprete: 4.3, disponibilite: 4.0 },
-    totalReviews: 134,
-    lastReview: '2024-11-25',
-  },
-  {
-    id: '5',
-    name: 'Pharmacie du Bourg',
-    territory: 'Guadeloupe',
-    address: 'Centre-ville, Sainte-Anne',
-    sector: 'Pharmacie',
-    sectorEmoji: '💊',
-    sectorColor: 'bg-green-100 text-green-800',
-    storeImage: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.5, proprete: 4.7, disponibilite: 3.9 },
-    totalReviews: 38,
-    lastReview: '2024-12-09',
-  },
-  {
-    id: '6',
-    name: 'Pharmacie Centrale Cayenne',
-    territory: 'Guyane',
-    address: 'Avenue du Général de Gaulle, Cayenne',
-    sector: 'Pharmacie',
-    sectorEmoji: '💊',
-    sectorColor: 'bg-green-100 text-green-800',
-    storeImage: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.9, proprete: 4.4, disponibilite: 3.7 },
-    totalReviews: 45,
-    lastReview: '2024-12-01',
-  },
-  {
-    id: '7',
-    name: 'Boulangerie Chez Ti-Marie',
-    territory: 'Martinique',
-    address: 'Rue Victor Hugo, Fort-de-France',
-    sector: 'Boulangerie',
-    sectorEmoji: '🥖',
-    sectorColor: 'bg-orange-100 text-orange-800',
-    storeImage: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.8, proprete: 4.6, disponibilite: 4.2 },
-    totalReviews: 75,
-    lastReview: '2024-12-11',
-  },
-  {
-    id: '8',
-    name: 'Boulangerie Maison Doucet',
-    territory: 'La Réunion',
-    address: 'Rue de la Paix, Saint-Pierre',
-    sector: 'Boulangerie',
-    sectorEmoji: '🥖',
-    sectorColor: 'bg-orange-100 text-orange-800',
-    storeImage: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.7, proprete: 4.5, disponibilite: 4.3 },
-    totalReviews: 83,
-    lastReview: '2024-11-30',
-  },
-  {
-    id: '9',
-    name: 'Boutique Orange Fort-de-France',
-    territory: 'Martinique',
-    address: 'Rue de la République, Fort-de-France',
-    sector: 'Téléphonie',
-    sectorEmoji: '📱',
-    sectorColor: 'bg-blue-100 text-blue-800',
-    storeImage: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.2, proprete: 4.0, disponibilite: 3.5 },
-    totalReviews: 54,
-    lastReview: '2024-12-07',
-  },
-  {
-    id: '10',
-    name: 'Leroy Merlin Jarry',
-    territory: 'Guadeloupe',
-    address: 'ZAC de Jarry, Baie-Mahault',
-    sector: 'Bricolage',
-    sectorEmoji: '🔨',
-    sectorColor: 'bg-gray-100 text-gray-700',
-    storeImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.6, proprete: 3.9, disponibilite: 4.1 },
-    totalReviews: 112,
-    lastReview: '2024-12-06',
-  },
-  {
-    id: '11',
-    name: 'Restaurant Le Balisier',
-    territory: 'Guadeloupe',
-    address: 'Bord de mer, Gosier',
-    sector: 'Restaurant',
-    sectorEmoji: '🍽️',
-    sectorColor: 'bg-red-100 text-red-800',
-    storeImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.6, proprete: 4.4, disponibilite: 4.7 },
-    totalReviews: 203,
-    lastReview: '2024-12-12',
-  },
-  {
-    id: '12',
-    name: 'Snack Chez Doudou',
-    territory: 'Martinique',
-    address: 'Rue des Artisans, Le François',
-    sector: 'Restaurant',
-    sectorEmoji: '🍽️',
-    sectorColor: 'bg-red-100 text-red-800',
-    storeImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.3, proprete: 4.1, disponibilite: 4.5 },
-    totalReviews: 91,
-    lastReview: '2024-12-09',
-  },
-  {
-    id: '13',
-    name: 'Marché Couvert de Saint-Paul',
-    territory: 'La Réunion',
-    address: 'Place du Marché, Saint-Paul',
-    sector: 'Marché',
-    sectorEmoji: '🌿',
-    sectorColor: 'bg-lime-100 text-lime-800',
-    storeImage: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.3, proprete: 3.7, disponibilite: 4.8 },
-    totalReviews: 167,
-    lastReview: '2024-12-10',
-  },
-  {
-    id: '14',
-    name: 'Marché de Matoury',
-    territory: 'Guyane',
-    address: 'Avenue de la Liberté, Matoury',
-    sector: 'Marché',
-    sectorEmoji: '🌿',
-    sectorColor: 'bg-lime-100 text-lime-800',
-    storeImage: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.0, proprete: 3.5, disponibilite: 4.6 },
-    totalReviews: 52,
-    lastReview: '2024-11-22',
-  },
-  {
-    id: '15',
-    name: 'Zara Galeria Lamentin',
-    territory: 'Martinique',
-    address: 'Centre Commercial Galeria, Le Lamentin',
-    sector: 'Mode',
-    sectorEmoji: '👗',
-    sectorColor: 'bg-purple-100 text-purple-800',
-    storeImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.9, proprete: 4.2, disponibilite: 3.6 },
-    totalReviews: 88,
-    lastReview: '2024-12-04',
-  },
-  {
-    id: '16',
-    name: 'Décathlon Basse-Terre',
-    territory: 'Guadeloupe',
-    address: 'Route Nationale, Basse-Terre',
-    sector: 'Sport',
-    sectorEmoji: '🏋️',
-    sectorColor: 'bg-indigo-100 text-indigo-800',
-    storeImage: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.1, proprete: 4.3, disponibilite: 4.0 },
-    totalReviews: 97,
-    lastReview: '2024-12-03',
-  },
-  {
-    id: '17',
-    name: 'Beauté Tropicale Schoelcher',
-    territory: 'Martinique',
-    address: 'Centre Commercial, Schoelcher',
-    sector: 'Beauté',
-    sectorEmoji: '💄',
-    sectorColor: 'bg-pink-100 text-pink-800',
-    storeImage: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.4, proprete: 4.6, disponibilite: 3.8 },
-    totalReviews: 56,
-    lastReview: '2024-11-28',
-  },
-  // ── Informatique / High-tech ──────────────────────────────────────────────
-  {
-    id: '18',
-    name: 'FNAC Pointe-à-Pitre',
-    territory: 'Guadeloupe',
-    address: 'Milenis, Baie-Mahault',
-    sector: 'Informatique',
-    sectorEmoji: '🖥️',
-    sectorColor: 'bg-sky-100 text-sky-800',
-    storeImage: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.7, proprete: 4.2, disponibilite: 3.9 },
-    totalReviews: 118,
-    lastReview: '2024-12-11',
-  },
-  {
-    id: '19',
-    name: 'Boulanger Saint-Denis',
-    territory: 'La Réunion',
-    address: 'Centre Commercial Cora, Saint-Denis',
-    sector: 'Informatique',
-    sectorEmoji: '🖥️',
-    sectorColor: 'bg-sky-100 text-sky-800',
-    storeImage: 'https://images.unsplash.com/photo-1593640408182-31c228f4b5af?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.9, proprete: 4.0, disponibilite: 4.1 },
-    totalReviews: 73,
-    lastReview: '2024-12-02',
-  },
-  // ── Coiffure / Salon ──────────────────────────────────────────────────────
-  {
-    id: '20',
-    name: 'Salon Kréol Beauté',
-    territory: 'Martinique',
-    address: 'Rue Lamartine, Fort-de-France',
-    sector: 'Coiffure',
-    sectorEmoji: '✂️',
-    sectorColor: 'bg-fuchsia-100 text-fuchsia-800',
-    storeImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.7, proprete: 4.8, disponibilite: 4.3 },
-    totalReviews: 64,
-    lastReview: '2024-12-12',
-  },
-  {
-    id: '21',
-    name: 'Coiffure Île en Fête',
-    territory: 'La Réunion',
-    address: 'Rue des Bons Enfants, Saint-Pierre',
-    sector: 'Coiffure',
-    sectorEmoji: '✂️',
-    sectorColor: 'bg-fuchsia-100 text-fuchsia-800',
-    storeImage: 'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.5, proprete: 4.6, disponibilite: 4.4 },
-    totalReviews: 47,
-    lastReview: '2024-12-05',
-  },
-  // ── Garage / Auto ─────────────────────────────────────────────────────────
-  {
-    id: '22',
-    name: 'Garage Sotramo',
-    territory: 'Guadeloupe',
-    address: 'Route de Versailles, Pointe-à-Pitre',
-    sector: 'Garage/Auto',
-    sectorEmoji: '🔧',
-    sectorColor: 'bg-zinc-100 text-zinc-800',
-    storeImage: 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.8, proprete: 3.5, disponibilite: 4.0 },
-    totalReviews: 81,
-    lastReview: '2024-11-30',
-  },
-  {
-    id: '23',
-    name: 'Renault Martinique Le Lamentin',
-    territory: 'Martinique',
-    address: 'Entrée de la ZI La Lézarde, Le Lamentin',
-    sector: 'Garage/Auto',
-    sectorEmoji: '🔧',
-    sectorColor: 'bg-zinc-100 text-zinc-800',
-    storeImage: 'https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.6, proprete: 3.9, disponibilite: 3.8 },
-    totalReviews: 59,
-    lastReview: '2024-11-20',
-  },
-  // ── Station-service ───────────────────────────────────────────────────────
-  {
-    id: '24',
-    name: 'Station Total Gosier',
-    territory: 'Guadeloupe',
-    address: 'Route de la Riviera, Gosier',
-    sector: 'Station-service',
-    sectorEmoji: '⛽',
-    sectorColor: 'bg-yellow-100 text-yellow-800',
-    storeImage: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.4, proprete: 3.2, disponibilite: 4.5 },
-    totalReviews: 96,
-    lastReview: '2024-12-10',
-  },
-  {
-    id: '25',
-    name: 'Station Shell Saint-Denis',
-    territory: 'La Réunion',
-    address: 'Boulevard Lancastel, Saint-Denis',
-    sector: 'Station-service',
-    sectorEmoji: '⛽',
-    sectorColor: 'bg-yellow-100 text-yellow-800',
-    storeImage: 'https://images.unsplash.com/photo-1611605645802-bf21ba17a44b?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.6, proprete: 3.4, disponibilite: 4.6 },
-    totalReviews: 74,
-    lastReview: '2024-11-25',
-  },
-  // ── Boucherie ─────────────────────────────────────────────────────────────
-  {
-    id: '26',
-    name: 'Boucherie Chez Mano',
-    territory: 'Guadeloupe',
-    address: 'Marché central, Pointe-à-Pitre',
-    sector: 'Boucherie',
-    sectorEmoji: '🥩',
-    sectorColor: 'bg-rose-100 text-rose-800',
-    storeImage: 'https://images.unsplash.com/photo-1588347818036-c1951ab9b8bc?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.6, proprete: 4.0, disponibilite: 4.4 },
-    totalReviews: 103,
-    lastReview: '2024-12-08',
-  },
-  {
-    id: '27',
-    name: 'Boucherie Antillaise Ti-Bœuf',
-    territory: 'Martinique',
-    address: 'Marché de Sainte-Marie, Sainte-Marie',
-    sector: 'Boucherie',
-    sectorEmoji: '🥩',
-    sectorColor: 'bg-rose-100 text-rose-800',
-    storeImage: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.4, proprete: 3.9, disponibilite: 4.2 },
-    totalReviews: 58,
-    lastReview: '2024-12-03',
-  },
-  // ── Poissonnerie ──────────────────────────────────────────────────────────
-  {
-    id: '28',
-    name: 'Poissonnerie Karibou',
-    territory: 'Guadeloupe',
-    address: 'Port de pêche, Pointe-à-Pitre',
-    sector: 'Poissonnerie',
-    sectorEmoji: '🐟',
-    sectorColor: 'bg-cyan-100 text-cyan-800',
-    storeImage: 'https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.5, proprete: 3.8, disponibilite: 4.7 },
-    totalReviews: 88,
-    lastReview: '2024-12-11',
-  },
-  {
-    id: '29',
-    name: 'Mareyeur du Port de Dégrad',
-    territory: 'Guyane',
-    address: 'Port de Dégrad-des-Cannes, Matoury',
-    sector: 'Poissonnerie',
-    sectorEmoji: '🐟',
-    sectorColor: 'bg-cyan-100 text-cyan-800',
-    storeImage: 'https://images.unsplash.com/photo-1510130387422-82bed34b37e9?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.2, proprete: 3.6, disponibilite: 4.5 },
-    totalReviews: 41,
-    lastReview: '2024-11-18',
-  },
-  // ── Optique ───────────────────────────────────────────────────────────────
-  {
-    id: '30',
-    name: 'Optique de la Pointe',
-    territory: 'Guadeloupe',
-    address: 'Rue Frébault, Pointe-à-Pitre',
-    sector: 'Optique',
-    sectorEmoji: '👓',
-    sectorColor: 'bg-teal-100 text-teal-800',
-    storeImage: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.6, proprete: 4.8, disponibilite: 4.1 },
-    totalReviews: 35,
-    lastReview: '2024-12-09',
-  },
-  // ── Bijouterie ────────────────────────────────────────────────────────────
-  {
-    id: '31',
-    name: 'Bijoux Créoles Saint-Denis',
-    territory: 'La Réunion',
-    address: 'Rue du Maréchal Leclerc, Saint-Denis',
-    sector: 'Bijouterie',
-    sectorEmoji: '💍',
-    sectorColor: 'bg-amber-100 text-yellow-800',
-    storeImage: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.7, proprete: 4.9, disponibilite: 3.8 },
-    totalReviews: 42,
-    lastReview: '2024-12-04',
-  },
-  {
-    id: '32',
-    name: 'Or & Soleil Fort-de-France',
-    territory: 'Martinique',
-    address: 'Rue Victor Sévère, Fort-de-France',
-    sector: 'Bijouterie',
-    sectorEmoji: '💍',
-    sectorColor: 'bg-amber-100 text-yellow-800',
-    storeImage: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.5, proprete: 4.8, disponibilite: 3.7 },
-    totalReviews: 29,
-    lastReview: '2024-11-26',
-  },
-  // ── Librairie ─────────────────────────────────────────────────────────────
-  {
-    id: '33',
-    name: 'Librairie Caraïbes',
-    territory: 'Martinique',
-    address: 'Rue Lamartine, Fort-de-France',
-    sector: 'Librairie',
-    sectorEmoji: '📚',
-    sectorColor: 'bg-emerald-100 text-emerald-800',
-    storeImage: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.8, proprete: 4.7, disponibilite: 4.0 },
-    totalReviews: 67,
-    lastReview: '2024-12-07',
-  },
-  // ── Fleuriste ─────────────────────────────────────────────────────────────
-  {
-    id: '34',
-    name: 'Fleurs des Îles Cayenne',
-    territory: 'Guyane',
-    address: 'Rue de la Liberté, Cayenne',
-    sector: 'Fleuriste',
-    sectorEmoji: '🌸',
-    sectorColor: 'bg-pink-100 text-pink-700',
-    storeImage: 'https://images.unsplash.com/photo-1487530811015-780c8a5c0b82?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.9, proprete: 4.8, disponibilite: 4.1 },
-    totalReviews: 33,
-    lastReview: '2024-12-06',
-  },
-  // ── Vétérinaire ───────────────────────────────────────────────────────────
-  {
-    id: '35',
-    name: 'Clinique Vétérinaire Tropicale',
-    territory: 'Martinique',
-    address: 'Rue des Flamboyants, Fort-de-France',
-    sector: 'Vétérinaire',
-    sectorEmoji: '🐾',
-    sectorColor: 'bg-green-100 text-green-700',
-    storeImage: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.7, proprete: 4.8, disponibilite: 3.9 },
-    totalReviews: 51,
-    lastReview: '2024-12-01',
-  },
-  // ── Pressing / Laverie ────────────────────────────────────────────────────
-  {
-    id: '36',
-    name: 'Pressing Kléo',
-    territory: 'Guadeloupe',
-    address: 'Rue de la Liberté, Pointe-à-Pitre',
-    sector: 'Pressing',
-    sectorEmoji: '👔',
-    sectorColor: 'bg-violet-100 text-violet-800',
-    storeImage: 'https://images.unsplash.com/photo-1517677129300-07b130802f46?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.3, proprete: 4.5, disponibilite: 4.2 },
-    totalReviews: 28,
-    lastReview: '2024-11-29',
-  },
-  // ── Glacier / Confiserie ──────────────────────────────────────────────────
-  {
-    id: '37',
-    name: 'Glacier Soleil d\'Or',
-    territory: 'La Réunion',
-    address: 'Front de mer, Saint-Gilles-les-Bains',
-    sector: 'Glacier',
-    sectorEmoji: '🍦',
-    sectorColor: 'bg-sky-100 text-sky-700',
-    storeImage: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.8, proprete: 4.6, disponibilite: 4.5 },
-    totalReviews: 129,
-    lastReview: '2024-12-12',
-  },
-  {
-    id: '38',
-    name: 'Sorbet Péyi Chez Clarisse',
-    territory: 'Guadeloupe',
-    address: 'Front de mer, Sainte-Anne',
-    sector: 'Glacier',
-    sectorEmoji: '🍦',
-    sectorColor: 'bg-sky-100 text-sky-700',
-    storeImage: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.9, proprete: 4.7, disponibilite: 4.4 },
-    totalReviews: 94,
-    lastReview: '2024-12-10',
-  },
-  // ── Hôtel ─────────────────────────────────────────────────────────────────
-  {
-    id: '39',
-    name: 'Hôtel La Créole Beach',
-    territory: 'Guadeloupe',
-    address: 'Pointe de la Verdure, Gosier',
-    sector: 'Hôtel',
-    sectorEmoji: '🏨',
-    sectorColor: 'bg-blue-100 text-blue-700',
-    storeImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.3, proprete: 4.5, disponibilite: 4.4 },
-    totalReviews: 312,
-    lastReview: '2024-12-11',
-  },
-  {
-    id: '40',
-    name: 'Hôtel Bakoua Martinique',
-    territory: 'Martinique',
-    address: 'Pointe du Bout, Les Trois-Îlets',
-    sector: 'Hôtel',
-    sectorEmoji: '🏨',
-    sectorColor: 'bg-blue-100 text-blue-700',
-    storeImage: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.5, proprete: 4.6, disponibilite: 4.3 },
-    totalReviews: 278,
-    lastReview: '2024-12-09',
-  },
-  // ── Quincaillerie ─────────────────────────────────────────────────────────
-  {
-    id: '41',
-    name: 'Quincaillerie Deyé Morne',
-    territory: 'Guadeloupe',
-    address: 'Route de Capesterre, Capesterre-Belle-Eau',
-    sector: 'Quincaillerie',
-    sectorEmoji: '🪛',
-    sectorColor: 'bg-stone-100 text-stone-700',
-    storeImage: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.0, proprete: 3.8, disponibilite: 4.4 },
-    totalReviews: 44,
-    lastReview: '2024-11-27',
-  },
-  // ── Épicerie fine / Bio ───────────────────────────────────────────────────
-  {
-    id: '42',
-    name: 'Bio & Créole Saint-Denis',
-    territory: 'La Réunion',
-    address: 'Rue du Commerce, Saint-Denis',
-    sector: 'Épicerie bio',
-    sectorEmoji: '🌱',
-    sectorColor: 'bg-lime-100 text-lime-700',
-    storeImage: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.6, proprete: 4.7, disponibilite: 3.9 },
-    totalReviews: 69,
-    lastReview: '2024-12-08',
-  },
-  {
-    id: '43',
-    name: 'Épicerie Fine des Antilles',
-    territory: 'Martinique',
-    address: 'Rue Victor Sévère, Fort-de-France',
-    sector: 'Épicerie bio',
-    sectorEmoji: '🌱',
-    sectorColor: 'bg-lime-100 text-lime-700',
-    storeImage: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 4.5, proprete: 4.6, disponibilite: 3.8 },
-    totalReviews: 53,
-    lastReview: '2024-12-03',
-  },
-  // ── Banque ────────────────────────────────────────────────────────────────
-  {
-    id: '44',
-    name: 'Agence BNP Paribas Pointe-à-Pitre',
-    territory: 'Guadeloupe',
-    address: 'Place de la Victoire, Pointe-à-Pitre',
-    sector: 'Banque',
-    sectorEmoji: '🏦',
-    sectorColor: 'bg-slate-100 text-slate-700',
-    storeImage: 'https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 2.9, proprete: 4.1, disponibilite: 3.2 },
-    totalReviews: 147,
-    lastReview: '2024-12-06',
-  },
-  {
-    id: '45',
-    name: 'Crédit Agricole Martinique',
-    territory: 'Martinique',
-    address: 'Rue de la Liberté, Fort-de-France',
-    sector: 'Banque',
-    sectorEmoji: '🏦',
-    sectorColor: 'bg-slate-100 text-slate-700',
-    storeImage: 'https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?auto=format&fm=webp&fit=crop&w=800&q=80',
-    ratings: { service: 3.1, proprete: 4.2, disponibilite: 3.0 },
-    totalReviews: 189,
-    lastReview: '2024-12-04',
-  },
-];
-
-const ALL_SECTORS = ['Tous', ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.sector))).sort()];
-const ALL_TERRITORIES = ['Tous', ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.territory))).sort()];
-
-// Mapping sector → emoji + color (used by the form)
-const SECTOR_META: Record<string, { emoji: string; color: string }> = {
-  Alimentaire: { emoji: '🛒', color: 'bg-amber-100 text-amber-800' },
-  Banque: { emoji: '🏦', color: 'bg-slate-100 text-slate-700' },
-  Beauté: { emoji: '💄', color: 'bg-pink-100 text-pink-800' },
-  Bijouterie: { emoji: '💍', color: 'bg-amber-100 text-yellow-800' },
-  Boucherie: { emoji: '🥩', color: 'bg-rose-100 text-rose-800' },
-  Boulangerie: { emoji: '🥖', color: 'bg-orange-100 text-orange-800' },
-  Bricolage: { emoji: '🔨', color: 'bg-gray-100 text-gray-700' },
-  Coiffure: { emoji: '✂️', color: 'bg-fuchsia-100 text-fuchsia-800' },
-  Fleuriste: { emoji: '🌸', color: 'bg-pink-100 text-pink-700' },
-  Glacier: { emoji: '🍦', color: 'bg-sky-100 text-sky-700' },
-  'Garage/Auto': { emoji: '🔧', color: 'bg-zinc-100 text-zinc-800' },
-  Hôtel: { emoji: '🏨', color: 'bg-blue-100 text-blue-700' },
-  Informatique: { emoji: '🖥️', color: 'bg-sky-100 text-sky-800' },
-  Librairie: { emoji: '📚', color: 'bg-emerald-100 text-emerald-800' },
-  Marché: { emoji: '🌿', color: 'bg-lime-100 text-lime-800' },
-  Mode: { emoji: '👗', color: 'bg-purple-100 text-purple-800' },
-  Optique: { emoji: '👓', color: 'bg-teal-100 text-teal-800' },
-  Pharmacie: { emoji: '💊', color: 'bg-green-100 text-green-800' },
-  Poissonnerie: { emoji: '🐟', color: 'bg-cyan-100 text-cyan-800' },
-  Pressing: { emoji: '👔', color: 'bg-violet-100 text-violet-800' },
-  Quincaillerie: { emoji: '🪛', color: 'bg-stone-100 text-stone-700' },
-  Restaurant: { emoji: '🍽️', color: 'bg-red-100 text-red-800' },
-  Sport: { emoji: '🏋️', color: 'bg-indigo-100 text-indigo-800' },
-  'Station-service': { emoji: '⛽', color: 'bg-yellow-100 text-yellow-800' },
-  Téléphonie: { emoji: '📱', color: 'bg-blue-100 text-blue-800' },
-  Vétérinaire: { emoji: '🐾', color: 'bg-green-100 text-green-700' },
-  'Épicerie bio': { emoji: '🌱', color: 'bg-lime-100 text-lime-700' },
-};
 
 function StarRating({ value }: { value: number }) {
   return (
@@ -694,6 +48,7 @@ export default function EvaluationMagasins() {
   const [selectedTerritory, setSelectedTerritory] = useState('Tous');
   const [searchQuery, setSearchQuery] = useState('');
   const [userRatings, setUserRatings] = useState<UserStoreRating[]>([]);
+  const [reportedStores, setReportedStores] = useState<Set<string>>(new Set());
   const [form, setForm] = useState({
     storeName: '',
     territory: 'Guadeloupe',
@@ -725,6 +80,10 @@ export default function EvaluationMagasins() {
     setRatingSubmitted(true);
     setShowForm(false);
     setForm({ storeName: '', territory: 'Guadeloupe', sector: 'Alimentaire', service: 0, proprete: 0, disponibilite: 0, comment: '' });
+  };
+
+  const handleReport = (storeId: string) => {
+    setReportedStores((prev) => new Set([...prev, storeId]));
   };
 
   const filteredBase = EXAMPLE_RATINGS.filter((s) => {
@@ -1054,6 +413,18 @@ export default function EvaluationMagasins() {
                           <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                           <span className="text-xs font-bold text-gray-700">{avgRatingFrom(u.ratings).toFixed(1)} / 5</span>
                         </div>
+                        {reportedStores.has(`user-${u.storeName}`) ? (
+                          <span className="text-xs text-gray-400 italic">✓ Signalé</span>
+                        ) : (
+                          <button
+                            onClick={() => handleReport(`user-${u.storeName}`)}
+                            aria-label={`Signaler l'avis pour ${u.storeName}`}
+                            className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            <Flag className="w-3 h-3" />
+                            Signaler
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1111,6 +482,21 @@ export default function EvaluationMagasins() {
                           <span className="text-gray-600">Disponibilité</span>
                           <StarRating value={store.ratings.disponibilite} />
                         </div>
+                      </div>
+                      {/* Modération */}
+                      <div className="mt-3 pt-3 border-t border-gray-100 flex justify-end">
+                        {reportedStores.has(store.id) ? (
+                          <span className="text-xs text-gray-400 italic">✓ Signalement transmis</span>
+                        ) : (
+                          <button
+                            onClick={() => handleReport(store.id)}
+                            aria-label={`Signaler l'avis pour ${store.name}`}
+                            className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-red-500 transition-colors"
+                          >
+                            <Flag className="w-3.5 h-3.5" />
+                            Signaler cet avis
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

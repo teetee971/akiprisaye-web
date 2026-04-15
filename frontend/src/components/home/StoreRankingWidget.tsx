@@ -229,10 +229,12 @@ function CrossTerritoryView() {
                   <div
                     style={{
                       height: '100%',
-                      width: `${widthPct}%`,
+                      width: '100%',
                       background: color,
                       borderRadius: 4,
-                      transition: 'width 0.4s ease',
+                      transformOrigin: 'left center',
+                      transform: `scaleX(${widthPct / 100})`,
+                      transition: 'transform 0.4s ease',
                     }}
                   />
                 </div>
@@ -490,10 +492,12 @@ export default function StoreRankingWidget() {
                       <div
                         style={{
                           height: '100%',
-                          width: `${widthPct}%`,
+                          width: '100%',
                           background: color,
                           borderRadius: 4,
-                          transition: 'width 0.4s ease',
+                          transformOrigin: 'left center',
+                          transform: `scaleX(${widthPct / 100})`,
+                          transition: 'transform 0.4s ease',
                         }}
                       />
                     </div>

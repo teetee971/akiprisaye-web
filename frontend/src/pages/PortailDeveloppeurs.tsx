@@ -112,7 +112,7 @@ export default function PortailDeveloppeurs() {
       const body = encodeURIComponent(
         `Nom : ${form.nom}\nEmail : ${form.email}\nPlan souhaité : ${form.plan}\nProjet : ${form.projet || '(non renseigné)'}\n\nCas d'usage :\n${form.useCase}`,
       );
-      window.location.href = `mailto:contact@akiprisaye.fr?subject=${subject}&body=${body}`;
+      window.open(`mailto:contact@akiprisaye.fr?subject=${subject}&body=${body}`);
     }
     setSubmitting(false);
     setSubmitted(true);

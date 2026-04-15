@@ -10,7 +10,7 @@
  *  4. Renders the creator dashboard when the user has the "admin" role (isAdmin=true)
  */
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 (globalThis as any).revenueAnalytics = { track: vi.fn(), init: vi.fn(), getStats: vi.fn(() => ({})) };
@@ -171,7 +171,7 @@ describe('EspaceCreateur creator guard', () => {
     expect(screen.getByTestId('home-page')).toBeTruthy();
   });
 
-  it('renders the creator dashboard when the user has the "creator" role', () => {
+  it('renders the creator dashboard when the user has the "creator" role', async () => {
     const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
     authState = makeAuthMock({
       loading: false,
@@ -191,7 +191,8 @@ describe('EspaceCreateur creator guard', () => {
     // The creator dashboard heading is rendered — no redirect occurred
     expect(screen.queryByTestId('home-page')).toBeNull();
     expect(screen.getByRole('heading', { name: /Espace Créateur v/i })).toBeTruthy();
-    expect(screen.getByRole('heading', { name: /Ghostwriter Social/i })).toBeTruthy();
+    // Ghostwriter Social is in a lazy sub-component — wait for it to resolve
+    await waitFor(() => expect(screen.getByRole('heading', { name: /Ghostwriter Social/i })).toBeTruthy());
   });
 
   it('renders the creator dashboard when the user has the "admin" role (isAdmin=true)', () => {
@@ -217,7 +218,7 @@ describe('EspaceCreateur creator guard', () => {
     expect(screen.getByRole('heading', { name: /Espace Créateur v/i })).toBeTruthy();
   });
 
-  it('shows admin tools as locked for creator users', () => {
+  it('shows admin tools as locked for creator users', async () => {
     const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
     authState = makeAuthMock({
       loading: false,
@@ -234,11 +235,12 @@ describe('EspaceCreateur creator guard', () => {
 
     renderCreateur();
 
-    expect(screen.getAllByText(/Admin requis/i).length).toBeGreaterThan(0);
+    // Admin tools are in a lazy sub-component — wait for them to resolve
+    await waitFor(() => expect(screen.getAllByText(/Admin requis/i).length).toBeGreaterThan(0));
     expect(screen.getByText(/Admin Global/i)).toBeTruthy();
   });
 
-  it('renders CPC revenue tracking section for creator users', () => {
+  it('renders CPC revenue tracking section for creator users', async () => {
     const fakeUser = { uid: 'creator-uid', email: 'creator@example.com', displayName: 'Créateur', photoURL: null };
     authState = makeAuthMock({
       loading: false,
@@ -255,7 +257,10 @@ describe('EspaceCreateur creator guard', () => {
 
     renderCreateur();
 
-    expect(screen.getByRole('heading', { name: /Trackers d'Engagement CPC/i })).toBeTruthy();
+    // CPC section is in a lazy sub-component — wait for it to resolve
+    await waitFor(() =>
+      expect(screen.getByRole('heading', { name: /Trackers d'Engagement CPC/i })).toBeTruthy(),
+    );
     expect(screen.getByText(/Revenu 7j/i)).toBeTruthy();
   });
 

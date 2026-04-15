@@ -14,7 +14,7 @@ export default function ScannerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex flex-col items-center justify-center gap-8 px-4 py-8">
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-8 px-4 py-8">
       <ScannerPreview barcode={barcode || undefined} />
       <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
         <input

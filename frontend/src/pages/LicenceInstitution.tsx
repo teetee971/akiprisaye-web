@@ -5,6 +5,7 @@
  * Civic Glass design - Professional, transparent, institutional
  */
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { GlassContainer } from '@/components/ui/GlassContainer';
 import { GlassCard } from '@/components/ui/glass-card';
@@ -16,6 +17,7 @@ import { HeroImage } from '@/components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 
 export default function LicenceInstitution() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <GlassContainer className="max-w-6xl mx-auto p-8">
@@ -313,7 +315,7 @@ export default function LicenceInstitution() {
               <CivicButton
                 variant="primary"
                 className="w-full"
-                onClick={() => window.location.href = '/contact-collectivites'}
+                onClick={() => navigate('/contact-collectivites')}
               >
                 Contacter notre équipe
               </CivicButton>

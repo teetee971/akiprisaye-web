@@ -1,6 +1,6 @@
  
 // src/services/catalogueService.ts
-// Catalogue service: fetch and validate product catalogue data
+// Catalogue service: small scaffolding for roadmap
 
 export type Product = {
   id: string
@@ -13,28 +13,49 @@ export type Product = {
 
 export type CatalogueItemRaw = Product
 
+// In-memory cache to avoid redundant network fetches within a session
+const _cache: Map<string, Product[]> = new Map()
+
 /**
- * Fetch catalogue from the static JSON asset served at /data/catalogue.json.
- * Falls back to an empty array on network or parse errors so callers degrade gracefully.
+ * Fetch catalogue from an HTTP source or the bundled data JSON.
+ * Falls back to empty array on any network / parse error.
  */
 export async function fetchCatalogue(source?: string): Promise<Product[]> {
-  const url = source ?? '/data/catalogue.json';
+  const url = source ?? '/data/catalogue-prices.json'
+
+  const cached = _cache.get(url)
+  if (cached) return cached
+
   try {
-    const response = await fetch(url);
+    const response = await fetch(url)
     if (!response.ok) {
-      console.warn('[catalogueService] HTTP error fetching catalogue', response.status, url);
-      return [];
+      console.warn('[catalogueService] fetchCatalogue: non-OK response', response.status, url)
+      return []
     }
-    const data: unknown = await response.json();
-    if (!Array.isArray(data)) {
-      console.warn('[catalogueService] Expected array, got:', typeof data);
-      return [];
+
+    const raw: unknown = await response.json()
+
+    // Accept both a direct array or an object wrapping { products: [] }
+    let records: Product[] = []
+    if (Array.isArray(raw)) {
+      records = raw as Product[]
+    } else if (raw && typeof raw === 'object' && Array.isArray((raw as Record<string, unknown>).products)) {
+      records = (raw as Record<string, unknown>).products as Product[]
+    } else if (raw && typeof raw === 'object' && Array.isArray((raw as Record<string, unknown>).items)) {
+      records = (raw as Record<string, unknown>).items as Product[]
     }
-    return data as Product[];
+
+    _cache.set(url, records)
+    return records
   } catch (error) {
-    console.error('[catalogueService] Failed to fetch catalogue:', error);
-    return [];
+    console.warn('[catalogueService] fetchCatalogue error', error)
+    return []
   }
+}
+
+/** Clear the in-memory session cache (useful for tests or forced refresh). */
+export function clearCatalogueCache(): void {
+  _cache.clear()
 }
 
 // Basic validation of catalogue entries
@@ -60,6 +81,7 @@ export function indexProducts(records: Product[]): Record<string, Product> {
 
 export default {
   fetchCatalogue,
+  clearCatalogueCache,
   validateCatalogue,
   indexProducts,
 }

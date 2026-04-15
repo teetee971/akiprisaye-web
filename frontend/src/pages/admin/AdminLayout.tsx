@@ -17,20 +17,22 @@ import {
   Users,
   Globe,
   ReceiptText,
-  BookOpen
+  BookOpen,
+  Bot,
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard',   href: '/admin',          icon: LayoutDashboard },
-  { name: 'Utilisateurs',href: '/admin/users',     icon: Users },
-  { name: 'Audience',    href: '/admin/audience',  icon: Globe },
-  { name: 'Enseignes',   href: '/admin/stores',    icon: Store },
-  { name: 'Articles',    href: '/admin/products',  icon: Package },
-  { name: 'Import',      href: '/admin/import',    icon: Upload },
-  { name: 'Tickets',     href: '/admin/ticket-import', icon: ReceiptText },
-  { name: 'Catalogues',  href: '/admin/catalogs', icon: BookOpen },
-  { name: 'Modération',  href: '/admin/moderation',icon: Flag },
-  { name: 'Statistiques',href: '/admin/stats',     icon: BarChart3 },
+  { name: 'Dashboard',      href: '/admin',             icon: LayoutDashboard },
+  { name: 'Automatisation', href: '/admin/automation',  icon: Bot },
+  { name: 'Utilisateurs',   href: '/admin/users',       icon: Users },
+  { name: 'Audience',       href: '/admin/audience',    icon: Globe },
+  { name: 'Enseignes',      href: '/admin/stores',      icon: Store },
+  { name: 'Articles',       href: '/admin/products',    icon: Package },
+  { name: 'Import',         href: '/admin/import',      icon: Upload },
+  { name: 'Tickets',        href: '/admin/ticket-import', icon: ReceiptText },
+  { name: 'Catalogues',     href: '/admin/catalogs',    icon: BookOpen },
+  { name: 'Modération',     href: '/admin/moderation',  icon: Flag },
+  { name: 'Statistiques',   href: '/admin/stats',       icon: BarChart3 },
 ];
 
 export default function AdminLayout() {

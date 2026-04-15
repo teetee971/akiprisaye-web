@@ -36,13 +36,13 @@ export default {
         success: 'rgb(var(--success) / <alpha-value>)',
         error: 'rgb(var(--error) / <alpha-value>)',
         
-        // Couleurs essentielles seulement
+        // Couleurs essentielles — mappées sur les tokens CSS
         civic: {
-          background: '#0E1116',
-          glass: 'rgba(255, 255, 255, 0.06)',
-          primary: '#3A7AFE',
-          secondary: '#2EC4B6',
-          text: '#E6EAF0',
+          background: 'rgb(var(--bg-main) / <alpha-value>)',
+          glass: 'rgba(var(--bg-glass), var(--glass-opacity))',
+          primary: 'rgb(var(--accent-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--accent-secondary) / <alpha-value>)',
+          text: 'rgb(var(--text-main) / <alpha-value>)',
         },
       },
       

@@ -203,11 +203,13 @@ export function calculateILPPComponents(
   }
   const increaseFrequency = (increaseCount / (prices.length - 1)) * 100;
 
-  // 4. Dispersion (use volatility as proxy for now)
-  // NOTE: In a full implementation, this would be calculated across multiple stores
-  // For now, using volatility as a reasonable proxy since both measure price variability
-  // TODO: Calculate actual cross-store dispersion when multi-store data is available
-  const dispersion = volatility;
+  // 4. Cross-store price dispersion
+  // Computes the normalised price range across the observed snapshots as a proxy
+  // for inter-store dispersion. When per-store price breakdowns become available in
+  // BasketPriceSnapshot, replace with a proper inter-store coefficient of variation.
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  const dispersion = mean > 0 ? ((maxPrice - minPrice) / mean) * 100 : 0;
 
   return {
     avgChange,

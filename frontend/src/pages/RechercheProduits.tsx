@@ -1,7 +1,7 @@
  
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import FavoritesPanel from '../components/search/FavoritesPanel';
 import SearchHistoryPanel from '../components/search/SearchHistoryPanel';
 import { useFavorites, type FavoriteItem } from '../hooks/useFavorites';
@@ -9,7 +9,7 @@ import { useSearchHistory, type SearchHistoryEntry, type SearchHistoryType } fro
 import { searchProductPrices } from '../services/priceSearch/priceSearch.service';
 import type { PriceSearchResult, TerritoryCode } from '../services/priceSearch/price.types';
 import type { ScanData, ScanHubResult } from '../types/scanHubResult';
-import type { ProductCard } from '../types/productCard';
+import type { ProductCard, ProductNutriments } from '../types/productCard';
 import { TipsPanel } from '../features/tips/ui/TipsPanel';
 import type { TipContext } from '../features/tips';
 import { getProductImageFallback } from '../utils/productImageFallback';
@@ -31,6 +31,8 @@ const TERRITORIES: { code: TerritoryCode; label: string; flag: string }[] = [
   { code: 'bl', label: 'St-Barth', flag: '⛵' },
   { code: 'mf', label: 'St-Martin', flag: '🌺' },
 ];
+
+const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
 
 const POPULAR_SEARCHES: { label: string; query?: string; ean?: string; emoji: string }[] = [
   { label: 'Coca-Cola', query: 'Coca-Cola', emoji: '🥤' },
@@ -55,6 +57,32 @@ const buildSearchLabel = (queryValue: string, barcodeValue: string) => {
     return `EAN ${barcodeValue}`;
   }
   return queryValue || 'Recherche';
+};
+
+const NOVA_META: Record<number, { label: string; color: string; desc: string }> = {
+  1: { label: 'NOVA 1', color: 'bg-green-600 text-white', desc: 'Aliment non transformé' },
+  2: { label: 'NOVA 2', color: 'bg-lime-500 text-black', desc: 'Ingrédient culinaire transformé' },
+  3: { label: 'NOVA 3', color: 'bg-orange-500 text-white', desc: 'Aliment transformé' },
+  4: { label: 'NOVA 4', color: 'bg-red-600 text-white', desc: 'Ultra-transformé' },
+};
+
+const shareProduct = async (title: string, barcode?: string) => {
+  const url = barcode
+    ? `${window.location.origin}${window.location.pathname}?ean=${encodeURIComponent(barcode)}`
+    : window.location.href;
+  if ('share' in navigator && typeof navigator.share === 'function') {
+    try {
+      await (navigator as Navigator & { share: (data: object) => Promise<void> }).share({ title: `AkiPriSaYé — ${title}`, url });
+    } catch {
+      // user cancelled or browser denied — silent
+    }
+  } else {
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      // clipboard unavailable
+    }
+  }
 };
 
 const buildProductFavoriteId = (params: {
@@ -216,7 +244,6 @@ export function PartialPriceState({
   onReturnToHub: () => void;
 }) {
   const interval = result.prices?.[0];
-  const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
   const confidence = result.confidence ?? 0;
   const observations = interval?.priceCount ?? 0;
   const territoryLabel = getTerritoryLabel(result.territory);
@@ -317,6 +344,9 @@ export function PriceResults({
   onFavoriteToast?: (message: string) => void;
 }) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const [ingredientsOpen, setIngredientsOpen] = useState(false);
+  const [nutritionOpen, setNutritionOpen] = useState(false);
+  const [lightboxImg, setLightboxImg] = useState<{ url: string; alt: string } | null>(null);
   const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
 
   const interval = result.prices?.[0];
@@ -333,6 +363,8 @@ export function PriceResults({
     : result.productName || 'Produit favori';
   const favoriteActive = isFavorite(favoriteId);
   const [productCard, setProductCard] = useState<ProductCard | null>(null);
+  // Resolved image URL from product-image worker (text query fallback)
+  const [resolvedImageUrl, setResolvedImageUrl] = useState<string | null>(null);
 
   // Seed from pre-loaded observations (from seedProvider / priceSearch); API call supplements
   const [apiPrices, setApiPrices] = useState<ApiPriceObservation[]>(
@@ -346,7 +378,10 @@ export function PriceResults({
     }
 
     const barcode = searchBarcode?.trim();
-    if (!barcode) {
+    const textQuery = searchQuery?.trim();
+
+    // Nothing to look up — clear card and bail out
+    if (!barcode && !textQuery) {
       setProductCard(null);
       return;
     }
@@ -354,23 +389,36 @@ export function PriceResults({
     const controller = new AbortController();
     const territory = (result.territory ?? 'gp').trim();
 
+    // SWR: serve stale card from sessionStorage immediately while fresh data loads
+    const cardCacheKey = barcode
+      ? `product-card:ean:${barcode}`
+      : `product-card:q:${textQuery!.toLowerCase()}`;
+    try {
+      const stale = sessionStorage.getItem(cardCacheKey);
+      if (stale) setProductCard(JSON.parse(stale) as ProductCard);
+    } catch { /* ignore */ }
+
     const loadProductCard = async () => {
       try {
-        const response = await fetch(`/api/product?barcode=${encodeURIComponent(barcode)}`, {
-          signal: controller.signal,
-        });
-        if (!response.ok) {
-          setProductCard(null);
-          return;
-        }
+        const url = barcode
+          ? `/api/product?barcode=${encodeURIComponent(barcode)}`
+          : `/api/product?q=${encodeURIComponent(textQuery!)}`;
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) return;
         const payload = (await response.json()) as { product?: ProductCard };
-        setProductCard(payload.product ?? null);
+        const card = payload.product ?? null;
+        setProductCard(card);
+        if (card) {
+          try { sessionStorage.setItem(cardCacheKey, JSON.stringify(card)); } catch { /* ignore */ }
+        }
       } catch {
-        setProductCard(null);
+        // Keep stale card if already shown; clear only for barcode searches where null is explicit
+        if (barcode) setProductCard(null);
       }
     };
 
     const loadPrices = async () => {
+      if (!barcode) return; // price observations require a barcode
       try {
         const response = await fetch(
           `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
@@ -387,12 +435,39 @@ export function PriceResults({
       }
     };
 
-    void Promise.all([loadProductCard(), loadPrices()]);
+    // Fetch a real product image via the product-image worker when a text query is used
+    const loadProductImage = async () => {
+      const label = textQuery || result.productName;
+      if (!label) return;
+      const imgCacheKey = `product-img:${label.toLowerCase()}`;
+      try {
+        const cached = sessionStorage.getItem(imgCacheKey);
+        if (cached) { setResolvedImageUrl(cached); return; }
+      } catch { /* ignore */ }
+      try {
+        const params = new URLSearchParams({ q: label, lang: 'fr', limit: '1' });
+        const resp = await fetch(`/api/product-image?${params.toString()}`, { signal: controller.signal });
+        if (!resp.ok) return;
+        const data = (await resp.json()) as { imageUrl?: string | null };
+        if (data.imageUrl) {
+          setResolvedImageUrl(data.imageUrl);
+          try { sessionStorage.setItem(imgCacheKey, data.imageUrl); } catch { /* ignore */ }
+        }
+      } catch { /* non-critical */ }
+    };
+
+    void Promise.all([loadProductCard(), loadPrices(), loadProductImage()]);
     return () => controller.abort();
-  }, [result.observations, result.territory, searchBarcode]);
+  }, [result.observations, result.productName, result.territory, searchBarcode, searchQuery]);
 
   const productTitle = productCard?.title || result.productName || 'Produit analysé';
-  const productImages = productCard?.images ?? [];
+  // Use card images when available; fall back to image resolved from the product-image worker
+  const productImages: ProductCard['images'] =
+    productCard?.images && productCard.images.length > 0
+      ? productCard.images
+      : resolvedImageUrl
+        ? [{ type: 'front' as const, url: resolvedImageUrl }]
+        : [];
 
   const rawPricedObservations = useMemo(
     () =>
@@ -579,28 +654,229 @@ export function PriceResults({
           </div>
         </div>
 
+        {/* Brand / categories metadata (only when productCard is loaded from barcode) */}
+        {(productCard?.brand || (productCard?.categories && productCard.categories.length > 0)) && (
+          <div className="flex flex-wrap gap-2 text-xs">
+            {productCard?.brand && (
+              <span className="bg-slate-800 border border-slate-700 rounded-full px-3 py-1 text-slate-300">
+                🏷️ {productCard.brand}
+              </span>
+            )}
+            {productCard?.quantity && (
+              <span className="bg-slate-800 border border-slate-700 rounded-full px-3 py-1 text-slate-300">
+                ⚖️ {productCard.quantity}
+              </span>
+            )}
+            {productCard?.categories?.slice(0, 3).map((cat) => (
+              <span key={cat} className="bg-indigo-900/40 border border-indigo-700/40 rounded-full px-3 py-1 text-indigo-300">
+                {cat}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Nutri-Score + Éco-Score + NOVA badges + Share */}
+        {(productCard?.nutriscore || productCard?.ecoscore || productCard?.novaGroup) && (
+          <div className="flex flex-wrap gap-2 items-center">
+            {productCard?.nutriscore && (() => {
+              const g = productCard.nutriscore.toUpperCase();
+              const colorMap: Record<string, string> = {
+                A: 'bg-green-500 text-white',
+                B: 'bg-lime-400 text-black',
+                C: 'bg-yellow-400 text-black',
+                D: 'bg-orange-500 text-white',
+                E: 'bg-red-600 text-white',
+              };
+              const cls = colorMap[g] ?? 'bg-slate-600 text-white';
+              return (
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cls}`} title="Nutri-Score">
+                  🥗 Nutri-Score <strong>{g}</strong>
+                </span>
+              );
+            })()}
+            {productCard?.ecoscore && (() => {
+              const g = productCard.ecoscore.toUpperCase();
+              const colorMap: Record<string, string> = {
+                A: 'bg-green-700 text-white',
+                B: 'bg-green-500 text-white',
+                C: 'bg-yellow-500 text-black',
+                D: 'bg-orange-600 text-white',
+                E: 'bg-red-700 text-white',
+              };
+              const cls = colorMap[g] ?? 'bg-slate-600 text-white';
+              return (
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cls}`} title="Éco-Score">
+                  🌿 Éco-Score <strong>{g}</strong>
+                </span>
+              );
+            })()}
+            {productCard?.novaGroup && NOVA_META[productCard.novaGroup] && (() => {
+              const meta = NOVA_META[productCard.novaGroup as number];
+              return (
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${meta.color}`} title={meta.desc}>
+                  🏭 {meta.label}
+                </span>
+              );
+            })()}
+            <button
+              type="button"
+              onClick={() => void shareProduct(productTitle, productCard?.barcode ?? searchBarcode ?? undefined)}
+              className="ml-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              aria-label="Partager ce produit"
+              title={'share' in navigator ? 'Partager' : 'Copier le lien'}
+            >
+              🔗 {'share' in navigator ? 'Partager' : 'Copier le lien'}
+            </button>
+          </div>
+        )}
+
         {productImages.length > 0 ? (
-          <div className="grid grid-cols-2 gap-2">
-            {productImages.map((img) => (
-              <OptimizedImage
-                key={img.url}
-                src={img.url}
-                alt={productTitle}
-                className="rounded-xl object-cover w-full h-32 bg-slate-800"
-                loading="lazy"
+          <div className={productImages.length === 1 ? '' : 'grid grid-cols-2 gap-2'}>
+            {productImages.map((img) => {
+              const alt = img.type === 'ingredients' ? `Ingrédients — ${productTitle}` : img.type === 'nutrition' ? `Tableau nutritionnel — ${productTitle}` : productTitle;
+              return (
+                <div key={img.url} className="relative">
+                  <button
+                    type="button"
+                    className="block w-full rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label={`Agrandir l'image : ${alt}`}
+                    onClick={() => setLightboxImg({ url: img.url, alt })}
+                  >
+                    <OptimizedImage
+                      src={img.url}
+                      alt={alt}
+                      className={`rounded-xl object-contain w-full bg-slate-800 ${productImages.length === 1 ? 'h-40' : 'h-32'}`}
+                      loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+                      }}
+                    />
+                  </button>
+                  {img.type !== 'front' && (
+                    <span className="absolute bottom-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none">
+                      {img.type === 'ingredients' ? 'Ingrédients' : 'Nutrition'}
+                    </span>
+                  )}
+                  <span className="absolute top-1 right-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none" aria-hidden="true">🔍</span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="block w-full rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label={`Agrandir l'image : ${productTitle}`}
+            onClick={() => {
+              const src = resolvedImageUrl ?? getProductImageFallback({ productName: productTitle });
+              setLightboxImg({ url: src, alt: productTitle });
+            }}
+          >
+            <OptimizedImage
+              src={resolvedImageUrl ?? getProductImageFallback({ productName: productTitle })}
+              alt={productTitle}
+              className="rounded-xl object-cover w-full h-40 bg-slate-800"
+              loading="lazy"
+              onError={(event) => {
+                event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+              }}
+            />
+          </button>
+        )}
+
+        {/* Ingrédients texte (accordéon) */}
+        {productCard?.ingredientsText && (
+          <div className="border border-slate-700 rounded-xl overflow-hidden">
+            <button
+              type="button"
+              className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 hover:bg-slate-700 transition-colors text-sm font-medium text-left"
+              aria-expanded={ingredientsOpen}
+              onClick={() => setIngredientsOpen((o) => !o)}
+            >
+              <span>🧪 Ingrédients</span>
+              <span className="text-slate-400 text-xs" aria-hidden="true">{ingredientsOpen ? '▲' : '▼'}</span>
+            </button>
+            {ingredientsOpen && (
+              <div className="px-4 py-3 bg-slate-900 text-xs text-slate-300 leading-relaxed">
+                {productCard.ingredientsText}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tableau nutritionnel (accordéon) */}
+        {productCard?.nutriments && (() => {
+          const n = productCard.nutriments as ProductNutriments;
+          const rows: Array<{ label: string; value: number | null; unit: string }> = [
+            { label: 'Énergie', value: n.energy_100g, unit: 'kcal' },
+            { label: 'Matières grasses', value: n.fat_100g, unit: 'g' },
+            { label: 'dont saturées', value: n.saturatedFat_100g, unit: 'g' },
+            { label: 'Glucides', value: n.carbohydrates_100g, unit: 'g' },
+            { label: 'dont sucres', value: n.sugars_100g, unit: 'g' },
+            { label: 'Fibres', value: n.fiber_100g, unit: 'g' },
+            { label: 'Protéines', value: n.proteins_100g, unit: 'g' },
+            { label: 'Sel', value: n.salt_100g, unit: 'g' },
+          ].filter((row) => row.value !== null && row.value !== undefined);
+          if (rows.length === 0) return null;
+          return (
+            <div className="border border-slate-700 rounded-xl overflow-hidden">
+              <button
+                type="button"
+                className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 hover:bg-slate-700 transition-colors text-sm font-medium text-left"
+                aria-expanded={nutritionOpen}
+                onClick={() => setNutritionOpen((o) => !o)}
+              >
+                <span>📊 Valeurs nutritionnelles <span className="text-slate-400 text-xs font-normal">pour 100 g</span></span>
+                <span className="text-slate-400 text-xs" aria-hidden="true">{nutritionOpen ? '▲' : '▼'}</span>
+              </button>
+              {nutritionOpen && (
+                <table className="w-full text-xs bg-slate-900" role="table" aria-label="Valeurs nutritionnelles pour 100 g">
+                  <tbody>
+                    {rows.map((row, i) => (
+                      <tr key={row.label} className={i % 2 === 0 ? 'bg-slate-900' : 'bg-slate-800/50'}>
+                        <td className={`px-4 py-2 text-slate-300 ${row.label.startsWith('dont') ? 'pl-7' : ''}`}>{row.label}</td>
+                        <td className="px-4 py-2 text-right font-medium text-white">
+                          {typeof row.value === 'number' ? `${row.value.toFixed(1)} ${row.unit}` : '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* Image lightbox */}
+        {lightboxImg && (
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+            role="dialog"
+            aria-modal="true"
+            aria-label={lightboxImg.alt}
+            onClick={() => setLightboxImg(null)}
+            onKeyDown={(e) => { if (e.key === 'Escape') setLightboxImg(null); }}
+            tabIndex={-1}
+          >
+            <div className="relative max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()} role="presentation">
+              <button
+                type="button"
+                onClick={() => setLightboxImg(null)}
+                className="absolute -top-10 right-0 text-white text-2xl leading-none p-2 hover:text-slate-300"
+                aria-label="Fermer l'image"
+              >✕</button>
+              <img
+                src={lightboxImg.url}
+                alt={lightboxImg.alt}
+                className="w-full max-h-[80vh] object-contain rounded-xl bg-slate-900"
                 onError={(event) => {
                   event.currentTarget.src = getProductImageFallback({ productName: productTitle });
                 }}
               />
-            ))}
+              <p className="text-center text-xs text-slate-400 mt-2">{lightboxImg.alt}</p>
+            </div>
           </div>
-        ) : (
-          <OptimizedImage
-            src={getProductImageFallback({ productName: productTitle })}
-            alt={productTitle}
-            className="rounded-xl object-cover w-full h-40 bg-slate-800"
-            loading="lazy"
-          />
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
@@ -820,16 +1096,152 @@ export function PriceSearchResults({
   }
 }
 
-export default function RechercheProduits() {
-  const params = useMemo(
-    () => new URLSearchParams(typeof window === 'undefined' ? '' : window.location.search),
-    [],
+// ── Barcode scanner modal using native BarcodeDetector / ZXing ────────────
+type BarcodeScannerModalProps = {
+  onDetected: (ean: string) => void;
+  onClose: () => void;
+};
+
+function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [status, setStatus] = useState<'requesting' | 'scanning' | 'error'>('requesting');
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const start = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+        });
+        if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play();
+        }
+        setStatus('scanning');
+        scanLoop();
+      } catch {
+        if (!cancelled) {
+          setErrorMsg('Accès à la caméra refusé. Autorisez la caméra puis réessayez.');
+          setStatus('error');
+        }
+      }
+    };
+
+    const scanLoop = async () => {
+      const video = videoRef.current;
+      if (!video || cancelled) return;
+
+      // Native BarcodeDetector API (Chromium 83+, Android Chrome)
+      if ('BarcodeDetector' in window) {
+        type BarcodeDetectorLike = { detect: (src: HTMLVideoElement) => Promise<Array<{ rawValue: string }>> };
+        const detector = new (window as unknown as { BarcodeDetector: new (opts: object) => BarcodeDetectorLike }).BarcodeDetector({
+          formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'],
+        });
+        const tick = async () => {
+          if (cancelled || video.readyState < 2) { rafRef.current = requestAnimationFrame(tick); return; }
+          try {
+            const codes = await detector.detect(video);
+            if (codes.length > 0) { onDetected(codes[0].rawValue); return; }
+          } catch { /* ignore */ }
+          rafRef.current = requestAnimationFrame(tick);
+        };
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+
+      // ZXing fallback
+      try {
+        const { BrowserMultiFormatReader } = await import('@zxing/browser');
+        const reader = new BrowserMultiFormatReader();
+        if (videoRef.current && streamRef.current) {
+          const result = await reader.decodeOnceFromStream(streamRef.current, videoRef.current ?? undefined);
+          if (!cancelled) onDetected(result.getText());
+        }
+      } catch {
+        if (!cancelled) {
+          setErrorMsg("Scan impossible sur ce navigateur. Saisissez le code-barres manuellement.");
+          setStatus('error');
+        }
+      }
+    };
+
+    void start();
+
+    return () => {
+      cancelled = true;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Scanner un code-barres"
+    >
+      <div className="relative bg-slate-900 rounded-2xl overflow-hidden w-full max-w-sm mx-4 shadow-2xl">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+          <span className="font-semibold text-sm">📷 Scanner un code-barres</span>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-slate-400 hover:text-white text-xl leading-none"
+            aria-label="Fermer le scanner"
+          >✕</button>
+        </div>
+        {status === 'error' ? (
+          <div className="p-6 text-center text-sm text-red-400 space-y-3">
+            <p>{errorMsg}</p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-slate-800 rounded-xl text-slate-200 text-xs hover:bg-slate-700"
+            >Fermer</button>
+          </div>
+        ) : (
+          <div className="relative aspect-[4/3] bg-black">
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              playsInline
+              muted
+              aria-label="Flux caméra pour scanner le code-barres"
+            />
+            {status === 'scanning' && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-48 h-24 border-2 border-blue-400 rounded-lg opacity-70" aria-hidden="true" />
+              </div>
+            )}
+            {status === 'requesting' && (
+              <div className="absolute inset-0 flex items-center justify-center text-slate-400 text-sm">
+                Accès caméra en cours…
+              </div>
+            )}
+          </div>
+        )}
+        <p className="text-xs text-slate-500 text-center py-2 px-4">
+          Pointez la caméra vers un code-barres EAN
+        </p>
+      </div>
+    </div>
   );
+}
+
+export default function RechercheProduits() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { history, addEntry, removeEntry, clearHistory } = useSearchHistory();
   const { favorites, removeFavorite } = useFavorites();
-  const [query, setQuery] = useState(params.get('q') ?? '');
-  const [barcode, setBarcode] = useState(params.get('ean') ?? '');
+  const [query, setQuery] = useState(searchParams.get('q') ?? '');
+  const [barcode, setBarcode] = useState(searchParams.get('ean') ?? '');
   const [territory, setTerritory] = useState<TerritoryCode>(
     () => (getPreferredTerritory() as TerritoryCode) ?? 'gp'
   );
@@ -843,6 +1255,7 @@ export default function RechercheProduits() {
   const [hasAutoSearched, setHasAutoSearched] = useState(false);
   const [cachedAt, setCachedAt] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const [premiumVisualRef, premiumVisualVisible] = useIntersectionObserver({ rootMargin: '200px', threshold: 0.01 });
   const hasSearchInput = Boolean(barcode.trim() || query.trim());
   const canSearch = hasSearchInput && !loading;
@@ -851,6 +1264,22 @@ export default function RechercheProduits() {
     setToastMessage(message);
     window.setTimeout(() => setToastMessage(null), 1400);
   }, []);
+
+  // React to URL changes driven by SPA navigation (e.g. GlobalSearch → /recherche-produits?q=lait)
+  const prevSearchParamsKey = useRef(searchParams.toString());
+  useEffect(() => {
+    const current = searchParams.toString();
+    if (current === prevSearchParamsKey.current) return;
+    prevSearchParamsKey.current = current;
+    const newQ = searchParams.get('q') ?? '';
+    const newEan = searchParams.get('ean') ?? '';
+    setQuery(newQ);
+    setBarcode(newEan);
+    setResult(null);
+    setError(null);
+    setCachedAt(null);
+    setHasAutoSearched(false);
+  }, [searchParams]);
 
   const buildCacheKey = useCallback((input?: {
     query?: string;
@@ -918,8 +1347,16 @@ export default function RechercheProduits() {
 
     setLoading(true);
     setError(null);
-    setResult(null);
     setCachedAt(null);
+
+    // SWR: show stale cached result immediately so the UI isn't blank while fetching
+    const staleCache = readCache({ query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
+    if (staleCache?.payload) {
+      setResult(staleCache.payload);
+      setCachedAt(staleCache.cachedAt);
+    } else {
+      setResult(null);
+    }
 
     try {
       const response = await searchProductPrices({
@@ -929,6 +1366,7 @@ export default function RechercheProduits() {
       });
       const mapped = mapPriceSearchResult(response);
       setResult(mapped);
+      setCachedAt(null);
       writeCache(mapped, { query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
     } catch (err: any) {
       console.error('Price search error:', err);
@@ -936,7 +1374,7 @@ export default function RechercheProduits() {
     } finally {
       setLoading(false);
     }
-  }, [addEntry, barcode, query, territory, writeCache]);
+  }, [addEntry, barcode, query, readCache, territory, writeCache]);
 
   const handleSearch = useCallback(async () => {
     const searchType = barcode.trim() ? 'barcode' : 'text';
@@ -959,12 +1397,33 @@ export default function RechercheProduits() {
     setHasAutoSearched(true);
   }, [barcode, query, hasAutoSearched, readCache, runSearch, territory]);
 
+  // Search-as-you-type: debounce 400ms after user stops typing (only when there is already a result)
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevQueryRef = useRef({ query, barcode });
+  useEffect(() => {
+    const prev = prevQueryRef.current;
+    const changed = prev.query !== query || prev.barcode !== barcode;
+    prevQueryRef.current = { query, barcode };
+    if (!changed || !hasAutoSearched) return;
+    if (!barcode.trim() && !query.trim()) return;
+    if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    debounceTimerRef.current = setTimeout(() => {
+      void runSearch({ source: barcode.trim() ? 'barcode' : 'text' });
+    }, 400);
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, [query, barcode, hasAutoSearched, runSearch]);
+
   const handleReset = () => {
     setResult(null);
     setError(null);
     setQuery('');
     setBarcode('');
     setCachedAt(null);
+    setHasAutoSearched(false);
+    // Clean URL params so re-visiting the page won't replay the old search
+    setSearchParams({}, { replace: true });
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1073,19 +1532,28 @@ export default function RechercheProduits() {
                   else { setQuery(v); setBarcode(''); }
                 }}
                 placeholder="Nom produit ou code-barres (EAN)…"
-                className="w-full rounded-xl bg-slate-950 border border-slate-600 focus:border-blue-500 outline-none pl-10 pr-4 py-3 text-white text-base"
+                className="w-full rounded-xl bg-slate-950 border border-slate-600 focus:border-blue-500 outline-none pl-10 pr-20 py-3 text-white text-base"
                 aria-label="Rechercher un produit par nom ou code-barres"
                 autoComplete="off"
                 inputMode="search"
               />
-              {(query || barcode) && (
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                {(query || barcode) && (
+                  <button
+                    type="button"
+                    onClick={() => { setQuery(''); setBarcode(''); }}
+                    className="text-slate-400 hover:text-white text-lg leading-none p-1"
+                    aria-label="Effacer la recherche"
+                  >✕</button>
+                )}
                 <button
                   type="button"
-                  onClick={() => { setQuery(''); setBarcode(''); }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-lg leading-none"
-                  aria-label="Effacer la recherche"
-                >✕</button>
-              )}
+                  onClick={() => setScannerOpen(true)}
+                  className="text-slate-400 hover:text-blue-400 text-xl leading-none p-1"
+                  aria-label="Scanner un code-barres avec la caméra"
+                  title="Scanner un code-barres"
+                >📷</button>
+              </div>
             </div>
 
             {/* Popular product chips */}
@@ -1220,6 +1688,19 @@ export default function RechercheProduits() {
           >
             {toastMessage}
           </div>
+        )}
+
+        {/* ── Barcode scanner modal ──────────────────────────────────── */}
+        {scannerOpen && (
+          <BarcodeScannerModal
+            onDetected={(ean) => {
+              setBarcode(ean);
+              setQuery('');
+              setScannerOpen(false);
+              void runSearch({ source: 'barcode', query: '', barcode: ean });
+            }}
+            onClose={() => setScannerOpen(false)}
+          />
         )}
       </div>
     </div>
