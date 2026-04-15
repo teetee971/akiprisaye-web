@@ -3,6 +3,7 @@ import { Search, PlayCircle, Package, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
+import { useCatalogueProductImage } from '../hooks/useCatalogueProductImage';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { SEOHead } from '../components/ui/SEOHead';
 import FlipStatCard from '../components/ui/FlipStatCard';
@@ -83,6 +84,73 @@ const PROMOS = [
   { id: 2, title: '🏆 TOP ÉCONOMIES',         subtitle: 'Meilleures offres du moment',    img: PROMO_IMG_TOP,   to: '/top-economies' },
   { id: 3, title: '🤝 CONTRIBUER UN PRIX',    subtitle: 'Renforcez l\'observatoire',      img: PROMO_IMG_SHARE, to: '/contribuer' },
 ];
+
+/* ── Catalogue card with lazy product image ─────────────────────────────────── */
+interface CatalogueCardProps {
+  product: Product;
+}
+
+function CatalogueCard({ product }: CatalogueCardProps) {
+  const { imageUrl, emoji, loading } = useCatalogueProductImage(
+    product.name,
+    (product as any).category,
+  );
+
+  const obs: Array<{ date?: string }> = (product as any).observations ?? [];
+  const lastDate = obs.length > 0 ? obs[obs.length - 1]?.date : undefined;
+  const tags: string[] = (product as any).tags ?? [];
+
+  return (
+    <div className="bento-card flex-row justify-between items-center gap-3">
+      {/* Thumbnail */}
+      <div className="flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center">
+        {imageUrl && !loading ? (
+          <img
+            src={imageUrl}
+            alt={product.name}
+            loading="lazy"
+            className="w-full h-full object-contain"
+          />
+        ) : (
+          <span className="text-2xl" aria-hidden="true">{emoji}</span>
+        )}
+      </div>
+
+      {/* Details */}
+      <div className="flex-1 min-w-0">
+        <p className="text-[9px] font-black text-blue-400 uppercase mb-0.5">
+          {(product as any).category ?? 'ÉPICERIE'}
+        </p>
+        <p className="text-sm font-bold text-slate-200 truncate">{product.name}</p>
+        <p className="text-[10px] text-slate-400 truncate">{product.store ?? 'SUPER U'}</p>
+        {/* Tags */}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-slate-700 text-slate-300"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        {/* Last observation date */}
+        {lastDate && (
+          <p className="text-[9px] text-slate-500 mt-0.5">
+            Obs. {new Date(lastDate).toLocaleDateString('fr-FR')}
+          </p>
+        )}
+      </div>
+
+      {/* Price */}
+      <div className="flex-shrink-0 text-right">
+        <span className="font-black text-emerald-400 text-base">{product.price}€</span>
+      </div>
+    </div>
+  );
+}
 
 const Home = () => {
   const [search, setSearch] = useState('');
@@ -335,17 +403,7 @@ const Home = () => {
             </div>
           ) : products && products.length > 0 ? (
             products.slice(0, 15).map((p: Product, i: number) => (
-              <div
-                key={p.id ?? i}
-                className="bento-card flex-row justify-between items-center"
-              >
-                <div>
-                  <p className="text-[9px] font-black text-blue-400 uppercase mb-1">{p.category ?? 'ÉPICERIE'}</p>
-                  <p className="text-sm font-bold text-slate-200">{p.name}</p>
-                  <p className="text-[10px] text-slate-400">{p.store ?? 'SUPER U'}</p>
-                </div>
-                <div className="text-right font-black text-emerald-400">{p.price}€</div>
-              </div>
+              <CatalogueCard key={(p as any).id ?? i} product={p} />
             ))
           ) : (
             <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
