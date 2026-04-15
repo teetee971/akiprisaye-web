@@ -203,5 +203,15 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false; // Admin SDK uniquement
     }
+
+    // Click events — écriture anonyme autorisée, lecture interdite (admin seulement)
+    match /click_events/{docId} {
+      allow create: if request.resource.data.keys().hasAll(['retailer', 'territory', 'price', 'clickedAt'])
+                    && request.resource.data.retailer is string
+                    && request.resource.data.price is number
+                    && request.resource.data.price >= 0
+                    && request.resource.data.price <= 10000;
+      allow read: if false; // lecture via Admin SDK seulement
+    }
   }
 }

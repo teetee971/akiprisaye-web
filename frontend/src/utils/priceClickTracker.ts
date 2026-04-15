@@ -16,6 +16,7 @@
  */
 
 import { safeLocalStorage } from './safeLocalStorage';
+import { trackClickToFirestore } from './firestoreClickTracker';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -109,6 +110,15 @@ export function trackRetailerClick(
   const clicks = readJson<RetailerClickEntry[]>(KEY_CLICKS, []);
   clicks.push({ barcode, retailer, territory, price, clickedAt: Date.now() });
   writeJson(KEY_CLICKS, prune(clicks));
+
+  // Firestore (fire-and-forget)
+  trackClickToFirestore({
+    retailer,
+    barcode,
+    territory,
+    price,
+    pageUrl: typeof window !== 'undefined' ? window.location.pathname : '',
+  });
 }
 
 /**
