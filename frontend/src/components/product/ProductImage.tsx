@@ -15,6 +15,10 @@ import type { ProductImages } from '../../types/enhancedPrice';
 import { createFallbackImage, generateLoadingPlaceholder, generateErrorPlaceholder } from '../../services/productImageFallback';
 import type { ProductCategory } from '../../types/product';
 
+function asHttpUrl(value: unknown): string | null {
+  return typeof value === 'string' && /^https?:\/\//i.test(value) ? value : null;
+}
+
 interface ProductImageProps {
   images?: ProductImages;
   productName: string;
@@ -39,6 +43,8 @@ export default function ProductImage({
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [fallbackImage, setFallbackImage] = useState<string | null>(null);
+  const [fetchedImageUrl, setFetchedImageUrl] = useState<string | null>(null);
+  const [fetchedSource, setFetchedSource] = useState<'off' | null>(null);
   
   // Generate fallback image on mount or when category changes
   useEffect(() => {
@@ -47,10 +53,43 @@ export default function ProductImage({
       setFallbackImage(size === 'thumbnail' ? fallback.thumbnailUrl : fallback.url);
     }
   }, [images, imageError, category, productName, size]);
+
+  // Fetch real product image by barcode when no images prop is supplied
+  useEffect(() => {
+    if (images || !barcode) return;
+
+    const controller = new AbortController();
+    fetch(`/api/product-image?ean=${encodeURIComponent(barcode)}&format=json`, {
+      signal: controller.signal,
+      headers: { Accept: 'application/json' },
+    })
+      .then((res) => (res.ok ? (res.json() as Promise<Record<string, unknown>>) : null))
+      .then((data) => {
+        if (!data) return;
+        const url =
+          asHttpUrl(data.url) ?? asHttpUrl(data.redirect_to) ?? asHttpUrl(data.image_url);
+        if (url && data.source === 'off') {
+          setFetchedImageUrl(url);
+          setFetchedSource('off');
+        }
+      })
+      .catch(() => {});
+
+    return () => controller.abort();
+  }, [barcode, images]);
+
+  // Reset image load/error state when a fetched URL arrives so the real image renders
+  useEffect(() => {
+    if (fetchedImageUrl) {
+      setImageError(false);
+      setImageLoaded(false);
+    }
+  }, [fetchedImageUrl]);
   
   // Get appropriate image URL based on size
   const getImageUrl = () => {
     if (!images || imageError) {
+      if (fetchedImageUrl && !imageError) return fetchedImageUrl;
       return fallbackImage || images?.fallback || generateErrorPlaceholder();
     }
     
@@ -129,7 +168,7 @@ export default function ProductImage({
       />
       
       {/* Attribution badge (for Open Food Facts images) */}
-      {images && !imageError && images.source === 'openfoodfacts' && (size === 'full' || size === 'card') && (
+      {!imageError && ((images && images.source === 'openfoodfacts') || fetchedSource === 'off') && (size === 'full' || size === 'card') && (
         <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
           <span role="img" aria-label="Photo">📸</span>
           <span>Open Food Facts</span>
@@ -137,7 +176,7 @@ export default function ProductImage({
       )}
       
       {/* Fallback indicator */}
-      {imageError && fallbackImage && size !== 'thumbnail' && (
+      {imageError && !fetchedImageUrl && fallbackImage && size !== 'thumbnail' && (
         <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
           <span role="img" aria-label="Catégorie">🏷️</span>
           <span>Image par catégorie</span>
