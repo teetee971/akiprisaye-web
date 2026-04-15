@@ -98,7 +98,7 @@ export default function NewsTeaser() {
     return (
       <div className="px-6 mb-6" aria-busy="true" aria-label="Chargement des actualités">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Actualités</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Actualités</span>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-1">
           {[0, 1, 2].map((i) => (
@@ -128,12 +128,12 @@ export default function NewsTeaser() {
       </div>
 
       {/* Horizontal scroll strip */}
-      <ul className="flex gap-3 overflow-x-auto pb-2 snap-x -mx-1 px-1 list-none p-0 m-0">
+      <ul className="flex gap-3 overflow-x-auto pb-2 snap-x -mx-1 px-1 list-none m-0 p-0">
         {articles.map((article) => (
-          <li key={article.id} className="flex-none">
+          <li key={article.id} className="flex-none w-52 snap-start">
             <Link
               to="/actualites"
-              className={`w-52 snap-start rounded-xl border active:scale-95 transition-all p-3 flex flex-col gap-1.5 text-left ${
+              className={`rounded-xl border active:scale-95 transition-all p-3 flex flex-col gap-1.5 text-left h-full ${
                 article.isSponsored
                   ? 'border-amber-500/30 bg-amber-900/15 hover:bg-amber-900/25'
                   : 'border-white/8 bg-slate-800/60 hover:bg-slate-700/70'
@@ -169,7 +169,7 @@ export default function NewsTeaser() {
               </p>
 
               {/* Date */}
-              <p className="text-[10px] text-slate-500 mt-auto">
+              <p className="text-[10px] text-slate-400 mt-auto">
                 {formatShortDate(article.date)}
               </p>
             </Link>
@@ -177,10 +177,10 @@ export default function NewsTeaser() {
         ))}
 
         {/* "Voir toutes" CTA card */}
-        <li className="flex-none">
+        <li className="flex-none w-36 snap-start">
           <Link
             to="/actualites"
-            className="w-36 snap-start rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 transition-all p-3 flex flex-col items-center justify-center gap-2 text-center"
+            className="rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 transition-all p-3 flex flex-col items-center justify-center gap-2 text-center h-full"
             aria-label="Voir toutes les actualités"
           >
             <span className="text-2xl" role="img" aria-hidden="true">📰</span>
@@ -192,7 +192,7 @@ export default function NewsTeaser() {
 
       {/* Freshness indicator */}
       {lastUpdated && (
-        <p className="text-[10px] text-slate-600 mt-1 text-right">
+        <p className="text-[10px] text-slate-500 mt-1 text-right">
           Mis à jour {formatShortDate(lastUpdated.toISOString())}
         </p>
       )}

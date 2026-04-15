@@ -3,6 +3,7 @@ import { Search, PlayCircle, Package, RefreshCw, ChevronRight } from 'lucide-rea
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
+import { useCatalogueProductImage } from '../hooks/useCatalogueProductImage';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { SEOHead } from '../components/ui/SEOHead';
 import FlipStatCard from '../components/ui/FlipStatCard';
@@ -221,7 +222,7 @@ const Home = () => {
                   type="button"
                   onClick={() => handleTerritorySelect(code)}
                   className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition-colors"
-                  aria-label={t.name}
+                  aria-label={`${code.toUpperCase()} — ${t.name}`}
                   title={t.name}
                 >
                   <span aria-hidden="true">{t.flag}</span>
