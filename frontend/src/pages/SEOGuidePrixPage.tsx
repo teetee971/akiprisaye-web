@@ -5,7 +5,7 @@
  * Educational angle with 500+ words of useful content about the product price.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SEOHead } from '../components/ui/SEOHead';
 import { formatEur } from '../utils/currency';
@@ -32,36 +32,41 @@ const TERRITORY_SLUG_NAMES: Record<string, string> = {
   GP: 'guadeloupe', MQ: 'martinique', GF: 'guyane', RE: 'reunion', YT: 'mayotte',
 };
 
-// ── Mock price data ────────────────────────────────────────────────────────────
-
-const PRICE_COEFF: Record<string, number> = {
-  GP: 1.18, MQ: 1.16, GF: 1.22, RE: 1.14, YT: 1.25,
-};
-
+// ── Real price types ─────────────────────────────────────────────────────────
 interface RetailerPrice {
   retailer: string;
   price: number;
   isBest: boolean;
 }
 
-function getMockPrices(productSlug: string, territory: string): RetailerPrice[] {
-  const coeff = PRICE_COEFF[territory] ?? 1.15;
-  const base = (productSlug.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 300) / 100 + 1.5;
-  const retailers = [
-    { retailer: 'E.Leclerc', delta: 0 },
-    { retailer: 'Carrefour', delta: 0.28 },
-    { retailer: 'Super U', delta: 0.42 },
-    { retailer: 'Leader Price', delta: 0.12 },
-    { retailer: 'Intermarché', delta: 0.35 },
-  ];
-  return retailers
-    .map(({ retailer, delta }) => ({
-      retailer,
-      price: Math.round((base * coeff + delta) * 100) / 100,
-      isBest: false,
-    }))
-    .sort((a, b) => a.price - b.price)
-    .map((r, i) => ({ ...r, isBest: i === 0 }));
+async function getRealPrices(productSlug: string, _territory: string): Promise<RetailerPrice[]> {
+  const { getCatalogue, searchCatalogueBySlug } = await import('../services/realDataService');
+  const catalogue = await getCatalogue();
+  const matches = searchCatalogueBySlug(catalogue, productSlug);
+  if (matches.length === 0) return [];
+  return [...matches].slice(0, 8).sort((a, b) => a.price - b.price)
+    .map((p, i) => ({ retailer: p.store, price: p.price, isBest: i === 0 }));
+}
+
+async function getRealHistoricalPrices(productSlug: string): Promise<Array<{ month: string; price: number }>> {
+  const { getHistoriquePrix } = await import('../services/realDataService');
+  const historique = await getHistoriquePrix();
+  if (!historique) return [];
+  // Find matching product key
+  const key = Object.keys(historique.products).find((k) => productSlug.includes(k.replace('_', '-').split('_')[0])) ?? 'riz_1kg';
+  const productData = historique.products[key];
+  if (!productData) return [];
+  const entries: Array<{ date: string; price: number }> = [];
+  for (const stores of Object.values(productData.history)) {
+    for (const storeEntries of Object.values(stores)) {
+      entries.push(...storeEntries);
+    }
+  }
+  entries.sort((a, b) => a.date.localeCompare(b.date));
+  return entries.slice(0, 6).map((e) => ({
+    month: new Date(e.date).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }),
+    price: e.price,
+  }));
 }
 
 // ── Slug parser ────────────────────────────────────────────────────────────────
@@ -83,15 +88,6 @@ function parseSlug(slug: string): { productName: string; productSlug: string; te
   return { productName: slug.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '), productSlug: slug, territory: 'GP' };
 }
 
-// ── Historical price mock ─────────────────────────────────────────────────────
-
-function getHistoricalPrices(base: number): Array<{ month: string; price: number }> {
-  const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'];
-  return months.map((month, i) => ({
-    month: `${month} 2025`,
-    price: Math.round((base * (1 + (i - 2) * 0.02)) * 100) / 100,
-  }));
-}
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
@@ -102,16 +98,24 @@ export default function SEOGuidePrixPage() {
   const territoryName = getTerritoryName(territory);
   const tSlug = TERRITORY_SLUG_NAMES[territory] ?? 'guadeloupe';
 
-  const prices = useMemo(() => getMockPrices(slug, territory), [slug, territory]);
+  const [prices, setPrices] = useState<RetailerPrice[]>([]);
+  const [history, setHistory] = useState<Array<{ month: string; price: number }>>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getRealPrices(slug, territory).then((data) => { if (!cancelled) setPrices(data); });
+    getRealHistoricalPrices(productSlug).then((data) => { if (!cancelled) setHistory(data); });
+    return () => { cancelled = true; };
+  }, [slug, territory, productSlug]);
+
   const bestPrice = prices[0];
-  const avgPrice = Math.round((prices.reduce((s, p) => s + p.price, 0) / prices.length) * 100) / 100;
-  const maxSavings = Math.round((prices[prices.length - 1].price - prices[0].price) * 100) / 100;
+  const avgPrice = prices.length > 0 ? Math.round((prices.reduce((s, p) => s + p.price, 0) / prices.length) * 100) / 100 : 0;
+  const maxSavings = prices.length > 1 ? Math.round((prices[prices.length - 1].price - prices[0].price) * 100) / 100 : 0;
 
   const angle = useMemo(() => getPageAngle(slug), [slug]);
   const intro = useMemo(() => generatePageIntro(productName, territory, angle), [productName, territory, angle]);
   const priceTip = useMemo(() => generatePriceTip(productName, territory, angle), [productName, territory, angle]);
   const faqItems = useMemo(() => generateFaqItems(productName, territory, angle), [productName, territory, angle]);
-  const history = useMemo(() => getHistoricalPrices(bestPrice.price), [bestPrice.price]);
 
   useMemo(() => {
     trackSEOProductView(productSlug, territory, 'guide-prix');
@@ -135,7 +139,7 @@ export default function SEOGuidePrixPage() {
     <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title={`Guide prix ${productName} en ${territoryName} 2026 — Historique & conseils`}
-        description={`Guide complet : prix ${productName} en ${territoryName}, historique des prix, comparaison enseignes, conseils pour payer moins cher. Meilleur prix : ${formatEur(bestPrice.price)} chez ${bestPrice.retailer}.`}
+        description={`Guide complet : prix ${productName} en ${territoryName}, historique des prix, comparaison enseignes, conseils pour payer moins cher.${bestPrice ? \` Meilleur prix : ${formatEur(bestPrice.price)} chez ${bestPrice.retailer}.\` : ''}`}
         canonical={`${SITE_URL}/guide-prix/${slug}`}
         jsonLd={articleJsonLd}
       />
@@ -165,9 +169,9 @@ export default function SEOGuidePrixPage() {
             Historique des prix, comparaison des enseignes, conseils pratiques pour payer moins cher.
           </p>
           <div className="mt-4 flex items-baseline gap-3">
-            <span className="text-3xl font-extrabold text-emerald-400">{formatEur(bestPrice.price)}</span>
+            <span className="text-3xl font-extrabold text-emerald-400">{bestPrice ? formatEur(bestPrice.price) : '—'}</span>
             <div>
-              <div className="text-xs text-zinc-400">chez {bestPrice.retailer}</div>
+              <div className="text-xs text-zinc-400">{bestPrice ? `chez ${bestPrice.retailer}` : 'Chargement…'}</div>
               <div className="text-[11px] text-zinc-600">Meilleur prix du jour</div>
             </div>
           </div>
@@ -319,13 +323,13 @@ export default function SEOGuidePrixPage() {
       </div>
 
       <ConversionStickyBar
-        bestPrice={bestPrice.price}
+        bestPrice={bestPrice?.price ?? 0}
         savings={maxSavings}
-        retailer={bestPrice.retailer}
-        retailerUrl={buildRetailerUrl(bestPrice.retailer, '') ?? null}
+        retailer={bestPrice?.retailer ?? ''}
+        retailerUrl={bestPrice ? (buildRetailerUrl(bestPrice.retailer, '') ?? null) : null}
         productName={productName}
         territory={territory}
-        onCTAClick={() => trackRetailerClick('', bestPrice.retailer, territory, bestPrice.price)}
+        onCTAClick={() => bestPrice && trackRetailerClick('', bestPrice.retailer, territory, bestPrice.price)}
       />
     </div>
   );

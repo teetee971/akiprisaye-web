@@ -15,7 +15,7 @@
  *   - Internal linking to product pages + comparator
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SEOHead } from '../components/ui/SEOHead';
 import {
@@ -38,36 +38,16 @@ const CATEGORY_DISPLAY: Record<string, { name: string; icon: string }> = {
   'bebe':              { name: 'Bébé',                icon: '👶' },
 };
 
-// ── Mock trend data ────────────────────────────────────────────────────────────
-// Monthly inflation rates (%) — territory-adjusted
-const TERRITORY_INFLATION_BIAS: Record<string, number> = {
-  GP: 5.2, MQ: 4.8, GF: 6.1, RE: 4.5, YT: 7.3,
-};
-
-const MONTHS_FR = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
-
-function getMockMonthlyData(
+// ── Real trend data loader ────────────────────────────────────────────────────
+async function getRealMonthlyData(
   categorySlug: string,
-  territory: string,
+  _territory: string,
   year: string,
-): Array<{ month: string; rate: number; avgPrice: number }> {
-  const bias = TERRITORY_INFLATION_BIAS[territory] ?? 5.0;
-  const catHash = categorySlug.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 20;
-  const yearNum = parseInt(year, 10) || 2026;
-  const yearOffset = (yearNum - 2024) * 0.5;
-
-  // Generate 12 months of data
-  const months = yearNum === new Date().getFullYear()
-    ? MONTHS_FR.slice(0, new Date().getMonth() + 1) // partial year
-    : MONTHS_FR;
-
-  return months.map((month, i) => {
-    const seasonality = Math.sin((i / 11) * Math.PI) * 1.5; // peak in summer
-    const rate = +(bias + yearOffset + (catHash / 20) + seasonality - 1.5 + (i % 3 === 0 ? 0.3 : 0)).toFixed(1);
-    const basePrice = 100 + (catHash * 0.5);
-    const cumulative = basePrice * (1 + (rate / 100));
-    return { month, rate, avgPrice: +cumulative.toFixed(1) };
-  });
+): Promise<Array<{ month: string; rate: number; avgPrice: number }>> {
+  const { getHistoriquePrix, buildMonthlyData } = await import('../services/realDataService');
+  const historique = await getHistoriquePrix();
+  if (!historique) return [];
+  return buildMonthlyData(historique, categorySlug, _territory, year);
 }
 
 // ── Sparkline bar ─────────────────────────────────────────────────────────────
@@ -126,10 +106,15 @@ export default function SEOInflationPage() {
 
   const categoryInfo   = CATEGORY_DISPLAY[category] ?? { name: 'Alimentaire', icon: '🛒' };
   const territoryName  = getTerritoryName(territory);
-  const monthlyData    = useMemo(
-    () => getMockMonthlyData(category, territory, year),
-    [category, territory, year],
-  );
+  const [monthlyData, setMonthlyData] = useState<Array<{ month: string; rate: number; avgPrice: number }>>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getRealMonthlyData(category, territory, year).then((data) => {
+      if (!cancelled) setMonthlyData(data);
+    });
+    return () => { cancelled = true; };
+  }, [category, territory, year]);
 
   const maxRate        = Math.max(...monthlyData.map((d) => d.rate));
   const avgRate        = +(monthlyData.reduce((s, d) => s + d.rate, 0) / monthlyData.length).toFixed(1);

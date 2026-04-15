@@ -20,7 +20,7 @@ import {
 } from '../utils/seoHelpers';
 import { getTrendingProducts } from '../utils/priceClickTracker';
 
-// ── Mock trending data (to be combined with real tracking data) ───────────────
+// ── Trending product types ───────────────────────────────────────────────────
 interface TrendingProduct {
   id: string;
   name: string;
@@ -33,23 +33,52 @@ interface TrendingProduct {
   searchVolume: 'high' | 'medium' | 'low';
 }
 
-function getMockTrendingProducts(territory: string): TrendingProduct[] {
-  const products = [
-    { id: '1', name: 'Huile de Tournesol 1L', category: 'Épicerie', currentPrice: 3.49, previousPrice: 2.89, searchVolume: 'high' as const },
-    { id: '2', name: 'Farine de Blé T55 1kg', category: 'Épicerie', currentPrice: 1.89, previousPrice: 1.45, searchVolume: 'high' as const },
-    { id: '3', name: 'Riz Basmati 1kg', brand: 'Uncle Ben\'s', category: 'Épicerie', currentPrice: 4.29, previousPrice: 3.79, searchVolume: 'medium' as const },
-    { id: '4', name: 'Poulet Entier kg', category: 'Viande', currentPrice: 7.99, previousPrice: 6.99, searchVolume: 'medium' as const },
-    { id: '5', name: 'Lait UHT 1L', brand: 'Candia', category: 'Produits Laitiers', currentPrice: 1.49, previousPrice: 1.25, searchVolume: 'high' as const },
-    { id: '6', name: 'Oeufs x12', category: 'Frais', currentPrice: 4.99, previousPrice: 3.99, searchVolume: 'medium' as const },
-    { id: '7', name: 'Pâtes Spaghetti 500g', brand: 'Barilla', category: 'Épicerie', currentPrice: 1.79, previousPrice: 1.49, searchVolume: 'low' as const },
-    { id: '8', name: 'Beurre Doux 250g', brand: 'Président', category: 'Produits Laitiers', currentPrice: 3.49, previousPrice: 2.99, searchVolume: 'low' as const },
-  ].map((p) => ({
-    ...p,
-    priceChange: +((p.currentPrice - p.previousPrice) / p.previousPrice * 100).toFixed(1),
-    viewGrowth: 20 + Math.floor(Math.random() * 80),
-  }));
-  
-  return products.sort((a, b) => b.viewGrowth - a.viewGrowth);
+/**
+ * Build trending products from real catalogue data.
+ * Products are sorted by price increase percentage (highest first).
+ * "previousPrice" is the category average; "currentPrice" is the product's real price.
+ */
+async function getRealTrendingProducts(_territory: string): Promise<TrendingProduct[]> {
+  const { getCatalogue, nameToSlug } = await import('../services/realDataService');
+  const catalogue = await getCatalogue();
+  if (catalogue.length === 0) return [];
+
+  // Compute per-category average price
+  const catTotals: Record<string, { sum: number; count: number }> = {};
+  for (const p of catalogue) {
+    const c = p.category;
+    if (!catTotals[c]) catTotals[c] = { sum: 0, count: 0 };
+    catTotals[c].sum += p.price;
+    catTotals[c].count += 1;
+  }
+  const catAvg: Record<string, number> = {};
+  for (const [c, { sum, count }] of Object.entries(catTotals)) {
+    catAvg[c] = sum / count;
+  }
+
+  // Build trending products: those priced above their category average
+  return catalogue
+    .map((p, i) => {
+      const avg = catAvg[p.category] ?? p.price;
+      const priceChange = +((p.price - avg) / avg * 100).toFixed(1);
+      // Deterministic "view growth" based on price deviation rank
+      const deviation = Math.abs(p.price - avg) / avg;
+      const searchVolume: 'high' | 'medium' | 'low' =
+        deviation > 0.25 ? 'high' : deviation > 0.10 ? 'medium' : 'low';
+      return {
+        id: nameToSlug(p.name) || String(i),
+        name: p.name,
+        category: p.category,
+        currentPrice: p.price,
+        previousPrice: +avg.toFixed(2),
+        priceChange,
+        viewGrowth: Math.round(20 + deviation * 200),
+        searchVolume,
+      };
+    })
+    .filter((p) => p.priceChange !== 0)
+    .sort((a, b) => b.priceChange - a.priceChange)
+    .slice(0, 12);
 }
 
 // ── Trending card component ───────────────────────────────────────────────────
@@ -161,12 +190,15 @@ export default function TendancesPage() {
   const [products, setProducts] = useState<TrendingProduct[]>([]);
   
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    const timer = setTimeout(() => {
-      setProducts(getMockTrendingProducts(territory));
-      setLoading(false);
-    }, 300);
-    return () => clearTimeout(timer);
+    getRealTrendingProducts(territory).then((data) => {
+      if (!cancelled) {
+        setProducts(data);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
   }, [territory]);
   
   const handleTerritoryChange = (newTerritory: string) => {

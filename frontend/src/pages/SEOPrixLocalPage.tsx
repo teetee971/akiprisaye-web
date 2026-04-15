@@ -16,7 +16,7 @@
  *   - Internal linking to category + comparator + territory pages
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { SEOHead } from '../components/ui/SEOHead';
 import { formatEur } from '../utils/currency';
@@ -38,16 +38,7 @@ import {
 import InternalLinksSection from '../components/seo/InternalLinksSection';
 import ConversionStickyBar from '../components/business/ConversionStickyBar';
 
-// ── Mock price data (replace with real API hook when available) ───────────────
-// Prices are territory-adjusted to reflect real cost-of-living differences
-const MOCK_PRICE_COEFFICIENTS: Record<string, number> = {
-  GP: 1.18,
-  MQ: 1.16,
-  GF: 1.22,
-  RE: 1.14,
-  YT: 1.25,
-};
-
+// ── Real price types ─────────────────────────────────────────────────────────
 interface RetailerPrice {
   retailer:  string;
   price:     number;
@@ -55,35 +46,22 @@ interface RetailerPrice {
   isBest:    boolean;
 }
 
-function getMockPrices(productSlug: string, territory: string): RetailerPrice[] {
-  const coeff = MOCK_PRICE_COEFFICIENTS[territory] ?? 1.15;
-  // Deterministic base from product slug chars
-  const base =
-    (productSlug.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % 300) / 100 + 1.5;
+async function getRealPrices(productSlug: string, _territory: string): Promise<RetailerPrice[]> {
+  const { getCatalogue, searchCatalogueBySlug } = await import('../services/realDataService');
+  const catalogue = await getCatalogue();
+  const matches = searchCatalogueBySlug(catalogue, productSlug);
+  if (matches.length === 0) return [];
 
-  const retailers = [
-    { retailer: 'E.Leclerc',    delta: 0 },
-    { retailer: 'Carrefour',    delta: 0.28 },
-    { retailer: 'Super U',      delta: 0.42 },
-    { retailer: 'Leader Price', delta: 0.12 },
-    { retailer: 'Intermarché',  delta: 0.35 },
-  ];
+  const sorted = [...matches]
+    .slice(0, 10)
+    .sort((a, b) => a.price - b.price);
 
-  return retailers
-    .map(({ retailer, delta }) => ({
-      retailer,
-      price: Math.round((base * coeff + delta) * 100) / 100,
-      isBest: false,
-    }))
-    .sort((a, b) => a.price - b.price)
-    .map((r, i) => ({
-      ...r,
-      isBest: i === 0,
-      badge:
-        i === 0 ? '🔥 Meilleur prix' :
-        i === 1 ? undefined :
-        undefined,
-    }));
+  return sorted.map((p, i) => ({
+    retailer: p.store,
+    price: p.price,
+    isBest: i === 0,
+    badge: i === 0 ? '🔥 Meilleur prix' : undefined,
+  }));
 }
 
 // ── Slug parser ───────────────────────────────────────────────────────────────
@@ -236,9 +214,18 @@ export default function SEOPrixLocalPage() {
   // URL param overrides parsed territory
   const territory     = searchParams.get('territory') ?? parsedTerritory;
   const territoryName = getTerritoryName(territory);
-  const prices        = useMemo(() => getMockPrices(slug, territory), [slug, territory]);
+  const [prices, setPrices] = useState<RetailerPrice[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getRealPrices(slug, territory).then((data) => {
+      if (!cancelled) setPrices(data);
+    });
+    return () => { cancelled = true; };
+  }, [slug, territory]);
+
   const bestPrice     = prices[0];
-  const avgPrice      = Math.round((prices.reduce((s, p) => s + p.price, 0) / prices.length) * 100) / 100;
+  const avgPrice      = prices.length > 0 ? Math.round((prices.reduce((s, p) => s + p.price, 0) / prices.length) * 100) / 100 : 0;
   const maxSavings    = prices.length > 1
     ? Math.round((prices[prices.length - 1].price - prices[0].price) * 100) / 100
     : 0;
@@ -255,7 +242,9 @@ export default function SEOPrixLocalPage() {
   );
 
   const seoTitle       = `Prix ${productName} en ${territoryName} : où payer le moins cher ?`;
-  const seoDescription = `Comparez le prix de ${productName} en ${territoryName}. Meilleur prix aujourd'hui : ${formatEur(bestPrice.price)} chez ${bestPrice.retailer}. Économisez jusqu'à ${formatEur(maxSavings)} — ${prices.length} enseignes comparées.`;
+  const seoDescription = bestPrice
+    ? `Comparez le prix de ${productName} en ${territoryName}. Meilleur prix aujourd'hui : ${formatEur(bestPrice.price)} chez ${bestPrice.retailer}. Économisez jusqu'à ${formatEur(maxSavings)} — ${prices.length} enseignes comparées.`
+    : `Comparez le prix de ${productName} en ${territoryName} dans les supermarchés locaux.`;
   const canonical      = `${SITE_URL}/prix/${slug}`;
 
   return (
@@ -294,10 +283,10 @@ export default function SEOPrixLocalPage() {
               </div>
               <div className="mt-2 flex items-end gap-2">
                 <span className="text-4xl font-extrabold tabular-nums text-emerald-400">
-                  {formatEur(bestPrice.price)}
+                  {bestPrice ? formatEur(bestPrice.price) : '—'}
                 </span>
                 <span className="mb-1 text-sm font-medium text-zinc-400">
-                  chez {bestPrice.retailer}
+                  {bestPrice ? `chez ${bestPrice.retailer}` : 'Chargement…'}
                 </span>
               </div>
               {maxSavings > 0.01 && (
@@ -306,7 +295,7 @@ export default function SEOPrixLocalPage() {
                 </div>
               )}
               <div className="mt-2 text-xs text-zinc-500">
-                Prix moyen en {territoryName} : {formatEur(avgPrice)}
+                Prix moyen en {territoryName} : {avgPrice > 0 ? formatEur(avgPrice) : '—'}
               </div>
             </div>
 
@@ -435,15 +424,17 @@ export default function SEOPrixLocalPage() {
       </div>
 
       {/* Sticky conversion bar — mobile only */}
-      <ConversionStickyBar
-        bestPrice={bestPrice.price}
-        savings={maxSavings}
-        retailer={bestPrice.retailer}
-        retailerUrl={buildRetailerUrl(bestPrice.retailer, '') ?? null}
-        productName={productName}
-        territory={territory}
-        onCTAClick={() => trackRetailerClick('', bestPrice.retailer, territory, bestPrice.price)}
-      />
+      {bestPrice && (
+        <ConversionStickyBar
+          bestPrice={bestPrice.price}
+          savings={maxSavings}
+          retailer={bestPrice.retailer}
+          retailerUrl={buildRetailerUrl(bestPrice.retailer, '') ?? null}
+          productName={productName}
+          territory={territory}
+          onCTAClick={() => trackRetailerClick('', bestPrice.retailer, territory, bestPrice.price)}
+        />
+      )}
     </div>
   );
 }

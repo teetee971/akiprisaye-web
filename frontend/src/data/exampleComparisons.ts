@@ -100,11 +100,11 @@ export const exampleComparisons: PriceComparison[] = [
 ];
 
 /**
- * Get a random comparison for display
+ * Get a deterministic daily rotation comparison (no Math.random).
  */
 export function getRandomComparison(): PriceComparison {
-  const randomIndex = Math.floor(Math.random() * exampleComparisons.length);
-  return exampleComparisons[randomIndex];
+  const dayIndex = (Date.now() / 86400000 | 0) % exampleComparisons.length;
+  return exampleComparisons[dayIndex];
 }
 
 /**

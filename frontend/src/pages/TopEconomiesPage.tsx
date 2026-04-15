@@ -19,9 +19,9 @@ import {
   SITE_URL,
 } from '../utils/seoHelpers';
 
-// ── Static savings data with real EANs ───────────────────────────────────────
+// ── Savings product type ─────────────────────────────────────────────────────
 interface SavingsProduct {
-  ean: string;           // real EAN-13 — links to /produit/:ean
+  ean: string;
   name: string;
   brand?: string;
   category: string;
@@ -32,21 +32,52 @@ interface SavingsProduct {
   storeCount: number;
 }
 
-const BASE_PRODUCTS: Omit<SavingsProduct, 'savings'>[] = [
-  { ean: '3017620422003', name: 'Nutella 750g',            brand: "Ferrero",      category: 'Épicerie',         minPrice: 5.99,  maxPrice: 9.49,  bestRetailer: 'Leader Price', storeCount: 6 },
-  { ean: '5449000000996', name: 'Coca-Cola 1.5L',          brand: 'Coca-Cola',    category: 'Boissons',         minPrice: 1.89,  maxPrice: 2.99,  bestRetailer: 'Carrefour',    storeCount: 7 },
-  { ean: '4015400276388', name: 'Pampers Baby-Dry T4 x44', brand: 'Pampers',      category: 'Bébé',             minPrice: 14.99, maxPrice: 22.50, bestRetailer: 'Super U',      storeCount: 5 },
-  { ean: '3011360006528', name: 'Huile Tournesol Lesieur 1L', brand: 'Lesieur',   category: 'Épicerie',         minPrice: 2.15,  maxPrice: 3.49,  bestRetailer: 'E.Leclerc',    storeCount: 6 },
-  { ean: '3033490009893', name: 'Yaourt Danone Nature x12', brand: 'Danone',      category: 'Produits Laitiers',minPrice: 3.45,  maxPrice: 4.99,  bestRetailer: 'Carrefour',    storeCount: 5 },
-  { ean: '8710908476556', name: 'Lessive Skip 40 doses',   brand: 'Skip',         category: 'Entretien',        minPrice: 8.99,  maxPrice: 13.50, bestRetailer: 'E.Leclerc',    storeCount: 6 },
-  { ean: '3228021360021', name: 'Café Carte Noire 250g',   brand: 'Carte Noire',  category: 'Épicerie',         minPrice: 4.25,  maxPrice: 6.49,  bestRetailer: 'Leader Price', storeCount: 4 },
-  { ean: '3270190042027', name: 'Eau Cristaline 6×1.5L',   brand: 'Cristaline',   category: 'Boissons',         minPrice: 2.19,  maxPrice: 3.29,  bestRetailer: 'Super U',      storeCount: 7 },
-];
+/**
+ * Build savings products from real catalogue data.
+ * Groups similar products by category+price range to surface meaningful savings.
+ */
+async function getRealSavingsProducts(_territory: string): Promise<SavingsProduct[]> {
+  const { getCatalogue, nameToSlug } = await import('../services/realDataService');
+  const catalogue = await getCatalogue();
+  if (catalogue.length === 0) return [];
 
-function getMockSavingsProducts(_territory: string): SavingsProduct[] {
-  return BASE_PRODUCTS
-    .map((p) => ({ ...p, savings: +(p.maxPrice - p.minPrice).toFixed(2) }))
-    .sort((a, b) => b.savings - a.savings);
+  // Group by category, find min/max per (normalised) base name
+  // Since each product is unique in the catalogue, we use catalogue products
+  // that have the highest price spread relative to their category average.
+  const catTotals: Record<string, { sum: number; count: number; min: number; max: number }> = {};
+  for (const p of catalogue) {
+    const c = p.category;
+    if (!catTotals[c]) catTotals[c] = { sum: 0, count: 0, min: Infinity, max: -Infinity };
+    catTotals[c].sum += p.price;
+    catTotals[c].count += 1;
+    catTotals[c].min = Math.min(catTotals[c].min, p.price);
+    catTotals[c].max = Math.max(catTotals[c].max, p.price);
+  }
+
+  // For each product, compute savings vs the category maximum (worst price)
+  return catalogue
+    .map((p) => {
+      const stats = catTotals[p.category];
+      const catAvg = stats ? stats.sum / stats.count : p.price;
+      const catMax = stats ? stats.max : p.price;
+      const savings = +(catMax - p.price).toFixed(2);
+      const slug = nameToSlug(p.name);
+      return {
+        ean: `/recherche?q=${encodeURIComponent(p.name)}`,
+        name: p.name,
+        category: p.category,
+        minPrice: p.price,
+        maxPrice: catMax,
+        savings,
+        bestRetailer: p.store,
+        storeCount: stats ? stats.count : 1,
+        _rank: savings / catAvg,
+      } satisfies SavingsProduct & { _rank: number };
+    })
+    .filter((p) => p.savings > 0)
+    .sort((a, b) => b._rank - a._rank)
+    .map(({ _rank: _r, ...p }) => p)
+    .slice(0, 12);
 }
 
 // ── Savings card component ────────────────────────────────────────────────────
@@ -61,7 +92,7 @@ function SavingsCard({ product, territory, rank }: SavingsCardProps) {
   
   return (
     <Link
-      to={`/produit/${product.ean}?territory=${territory}`}
+      to={product.ean.startsWith('/') ? product.ean : `/produit/${product.ean}?territory=${territory}`}
       className="group relative rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-all hover:border-emerald-400/30 hover:bg-white/[0.05]"
     >
       {/* Rank badge */}
@@ -150,12 +181,15 @@ export default function TopEconomiesPage() {
   const [products, setProducts] = useState<SavingsProduct[]>([]);
   
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
-    const timer = setTimeout(() => {
-      setProducts(getMockSavingsProducts(territory));
-      setLoading(false);
-    }, 300);
-    return () => clearTimeout(timer);
+    getRealSavingsProducts(territory).then((data) => {
+      if (!cancelled) {
+        setProducts(data);
+        setLoading(false);
+      }
+    });
+    return () => { cancelled = true; };
   }, [territory]);
   
   const handleTerritoryChange = (newTerritory: string) => {

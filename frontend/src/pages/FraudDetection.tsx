@@ -3,7 +3,7 @@
  * Route : /admin/fraude
  */
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Shield, AlertTriangle, CheckCircle, Clock, Download, RefreshCw } from 'lucide-react';
 
 interface PriceReport {
@@ -33,28 +33,32 @@ interface AlertRecord {
   resolvedAt?: string;
 }
 
-const MOCK_REPORTS: PriceReport[] = [
-  { id: '1', productName: 'Riz long grain 1kg', store: 'Carrefour', price: 3.20, territory: 'Martinique', reportedAt: '2025-01-15' },
-  { id: '2', productName: 'Riz long grain 1kg', store: 'Leclerc', price: 3.10, territory: 'Martinique', reportedAt: '2025-01-15' },
-  { id: '3', productName: 'Riz long grain 1kg', store: 'Hyper U', price: 6.80, territory: 'Martinique', reportedAt: '2025-01-16' },
-  { id: '4', productName: 'Riz long grain 1kg', store: 'Leader Price', price: 3.30, territory: 'Martinique', reportedAt: '2025-01-17' },
-  { id: '5', productName: 'Riz long grain 1kg', store: 'Intermarché', price: 3.15, territory: 'Martinique', reportedAt: '2025-01-17' },
-  { id: '6', productName: 'Huile tournesol 1L', store: 'Carrefour', price: 2.90, territory: 'Guadeloupe', reportedAt: '2025-01-14' },
-  { id: '7', productName: 'Huile tournesol 1L', store: 'Leclerc', price: 2.85, territory: 'Guadeloupe', reportedAt: '2025-01-14' },
-  { id: '8', productName: 'Huile tournesol 1L', store: 'Hyper U', price: 2.95, territory: 'Guadeloupe', reportedAt: '2025-01-15' },
-  { id: '9', productName: 'Huile tournesol 1L', store: 'Maxi', price: 5.40, territory: 'Guadeloupe', reportedAt: '2025-01-16' },
-  { id: '10', productName: 'Huile tournesol 1L', store: 'Leader Price', price: 2.88, territory: 'Guadeloupe', reportedAt: '2025-01-17' },
-  { id: '11', productName: 'Lait demi-écrémé 1L', store: 'Carrefour', price: 1.10, territory: 'Réunion', reportedAt: '2025-01-13' },
-  { id: '12', productName: 'Lait demi-écrémé 1L', store: 'Leclerc', price: 1.15, territory: 'Réunion', reportedAt: '2025-01-13' },
-  { id: '13', productName: 'Lait demi-écrémé 1L', store: 'Jumbo', price: 1.12, territory: 'Réunion', reportedAt: '2025-01-14' },
-  { id: '14', productName: 'Lait demi-écrémé 1L', store: 'Hyper U', price: 0.45, territory: 'Réunion', reportedAt: '2025-01-15' },
-  { id: '15', productName: 'Lait demi-écrémé 1L', store: 'Intermarché', price: 1.09, territory: 'Réunion', reportedAt: '2025-01-16' },
-  { id: '16', productName: 'Sucre blanc 1kg', store: 'Carrefour', price: 1.60, territory: 'Guyane', reportedAt: '2025-01-12' },
-  { id: '17', productName: 'Sucre blanc 1kg', store: 'Leclerc', price: 1.55, territory: 'Guyane', reportedAt: '2025-01-12' },
-  { id: '18', productName: 'Sucre blanc 1kg', store: 'Leader Price', price: 1.65, territory: 'Guyane', reportedAt: '2025-01-13' },
-  { id: '19', productName: 'Sucre blanc 1kg', store: 'Hyper U', price: 1.58, territory: 'Guyane', reportedAt: '2025-01-14' },
-  { id: '20', productName: 'Sucre blanc 1kg', store: 'Marché local', price: 3.80, territory: 'Guyane', reportedAt: '2025-01-15' },
-];
+async function buildReportsFromCatalogue(): Promise<PriceReport[]> {
+  const { getCatalogue } = await import('../services/realDataService');
+  const catalogue = await getCatalogue();
+
+  // Group by category to find median price per category
+  const byCategory: Record<string, number[]> = {};
+  for (const p of catalogue) {
+    if (!byCategory[p.category]) byCategory[p.category] = [];
+    byCategory[p.category].push(p.price);
+  }
+  const catMedian: Record<string, number> = {};
+  for (const [c, prices] of Object.entries(byCategory)) {
+    const sorted = [...prices].sort((a, b) => a - b);
+    catMedian[c] = sorted[Math.floor(sorted.length / 2)];
+  }
+
+  return catalogue.map((p, i) => ({
+    id: String(i + 1),
+    productName: p.name,
+    store: p.store,
+    price: p.price,
+    territory: 'Guadeloupe',
+    reportedAt: p.observations?.[0]?.date ?? '2025-04-01',
+    _median: catMedian[p.category] ?? p.price,
+  }));
+}
 
 const TERRITORIES = ['Tous', 'Martinique', 'Guadeloupe', 'Réunion', 'Guyane'];
 
@@ -110,7 +114,15 @@ export default function FraudDetection() {
   const [minScore, setMinScore] = useState(0);
   const [resolved, setResolved] = useState<Set<string>>(getResolved);
 
-  const allAnomalies = useMemo(() => computeAnomalies(MOCK_REPORTS), []);
+  const [reports, setReports] = useState<PriceReport[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    buildReportsFromCatalogue().then((data) => { if (!cancelled) setReports(data); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const allAnomalies = useMemo(() => computeAnomalies(reports), [reports]);
 
   const filtered = useMemo(
     () =>

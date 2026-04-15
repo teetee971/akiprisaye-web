@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar } from 'lucide-react';
 import SourceFooter from './ui/SourceFooter';
+import { getActualites, type ActualitesArticle } from '../services/realDataService';
 
 export interface CivicNewsItem {
   id: string;
@@ -30,72 +31,36 @@ export default function NewsWidgetCivic({
   const [news, setNews] = useState<CivicNewsItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  /**
-   * FRONTEND-ONLY
-   * Source : données statiques vérifiées
-   */
-  const getMockNews = (): CivicNewsItem[] => [
-    {
-      id: '1',
-      title: 'Nouvelle baisse des prix dans les grandes surfaces',
-      summary:
-        'Plusieurs enseignes annoncent une réduction de 5 % sur les produits de première nécessité suite aux accords du bouclier qualité-prix.',
-      publishedAt: '2025-11-08T10:00:00Z',
-      category: 'PRIX',
-      territory: 'Guadeloupe',
-      source: {
-        name: 'Préfecture de Guadeloupe',
-        url: 'https://www.guadeloupe.gouv.fr',
-      },
+  const mapArticleToCivicItem = (a: import('../services/realDataService').ActualitesArticle): CivicNewsItem => ({
+    id: a.id,
+    title: a.title,
+    summary: a.content.slice(0, 200) + (a.content.length > 200 ? '…' : ''),
+    publishedAt: a.date.includes('T') ? a.date : a.date + 'T00:00:00Z',
+    category: a.category.toUpperCase(),
+    territory: a.territory === 'all' ? 'Tous territoires' : a.territory,
+    source: {
+      name: a.source_name,
+      url: a.source_url ?? '#',
     },
-    {
-      id: '2',
-      title: 'Extension du bouclier qualité-prix à 1000 produits',
-      summary:
-        'Le gouvernement étend le dispositif anti-vie-chère à de nouveaux produits essentiels dans tous les DROM-COM.',
-      publishedAt: '2025-11-06T15:00:00Z',
-      category: 'POLITIQUE',
-      territory: 'DROM-COM',
-      source: {
-        name: 'Ministère des Outre-mer',
-        url: 'https://www.outre-mer.gouv.fr',
-      },
-    },
-    {
-      id: '3',
-      title: 'Contrôles renforcés de la DGCCRF',
-      summary:
-        'La DGCCRF intensifie ses contrôles sur les pratiques tarifaires dans les grandes surfaces.',
-      publishedAt: '2025-11-05T14:30:00Z',
-      category: 'ALERTE',
-      territory: 'Martinique',
-      source: {
-        name: 'DGCCRF',
-        url: 'https://www.economie.gouv.fr/dgccrf',
-      },
-    },
-    {
-      id: '4',
-      title: 'Publication des indices de prix par l’INSEE',
-      summary:
-        'L’INSEE publie les derniers indices de prix à la consommation pour les territoires d’Outre-mer.',
-      publishedAt: '2025-11-04T08:00:00Z',
-      category: 'INFORMATION',
-      territory: 'Tous territoires',
-      source: {
-        name: 'INSEE',
-        url: 'https://www.insee.fr',
-      },
-    },
-  ];
+  });
 
-  const fetchNews = useCallback(() => {
+  const fetchNews = useCallback(async () => {
     try {
-      const allNews = getMockNews();
-      const filtered = territory
-        ? allNews.filter((n) => n.territory === territory)
-        : allNews;
-
+      const { getActualites } = await import('../services/realDataService');
+      const articles = await getActualites();
+      const mapped = articles.map(mapArticleToCivicItem);
+      const sorted = [...mapped].sort(
+        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+      );
+      const filtered =
+        territory && territory !== 'Tous territoires'
+          ? sorted.filter(
+              (n) =>
+                n.territory === territory ||
+                n.territory === 'Tous territoires' ||
+                n.territory === 'all',
+            )
+          : sorted;
       setNews(filtered.slice(0, limit));
     } finally {
       setLoading(false);

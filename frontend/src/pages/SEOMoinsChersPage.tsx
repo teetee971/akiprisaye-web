@@ -18,7 +18,7 @@
  *   - Internal linking: comparator, category pages, price pages
  */
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { SEOHead } from '../components/ui/SEOHead';
 import { formatEur } from '../utils/currency';
@@ -49,7 +49,7 @@ const CATEGORIES = [
   { slug: 'bebe',             name: 'Bébé',            icon: '👶' },
 ];
 
-// ── Mock best deals data ───────────────────────────────────────────────────────
+// ── Best deal types ───────────────────────────────────────────────────────────
 interface BestDeal {
   id:       string;
   name:     string;
@@ -62,43 +62,67 @@ interface BestDeal {
   isFlash:  boolean;
 }
 
-const BASE_DEALS: Array<Omit<BestDeal, 'price' | 'avgPrice' | 'savings' | 'pct'>> = [
-  { id: 'coca-cola-1-5l',      name: 'Coca-Cola 1,5L',          retailer: 'E.Leclerc',    category: 'boissons',         isFlash: true  },
-  { id: 'riz-basmati-1kg',     name: 'Riz Basmati 1kg',         retailer: 'Leader Price', category: 'epicerie',         isFlash: false },
-  { id: 'lait-entier-1l',      name: 'Lait entier 1L',          retailer: 'Super U',      category: 'produits-laitiers', isFlash: false },
-  { id: 'nutella-400g',        name: 'Nutella 400g',            retailer: 'Carrefour',    category: 'epicerie',         isFlash: true  },
-  { id: 'poulet-entier',       name: 'Poulet entier /kg',       retailer: 'E.Leclerc',    category: 'viande',           isFlash: false },
-  { id: 'lessive-ariel-30d',   name: 'Lessive Ariel 30 doses',  retailer: 'Leader Price', category: 'hygiene',          isFlash: true  },
-  { id: 'banane-kg',           name: 'Banane /kg',              retailer: 'Super U',      category: 'fruits-legumes',   isFlash: false },
-  { id: 'couches-pampers-t3',  name: 'Couches Pampers T3 × 54', retailer: 'Carrefour',    category: 'bebe',             isFlash: false },
-  { id: 'eau-evian-1-5l',      name: 'Eau Évian 1,5L',          retailer: 'Intermarché',  category: 'boissons',         isFlash: false },
-  { id: 'beurre-president',    name: 'Beurre Président 250g',   retailer: 'E.Leclerc',    category: 'produits-laitiers', isFlash: false },
-  { id: 'pates-panzani-500g',  name: 'Pâtes Panzani 500g',      retailer: 'Leader Price', category: 'epicerie',         isFlash: false },
-  { id: 'shampoing-pantene',   name: 'Shampooing Pantène 300ml', retailer: 'Carrefour',   category: 'hygiene',          isFlash: true  },
-];
-
-const TERRITORY_PRICE_COEFF: Record<string, number> = {
-  GP: 1.18, MQ: 1.16, GF: 1.22, RE: 1.14, YT: 1.25,
+/** Category slug mapping from catalogue categories to page slugs */
+const CAT_SLUG_MAP: Record<string, string> = {
+  'BOISSONS': 'boissons',
+  'ÉPICERIE': 'epicerie',
+  'ULTRA FRAIS': 'produits-laitiers',
+  'CHARCUTERIE': 'viande',
+  'BOUCHERIE': 'viande',
+  'POISSONNERIE': 'viande',
+  'HYGIÈNE': 'hygiene',
+  'FRUITS ET LÉGUMES': 'fruits-legumes',
+  'BÉBÉ': 'bebe',
 };
 
-const BASE_PRICES: Record<string, number> = {
-  'coca-cola-1-5l': 2.10, 'riz-basmati-1kg': 2.80, 'lait-entier-1l': 1.30,
-  'nutella-400g': 4.20, 'poulet-entier': 5.80, 'lessive-ariel-30d': 8.50,
-  'banane-kg': 1.50, 'couches-pampers-t3': 15.90, 'eau-evian-1-5l': 1.20,
-  'beurre-president': 2.20, 'pates-panzani-500g': 1.80, 'shampoing-pantene': 3.90,
-};
+/**
+ * Build best deals from real catalogue data.
+ * For each product, "price" is its real price, "avgPrice" is the category average.
+ * Sorted by savings percentage descending.
+ */
+async function getRealDeals(territory: string, categoryFilter: string): Promise<BestDeal[]> {
+  const { getCatalogue, nameToSlug } = await import('../services/realDataService');
+  const catalogue = await getCatalogue();
+  if (catalogue.length === 0) return [];
 
-function getMockDeals(territory: string): BestDeal[] {
-  const coeff = TERRITORY_PRICE_COEFF[territory] ?? 1.15;
+  // Compute per-category averages
+  const catTotals: Record<string, { sum: number; count: number }> = {};
+  for (const p of catalogue) {
+    const c = p.category;
+    if (!catTotals[c]) catTotals[c] = { sum: 0, count: 0 };
+    catTotals[c].sum += p.price;
+    catTotals[c].count += 1;
+  }
+  const catAvg: Record<string, number> = {};
+  for (const [c, { sum, count }] of Object.entries(catTotals)) {
+    catAvg[c] = sum / count;
+  }
 
-  return BASE_DEALS.map((deal) => {
-    const basePrice = BASE_PRICES[deal.id] ?? 3.00;
-    const price     = Math.round(basePrice * coeff * 0.88 * 100) / 100; // -12% best price
-    const avgPrice  = Math.round(basePrice * coeff * 100) / 100;
-    const savings   = Math.round((avgPrice - price) * 100) / 100;
-    const pct       = Math.round((savings / avgPrice) * 100);
-    return { ...deal, price, avgPrice, savings, pct };
-  }).sort((a, b) => b.pct - a.pct); // Sort by best % savings
+  const deals = catalogue
+    .map((p) => {
+      const avg = catAvg[p.category] ?? p.price;
+      const savings = +(avg - p.price).toFixed(2);
+      const pct = avg > 0 ? Math.round((savings / avg) * 100) : 0;
+      const catPageSlug = CAT_SLUG_MAP[p.category] ?? 'epicerie';
+      return {
+        id: nameToSlug(p.name),
+        name: p.name,
+        price: p.price,
+        avgPrice: +avg.toFixed(2),
+        retailer: p.store,
+        category: catPageSlug,
+        savings,
+        pct,
+        isFlash: pct > 20,
+      };
+    })
+    .filter((d) => d.savings > 0 && d.pct > 0);
+
+  const filtered = categoryFilter && categoryFilter !== 'all'
+    ? deals.filter((d) => d.category === categoryFilter)
+    : deals;
+
+  return filtered.sort((a, b) => b.pct - a.pct).slice(0, 12);
 }
 
 // ── Deal card ─────────────────────────────────────────────────────────────────
@@ -167,11 +191,17 @@ export default function SEOMoinsChersPage() {
   const territoryName = getTerritoryName(territory);
 
   const [activeCategory, setActiveCategory] = useState(catSlug ?? 'all');
+  const [allDeals, setAllDeals] = useState<BestDeal[]>([]);
 
-  const allDeals = useMemo(() => getMockDeals(territory), [territory]);
-  const deals    = activeCategory === 'all'
-    ? allDeals
-    : allDeals.filter((d) => d.category === activeCategory);
+  useEffect(() => {
+    let cancelled = false;
+    getRealDeals(territory, activeCategory).then((data) => {
+      if (!cancelled) setAllDeals(data);
+    });
+    return () => { cancelled = true; };
+  }, [territory, activeCategory]);
+
+  const deals = allDeals;
 
   const jsonLd = buildMoinsChersJsonLd(
     territory,
