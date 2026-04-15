@@ -203,5 +203,35 @@ service cloud.firestore {
       allow read: if true;
       allow write: if false; // Admin SDK uniquement
     }
+
+    function isAllowedClickEventTerritory(territory) {
+      return territory is string
+             && ['gp', 'mq', 'gf', 're', 'yt', 'guadeloupe', 'martinique', 'guyane', 'reunion', 'mayotte']
+                  .hasAny([territory.lower()]);
+    }
+
+    function isOptionalBoundedString(data, field, maxLen) {
+      return !data.keys().hasAny([field])
+             || (data[field] is string && data[field].size() > 0 && data[field].size() <= maxLen);
+    }
+
+    // Click events — écriture anonyme autorisée, lecture interdite (admin seulement)
+    match /click_events/{docId} {
+      allow create: if request.resource.data.keys().hasAll(['retailer', 'territory', 'price', 'clickedAt'])
+                    && request.resource.data.keys().hasOnly(['retailer', 'territory', 'price', 'clickedAt', 'barcode', 'pageUrl', 'sessionId'])
+                    && request.resource.data.retailer is string
+                    && request.resource.data.retailer.size() > 0
+                    && request.resource.data.retailer.size() <= 100
+                    && isAllowedClickEventTerritory(request.resource.data.territory)
+                    && request.resource.data.price is number
+                    && request.resource.data.price >= 0
+                    && request.resource.data.price <= 10000
+                    && request.resource.data.clickedAt is timestamp
+                    && request.resource.data.clickedAt == request.time
+                    && isOptionalBoundedString(request.resource.data, 'barcode', 128)
+                    && isOptionalBoundedString(request.resource.data, 'pageUrl', 2048)
+                    && isOptionalBoundedString(request.resource.data, 'sessionId', 128);
+      allow read: if false; // lecture via Admin SDK seulement
+    }
   }
 }
