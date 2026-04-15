@@ -206,7 +206,8 @@ service cloud.firestore {
 
     function isAllowedClickEventTerritory(territory) {
       return territory is string
-             && ['GP', 'MQ', 'GF', 'RE', 'YT', 'guadeloupe', 'martinique', 'guyane', 'reunion', 'mayotte'].hasAny([territory]);
+             && ['gp', 'mq', 'gf', 're', 'yt', 'guadeloupe', 'martinique', 'guyane', 'reunion', 'mayotte']
+                  .hasAny([territory.lower()]);
     }
 
     function isOptionalBoundedString(data, field, maxLen) {

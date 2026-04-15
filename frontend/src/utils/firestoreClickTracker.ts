@@ -12,12 +12,12 @@
  * Collection Firestore : `click_events`
  * Document auto-id avec champs :
  *   - retailer: string
- *   - barcode: string (peut être vide)
+ *   - barcode?: string (omis si inconnu)
  *   - territory: string
  *   - price: number
- *   - pageUrl: string
+ *   - pageUrl?: string (omis si window indisponible)
  *   - clickedAt: Timestamp
- *   - sessionId: string (anonyme, généré côté client, non persisté)
+ *   - sessionId?: string (anonyme, généré côté client, non persisté)
  */
 
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -53,10 +53,10 @@ function getAnonymousSessionId(): string {
 
 export interface FirestoreClickEvent {
   retailer: string;
-  barcode: string;
+  barcode?: string;
   territory: string;
   price: number;
-  pageUrl: string;
+  pageUrl?: string;
 }
 
 /**
@@ -70,10 +70,18 @@ export function trackClickToFirestore(event: FirestoreClickEvent): void {
       if (!getApps().length) return;
       const db = getFirestore(getApp());
       const ref = collection(db, 'click_events');
+      const pageUrl =
+        typeof window !== 'undefined' && window.location.pathname
+          ? window.location.pathname
+          : event.pageUrl;
+      const sessionId = getAnonymousSessionId();
       await addDoc(ref, {
-        ...event,
-        sessionId: getAnonymousSessionId(),
-        pageUrl: typeof window !== 'undefined' ? window.location.pathname : event.pageUrl,
+        retailer: event.retailer,
+        territory: event.territory,
+        price: event.price,
+        ...(event.barcode ? { barcode: event.barcode } : {}),
+        ...(pageUrl ? { pageUrl } : {}),
+        ...(sessionId ? { sessionId } : {}),
         clickedAt: serverTimestamp(),
       });
     } catch {
