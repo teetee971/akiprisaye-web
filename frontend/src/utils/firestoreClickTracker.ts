@@ -31,7 +31,13 @@ function getAnonymousSessionId(): string {
     if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
       return `anon_${window.crypto.randomUUID()}`;
     }
-    return `anon_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
+      const bytes = new Uint8Array(16);
+      window.crypto.getRandomValues(bytes);
+      const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+      return `anon_${hex}`;
+    }
+    return `anon_${Date.now()}`;
   };
 
   try {
