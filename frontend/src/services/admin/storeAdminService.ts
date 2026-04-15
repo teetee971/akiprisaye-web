@@ -6,6 +6,56 @@
 import type { TerritoryCode } from '../../types/extensions';
 import { adminFetchJson } from './adminApiClient';
 
+// ── Static preview fallback ───────────────────────────────────────────────────
+
+interface RawStaticStore {
+  id: string;
+  name: string;
+  type?: string;
+  territory: string;
+  commune?: string;
+  city?: string;
+  address?: string;
+  lat?: number;
+  lon?: number;
+  phone?: string;
+}
+
+function mapStaticStore(raw: RawStaticStore): Store {
+  return {
+    id: raw.id,
+    name: raw.name,
+    brandId: raw.type ?? '',
+    brandName: raw.type ?? '',
+    address: raw.address ?? '',
+    postalCode: '',
+    city: raw.commune ?? raw.city ?? '',
+    territory: raw.territory.toUpperCase() as TerritoryCode,
+    latitude: raw.lat,
+    longitude: raw.lon,
+    phone: raw.phone,
+    isActive: true,
+  };
+}
+
+let _staticStoresCache: Store[] | null = null;
+
+export async function getStoresStatic(): Promise<Store[]> {
+  if (_staticStoresCache) return _staticStoresCache;
+  try {
+    const res = await fetch('/data/stores-database.json');
+    if (!res.ok) throw new Error('stores-database.json not found');
+    const json = await res.json() as { stores?: RawStaticStore[] } | RawStaticStore[];
+    const raw: RawStaticStore[] = Array.isArray(json)
+      ? json
+      : (json as { stores?: RawStaticStore[] }).stores ?? [];
+    _staticStoresCache = raw.map(mapStaticStore);
+    return _staticStoresCache;
+  } catch {
+    return [];
+  }
+}
+
 export interface Store {
   id: string;
   name: string;

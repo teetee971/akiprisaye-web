@@ -152,13 +152,34 @@ export default function StoreList() {
   }, [currentPage, searchTerm, territoryFilter, statusFilter]);
 
   const loadStores = async () => {
-    if (isDegradedMode) {
-      setStores([]);
-      setLoading(false);
-      return;
-    }
     try {
       setLoading(true);
+
+      if (isDegradedMode) {
+        const all = await getStoresStatic();
+        let filtered = all;
+        if (territoryFilter) {
+          filtered = filtered.filter((s) => s.territory === territoryFilter);
+        }
+        if (searchTerm) {
+          const q = searchTerm.toLowerCase();
+          filtered = filtered.filter(
+            (s) =>
+              s.name.toLowerCase().includes(q) ||
+              s.city.toLowerCase().includes(q) ||
+              s.address.toLowerCase().includes(q),
+          );
+        }
+        if (statusFilter === 'active') {
+          filtered = filtered.filter((s) => s.isActive);
+        } else if (statusFilter === 'inactive') {
+          filtered = filtered.filter((s) => !s.isActive);
+        }
+        setStores(filtered);
+        setTotalPages(1);
+        return;
+      }
+
       const filters: StoreSearchFilters = {
         search: searchTerm || undefined,
         territory: territoryFilter || undefined,
