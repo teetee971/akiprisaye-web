@@ -142,7 +142,7 @@ function Sparkline({ points, color, showLabels }: { points: (number | null)[]; c
 }
 
 function trendColor(pct: number | null): string {
-  if (pct === null) return '#64748b';
+  if (pct === null) return '#94a3b8';
   if (pct > 3) return '#ef4444';
   if (pct > 0) return '#f97316';
   if (pct > -3) return '#22c55e';

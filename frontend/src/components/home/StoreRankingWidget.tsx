@@ -305,7 +305,7 @@ function CrossTerritoryView() {
         style={{
           textAlign: 'center',
           fontSize: '0.72rem',
-          color: '#475569',
+          color: '#94a3b8',
           marginTop: '0.85rem',
         }}
       >
@@ -558,7 +558,7 @@ export default function StoreRankingWidget() {
             style={{
               textAlign: 'center',
               fontSize: '0.72rem',
-              color: '#475569',
+              color: '#94a3b8',
               marginTop: '0.85rem',
             }}
           >
