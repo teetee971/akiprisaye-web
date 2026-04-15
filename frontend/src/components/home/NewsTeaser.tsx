@@ -41,6 +41,7 @@ interface NewsArticle {
   territory?: string;
   impact?: string;
   verified?: boolean;
+  isSponsored?: boolean;
 }
 
 interface ActualitesData {
@@ -133,22 +134,32 @@ export default function NewsTeaser() {
             key={article.id}
             to="/actualites"
             role="listitem"
-            className="flex-none w-52 snap-start rounded-xl border border-white/8 bg-slate-800/60 hover:bg-slate-700/70 active:scale-95 transition-all p-3 flex flex-col gap-1.5 text-left"
+            className={`flex-none w-52 snap-start rounded-xl border active:scale-95 transition-all p-3 flex flex-col gap-1.5 text-left ${
+              article.isSponsored
+                ? 'border-amber-500/30 bg-amber-900/15 hover:bg-amber-900/25'
+                : 'border-white/8 bg-slate-800/60 hover:bg-slate-700/70'
+            }`}
             aria-label={`Actualité : ${article.title}`}
           >
             {/* Category pill + impact dot */}
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${CATEGORY_COLORS[article.category] ?? 'bg-slate-500/20 text-slate-300'}`}
-              >
-                {article.icon} {article.category}
-              </span>
+              {article.isSponsored ? (
+                <span className="rounded-full px-2 py-0.5 text-[10px] font-semibold bg-amber-500/20 text-amber-300">
+                  🏪 Partenaire
+                </span>
+              ) : (
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${CATEGORY_COLORS[article.category] ?? 'bg-slate-500/20 text-slate-300'}`}
+                >
+                  {article.icon} {article.category}
+                </span>
+              )}
               {article.impact && article.impact !== 'info' && (
                 <span className={`text-[10px] font-bold ${IMPACT_COLORS[article.impact] ?? ''}`}>
                   {article.impact === 'fort' ? '🔴' : '🟡'}
                 </span>
               )}
-              {article.verified && (
+              {article.verified && !article.isSponsored && (
                 <span className="text-[10px] text-emerald-400" title="Source vérifiée">✓</span>
               )}
             </div>

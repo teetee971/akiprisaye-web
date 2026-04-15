@@ -140,8 +140,16 @@ export default function Actualites() {
 
   const displayedItems = useMemo(() => {
     const sorted = [...state.items].sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at));
-    return verifiedOnly ? sorted.filter((item) => item.verified) : sorted;
+    const filtered = verifiedOnly ? sorted.filter((item) => item.verified) : sorted;
+    // Exclude partner items from the main list (shown in their own section)
+    return filtered.filter((item) => item.type !== 'partner');
   }, [state.items, verifiedOnly]);
+
+  const partnerItems = useMemo(() => {
+    // Partner/sponsored items get their own dedicated section
+    const sorted = [...state.items].sort((a, b) => Date.parse(b.published_at) - Date.parse(a.published_at));
+    return sorted.filter((item) => item.type === 'partner' || item.isSponsored);
+  }, [state.items]);
 
   const shouldRenderNewsList = newsListVisible || state.status !== 'loading' || displayedItems.length > 0;
 
@@ -215,7 +223,55 @@ export default function Actualites() {
           <p className="text-sm text-amber-300">API indisponible : aucune donnée live disponible.</p>
         </div>
       )}
-      {displayedItems.length === 0 && state.status !== 'loading' && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}
+      {displayedItems.length === 0 && state.status !== 'loading' && partnerItems.length === 0 && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}
+
+      {/* ── Enseignes Partenaires ─────────────────────────────────── */}
+      {partnerItems.length > 0 && !type && (
+        <section className="rounded-2xl border border-amber-500/30 bg-amber-900/10 p-3 sm:p-4 backdrop-blur" aria-labelledby="partner-news-heading">
+          <div className="flex items-center justify-between mb-3">
+            <h2 id="partner-news-heading" className="text-sm font-bold text-amber-300 flex items-center gap-2">
+              🏪 Enseignes Partenaires
+            </h2>
+            <span className="text-[10px] text-amber-500 border border-amber-600/40 rounded px-1.5 py-0.5">Liens sponsorisés</span>
+          </div>
+          <p className="text-xs text-amber-400/70 mb-3">Actualités et promotions de nos enseignes partenaires. Cliquer sur un lien peut générer une commission pour A KI PRI SA YÉ.</p>
+          <div className="flex gap-3 overflow-x-auto pb-2 snap-x -mx-1 px-1" role="list">
+            {partnerItems.map((item) => {
+              const retailerUrl = normalizeNewsUrl(item.canonical_url) ?? normalizeNewsUrl(item.source_url);
+              return (
+                <a
+                  key={item.id}
+                  href={retailerUrl ?? '#'}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  role="listitem"
+                  aria-label={`Offre partenaire : ${item.title}`}
+                  className="flex-none w-56 snap-start rounded-xl border border-amber-500/20 bg-slate-900/80 hover:bg-amber-900/20 active:scale-95 transition-all p-3 flex flex-col gap-1.5"
+                >
+                  {item.imageUrl && (
+                    <img
+                      src={item.imageUrl}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="w-full h-20 object-cover rounded-lg border border-white/5"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                  )}
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold text-amber-300 bg-amber-900/40 rounded-full px-2 py-0.5 truncate max-w-[120px]">
+                      {item.source_name}
+                    </span>
+                    <span className="text-[10px] text-amber-600">Partenaire</span>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-100 leading-snug line-clamp-3">{item.title}</p>
+                  <p className="text-[10px] text-amber-400 font-medium mt-auto">Voir l'offre →</p>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       <section ref={mediaSectionRef} className="rounded-2xl border border-white/10 bg-white/5 p-3 sm:p-4 backdrop-blur">
         <h2 className="text-sm sm:text-base font-semibold text-white mb-2">Média à la une</h2>
