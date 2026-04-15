@@ -12,7 +12,7 @@ import type { CompareProduct, CompareSummary, PriceObservationRow } from '../typ
 
 // ── Site constants ─────────────────────────────────────────────────────────────
 
-export const SITE_URL = 'https://teetee971.github.io/akiprisaye-web';
+export const SITE_URL = 'https://akiprisaye-web.pages.dev';
 export const SITE_NAME = 'A KI PRI SA YÉ';
 
 // ── Territory display names ────────────────────────────────────────────────────

@@ -23,7 +23,7 @@ interface SEOHeadProps {
 }
 
 const SITE_NAME = 'A KI PRI SA YÉ';
-const SITE_URL  = 'https://teetee971.github.io/akiprisaye-web/';
+const SITE_URL  = 'https://akiprisaye-web.pages.dev/';
 const DEFAULT_DESC = 'Observatoire des prix dans les DOM-COM — comparez, analysez et anticipez la vie chère en Guadeloupe, Martinique, Guyane, La Réunion et Mayotte.';
 const DEFAULT_OG_IMAGE     = `${SITE_URL}icon-512.png`;
 const DEFAULT_OG_IMAGE_ALT = 'Logo A KI PRI SA YÉ — transparence des prix Outre-mer';

@@ -61,7 +61,7 @@ export default function PriceLiveTicker() {
     >
       <div className="price-ticker-label">
         <span className="price-ticker-dot" aria-hidden="true" />
-        <span>Prix en direct</span>
+        <span>Relevés citoyens — mars 2026</span>
       </div>
       <div className="price-ticker-outer" aria-hidden="true">
         <div className="price-ticker-track" ref={trackRef}>

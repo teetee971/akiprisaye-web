@@ -72,15 +72,19 @@ const HOME_STATS = [
   { value: '300+',   label: 'Alertes',     backContent: 'Plus de 300 alertes prix actives',                    icon: '🔔' },
 ];
 
+// Local placeholder images (no external dependency)
+const PROMO_IMG_SCAN  = `${import.meta.env.BASE_URL}media/images/hero-recherche.webp`;
+const PROMO_IMG_TOP   = `${import.meta.env.BASE_URL}media/images/hero-actualites.webp`;
+const PROMO_IMG_SHARE = `${import.meta.env.BASE_URL}media/images/section-professional-3d.webp`;
+
 const PROMOS = [
-  { id: 1, title: 'OFFRES SUPER U',   subtitle: 'Grand Ouverture v4.6.20', img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=400', to: '/flyer' },
-  { id: 2, title: 'ACTUALITÉS',       subtitle: 'Vidéo Souveraine OK',     img: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=400', to: '/connexion' },
-  { id: 3, title: "PARTAGEZ L'APPLI", subtitle: 'Propager la solution',    img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=400', to: null },
+  { id: 1, title: '📷 SCANNER',              subtitle: 'Scannez un code-barres',         img: PROMO_IMG_SCAN,  to: '/scanner' },
+  { id: 2, title: '🏆 TOP ÉCONOMIES',         subtitle: 'Meilleures offres du moment',    img: PROMO_IMG_TOP,   to: '/top-economies' },
+  { id: 3, title: '🤝 CONTRIBUER UN PRIX',    subtitle: 'Renforcez l\'observatoire',      img: PROMO_IMG_SHARE, to: '/contribuer' },
 ];
 
 const Home = () => {
   const [search, setSearch] = useState('');
-  const [showExtendedHome, setShowExtendedHome] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [activeTerritoryCode, setActiveTerritoryCode] = useState<string | null>(
     readStoredTerritory
@@ -119,46 +123,18 @@ const Home = () => {
       <SEOHead
         title="A KI PRI SA YÉ — Comparez les prix DOM-TOM"
         description="Observatoire citoyen des prix dans les DOM-COM. Comparez, analysez et anticipez la vie chère en Guadeloupe, Martinique, Guyane, La Réunion et Mayotte."
-        canonical="https://teetee971.github.io/akiprisaye-web/"
+        canonical="https://akiprisaye-web.pages.dev/"
       />
 
-      {/* 👻 ANCRES DE SÉCURITÉ POUR LES TESTS */}
-      <div style={{ position: 'absolute', opacity: 0 }} aria-hidden="true">
-        <p>le plus utile, sans surcharge</p>
-        <p>page d’accueil simplifiée</p>
-      </div>
-
-      {/* Contrôle "voir toute la page d’accueil" */}
-      <div className="flex justify-center py-2">
-        {showExtendedHome ? (
-          <button
-            type="button"
-            aria-expanded="true"
-            aria-controls="home-extended-content"
-            onClick={() => setShowExtendedHome(false)}
-            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
-          >
-            masquer la vue complète
-          </button>
-        ) : (
-          <button
-            type="button"
-            aria-expanded="false"
-            aria-controls="home-extended-content"
-            onClick={() => setShowExtendedHome(true)}
-            className="text-xs text-blue-400 underline hover:text-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
-          >
-            voir toute la page d’accueil
-          </button>
-        )}
-      </div>
-
       {/* ── HEADER STATUT ──────────────────────────────────────────── */}
-      <div className="pt-12 px-6 pb-6 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest mb-4">
-          v4.6.20 • SOUVERAINE ✅
+      <div className="pt-12 px-6 pb-2 text-center">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-[10px] font-black uppercase tracking-widest mb-4">
+          🟢 Données mises à jour aujourd’hui
         </div>
         <h1 className="text-4xl font-black italic uppercase tracking-tighter">Aki Pri Sa Yé</h1>
+        <p className="mt-2 text-sm text-slate-400 max-w-sm mx-auto leading-snug">
+          Comparez les prix des supermarchés en Guadeloupe, Martinique, Guyane, La Réunion et Mayotte.
+        </p>
       </div>
 
       {/* ── TERRITOIRE ACTIF ───────────────────────────────────────── */}
@@ -194,16 +170,17 @@ const Home = () => {
               Territoire :
             </span>
             <div className="flex gap-1.5 flex-wrap">
-              {Object.entries(TERRITORY_DISPLAY).slice(0, 6).map(([code, t]) => (
+              {(Object.entries(TERRITORY_DISPLAY).slice(0, 6) as [string, { flag: string; name: string }][]).map(([code, t]) => (
                 <button
                   key={code}
                   type="button"
                   onClick={() => handleTerritorySelect(code)}
-                  className="rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition-colors"
+                  className="inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-800/60 px-2.5 py-0.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300 transition-colors"
                   aria-label={t.name}
                   title={t.name}
                 >
                   <span aria-hidden="true">{t.flag}</span>
+                  <span className="font-semibold">{code.toUpperCase()}</span>
                 </button>
               ))}
             </div>
@@ -211,6 +188,41 @@ const Home = () => {
         )}
       </div>
 
+      {/* ── RECHERCHE ──────────────────────────────────────────────── */}
+      <form onSubmit={handleSearch} className="px-6 mb-4">
+        <div className="relative">
+          <Search className="absolute left-4 top-4 text-slate-500" size={20} />
+          <input
+            type="text"
+            aria-label="rechercher un produit"
+            placeholder="Rechercher un produit..."
+            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button type="submit" className="sr-only">rechercher</button>
+        </div>
+      </form>
+
+      {/* ── CTA PRINCIPAUX ─────────────────────────────────────────── */}
+      <div className="px-6 mb-8 flex gap-3">
+        <button
+          type="button"
+          onClick={() => navigate('/comparateur')}
+          className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-sm font-bold py-3 px-4 transition-all"
+        >
+          <Search size={16} />
+          Comparer les prix
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/scanner')}
+          className="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-sm font-bold py-3 px-4 transition-all"
+        >
+          <PlayCircle size={16} />
+          Scanner un code-barres
+        </button>
+      </div>
       {/* ── STATS FLIP CARDS ───────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 mb-8">
         {HOME_STATS.map((s) => (
@@ -224,7 +236,7 @@ const Home = () => {
         ))}
       </div>
 
-      {/* ── PRIX EN DIRECT ─────────────────────────────────────────── */}
+      {/* ── PRIX (RELEVÉS CITOYENS) ─────────────────────────────────────────── */}
       <div className="px-6 mb-8">
         <PriceLiveTicker />
       </div>
@@ -248,6 +260,7 @@ const Home = () => {
                 height={162}
                 fetchPriority={idx === 0 ? 'high' : undefined}
                 loading={idx === 0 ? undefined : 'lazy'}
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
               <div className="absolute bottom-4 left-5">
@@ -260,21 +273,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* ── RECHERCHE ──────────────────────────────────────────────── */}
-      <form onSubmit={handleSearch} className="px-6 mb-10">
-        <div className="relative">
-          <Search className="absolute left-4 top-4 text-slate-500" size={20} />
-          <input
-            type="text"
-            aria-label="rechercher un produit"
-            placeholder="Rechercher un produit..."
-            className="w-full bg-slate-800/40 border border-slate-700/50 p-4 pl-12 rounded-2xl outline-none"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button type="submit" className="sr-only">rechercher</button>
-        </div>
-      </form>
 
       {/* ── OBSERVATOIRE EN DIRECT ─────────────────────────────────── */}
       <div className="bento-grid-section mb-4" aria-label="Observatoire des prix">
@@ -302,16 +300,10 @@ const Home = () => {
         </Suspense>
       </div>
 
-      {/* ── OFFRE PERSONNALISÉE DU JOUR ────────────────────────────── */}
-      <div className="px-6 mb-6">
-        <Suspense fallback={<Skeleton className="h-28 w-full" />}>
-          <PersonalizedDealOfDay />
-        </Suspense>
-      </div>
 
-      {/* ── GISEMENT SOUVERAIN ─────────────────────────────────────── */}
+      {/* ── CATALOGUE DES PRIX DU MOMENT ─────────────────────────────────────── */}
       <div className="bento-grid-section mb-10">
-        <p className="bento-grid-title">Le Gisement Souverain</p>
+        <p className="bento-grid-title">Catalogue des prix du moment</p>
         <div className="grid gap-3">
           {loading ? (
             <div className="flex flex-col gap-3 py-4">
@@ -337,7 +329,7 @@ const Home = () => {
             <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
               <Package className="mx-auto text-slate-800 mb-2" size={32} />
               <p className="text-slate-600 text-[10px] font-bold uppercase">
-                {error ? 'Catalogue indisponible' : 'Gisement vide'}
+                {error ? 'Catalogue indisponible' : 'Aucun prix pour le moment'}
               </p>
               {error && (
                 <button
@@ -353,9 +345,8 @@ const Home = () => {
         </div>
       </div>
 
-      {/* ── SECTION ÉTENDUE (toggle) ───────────────────────────────── */}
-      {showExtendedHome && (
-        <div id="home-extended-content" className="space-y-12 px-4 pb-8">
+      {/* ── SECTION ÉTENDUE (toujours visible) ────────────────────── */}
+      <div id="home-extended-content" className="space-y-12 px-4 pb-8">
           <Suspense
             fallback={
               <div className="space-y-6 py-4">
@@ -441,8 +432,7 @@ const Home = () => {
             {/* FAQ */}
             <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={handleToggleFaq} />
           </Suspense>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
