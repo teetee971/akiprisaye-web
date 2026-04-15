@@ -587,7 +587,24 @@ export default function ScanEAN() {
         <div className="mb-8 space-y-4">
           <h2 className="text-2xl font-bold text-white">Résultat</h2>
           <ScanResultCard product={resolver.product} />
-          <AddToTiPanierButton product={resolver.product} />
+
+          {/* Action CTAs */}
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <Link
+              to={`/produit/${resolver.product.ean}`}
+              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 text-sm font-bold text-white shadow hover:from-blue-700 hover:to-indigo-700 transition-all"
+            >
+              🏷️ Comparer les prix DOM-TOM
+            </Link>
+            <Link
+              to={`/product/${resolver.product.ean}`}
+              className="flex items-center justify-center gap-2 rounded-xl bg-slate-700 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-600 transition-colors border border-slate-600"
+            >
+              📋 Fiche produit complète
+            </Link>
+            <AddToTiPanierButton product={resolver.product} />
+          </div>
+
           {shoppingListCount > 0 && (
             <button
               onClick={() => navigate('/liste')}
