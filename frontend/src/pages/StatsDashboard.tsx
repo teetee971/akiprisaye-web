@@ -13,6 +13,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 import { SEOHead } from '../components/ui/SEOHead';
 import { formatEur } from '../utils/currency';
 import {
@@ -20,10 +21,12 @@ import {
   getDailyStats,
   getTrendingProducts,
   getTopSEOProducts,
+  trackRetailerClick,
   type ConversionStats,
   type DailyStats,
 } from '../utils/priceClickTracker';
 import { getSEOPageStats, getSEOTopPages } from '../utils/statsTracker';
+import { buildRetailerUrl, isValidRetailerUrl, knownRetailers } from '../utils/retailerLinks';
 
 // ── Stat card component ───────────────────────────────────────────────────────
 interface StatCardProps {
@@ -156,15 +159,31 @@ interface RetailerListItemProps {
 }
 
 function RetailerListItem({ retailer, rank }: RetailerListItemProps) {
+  const url = buildRetailerUrl(retailer.retailer);
+  const hasLink = isValidRetailerUrl(url);
+
   return (
     <div className="flex items-center gap-3 py-2 border-b border-white/5 last:border-0">
       <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-zinc-400">
         {rank}
       </span>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-white truncate">
-          {retailer.retailer}
-        </div>
+        {hasLink && url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-white hover:text-emerald-400 transition-colors truncate flex items-center gap-1"
+            onClick={() => trackRetailerClick('', retailer.retailer, '', retailer.avgPrice)}
+          >
+            {retailer.retailer}
+            <ExternalLink className="w-3 h-3 opacity-60 flex-shrink-0" />
+          </a>
+        ) : (
+          <div className="text-sm font-medium text-white truncate">
+            {retailer.retailer}
+          </div>
+        )}
         <div className="flex gap-3 text-xs text-zinc-500">
           <span>{retailer.clicks} clics</span>
           <span>Moy. {formatEur(retailer.avgPrice)}</span>
@@ -210,6 +229,36 @@ function TrendingItem({ product }: TrendingItemProps) {
         {isPositive ? '+' : ''}{product.growth.toFixed(0)}%
       </div>
     </Link>
+  );
+}
+
+// ── Retailer config card ──────────────────────────────────────────────────────
+function RetailerConfigCard({ name, clicks }: { name: string; clicks: number }) {
+  const url = buildRetailerUrl(name);
+  const hasLink = isValidRetailerUrl(url);
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.01] px-3 py-2">
+      <div className="flex items-center gap-2">
+        <span className={`text-xs ${hasLink ? 'text-emerald-400' : 'text-rose-400'}`}>
+          {hasLink ? '✅' : '❌'}
+        </span>
+        {hasLink && url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-white hover:text-emerald-400 transition-colors flex items-center gap-1"
+            onClick={() => trackRetailerClick('', name, '', 0)}
+          >
+            {name}
+            <ExternalLink className="w-3 h-3 opacity-60" />
+          </a>
+        ) : (
+          <span className="text-sm text-zinc-500">{name}</span>
+        )}
+      </div>
+      <span className="text-xs text-zinc-500">{clicks > 0 ? `${clicks} clics` : 'Aucun clic'}</span>
+    </div>
   );
 }
 
@@ -391,6 +440,30 @@ export default function StatsDashboard() {
           </div>
         </div>
         
+        {/* ── Enseignes & Liens affiliés ──────────────────────────────────── */}
+        {(() => {
+          const clicksByRetailer = Object.fromEntries(
+            stats.topRetailers.map((r) => [r.retailer, r.clicks]),
+          );
+          const retailers = knownRetailers();
+          return (
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 mt-6">
+              <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
+                🏪 Enseignes &amp; Liens affiliés
+              </h2>
+              <div className="space-y-1.5">
+                {retailers.map((name) => (
+                  <RetailerConfigCard
+                    key={name}
+                    name={name}
+                    clicks={clicksByRetailer[name] ?? 0}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* ── SEO Page Stats ──────────────────────────────────────────────── */}
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
           <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500">

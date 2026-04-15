@@ -35,6 +35,18 @@ const RETAILER_URLS: Record<string, string> = {
   'Lidl':             'https://www.lidl.fr/',
   'Spar':             'https://www.spar.fr/',
   'Écomax':           'https://www.ecomax.fr/',
+  // ── DOM-TOM retailers ──────────────────────────────────────────────────────
+  'Super U / Hyper U':               'https://www.coursesu.com/',
+  'Cora':                            'https://www.cora.fr/',
+  'Score Réunion':                   'https://www.score.re/',
+  'Auchan Réunion':                  'https://www.auchan.fr/',
+  'Monoprix Martinique':             'https://www.monoprix.fr/',
+  'E.Leclerc Drive DOM (123.click)': 'https://www.123.click/',
+  // ── Métropole aliases used by scrapers ─────────────────────────────────────
+  'E.Leclerc (métropole)':           'https://www.courses.leclerc.fr/',
+  'Intermarché (métropole)':         'https://www.intermarche.com/',
+  'Super U (métropole)':             'https://www.coursesu.com/',
+  'Carrefour (métropole)':           'https://www.carrefour.fr/',
 };
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -85,8 +97,23 @@ function buildDeepLink(
   if (retailer === 'E.Leclerc') {
     return `https://www.courses.leclerc.fr/recherche?q=${encoded}`;
   }
-  if (retailer === 'Intermarché') {
+  if (retailer === 'Intermarché' || retailer === 'Intermarché (métropole)') {
     return `https://www.intermarche.com/nos-produits/recherche?term=${encoded}`;
+  }
+  if (retailer === 'Score Réunion') {
+    return `https://www.score.re/catalogsearch/result/?q=${encoded}`;
+  }
+  if (retailer === 'Auchan Réunion') {
+    return `https://www.auchan.fr/recherche?q=${encoded}`;
+  }
+  if (retailer === 'Monoprix Martinique') {
+    return `https://www.monoprix.fr/recherche?q=${encoded}`;
+  }
+  if (retailer === 'Cora') {
+    return `https://www.cora.fr/courses/recherche?q=${encoded}`;
+  }
+  if (retailer === 'Super U / Hyper U' || retailer === 'Super U (métropole)') {
+    return `https://www.coursesu.com/recherche?q=${encoded}`;
   }
 
   // Default — no deep link for this retailer
@@ -121,6 +148,10 @@ const ALLOWED_RETAILER_HOSTNAMES: readonly string[] = [
   'lidl.fr',
   'spar.fr',
   'ecomax.fr',
+  'score.re',
+  '123.click',
+  'monoprix.fr',
+  'cora.fr',
 ];
 
 /**
@@ -174,4 +205,31 @@ export function isValidRetailerUrl(url: string | null | undefined): boolean {
   } catch {
     return false;
   }
+}
+
+// ── Retailer status utility ───────────────────────────────────────────────────
+
+export interface RetailerStatus {
+  name: string;
+  url: string | null;
+  hasLink: boolean;
+}
+
+/**
+ * Return all known retailers with their URL and link status.
+ * Retailers with a valid link are sorted first.
+ * Useful for dashboard listing of all configured enseignes.
+ */
+export function getAllRetailersWithStatus(): RetailerStatus[] {
+  const all = [
+    ...Object.keys(RETAILER_URLS),
+    // Enseignes without a URL yet configured
+    'Grossistes',
+  ];
+  return [...new Set(all)]
+    .map((name) => {
+      const url = buildRetailerUrl(name);
+      return { name, url, hasLink: isValidRetailerUrl(url) };
+    })
+    .sort((a, b) => Number(b.hasLink) - Number(a.hasLink));
 }
