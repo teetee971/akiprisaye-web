@@ -36,7 +36,7 @@ export interface WorkflowRun {
   id: number;
   name: string;
   status: 'queued' | 'in_progress' | 'completed' | string;
-  conclusion: 'success' | 'failure' | 'cancelled' | 'skipped' | null;
+  conclusion: 'success' | 'failure' | 'cancelled' | 'skipped' | 'action_required' | 'timed_out' | null;
   createdAt: string;
   updatedAt: string;
   htmlUrl: string;

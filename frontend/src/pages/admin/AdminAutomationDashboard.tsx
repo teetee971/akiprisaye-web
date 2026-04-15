@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Activity,
   CheckCircle,
@@ -27,6 +28,10 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  SkipForward,
+  Timer,
+  TrendingUp,
+  ArrowRight,
 } from 'lucide-react';
 import { GlassCard } from '@/components/ui/glass-card';
 import {
@@ -44,8 +49,10 @@ const REFRESH_INTERVAL_MS = 30_000; // 30 secondes
 function fmtRelative(isoDate: string | null): string {
   if (!isoDate) return '—';
   const diff = Date.now() - new Date(isoDate).getTime();
-  const m = Math.floor(diff / 60_000);
-  if (m < 1) return 'à l\'instant';
+  const s = Math.floor(diff / 1_000);
+  if (s < 10) return 'à l\'instant';
+  if (s < 60) return `il y a ${s}s`;
+  const m = Math.floor(s / 60);
   if (m < 60) return `il y a ${m} min`;
   const h = Math.floor(m / 60);
   if (h < 24) return `il y a ${h} h`;
@@ -74,11 +81,28 @@ function workflowBadge(run: WorkflowRun) {
   if (run.conclusion === 'failure') {
     return { icon: <XCircle className="w-3.5 h-3.5" />, color: 'text-red-400', label: 'Échec' };
   }
+  if (run.conclusion === 'action_required') {
+    return { icon: <AlertTriangle className="w-3.5 h-3.5" />, color: 'text-orange-400', label: 'Action requise' };
+  }
+  if (run.conclusion === 'timed_out') {
+    return { icon: <Timer className="w-3.5 h-3.5" />, color: 'text-red-400', label: 'Timeout' };
+  }
+  if (run.conclusion === 'skipped') {
+    return { icon: <SkipForward className="w-3.5 h-3.5" />, color: 'text-slate-400', label: 'Ignoré' };
+  }
   if (run.conclusion === 'cancelled') {
     return { icon: <XCircle className="w-3.5 h-3.5" />, color: 'text-slate-400', label: 'Annulé' };
   }
   return { icon: <Clock className="w-3.5 h-3.5" />, color: 'text-slate-400', label: run.conclusion ?? run.status };
 }
+
+const EVENT_LABELS: Record<string, string> = {
+  schedule: 'cron',
+  push: 'push',
+  workflow_dispatch: 'manuel',
+  pull_request: 'PR',
+  repository_dispatch: 'dispatch',
+};
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -132,6 +156,7 @@ export default function AdminAutomationDashboard() {
   const [scrapingExpanded, setScrapingExpanded] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const navigate = useNavigate();
 
   const isDegradedMode = isStaticPreviewEnv();
 
@@ -198,6 +223,20 @@ export default function AdminAutomationDashboard() {
         ? 'text-emerald-400'
         : 'text-yellow-400';
 
+  // ── Sorted sources: KO first ──
+  const sortedSources = status?.scraping.sources
+    ? [...status.scraping.sources].sort((a, b) => {
+        if (a.ok === b.ok) return 0;
+        return a.ok ? 1 : -1;
+      })
+    : [];
+
+  // ── Workflow success rate ──
+  const workflowSuccessCount = status?.workflows.filter((w: WorkflowRun) => w.conclusion === 'success').length ?? 0;
+  const workflowTotalCount = status?.workflows.length ?? 0;
+
+  const countdownPct = (countdown / (REFRESH_INTERVAL_MS / 1000)) * 100;
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
       {/* Header */}
@@ -223,14 +262,22 @@ export default function AdminAutomationDashboard() {
           <button
             type="button"
             onClick={() => setLiveEnabled((v) => !v)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            className={`relative overflow-hidden flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
               liveEnabled
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
                 : 'bg-slate-700 text-slate-400 border border-slate-600'
             }`}
           >
-            {liveEnabled ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
-            {liveEnabled ? `Live · ${countdown}s` : 'Pause'}
+            {liveEnabled && (
+              <span
+                className="absolute inset-0 bg-emerald-500/10 origin-left transition-none"
+                style={{ transform: `scaleX(${countdownPct / 100})`, transformOrigin: 'left center' }}
+              />
+            )}
+            <span className="relative flex items-center gap-1.5">
+              {liveEnabled ? <Wifi className="w-3.5 h-3.5" /> : <WifiOff className="w-3.5 h-3.5" />}
+              {liveEnabled ? `Live · ${countdown}s` : 'Pause'}
+            </span>
           </button>
 
           <button
@@ -263,8 +310,8 @@ export default function AdminAutomationDashboard() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {/* Scraping */}
         <GlassCard className="p-4 flex items-center gap-3">
-          <Activity className={`w-8 h-8 ${scrapingColor}`} />
-          <div>
+          <Activity className={`w-8 h-8 shrink-0 ${scrapingColor}`} />
+          <div className="min-w-0">
             <p className="text-2xl font-bold text-white">
               {loading ? '…' : `${scrapingOkCount}/${scrapingTotalCount}`}
             </p>
@@ -274,15 +321,11 @@ export default function AdminAutomationDashboard() {
 
         {/* Workflows */}
         <GlassCard className="p-4 flex items-center gap-3">
-          <Zap className="w-8 h-8 text-yellow-400" />
-          <div>
+          <Zap className="w-8 h-8 shrink-0 text-yellow-400" />
+          <div className="min-w-0">
             <p className="text-2xl font-bold text-white">
-              {loading
-                ? '…'
-                : status?.workflows.filter((w: WorkflowRun) => w.conclusion === 'success').length ?? 0}
-              <span className="text-sm text-slate-400">
-                /{status?.workflows.length ?? 0}
-              </span>
+              {loading ? '…' : workflowSuccessCount}
+              <span className="text-sm text-slate-400">/{workflowTotalCount}</span>
             </p>
             <p className="text-xs text-slate-400">Workflows OK</p>
           </div>
@@ -290,8 +333,8 @@ export default function AdminAutomationDashboard() {
 
         {/* Moderation pending */}
         <GlassCard className="p-4 flex items-center gap-3">
-          <ShieldCheck className={`w-8 h-8 ${(status?.moderation.pending ?? 0) > 0 ? 'text-orange-400' : 'text-emerald-400'}`} />
-          <div>
+          <ShieldCheck className={`w-8 h-8 shrink-0 ${(status?.moderation.pending ?? 0) > 0 ? 'text-orange-400' : 'text-emerald-400'}`} />
+          <div className="min-w-0">
             <p className="text-2xl font-bold text-white">
               {loading ? '…' : status?.moderation.pending ?? 0}
             </p>
@@ -299,14 +342,22 @@ export default function AdminAutomationDashboard() {
           </div>
         </GlassCard>
 
-        {/* Alerts 24h */}
+        {/* Shocks / Alerts */}
         <GlassCard className="p-4 flex items-center gap-3">
-          <Bell className="w-8 h-8 text-purple-400" />
-          <div>
+          {(status?.scraping.shocksDetected ?? 0) > 0 ? (
+            <TrendingUp className="w-8 h-8 shrink-0 text-orange-400" />
+          ) : (
+            <Bell className="w-8 h-8 shrink-0 text-purple-400" />
+          )}
+          <div className="min-w-0">
             <p className="text-2xl font-bold text-white">
               {loading ? '…' : status?.alerts.triggeredLast24h ?? 0}
             </p>
-            <p className="text-xs text-slate-400">Alertes / 24h</p>
+            <p className="text-xs text-slate-400">
+              {(status?.scraping.shocksDetected ?? 0) > 0
+                ? `${status!.scraping.shocksDetected} choc(s) · alertes`
+                : 'Alertes / 24h'}
+            </p>
           </div>
         </GlassCard>
       </div>
@@ -339,6 +390,12 @@ export default function AdminAutomationDashboard() {
               </span>
             )}
 
+            {status?.scraping.deepScan && (
+              <span className="px-2 py-1 rounded-full text-xs font-medium bg-indigo-500/20 text-indigo-300">
+                🔍 Deep Scan
+              </span>
+            )}
+
             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
               status?.scraping.staleness === 'fresh'
                 ? 'bg-emerald-500/20 text-emerald-300'
@@ -361,16 +418,16 @@ export default function AdminAutomationDashboard() {
           </div>
 
           {/* Source list */}
-          {status?.scraping.sources.length ? (
+          {sortedSources.length ? (
             <>
               {(scrapingExpanded
-                ? status.scraping.sources
-                : status.scraping.sources.slice(0, 6)
+                ? sortedSources
+                : sortedSources.slice(0, 6)
               ).map((s: ScrapingSourceStatus) => (
                 <SourceRow key={s.name} source={s} />
               ))}
 
-              {status.scraping.sources.length > 6 && (
+              {sortedSources.length > 6 && (
                 <button
                   type="button"
                   onClick={() => setScrapingExpanded((v) => !v)}
@@ -379,7 +436,7 @@ export default function AdminAutomationDashboard() {
                   {scrapingExpanded ? (
                     <><ChevronUp className="w-3.5 h-3.5" /> Réduire</>
                   ) : (
-                    <><ChevronDown className="w-3.5 h-3.5" /> Voir toutes les {status.scraping.sources.length} sources</>
+                    <><ChevronDown className="w-3.5 h-3.5" /> Voir toutes les {sortedSources.length} sources</>
                   )}
                 </button>
               )}
@@ -411,6 +468,7 @@ export default function AdminAutomationDashboard() {
             <div className="space-y-2">
               {status.workflows.map((run: WorkflowRun) => {
                 const badge = workflowBadge(run);
+                const eventLabel = EVENT_LABELS[run.event] ?? run.event;
                 return (
                   <div
                     key={run.id}
@@ -419,6 +477,11 @@ export default function AdminAutomationDashboard() {
                     <div className="flex items-center gap-2 min-w-0">
                       <span className={badge.color}>{badge.icon}</span>
                       <span className="text-sm text-slate-200 truncate">{run.name}</span>
+                      {eventLabel && (
+                        <span className="hidden sm:inline text-[10px] px-1.5 py-0.5 rounded bg-white/5 text-slate-500 shrink-0">
+                          {eventLabel}
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <span className={`text-xs font-medium ${badge.color}`}>{badge.label}</span>
@@ -488,6 +551,17 @@ export default function AdminAutomationDashboard() {
           <p className="text-xs text-slate-500 mt-3">
             Vérifié {fmtRelative(status?.moderation.lastCheckedAt ?? null)}
           </p>
+
+          {(status?.moderation.pending ?? 0) > 0 && (
+            <button
+              type="button"
+              onClick={() => navigate('/admin/moderation')}
+              className="mt-3 w-full flex items-center justify-center gap-2 py-2 rounded-lg bg-orange-500/15 border border-orange-500/25 text-orange-300 text-xs font-medium hover:bg-orange-500/25 transition-colors"
+            >
+              <ArrowRight className="w-3.5 h-3.5" />
+              Modérer maintenant
+            </button>
+          )}
         </GlassCard>
 
         {/* ── Alertes prix + Lettre hebdo ── */}
