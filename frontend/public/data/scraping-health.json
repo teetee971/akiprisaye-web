@@ -1,13 +1,26 @@
 {
-  "lastScrapedAt": "2026-03-18T12:05:44.171Z",
-  "date": "2026-03-18",
-  "dryRun": true,
+  "lastScrapedAt": "2026-04-14T18:50:52.141Z",
+  "date": "2026-04-14",
+  "dryRun": false,
+  "deepScan": false,
   "sources": {
     "fuel": {
+      "count": 20,
+      "ok": true
+    },
+    "food": {
+      "count": 1428,
+      "ok": true
+    },
+    "fresh": {
+      "count": 39,
+      "ok": true
+    },
+    "catalogue": {
       "count": 0,
       "ok": false
     },
-    "food": {
+    "hexagone": {
       "count": 0,
       "ok": false
     },
@@ -16,11 +29,31 @@
       "ok": true
     },
     "services": {
-      "count": 0,
-      "ok": false
+      "count": 50,
+      "ok": true
+    },
+    "loyer": {
+      "count": 39,
+      "ok": true
+    },
+    "medicaments": {
+      "count": 250,
+      "ok": true
+    },
+    "octroisMer": {
+      "count": 60,
+      "ok": true
+    },
+    "com": {
+      "count": 42,
+      "ok": true
+    },
+    "grossistes": {
+      "count": 105,
+      "ok": true
     }
   },
-  "totalEntries": 51,
+  "totalEntries": 2084,
   "shocksDetected": 0,
   "status": "ok"
 }

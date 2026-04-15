@@ -1,0 +1,19 @@
+{
+  "ean": "3068320113901",
+  "product": null,
+  "pricesByTerritory": {
+    "gp": [],
+    "mq": [],
+    "gf": [],
+    "re": [],
+    "yt": []
+  },
+  "scannedAt": "2026-04-14T19:30:24.216Z",
+  "territories": [
+    "gp",
+    "mq",
+    "gf",
+    "re",
+    "yt"
+  ]
+}

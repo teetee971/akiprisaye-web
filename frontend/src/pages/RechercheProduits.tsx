@@ -32,6 +32,8 @@ const TERRITORIES: { code: TerritoryCode; label: string; flag: string }[] = [
   { code: 'mf', label: 'St-Martin', flag: '🌺' },
 ];
 
+const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
+
 const POPULAR_SEARCHES: { label: string; query?: string; ean?: string; emoji: string }[] = [
   { label: 'Coca-Cola', query: 'Coca-Cola', emoji: '🥤' },
   { label: 'Coca Zero', query: 'Coca-Cola Zero', emoji: '🫙' },
@@ -216,7 +218,6 @@ export function PartialPriceState({
   onReturnToHub: () => void;
 }) {
   const interval = result.prices?.[0];
-  const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
   const confidence = result.confidence ?? 0;
   const observations = interval?.priceCount ?? 0;
   const territoryLabel = getTerritoryLabel(result.territory);
@@ -317,7 +318,6 @@ export function PriceResults({
   onFavoriteToast?: (message: string) => void;
 }) {
   const { isFavorite, toggleFavorite } = useFavorites();
-  const formatRange = (value: number | null) => (value === null ? '—' : `${value.toFixed(2)}€`);
 
   const interval = result.prices?.[0];
   const confidence = result.confidence ?? 0;
@@ -333,6 +333,8 @@ export function PriceResults({
     : result.productName || 'Produit favori';
   const favoriteActive = isFavorite(favoriteId);
   const [productCard, setProductCard] = useState<ProductCard | null>(null);
+  // Resolved image URL from product-image worker (text query fallback)
+  const [resolvedImageUrl, setResolvedImageUrl] = useState<string | null>(null);
 
   // Seed from pre-loaded observations (from seedProvider / priceSearch); API call supplements
   const [apiPrices, setApiPrices] = useState<ApiPriceObservation[]>(
@@ -346,7 +348,10 @@ export function PriceResults({
     }
 
     const barcode = searchBarcode?.trim();
-    if (!barcode) {
+    const textQuery = searchQuery?.trim();
+
+    // Nothing to look up — clear card and bail out
+    if (!barcode && !textQuery) {
       setProductCard(null);
       return;
     }
@@ -354,23 +359,36 @@ export function PriceResults({
     const controller = new AbortController();
     const territory = (result.territory ?? 'gp').trim();
 
+    // SWR: serve stale card from sessionStorage immediately while fresh data loads
+    const cardCacheKey = barcode
+      ? `product-card:ean:${barcode}`
+      : `product-card:q:${textQuery!.toLowerCase()}`;
+    try {
+      const stale = sessionStorage.getItem(cardCacheKey);
+      if (stale) setProductCard(JSON.parse(stale) as ProductCard);
+    } catch { /* ignore */ }
+
     const loadProductCard = async () => {
       try {
-        const response = await fetch(`/api/product?barcode=${encodeURIComponent(barcode)}`, {
-          signal: controller.signal,
-        });
-        if (!response.ok) {
-          setProductCard(null);
-          return;
-        }
+        const url = barcode
+          ? `/api/product?barcode=${encodeURIComponent(barcode)}`
+          : `/api/product?q=${encodeURIComponent(textQuery!)}`;
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) return;
         const payload = (await response.json()) as { product?: ProductCard };
-        setProductCard(payload.product ?? null);
+        const card = payload.product ?? null;
+        setProductCard(card);
+        if (card) {
+          try { sessionStorage.setItem(cardCacheKey, JSON.stringify(card)); } catch { /* ignore */ }
+        }
       } catch {
-        setProductCard(null);
+        // Keep stale card if already shown; clear only for barcode searches where null is explicit
+        if (barcode) setProductCard(null);
       }
     };
 
     const loadPrices = async () => {
+      if (!barcode) return; // price observations require a barcode
       try {
         const response = await fetch(
           `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
@@ -387,12 +405,39 @@ export function PriceResults({
       }
     };
 
-    void Promise.all([loadProductCard(), loadPrices()]);
+    // Fetch a real product image via the product-image worker when a text query is used
+    const loadProductImage = async () => {
+      const label = textQuery || result.productName;
+      if (!label) return;
+      const imgCacheKey = `product-img:${label.toLowerCase()}`;
+      try {
+        const cached = sessionStorage.getItem(imgCacheKey);
+        if (cached) { setResolvedImageUrl(cached); return; }
+      } catch { /* ignore */ }
+      try {
+        const params = new URLSearchParams({ q: label, lang: 'fr', limit: '1' });
+        const resp = await fetch(`/api/product-image?${params.toString()}`, { signal: controller.signal });
+        if (!resp.ok) return;
+        const data = (await resp.json()) as { imageUrl?: string | null };
+        if (data.imageUrl) {
+          setResolvedImageUrl(data.imageUrl);
+          try { sessionStorage.setItem(imgCacheKey, data.imageUrl); } catch { /* ignore */ }
+        }
+      } catch { /* non-critical */ }
+    };
+
+    void Promise.all([loadProductCard(), loadPrices(), loadProductImage()]);
     return () => controller.abort();
-  }, [result.observations, result.territory, searchBarcode]);
+  }, [result.observations, result.productName, result.territory, searchBarcode, searchQuery]);
 
   const productTitle = productCard?.title || result.productName || 'Produit analysé';
-  const productImages = productCard?.images ?? [];
+  // Use card images when available; fall back to image resolved from the product-image worker
+  const productImages: ProductCard['images'] =
+    productCard?.images && productCard.images.length > 0
+      ? productCard.images
+      : resolvedImageUrl
+        ? [{ type: 'front' as const, url: resolvedImageUrl }]
+        : [];
 
   const rawPricedObservations = useMemo(
     () =>
@@ -918,8 +963,16 @@ export default function RechercheProduits() {
 
     setLoading(true);
     setError(null);
-    setResult(null);
     setCachedAt(null);
+
+    // SWR: show stale cached result immediately so the UI isn't blank while fetching
+    const staleCache = readCache({ query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
+    if (staleCache?.payload) {
+      setResult(staleCache.payload);
+      setCachedAt(staleCache.cachedAt);
+    } else {
+      setResult(null);
+    }
 
     try {
       const response = await searchProductPrices({
@@ -929,6 +982,7 @@ export default function RechercheProduits() {
       });
       const mapped = mapPriceSearchResult(response);
       setResult(mapped);
+      setCachedAt(null);
       writeCache(mapped, { query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
     } catch (err: any) {
       console.error('Price search error:', err);
@@ -936,7 +990,7 @@ export default function RechercheProduits() {
     } finally {
       setLoading(false);
     }
-  }, [addEntry, barcode, query, territory, writeCache]);
+  }, [addEntry, barcode, query, readCache, territory, writeCache]);
 
   const handleSearch = useCallback(async () => {
     const searchType = barcode.trim() ? 'barcode' : 'text';
