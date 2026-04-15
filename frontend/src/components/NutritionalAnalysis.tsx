@@ -171,16 +171,19 @@ export function NutritionalAnalysis({
           <button
             type="button"
             onClick={() => setExpanded(!expanded)}
+            aria-expanded={expanded}
+            aria-controls="additives-list"
+            aria-label={expanded ? `Masquer les ${additives.length} additifs` : `Afficher les ${additives.length} additifs`}
             className="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
           >
             <span className="font-semibold text-slate-900 dark:text-white">
               Additifs ({additives.length})
             </span>
-            <Info className="w-5 h-5 text-slate-600 dark:text-slate-400" />
+            <Info className="w-5 h-5 text-slate-600 dark:text-slate-400" aria-hidden="true" />
           </button>
 
           {expanded && (
-            <div className="mt-3 space-y-2">
+            <div id="additives-list" className="mt-3 space-y-2">
               {additives.map((additive) => (
                 <div 
                   key={additive.code}
