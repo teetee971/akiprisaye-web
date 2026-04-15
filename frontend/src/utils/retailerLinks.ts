@@ -26,7 +26,7 @@ const RETAILER_URLS: Record<string, string> = {
   'Carrefour Market': 'https://www.carrefour.fr/',
   'Leader Price':     'https://www.leaderprice.fr/',
   'Super U':          'https://www.coursesu.com/',
-  'E.Leclerc':        'https://www.courses.leclerc.fr/',
+  'E.Leclerc':        'https://www.e.leclerc/',
   'Intermarché':      'https://www.intermarche.com/',
   'Match':            'https://www.match.fr/',
   'Simply Market':    'https://www.auchan.fr/',  // Simply Market → Auchan
@@ -43,7 +43,7 @@ const RETAILER_URLS: Record<string, string> = {
   'Monoprix Martinique':             'https://www.monoprix.fr/',
   'E.Leclerc Drive DOM (123.click)': 'https://www.123.click/',
   // ── Métropole aliases used by scrapers ─────────────────────────────────────
-  'E.Leclerc (métropole)':           'https://www.courses.leclerc.fr/',
+  'E.Leclerc (métropole)':           'https://www.e.leclerc/',
   'Intermarché (métropole)':         'https://www.intermarche.com/',
   'Super U (métropole)':             'https://www.coursesu.com/',
   'Carrefour (métropole)':           'https://www.carrefour.fr/',
@@ -95,7 +95,7 @@ function buildDeepLink(
     return `https://www.carrefour.fr/recherche?q=${encoded}`;
   }
   if (retailer === 'E.Leclerc') {
-    return `https://www.courses.leclerc.fr/recherche?q=${encoded}`;
+    return `https://www.e.leclerc/recherche?q=${encoded}`;
   }
   if (retailer === 'Intermarché' || retailer === 'Intermarché (métropole)') {
     return `https://www.intermarche.com/nos-produits/recherche?term=${encoded}`;
@@ -136,7 +136,6 @@ export function knownRetailers(): string[] {
 const ALLOWED_RETAILER_HOSTNAMES: readonly string[] = [
   'carrefour.fr',
   'carrefour.com',
-  'courses.leclerc.fr',
   'e.leclerc',
   'coursesu.com',
   'leaderprice.fr',

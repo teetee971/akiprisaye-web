@@ -235,7 +235,7 @@ export default function ComparateurSuperMarchesDOM() {
         bestPrice={87.40}
         savings={10.40}
         retailer="E.Leclerc"
-        retailerUrl="https://www.courses.leclerc.fr/"
+        retailerUrl="https://www.e.leclerc/"
         productName="panier alimentaire DOM"
         territory="GP"
       />

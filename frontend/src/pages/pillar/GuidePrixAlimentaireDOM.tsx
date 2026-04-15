@@ -249,7 +249,7 @@ export default function GuidePrixAlimentaireDOM() {
         bestPrice={1.89}
         savings={0.60}
         retailer="E.Leclerc"
-        retailerUrl="https://www.courses.leclerc.fr/"
+        retailerUrl="https://www.e.leclerc/"
         productName="produits alimentaires DOM"
         territory="GP"
       />

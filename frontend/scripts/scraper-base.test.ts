@@ -93,9 +93,9 @@ describe('validateObservation', () => {
   });
 
   it('accepts observation with a valid https URL', () => {
-    const result = validateObservation({ ...base, url: 'https://leclerc.fr/produit/nutella' });
+    const result = validateObservation({ ...base, url: 'https://www.e.leclerc/produit/nutella' });
     expect(result.valid).toBe(true);
-    if (result.valid) expect(result.data.url).toBe('https://leclerc.fr/produit/nutella');
+    if (result.valid) expect(result.data.url).toBe('https://www.e.leclerc/produit/nutella');
   });
 
   it('uses default confidence 0.75 when not provided', () => {

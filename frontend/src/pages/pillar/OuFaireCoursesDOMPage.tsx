@@ -237,7 +237,7 @@ export default function OuFaireCoursesDOMPage() {
         bestPrice={87.40}
         savings={25.80}
         retailer="E.Leclerc"
-        retailerUrl="https://www.courses.leclerc.fr/"
+        retailerUrl="https://www.e.leclerc/"
         productName="panier alimentaire DOM"
         territory="GP"
       />
