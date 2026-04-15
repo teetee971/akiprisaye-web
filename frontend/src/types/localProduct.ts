@@ -22,4 +22,6 @@ export interface LocalPriceReport {
   observedAt: string;
   createdAt: string;
   note?: string;
+  /** Small JPEG data-URI captured as photo proof (resized, max ~80 KB) */
+  proofPhoto?: string;
 }
