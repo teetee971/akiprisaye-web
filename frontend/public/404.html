@@ -6,7 +6,11 @@
     <script type="text/javascript">
       // Redirection SPA pour GitHub Pages : redirige vers la racine du dépôt
       var l = window.location;
-      var path = l.pathname.slice(1);
+      var basePath = '/akiprisaye-web';
+      var pathname = l.pathname.indexOf(basePath) === 0
+        ? l.pathname.slice(basePath.length)
+        : l.pathname;
+      var path = pathname.slice(1);
       l.replace(
         'https://teetee971.github.io/akiprisaye-web/?p=/' +
         path.replace(/&/g, '~and~') +
