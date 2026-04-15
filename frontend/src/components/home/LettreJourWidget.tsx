@@ -112,8 +112,8 @@ export default function LettreJourWidget() {
             {/* Indicateurs */}
             {lettre.indicateurs.length > 0 && (
               <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-                {lettre.indicateurs.slice(0, 3).map((ind, i) => (
-                  <div key={i} style={{
+                {lettre.indicateurs.slice(0, 3).map((ind) => (
+                  <div key={ind.label} style={{
                     padding: '0.5rem 0.75rem', borderRadius: 10,
                     background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.2)',
                     textAlign: 'center', flex: '1 1 120px',
@@ -127,8 +127,8 @@ export default function LettreJourWidget() {
             )}
 
             {/* Sections preview */}
-            {lettre.sections.slice(0, 2).map((s, i) => (
-              <div key={i} style={{
+            {lettre.sections.slice(0, 2).map((s) => (
+              <div key={s.titre} style={{
                 padding: '0.8rem 1rem', borderRadius: 10,
                 background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(148,163,184,0.1)',
                 borderLeft: '3px solid rgba(249,115,22,0.5)',

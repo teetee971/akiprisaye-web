@@ -143,8 +143,8 @@ export default function ManualSync({ onSync }: ManualSyncProps) {
               <div className="mt-3 text-sm">
                 <p className="font-medium mb-2">Prix trouvés:</p>
                 <ul className="space-y-1">
-                  {result.prices.slice(0, 5).map((price: any, i: number) => (
-                    <li key={i}>
+                  {result.prices.slice(0, 5).map((price: any) => (
+                    <li key={`${price.date}_${price.price}`}>
                       {price.price} {price.currency} - {new Date(price.date).toLocaleDateString('fr-FR')}
                     </li>
                   ))}

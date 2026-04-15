@@ -107,7 +107,7 @@ export function ComparateurFormats() {
           
           return (
             <Card 
-              key={index}
+              key={format.label || format.poids}
               className={`p-6 border-2 ${
                 isMeilleur 
                   ? 'border-green-400 dark:border-green-600' 

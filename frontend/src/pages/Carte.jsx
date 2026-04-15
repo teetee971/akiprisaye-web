@@ -1047,7 +1047,7 @@ export default function Carte() {
 
                   return (
                     <Marker 
-                      key={index} 
+                      key={store.id || storeKey}
                       position={[store.lat, store.lon]}
                       ref={(m) => {
                         if (m) {
@@ -1185,7 +1185,7 @@ export default function Carte() {
 
               return (
                 <div
-                  key={index}
+                  key={store.id || storeKey}
                   className="border border-slate-700 rounded-lg p-4 bg-slate-800/50 hover:border-blue-500 transition shadow-lg"
                 >
                   <h3 className="font-semibold text-slate-100 mb-1">{store.name}</h3>

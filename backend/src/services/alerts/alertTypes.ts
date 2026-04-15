@@ -61,14 +61,14 @@ export interface TriggeredAlert {
     savings?: number;
     savingsPercent?: number;
     storeName: string;
-    storeId: string;
+    storeId?: string;
     productName: string;
   };
 }
 
 export interface PriceUpdate {
   productId: string;
-  storeId: string;
+  storeId?: string;
   storeName: string;
   newPrice: number;
   oldPrice?: number;

@@ -4,7 +4,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Joyride, EventData, STATUS, Step, Locale } from 'react-joyride';
+import { Joyride, EventData, STATUS, Step } from 'react-joyride';
+import type { Locale } from 'react-joyride';
 import { useOnboarding } from '../context/OnboardingContext';
 
 // Traduction française pour React Joyride
@@ -148,15 +149,15 @@ export default function OnboardingTour() {
       locale={locale}
       onEvent={handleJoyrideCallback}
       options={{
-        showProgress: true,
-        buttons: ['back', 'close', 'primary', 'skip'],
-        overlayClickAction: false,
-        overlayColor: 'rgba(0, 0, 0, 0.5)',
         primaryColor: '#1d4ed8', // blue-700 — WCAG AA contrast ≥4.5:1 with white
         textColor: '#1e293b', // slate-800
         backgroundColor: '#ffffff',
         arrowColor: '#ffffff',
+        overlayColor: 'rgba(0, 0, 0, 0.5)',
         zIndex: 10000,
+        showProgress: true,
+        buttons: ['back', 'close', 'primary', 'skip'],
+        overlayClickAction: false,
       }}
       styles={{
         tooltip: {

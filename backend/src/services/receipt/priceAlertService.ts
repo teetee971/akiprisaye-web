@@ -16,6 +16,8 @@ import { randomUUID } from 'node:crypto';
 import prisma from '../../database/prisma.js';
 import type { PriceAlertEventInput, TerritoryCode } from '../../types/receipt.types.js';
 import { priceObservationService } from './priceObservationService.js';
+import { notificationService } from '../notifications/notificationService.js';
+import type { TriggeredAlert } from '../alerts/alertTypes.js';
 
 const DROP_THRESHOLD_PERCENT = 10;  // -10% vs moyenne → significant_drop
 const RISE_THRESHOLD_PERCENT = 15;  // +15% vs moyenne → significant_rise
@@ -115,22 +117,76 @@ export class PriceAlertService {
   }
 
   /**
-   * Dispatch d'une notification.
+   * Dispatch d'une notification vers les canaux actifs (push / email / in-app).
    *
-   * TODO: brancher canaux push / email / in_app.
-   * Actuellement: log console uniquement.
+   * Recherche les abonnements priceAlert actifs pour ce produit + territoire,
+   * puis délègue l'envoi au NotificationService (email + push).
    */
   async dispatchNotification(event: PriceAlertEventInput): Promise<void> {
-    // Extension point:
-    // - push: via Firebase Cloud Messaging
-    // - email: via Resend / SendGrid
-    // - in_app: via messagingService (Firestore)
-    console.info(
-      `[PriceAlert] ${event.eventType.toUpperCase()} — product:${event.productId}` +
-        ` territory:${event.territory}` +
-        ` price:${event.currentPrice}€` +
-        (event.previousPrice ? ` (was ${event.previousPrice}€)` : ''),
+    // Fetch active subscriptions for this product / territory
+    const activeAlerts = await prisma.priceAlert.findMany({
+      where: {
+        productId: event.productId,
+        territory: event.territory,
+        isActive: true,
+      },
+    });
+
+    if (activeAlerts.length === 0) return;
+
+    const reason = this._buildReason(event);
+
+    await Promise.allSettled(
+      activeAlerts.map((alert) => {
+        const triggered: TriggeredAlert = {
+          alert: {
+            id: alert.id,
+            userId: alert.userId,
+            productId: alert.productId,
+            alertType: alert.alertType,
+            targetPrice: alert.targetPrice ?? undefined,
+            territory: alert.territory,
+            notifyEmail: alert.notifyEmail,
+            notifyPush: alert.notifyPush,
+            notifySms: alert.notifySms,
+            isActive: alert.isActive,
+            triggeredCount: alert.triggeredCount,
+            triggeredAt: alert.triggeredAt ?? undefined,
+            createdAt: alert.createdAt,
+            updatedAt: alert.updatedAt,
+            expiresAt: alert.expiresAt ?? undefined,
+          },
+          trigger: {
+            reason,
+            oldPrice: event.previousPrice,
+            newPrice: event.currentPrice,
+            productName: event.productId,
+            storeName: String(event.payloadJson?.['store'] ?? ''),
+            storeId: undefined,
+            savings: event.previousPrice != null
+              ? +(event.previousPrice - event.currentPrice).toFixed(2)
+              : undefined,
+            savingsPercent: event.previousPrice != null
+              ? +(((event.previousPrice - event.currentPrice) / event.previousPrice) * 100).toFixed(1)
+              : undefined,
+          },
+        };
+        return notificationService.sendAlertNotification(triggered);
+      }),
     );
+  }
+
+  private _buildReason(event: PriceAlertEventInput): string {
+    switch (event.eventType) {
+      case 'new_low':
+        return `Nouveau prix le plus bas : ${event.currentPrice}€${event.previousPrice != null ? ` (précédent min : ${event.previousPrice}€)` : ''}`;
+      case 'significant_drop':
+        return `Baisse significative : ${event.currentPrice}€${event.previousPrice != null ? ` (était ${event.previousPrice}€)` : ''}`;
+      case 'significant_rise':
+        return `Hausse significative : ${event.currentPrice}€${event.previousPrice != null ? ` (était ${event.previousPrice}€)` : ''}`;
+      default:
+        return `Mise à jour prix : ${event.currentPrice}€`;
+    }
   }
 
   private async _getLastMonthAvg(

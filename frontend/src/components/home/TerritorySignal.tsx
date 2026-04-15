@@ -17,6 +17,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { GlassCard } from '../ui/glass-card';
 
 interface TerritorySignal {
@@ -145,12 +146,12 @@ export function TerritorySignal() {
       }).catch(() => {
         // Fallback: copy to clipboard
         navigator.clipboard.writeText(text);
-        alert('✅ Signal copié dans le presse-papier');
+        toast.success('Signal copié dans le presse-papier');
       });
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(text);
-      alert('✅ Signal copié dans le presse-papier');
+      toast.success('Signal copié dans le presse-papier');
     }
   };
 

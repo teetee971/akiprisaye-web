@@ -1,6 +1,6 @@
  
 // src/services/catalogueService.ts
-// Catalogue service: small scaffolding for roadmap
+// Catalogue service: fetch and validate product catalogue data
 
 export type Product = {
   id: string
@@ -13,12 +13,28 @@ export type Product = {
 
 export type CatalogueItemRaw = Product
 
-// Fetch catalogue from a source (placeholder)
+/**
+ * Fetch catalogue from the static JSON asset served at /data/catalogue.json.
+ * Falls back to an empty array on network or parse errors so callers degrade gracefully.
+ */
 export async function fetchCatalogue(source?: string): Promise<Product[]> {
-  // TODO: implement real fetching (HTTP, cloud storage, etc.)
-  // For now return an empty array to allow other parts to compile.
-  console.info('fetchCatalogue called', { source })
-  return []
+  const url = source ?? '/data/catalogue.json';
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.warn('[catalogueService] HTTP error fetching catalogue', response.status, url);
+      return [];
+    }
+    const data: unknown = await response.json();
+    if (!Array.isArray(data)) {
+      console.warn('[catalogueService] Expected array, got:', typeof data);
+      return [];
+    }
+    return data as Product[];
+  } catch (error) {
+    console.error('[catalogueService] Failed to fetch catalogue:', error);
+    return [];
+  }
 }
 
 // Basic validation of catalogue entries

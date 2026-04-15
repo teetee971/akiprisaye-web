@@ -1,10 +1,27 @@
 /**
  * Payment Provider Service
- * Handles payment processing with multiple payment methods
+ * Handles payment processing with multiple payment methods via Stripe.
  * Supports: Card, Bank Transfer, Institutional Deferred Payment
+ *
+ * Required environment variable:
+ *   STRIPE_SECRET_KEY – Stripe secret API key
+ *
+ * When STRIPE_SECRET_KEY is absent the service falls back to an in-memory
+ * simulation so that the rest of the application can still run in dev/test.
  */
 
+import Stripe from 'stripe';
 import type { Plan, BillingCycle } from '../models/Subscription.js';
+
+// ─── Stripe client ─────────────────────────────────────────────────────────────
+
+const stripe: Stripe | null = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2023-10-16' })
+  : null;
+
+if (!stripe) {
+  console.warn('[PaymentProvider] STRIPE_SECRET_KEY not set – using in-memory simulation');
+}
 
 export interface PaymentIntent {
   id: string;
@@ -62,19 +79,47 @@ const paymentMethods: Map<string, PaymentMethod> = new Map();
 
 export class PaymentProvider {
   /**
-   * Create a payment intent
-   * This initiates the payment process
+   * Create a payment intent via Stripe.
+   * Falls back to an in-memory record when Stripe is not configured.
    */
   static async createPaymentIntent(data: CreatePaymentIntentDTO): Promise<PaymentIntent> {
-    const id = `pi_${Date.now()}`;
+    const amount = data.amount || 0;
     const now = new Date();
     const expiresAt = new Date(now);
-    expiresAt.setHours(expiresAt.getHours() + 24); // Intent expires in 24 hours
-    
-    // In production, calculate amount from pricing service
-    const amount = data.amount || 0;
-    
-    const paymentIntent: PaymentIntent = {
+    expiresAt.setHours(expiresAt.getHours() + 24);
+
+    if (stripe) {
+      const stripeIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Stripe uses cents
+        currency: 'eur',
+        metadata: {
+          userId: data.userId,
+          plan: data.plan,
+          billingCycle: data.billingCycle,
+          territory: data.territory,
+        },
+      });
+
+      const intent: PaymentIntent = {
+        id: stripeIntent.id,
+        userId: data.userId,
+        plan: data.plan,
+        billingCycle: data.billingCycle,
+        amount,
+        currency: 'EUR',
+        status: 'pending',
+        territory: data.territory,
+        clientSecret: stripeIntent.client_secret ?? undefined,
+        createdAt: now,
+        expiresAt,
+      };
+      paymentIntents.set(intent.id, intent);
+      return intent;
+    }
+
+    // In-memory fallback
+    const id = `pi_${Date.now()}`;
+    const intent: PaymentIntent = {
       id,
       userId: data.userId,
       plan: data.plan,
@@ -87,39 +132,46 @@ export class PaymentProvider {
       createdAt: now,
       expiresAt,
     };
-    
-    paymentIntents.set(id, paymentIntent);
-    return paymentIntent;
+    paymentIntents.set(id, intent);
+    return intent;
   }
 
   /**
-   * Confirm payment with card
-   * In production, integrate with Stripe, PayPal, or local payment provider
+   * Confirm payment with card via Stripe.
+   * The cardToken is the Stripe PaymentMethod ID obtained client-side.
    */
   static async confirmCardPayment(
     paymentIntentId: string,
-    _cardToken: string
+    cardToken: string
   ): Promise<PaymentIntent> {
     const intent = paymentIntents.get(paymentIntentId);
-    if (!intent) {
-      throw new Error('Payment intent not found');
-    }
-    
+    if (!intent) throw new Error('Payment intent not found');
     if (intent.status !== 'pending' && intent.status !== 'processing') {
       throw new Error('Payment intent already processed or in invalid state');
     }
-    
-    // In production: Process with payment provider (Stripe, etc.)
-    // For now, simulate success
+
+    if (stripe) {
+      const confirmed = await stripe.paymentIntents.confirm(paymentIntentId, {
+        payment_method: cardToken,
+      });
+      intent.status =
+        confirmed.status === 'succeeded'
+          ? 'succeeded'
+          : confirmed.status === 'canceled'
+            ? 'canceled'
+            : 'processing';
+      intent.paymentMethod = 'card';
+      paymentIntents.set(paymentIntentId, intent);
+      return intent;
+    }
+
+    // In-memory fallback: simulate async processing
     intent.status = 'processing';
-    
-    // Simulate async processing
     setTimeout(() => {
       intent.status = 'succeeded';
       intent.paymentMethod = 'card';
       paymentIntents.set(paymentIntentId, intent);
     }, 2000);
-    
     return intent;
   }
 
@@ -191,14 +243,14 @@ export class PaymentProvider {
   }
 
   /**
-   * Cancel subscription (immediate, no retention tricks)
+   * Cancel subscription immediately via Stripe, or log in simulation mode.
    */
   static async cancelSubscription(subscriptionId: string): Promise<void> {
-    // In production: Cancel with payment provider
-    // Stripe: stripe.subscriptions.cancel(subscriptionId)
-    // PayPal: paypal.billing.subscriptions.cancel(subscriptionId)
-    
-    console.log(`Subscription ${subscriptionId} canceled immediately`);
+    if (stripe) {
+      await stripe.subscriptions.cancel(subscriptionId);
+      return;
+    }
+    console.log(`[PaymentProvider] Subscription ${subscriptionId} canceled (simulation)`);
   }
 
   /**
@@ -302,7 +354,7 @@ export class PaymentProvider {
   }
 
   /**
-   * Refund payment
+   * Refund a payment via Stripe or in simulation mode.
    */
   static async refundPayment(
     paymentIntentId: string,
@@ -313,17 +365,23 @@ export class PaymentProvider {
     status: 'succeeded' | 'failed';
   }> {
     const intent = paymentIntents.get(paymentIntentId);
-    if (!intent) {
-      throw new Error('Payment intent not found');
+    if (!intent) throw new Error('Payment intent not found');
+    if (intent.status !== 'succeeded') throw new Error('Can only refund successful payments');
+
+    const refundAmount = amount ?? intent.amount;
+
+    if (stripe) {
+      const refund = await stripe.refunds.create({
+        payment_intent: paymentIntentId,
+        ...(amount ? { amount: Math.round(amount * 100) } : {}),
+      });
+      return {
+        refundId: refund.id,
+        amount: (refund.amount ?? Math.round(refundAmount * 100)) / 100,
+        status: refund.status === 'succeeded' ? 'succeeded' : 'failed',
+      };
     }
-    
-    if (intent.status !== 'succeeded') {
-      throw new Error('Can only refund successful payments');
-    }
-    
-    const refundAmount = amount || intent.amount;
-    
-    // In production: Process refund with payment provider
+
     return {
       refundId: `re_${Date.now()}`,
       amount: refundAmount,

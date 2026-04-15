@@ -12,6 +12,8 @@ const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
   minute: '2-digit'
 });
 
+const API_BASE_URL = (import.meta as { env: Record<string, string> }).env.VITE_API_URL || '';
+
 interface ShoppingItem {
   id: string;
   name: string;
@@ -25,6 +27,16 @@ interface StoreOption {
   totalCost: number;
   travelCost: number;
   address: string;
+}
+
+/** Raw store shape returned by /api/map/nearby */
+interface ApiStore {
+  id: string;
+  name: string;
+  lat: number;
+  lon: number;
+  address?: string;
+  priceIndex?: number;
 }
 
 interface GPSShoppingListProps {
@@ -71,43 +83,55 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
     const ROUND_TRIP_MULTIPLIER = 2; // Account for return trip
     const COST_PER_KM = 0.5; // Average fuel cost per km (€)
     const CENTS_MULTIPLIER = 100; // For rounding to cents
-    
-    // Mock data - in production, fetch from API with real prices and GPS coordinates
-    const mockStores = [
-      {
-        id: '1',
-        name: 'Super U',
-        lat: 16.271,
-        lon: -61.588,
-        totalCost: 87.30,
-        travelCost: 2.10,
-        address: 'Zone commerciale Jarry, Baie-Mahault'
-      },
-      {
-        id: '2',
-        name: 'Carrefour Market',
-        lat: 16.2415,
-        lon: -61.5331,
-        totalCost: 92.50,
-        travelCost: 1.40,
-        address: 'Centre-ville, Pointe-à-Pitre'
-      },
-      {
-        id: '3',
-        name: 'Leader Price',
-        lat: 16.224,
-        lon: -61.493,
-        totalCost: 84.90,
-        travelCost: 3.05,
-        address: 'Route de Basse-Terre, Les Abymes'
+    const NEARBY_RADIUS_KM = 15;
+
+    let apiStores: ApiStore[] = [];
+
+    // Fetch nearby stores from real-time API
+    try {
+      const params = new URLSearchParams({
+        lat: userPos.lat.toString(),
+        lon: userPos.lon.toString(),
+        radius: NEARBY_RADIUS_KM.toString(),
+        maxResults: '10',
+      });
+      const res = await fetch(`${API_BASE_URL}/api/map/nearby?${params.toString()}`);
+      if (res.ok) {
+        const json = await res.json() as { success?: boolean; data?: { stores?: ApiStore[] } };
+        if (json.success && json.data?.stores) {
+          apiStores = json.data.stores;
+        }
       }
-    ];
+    } catch {
+      // API unavailable — fall back to empty list (handled below)
+    }
+
+    if (apiStores.length === 0) {
+      setError('Aucun magasin trouvé à proximité. Vérifiez votre connexion ou élargissez le rayon de recherche.');
+      setStoreOptions([]);
+      return;
+    }
+
+    // Estimate basket cost from priceIndex (relative to 100 = average)
+    // priceIndex 95 means 5% cheaper than average
+    const BASKET_BASE_COST = 90; // estimated average basket cost in €
+
+    const storesWithCoords = apiStores.map((s) => ({
+      id: s.id,
+      name: s.name,
+      lat: s.lat,
+      lon: s.lon,
+      address: s.address ?? '',
+      totalCost: s.priceIndex != null
+        ? Math.round(BASKET_BASE_COST * (s.priceIndex / 100) * CENTS_MULTIPLIER) / CENTS_MULTIPLIER
+        : BASKET_BASE_COST,
+    }));
 
     // Use batch distance calculation for efficiency
-    const storesWithDistances = calculateDistancesBatch(userPos, mockStores);
-    
+    const storesWithDistances = calculateDistancesBatch(userPos, storesWithCoords);
+
     // Calculate travel cost based on actual distance
-    const optionsWithRealDistance: StoreOption[] = storesWithDistances.map(store => ({
+    const optionsWithRealDistance: StoreOption[] = storesWithDistances.map((store) => ({
       id: store.id,
       name: store.name,
       distance: store.distance,
@@ -116,7 +140,12 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
       travelCost: Math.round(store.distance * ROUND_TRIP_MULTIPLIER * COST_PER_KM * CENTS_MULTIPLIER) / CENTS_MULTIPLIER,
       address: store.address,
     }));
-    
+
+    // Sort by total cost (products + travel) — greedy optimum
+    optionsWithRealDistance.sort(
+      (a, b) => (a.totalCost + a.travelCost) - (b.totalCost + b.travelCost),
+    );
+
     setStoreOptions(optionsWithRealDistance);
   }, []);
 
@@ -189,6 +218,7 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
       {/* GPS Button */}
       {!position && (
         <button
+          type="button"
           onClick={requestLocation}
           disabled={loading}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"

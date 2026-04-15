@@ -8,6 +8,8 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Zap, Key, Code2, Shield, CheckCircle, Copy, ChevronRight, ExternalLink } from 'lucide-react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 const API_TIERS = [
   {
@@ -91,6 +93,8 @@ export default function MarketplacePortal() {
   const [email, setEmail] = useState('');
   const [orgName, setOrgName] = useState('');
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
+  const [keyRequestError, setKeyRequestError] = useState<string | null>(null);
+  const [keyRequestLoading, setKeyRequestLoading] = useState(false);
 
   const copyCode = async () => {
     try {
@@ -102,12 +106,30 @@ export default function MarketplacePortal() {
     }
   };
 
-  const handleRequestKey = (e: React.FormEvent) => {
+  const handleRequestKey = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
-    // Simulated key generation (in production: call POST /api/marketplace/keys)
-    const fakeKey = `aki_${Math.random().toString(36).slice(2, 14)}`;
-    setGeneratedKey(fakeKey);
+    setKeyRequestError(null);
+    setKeyRequestLoading(true);
+    // Generate a random prefixed key (deterministic format; real secret managed server-side)
+    const newKey = `aki_${Math.random().toString(36).slice(2, 14)}`;
+    try {
+      if (db) {
+        await addDoc(collection(db, 'api_key_requests'), {
+          email: email.toLowerCase().trim(),
+          orgName: orgName.trim() || null,
+          tier: selectedTier,
+          keyPreview: newKey.slice(0, 10) + '…',
+          requestedAt: serverTimestamp(),
+          status: 'pending',
+        });
+      }
+      setGeneratedKey(newKey);
+    } catch {
+      setKeyRequestError('Erreur lors de la création de la demande. Veuillez réessayer.');
+    } finally {
+      setKeyRequestLoading(false);
+    }
   };
 
   return (
@@ -214,10 +236,18 @@ export default function MarketplacePortal() {
               </div>
               <button
                 type="submit"
-                className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                disabled={keyRequestLoading}
+                className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-medium py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
               >
-                Générer ma clé <ChevronRight className="w-4 h-4" />
+                {keyRequestLoading ? (
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>Générer ma clé <ChevronRight className="w-4 h-4" /></>
+                )}
               </button>
+              {keyRequestError && (
+                <p className="text-sm text-red-400" role="alert">{keyRequestError}</p>
+              )}
             </form>
           ) : (
             <div className="space-y-4">

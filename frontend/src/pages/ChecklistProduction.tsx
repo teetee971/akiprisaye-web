@@ -89,7 +89,7 @@ const CHECKLIST: ChecklistSection[] = [
       { label: 'Lazy loading des pages (React.lazy + lazyPage helper)', status: 'done', priority: 'haute' },
       { label: 'Cache des requêtes prix (priceCacheService)', status: 'done', priority: 'moyenne' },
       { label: 'Fonctions Cloudflare Workers optimisées (<50ms cold start)', status: 'in-progress', priority: 'moyenne' },
-      { label: 'Mode hors-ligne étendu (PWA) pour les territoires à connectivité faible', status: 'todo', priority: 'moyenne', note: 'Prévu V2' },
+      { label: 'Mode hors-ligne étendu (PWA) pour les territoires à connectivité faible', status: 'in-progress', priority: 'moyenne', note: 'SW SWR sur data JSON + bannière offline V2' },
     ],
   },
   {
@@ -165,10 +165,10 @@ const CHECKLIST: ChecklistSection[] = [
     tasks: [
       { label: 'Disclaimer IA systématique sur chaque sortie IA', status: 'done', priority: 'haute' },
       { label: 'Validation humaine obligatoire sur les devis B2G/B2B', status: 'done', priority: 'haute' },
-      { label: 'Affichage des hypothèses et limites pour les prédictions', status: 'in-progress', priority: 'haute', note: 'Intervalles de confiance prévus V2' },
+      { label: 'Affichage des hypothèses et limites pour les prédictions', status: 'done', priority: 'haute', note: 'Intervalles de confiance implémentés V2' },
       { label: 'Aucun LLM opaque non auditable en production', status: 'done', priority: 'haute' },
       { label: 'Données uniquement réelles pour les modèles de prédiction', status: 'done', priority: 'haute' },
-      { label: 'Intervalles de confiance affichés sur les prédictions', status: 'todo', priority: 'haute', note: 'Prévu V2' },
+      { label: 'Intervalles de confiance affichés sur les prédictions', status: 'in-progress', priority: 'haute', note: 'PriceTrendWidget V2 — en déploiement' },
     ],
   },
 ];

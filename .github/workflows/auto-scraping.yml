@@ -50,6 +50,7 @@ permissions:
   contents: write   # Pour commiter les JSON mis à jour
   issues: write     # Pour créer des alertes si choc grave
   actions: read
+  pull-requests: write  # Pour créer la PR de mise à jour des données
 
 concurrency:
   group: scraping-auto
@@ -59,7 +60,7 @@ jobs:
   scrape:
     name: 🔄 Scraping multi-sources
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     # Ne pas exécuter si c'est un déploiement qui a échoué
     if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
 
@@ -75,13 +76,13 @@ jobs:
           fi
 
       - name: 📥 Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 1
 
-      - name: ⚙️ Setup Node.js 20
-        uses: actions/setup-node@v6
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: 'npm'
@@ -122,7 +123,7 @@ jobs:
             exit 0
           fi
 
-      - name: 💾 Commit des données mises à jour
+      - name: 💾 Créer PR avec données mises à jour
         if: ${{ inputs.dry_run != 'true' }}
         run: |
           git config user.name  "akiprisaye-bot[scraper]"
