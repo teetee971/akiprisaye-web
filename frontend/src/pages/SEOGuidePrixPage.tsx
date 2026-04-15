@@ -32,6 +32,12 @@ const TERRITORY_SLUG_NAMES: Record<string, string> = {
   GP: 'guadeloupe', MQ: 'martinique', GF: 'guyane', RE: 'reunion', YT: 'mayotte',
 };
 
+/** Estimated price premium vs hexagone per territory (ratio: 1.0 = same price) */
+const PRICE_COEFF: Record<string, number> = {
+  GP: 1.40, MQ: 1.42, GF: 1.38, RE: 1.35, YT: 1.50,
+  BL: 1.60, MF: 1.55, PM: 1.45,
+};
+
 // ── Real price types ─────────────────────────────────────────────────────────
 interface RetailerPrice {
   retailer: string;
@@ -139,7 +145,7 @@ export default function SEOGuidePrixPage() {
     <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
       <SEOHead
         title={`Guide prix ${productName} en ${territoryName} 2026 — Historique & conseils`}
-        description={`Guide complet : prix ${productName} en ${territoryName}, historique des prix, comparaison enseignes, conseils pour payer moins cher.${bestPrice ? \` Meilleur prix : ${formatEur(bestPrice.price)} chez ${bestPrice.retailer}.\` : ''}`}
+        description={`Guide complet : prix ${productName} en ${territoryName}, historique des prix, comparaison enseignes, conseils pour payer moins cher.${bestPrice ? ' Meilleur prix : ' + formatEur(bestPrice.price) + ' chez ' + bestPrice.retailer + '.' : ''}`}
         canonical={`${SITE_URL}/guide-prix/${slug}`}
         jsonLd={articleJsonLd}
       />

@@ -26,12 +26,12 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://teetee971.github.io/akiprisaye-web/modules</loc>
+    <loc>https://teetee971.github.io/akiprisaye-web/civic-modules</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://teetee971.github.io/akiprisaye-web/mentions</loc>
+    <loc>https://teetee971.github.io/akiprisaye-web/mentions-legales</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

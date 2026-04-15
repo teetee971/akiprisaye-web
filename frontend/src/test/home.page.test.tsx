@@ -147,31 +147,32 @@ describe('Home page', () => {
     );
   });
 
-  it('renders the compact homepage by default', async () => {
+
+  it('renders the homepage with search bar and value proposition', async () => {
     render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/le plus utile, sans surcharge/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /voir toute la page d’accueil/i })).toBeInTheDocument();
-    expect(screen.queryByText(/ce que disent nos utilisateurs/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/mock proof stats/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/mock observatory section/i)).not.toBeInTheDocument();
-    expect(screen.getByText(/page d’accueil simplifiée/i)).toBeInTheDocument();
+    // Search bar is visible
+    expect(screen.getByRole('textbox', { name: /rechercher un produit/i })).toBeInTheDocument();
+    // Value proposition subtitle
+    expect(screen.getByText(/comparez les prix des supermarch/i)).toBeInTheDocument();
+    // CTAs visible
+    expect(screen.getByRole('button', { name: /comparer les prix/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /scanner un code-barres/i })).toBeInTheDocument();
+    // Toggle is gone
+    expect(screen.queryByRole('button', { name: /voir toute la page d'accueil/i })).not.toBeInTheDocument();
   });
 
-  it('can show the extended homepage on demand', async () => {
+  it('extended homepage content is always visible without any toggle', async () => {
     render(
       <MemoryRouter>
         <Home />
       </MemoryRouter>,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /voir toute la page d’accueil/i }));
-
-    expect(screen.getByRole('button', { name: /masquer la vue complète/i })).toBeInTheDocument();
     expect(await screen.findByText(/mock proof stats/i)).toBeInTheDocument();
     expect(await screen.findByText(/mock observatory section/i)).toBeInTheDocument();
   });

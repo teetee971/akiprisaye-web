@@ -39,6 +39,13 @@ import InternalLinksSection from '../components/seo/InternalLinksSection';
 import ConversionStickyBar from '../components/business/ConversionStickyBar';
 
 // ── Real price types ─────────────────────────────────────────────────────────
+
+/** Estimated price premium vs hexagone per territory (ratio: 1.0 = same price) */
+const MOCK_PRICE_COEFFICIENTS: Record<string, number> = {
+  GP: 1.40, MQ: 1.42, GF: 1.38, RE: 1.35, YT: 1.50,
+  BL: 1.60, MF: 1.55, PM: 1.45,
+};
+
 interface RetailerPrice {
   retailer:  string;
   price:     number;

@@ -38,6 +38,13 @@ function resolveTerritoryCode(slug: string): string {
 }
 
 // ── Category tabs ─────────────────────────────────────────────────────────────
+
+/** Estimated price premium vs hexagone per territory (ratio: 1.0 = same price) */
+const TERRITORY_PRICE_COEFF: Record<string, number> = {
+  GP: 1.40, MQ: 1.42, GF: 1.38, RE: 1.35, YT: 1.50,
+  BL: 1.60, MF: 1.55, PM: 1.45,
+};
+
 const CATEGORIES = [
   { slug: 'all',              name: 'Tout',            icon: '🛒' },
   { slug: 'boissons',         name: 'Boissons',        icon: '🥤' },

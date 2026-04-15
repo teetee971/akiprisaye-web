@@ -69,6 +69,21 @@ async function buildPriceMap(): Promise<Record<string, ProductResult>> {
   return map;
 }
 
+// Module-level sync price cache (populated asynchronously on first use)
+let MOCK_PRICES: Record<string, ProductResult> = {
+  DEFAULT: {
+    ean: '0000000000000',
+    name: 'Produit détecté',
+    brand: 'Marque inconnue',
+    prices: [
+      { store: 'Carrefour Destrellan', price: 3.49, territory: 'gp' },
+      { store: 'E.Leclerc Bas du Fort', price: 3.29, territory: 'gp' },
+    ],
+  },
+};
+// Populate asynchronously
+buildPriceMap().then((map) => { MOCK_PRICES = map; }).catch(() => { /* keep defaults */ });
+
 // Extend BarcodeDetector types (not in lib.dom.d.ts yet)
 interface BarcodeDetectorResult {
   rawValue: string;

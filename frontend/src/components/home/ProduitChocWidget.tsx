@@ -41,7 +41,20 @@ interface Snapshot {
   donnees: ObsEntry[];
 }
 
-const SNAPSHOT_DATE = '2026-03';
+/** Candidate months to try, newest first */
+const SNAPSHOT_CANDIDATES = ['2026-03', '2026-02', '2026-01', '2025-12', '2025-11'];
+
+/** Try fetching a snapshot, falling back through candidate months */
+async function fetchSnapshot(stem: string, base: string): Promise<Snapshot | null> {
+  for (const date of SNAPSHOT_CANDIDATES) {
+    const url = `${base}data/observatoire/${stem}_${date}.json`;
+    try {
+      const resp = await fetch(url);
+      if (resp.ok) return await resp.json() as Snapshot;
+    } catch { /* try next */ }
+  }
+  return null;
+}
 
 const TERRITORIES = [
   { stem: 'hexagone',                   flag: '🇫🇷', label: 'Hexagone' },
@@ -108,18 +121,11 @@ export default function ProduitChocWidget() {
     let cancelled = false;
 
     async function load() {
-      // Step 1: Fetch all snapshots in parallel
+      // Step 1: Fetch all snapshots in parallel (with fallback to older months)
       const snapshotMap: Record<string, Snapshot | null> = {};
       await Promise.all(
         TERRITORIES.map(async (t) => {
-          const url = `${import.meta.env.BASE_URL}data/observatoire/${t.stem}_${SNAPSHOT_DATE}.json`;
-          try {
-            const resp = await fetch(url);
-            if (!resp.ok) throw new Error('not ok');
-            snapshotMap[t.stem] = await resp.json() as Snapshot;
-          } catch {
-            snapshotMap[t.stem] = null;
-          }
+          snapshotMap[t.stem] = await fetchSnapshot(t.stem, import.meta.env.BASE_URL as string);
         }),
       );
 

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState, useRef } from 'react';
+import React, { lazy, Suspense, useState, useRef, useEffect } from 'react';
 import { Search, PlayCircle, Package, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
@@ -65,7 +65,7 @@ const SmartShoppingList        = lazy(() => import('../components/home/SmartShop
 const ShareVictory             = lazy(() => import('../components/home/ShareVictory'));
 const ProofStats               = lazy(() => import('../components/home/ProofStats'));
 
-const HOME_STATS = [
+const DEFAULT_HOME_STATS = [
   { value: '12',     label: 'Territoires', backContent: "12 départements et territoires d'outre-mer couverts", icon: '🗺️' },
   { value: '5 000+', label: 'Produits',    backContent: 'Plus de 5 000 produits suivis en temps réel',         icon: '🛒' },
   { value: '1 200+', label: 'Scans',       backContent: 'Plus de 1 200 scans validés par les citoyens',        icon: '📷' },
@@ -89,9 +89,25 @@ const Home = () => {
   const [activeTerritoryCode, setActiveTerritoryCode] = useState<string | null>(
     readStoredTerritory
   );
+  const [homeStats, setHomeStats] = useState(DEFAULT_HOME_STATS);
   const navigate = useNavigate();
   const { products, loading, error, reloadProducts } = useApp();
   const pageRef = useRef<HTMLDivElement>(null);
+
+  // Load dynamic stats from JSON (updated by scraping pipeline)
+  useEffect(() => {
+    fetch(`${import.meta.env.BASE_URL}data/site-stats.json`)
+      .then((r) => r.ok ? r.json() as Promise<{ territories?: string; products?: string; scans?: string; alerts?: string }> : Promise.reject())
+      .then((data) => {
+        setHomeStats([
+          { value: data.territories ?? '12',     label: 'Territoires', backContent: "12 départements et territoires d'outre-mer couverts", icon: '🗺️' },
+          { value: data.products  ?? '5 000+',   label: 'Produits',    backContent: 'Produits suivis en temps réel',                      icon: '🛒' },
+          { value: data.scans     ?? '1 200+',   label: 'Scans',       backContent: 'Scans validés par les citoyens',                     icon: '📷' },
+          { value: data.alerts    ?? '300+',     label: 'Alertes',     backContent: 'Alertes prix actives',                               icon: '🔔' },
+        ]);
+      })
+      .catch(() => { /* keep DEFAULT_HOME_STATS */ });
+  }, []);
 
   useScrollReveal(pageRef);
 
@@ -225,7 +241,7 @@ const Home = () => {
       </div>
       {/* ── STATS FLIP CARDS ───────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 mb-8">
-        {HOME_STATS.map((s) => (
+        {homeStats.map((s) => (
           <FlipStatCard
             key={s.label}
             value={s.value}
