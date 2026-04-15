@@ -8,6 +8,8 @@ export interface Product {
   price: string | number;
   category?: string;
   store?: string;
+  tags?: string[];
+  imageUrl?: string;
 }
 
 type AppContextValue = {

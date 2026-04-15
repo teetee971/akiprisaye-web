@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useState, useRef, useEffect } from 'react';
-import { Search, PlayCircle, Package, RefreshCw } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Search, PlayCircle, Package, RefreshCw, ChevronRight } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -83,6 +83,34 @@ const PROMOS = [
   { id: 2, title: '🏆 TOP ÉCONOMIES',         subtitle: 'Meilleures offres du moment',    img: PROMO_IMG_TOP,   to: '/top-economies' },
   { id: 3, title: '🤝 CONTRIBUER UN PRIX',    subtitle: 'Renforcez l\'observatoire',      img: PROMO_IMG_SHARE, to: '/contribuer' },
 ];
+
+const CATEGORY_EMOJIS: Record<string, string> = {
+  'ÉPICERIE':           '🛒',
+  'BOUCHERIE':          '🥩',
+  'BOULANGERIE':        '🍞',
+  'BOISSONS':           '🥤',
+  'CHARCUTERIE':        '🍖',
+  'CONFISERIE':         '🍬',
+  'CRÈMERIE':           '🧀',
+  'FRUITS ET LÉGUMES':  '🥦',
+  'HYGIÈNE':            '🧴',
+  'PLATS CUISINÉS':     '🍽️',
+  'POISSONNERIE':       '🐟',
+  'SURGELÉS':           '🧊',
+  'ULTRA FRAIS':        '🥗',
+  'BAZAR':              '🏬',
+};
+
+const TAG_STYLES: Record<string, string> = {
+  'PROMO':        'bg-rose-500/20 text-rose-300',
+  'LOCAL':        'bg-green-500/20 text-green-300',
+  'ESSENTIEL':    'bg-blue-500/20 text-blue-300',
+  'SOUVERAIN':    'bg-yellow-500/20 text-yellow-300',
+  'FRAÎCHE':      'bg-teal-500/20 text-teal-300',
+  'GROS VOLUME':  'bg-purple-500/20 text-purple-300',
+  'PRESTIGE':     'bg-amber-500/20 text-amber-300',
+  'SIGNATURE':    'bg-indigo-500/20 text-indigo-300',
+};
 
 const Home = () => {
   const [search, setSearch] = useState('');
@@ -334,19 +362,63 @@ const Home = () => {
               ))}
             </div>
           ) : products && products.length > 0 ? (
-            products.slice(0, 15).map((p: Product, i: number) => (
-              <div
-                key={p.id ?? i}
-                className="bento-card flex-row justify-between items-center"
-              >
-                <div>
-                  <p className="text-[9px] font-black text-blue-400 uppercase mb-1">{p.category ?? 'ÉPICERIE'}</p>
-                  <p className="text-sm font-bold text-slate-200">{p.name}</p>
-                  <p className="text-[10px] text-slate-400">{p.store ?? 'SUPER U'}</p>
-                </div>
-                <div className="text-right font-black text-emerald-400">{p.price}€</div>
-              </div>
-            ))
+            products.slice(0, 15).map((p: Product, i: number) => {
+              const emoji = CATEGORY_EMOJIS[p.category ?? ''] ?? '🛒';
+              const tags: string[] = (p as any).tags ?? [];
+              const searchPath = `/recherche?q=${encodeURIComponent(p.name)}`;
+              return (
+                <Link
+                  key={p.id ?? i}
+                  to={searchPath}
+                  className="bento-card flex-row items-center gap-3 no-underline hover:opacity-90 transition-opacity"
+                  aria-label={`Voir les prix de ${p.name}`}
+                >
+                  {/* Thumbnail: product image or category emoji */}
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-slate-700/50 flex items-center justify-center overflow-hidden">
+                    {p.imageUrl ? (
+                      <img
+                        src={p.imageUrl}
+                        alt={p.name}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = 'none';
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) parent.textContent = emoji;
+                        }}
+                      />
+                    ) : (
+                      <span className="text-2xl leading-none" role="img" aria-hidden="true">{emoji}</span>
+                    )}
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[9px] font-black text-blue-400 uppercase mb-0.5">{p.category ?? 'ÉPICERIE'}</p>
+                    <p className="text-sm font-bold text-slate-200 truncate">{p.name}</p>
+                    <p className="text-[10px] text-slate-400">{p.store ?? 'SUPER U'}</p>
+                    {tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full ${TAG_STYLES[tag] ?? 'bg-slate-600/40 text-slate-300'}`}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Price + chevron */}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <span className="font-black text-emerald-400">{p.price}€</span>
+                    <ChevronRight size={14} className="text-slate-500" />
+                  </div>
+                </Link>
+              );
+            })
           ) : (
             <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
               <Package className="mx-auto text-slate-800 mb-2" size={32} />
