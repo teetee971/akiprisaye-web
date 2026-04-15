@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useState, useRef, useEffect } from 'react';
-import { Search, PlayCircle, Package, RefreshCw, ChevronRight } from 'lucide-react';
+import { Search, PlayCircle, Package, RefreshCw, ChevronRight, Share2, MessageCircle, Facebook, Twitter, Link2, Check } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
@@ -112,6 +112,155 @@ const TAG_STYLES: Record<string, string> = {
   'PRESTIGE':     'bg-amber-500/20 text-amber-300',
   'SIGNATURE':    'bg-indigo-500/20 text-indigo-300',
 };
+
+// ─── CatalogueTile ─────────────────────────────────────────────────────────
+// Extracted as its own component so hooks (useCatalogueProductImage) can run
+// per product without violating the Rules of Hooks.
+
+interface CatalogueTileProps {
+  product: Product;
+  categoryEmojis: Record<string, string>;
+  tagStyles: Record<string, string>;
+}
+
+function CatalogueTile({ product: p, categoryEmojis, tagStyles }: CatalogueTileProps) {
+  const navigate = useNavigate();
+  const tags: string[] = (p as any).tags ?? [];
+  const searchPath = `/recherche?q=${encodeURIComponent(p.name)}`;
+  const { imageUrl, emoji, loading: imgLoading } = useCatalogueProductImage(p.name, p.category);
+  const [showShare, setShowShare] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const shareRef = useRef<HTMLDivElement>(null);
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}${import.meta.env.BASE_URL || '/'}recherche?q=${encodeURIComponent(p.name)}`
+    : searchPath;
+  const shareText = `${p.name} — ${p.price}€ chez ${p.store ?? ''} 🛒 A KI PRI SA YÉ`;
+
+  // Close share menu on outside click
+  useEffect(() => {
+    if (!showShare) return;
+    const handler = (e: MouseEvent) => {
+      if (shareRef.current && !shareRef.current.contains(e.target as Node)) {
+        setShowShare(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showShare]);
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try { await navigator.clipboard.writeText(shareUrl); } catch { /* ignore */ }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    setShowShare(false);
+  };
+
+  const openShare = (url: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    window.open(url, '_blank', 'noopener,noreferrer');
+    setShowShare(false);
+  };
+
+  return (
+    <div
+      className="bento-card flex-row items-center gap-3 no-underline cursor-pointer hover:opacity-90 transition-opacity relative"
+      onClick={() => navigate(searchPath)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(searchPath); }}
+      aria-label={`Voir les prix de ${p.name}`}
+    >
+      {/* Thumbnail */}
+      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-slate-700/50 flex items-center justify-center overflow-hidden">
+        {imgLoading ? (
+          <span className="text-2xl leading-none animate-pulse" role="img" aria-hidden="true">
+            {categoryEmojis[p.category ?? ''] ?? '🛒'}
+          </span>
+        ) : imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={p.name}
+            className="w-full h-full object-cover"
+            loading="lazy"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+              const parent = e.currentTarget.parentElement;
+              if (parent) parent.textContent = categoryEmojis[p.category ?? ''] ?? '🛒';
+            }}
+          />
+        ) : (
+          <span className="text-2xl leading-none" role="img" aria-hidden="true">
+            {categoryEmojis[p.category ?? ''] ?? '🛒'}
+          </span>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <p className="text-[9px] font-black text-blue-400 uppercase mb-0.5">{p.category ?? 'ÉPICERIE'}</p>
+        <p className="text-sm font-bold text-slate-200 truncate">{p.name}</p>
+        <p className="text-[10px] text-slate-400">{p.store ?? 'SUPER U'}</p>
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-1">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full ${tagStyles[tag] ?? 'bg-slate-600/40 text-slate-300'}`}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Price + share */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <span className="font-black text-emerald-400">{p.price}€</span>
+
+        {/* Share button */}
+        <div className="relative" ref={shareRef} onClick={(e) => e.stopPropagation()}>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setShowShare((v) => !v); }}
+            className="p-1.5 rounded-full bg-slate-700/60 hover:bg-slate-600 text-slate-300 hover:text-white transition-colors"
+            aria-label={`Partager ${p.name}`}
+            aria-expanded={showShare}
+          >
+            <Share2 className="w-3.5 h-3.5" />
+          </button>
+
+          {showShare && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setShowShare(false)} aria-hidden="true" />
+              <div
+                role="menu"
+                className="absolute right-0 bottom-full mb-1 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-20 overflow-hidden text-sm"
+              >
+                <button type="button" role="menuitem" onClick={(e) => openShare(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, e)} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200">
+                  <MessageCircle className="w-4 h-4 text-green-400 flex-shrink-0" /> WhatsApp
+                </button>
+                <button type="button" role="menuitem" onClick={(e) => openShare(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, e)} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200">
+                  <Facebook className="w-4 h-4 text-blue-400 flex-shrink-0" /> Facebook
+                </button>
+                <button type="button" role="menuitem" onClick={(e) => openShare(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, e)} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200">
+                  <Twitter className="w-4 h-4 text-sky-400 flex-shrink-0" /> X / Twitter
+                </button>
+                <button type="button" role="menuitem" onClick={handleCopy} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left border-t border-slate-700 text-slate-200">
+                  {copied ? <Check className="w-4 h-4 text-green-400 flex-shrink-0" /> : <Link2 className="w-4 h-4 text-slate-400 flex-shrink-0" />}
+                  {copied ? 'Lien copié !' : 'Copier le lien'}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        <ChevronRight size={14} className="text-slate-500" />
+      </div>
+    </div>
+  );
+}
 
 const Home = () => {
   const [search, setSearch] = useState('');
@@ -363,63 +512,14 @@ const Home = () => {
               ))}
             </div>
           ) : products && products.length > 0 ? (
-            products.slice(0, 15).map((p: Product, i: number) => {
-              const emoji = CATEGORY_EMOJIS[p.category ?? ''] ?? '🛒';
-              const tags: string[] = (p as any).tags ?? [];
-              const searchPath = `/recherche?q=${encodeURIComponent(p.name)}`;
-              return (
-                <Link
-                  key={p.id ?? i}
-                  to={searchPath}
-                  className="bento-card flex-row items-center gap-3 no-underline hover:opacity-90 transition-opacity"
-                  aria-label={`Voir les prix de ${p.name}`}
-                >
-                  {/* Thumbnail: product image or category emoji */}
-                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-slate-700/50 flex items-center justify-center overflow-hidden">
-                    {p.imageUrl ? (
-                      <img
-                        src={p.imageUrl}
-                        alt={p.name}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).style.display = 'none';
-                          const parent = e.currentTarget.parentElement;
-                          if (parent) parent.textContent = emoji;
-                        }}
-                      />
-                    ) : (
-                      <span className="text-2xl leading-none" role="img" aria-hidden="true">{emoji}</span>
-                    )}
-                  </div>
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[9px] font-black text-blue-400 uppercase mb-0.5">{p.category ?? 'ÉPICERIE'}</p>
-                    <p className="text-sm font-bold text-slate-200 truncate">{p.name}</p>
-                    <p className="text-[10px] text-slate-400">{p.store ?? 'SUPER U'}</p>
-                    {tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded-full ${TAG_STYLES[tag] ?? 'bg-slate-600/40 text-slate-300'}`}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Price + chevron */}
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <span className="font-black text-emerald-400">{p.price}€</span>
-                    <ChevronRight size={14} className="text-slate-500" />
-                  </div>
-                </Link>
-              );
-            })
+            products.slice(0, 15).map((p: Product, i: number) => (
+              <CatalogueTile
+                key={p.id ?? i}
+                product={p}
+                categoryEmojis={CATEGORY_EMOJIS}
+                tagStyles={TAG_STYLES}
+              />
+            ))
           ) : (
             <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
               <Package className="mx-auto text-slate-800 mb-2" size={32} />
