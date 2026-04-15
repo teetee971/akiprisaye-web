@@ -48,6 +48,7 @@ const NewsTeaser           = lazy(() => import('../components/home/NewsTeaser'))
 const PanierVitalWidget    = lazy(() => import('../components/home/PanierVitalWidget'));
 const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
 const StoreRankingWidget   = lazy(() => import('../components/home/StoreRankingWidget'));
+const PalmaresWidget       = lazy(() => import('../components/home/PalmaresWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
 const ProduitChocWidget    = lazy(() => import('../components/home/ProduitChocWidget'));
 const IndiceEquiteWidget   = lazy(() => import('../components/home/IndiceEquiteWidget'));
@@ -489,6 +490,9 @@ const Home = () => {
           </Suspense>
           <Suspense fallback={<Skeleton className="h-48 w-full" />}>
             <StoreRankingWidget />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <PalmaresWidget />
           </Suspense>
         </div>
       </div>

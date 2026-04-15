@@ -9,12 +9,13 @@
  */
 
 import { useMemo, useState } from 'react';
-import { Globe, TrendingUp, BarChart3, Cpu, Copy, Check, RefreshCw } from 'lucide-react';
+import { Globe, TrendingUp, BarChart3, Cpu, Copy, Check, RefreshCw, AlertTriangle } from 'lucide-react';
 import {
   useVisitorStats,
   type TerritoryStats,
   type TerritoryInterestStat,
 } from '../../hooks/useVisitorStats';
+import { isStaticPreviewEnv } from '../../services/admin/runtimeEnv';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -130,6 +131,7 @@ function buildAiPayload(
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function AdminAudience() {
+  const isDegradedMode = isStaticPreviewEnv();
   const { totalOnline, byTerritory, byInterest, interestByTerritory, loading } = useVisitorStats();
   const [copied, setCopied] = useState<'json' | 'prompt' | null>(null);
   const [expandedTerritory, setExpandedTerritory] = useState<string | null>(null);
@@ -178,13 +180,20 @@ export default function AdminAudience() {
           </p>
         </div>
         <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-xl border border-white/20">
-          <PulseDot />
+          <PulseDot active={!isDegradedMode} />
           <span className="text-emerald-300 font-bold tabular-nums text-xl">{totalOnline}</span>
           <span className="text-white/60 text-sm">
             {totalOnline === 1 ? 'visiteur en ligne' : 'visiteurs en ligne'}
           </span>
         </div>
       </div>
+
+      {isDegradedMode && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-400/40 text-amber-200 text-sm">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          Mode preview statique — les statistiques Firestore temps réel ne sont pas disponibles dans cet environnement.
+        </div>
+      )}
 
       {/* ── Territory ranking ── */}
       <section>

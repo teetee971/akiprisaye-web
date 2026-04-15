@@ -35,6 +35,7 @@ import {
   type ScrapingSourceStatus,
   type WorkflowRun,
 } from '@/services/admin/automationStatusService';
+import { isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
 
 const REFRESH_INTERVAL_MS = 30_000; // 30 secondes
 
@@ -132,7 +133,13 @@ export default function AdminAutomationDashboard() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const isDegradedMode = isStaticPreviewEnv();
+
   const refresh = useCallback(async () => {
+    if (isDegradedMode) {
+      setLoading(false);
+      return;
+    }
     setError(null);
     try {
       const data = await getAutomationStatus();
@@ -142,7 +149,7 @@ export default function AdminAutomationDashboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isDegradedMode]);
 
   // Initial load
   useEffect(() => {
@@ -237,6 +244,13 @@ export default function AdminAutomationDashboard() {
           </button>
         </div>
       </div>
+
+      {isDegradedMode && (
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-400/40 text-amber-200 text-sm">
+          <AlertTriangle className="w-4 h-4 shrink-0" />
+          Mode preview statique — les données temps réel (GitHub Actions, Firestore) ne sont pas disponibles dans cet environnement.
+        </div>
+      )}
 
       {error && (
         <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-900/20 border border-red-500/30 text-red-300 text-sm">

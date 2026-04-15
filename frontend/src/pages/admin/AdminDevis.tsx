@@ -38,6 +38,7 @@ import {
   PROFONDEUR_LABELS,
   DELAI_LABELS,
 } from '@/services/devisEstimationEngine';
+import { isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
 
 const PIPELINE_ACTIONS: Partial<Record<DevisStatus, { next: DevisStatus; label: string; color: string }>> = {
   DRAFT: { next: 'VALIDATED', label: 'Valider le devis', color: 'bg-blue-600 hover:bg-blue-700' },
@@ -47,6 +48,7 @@ const PIPELINE_ACTIONS: Partial<Record<DevisStatus, { next: DevisStatus; label: 
 };
 
 export default function AdminDevis() {
+  const isDegradedMode = isStaticPreviewEnv();
   const [user, setUser] = useState<User | null>(null);
   const [devisList, setDevisList] = useState<DevisRequest[]>([]);
   const [selected, setSelected] = useState<DevisRequest | null>(null);
@@ -61,14 +63,14 @@ export default function AdminDevis() {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || isDegradedMode) return;
     return subscribeToAllDevis((list) => {
       setDevisList(list);
       if (selected) {
         setSelected(list.find((d) => d.id === selected.id) ?? null);
       }
     });
-  }, [user]);
+  }, [user, isDegradedMode]);
 
   async function handleAdvance(devis: DevisRequest) {
     const action = PIPELINE_ACTIONS[devis.status];
@@ -164,6 +166,12 @@ export default function AdminDevis() {
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
+        {isDegradedMode && (
+          <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border-b border-amber-200 text-amber-800 text-sm">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            Mode preview statique — les devis Firestore ne sont pas disponibles dans cet environnement. Les actions de modification sont désactivées.
+          </div>
+        )}
         {/* Header */}
         <div className="bg-slate-900 text-white py-6 px-4">
           <div className="max-w-6xl mx-auto flex items-center gap-3">

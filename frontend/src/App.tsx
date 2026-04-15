@@ -505,7 +505,6 @@ export default function App() {
                               <Route path="observatoire-temps-reel" element={<ObservatoireTempsReel />} />
                               <Route path="transparence" element={<Transparence />} />
                               <Route path="signaler-abus" element={<SignalerAbus />} />
-                              <Route path="admin/sync" element={<SyncDashboard />} />
                               <Route path="test-i18n" element={<I18nTest />} />
                               <Route path="a-propos" element={<APropos />} />
                               <Route path="tarifs-details" element={<PricingDetailed />} />
