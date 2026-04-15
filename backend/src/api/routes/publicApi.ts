@@ -51,7 +51,7 @@ function validateApiKey(req: Request, res: Response): boolean {
 router.get('/prices', (req: Request, res: Response) => {
   if (!validateApiKey(req, res)) return;
 
-  const { territory, category, limit = '20' } = req.query as Record<string, string>;
+  const { territory, limit = '20' } = req.query as Record<string, string>;
   let results = [...MOCK_PRICES];
 
   if (territory) results = results.filter((p) => p.territory === territory.toLowerCase());
