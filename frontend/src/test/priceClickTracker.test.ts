@@ -14,6 +14,11 @@ import {
   clearPriceClickData,
 } from '../utils/priceClickTracker';
 
+vi.mock('../utils/firestoreClickTracker', () => ({
+  trackClickToFirestore: vi.fn(),
+}));
+import { trackClickToFirestore } from '../utils/firestoreClickTracker';
+
 // ── localStorage mock ─────────────────────────────────────────────────────────
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
@@ -106,6 +111,25 @@ describe('trackRetailerClick + getRecentRetailerClicks', () => {
     expect(carrefourClick).toBeDefined();
     expect(leaderClick).toBeDefined();
     expect(carrefourClick!.clickedAt).toBeGreaterThanOrEqual(leaderClick!.clickedAt);
+  });
+
+  it('calls trackClickToFirestore with correct payload', () => {
+    trackRetailerClick('3017620422003', 'Carrefour', 'GP', 3.49);
+    expect(trackClickToFirestore).toHaveBeenCalledWith({
+      retailer: 'Carrefour',
+      barcode: '3017620422003',
+      territory: 'GP',
+      price: 3.49,
+      pageUrl: expect.any(String),
+    });
+  });
+
+  it('localStorage tracking is unaffected if trackClickToFirestore throws', () => {
+    vi.mocked(trackClickToFirestore).mockImplementationOnce(() => {
+      throw new Error('Firestore unavailable');
+    });
+    expect(() => trackRetailerClick('3017620422003', 'Carrefour', 'GP', 3.49)).not.toThrow();
+    expect(getRecentRetailerClicks()).toHaveLength(1);
   });
 });
 
