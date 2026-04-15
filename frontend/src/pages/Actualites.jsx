@@ -118,9 +118,23 @@ export default function Actualites() {
     };
 
     load();
+
+    // Hourly auto-refresh
+    const refreshTimer = window.setInterval(() => {
+      if (mounted) load();
+    }, 60 * 60 * 1000);
+
+    // Refresh when the tab becomes visible again
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible' && mounted) load();
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       mounted = false;
       controller.abort();
+      window.clearInterval(refreshTimer);
+      document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [territory, type, impact, limit]);
 

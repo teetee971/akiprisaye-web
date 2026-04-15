@@ -67,14 +67,27 @@ export default function LiveNewsFeed() {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}data/actualites.json`)
+  const load = () => {
+    fetch(`${import.meta.env.BASE_URL}data/actualites.json?v=${Date.now()}`)
       .then((r) => r.json())
       .then((data: ActualitesData) => {
         setArticles(data.articles.slice(0, 6));
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    load();
+
+    const timer = setInterval(load, 60 * 60 * 1000);
+    const handleVisibility = () => { if (document.visibilityState === 'visible') load(); };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   if (loading) {
@@ -94,7 +107,7 @@ export default function LiveNewsFeed() {
       {/* Section banner image */}
       <div className="section-context-banner">
         <img
-          src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=900&q=60"
+          src={`${import.meta.env.BASE_URL}media/images/hero-actualites.webp`}
           alt="Journaux et presse économique — actualités outre-mer"
           className="section-context-banner-img"
           loading="lazy"

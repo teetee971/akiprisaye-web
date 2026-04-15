@@ -43,6 +43,7 @@ const MiniFaqSection       = lazy(() => import('./home-v5/MiniFaqSection'));
 const TerritoryPriceChart  = lazy(() => import('../components/home/TerritoryPriceChart'));
 const PriceEvolutionChart  = lazy(() => import('../components/home/PriceEvolutionChart'));
 const LiveNewsFeed         = lazy(() => import('../components/home/LiveNewsFeed'));
+const NewsTeaser           = lazy(() => import('../components/home/NewsTeaser'));
 const PanierVitalWidget    = lazy(() => import('../components/home/PanierVitalWidget'));
 const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
 const StoreRankingWidget   = lazy(() => import('../components/home/StoreRankingWidget'));
@@ -239,6 +240,11 @@ const Home = () => {
           Scanner un code-barres
         </button>
       </div>
+      {/* ── ACTUALITÉS (TEASER) ────────────────────────────────────── */}
+      <Suspense fallback={<div className="px-6 mb-6 h-24" />}>
+        <NewsTeaser />
+      </Suspense>
+
       {/* ── STATS FLIP CARDS ───────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 mb-8">
         {homeStats.map((s) => (
