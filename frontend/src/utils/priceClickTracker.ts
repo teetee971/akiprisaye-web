@@ -2,7 +2,9 @@
  * priceClickTracker.ts
  *
  * Lightweight usage analytics stored in localStorage.
- * No external service — all data stays on the user's device.
+ * Retailer clicks are also forwarded to Firestore anonymously
+ * (no PII: only retailer, barcode, territory, price, pathname,
+ * and an anonymous sessionId generated client-side).
  *
  * Tracks:
  *   - product page views (barcode + name)
@@ -11,11 +13,13 @@
  * Data is capped (max 500 entries) and aged out after 30 days
  * so it never grows unbounded.
  *
- * RGPD: data never leaves the browser. No network call is made.
+ * RGPD: no PII is collected. localStorage data never leaves the browser.
+ * Firestore receives only anonymous, non-identifying analytics data.
  * Can be cleared by calling clearPriceClickData().
  */
 
 import { safeLocalStorage } from './safeLocalStorage';
+import { trackClickToFirestore } from './firestoreClickTracker';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -109,6 +113,30 @@ export function trackRetailerClick(
   const clicks = readJson<RetailerClickEntry[]>(KEY_CLICKS, []);
   clicks.push({ barcode, retailer, territory, price, clickedAt: Date.now() });
   writeJson(KEY_CLICKS, prune(clicks));
+
+  // Firestore (fire-and-forget)
+  try {
+    const normalizedTerritory = territory.trim();
+    if (!normalizedTerritory) {
+      return;
+    }
+
+    const normalizedBarcode = barcode.trim();
+    const pageUrl =
+      typeof window !== 'undefined' && window.location.pathname
+        ? window.location.pathname
+        : undefined;
+
+    trackClickToFirestore({
+      retailer,
+      territory: normalizedTerritory,
+      price,
+      ...(normalizedBarcode ? { barcode: normalizedBarcode } : {}),
+      ...(pageUrl ? { pageUrl } : {}),
+    });
+  } catch {
+    // Silently ignore — localStorage is the primary store
+  }
 }
 
 /**
