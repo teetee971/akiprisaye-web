@@ -17,23 +17,22 @@ interface ApiKey {
   revoked: boolean;
 }
 
+/** Metadata only — the actual key value is never persisted to localStorage. */
 type StoredApiKey = Omit<ApiKey, 'key'>;
 
 const STORAGE_KEY = 'akiprisaye_api_keys';
 
-function loadKeys(): ApiKey[] {
+function loadStoredKeys(): StoredApiKey[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? (JSON.parse(raw) as StoredApiKey[]) : [];
-    return parsed.map((k) => ({ ...k, key: '' }));
+    return raw ? (JSON.parse(raw) as StoredApiKey[]) : [];
   } catch {
     return [];
   }
 }
 
-function saveKeys(keys: ApiKey[]): void {
-  const sanitized: StoredApiKey[] = keys.map(({ key, ...rest }) => rest);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
+function saveStoredKeys(keys: StoredApiKey[]): void {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
 }
 
 function generateApiKey(): string {
@@ -56,38 +55,54 @@ const MOCK_USAGE = Array.from({ length: 7 }, (_, i) => ({
 }));
 
 export default function APIKeyDashboard() {
-  const [keys, setKeys] = useState<ApiKey[]>(loadKeys);
+  // Persisted metadata only — actual key values are never stored to localStorage.
+  const [storedKeys, setStoredKeys] = useState<StoredApiKey[]>(loadStoredKeys);
+  // In-memory session values: key id → actual API key string (cleared on reload, by design).
+  const [sessionKeyValues, setSessionKeyValues] = useState<Record<string, string>>({});
   const [newLabel, setNewLabel] = useState('');
   const [newPlan, setNewPlan] = useState<'free' | 'pro'>('free');
   const [revealedKeys, setRevealedKeys] = useState<Set<string>>(new Set());
   const [justCreated, setJustCreated] = useState<string | null>(null);
 
+  // Merge persisted metadata with in-memory key values for rendering.
+  const keys = useMemo<ApiKey[]>(
+    () => storedKeys.map((k) => ({ ...k, key: sessionKeyValues[k.id] ?? '' })),
+    [storedKeys, sessionKeyValues],
+  );
+
   const activeKeys = useMemo(() => keys.filter((k) => !k.revoked), [keys]);
 
   const createKey = useCallback(() => {
     const key = generateApiKey();
-    const newKey: ApiKey = {
-      id: `key_${Date.now()}`,
-      key,
+    const id = `key_${Date.now()}`;
+    const meta: StoredApiKey = {
+      id,
       label: newLabel.trim() || 'Ma clé API',
       plan: newPlan,
       createdAt: new Date().toISOString(),
       revoked: false,
     };
-    setKeys((prev) => {
-      const next = [...prev, newKey];
-      saveKeys(next);
+    setStoredKeys((prev) => {
+      const next = [...prev, meta];
+      saveStoredKeys(next);
       return next;
     });
-    setJustCreated(newKey.id);
+    // Key value kept in memory only — never written to localStorage.
+    setSessionKeyValues((prev) => ({ ...prev, [id]: key }));
+    setJustCreated(id);
     setNewLabel('');
     toast.success('Clé générée — copiez-la maintenant, elle ne sera plus affichée en clair');
   }, [newLabel, newPlan]);
 
   const revokeKey = useCallback((id: string) => {
-    setKeys((prev) => {
+    setStoredKeys((prev) => {
       const next = prev.map((k) => (k.id === id ? { ...k, revoked: true } : k));
-      saveKeys(next);
+      saveStoredKeys(next);
+      return next;
+    });
+    setSessionKeyValues((prev) => {
+      const next = { ...prev };
+      delete next[id];
       return next;
     });
     toast.success('Clé révoquée');
