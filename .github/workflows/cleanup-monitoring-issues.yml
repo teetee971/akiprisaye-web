@@ -1,0 +1,53 @@
+name: 🧹 Nettoyage issues monitoring automatiques
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Chaque lundi à 8h UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  cleanup:
+    name: Fermer les vieilles issues automatiques
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🧹 Fermer issues monitoring > 7 jours
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const MAX_AGE_DAYS = 7;
+            const cutoff = new Date(Date.now() - MAX_AGE_DAYS * 24 * 60 * 60 * 1000);
+            let closed = 0;
+
+            for (const query of [
+              '[AUTO] Échec scraping',
+              '[MONITORING] Score'
+            ]) {
+              const result = await github.rest.search.issuesAndPullRequests({
+                q: `${query} in:title repo:${context.repo.owner}/${context.repo.repo} is:open is:issue label:automatique`,
+                per_page: 100
+              });
+
+              for (const issue of result.data.items) {
+                if (new Date(issue.created_at) < cutoff) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    body: `🤖 Issue fermée automatiquement après ${MAX_AGE_DAYS} jours. Consulter le [tableau de bord](https://akiprisaye.fr/admin/automatisation) pour l'état actuel du système.`
+                  });
+                  await github.rest.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    state: 'closed',
+                    state_reason: 'not_planned'
+                  });
+                  closed++;
+                }
+              }
+            }
+
+            core.info(`✅ ${closed} issues fermées.`);
+            await core.summary.addHeading('Nettoyage issues monitoring').addRaw(`${closed} issues automatiques fermées.`).write();
