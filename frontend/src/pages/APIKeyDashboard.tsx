@@ -17,19 +17,23 @@ interface ApiKey {
   revoked: boolean;
 }
 
+type StoredApiKey = Omit<ApiKey, 'key'>;
+
 const STORAGE_KEY = 'akiprisaye_api_keys';
 
 function loadKeys(): ApiKey[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ApiKey[]) : [];
+    const parsed = raw ? (JSON.parse(raw) as StoredApiKey[]) : [];
+    return parsed.map((k) => ({ ...k, key: '' }));
   } catch {
     return [];
   }
 }
 
 function saveKeys(keys: ApiKey[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(keys));
+  const sanitized: StoredApiKey[] = keys.map(({ key, ...rest }) => rest);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
 }
 
 function generateApiKey(): string {
