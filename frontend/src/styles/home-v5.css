@@ -619,7 +619,7 @@
 
 .comparison-reference {
   font-size: 0.875rem;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .comparison-divider {
@@ -631,7 +631,7 @@
 .comparison-vs {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #64748b;
+  color: #94a3b8;
   padding: 0.5rem 1rem;
   background: rgba(30, 41, 59, 0.8);
   border-radius: 8px;
@@ -1010,7 +1010,7 @@
   padding: 1.5rem 2rem;
   text-align: center;
   font-size: 0.875rem;
-  color: #64748b;
+  color: #94a3b8;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1029,7 +1029,7 @@
 }
 
 .footer-minimal span {
-  color: #475569;
+  color: #94a3b8;
 }
 
 /* ============================================
@@ -1235,7 +1235,7 @@
 
 .testimonial-savings-label {
   font-size: 0.68rem;
-  color: #64748b;
+  color: #94a3b8;
   display: block;
   margin-top: 0.15rem;
   white-space: nowrap;
@@ -1251,7 +1251,7 @@
 
 .testimonial-product-tag {
   font-size: 0.72rem;
-  color: #64748b;
+  color: #94a3b8;
   padding: 0.3rem 0.7rem;
   background: rgba(100, 116, 139, 0.12);
   border: 1px solid rgba(100, 116, 139, 0.2);
@@ -1390,7 +1390,7 @@
 
 .observatory-stat-label {
   font-size: 0.72rem;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 0.25rem;
   display: block;
   line-height: 1.3;
@@ -2133,7 +2133,7 @@
 
 .news-card-reading-time {
   font-size: 0.68rem;
-  color: #475569;
+  color: #94a3b8;
 }
 
 .news-card-body {
@@ -2183,7 +2183,7 @@
 
 .news-card-date {
   font-size: 0.72rem;
-  color: #64748b;
+  color: #94a3b8;
   margin-bottom: 0.6rem;
 }
 
@@ -2273,7 +2273,7 @@
 .price-evo-note {
   margin-top: 1rem;
   font-size: 0.75rem;
-  color: #64748b;
+  color: #94a3b8;
   text-align: center;
   line-height: 1.5;
 }
@@ -2452,7 +2452,7 @@
 
 .panier-vital-detail {
   font-size: 0.78rem;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 0.3rem;
   line-height: 1.5;
   max-width: 560px;
@@ -2509,7 +2509,7 @@
 
 .pvc-price-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .pvc-bar-wrapper {
@@ -2574,7 +2574,7 @@
 .panier-vital-source {
   margin-top: 1.5rem;
   font-size: 0.72rem;
-  color: #475569;
+  color: #94a3b8;
   text-align: center;
   line-height: 1.6;
 }
@@ -2645,7 +2645,7 @@
 .ibw-hex-ref {
   margin-top: 0.5rem;
   font-size: 0.85rem;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .ibw-alert {
@@ -2764,14 +2764,14 @@
 
 .ibw-spark-label {
   font-size: 0.55rem;
-  color: #475569;
+  color: #94a3b8;
   letter-spacing: 0;
 }
 
 /* Subtitle detail for editorial header */
 .ibw-subtitle-detail {
   font-size: 0.8rem;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 0.35rem;
   line-height: 1.5;
 }
@@ -2842,12 +2842,12 @@
 }
 
 .ibw-price-old {
-  color: #64748b;
+  color: #94a3b8;
   text-decoration: line-through;
 }
 
 .ibw-price-arrow {
-  color: #475569;
+  color: #94a3b8;
   font-size: 0.75rem;
 }
 
@@ -2857,14 +2857,14 @@
 
 .ibw-vs-hex {
   font-size: 0.73rem;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 0.3rem;
 }
 
 .ibw-source {
   margin-top: 1.5rem;
   font-size: 0.72rem;
-  color: #475569;
+  color: #94a3b8;
   text-align: center;
   line-height: 1.6;
 }
@@ -3078,7 +3078,7 @@
 
 .choc-vs-hex {
   font-size: 0.72rem;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 0.45rem;
 }
 
@@ -3086,7 +3086,7 @@
   max-width: 680px;
   margin: 0 auto;
   font-size: 0.72rem;
-  color: #475569;
+  color: #94a3b8;
   text-align: center;
   line-height: 1.6;
 }
@@ -3309,7 +3309,7 @@
 
 .equite-products {
   font-size: 0.72rem;
-  color: #475569;
+  color: #94a3b8;
 }
 
 .equite-breach-note {
@@ -3322,7 +3322,7 @@
   max-width: 820px;
   margin: 0 auto;
   font-size: 0.72rem;
-  color: #475569;
+  color: #94a3b8;
   text-align: center;
   line-height: 1.6;
 }
@@ -3610,7 +3610,7 @@
 
 .demo-scan-hint {
   font-size: 0.7rem;
-  color: #64748b;
+  color: #94a3b8;
   z-index: 1;
 }
 
@@ -3641,7 +3641,7 @@
 
 .demo-scan-ean {
   font-size: 0.62rem;
-  color: #64748b;
+  color: #94a3b8;
   margin: 0;
 }
 
@@ -3699,7 +3699,7 @@
 
 .demo-compare-date {
   font-size: 0.68rem;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .demo-compare-bars {
@@ -3768,7 +3768,7 @@
 
 .demo-terr-sub {
   font-size: 0.68rem;
-  color: #64748b;
+  color: #94a3b8;
   display: block;
   margin-top: 0.2rem;
 }
@@ -4022,7 +4022,7 @@
   align-items: center;
   justify-content: space-between;
   font-size: 0.72rem;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .video-card-source {
@@ -4031,14 +4031,14 @@
 }
 
 .video-card-duration {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .video-viechere-disclaimer {
   max-width: 900px;
   margin: 0 auto;
   font-size: 0.72rem;
-  color: #475569;
+  color: #94a3b8;
   text-align: center;
   line-height: 1.6;
 }
@@ -4251,7 +4251,7 @@
 
 .choc-product-context {
   font-size: 0.75rem;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 0.35rem;
   font-style: italic;
   line-height: 1.4;
@@ -4277,7 +4277,7 @@
 
 .ibw-basket-detail-label {
   font-size: 0.75rem;
-  color: #64748b;
+  color: #94a3b8;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
