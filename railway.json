@@ -5,9 +5,8 @@
     "buildCommand": "npm run install:frontend && npm run build:frontend",
     "watchPatterns": [
       "frontend/src/**",
-      "backend/app/**",
-      "package.json",
-      "frontend/package.json"
+      "frontend/package.json",
+      "package.json"
     ]
   },
   "deploy": {
@@ -16,14 +15,9 @@
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10,
     "runtime": "v2",
-    "numReplicas": 1,
     "resources": {
-      "cpu": {
-        "limit": 2000
-      },
-      "memory": {
-        "limit": 1024
-      }
+      "cpu": 2000,
+      "memory": 1024
     }
   }
 }
