@@ -285,7 +285,7 @@ const Home = () => {
 
     const source = products.filter((p) => /huile/i.test(p.name) && /tournesol/i.test(p.name));
     const pool = source.length > 0 ? source : products;
-    const cheapest = [...pool].sort((a, b) => Number(a.price) - Number(b.price))[0];
+    const cheapest = pool.length > 0 ? pool.reduce((min, p) => Number(p.price) < Number(min.price) ? p : min) : null;
     if (!cheapest) return fallback;
 
     return {
