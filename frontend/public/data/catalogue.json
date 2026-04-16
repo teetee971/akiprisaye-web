@@ -9,6 +9,11 @@
         "date": "2025-04-01",
         "store": "CARREFOUR MARKET",
         "price": 2.75
+      },
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR MARKET",
+        "price": 2.75
       }
     ],
     "tags": [
@@ -37,6 +42,11 @@
     "observations": [
       {
         "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 1.35
+      },
+      {
+        "date": "2026-04-16",
         "store": "CARREFOUR MARKET",
         "price": 1.35
       }
@@ -147,6 +157,11 @@
         "date": "2025-04-01",
         "store": "CARREFOUR MARKET",
         "price": 3.79
+      },
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR MARKET",
+        "price": 3.79
       }
     ]
   },
@@ -158,6 +173,11 @@
     "observations": [
       {
         "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 2.15
+      },
+      {
+        "date": "2026-04-16",
         "store": "LEADER PRICE",
         "price": 2.15
       }
@@ -704,6 +724,11 @@
         "date": "2025-04-01",
         "store": "Ô MARCHÉ",
         "price": 0.4
+      },
+      {
+        "date": "2026-04-16",
+        "store": "Ô MARCHÉ",
+        "price": 0.4
       }
     ],
     "tags": [
@@ -719,6 +744,11 @@
     "observations": [
       {
         "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 4.99
+      },
+      {
+        "date": "2026-04-16",
         "store": "CARREFOUR MARKET",
         "price": 4.99
       }
@@ -1095,10 +1125,16 @@
         "date": "2025-04-01",
         "store": "LEADER PRICE",
         "price": 8.79
+      },
+      {
+        "date": "2026-04-16",
+        "store": "LEADER PRICE",
+        "price": 8.79
       }
     ],
     "tags": [
-      "GROS VOLUME"
+      "GROS VOLUME",
+      "PRIX CHOC"
     ]
   },
   {
@@ -1111,10 +1147,16 @@
         "date": "2025-04-01",
         "store": "LEADER PRICE",
         "price": 9.95
+      },
+      {
+        "date": "2026-04-16",
+        "store": "LEADER PRICE",
+        "price": 9.95
       }
     ],
     "tags": [
-      "GROS VOLUME"
+      "GROS VOLUME",
+      "PRIX CHOC"
     ]
   },
   {
@@ -1125,6 +1167,11 @@
     "observations": [
       {
         "date": "2025-04-01",
+        "store": "LEADER PRICE",
+        "price": 16.95
+      },
+      {
+        "date": "2026-04-16",
         "store": "LEADER PRICE",
         "price": 16.95
       }
@@ -1556,6 +1603,11 @@
         "date": "2025-04-01",
         "store": "CARREFOUR MARKET",
         "price": 11.25
+      },
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR MARKET",
+        "price": 11.25
       }
     ]
   },
@@ -1567,6 +1619,11 @@
     "observations": [
       {
         "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.99
+      },
+      {
+        "date": "2026-04-16",
         "store": "CARREFOUR MARKET",
         "price": 6.99
       }
@@ -1582,6 +1639,11 @@
         "date": "2025-04-01",
         "store": "CARREFOUR MARKET",
         "price": 4.2
+      },
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR MARKET",
+        "price": 4.2
       }
     ]
   },
@@ -1593,6 +1655,11 @@
     "observations": [
       {
         "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 3.55
+      },
+      {
+        "date": "2026-04-16",
         "store": "CARREFOUR MARKET",
         "price": 3.55
       }
@@ -1697,6 +1764,11 @@
     "observations": [
       {
         "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.15
+      },
+      {
+        "date": "2026-04-16",
         "store": "CARREFOUR MARKET",
         "price": 6.15
       }
@@ -2176,6 +2248,11 @@
         "date": "2025-04-01",
         "store": "Ô MARCHÉ",
         "price": 2.45
+      },
+      {
+        "date": "2026-04-16",
+        "store": "Ô MARCHÉ",
+        "price": 2.45
       }
     ]
   },
@@ -2417,7 +2494,15 @@
         "date": "2025-04-01",
         "store": "CARREFOUR MARKET",
         "price": 8.29
+      },
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR MARKET",
+        "price": 8.29
       }
+    ],
+    "tags": [
+      "ESSENTIEL"
     ]
   },
   {
@@ -2428,6 +2513,11 @@
     "observations": [
       {
         "date": "2025-04-01",
+        "store": "CARREFOUR MARKET",
+        "price": 6.65
+      },
+      {
+        "date": "2026-04-16",
         "store": "CARREFOUR MARKET",
         "price": 6.65
       }
@@ -2628,6 +2718,11 @@
         "date": "2025-04-01",
         "store": "GIFI",
         "price": 2.99
+      },
+      {
+        "date": "2026-04-16",
+        "store": "GIFI",
+        "price": 2.99
       }
     ]
   },
@@ -2771,6 +2866,11 @@
         "date": "2025-04-01",
         "store": "GIFI",
         "price": 3.79
+      },
+      {
+        "date": "2026-04-16",
+        "store": "GIFI",
+        "price": 3.79
       }
     ]
   },
@@ -2823,6 +2923,246 @@
         "date": "2025-04-01",
         "store": "SUPER U",
         "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "HUILE TOURNESOL MAUREL 1L",
+    "price": 2.99,
+    "store": "CARREFOUR EXPRESS",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR EXPRESS",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "HUILE OLIVE CRF 50CL",
+    "price": 6.49,
+    "store": "CARREFOUR EXPRESS",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR EXPRESS",
+        "price": 6.49
+      }
+    ]
+  },
+  {
+    "name": "CAFE MOULU ROBUSTA 250G",
+    "price": 4.99,
+    "store": "CARREFOUR EXPRESS",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR EXPRESS",
+        "price": 4.99
+      }
+    ]
+  },
+  {
+    "name": "COCA COLA 2L",
+    "price": 3.49,
+    "store": "SHILO H INT",
+    "category": "BOISSONS",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "SHILO H INT",
+        "price": 3.49
+      }
+    ]
+  },
+  {
+    "name": "LAIT UHT 1/2 ECR. BIO 1L",
+    "price": 1.6,
+    "store": "U EXPRESS",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "U EXPRESS",
+        "price": 1.6
+      }
+    ]
+  },
+  {
+    "name": "TOMATE GPE GRS (KG)",
+    "price": 5.9,
+    "store": "U EXPRESS",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "U EXPRESS",
+        "price": 5.9
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "TOMATE GROSSE LOCALE (KG)",
+    "price": 4.49,
+    "store": "Ô MARCHÉ",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "Ô MARCHÉ",
+        "price": 4.49
+      }
+    ],
+    "tags": [
+      "LOCAL"
+    ]
+  },
+  {
+    "name": "ENDIVE (KG)",
+    "price": 3.98,
+    "store": "U EXPRESS",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "U EXPRESS",
+        "price": 3.98
+      }
+    ]
+  },
+  {
+    "name": "OIGNON ROUGE (KG)",
+    "price": 2.69,
+    "store": "U EXPRESS",
+    "category": "FRUITS ET LÉGUMES",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "U EXPRESS",
+        "price": 2.69
+      }
+    ]
+  },
+  {
+    "name": "FILET DE POULET 1KG",
+    "price": 8.98,
+    "store": "LEADER PRICE",
+    "category": "BOUCHERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "LEADER PRICE",
+        "price": 8.98
+      }
+    ]
+  },
+  {
+    "name": "PAPIER HYG. DOUCINE X4",
+    "price": 2.8,
+    "store": "U EXPRESS",
+    "category": "HYGIÈNE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "U EXPRESS",
+        "price": 2.8
+      }
+    ]
+  },
+  {
+    "name": "LESSIVE LIQ. 1.98L",
+    "price": 4.85,
+    "store": "CARREFOUR EXPRESS",
+    "category": "ENTRETIEN",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR EXPRESS",
+        "price": 4.85
+      }
+    ]
+  },
+  {
+    "name": "EMMENTAL RAPE ZIP 200G",
+    "price": 2.99,
+    "store": "CARREFOUR EXPRESS",
+    "category": "CRÈMERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR EXPRESS",
+        "price": 2.99
+      }
+    ]
+  },
+  {
+    "name": "EPAULE CUITE STD 5T",
+    "price": 2.29,
+    "store": "CARREFOUR EXPRESS",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR EXPRESS",
+        "price": 2.29
+      }
+    ]
+  },
+  {
+    "name": "PAIN MIE NATU. 550G",
+    "price": 3.2,
+    "store": "CARREFOUR EXPRESS",
+    "category": "ÉPICERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "CARREFOUR EXPRESS",
+        "price": 3.2
+      }
+    ]
+  },
+  {
+    "name": "KNACKS U X10 350G",
+    "price": 3.14,
+    "store": "U EXPRESS",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "U EXPRESS",
+        "price": 3.14
+      }
+    ]
+  },
+  {
+    "name": "JAMBON DE PARIS 4T",
+    "price": 2.82,
+    "store": "U EXPRESS",
+    "category": "CHARCUTERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "U EXPRESS",
+        "price": 2.82
+      }
+    ]
+  },
+  {
+    "name": "FINI ANNEAUX PECHE 90G",
+    "price": 1.95,
+    "store": "GIFI",
+    "category": "CONFISERIE",
+    "observations": [
+      {
+        "date": "2026-04-16",
+        "store": "GIFI",
+        "price": 1.95
       }
     ]
   }
