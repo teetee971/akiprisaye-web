@@ -26,6 +26,14 @@ const APP_VERSIONS = [
     changelog: null,
   },
   {
+    version: 'v4.6.20',
+    date: 'avril 2026',
+    label: null,
+    title: 'Horizon Souverain — 254 articles, arbitrage géographique & focus souveraineté',
+    description: 'Le catalogue passe de quelques dizaines à 254 articles réels audités sur le terrain (Le Moule, Saint-François, Morne-à-l\'Eau, Les Abymes). Moteur d\'arbitrage géographique : détection d\'écarts jusqu\'à 42 % (huile tournesol) et 31 % (tomates locales) entre communes voisines. Focus souveraineté : fiches détaillées Sucre Marie-Galante, Farine GMA, Rhum Damoiseau 50 %. Hardening Codex Engine : Similarité de Jaccard pour la recherche, injection massive EAN, migration Railway 2 vCPU / 1 Go RAM.',
+    changelog: '/news/v4.6.20',
+  },
+  {
     version: 'v4.6.1',
     date: 'mars 2026',
     label: null,
@@ -167,14 +175,23 @@ export default function Versions() {
                 <h2 className="text-lg font-semibold text-white">{item.title}</h2>
                 <p className="text-slate-200 text-sm leading-relaxed">{item.description}</p>
                 {item.changelog && (
-                  <a
-                    href={item.changelog}
-                    className="text-xs text-blue-400 hover:text-blue-300 underline"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Voir le changelog complet →
-                  </a>
+                  item.changelog.startsWith('/news/') ? (
+                    <Link
+                      to={item.changelog}
+                      className="text-xs text-blue-400 hover:text-blue-300 underline"
+                    >
+                      Voir la note de version →
+                    </Link>
+                  ) : (
+                    <a
+                      href={item.changelog}
+                      className="text-xs text-blue-400 hover:text-blue-300 underline"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Voir le changelog complet →
+                    </a>
+                  )
                 )}
               </div>
             </div>

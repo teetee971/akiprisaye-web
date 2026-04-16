@@ -209,6 +209,7 @@ const BudgetVital = lazy(() => import('./pages/BudgetVital'));
 const IEVRPage = lazy(() => import('./pages/IEVR'));
 const Versions = lazy(() => import('./pages/Versions'));
 const VersionPage = lazy(() => import('./pages/VersionPage'));
+const NewsV4620 = lazy(() => import('./pages/News_v4_6_20'));
 const ScanOCR = lazy(() => import('./pages/ScanOCR'));
 const Messagerie = lazy(() => import('./pages/Messagerie'));
 const GroupesParole = lazy(() => import('./pages/GroupesParole'));
@@ -588,6 +589,7 @@ export default function App() {
                               <Route path="budget-vital" element={<BudgetVital />} />
                               <Route path="ievr" element={<IEVRPage />} />
                               <Route path="versions" element={<Versions />} />
+                              <Route path="news/v4.6.20" element={<NewsV4620 />} />
                               <Route path="version" element={<VersionPage />} />
                               <Route path="messagerie" element={<Messagerie />} />
                               <Route path="groupes-parole" element={<GroupesParole />} />
