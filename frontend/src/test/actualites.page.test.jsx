@@ -11,6 +11,8 @@ describe('Actualites page', () => {
   let root;
 
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-04-16T10:00:00.000Z'));
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
@@ -28,6 +30,7 @@ describe('Actualites page', () => {
   afterEach(() => {
     act(() => root.unmount());
     container.remove();
+    vi.useRealTimers();
     vi.unstubAllGlobals();
   });
 
@@ -56,6 +59,7 @@ describe('Actualites page', () => {
     expect(latest).toContain('type=bons_plans');
     expect(latest).toContain('impact=fort');
     expect(latest).toContain(`limit=${DEFAULT_NEWS_LIMIT}`);
+    expect(latest).toContain('refresh=');
     expect(latest).not.toContain('&q=');
   });
 
@@ -72,5 +76,41 @@ describe('Actualites page', () => {
 
     expect(container.textContent).toContain('Données hors connexion affichées');
     expect(container.textContent).toContain('Ouvrir la recherche globale du site');
+  });
+
+  it('shows staleness notice when there is no update in the current month', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          mode: 'live',
+          items: [{
+            id: 'item-janvier',
+            type: 'reglementaire',
+            territory: 'fr',
+            title: 'Ancienne publication',
+            summary: 'Résumé test',
+            source_name: 'Source test',
+            source_url: 'https://example.com',
+            published_at: '2026-01-20T10:00:00.000Z',
+            impact: 'info',
+            verified: true,
+          }],
+        }),
+      }),
+    );
+
+    await act(async () => {
+      root.render(<MemoryRouter><HelmetProvider><Actualites /></HelmetProvider></MemoryRouter>);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(container.textContent).toContain('Pas de nouvelle mise à jour pour');
+    expect(container.textContent).toContain('avril 2026');
+    expect(container.textContent).toContain('janvier 2026');
   });
 });
