@@ -32,6 +32,7 @@ const TYPE_LABELS = {
 const IMPACT_LABELS = { fort: 'Fort', moyen: 'Moyen', info: 'Info' };
 const TYPE_OPTIONS = Object.keys(TYPE_LABELS);
 const IMPACT_OPTIONS = Object.keys(IMPACT_LABELS);
+const AUTO_REFRESH_MS = 60 * 60 * 1000;
 const PUBLIC_WEB_BASE = 'https://teetee971.github.io/akiprisaye-web';
 const RUNTIME_WEB_BASE =
   typeof window !== 'undefined'
@@ -81,12 +82,21 @@ export default function Actualites() {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [limit, setLimit] = useState(DEFAULT_NEWS_LIMIT);
   const [state, setState] = useState({ status: 'loading', items: [], mode: 'live' });
+  const [lastRefreshAt, setLastRefreshAt] = useState(null);
   const [openEvidence, setOpenEvidence] = useState({});
   const [showFeaturedMedia, setShowFeaturedMedia] = useState(false);
   const [mediaSectionRef, mediaSectionVisible] = useIntersectionObserver({ rootMargin: '200px', threshold: 0.01 });
   const [newsListRef, newsListVisible] = useIntersectionObserver({ rootMargin: '250px', threshold: 0.01 });
   const dateFormatter = useMemo(
     () => new Intl.DateTimeFormat('fr-FR'),
+    [],
+  );
+  const dateTimeFormatter = useMemo(
+    () => new Intl.DateTimeFormat('fr-FR', { dateStyle: 'short', timeStyle: 'short' }),
+    [],
+  );
+  const monthYearFormatter = useMemo(
+    () => new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }),
     [],
   );
 
@@ -104,17 +114,24 @@ export default function Actualites() {
       const params = new URLSearchParams({ territory, limit: String(limit) });
       if (type) params.set('type', type);
       if (impact) params.set('impact', impact);
+      params.set('refresh', String(Math.floor(Date.now() / AUTO_REFRESH_MS)));
 
       try {
-        const response = await fetch(`/api/news?${params.toString()}`, { signal: controller.signal });
+        const response = await fetch(`/api/news?${params.toString()}`, {
+          signal: controller.signal,
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
         if (!response.ok) throw new Error(`api_${response.status}`);
         const payload = await response.json();
         if (!mounted) return;
         const items = Array.isArray(payload.items) ? payload.items : [];
         setState({ status: 'success', items, mode: payload.mode ?? 'live' });
+        setLastRefreshAt(new Date().toISOString());
       } catch {
         if (!mounted) return;
         setState({ status: 'error', items: newsFallback, mode: 'fallback' });
+        setLastRefreshAt(new Date().toISOString());
       }
     };
 
@@ -123,7 +140,7 @@ export default function Actualites() {
     // Hourly auto-refresh
     const refreshTimer = window.setInterval(() => {
       if (mounted) load();
-    }, 60 * 60 * 1000);
+    }, AUTO_REFRESH_MS);
 
     // Refresh when the tab becomes visible again
     const handleVisibility = () => {
@@ -145,6 +162,24 @@ export default function Actualites() {
     // Exclude partner items from the main list (shown in their own section)
     return filtered.filter((item) => item.type !== 'partner');
   }, [state.items, verifiedOnly]);
+
+  const staleNewsNotice = useMemo(() => {
+    if (state.status === 'loading' || displayedItems.length === 0) return null;
+    const current = new Date();
+    const currentMonth = current.getMonth();
+    const currentYear = current.getFullYear();
+    const hasCurrentMonthItem = displayedItems.some((item) => {
+      const published = new Date(item.published_at);
+      return published.getFullYear() === currentYear && published.getMonth() === currentMonth;
+    });
+    if (hasCurrentMonthItem) return null;
+
+    const latestPublished = new Date(displayedItems[0].published_at);
+    return {
+      currentMonthLabel: monthYearFormatter.format(current),
+      latestMonthLabel: monthYearFormatter.format(latestPublished),
+    };
+  }, [displayedItems, monthYearFormatter, state.status]);
 
   const partnerItems = useMemo(() => {
     // Partner/sponsored items get their own dedicated section
@@ -214,12 +249,24 @@ export default function Actualites() {
             </button>
           ))}
         </div>
+
+        <p className="text-[11px] text-slate-400">
+          Actualisation automatique toutes les 1h
+          {lastRefreshAt ? ` • Dernière synchro: ${dateTimeFormatter.format(new Date(lastRefreshAt))}` : ''}
+        </p>
       </section>
 
       {state.status === 'loading' && <p className="text-sm text-slate-400 px-1">Chargement des actualités...</p>}
       {state.status === 'error' && (
         <div className="px-1">
           <p className="text-xs text-slate-400">Données hors connexion affichées.</p>
+        </div>
+      )}
+      {staleNewsNotice && (
+        <div className="rounded-xl border border-amber-500/30 bg-amber-900/10 px-3 py-2">
+          <p className="text-xs text-amber-300">
+            Pas de nouvelle mise à jour pour {staleNewsNotice.currentMonthLabel}. Dernière actualité datée de {staleNewsNotice.latestMonthLabel}.
+          </p>
         </div>
       )}
       {displayedItems.length === 0 && state.status !== 'loading' && partnerItems.length === 0 && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}

@@ -173,6 +173,7 @@
 /monetisation
 /monitoring-ia
 /news
+/news/v4.6.20
 /newsletter
 /observatoire
 /observatoire-temps-reel
