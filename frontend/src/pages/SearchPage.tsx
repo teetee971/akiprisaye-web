@@ -32,7 +32,7 @@ const SearchPage: React.FC = () => {
   useEffect(() => {
     let mounted = true;
 
-    fetch('/data/catalogue.json')
+    fetch(`${import.meta.env.BASE_URL}data/catalogue.json`)
       .then((res) => res.json())
       .then((data: RawCatalogueItem[]) => {
         if (!mounted || !Array.isArray(data)) return;
