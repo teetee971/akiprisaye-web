@@ -6,6 +6,7 @@ import OptimizedImage from '../components/OptimizedImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import { DEFAULT_NEWS_LIMIT } from '../constants/news';
+import { newsFallback } from '../data/newsFallback';
 
 const TERRITORY_LABELS = {
   all: 'Tous territoires',
@@ -113,7 +114,7 @@ export default function Actualites() {
         setState({ status: 'success', items, mode: payload.mode ?? 'live' });
       } catch {
         if (!mounted) return;
-        setState({ status: 'error', items: [], mode: 'live_error' });
+        setState({ status: 'error', items: newsFallback, mode: 'fallback' });
       }
     };
 
@@ -218,9 +219,7 @@ export default function Actualites() {
       {state.status === 'loading' && <p className="text-sm text-slate-400 px-1">Chargement des actualités...</p>}
       {state.status === 'error' && (
         <div className="px-1">
-          <p className="text-sm text-amber-300">API indisponible : fallback embarqué affiché.</p>
-          <p className="text-xs text-orange-400">fallback embarqué affiché</p>
-          <p className="text-sm text-amber-300">API indisponible : aucune donnée live disponible.</p>
+          <p className="text-xs text-slate-400">Données hors connexion affichées.</p>
         </div>
       )}
       {displayedItems.length === 0 && state.status !== 'loading' && partnerItems.length === 0 && <p className="text-sm text-slate-400 px-1">Aucun résultat pour ces filtres.</p>}
