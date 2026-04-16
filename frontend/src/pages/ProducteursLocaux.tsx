@@ -11,6 +11,8 @@ import { Link } from 'react-router-dom';
 import {
   Leaf, MapPin, Search, Phone, Clock,
   Star, ChevronRight, ArrowLeft, ShoppingBag,
+  BarChart3, ShieldCheck, Truck, Store,
+  Database, ClipboardList, AlertTriangle, Target,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -167,6 +169,51 @@ const PRODUCTEURS: Producteur[] = [
 ];
 
 const TERRITOIRES = ['Tous', 'Guadeloupe', 'Martinique', 'La Réunion', 'Guyane', 'Mayotte'];
+
+const TERRITOIRES_AUDIT = [
+  'Guadeloupe (971)',
+  'Martinique (972)',
+  'Guyane (973)',
+  'La Réunion (974)',
+  'Mayotte (976)',
+  'Saint-Martin (978)',
+  'Saint-Barthélemy (977)',
+  'Saint-Pierre-et-Miquelon (975)',
+  'Polynésie française',
+  'Nouvelle-Calédonie',
+  'Wallis-et-Futuna',
+];
+
+const AXES_AUDIT = [
+  {
+    icon: Database,
+    titre: 'Cartographie de l’offre locale',
+    description: 'Recensement exhaustif des maraîchers, agriculteurs, coopératives, transformateurs et logisticiens.',
+  },
+  {
+    icon: Truck,
+    titre: 'Logistique et distribution',
+    description: 'Analyse des goulets d’étranglement : chaîne du froid, transport inter-îles, ruptures et délais.',
+  },
+  {
+    icon: Store,
+    titre: 'Demande et débouchés',
+    description: 'Qualification des besoins des cantines, hôpitaux, commerces de proximité et marchés communaux.',
+  },
+  {
+    icon: ShieldCheck,
+    titre: 'Fiabilité et gouvernance data',
+    description: 'Validation croisée des données via sources institutionnelles, appels de contrôle et mise à jour trimestrielle.',
+  },
+];
+
+const INDICATEURS_CLES = [
+  ['Taux de couverture locale', '% des besoins alimentaires couverts localement', '≥ 35% (phase 1)'],
+  ['Risque de rupture', 'Nombre de produits critiques en tension / mois', '≤ 5 produits critiques'],
+  ['Capacité logistique', 'Part des acteurs disposant transport + stockage', '≥ 60% des acteurs'],
+  ['Qualité de la donnée', 'Fiches vérifiées sur les 90 derniers jours', '≥ 85%'],
+  ['Réactivité filière', 'Délai moyen commande → livraison', '< 72h en intra-territoire'],
+];
 
 /* ─── Panier économie badge ────────────────────────────────────────────── */
 
@@ -366,6 +413,97 @@ const ProducteursLocaux: React.FC = () => {
             maraîchers, agriculteurs, coopératives, transformateurs et acheteurs. Chaque fiche est enrichie puis validée
             avec des sources institutionnelles et la qualification terrain.
           </p>
+        </section>
+
+        <section className="mb-6 bg-gradient-to-br from-emerald-900/30 to-slate-900 border border-emerald-700/30 rounded-2xl p-4 sm:p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <ClipboardList className="w-5 h-5 text-emerald-300" />
+            <h2 className="text-lg sm:text-xl font-bold">Audit complet DOM-TOM — Enquête souveraineté alimentaire</h2>
+          </div>
+          <p className="text-sm text-slate-300 leading-relaxed mb-4">
+            Cette enquête approfondie suit une méthode unique sur l’ensemble des territoires ultramarins français :
+            collecte terrain, validation institutionnelle, scoring logistique, suivi des risques de rupture et pilotage des
+            actions correctives. L’objectif est de produire une photographie opérationnelle et régulièrement mise à jour.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {AXES_AUDIT.map(({ icon: Icon, titre, description }) => (
+              <article key={titre} className="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3">
+                <Icon className="w-4 h-4 text-emerald-300 mb-2" />
+                <h3 className="font-semibold text-sm mb-1">{titre}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-6 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Target className="w-5 h-5 text-sky-300" />
+            <h2 className="text-lg sm:text-xl font-bold">Protocole d’enquête (illustration opérationnelle)</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="bg-slate-950/60 border border-slate-700/60 rounded-xl p-3">
+              <p className="text-xs font-semibold text-sky-300 mb-1">Étape 1 — Sourcing</p>
+              <p className="text-xs text-slate-400">DAAF, Chambres d’agriculture, ODEADOM, annuaires professionnels, coopératives.</p>
+            </div>
+            <div className="bg-slate-950/60 border border-slate-700/60 rounded-xl p-3">
+              <p className="text-xs font-semibold text-sky-300 mb-1">Étape 2 — Qualification terrain</p>
+              <p className="text-xs text-slate-400">Appels, WhatsApp, visite marché/atelier, vérification activité réelle et saisonnalité.</p>
+            </div>
+            <div className="bg-slate-950/60 border border-slate-700/60 rounded-xl p-3">
+              <p className="text-xs font-semibold text-sky-300 mb-1">Étape 3 — Scoring</p>
+              <p className="text-xs text-slate-400">Score fiabilité, score logistique, score couverture locale, score risque rupture.</p>
+            </div>
+            <div className="bg-slate-950/60 border border-slate-700/60 rounded-xl p-3">
+              <p className="text-xs font-semibold text-sky-300 mb-1">Étape 4 — Plan d’action</p>
+              <p className="text-xs text-slate-400">Mise en relation acheteurs/producteurs, priorisation filières et alertes mensuelles.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-6 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart3 className="w-5 h-5 text-amber-300" />
+            <h2 className="text-lg sm:text-xl font-bold">Indicateurs clés de l’audit</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-slate-300 border-b border-slate-700">
+                  <th className="py-2 pr-3">Indicateur</th>
+                  <th className="py-2 pr-3">Définition</th>
+                  <th className="py-2">Objectif pilote</th>
+                </tr>
+              </thead>
+              <tbody>
+                {INDICATEURS_CLES.map(([nom, definition, objectif]) => (
+                  <tr key={nom} className="border-b border-slate-800">
+                    <td className="py-2 pr-3 text-white font-medium">{nom}</td>
+                    <td className="py-2 pr-3 text-slate-400">{definition}</td>
+                    <td className="py-2 text-emerald-300">{objectif}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="mb-6 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle className="w-5 h-5 text-orange-300" />
+            <h2 className="text-lg sm:text-xl font-bold">Périmètre DOM-TOM couvert par l’enquête</h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {TERRITOIRES_AUDIT.map((territoireAudit) => (
+              <span
+                key={territoireAudit}
+                className="px-2.5 py-1 rounded-full text-xs bg-slate-800 border border-slate-700 text-slate-300"
+              >
+                {territoireAudit}
+              </span>
+            ))}
+          </div>
         </section>
 
         {/* Search + filters */}
