@@ -466,6 +466,24 @@ const Home = () => {
           <p className="text-sm font-bold text-slate-200">Plus de services</p>
           <p className="text-xs text-slate-400">Vols, carburant, fret et autres comparateurs sont disponibles dans ce menu.</p>
         </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <button
+            type="button"
+            onClick={() => navigate('/suggestions?type=bug_report')}
+            className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-left hover:border-red-400/60 transition-colors"
+          >
+            <p className="text-sm font-bold text-red-200">🐛 Signaler un bug</p>
+            <p className="text-xs text-slate-300">Aidez-nous à corriger un problème technique rapidement.</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/suggestions?type=feature_request')}
+            className="rounded-2xl border border-purple-500/30 bg-purple-500/10 px-4 py-3 text-left hover:border-purple-400/60 transition-colors"
+          >
+            <p className="text-sm font-bold text-purple-200">✨ Demander une fonctionnalité</p>
+            <p className="text-xs text-slate-300">Proposez une amélioration utile pour tous les utilisateurs.</p>
+          </button>
+        </div>
       </div>
       {/* ── ACTUALITÉS (TEASER) ────────────────────────────────────── */}
       <Suspense fallback={<div className="px-6 mb-6 h-24" />}>
