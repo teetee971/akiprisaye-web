@@ -78,7 +78,7 @@ const SearchPage: React.FC = () => {
   }, [query, catalogue]);
 
   return (
-    <div className="w-full max-w-md mx-auto min-h-screen bg-white flex flex-col font-sans">
+    <div className="w-full max-w-md mx-auto min-h-screen bg-slate-950 text-white flex flex-col font-sans">
       <div className="p-4 border-b border-slate-100 sticky top-0 bg-white/90 backdrop-blur-xl z-20">
         <div className="relative">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xl opacity-40">🔍</span>
