@@ -11,6 +11,8 @@ import { Link } from 'react-router-dom';
 import {
   Leaf, MapPin, Search, Phone, Clock,
   Star, ChevronRight, ArrowLeft, ShoppingBag,
+  BarChart3, ShieldCheck, Truck, Store,
+  Database, ClipboardList, AlertTriangle, Target,
 } from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -28,158 +30,190 @@ interface Producteur {
   certification: string;
   modeVente: string[];
   jours: string;
-  note: number;
-  nbAvis: number;
+  note?: number;
+  nbAvis?: number;
   paniers: { label: string; prix: number; prixHabituel: number }[];
   image: string;
+  source: string;
 }
 
 /* ─── Données ─────────────────────────────────────────────────────────────── */
 
 const PRODUCTEURS: Producteur[] = [
   {
-    id: 'prod-tijardin-gp',
-    nom: 'Ferme Ti Jardin',
+    id: 'op-caraibes-melonniers',
+    nom: 'Association Caraïbes Melonniers',
     territoire: 'Guadeloupe',
-    ville: 'Capesterre-Belle-Eau',
-    telephone: '0590 12 34 56',
-    description: 'Maraîchage diversifié en agriculture biologique depuis 2003. Légumes de saison, herbes aromatiques et plantes médicinales tropicales.',
-    specialites: ['Légumes racine', 'Salades', 'Herbes aromatiques', 'Giraumon', 'Patate douce'],
-    certification: '🌿 BIO AB',
-    modeVente: ['Vente directe à la ferme', 'Marché de Capesterre', 'Livraison Pointe-à-Pitre'],
-    jours: 'Ven–Sam sur place · Marché Mar & Sam',
-    note: 4.8, nbAvis: 92,
-    paniers: [
-      { label: 'Panier Fond de Cuisine 🥗 (5 kg légumes saison)', prix: 15.00, prixHabituel: 22.50 },
-      { label: 'Panier Herbes & Épices (assortiment)', prix: 8.00, prixHabituel: 12.00 },
-    ],
+    ville: 'Le Moule',
+    description: 'Organisation de producteurs fruits et légumes en Guadeloupe. Fiche intégrée pour mise en relation locale et qualification terrain.',
+    specialites: ['Fruits', 'Légumes', 'Organisation de producteurs'],
+    certification: '🧾 OP 971FL2402',
+    modeVente: ['Contact via organisation'],
+    jours: 'À confirmer',
+    paniers: [],
     image: 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4e6?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://www.agroberichtenbuitenland.nl/',
   },
   {
-    id: 'prod-manioc-gp',
-    nom: 'GAEC Manioc des Grands-Fonds',
+    id: 'op-sicapag',
+    nom: 'SARL SICAPAG',
     territoire: 'Guadeloupe',
-    ville: 'Grands-Fonds',
-    telephone: '0590 93 48 21',
-    description: 'Producteur de manioc et de dérivés (farine, couac, gâteau). Transformation artisanale sur place.',
-    specialites: ['Manioc frais', 'Farine de manioc', 'Couac', 'Gâteau manioc'],
-    certification: '🏡 Agriculture locale',
-    modeVente: ['Vente directe', 'Marché du Gosier'],
-    jours: 'Mar · Sam matin',
-    note: 4.6, nbAvis: 53,
-    paniers: [
-      { label: 'Colis Manioc (3 kg frais + 1 kg couac)', prix: 12.00, prixHabituel: 18.00 },
-    ],
+    ville: 'Lamentin',
+    description: 'Organisation de producteurs référencée sur la filière fruits et légumes. Données en cours de vérification locale.',
+    specialites: ['Fruits', 'Légumes', 'Approvisionnement local'],
+    certification: '🧾 OP 971FL2424',
+    modeVente: ['Contact via organisation'],
+    jours: 'À confirmer',
+    paniers: [],
     image: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://www.agroberichtenbuitenland.nl/',
   },
   {
-    id: 'prod-cooppeyi-mq',
-    nom: 'Coopérative Péyi Martinique',
+    id: 'op-sicacfrel',
+    nom: 'SAS SICACFEL',
+    territoire: 'Guadeloupe',
+    ville: 'Saint-François',
+    description: 'Structure OP fruits et légumes. Acteur de regroupement pour améliorer la distribution locale.',
+    specialites: ['Fruits', 'Légumes', 'Coopération agricole'],
+    certification: '🧾 OP 971FL2449',
+    modeVente: ['Contact via organisation'],
+    jours: 'À confirmer',
+    paniers: [],
+    image: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://www.agroberichtenbuitenland.nl/',
+  },
+  {
+    id: 'op-gie-mhm',
+    nom: 'GIE Maraîcher et Horticole de Martinique',
     territoire: 'Martinique',
-    ville: 'Le Lamentin',
-    telephone: '0596 77 88 99',
-    description: 'Regroupement de 12 producteurs martiniquais pour la souveraineté alimentaire. Bannanes, ananas, épices et produits transformés locaux.',
-    specialites: ['Bananes Cavendish', 'Ananas Victoria', 'Épices créoles', 'Piment confit', 'Sirop de canne'],
-    certification: '✅ Zéro Chlordécone certifié',
-    modeVente: ['Marché du Lamentin', 'Drive fermier', 'Livraison Fort-de-France'],
-    jours: 'Lun–Sam — commandes en ligne 24h/7j',
-    note: 4.7, nbAvis: 134,
-    paniers: [
-      { label: 'Pack Fraîcheur Fruits 🍍 (assortiment tropical)', prix: 10.00, prixHabituel: 16.00 },
-      { label: 'Colis Épices Péyi (5 bocaux assortis)', prix: 18.00, prixHabituel: 26.00 },
-    ],
+    ville: 'Saint-Joseph',
+    description: 'Organisation de producteurs martiniquais pour les filières maraîchères et horticoles.',
+    specialites: ['Maraîchage', 'Horticulture', 'Fruits et légumes'],
+    certification: '🧾 OP 972FL2425',
+    modeVente: ['Contact via organisation'],
+    jours: 'À confirmer',
+    paniers: [],
     image: 'https://images.unsplash.com/photo-1490885578174-acda8905c2c6?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://www.agroberichtenbuitenland.nl/',
   },
   {
-    id: 'prod-cacao-mq',
-    nom: 'Plantation Cacao Madinina',
+    id: 'op-ananas-mq',
+    nom: 'SCA Ananas Martinique',
     territoire: 'Martinique',
-    ville: 'Ajoupa-Bouillon',
-    telephone: '0596 53 31 04',
-    description: 'L\'une des dernières plantations de cacao de la Martinique. Chocolat artisanal bean-to-bar, visites possibles.',
-    specialites: ['Fèves de cacao Trinitario', 'Chocolat noir 70%', 'Cacao en poudre', 'Beurre de cacao'],
-    certification: '🍫 Artisanal · AOP en cours',
-    modeVente: ['Boutique sur place', 'Marché de Saint-Pierre', 'Commande en ligne'],
-    jours: 'Mer–Dim 9h–16h30',
-    note: 4.9, nbAvis: 78,
-    paniers: [
-      { label: 'Coffret Chocolat Martinique (4 tablettes artisanales)', prix: 22.00, prixHabituel: 32.00 },
-    ],
-    image: 'https://images.unsplash.com/photo-1511381939415-e44f12a5fa73?auto=format&fm=webp&fit=crop&w=800&q=80',
+    ville: 'Le Lorrain',
+    description: 'Coopérative ananas en Martinique, acteur structurant de la filière fruits.',
+    specialites: ['Ananas', 'Fruits tropicaux', 'Coopérative'],
+    certification: '🧾 OP 972FL2437',
+    modeVente: ['Contact via organisation'],
+    jours: 'À confirmer',
+    paniers: [],
+    image: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://www.agroberichtenbuitenland.nl/',
   },
   {
-    id: 'prod-vanilla-re',
-    nom: 'Domaine Vanille Bourbon Péi',
+    id: 'op-sica2m',
+    nom: 'SICA des Maraîchers de Martinique (SICA2M)',
+    territoire: 'Martinique',
+    ville: 'Ducos',
+    description: 'Organisation de producteurs maraîchers dédiée au renforcement de l’approvisionnement local.',
+    specialites: ['Maraîchage', 'Légumes', 'Approvisionnement territorial'],
+    certification: '🧾 OP 972FL2448',
+    modeVente: ['Contact via organisation'],
+    jours: 'À confirmer',
+    paniers: [],
+    image: 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://www.agroberichtenbuitenland.nl/',
+  },
+  {
+    id: 'chambre-reunion',
+    nom: 'Chambre d’agriculture de La Réunion',
     territoire: 'La Réunion',
-    ville: 'Sainte-Suzanne',
-    telephone: '0262 52 18 73',
-    description: 'Producteur familial de vanille Bourbon de La Réunion. Gousses charnues, séchage traditionnel. Export et vente directe.',
-    specialites: ['Vanille Bourbon gousse', 'Extrait de vanille', 'Sucre vanillé artisanal'],
-    certification: '🌿 Indication Géographique Protégée',
-    modeVente: ['Vente directe', 'Marché forain Saint-Denis', 'E-shop'],
-    jours: 'Sur RDV · Marché Sam Saint-Denis',
-    note: 4.9, nbAvis: 167,
-    paniers: [
-      { label: 'Sachet 5 gousses Bourbon IGP', prix: 9.50, prixHabituel: 15.00 },
-      { label: 'Pack cadeau Vanille (gousses + extrait)', prix: 24.00, prixHabituel: 36.00 },
-    ],
+    ville: 'Saint-Denis',
+    description: 'Point d’entrée institutionnel pour identifier producteurs, coopératives et filières réunionnaises.',
+    specialites: ['Annuaire filières', 'Accompagnement', 'Production locale'],
+    certification: '🏛️ Source institutionnelle',
+    modeVente: ['Orientation vers les filières'],
+    jours: 'Consulter le site',
+    paniers: [],
     image: 'https://images.unsplash.com/photo-1612444332120-2b06a35b5f89?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://reunion.chambre-agriculture.fr/',
   },
   {
-    id: 'prod-lentilles-re',
-    nom: 'CUMA Lentilles de Cilaos',
-    territoire: 'La Réunion',
-    ville: 'Cilaos',
-    telephone: '0262 31 74 00',
-    description: 'Lentilles de Cilaos, produites dans le cirque volcanique à 1 200 m d\'altitude. Produit emblématique réunionnais, IGP.',
-    specialites: ['Lentilles blondes Cilaos IGP', 'Lentilles brunes', 'Farines légumineuses'],
-    certification: '🏔️ IGP Lentilles de Cilaos',
-    modeVente: ['Marchés de La Réunion', 'Grands supermarchés locaux', 'Vente directe cirque'],
-    jours: 'Disponibles en saison (mai–sept) · Stock limité',
-    note: 4.7, nbAvis: 215,
-    paniers: [
-      { label: 'Sac Lentilles Cilaos IGP 1 kg', prix: 5.50, prixHabituel: 8.00 },
-    ],
-    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fm=webp&fit=crop&w=800&q=80',
-  },
-  {
-    id: 'prod-pêche-gf',
-    nom: 'Coopérative Pêche Cayenne',
+    id: 'daaf-guyane',
+    nom: 'DAAF Guyane — Filières agricoles',
     territoire: 'Guyane',
     ville: 'Cayenne',
-    telephone: '0594 25 11 08',
-    description: 'Pêcheurs artisanaux guyanais. Poissons et crustacés pêchés le matin même, vendus à l\'arrivée des pirogues.',
-    specialites: ['Acoupa', 'Vivaneau', 'Crevettes géantes', 'Coulirou fumé', 'Matoutou'],
-    certification: '🎣 Pêche artisanale durable',
-    modeVente: ['Port de pêche Cayenne', 'Marché central', 'Abonnement hebdomadaire'],
-    jours: 'Mar–Sam dès 6h (arrivage) · stock limité',
-    note: 4.6, nbAvis: 89,
-    paniers: [
-      { label: 'Colis Poissons frais (3 kg assortis)', prix: 18.00, prixHabituel: 26.00 },
-      { label: 'Crevettes géantes 1 kg (fraîches)', prix: 14.00, prixHabituel: 20.00 },
-    ],
+    description: 'Source publique pour identifier les acteurs agricoles et les filières en Guyane.',
+    specialites: ['Filières locales', 'Maraîchage', 'Agriculture vivrière'],
+    certification: '🏛️ Source institutionnelle',
+    modeVente: ['Orientation vers les acteurs'],
+    jours: 'Consulter le site',
+    paniers: [],
     image: 'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://daaf.guyane.agriculture.gouv.fr/',
   },
   {
-    id: 'prod-ylang-yt',
-    nom: 'Distillerie Ylang Maweni',
+    id: 'daaf-mayotte',
+    nom: 'DAAF Mayotte — Acteurs agricoles',
     territoire: 'Mayotte',
-    ville: 'Kani-Kéli',
-    telephone: '0269 62 05 18',
-    description: 'Distillation artisanale d\'ylang-ylang de Mayotte. Huile essentielle d\'exception, utilisée par les grandes parfumeries.',
-    specialites: ['Huile essentielle ylang-ylang', 'Eau florale ylang', 'Savon artisanal Coco-Ylang'],
-    certification: '🌸 Production Mahoraise',
-    modeVente: ['Vente directe distillerie', 'Marchés de Mamoudzou'],
-    jours: 'Lun–Sam sur RDV',
-    note: 4.8, nbAvis: 41,
-    paniers: [
-      { label: 'Flacon HE Ylang-Ylang Mayotte 10 ml', prix: 12.00, prixHabituel: 18.00 },
-    ],
+    ville: 'Mamoudzou',
+    description: 'Point de départ pour recenser maraîchers, agriculteurs et structures de filière à Mayotte.',
+    specialites: ['Réseaux agricoles', 'Filières locales', 'Structures d’appui'],
+    certification: '🏛️ Source institutionnelle',
+    modeVente: ['Orientation vers les acteurs'],
+    jours: 'Consulter le site',
+    paniers: [],
     image: 'https://images.unsplash.com/photo-1595535873420-a599195b3f4a?auto=format&fm=webp&fit=crop&w=800&q=80',
+    source: 'https://daaf.mayotte.agriculture.gouv.fr/',
   },
 ];
 
 const TERRITOIRES = ['Tous', 'Guadeloupe', 'Martinique', 'La Réunion', 'Guyane', 'Mayotte'];
+
+const TERRITOIRES_AUDIT = [
+  'Guadeloupe (971)',
+  'Martinique (972)',
+  'Guyane (973)',
+  'La Réunion (974)',
+  'Mayotte (976)',
+  'Saint-Martin (978)',
+  'Saint-Barthélemy (977)',
+  'Saint-Pierre-et-Miquelon (975)',
+  'Polynésie française',
+  'Nouvelle-Calédonie',
+  'Wallis-et-Futuna',
+];
+
+const AXES_AUDIT = [
+  {
+    icon: Database,
+    titre: 'Cartographie de l’offre locale',
+    description: 'Recensement exhaustif des maraîchers, agriculteurs, coopératives, transformateurs et logisticiens.',
+  },
+  {
+    icon: Truck,
+    titre: 'Logistique et distribution',
+    description: 'Analyse des goulets d’étranglement : chaîne du froid, transport inter-îles, ruptures et délais.',
+  },
+  {
+    icon: Store,
+    titre: 'Demande et débouchés',
+    description: 'Qualification des besoins des cantines, hôpitaux, commerces de proximité et marchés communaux.',
+  },
+  {
+    icon: ShieldCheck,
+    titre: 'Fiabilité et gouvernance data',
+    description: 'Validation croisée des données via sources institutionnelles, appels de contrôle et mise à jour trimestrielle.',
+  },
+];
+
+const INDICATEURS_CLES = [
+  ['Taux de couverture locale', '% des besoins alimentaires couverts localement', '≥ 35% (phase 1)'],
+  ['Risque de rupture', 'Nombre de produits critiques en tension / mois', '≤ 5 produits critiques'],
+  ['Capacité logistique', 'Part des acteurs disposant transport + stockage', '≥ 60% des acteurs'],
+  ['Qualité de la donnée', 'Fiches vérifiées sur les 90 derniers jours', '≥ 85%'],
+  ['Réactivité filière', 'Délai moyen commande → livraison', '< 72h en intra-territoire'],
+];
 
 /* ─── Panier économie badge ────────────────────────────────────────────── */
 
@@ -213,13 +247,17 @@ function ProducteurCard({ p }: { p: Producteur }) {
 
       <div className="p-4">
         {/* Rating */}
-        <div className="flex items-center gap-2 mb-2">
-          {[1, 2, 3, 4, 5].map(i => (
-            <Star key={i} className={`w-3 h-3 ${i <= Math.round(p.note) ? 'text-amber-400 fill-amber-400' : 'text-slate-600'}`} />
-          ))}
-          <span className="text-amber-400 font-bold text-sm">{p.note.toFixed(1)}</span>
-          <span className="text-slate-500 text-xs">({p.nbAvis})</span>
-        </div>
+        {typeof p.note === 'number' ? (
+          <div className="flex items-center gap-2 mb-2">
+            {[1, 2, 3, 4, 5].map(i => (
+              <Star key={i} className={`w-3 h-3 ${i <= Math.round(p.note ?? 0) ? 'text-amber-400 fill-amber-400' : 'text-slate-600'}`} />
+            ))}
+            <span className="text-amber-400 font-bold text-sm">{p.note.toFixed(1)}</span>
+            <span className="text-slate-500 text-xs">({p.nbAvis ?? 0})</span>
+          </div>
+        ) : (
+          <p className="text-xs text-slate-400 mb-2">Donnée en qualification terrain</p>
+        )}
 
         <p className="text-xs text-slate-300 leading-relaxed mb-3">{p.description}</p>
 
@@ -276,6 +314,14 @@ function ProducteurCard({ p }: { p: Producteur }) {
             <Phone className="w-3.5 h-3.5" />{p.telephone}
           </a>
         )}
+        <a
+          href={p.source}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 block text-xs text-blue-300 hover:text-blue-200 underline underline-offset-2"
+        >
+          Source institutionnelle
+        </a>
       </div>
     </div>
   );
@@ -344,21 +390,121 @@ const ProducteursLocaux: React.FC = () => {
               </span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-black text-white drop-shadow leading-tight">
-              🌾 Producteurs locaux
+              🌾 Souveraineté alimentaire ultramarine
             </h1>
             <p className="text-green-100 text-sm mt-2 drop-shadow max-w-2xl">
-              Achetez directement aux producteurs des DOM. Paniers fraîcheur, prix circuit court.
+              Annuaire des maraîchers, agriculteurs et coopératives pour produire local, distribuer local et nourrir local.
             </p>
             <div className="flex flex-wrap gap-2 mt-3">
               <span className="px-2 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300">
                 {PRODUCTEURS.length} producteurs répertoriés
               </span>
               <span className="px-2 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full text-xs text-amber-300">
-                🧺 {PRODUCTEURS.reduce((n, p) => n + p.paniers.length, 0)} paniers disponibles
+                🧭 Base de qualification en cours
               </span>
             </div>
           </HeroImage>
         </div>
+
+        <section className="mb-6 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
+          <h2 className="text-lg sm:text-xl font-bold mb-2">Pourquoi cette page ?</h2>
+          <p className="text-sm text-slate-300 leading-relaxed">
+            Cette page structure les acteurs clés de la souveraineté alimentaire dans les territoires ultramarins français :
+            maraîchers, agriculteurs, coopératives, transformateurs et acheteurs. Chaque fiche est enrichie puis validée
+            avec des sources institutionnelles et la qualification terrain.
+          </p>
+        </section>
+
+        <section className="mb-6 bg-gradient-to-br from-emerald-900/30 to-slate-900 border border-emerald-700/30 rounded-2xl p-4 sm:p-6">
+          <div className="flex items-center gap-2 mb-3">
+            <ClipboardList className="w-5 h-5 text-emerald-300" />
+            <h2 className="text-lg sm:text-xl font-bold">Audit complet DOM-TOM — Enquête souveraineté alimentaire</h2>
+          </div>
+          <p className="text-sm text-slate-300 leading-relaxed mb-4">
+            Cette enquête approfondie suit une méthode unique sur l’ensemble des territoires ultramarins français :
+            collecte terrain, validation institutionnelle, scoring logistique, suivi des risques de rupture et pilotage des
+            actions correctives. L’objectif est de produire une photographie opérationnelle et régulièrement mise à jour.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {AXES_AUDIT.map(({ icon: Icon, titre, description }) => (
+              <article key={titre} className="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3">
+                <Icon className="w-4 h-4 text-emerald-300 mb-2" />
+                <h3 className="font-semibold text-sm mb-1">{titre}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-6 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Target className="w-5 h-5 text-sky-300" />
+            <h2 className="text-lg sm:text-xl font-bold">Protocole d’enquête (illustration opérationnelle)</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="bg-slate-950/60 border border-slate-700/60 rounded-xl p-3">
+              <p className="text-xs font-semibold text-sky-300 mb-1">Étape 1 — Sourcing</p>
+              <p className="text-xs text-slate-400">DAAF, Chambres d’agriculture, ODEADOM, annuaires professionnels, coopératives.</p>
+            </div>
+            <div className="bg-slate-950/60 border border-slate-700/60 rounded-xl p-3">
+              <p className="text-xs font-semibold text-sky-300 mb-1">Étape 2 — Qualification terrain</p>
+              <p className="text-xs text-slate-400">Appels, WhatsApp, visite marché/atelier, vérification activité réelle et saisonnalité.</p>
+            </div>
+            <div className="bg-slate-950/60 border border-slate-700/60 rounded-xl p-3">
+              <p className="text-xs font-semibold text-sky-300 mb-1">Étape 3 — Scoring</p>
+              <p className="text-xs text-slate-400">Score fiabilité, score logistique, score couverture locale, score risque rupture.</p>
+            </div>
+            <div className="bg-slate-950/60 border border-slate-700/60 rounded-xl p-3">
+              <p className="text-xs font-semibold text-sky-300 mb-1">Étape 4 — Plan d’action</p>
+              <p className="text-xs text-slate-400">Mise en relation acheteurs/producteurs, priorisation filières et alertes mensuelles.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-6 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <BarChart3 className="w-5 h-5 text-amber-300" />
+            <h2 className="text-lg sm:text-xl font-bold">Indicateurs clés de l’audit</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-slate-300 border-b border-slate-700">
+                  <th className="py-2 pr-3">Indicateur</th>
+                  <th className="py-2 pr-3">Définition</th>
+                  <th className="py-2">Objectif pilote</th>
+                </tr>
+              </thead>
+              <tbody>
+                {INDICATEURS_CLES.map(([nom, definition, objectif]) => (
+                  <tr key={nom} className="border-b border-slate-800">
+                    <td className="py-2 pr-3 text-white font-medium">{nom}</td>
+                    <td className="py-2 pr-3 text-slate-400">{definition}</td>
+                    <td className="py-2 text-emerald-300">{objectif}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="mb-6 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle className="w-5 h-5 text-orange-300" />
+            <h2 className="text-lg sm:text-xl font-bold">Périmètre DOM-TOM couvert par l’enquête</h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {TERRITOIRES_AUDIT.map((territoireAudit) => (
+              <span
+                key={territoireAudit}
+                className="px-2.5 py-1 rounded-full text-xs bg-slate-800 border border-slate-700 text-slate-300"
+              >
+                {territoireAudit}
+              </span>
+            ))}
+          </div>
+        </section>
 
         {/* Search + filters */}
         <div className="bg-slate-800/60 border border-slate-700/50 rounded-2xl p-4 mb-6 space-y-3">
@@ -411,7 +557,7 @@ const ProducteursLocaux: React.FC = () => {
           <div className="flex-1">
             <p className="font-semibold text-green-300 mb-1">🌱 Vous êtes producteur local ?</p>
             <p className="text-sm text-gray-400">
-              Inscrivez votre exploitation dans l'annuaire citoyen. Rejoignez l'économie de proximité des DOM.
+              Inscrivez votre exploitation dans l'annuaire citoyen. Rejoignez la dynamique de souveraineté alimentaire ultramarine.
             </p>
           </div>
           <Link to="/contribuer-prix"
@@ -420,6 +566,19 @@ const ProducteursLocaux: React.FC = () => {
             Référencer mon exploitation
           </Link>
         </div>
+
+        <section className="mt-6 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-5">
+          <h2 className="text-lg sm:text-xl font-bold mb-3">Sources officielles à consulter</h2>
+          <ul className="space-y-2 text-sm text-slate-300 list-disc pl-5">
+            <li><a className="text-blue-300 hover:text-blue-200 underline" href="https://chambres-agriculture.fr/" target="_blank" rel="noreferrer">Réseau des Chambres d’agriculture</a></li>
+            <li><a className="text-blue-300 hover:text-blue-200 underline" href="https://daaf.guadeloupe.agriculture.gouv.fr/" target="_blank" rel="noreferrer">DAAF Guadeloupe</a></li>
+            <li><a className="text-blue-300 hover:text-blue-200 underline" href="https://daaf.martinique.agriculture.gouv.fr/" target="_blank" rel="noreferrer">DAAF Martinique</a></li>
+            <li><a className="text-blue-300 hover:text-blue-200 underline" href="https://daaf.guyane.agriculture.gouv.fr/" target="_blank" rel="noreferrer">DAAF Guyane</a></li>
+            <li><a className="text-blue-300 hover:text-blue-200 underline" href="https://daaf.reunion.agriculture.gouv.fr/" target="_blank" rel="noreferrer">DAAF La Réunion</a></li>
+            <li><a className="text-blue-300 hover:text-blue-200 underline" href="https://daaf.mayotte.agriculture.gouv.fr/" target="_blank" rel="noreferrer">DAAF Mayotte</a></li>
+            <li><a className="text-blue-300 hover:text-blue-200 underline" href="https://www.odeadom.fr/" target="_blank" rel="noreferrer">ODEADOM</a></li>
+          </ul>
+        </section>
 
         {/* Bottom nav */}
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
