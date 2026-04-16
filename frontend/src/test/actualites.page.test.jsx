@@ -70,7 +70,7 @@ describe('Actualites page', () => {
       await Promise.resolve();
     });
 
-    expect(container.textContent).toContain('fallback embarqué affiché');
+    expect(container.textContent).toContain('Données hors connexion affichées');
     expect(container.textContent).toContain('Ouvrir la recherche globale du site');
   });
 });
