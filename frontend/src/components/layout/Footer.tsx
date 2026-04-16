@@ -95,7 +95,7 @@ export default function Footer() {
               <li><Link to="/search" className="text-slate-400 hover:text-white transition-colors">Recherche</Link></li>
               <li><Link to="/scanner" className="text-slate-400 hover:text-white transition-colors">Scanner</Link></li>
               <li><Link to="/liste" className="text-slate-400 hover:text-white transition-colors">Liste de courses</Link></li>
-              <li><Link to="/pricing" className="text-slate-400 hover:text-white transition-colors">Offres</Link></li>
+              <li><Link to="/pricing" className="text-slate-400 hover:text-white transition-colors">Offres payantes</Link></li>
             </ul>
           </div>
 
