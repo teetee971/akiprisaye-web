@@ -117,6 +117,7 @@ const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const MonCompte = lazy(() => import('./pages/MonCompte'));
 const AuthHub = lazy(() => import('./pages/AuthHub'));
 const AuthCallbackPage = lazy(() => import('./pages/AuthCallbackPage'));
+const Pricing = lazy(() => import('./pages/Pricing'));
 const Subscribe = lazy(() => import('./pages/Subscribe'));
 const SubscribeSuccess = lazy(() => import('./pages/SubscribeSuccess'));
 const SubscribeError = lazy(() => import('./pages/SubscribeError'));
@@ -298,6 +299,7 @@ const MarketplacePortal = lazy(() => import('./pages/MarketplacePortal'));
 const AffiliatePortal = lazy(() => import('./pages/AffiliatePortal'));
 const DataMarketplace = lazy(() => import('./pages/DataMarketplace'));
 const CorporateSales = lazy(() => import('./pages/CorporateSales'));
+const PremiumReports = lazy(() => import('./pages/PremiumReports'));
 const NearbyDeals = lazy(() => import('./pages/NearbyDeals'));
 const SaaSMarketplace = lazy(() => import('./pages/SaaSMarketplace'));
 const PopulairesPage = lazy(() => import('./pages/PopulairesPage'));
@@ -313,13 +315,12 @@ const LEGACY_ALIAS_ROUTES = (
     <Route path="checkout" element={<Navigate to="/liste" replace />} />
     <Route path="news" element={<Navigate to="/actualites" replace />} />
     <Route path="scan" element={<Navigate to="/scanner" replace />} />
-    {/* Routes premium/plans volontairement désactivées pour éviter toute confusion */}
-    <Route path="offres" element={<Navigate to="/" replace />} />
-    <Route path="tarifs" element={<Navigate to="/" replace />} />
-    <Route path="abonnements" element={<Navigate to="/" replace />} />
-    <Route path="premium" element={<Navigate to="/" replace />} />
-    <Route path="plans" element={<Navigate to="/" replace />} />
-    <Route path="plan" element={<Navigate to="/" replace />} />
+    <Route path="offres" element={<Navigate to="/pricing" replace />} />
+    <Route path="tarifs" element={<Navigate to="/pricing" replace />} />
+    <Route path="abonnements" element={<Navigate to="/pricing" replace />} />
+    <Route path="premium" element={<Navigate to="/pricing" replace />} />
+    <Route path="plans" element={<Navigate to="/pricing" replace />} />
+    <Route path="plan" element={<Navigate to="/pricing" replace />} />
     <Route path="Login" element={<Navigate to="/login" replace />} />
     <Route path="auth/login" element={<Navigate to="/login" replace />} />
     <Route path="signin" element={<Navigate to="/login" replace />} />
@@ -501,8 +502,7 @@ export default function App() {
                               <Route path="auth" element={<AuthHub />} />
                               <Route path="mon-compte" element={<RequireAuth><MonCompte /></RequireAuth>} />
                               {LEGACY_ALIAS_ROUTES}
-                              {/* Route de plan premium désactivée */}
-                              <Route path="pricing" element={<Navigate to="/" replace />} />
+                              <Route path="pricing" element={<Pricing />} />
                               <Route path="subscribe" element={<Subscribe />} />
                               <Route path="subscribe/success" element={<SubscribeSuccess />} />
                               <Route path="subscribe/error" element={<SubscribeError />} />
@@ -669,7 +669,7 @@ export default function App() {
                               <Route path="portail-affilies" element={<AffiliatePortal />} />
                               <Route path="data-marketplace" element={<DataMarketplace />} />
                               <Route path="corporate" element={<CorporateSales />} />
-                              <Route path="rapports-premium" element={<Navigate to="/" replace />} />
+                              <Route path="rapports-premium" element={<PremiumReports />} />
                               <Route path="offres-proximite" element={<NearbyDeals />} />
                               <Route path="saas-marketplace" element={<SaaSMarketplace />} />
                               <Route path="vs/:slug" element={<SEOCompetitorComparisonPage />} />
