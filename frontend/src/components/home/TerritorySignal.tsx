@@ -64,7 +64,7 @@ export function TerritorySignal() {
         type: 'increase',
         severity: 'high',
         title: '3 hausses importantes détectées cette semaine',
-        description: 'Produits laitiers, fruits frais et carburant en hausse moyenne de +8.5%',
+        description: 'Produits laitiers et fruits frais en hausse moyenne de +8.5%',
         productsAffected: 3,
         dateDetected: '2026-01-07',
         icon: '📈'

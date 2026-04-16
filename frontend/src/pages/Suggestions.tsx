@@ -1,6 +1,7 @@
  
 import React from 'react';
-import { MessageSquarePlus, Lightbulb, Bug, HelpCircle, Database, Sparkles } from 'lucide-react';
+import { Lightbulb, Bug, HelpCircle, Database, Sparkles } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import TicketForm from '../components/TicketForm';
 import type { TicketType } from '../types/ticket';
 import { HeroImage } from '../components/ui/HeroImage';
@@ -17,6 +18,7 @@ import { PAGE_HERO_IMAGES } from '../config/imageAssets';
  * - Signaler des erreurs de données
  */
 export default function Suggestions() {
+  const location = useLocation();
   const [selectedType, setSelectedType] = React.useState<TicketType | null>(null);
 
   const ticketTypes = [
@@ -78,6 +80,15 @@ export default function Suggestions() {
     };
     return colors[color] || colors.blue;
   };
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const requestedType = params.get('type');
+    const allowedTypes: TicketType[] = ['suggestion', 'feature_request', 'bug_report', 'data_quality', 'question'];
+    if (requestedType && allowedTypes.includes(requestedType as TicketType)) {
+      setSelectedType(requestedType as TicketType);
+    }
+  }, [location.search]);
 
   return (
     <div className="min-h-screen bg-slate-950">

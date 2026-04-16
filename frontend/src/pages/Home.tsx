@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState, useRef, useEffect } from 'react';
+import React, { lazy, Suspense, useState, useRef, useEffect, useMemo } from 'react';
 import { Search, PlayCircle, Package, RefreshCw, ChevronRight, Share2, MessageCircle, Facebook, Twitter, Link2, Check } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
@@ -273,6 +273,28 @@ const Home = () => {
   const navigate = useNavigate();
   const { products, loading, error, reloadProducts } = useApp();
   const pageRef = useRef<HTMLDivElement>(null);
+  const dailyStar = useMemo(() => {
+    const fallback = {
+      name: "Huile de tournesol 1L",
+      store: "votre magasin local",
+      price: 2.10,
+      territory: activeTerritoryCode ? TERRITORY_DISPLAY[activeTerritoryCode]?.name ?? 'votre territoire' : 'votre territoire',
+    };
+
+    if (!products || products.length === 0) return fallback;
+
+    const source = products.filter((p) => /huile/i.test(p.name) && /tournesol/i.test(p.name));
+    const pool = source.length > 0 ? source : products;
+    const cheapest = [...pool].sort((a, b) => Number(a.price) - Number(b.price))[0];
+    if (!cheapest) return fallback;
+
+    return {
+      name: cheapest.name,
+      store: cheapest.store || fallback.store,
+      price: Number(cheapest.price) || fallback.price,
+      territory: activeTerritoryCode ? TERRITORY_DISPLAY[activeTerritoryCode]?.name ?? 'votre territoire' : 'votre territoire',
+    };
+  }, [products, activeTerritoryCode]);
 
   // Load dynamic stats from JSON (updated by scraping pipeline)
   useEffect(() => {
@@ -418,6 +440,50 @@ const Home = () => {
           <PlayCircle size={16} />
           Scanner un code-barres
         </button>
+      </div>
+
+      {/* ── STAR DU JOUR : UNE INFO MAJEURE ───────────────────────── */}
+      <div className="px-6 mb-8">
+        <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/15 to-slate-900 p-5">
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-300 mb-2">La star du jour</p>
+          <p className="text-xl sm:text-2xl font-black leading-tight">
+            Aujourd&apos;hui, <span className="text-amber-300">{dailyStar.name.toLowerCase()}</span> est au prix le plus bas
+            chez <span className="text-emerald-300">{dailyStar.store}</span> ({dailyStar.price.toFixed(2)}€).
+          </p>
+          <p className="text-xs text-slate-400 mt-2">
+            Information simple et utile pour {dailyStar.territory}. Mise à jour quotidienne.
+          </p>
+        </div>
+      </div>
+
+      {/* ── SERVICES : VOLS/CARBURANT DÉPORTÉS ────────────────────── */}
+      <div className="px-6 mb-8">
+        <button
+          type="button"
+          onClick={() => navigate('/comparateurs')}
+          className="w-full rounded-2xl border border-slate-700 bg-slate-900/70 px-4 py-3 text-left hover:border-blue-400/60 transition-colors"
+        >
+          <p className="text-sm font-bold text-slate-200">Plus de services</p>
+          <p className="text-xs text-slate-400">Vols, carburant, fret et autres comparateurs sont disponibles dans ce menu.</p>
+        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <button
+            type="button"
+            onClick={() => navigate('/suggestions?type=bug_report')}
+            className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-left hover:border-red-400/60 transition-colors"
+          >
+            <p className="text-sm font-bold text-red-200">🐛 Signaler un bug</p>
+            <p className="text-xs text-slate-300">Aidez-nous à corriger un problème technique rapidement.</p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/suggestions?type=feature_request')}
+            className="rounded-2xl border border-purple-500/30 bg-purple-500/10 px-4 py-3 text-left hover:border-purple-400/60 transition-colors"
+          >
+            <p className="text-sm font-bold text-purple-200">✨ Demander une fonctionnalité</p>
+            <p className="text-xs text-slate-300">Proposez une amélioration utile pour tous les utilisateurs.</p>
+          </button>
+        </div>
       </div>
       {/* ── ACTUALITÉS (TEASER) ────────────────────────────────────── */}
       <Suspense fallback={<div className="px-6 mb-6 h-24" />}>
