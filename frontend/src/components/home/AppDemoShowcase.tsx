@@ -38,7 +38,7 @@ const SCREENS = ['scan', 'compare', 'territoire'] as const;
 type Screen = (typeof SCREENS)[number];
 
 const SCREEN_LABELS: Record<Screen, string> = {
-  scan: '📷 Scan EAN',
+  scan: '📷 Scanner',
   compare: '📊 Comparer',
   territoire: '🗺️ Territoire',
 };
@@ -73,7 +73,7 @@ function ScanScreen() {
           <span className="demo-scan-emoji">🥛</span>
           <div>
             <p className="demo-scan-product-name">Lait demi-écrémé UHT 1L</p>
-            <p className="demo-scan-ean">EAN : 3560070123456</p>
+            <p className="demo-scan-ean">Code-barres : 3560070123456</p>
           </div>
         </div>
         <div className="demo-scan-price-row">
@@ -200,7 +200,7 @@ export default function AppDemoShowcase() {
               <span className="app-demo-feat-icon">📷</span>
               <div>
                 <strong>Scan instantané</strong>
-                <span> — visez le code-barres, obtenez le prix juste</span>
+                <span> — visez le code-barres, obtenez le bon prix</span>
               </div>
             </li>
             <li>

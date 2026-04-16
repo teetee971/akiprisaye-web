@@ -40,7 +40,7 @@ const CONSEILS: Conseil[] = [
   { emoji: '🌾', categorie: 'local', texte: "Les producteurs locaux peuvent vous vendre directement. Cherchez les AMAP ou groupements de producteurs de votre île." },
   { emoji: '🧾', categorie: 'economie', texte: "Gardez vos tickets de caisse et comparez vos dépenses mois après mois. Identifier une hausse de 5 % peut vous faire économiser 200 €/an." },
   { emoji: '♻️', categorie: 'economie', texte: "Les promotions de fin de semaine sur les produits frais permettent d'économiser jusqu'à 40 % sur la viande et le poisson." },
-  { emoji: '🚗', categorie: 'transport', texte: "Comparez le prix du carburant entre les stations avant de faire le plein. Les stations-service offrent parfois des réductions fidélité.", lien: { to: '/comparateur', label: 'Comparateurs' } },
+  { emoji: '🚗', categorie: 'transport', texte: "Regroupez vos déplacements et comparez les options de transport pour réduire vos dépenses chaque semaine.", lien: { to: '/comparateurs', label: 'Plus de services' } },
   { emoji: '📦', categorie: 'alimentation', texte: "Achetez certains produits secs (riz, pâtes, légumineuses) en grande quantité. Le prix au kilo baisse fortement à partir de 5 kg." },
   { emoji: '🔍', categorie: 'numerique', texte: "Avant tout achat important, consultez l'historique des prix. Un produit à prix cassé n'est pas toujours une vraie promo !", lien: { to: '/historique-prix', label: 'Historique des prix' } },
   { emoji: '🌴', categorie: 'local', texte: "Faites pousser quelques herbes aromatiques sur votre balcon (ciboulette, persil, thym). Un plant à 2 € vous évitera des achats pendant des mois." },
