@@ -66,6 +66,9 @@ const RSS_FEEDS = [
   // ── Presse indépendante ───────────────────────────────────────────────────
   // ImazPress — presse indépendante La Réunion
   { url: 'https://imazpress.com/feed',                               source: 'ImazPress Réunion',      territory: 'La Réunion' },
+  // RCI — Antilles (flux principal + fallback WordPress)
+  { urls: ['https://www.rci.fm/guadeloupe/rss.xml', 'https://rci.fm/guadeloupe/rss.xml'], source: 'RCI Guadeloupe', territory: 'Guadeloupe' },
+  { urls: ['https://www.rci.fm/martinique/rss.xml', 'https://rci.fm/martinique/rss.xml'], source: 'RCI Martinique', territory: 'Martinique' },
 ];
 
 // ─── Utilitaires temporels ──────────────────────────────────────────────────────
@@ -89,30 +92,34 @@ function getDayLabel(date = new Date()) {
 
 /** Récupère et parse un flux RSS. Retourne une liste d'articles ou [] si échec. */
 async function fetchFeed(feed, parser) {
-  try {
-    const res = await fetch(feed.url, {
-      headers: { 'User-Agent': 'AKiPriSaYe-Bot/1.0 (+https://akiprisaye.pf)' },
-      signal: AbortSignal.timeout(12000),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const xml = await res.text();
-    const parsed = parser.parse(xml);
-    const rawItems = parsed?.rss?.channel?.item ?? [];
-    const items = Array.isArray(rawItems) ? rawItems : [rawItems];
-    return items.slice(0, 8).map((item) => ({
-      title: stripHtmlToText(item.title ?? '').trim(),
-      description: stripHtmlToText(item.description ?? '')
-        .trim()
-        .slice(0, 300),
-      url: String(item.link ?? item.guid ?? ''),
-      publishedAt: String(item.pubDate ?? ''),
-      source: feed.source,
-      territory: feed.territory,
-    }));
-  } catch (err) {
-    console.warn(`⚠️  Flux ignoré (${feed.source}) : ${err.message}`);
-    return [];
+  const candidates = Array.isArray(feed.urls) ? feed.urls : [feed.url];
+  for (const url of candidates) {
+    try {
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'AKiPriSaYe-Bot/1.0 (+https://akiprisaye.pf)' },
+        signal: AbortSignal.timeout(12000),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const xml = await res.text();
+      const parsed = parser.parse(xml);
+      const rawItems = parsed?.rss?.channel?.item ?? [];
+      const items = Array.isArray(rawItems) ? rawItems : [rawItems];
+      return items.slice(0, 8).map((item) => ({
+        title: stripHtmlToText(item.title ?? '').trim(),
+        description: stripHtmlToText(item.description ?? '')
+          .trim()
+          .slice(0, 300),
+        url: String(item.link ?? item.guid ?? ''),
+        publishedAt: String(item.pubDate ?? ''),
+        source: feed.source,
+        territory: feed.territory,
+      }));
+    } catch (err) {
+      console.warn(`⚠️  Tentative flux échouée (${feed.source}) [${url}] : ${err.message}`);
+    }
   }
+  console.warn(`⚠️  Flux ignoré (${feed.source}) : aucune URL disponible`);
+  return [];
 }
 
 // ─── Prompt IA ─────────────────────────────────────────────────────────────────

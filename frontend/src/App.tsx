@@ -318,6 +318,9 @@ const LEGACY_ALIAS_ROUTES = (
     <Route path="offres" element={<Navigate to="/pricing" replace />} />
     <Route path="tarifs" element={<Navigate to="/pricing" replace />} />
     <Route path="abonnements" element={<Navigate to="/pricing" replace />} />
+    <Route path="premium" element={<Navigate to="/pricing" replace />} />
+    <Route path="plans" element={<Navigate to="/pricing" replace />} />
+    <Route path="plan" element={<Navigate to="/pricing" replace />} />
     <Route path="Login" element={<Navigate to="/login" replace />} />
     <Route path="auth/login" element={<Navigate to="/login" replace />} />
     <Route path="signin" element={<Navigate to="/login" replace />} />
