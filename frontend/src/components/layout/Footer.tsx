@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Scale, BarChart2, Wrench, Info, Briefcase } from 'lucide-react';
+import { Scale, BarChart2, Wrench, Info } from 'lucide-react';
 import { SkeletonBadge } from '../SkeletonWidgets';
 
 // LiveOnlineBadge uses Firestore (lib/firebase) — lazy so Firebase SDK doesn't
@@ -95,7 +95,7 @@ export default function Footer() {
               <li><Link to="/search" className="text-slate-400 hover:text-white transition-colors">Recherche</Link></li>
               <li><Link to="/scanner" className="text-slate-400 hover:text-white transition-colors">Scanner</Link></li>
               <li><Link to="/liste" className="text-slate-400 hover:text-white transition-colors">Liste de courses</Link></li>
-              <li><Link to="/pricing" className="text-slate-400 hover:text-white transition-colors">Offres</Link></li>
+              <li><Link to="/suggestions" className="text-slate-400 hover:text-white transition-colors">Suggestions</Link></li>
             </ul>
           </div>
 
@@ -123,14 +123,14 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Col 4 – Pro & institutionnels */}
+          {/* Col 4 – Communauté */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Info className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Pro &amp; institutions</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Info className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Communauté</p>
             <ul className="space-y-2">
-              <li><Link to="/inscription-pro" className="text-slate-400 hover:text-blue-300 transition-colors"><Briefcase className="inline-block w-3.5 h-3.5 mr-1" /> Espace Pro</Link></li>
-              <li><Link to="/licence-institution" className="text-slate-400 hover:text-white transition-colors">Licence institution</Link></li>
-              <li><Link to="/pricing#partners" className="text-slate-400 hover:text-white transition-colors">Partenariats</Link></li>
-              <li><Link to="/contact#pro" className="text-slate-400 hover:text-white transition-colors">Parler à l’équipe</Link></li>
+              <li><Link to="/suggestions?type=feature_request" className="text-slate-400 hover:text-white transition-colors">Demander une fonctionnalité</Link></li>
+              <li><Link to="/suggestions?type=bug_report" className="text-slate-400 hover:text-white transition-colors">Signaler un bug</Link></li>
+              <li><Link to="/signalement" className="text-slate-400 hover:text-white transition-colors">Signaler un abus</Link></li>
+              <li><Link to="/contact" className="text-slate-400 hover:text-white transition-colors">Parler à l’équipe</Link></li>
               <li><Link to="/gouvernance" className="text-slate-400 hover:text-white transition-colors">Gouvernance</Link></li>
             </ul>
           </div>
