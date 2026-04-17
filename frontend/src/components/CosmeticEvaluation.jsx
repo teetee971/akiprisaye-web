@@ -14,7 +14,16 @@ import {
   analyzeHazardCategories,
   HAZARD_CATEGORY_META,
 } from '../services/cosmeticEvaluationService';
-import { Shield, BookOpen, AlertTriangle, Info, ExternalLink, Search, Loader2, Barcode } from 'lucide-react';
+import {
+  Shield,
+  BookOpen,
+  AlertTriangle,
+  Info,
+  ExternalLink,
+  Search,
+  Loader2,
+  Barcode,
+} from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                              */
@@ -22,23 +31,35 @@ import { Shield, BookOpen, AlertTriangle, Info, ExternalLink, Search, Loader2, B
 
 function getRiskLevelColor(level) {
   switch (level) {
-    case 'LOW': return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-300';
-    case 'MODERATE': return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-300';
-    case 'HIGH': return 'text-orange-600 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-300';
-    case 'RESTRICTED': return 'text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-300';
-    case 'PROHIBITED': return 'text-red-800 bg-red-100 dark:bg-red-900/40 dark:text-red-200';
-    default: return 'text-gray-600 bg-gray-50 dark:bg-gray-700 dark:text-gray-300';
+    case 'LOW':
+      return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-300';
+    case 'MODERATE':
+      return 'text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 dark:text-yellow-300';
+    case 'HIGH':
+      return 'text-orange-600 bg-orange-50 dark:bg-orange-900/20 dark:text-orange-300';
+    case 'RESTRICTED':
+      return 'text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-300';
+    case 'PROHIBITED':
+      return 'text-red-800 bg-red-100 dark:bg-red-900/40 dark:text-red-200';
+    default:
+      return 'text-gray-600 bg-gray-50 dark:bg-gray-700 dark:text-gray-300';
   }
 }
 
 function getRiskLevelLabel(level) {
   switch (level) {
-    case 'LOW': return '✅ Sûr';
-    case 'MODERATE': return '⚠️ Modéré';
-    case 'HIGH': return '🔶 Attention';
-    case 'RESTRICTED': return '🚫 Restreint';
-    case 'PROHIBITED': return '⛔ Interdit/Très restreint';
-    default: return 'Inconnu';
+    case 'LOW':
+      return '✅ Sûr';
+    case 'MODERATE':
+      return '⚠️ Modéré';
+    case 'HIGH':
+      return '🔶 Attention';
+    case 'RESTRICTED':
+      return '🚫 Restreint';
+    case 'PROHIBITED':
+      return '⛔ Interdit/Très restreint';
+    default:
+      return 'Inconnu';
   }
 }
 
@@ -98,7 +119,9 @@ export default function CosmeticEvaluation({ initialEan }) {
     try {
       const product = await fetchOpenBeautyFacts(target);
       if (!product) {
-        setBarcodeError('Produit non trouvé dans la base ouverte (code-barres incorrect ou produit absent).');
+        setBarcodeError(
+          'Produit non trouvé dans la base ouverte (code-barres incorrect ou produit absent).'
+        );
         return;
       }
       if (product.productName) setProductName(product.productName);
@@ -125,23 +148,25 @@ export default function CosmeticEvaluation({ initialEan }) {
     setActiveHazardFilter(null);
     const result = evaluateProduct(productName, category, inciList);
     setEvaluation(result);
-    setTimeout(() => document.getElementById('cosmetic-results')?.scrollIntoView({ behavior: 'smooth' }), 100);
+    setTimeout(
+      () => document.getElementById('cosmetic-results')?.scrollIntoView({ behavior: 'smooth' }),
+      100
+    );
   };
 
   /* ---------------------------------------------------------------- */
   /* Calcul des catégories de danger                                    */
   /* ---------------------------------------------------------------- */
-  const hazardSummary = evaluation
-    ? analyzeHazardCategories(evaluation.product.ingredients)
-    : [];
+  const hazardSummary = evaluation ? analyzeHazardCategories(evaluation.product.ingredients) : [];
 
   /* Filtre ingrédients by hazard category */
   const displayedIngredients = evaluation
-    ? (activeHazardFilter
-        ? evaluation.product.ingredients.filter(
-            (ing) => Array.isArray(ing.hazardCategories) && ing.hazardCategories.includes(activeHazardFilter),
-          )
-        : evaluation.product.ingredients)
+    ? activeHazardFilter
+      ? evaluation.product.ingredients.filter(
+          (ing) =>
+            Array.isArray(ing.hazardCategories) && ing.hazardCategories.includes(activeHazardFilter)
+        )
+      : evaluation.product.ingredients
     : [];
 
   /* ---------------------------------------------------------------- */
@@ -150,7 +175,6 @@ export default function CosmeticEvaluation({ initialEan }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 py-8 px-4">
       <div className="max-w-6xl mx-auto">
-
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -160,7 +184,8 @@ export default function CosmeticEvaluation({ initialEan }) {
             </h1>
           </div>
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Déchiffrez la composition de vos produits beauté grâce à notre base de données réglementaire
+            Déchiffrez la composition de vos produits beauté grâce à notre base de données
+            réglementaire
           </p>
           <div className="mt-2 flex items-center justify-center gap-2 text-sm text-slate-500 dark:text-slate-400">
             <BookOpen className="w-4 h-4" />
@@ -180,7 +205,10 @@ export default function CosmeticEvaluation({ initialEan }) {
               type="text"
               aria-label="Code-barres produit cosmétique"
               value={barcode}
-              onChange={(e) => { setBarcode(e.target.value); setBarcodeError(''); }}
+              onChange={(e) => {
+                setBarcode(e.target.value);
+                setBarcodeError('');
+              }}
               onKeyDown={(e) => e.key === 'Enter' && handleLoadBarcode()}
               placeholder="Ex : 3600523003396"
               inputMode="numeric"
@@ -192,9 +220,11 @@ export default function CosmeticEvaluation({ initialEan }) {
               disabled={barcodeLoading || !barcode.trim()}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
             >
-              {barcodeLoading
-                ? <Loader2 className="w-4 h-4 animate-spin" />
-                : <Search className="w-4 h-4" />}
+              {barcodeLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Search className="w-4 h-4" />
+              )}
               Charger
             </button>
           </div>
@@ -202,18 +232,29 @@ export default function CosmeticEvaluation({ initialEan }) {
             <p className="mt-2 text-sm text-red-600 dark:text-red-400">{barcodeError}</p>
           )}
           <p className="mt-1 text-xs text-slate-400">
-            Scannez ou saisissez un code EAN/UPC pour pré-remplir automatiquement nom et liste INCI depuis la base ouverte des produits cosmétiques.
+            Scannez ou saisissez un code EAN/UPC pour pré-remplir automatiquement nom et liste INCI
+            depuis la base ouverte des produits cosmétiques.
           </p>
 
           {/* Aperçu produit chargé */}
           {(productImage || productBrand) && (
             <div className="mt-3 flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
               {productImage && (
-                <img src={productImage} alt="produit" className="w-14 h-14 object-contain rounded bg-white" />
+                <img
+                  src={productImage}
+                  alt="produit"
+                  className="w-14 h-14 object-contain rounded bg-white"
+                />
               )}
               <div>
-                {productBrand && <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{productBrand}</p>}
-                <p className="text-xs text-green-600 dark:text-green-400">✓ Informations chargées — vérifiez et complétez si nécessaire</p>
+                {productBrand && (
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                    {productBrand}
+                  </p>
+                )}
+                <p className="text-xs text-green-600 dark:text-green-400">
+                  ✓ Informations chargées — vérifiez et complétez si nécessaire
+                </p>
               </div>
             </div>
           )}
@@ -224,7 +265,10 @@ export default function CosmeticEvaluation({ initialEan }) {
           <form onSubmit={handleEvaluate} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="cosmetic-nom" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="cosmetic-nom"
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                >
                   Nom du produit
                 </label>
                 <input
@@ -238,7 +282,10 @@ export default function CosmeticEvaluation({ initialEan }) {
                 />
               </div>
               <div>
-                <label htmlFor="cosmetic-categorie" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="cosmetic-categorie"
+                  className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                >
                   Catégorie
                 </label>
                 <select
@@ -248,14 +295,19 @@ export default function CosmeticEvaluation({ initialEan }) {
                   className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white"
                 >
                   {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
                   ))}
                 </select>
               </div>
             </div>
 
             <div>
-              <label htmlFor="cosmetic-inci" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+              <label
+                htmlFor="cosmetic-inci"
+                className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+              >
                 Liste INCI — ingrédients séparés par des virgules
               </label>
               <textarea
@@ -290,10 +342,11 @@ export default function CosmeticEvaluation({ initialEan }) {
         {/* ── Résultats ── */}
         {evaluation && (
           <div id="cosmetic-results" className="space-y-6">
-
             {/* Score global */}
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Score de composition</h2>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+                Score de composition
+              </h2>
               <div className="flex flex-wrap items-center gap-6">
                 <div className="text-center">
                   <div className={`text-6xl font-extrabold ${getScoreColor(evaluation.score)}`}>
@@ -306,10 +359,21 @@ export default function CosmeticEvaluation({ initialEan }) {
                     {getScoreLabel(evaluation.score)}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-3 text-sm">
-                    <span className="text-green-600">✅ {evaluation.scoreBreakdown.safeIngredients} sûrs</span>
-                    <span className="text-yellow-600">⚠️ {evaluation.scoreBreakdown.moderateIngredients} modérés</span>
-                    <span className="text-orange-600">🔶 {evaluation.scoreBreakdown.riskIngredients} à surveiller</span>
-                    <span className="text-red-600">🚫 {evaluation.scoreBreakdown.restrictedIngredients + evaluation.scoreBreakdown.prohibitedIngredients} restreints/interdits</span>
+                    <span className="text-green-600">
+                      ✅ {evaluation.scoreBreakdown.safeIngredients} sûrs
+                    </span>
+                    <span className="text-yellow-600">
+                      ⚠️ {evaluation.scoreBreakdown.moderateIngredients} modérés
+                    </span>
+                    <span className="text-orange-600">
+                      🔶 {evaluation.scoreBreakdown.riskIngredients} à surveiller
+                    </span>
+                    <span className="text-red-600">
+                      🚫{' '}
+                      {evaluation.scoreBreakdown.restrictedIngredients +
+                        evaluation.scoreBreakdown.prohibitedIngredients}{' '}
+                      restreints/interdits
+                    </span>
                   </div>
                 </div>
               </div>
@@ -323,8 +387,8 @@ export default function CosmeticEvaluation({ initialEan }) {
                   Ingrédients préoccupants détectés
                 </h2>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-                  Classés selon le Règlement CE 1223/2009, les évaluations ANSES et ECHA.
-                  Cliquez sur une catégorie pour filtrer la liste des ingrédients.
+                  Classés selon le Règlement CE 1223/2009, les évaluations ANSES et ECHA. Cliquez
+                  sur une catégorie pour filtrer la liste des ingrédients.
                 </p>
 
                 {/* Badges catégories */}
@@ -346,7 +410,9 @@ export default function CosmeticEvaluation({ initialEan }) {
                       <button
                         key={cat}
                         type="button"
-                        onClick={() => setActiveHazardFilter(activeHazardFilter === cat ? null : cat)}
+                        onClick={() =>
+                          setActiveHazardFilter(activeHazardFilter === cat ? null : cat)
+                        }
                         title={meta.description}
                         className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                           activeHazardFilter === cat
@@ -366,7 +432,9 @@ export default function CosmeticEvaluation({ initialEan }) {
                     const meta = HAZARD_CATEGORY_META[cat];
                     return (
                       <div key={cat} className={`p-3 rounded-lg text-sm ${meta.color}`}>
-                        <span className="font-semibold">{meta.emoji} {meta.label} : </span>
+                        <span className="font-semibold">
+                          {meta.emoji} {meta.label} :{' '}
+                        </span>
                         <span>{ingredients.join(' · ')}</span>
                       </div>
                     );
@@ -378,7 +446,9 @@ export default function CosmeticEvaluation({ initialEan }) {
             {/* ── Avertissements ── */}
             {evaluation.warnings.length > 0 && (
               <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Avertissements</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+                  Avertissements
+                </h2>
                 <div className="space-y-3">
                   {evaluation.warnings.map((warning) => (
                     <div
@@ -387,16 +457,22 @@ export default function CosmeticEvaluation({ initialEan }) {
                         warning.level === 'error'
                           ? 'bg-red-50 border-red-500 dark:bg-red-900/20'
                           : warning.level === 'warning'
-                          ? 'bg-yellow-50 border-yellow-500 dark:bg-yellow-900/20'
-                          : 'bg-blue-50 border-blue-500 dark:bg-blue-900/20'
+                            ? 'bg-yellow-50 border-yellow-500 dark:bg-yellow-900/20'
+                            : 'bg-blue-50 border-blue-500 dark:bg-blue-900/20'
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        {warning.level === 'error' || warning.level === 'warning'
-                          ? <AlertTriangle className={`w-5 h-5 flex-shrink-0 mt-0.5 ${warning.level === 'error' ? 'text-red-600' : 'text-yellow-600'}`} />
-                          : <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />}
+                        {warning.level === 'error' || warning.level === 'warning' ? (
+                          <AlertTriangle
+                            className={`w-5 h-5 flex-shrink-0 mt-0.5 ${warning.level === 'error' ? 'text-red-600' : 'text-yellow-600'}`}
+                          />
+                        ) : (
+                          <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                        )}
                         <div>
-                          <p className="font-medium text-slate-900 dark:text-white">{warning.message}</p>
+                          <p className="font-medium text-slate-900 dark:text-white">
+                            {warning.message}
+                          </p>
                           {warning.ingredients?.length > 0 && (
                             <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                               Ingrédients : {warning.ingredients.join(', ')}
@@ -443,15 +519,23 @@ export default function CosmeticEvaluation({ initialEan }) {
                   >
                     {/* Nom + risk level */}
                     <div className="flex flex-wrap items-center gap-2 mb-2">
-                      <h3 className="font-bold text-base text-slate-900 dark:text-white">{ingredient.inciName}</h3>
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getRiskLevelColor(ingredient.riskLevel)}`}>
+                      <h3 className="font-bold text-base text-slate-900 dark:text-white">
+                        {ingredient.inciName}
+                      </h3>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getRiskLevelColor(ingredient.riskLevel)}`}
+                      >
                         {getRiskLevelLabel(ingredient.riskLevel)}
                       </span>
                       {/* Hazard category badges inline */}
                       {ingredient.hazardCategories?.map((cat) => {
                         const meta = HAZARD_CATEGORY_META[cat];
                         return meta ? (
-                          <span key={cat} title={meta.description} className={`px-2 py-0.5 rounded-full text-xs font-medium ${meta.color}`}>
+                          <span
+                            key={cat}
+                            title={meta.description}
+                            className={`px-2 py-0.5 rounded-full text-xs font-medium ${meta.color}`}
+                          >
                             {meta.emoji} {meta.label}
                           </span>
                         ) : null;
@@ -459,13 +543,18 @@ export default function CosmeticEvaluation({ initialEan }) {
                     </div>
 
                     {ingredient.commonName && (
-                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">{ingredient.commonName}</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                        {ingredient.commonName}
+                      </p>
                     )}
 
                     {ingredient.function?.length > 0 && (
                       <div className="flex flex-wrap gap-1 mb-2">
                         {ingredient.function.map((func, idx) => (
-                          <span key={idx} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-xs">
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded text-xs"
+                          >
                             {func}
                           </span>
                         ))}
@@ -482,14 +571,18 @@ export default function CosmeticEvaluation({ initialEan }) {
 
                     {ingredient.restrictions && (
                       <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border-l-2 border-yellow-400 rounded text-sm text-slate-700 dark:text-slate-300">
-                        <strong>Restrictions : </strong>{ingredient.restrictions}
+                        <strong>Restrictions : </strong>
+                        {ingredient.restrictions}
                       </div>
                     )}
 
                     {ingredient.regulatoryReferences?.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {ingredient.regulatoryReferences.map((ref, idx) => (
-                          <span key={idx} className="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs">
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs"
+                          >
                             {ref}
                           </span>
                         ))}
@@ -524,18 +617,29 @@ export default function CosmeticEvaluation({ initialEan }) {
                 onClick={() => setShowSources(!showSources)}
                 className="flex items-center justify-between w-full text-left"
               >
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Sources officielles utilisées</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Sources officielles utilisées
+                </h2>
                 <span className="text-slate-400">{showSources ? '▲' : '▼'}</span>
               </button>
               {showSources && (
                 <div className="mt-4 space-y-3">
                   {Object.values(databases).map((db) => (
                     <div key={db.name} className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-                      <a href={db.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
+                      <a
+                        href={db.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-start gap-3 group"
+                      >
                         <ExternalLink className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <p className="font-semibold text-slate-900 dark:text-white group-hover:text-blue-600">{db.name}</p>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{db.description}</p>
+                          <p className="font-semibold text-slate-900 dark:text-white group-hover:text-blue-600">
+                            {db.name}
+                          </p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                            {db.description}
+                          </p>
                         </div>
                       </a>
                     </div>
@@ -551,18 +655,29 @@ export default function CosmeticEvaluation({ initialEan }) {
                 onClick={() => setShowRegulations(!showRegulations)}
                 className="flex items-center justify-between w-full text-left"
               >
-                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Références réglementaires</h2>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                  Références réglementaires
+                </h2>
                 <span className="text-slate-400">{showRegulations ? '▲' : '▼'}</span>
               </button>
               {showRegulations && (
                 <div className="mt-4 space-y-3">
                   {Object.values(regulations).map((reg) => (
                     <div key={reg.name} className="p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-                      <a href={reg.url} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 group">
+                      <a
+                        href={reg.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-start gap-3 group"
+                      >
                         <BookOpen className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                         <div>
-                          <p className="font-semibold text-slate-900 dark:text-white group-hover:text-blue-600">{reg.name}</p>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{reg.description}</p>
+                          <p className="font-semibold text-slate-900 dark:text-white group-hover:text-blue-600">
+                            {reg.name}
+                          </p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                            {reg.description}
+                          </p>
                         </div>
                       </a>
                     </div>
@@ -576,12 +691,15 @@ export default function CosmeticEvaluation({ initialEan }) {
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white mb-2">Avertissement important</h3>
-                  <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">{evaluation.disclaimer}</p>
+                  <h3 className="font-bold text-slate-900 dark:text-white mb-2">
+                    Avertissement important
+                  </h3>
+                  <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">
+                    {evaluation.disclaimer}
+                  </p>
                 </div>
               </div>
             </div>
-
           </div>
         )}
       </div>

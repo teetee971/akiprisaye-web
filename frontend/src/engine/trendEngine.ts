@@ -52,7 +52,7 @@ export interface TrendedProduct {
  * @param productEvents  Click counts for two consecutive 24-hour windows
  */
 export function computeClickTrend(productEvents: ProductEventWindow): number {
-  const last     = productEvents.last24h     ?? 0;
+  const last = productEvents.last24h ?? 0;
   const previous = productEvents.previous24h ?? 0;
 
   if (previous === 0) {
@@ -81,9 +81,9 @@ export function normaliseTrend(trend: number): number {
  */
 export function trendLabel(
   trend: number,
-  events?: Pick<ProductEventWindow, 'last24h' | 'previous24h'>,
+  events?: Pick<ProductEventWindow, 'last24h' | 'previous24h'>
 ): TrendedProduct['trendLabel'] {
-  if (trend > 0.2)  return 'rising';
+  if (trend > 0.2) return 'rising';
   if (trend < -0.2) return 'falling';
   // trend === 0: distinguish "new activity" from "no signal / stable"
   if (trend === 0) {
@@ -101,16 +101,16 @@ export function trendLabel(
  */
 export function annotateTrends(
   products: { name: string; [k: string]: unknown }[],
-  eventMap: Map<string, ProductEventWindow>,
+  eventMap: Map<string, ProductEventWindow>
 ): TrendedProduct[] {
   return products.map((p) => {
-    const key    = p.name.toLowerCase().trim();
+    const key = p.name.toLowerCase().trim();
     const events = eventMap.get(key) ?? { last24h: 0, previous24h: 0 };
-    const trend  = computeClickTrend(events);
+    const trend = computeClickTrend(events);
 
     return {
       ...p,
-      name:       p.name,
+      name: p.name,
       events,
       trend,
       trendScore: normaliseTrend(trend),
@@ -127,11 +127,11 @@ export function annotateTrends(
  * @param events  Raw event array: { type: string, product: string, ts: number }[]
  */
 export function buildEventWindowMap(
-  events: { type: string; product?: string; ts: number }[],
+  events: { type: string; product?: string; ts: number }[]
 ): Map<string, ProductEventWindow> {
-  const now  = Date.now();
-  const h24  = 24 * 60 * 60 * 1000;
-  const map  = new Map<string, ProductEventWindow>();
+  const now = Date.now();
+  const h24 = 24 * 60 * 60 * 1000;
+  const map = new Map<string, ProductEventWindow>();
 
   const clickTypes = new Set(['click', 'affiliate_click', 'conversion', 'deal_view']);
 
@@ -142,7 +142,7 @@ export function buildEventWindowMap(
     const win = map.get(key)!;
 
     const age = now - e.ts;
-    if (age <= h24)         win.last24h++;
+    if (age <= h24) win.last24h++;
     else if (age <= 2 * h24) win.previous24h++;
   }
 

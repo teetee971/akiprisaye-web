@@ -1,7 +1,6 @@
- 
 /**
  * MapLeaflet Component - Performance Optimized
- * 
+ *
  * Interactive map showing stores across DOM-COM territories
  * Uses Leaflet.js for map rendering with lazy loading and mobile optimizations
  */
@@ -14,17 +13,17 @@ import { isStoreOpen } from '../utils/storeHoursUtils';
 
 // Territory coordinates (center points)
 const TERRITORY_COORDINATES = {
-  GP: { lat: 16.2650, lng: -61.5510, zoom: 10, name: 'Guadeloupe' },
+  GP: { lat: 16.265, lng: -61.551, zoom: 10, name: 'Guadeloupe' },
   MQ: { lat: 14.6415, lng: -61.0242, zoom: 10, name: 'Martinique' },
   GF: { lat: 3.9339, lng: -53.1258, zoom: 8, name: 'Guyane' },
   RE: { lat: -21.1151, lng: 55.5364, zoom: 9, name: 'La Réunion' },
   YT: { lat: -12.8275, lng: 45.1662, zoom: 10, name: 'Mayotte' },
   PM: { lat: 46.9419, lng: -56.2711, zoom: 11, name: 'Saint-Pierre-et-Miquelon' },
-  BL: { lat: 17.9000, lng: -62.8333, zoom: 13, name: 'Saint-Barthélemy' },
+  BL: { lat: 17.9, lng: -62.8333, zoom: 13, name: 'Saint-Barthélemy' },
   MF: { lat: 18.0708, lng: -63.0501, zoom: 12, name: 'Saint-Martin' },
   WF: { lat: -13.7687, lng: -177.1561, zoom: 10, name: 'Wallis-et-Futuna' },
   PF: { lat: -17.6797, lng: -149.4068, zoom: 9, name: 'Polynésie française' },
-  NC: { lat: -20.9043, lng: 165.6180, zoom: 8, name: 'Nouvelle-Calédonie' },
+  NC: { lat: -20.9043, lng: 165.618, zoom: 8, name: 'Nouvelle-Calédonie' },
   TF: { lat: -49.2803, lng: 69.3486, zoom: 5, name: 'TAAF' },
 };
 
@@ -33,11 +32,11 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
   const mapInstanceRef = useRef(null);
   const observerRef = useRef(null);
   const markersRef = useRef([]);
-  
+
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   // Get device-optimized config
   const mapConfig = useRef(getOptimizedMapConfig());
 
@@ -131,7 +130,8 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
 
     // Add dark CartoDB tiles
     window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 20,
       updateWhenIdle: config.performanceTier === 'low', // Reduce tile loading on low-end
@@ -152,12 +152,11 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
 
     const coords = TERRITORY_COORDINATES[territory] || TERRITORY_COORDINATES.GP;
     const config = mapConfig.current;
-    
-    mapInstanceRef.current.setView(
-      [coords.lat, coords.lng], 
-      coords.zoom,
-      { animate: config.animate, duration: config.zoomAnimationDuration / 1000 }
-    );
+
+    mapInstanceRef.current.setView([coords.lat, coords.lng], coords.zoom, {
+      animate: config.animate,
+      duration: config.zoomAnimationDuration / 1000,
+    });
 
     // Clear existing markers and add new ones
     updateMarkers(mapInstanceRef.current);
@@ -173,10 +172,10 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
 
     // Status color palette for marker icons
     const STATUS_COLORS = {
-      open: '#10b981',        // green
+      open: '#10b981', // green
       closing_soon: '#f59e0b', // orange
-      closed: '#ef4444',       // red
-      unknown: '#9ca3af',      // gray
+      closed: '#ef4444', // red
+      unknown: '#9ca3af', // gray
     };
 
     const STATUS_ICONS = {
@@ -187,13 +186,11 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
     };
 
     // Clear existing markers
-    markersRef.current.forEach(marker => map.removeLayer(marker));
+    markersRef.current.forEach((marker) => map.removeLayer(marker));
     markersRef.current = [];
 
     // Limit markers on mobile for performance
-    const visibleStores = config.isMobile 
-      ? stores.slice(0, config.maxVisibleMarkers)
-      : stores;
+    const visibleStores = config.isMobile ? stores.slice(0, config.maxVisibleMarkers) : stores;
 
     // Add markers for each store
     visibleStores.forEach((store) => {
@@ -202,7 +199,9 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
       // Determine store open status for colored marker
       const storeHours = store.id ? getStoreHours(store.id, store.territory || territory) : null;
       const statusInfo = storeHours ? isStoreOpen(storeHours) : null;
-      const statusColor = statusInfo ? (STATUS_COLORS[statusInfo.status] || STATUS_COLORS.unknown) : STATUS_COLORS.unknown;
+      const statusColor = statusInfo
+        ? STATUS_COLORS[statusInfo.status] || STATUS_COLORS.unknown
+        : STATUS_COLORS.unknown;
 
       // Create colored SVG marker icon based on open status
       const markerIcon = window.L.divIcon({
@@ -279,9 +278,13 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
 
       if (onStoreClick && store.id) {
         const btn = document.createElement('button');
-        btn.style.cssText = 'margin-top: 8px; padding: 6px 12px; background: #0f62fe; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;';
+        btn.style.cssText =
+          'margin-top: 8px; padding: 6px 12px; background: #0f62fe; color: white; border: none; border-radius: 4px; cursor: pointer; width: 100%;';
         btn.textContent = 'Voir les prix';
-        btn.addEventListener('click', () => window.handleStoreClick && window.handleStoreClick(store.id));
+        btn.addEventListener(
+          'click',
+          () => window.handleStoreClick && window.handleStoreClick(store.id)
+        );
         popupEl.appendChild(btn);
       }
 
@@ -304,7 +307,9 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
 
     // Show warning if markers were limited
     if (config.isMobile && stores.length > config.maxVisibleMarkers) {
-      console.info(`Showing ${config.maxVisibleMarkers} of ${stores.length} markers for performance`);
+      console.info(
+        `Showing ${config.maxVisibleMarkers} of ${stores.length} markers for performance`
+      );
     }
   }
 
@@ -312,7 +317,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
   useEffect(() => {
     if (onStoreClick) {
       window.handleStoreClick = (storeId) => {
-        const store = stores.find(s => s.id === storeId);
+        const store = stores.find((s) => s.id === storeId);
         if (store) {
           onStoreClick(store);
         }
@@ -329,14 +334,14 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
     return () => {
       // Clear markers
       if (mapInstanceRef.current && markersRef.current.length > 0) {
-        markersRef.current.forEach(marker => {
+        markersRef.current.forEach((marker) => {
           if (mapInstanceRef.current) {
             mapInstanceRef.current.removeLayer(marker);
           }
         });
         markersRef.current = [];
       }
-      
+
       // Remove map
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -348,7 +353,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
   // Show placeholder before map is visible
   if (!isVisible) {
     return (
-      <div 
+      <div
         ref={mapRef}
         className="flex items-center justify-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg"
         style={{ height: '500px', minHeight: '400px' }}
@@ -356,9 +361,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
         <div className="text-center">
           <div className="mb-4 text-4xl">🗺️</div>
           <p className="text-gray-600 dark:text-gray-400">Carte interactive</p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-            Se charge au scroll
-          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">Se charge au scroll</p>
         </div>
       </div>
     );
@@ -366,7 +369,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
 
   if (isLoading) {
     return (
-      <div 
+      <div
         ref={mapRef}
         className="flex items-center justify-center p-8 bg-gray-100 dark:bg-gray-800 rounded-lg"
         style={{ height: '500px', minHeight: '400px' }}
@@ -382,9 +385,7 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
   if (error) {
     return (
       <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-        <p className="text-red-800 dark:text-red-200">
-          ⚠️ {error}
-        </p>
+        <p className="text-red-800 dark:text-red-200">⚠️ {error}</p>
       </div>
     );
   }
@@ -396,23 +397,22 @@ export function MapLeaflet({ territory = 'GP', stores = [], onStoreClick = null 
         className="w-full rounded-lg overflow-hidden shadow-lg"
         style={{ height: '500px', minHeight: '400px' }}
       />
-      
+
       {stores.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg text-center max-w-sm">
-            <p className="text-gray-700 dark:text-gray-300 mb-2">
-              📍 Aucun magasin à afficher
-            </p>
+            <p className="text-gray-700 dark:text-gray-300 mb-2">📍 Aucun magasin à afficher</p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Sélectionnez un territoire pour voir les magasins disponibles
             </p>
           </div>
         </div>
       )}
-      
+
       {mapConfig.current.isMobile && stores.length > mapConfig.current.maxVisibleMarkers && (
         <div className="absolute bottom-4 left-4 right-4 bg-blue-500/90 text-white px-3 py-2 rounded-lg text-sm shadow-lg">
-          ℹ️ {mapConfig.current.maxVisibleMarkers} magasins affichés sur {stores.length} (optimisation mobile)
+          ℹ️ {mapConfig.current.maxVisibleMarkers} magasins affichés sur {stores.length}{' '}
+          (optimisation mobile)
         </div>
       )}
     </div>

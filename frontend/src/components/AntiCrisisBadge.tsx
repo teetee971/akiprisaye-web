@@ -1,12 +1,12 @@
 /**
  * AntiCrisisBadge Component
- * 
+ *
  * Displays Anti-Crisis indicator for prices based on historical analysis
  * - Shows only when sufficient historical data exists
  * - Color-coded badges (🟢 green, 🟡 yellow, 🔴 red, ⚪ neutral)
  * - Tooltip with detailed explanation
  * - Non-intrusive, informational only
- * 
+ *
  * Legal Compliance:
  * - No commercial promises
  * - No financial advice
@@ -24,8 +24,8 @@ interface AntiCrisisBadgeProps {
   className?: string;
 }
 
-const AntiCrisisBadge: React.FC<AntiCrisisBadgeProps> = ({ 
-  result, 
+const AntiCrisisBadge: React.FC<AntiCrisisBadgeProps> = ({
+  result,
   compact = false,
   showDetails = false,
   className = '',
@@ -41,7 +41,7 @@ const AntiCrisisBadge: React.FC<AntiCrisisBadgeProps> = ({
 
   // Build tooltip content
   const tooltipContent = result.reasons
-    .map(r => {
+    .map((r) => {
       const icon = r.met ? '✓' : '✗';
       return `${icon} ${r.explanation}`;
     })
@@ -49,7 +49,7 @@ const AntiCrisisBadge: React.FC<AntiCrisisBadgeProps> = ({
 
   if (compact) {
     return (
-      <span 
+      <span
         className={`${badgeClasses} ${className}`}
         title={tooltipContent}
         role="status"
@@ -63,27 +63,25 @@ const AntiCrisisBadge: React.FC<AntiCrisisBadgeProps> = ({
   return (
     <div className={`space-y-2 ${className}`}>
       <div className="flex items-center gap-2">
-        <span 
+        <span
           className={badgeClasses}
           title={tooltipContent}
           role="status"
           aria-label={`Indicateur Anti-Crise: ${result.label}`}
         >
-          <span className="mr-1 text-base" aria-hidden="true">{emoji}</span>
+          <span className="mr-1 text-base" aria-hidden="true">
+            {emoji}
+          </span>
           <span>{result.label}</span>
         </span>
-        
-        <span className="text-xs text-gray-500">
-          {result.score}/3 critères
-        </span>
+
+        <span className="text-xs text-gray-500">{result.score}/3 critères</span>
       </div>
 
       {showDetails && (
         <div className="text-xs text-gray-600 space-y-1 mt-2">
-          <p className="font-medium text-gray-700 mb-1">
-            Analyse de résilience du prix:
-          </p>
-          
+          <p className="font-medium text-gray-700 mb-1">Analyse de résilience du prix:</p>
+
           {result.reasons.map((reason) => (
             <div key={reason.criterion} className="flex items-start gap-2">
               <span className={reason.met ? 'text-green-600' : 'text-gray-400'}>
@@ -114,8 +112,8 @@ const AntiCrisisBadge: React.FC<AntiCrisisBadgeProps> = ({
           <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-[10px] text-blue-800">
             <p className="font-medium">ℹ️ Indicateur informatif</p>
             <p className="mt-1">
-              Analyse descriptive basée sur l'historique local des prix observés. 
-              Ne constitue pas un conseil financier ou une garantie.
+              Analyse descriptive basée sur l'historique local des prix observés. Ne constitue pas
+              un conseil financier ou une garantie.
             </p>
           </div>
         </div>

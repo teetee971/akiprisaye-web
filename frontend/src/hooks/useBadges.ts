@@ -38,7 +38,7 @@ export function useBadges(options: UseBadgesOptions = {}): UseBadgesReturn {
     try {
       const response = await fetch(`${API_BASE}/badges?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch badges');
-      
+
       const data = await response.json();
       setBadges(data);
     } catch (err) {
@@ -51,7 +51,7 @@ export function useBadges(options: UseBadgesOptions = {}): UseBadgesReturn {
     try {
       const response = await fetch(`${API_BASE}/badges/all`);
       if (!response.ok) throw new Error('Failed to fetch all badges');
-      
+
       const data = await response.json();
       setAllBadges(data);
     } catch (err) {
@@ -70,10 +70,7 @@ export function useBadges(options: UseBadgesOptions = {}): UseBadgesReturn {
     setError(null);
 
     try {
-      await Promise.all([
-        fetchUserBadges(),
-        fetchAllBadges()
-      ]);
+      await Promise.all([fetchUserBadges(), fetchAllBadges()]);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch badges';
       setError(errorMessage);
@@ -82,20 +79,23 @@ export function useBadges(options: UseBadgesOptions = {}): UseBadgesReturn {
     }
   }, [userId, fetchUserBadges, fetchAllBadges]);
 
-  const getBadgeProgress = useCallback(async (badgeId: string): Promise<BadgeProgress | null> => {
-    if (!userId) return null;
+  const getBadgeProgress = useCallback(
+    async (badgeId: string): Promise<BadgeProgress | null> => {
+      if (!userId) return null;
 
-    try {
-      const response = await fetch(`${API_BASE}/badges/${badgeId}/progress?userId=${userId}`);
-      if (!response.ok) throw new Error('Failed to fetch badge progress');
-      
-      const data = await response.json();
-      return data;
-    } catch (err) {
-      console.error('Error fetching badge progress:', err);
-      return null;
-    }
-  }, [userId]);
+      try {
+        const response = await fetch(`${API_BASE}/badges/${badgeId}/progress?userId=${userId}`);
+        if (!response.ok) throw new Error('Failed to fetch badge progress');
+
+        const data = await response.json();
+        return data;
+      } catch (err) {
+        console.error('Error fetching badge progress:', err);
+        return null;
+      }
+    },
+    [userId]
+  );
 
   useEffect(() => {
     if (autoFetch && userId) {
@@ -103,8 +103,8 @@ export function useBadges(options: UseBadgesOptions = {}): UseBadgesReturn {
     }
   }, [autoFetch, userId, refresh]);
 
-  const unlockedBadges = badges.filter(badge => badge.isUnlocked);
-  const lockedBadges = badges.filter(badge => !badge.isUnlocked);
+  const unlockedBadges = badges.filter((badge) => badge.isUnlocked);
+  const lockedBadges = badges.filter((badge) => !badge.isUnlocked);
 
   return {
     badges,
@@ -114,6 +114,6 @@ export function useBadges(options: UseBadgesOptions = {}): UseBadgesReturn {
     loading,
     error,
     refresh,
-    getBadgeProgress
+    getBadgeProgress,
   };
 }

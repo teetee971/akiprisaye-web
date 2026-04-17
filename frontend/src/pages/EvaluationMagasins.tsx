@@ -6,7 +6,17 @@
 
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Flag, Star, MapPin, ThumbsUp, ShoppingBag, Search, SlidersHorizontal, X, Filter } from 'lucide-react';
+import {
+  Flag,
+  Star,
+  MapPin,
+  ThumbsUp,
+  ShoppingBag,
+  Search,
+  SlidersHorizontal,
+  X,
+  Filter,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -23,7 +33,6 @@ import {
   ALL_TERRITORIES,
   SECTOR_META,
 } from '../data/evaluationMagasinsData';
-
 
 function StarRating({ value }: { value: number }) {
   return (
@@ -73,13 +82,25 @@ export default function EvaluationMagasins() {
       sector: form.sector,
       sectorEmoji: meta.emoji,
       sectorColor: meta.color,
-      ratings: { service: form.service, proprete: form.proprete, disponibilite: form.disponibilite },
+      ratings: {
+        service: form.service,
+        proprete: form.proprete,
+        disponibilite: form.disponibilite,
+      },
       comment: form.comment,
     });
     setUserRatings(getUserRatings());
     setRatingSubmitted(true);
     setShowForm(false);
-    setForm({ storeName: '', territory: 'Guadeloupe', sector: 'Alimentaire', service: 0, proprete: 0, disponibilite: 0, comment: '' });
+    setForm({
+      storeName: '',
+      territory: 'Guadeloupe',
+      sector: 'Alimentaire',
+      service: 0,
+      proprete: 0,
+      disponibilite: 0,
+      comment: '',
+    });
   };
 
   const handleReport = (storeId: string) => {
@@ -89,8 +110,12 @@ export default function EvaluationMagasins() {
   const filteredBase = EXAMPLE_RATINGS.filter((s) => {
     if (selectedSector !== 'Tous' && s.sector !== selectedSector) return false;
     if (selectedTerritory !== 'Tous' && s.territory !== selectedTerritory) return false;
-    if (searchQuery && !s.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !s.address.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    if (
+      searchQuery &&
+      !s.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !s.address.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+      return false;
     return true;
   });
 
@@ -111,7 +136,10 @@ export default function EvaluationMagasins() {
           name="description"
           content="Notez la qualité de service, la propreté et la disponibilité des produits dans votre magasin — A KI PRI SA YÉ"
         />
-        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/evaluation-magasins" />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/evaluation-magasins"
+        />
       </Helmet>
 
       <div className="min-h-screen bg-amber-50/40">
@@ -138,11 +166,13 @@ export default function EvaluationMagasins() {
         </div>
 
         <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
-
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={() => { setShowForm(!showForm); setRatingSubmitted(false); }}
+              onClick={() => {
+                setShowForm(!showForm);
+                setRatingSubmitted(false);
+              }}
               className="flex items-center justify-center gap-2 px-5 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl transition-colors text-sm"
             >
               <Star className="w-4 h-4" />
@@ -191,12 +221,15 @@ export default function EvaluationMagasins() {
 
               <div className="p-5 space-y-4">
                 <div>
-                  <label htmlFor="eval-nom-magasin" className="block text-sm font-medium text-amber-900 mb-1">
-                      Nom du magasin
-                    </label>
+                  <label
+                    htmlFor="eval-nom-magasin"
+                    className="block text-sm font-medium text-amber-900 mb-1"
+                  >
+                    Nom du magasin
+                  </label>
                   <input
-                      id="eval-nom-magasin"
-                      type="text"
+                    id="eval-nom-magasin"
+                    type="text"
                     value={form.storeName}
                     onChange={(e) => setForm({ ...form, storeName: e.target.value })}
                     placeholder="Ex: Carrefour Jarry"
@@ -207,7 +240,10 @@ export default function EvaluationMagasins() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label htmlFor="eval-territoire" className="block text-sm font-medium text-amber-900 mb-1">
+                    <label
+                      htmlFor="eval-territoire"
+                      className="block text-sm font-medium text-amber-900 mb-1"
+                    >
                       Territoire
                     </label>
                     <select
@@ -217,12 +253,17 @@ export default function EvaluationMagasins() {
                       className="w-full border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white/80"
                     >
                       {ALL_TERRITORIES.filter((t) => t !== 'Tous').map((t) => (
-                        <option key={t} value={t}>{t}</option>
+                        <option key={t} value={t}>
+                          {t}
+                        </option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label htmlFor="eval-secteur" className="block text-sm font-medium text-amber-900 mb-1">
+                    <label
+                      htmlFor="eval-secteur"
+                      className="block text-sm font-medium text-amber-900 mb-1"
+                    >
                       Secteur
                     </label>
                     <select
@@ -231,9 +272,13 @@ export default function EvaluationMagasins() {
                       onChange={(e) => setForm({ ...form, sector: e.target.value })}
                       className="w-full border border-amber-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white/80"
                     >
-                      {ALL_SECTORS.filter((s) => s !== 'Tous').sort().map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
+                      {ALL_SECTORS.filter((s) => s !== 'Tous')
+                        .sort()
+                        .map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
                     </select>
                   </div>
                 </div>
@@ -241,7 +286,11 @@ export default function EvaluationMagasins() {
                 {(['service', 'proprete', 'disponibilite'] as const).map((criterion) => (
                   <div key={criterion}>
                     <span className="block text-sm font-medium text-amber-900 mb-1">
-                      {criterion === 'proprete' ? 'Propreté' : criterion === 'disponibilite' ? 'Disponibilité produits' : 'Qualité de service'}
+                      {criterion === 'proprete'
+                        ? 'Propreté'
+                        : criterion === 'disponibilite'
+                          ? 'Disponibilité produits'
+                          : 'Qualité de service'}
                     </span>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -261,12 +310,15 @@ export default function EvaluationMagasins() {
                 ))}
 
                 <div>
-                  <label htmlFor="eval-commentaire" className="block text-sm font-medium text-amber-900 mb-1">
-                      Commentaire (optionnel)
-                    </label>
+                  <label
+                    htmlFor="eval-commentaire"
+                    className="block text-sm font-medium text-amber-900 mb-1"
+                  >
+                    Commentaire (optionnel)
+                  </label>
                   <textarea
-                      id="eval-commentaire"
-                      value={form.comment}
+                    id="eval-commentaire"
+                    value={form.comment}
                     onChange={(e) => setForm({ ...form, comment: e.target.value })}
                     placeholder="Décrivez votre expérience..."
                     rows={3}
@@ -306,7 +358,11 @@ export default function EvaluationMagasins() {
               </div>
               {(selectedSector !== 'Tous' || selectedTerritory !== 'Tous' || searchQuery) && (
                 <button
-                  onClick={() => { setSelectedSector('Tous'); setSelectedTerritory('Tous'); setSearchQuery(''); }}
+                  onClick={() => {
+                    setSelectedSector('Tous');
+                    setSelectedTerritory('Tous');
+                    setSearchQuery('');
+                  }}
                   className="flex items-center gap-1 text-xs text-amber-700 hover:text-amber-900"
                 >
                   <X className="w-3.5 h-3.5" /> Réinitialiser
@@ -330,7 +386,9 @@ export default function EvaluationMagasins() {
             <div>
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Filter className="w-3.5 h-3.5 text-gray-400" />
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Territoire</span>
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Territoire
+                </span>
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {ALL_TERRITORIES.map((terr) => (
@@ -353,7 +411,9 @@ export default function EvaluationMagasins() {
             <div>
               <div className="flex items-center gap-1.5 mb-1.5">
                 <ShoppingBag className="w-3.5 h-3.5 text-gray-400" />
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">Secteur</span>
+                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                  Secteur
+                </span>
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {ALL_SECTORS.map((sector) => (
@@ -379,17 +439,24 @@ export default function EvaluationMagasins() {
                   📝 Vos avis ({filteredUser.length})
                 </p>
                 {filteredUser.map((u) => (
-                  <div key={u.id} className="bg-amber-50 border border-amber-200 rounded-2xl overflow-hidden shadow-sm">
+                  <div
+                    key={u.id}
+                    className="bg-amber-50 border border-amber-200 rounded-2xl overflow-hidden shadow-sm"
+                  >
                     <div className="px-4 py-3">
                       <div className="flex items-center justify-between mb-1">
                         <p className="font-bold text-gray-900 text-sm">{u.storeName}</p>
-                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${u.sectorColor}`}>
+                        <span
+                          className={`text-xs font-semibold px-2 py-0.5 rounded-full ${u.sectorColor}`}
+                        >
                           {u.sectorEmoji} {u.sector}
                         </span>
                       </div>
                       <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
                         <MapPin className="w-3 h-3 flex-shrink-0" />
-                        <span>{u.territory} · {new Date(u.submittedAt).toLocaleDateString('fr-FR')}</span>
+                        <span>
+                          {u.territory} · {new Date(u.submittedAt).toLocaleDateString('fr-FR')}
+                        </span>
                       </div>
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between text-sm">
@@ -411,7 +478,9 @@ export default function EvaluationMagasins() {
                       <div className="flex items-center justify-between mt-2">
                         <div className="flex items-center gap-1">
                           <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                          <span className="text-xs font-bold text-gray-700">{avgRatingFrom(u.ratings).toFixed(1)} / 5</span>
+                          <span className="text-xs font-bold text-gray-700">
+                            {avgRatingFrom(u.ratings).toFixed(1)} / 5
+                          </span>
                         </div>
                         {reportedStores.has(`user-${u.storeName}`) ? (
                           <span className="text-xs text-gray-400 italic">✓ Signalé</span>
@@ -441,7 +510,10 @@ export default function EvaluationMagasins() {
                   </p>
                 )}
                 {filteredBase.map((store) => (
-                  <div key={store.id} className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
+                  <div
+                    key={store.id}
+                    className="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm"
+                  >
                     {/* Banner image */}
                     <div className="relative h-32">
                       <img
@@ -451,7 +523,9 @@ export default function EvaluationMagasins() {
                         loading="lazy"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
-                      <span className={`absolute top-2.5 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${store.sectorColor}`}>
+                      <span
+                        className={`absolute top-2.5 right-3 text-xs font-semibold px-2 py-0.5 rounded-full ${store.sectorColor}`}
+                      >
                         {store.sectorEmoji} {store.sector}
                       </span>
                       <p className="absolute bottom-2.5 left-3 font-bold text-white text-sm drop-shadow-md">
@@ -459,7 +533,9 @@ export default function EvaluationMagasins() {
                       </p>
                       <div className="absolute bottom-2.5 right-3 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-lg px-2 py-1">
                         <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                        <span className="text-white font-bold text-sm">{avgRatingFrom(store.ratings).toFixed(1)}</span>
+                        <span className="text-white font-bold text-sm">
+                          {avgRatingFrom(store.ratings).toFixed(1)}
+                        </span>
                         <span className="text-white/70 text-xs">({store.totalReviews})</span>
                       </div>
                     </div>
@@ -467,7 +543,9 @@ export default function EvaluationMagasins() {
                     <div className="px-4 py-3">
                       <div className="flex items-center gap-1 text-xs text-gray-500 mb-3">
                         <MapPin className="w-3 h-3 flex-shrink-0" />
-                        <span>{store.address} · {store.territory}</span>
+                        <span>
+                          {store.address} · {store.territory}
+                        </span>
                       </div>
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between text-sm">
@@ -486,7 +564,9 @@ export default function EvaluationMagasins() {
                       {/* Modération */}
                       <div className="mt-3 pt-3 border-t border-gray-100 flex justify-end">
                         {reportedStores.has(store.id) ? (
-                          <span className="text-xs text-gray-400 italic">✓ Signalement transmis</span>
+                          <span className="text-xs text-gray-400 italic">
+                            ✓ Signalement transmis
+                          </span>
                         ) : (
                           <button
                             onClick={() => handleReport(store.id)}

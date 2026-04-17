@@ -1,9 +1,9 @@
 /**
  * Pedagogical Badge System
- * 
+ *
  * Automatic badges to build user trust through transparency.
  * PROMPT 6: Badge pédagogiques automatiques (effet confiance)
- * 
+ *
  * Badges:
  * - "Prix stable" - price hasn't changed much
  * - "Variation récente" - price changed recently
@@ -40,7 +40,9 @@ export function calculatePriceBadge(
 ): PriceBadge | null {
   const now = new Date();
   const lastUpdate = new Date(lastUpdateDate);
-  const daysSinceUpdate = Math.floor((now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24));
+  const daysSinceUpdate = Math.floor(
+    (now.getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24)
+  );
 
   // Check for recent observation (< 7 days)
   if (daysSinceUpdate <= 7) {
@@ -51,7 +53,7 @@ export function calculatePriceBadge(
       color: 'text-green-400',
       bgColor: 'bg-green-900/30',
       borderColor: 'border-green-700',
-      explanation: `Ce prix a été observé il y a ${daysSinceUpdate === 0 ? "aujourd'hui" : daysSinceUpdate === 1 ? "hier" : `${daysSinceUpdate} jours`}. Les données sont très fraîches.`,
+      explanation: `Ce prix a été observé il y a ${daysSinceUpdate === 0 ? "aujourd'hui" : daysSinceUpdate === 1 ? 'hier' : `${daysSinceUpdate} jours`}. Les données sont très fraîches.`,
     };
   }
 
@@ -71,8 +73,8 @@ export function calculatePriceBadge(
   // Check for price stability (last 30 days)
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
   const recentPrices = priceHistory
-    .filter(p => new Date(p.date) >= thirtyDaysAgo)
-    .map(p => p.price);
+    .filter((p) => new Date(p.date) >= thirtyDaysAgo)
+    .map((p) => p.price);
 
   if (recentPrices.length >= 2) {
     const prices = [currentPrice, ...recentPrices];
@@ -142,9 +144,7 @@ export default function PedagogicalBadge({ badge, onClick }: PedagogicalBadgePro
             <span className="text-lg">{badge.icon}</span>
             <div>
               <p className="font-medium text-white mb-1">{badge.label}</p>
-              <p className={`text-xs ${badge.color} opacity-90`}>
-                {badge.explanation}
-              </p>
+              <p className={`text-xs ${badge.color} opacity-90`}>{badge.explanation}</p>
             </div>
           </div>
         </div>

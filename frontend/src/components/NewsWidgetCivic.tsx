@@ -31,7 +31,9 @@ export default function NewsWidgetCivic({
   const [news, setNews] = useState<CivicNewsItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const mapArticleToCivicItem = (a: import('../services/realDataService').ActualitesArticle): CivicNewsItem => ({
+  const mapArticleToCivicItem = (
+    a: import('../services/realDataService').ActualitesArticle
+  ): CivicNewsItem => ({
     id: a.id,
     title: a.title,
     summary: a.content.slice(0, 200) + (a.content.length > 200 ? '…' : ''),
@@ -50,7 +52,7 @@ export default function NewsWidgetCivic({
       const articles = await getActualites();
       const mapped = articles.map(mapArticleToCivicItem);
       const sorted = [...mapped].sort(
-        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+        (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
       );
       const filtered =
         territory && territory !== 'Tous territoires'
@@ -58,7 +60,7 @@ export default function NewsWidgetCivic({
               (n) =>
                 n.territory === territory ||
                 n.territory === 'Tous territoires' ||
-                n.territory === 'all',
+                n.territory === 'all'
             )
           : sorted;
       setNews(filtered.slice(0, limit));
@@ -93,9 +95,7 @@ export default function NewsWidgetCivic({
   return (
     <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 shadow-lg p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-100">
-          Actualité civique
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-100">Actualité civique</h2>
 
         {showFullButton && (
           <Link
@@ -119,23 +119,16 @@ export default function NewsWidgetCivic({
               <span>{item.territory}</span>
             </div>
 
-            <h3 className="text-lg font-semibold text-gray-100 mb-2">
-              {item.title}
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-100 mb-2">{item.title}</h3>
 
-            <p className="text-sm text-gray-300 mb-3 leading-relaxed">
-              {item.summary}
-            </p>
+            <p className="text-sm text-gray-300 mb-3 leading-relaxed">{item.summary}</p>
 
             <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
               <Calendar size={14} />
               <time>{formatDate(item.publishedAt)}</time>
             </div>
 
-            <SourceFooter
-              sourceName={item.source.name}
-              sourceUrl={item.source.url}
-            />
+            <SourceFooter sourceName={item.source.name} sourceUrl={item.source.url} />
           </article>
         ))}
 
@@ -147,8 +140,7 @@ export default function NewsWidgetCivic({
       </div>
 
       <p className="mt-6 text-xs text-gray-400 italic border-t border-slate-700/50 pt-4">
-        Sources publiques officielles vérifiées (préfectures, ministères,
-        autorités nationales).
+        Sources publiques officielles vérifiées (préfectures, ministères, autorités nationales).
       </p>
     </section>
   );

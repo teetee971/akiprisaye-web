@@ -5,15 +5,60 @@
 
 import { useState } from 'react';
 import { SEOHead } from '../components/ui/SEOHead';
-import { analyzeRevenueMetrics, type RevenueMetric, type RevenueAction, type RevenueActionType } from '../utils/revenueOptimizer';
+import {
+  analyzeRevenueMetrics,
+  type RevenueMetric,
+  type RevenueAction,
+  type RevenueActionType,
+} from '../utils/revenueOptimizer';
 import { getConversionStats } from '../utils/priceClickTracker';
 
 const MOCK_REVENUE_METRICS: RevenueMetric[] = [
-  { url: '/prix/coca-cola-guadeloupe', productName: 'Coca-Cola', retailer: 'Carrefour', pageViews: 120, affiliateClicks: 8, ctr: 0.067, estimatedRevenue: 4.0 },
-  { url: '/prix/huile-tournesol-martinique', productName: 'Huile Tournesol', retailer: 'Leader Price', pageViews: 85, affiliateClicks: 3, ctr: 0.035, estimatedRevenue: 1.5 },
-  { url: '/comparer/carrefour-vs-leclerc-guadeloupe', productName: 'Comparatif GP', retailer: 'Carrefour', pageViews: 200, affiliateClicks: 22, ctr: 0.11, estimatedRevenue: 11.0 },
-  { url: '/guide-prix-alimentaire-dom', productName: 'Guide Prix DOM', retailer: 'multiple', pageViews: 160, affiliateClicks: 5, ctr: 0.031, estimatedRevenue: 2.5 },
-  { url: '/prix/farine-ble-guyane', productName: 'Farine Blé', retailer: 'Géant Casino', pageViews: 40, affiliateClicks: 0, ctr: 0, estimatedRevenue: 0 },
+  {
+    url: '/prix/coca-cola-guadeloupe',
+    productName: 'Coca-Cola',
+    retailer: 'Carrefour',
+    pageViews: 120,
+    affiliateClicks: 8,
+    ctr: 0.067,
+    estimatedRevenue: 4.0,
+  },
+  {
+    url: '/prix/huile-tournesol-martinique',
+    productName: 'Huile Tournesol',
+    retailer: 'Leader Price',
+    pageViews: 85,
+    affiliateClicks: 3,
+    ctr: 0.035,
+    estimatedRevenue: 1.5,
+  },
+  {
+    url: '/comparer/carrefour-vs-leclerc-guadeloupe',
+    productName: 'Comparatif GP',
+    retailer: 'Carrefour',
+    pageViews: 200,
+    affiliateClicks: 22,
+    ctr: 0.11,
+    estimatedRevenue: 11.0,
+  },
+  {
+    url: '/guide-prix-alimentaire-dom',
+    productName: 'Guide Prix DOM',
+    retailer: 'multiple',
+    pageViews: 160,
+    affiliateClicks: 5,
+    ctr: 0.031,
+    estimatedRevenue: 2.5,
+  },
+  {
+    url: '/prix/farine-ble-guyane',
+    productName: 'Farine Blé',
+    retailer: 'Géant Casino',
+    pageViews: 40,
+    affiliateClicks: 0,
+    ctr: 0,
+    estimatedRevenue: 0,
+  },
 ];
 
 function buildRevenueMetrics(): RevenueMetric[] {
@@ -60,43 +105,63 @@ export default function RevenueDashboardPage() {
   const needsCta = allActions.filter((a) => a.type === 'BOOST_CTA' && a.priority === 'high').length;
 
   const filteredActions = allActions.filter((a) =>
-    typeFilter === 'all' ? true : a.type === typeFilter,
+    typeFilter === 'all' ? true : a.type === typeFilter
   );
 
   return (
     <>
-      <SEOHead title="Revenue Dashboard" description="Analyse des revenus affiliés et optimisations." noIndex />
+      <SEOHead
+        title="Revenue Dashboard"
+        description="Analyse des revenus affiliés et optimisations."
+        noIndex
+      />
       <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-4xl space-y-8">
-
           <div>
             <h1 className="text-2xl font-extrabold text-white">💰 Revenue Dashboard</h1>
-            <p className="mt-1 text-sm text-zinc-400">Revenus affiliés estimés et actions d'optimisation</p>
+            <p className="mt-1 text-sm text-zinc-400">
+              Revenus affiliés estimés et actions d'optimisation
+            </p>
           </div>
 
           {/* Summary cards */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Revenu estimé</p>
-              <p className="mt-1 text-2xl font-extrabold text-emerald-400">{totalRevenue.toFixed(2)} €</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Revenu estimé
+              </p>
+              <p className="mt-1 text-2xl font-extrabold text-emerald-400">
+                {totalRevenue.toFixed(2)} €
+              </p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Pages fort potentiel</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Pages fort potentiel
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-white">{highPotential}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Retailers à booster</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Retailers à booster
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-blue-400">{retailerBoost}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">CTA à optimiser</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                CTA à optimiser
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-rose-400">{needsCta}</p>
             </div>
           </div>
 
           {/* Filter */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="revenue-filter-type" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Type d'action</label>
+            <label
+              htmlFor="revenue-filter-type"
+              className="text-[10px] font-bold uppercase tracking-wide text-zinc-500"
+            >
+              Type d'action
+            </label>
             <select
               id="revenue-filter-type"
               value={typeFilter}
@@ -113,7 +178,9 @@ export default function RevenueDashboardPage() {
 
           {/* Actions table */}
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-            <h2 className="mb-4 text-sm font-bold text-white">Actions revenue ({filteredActions.length})</h2>
+            <h2 className="mb-4 text-sm font-bold text-white">
+              Actions revenue ({filteredActions.length})
+            </h2>
             {filteredActions.length === 0 ? (
               <p className="text-sm text-zinc-500">Aucune action.</p>
             ) : (
@@ -131,12 +198,16 @@ export default function RevenueDashboardPage() {
                     {filteredActions.map((action, i) => (
                       <tr key={i}>
                         <td className="py-2 pr-4">
-                          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${ACTION_COLORS[action.type]}`}>
+                          <span
+                            className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${ACTION_COLORS[action.type]}`}
+                          >
                             {action.type}
                           </span>
                         </td>
                         <td className="py-2 pr-4">
-                          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${PRIORITY_COLORS[action.priority]}`}>
+                          <span
+                            className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${PRIORITY_COLORS[action.priority]}`}
+                          >
                             {action.priority}
                           </span>
                         </td>
@@ -160,14 +231,21 @@ export default function RevenueDashboardPage() {
                 .slice()
                 .sort((a, b) => b.estimatedRevenue - a.estimatedRevenue)
                 .map((m, i) => (
-                  <div key={i} className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white/[0.02] p-3">
+                  <div
+                    key={i}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white/[0.02] p-3"
+                  >
                     <div>
-                      <p className="text-sm font-semibold text-zinc-200">{m.productName ?? m.url}</p>
+                      <p className="text-sm font-semibold text-zinc-200">
+                        {m.productName ?? m.url}
+                      </p>
                       <p className="font-mono text-xs text-zinc-500">
                         {m.pageViews} vues · {m.affiliateClicks} clics
                       </p>
                     </div>
-                    <p className="text-sm font-bold text-emerald-400">{m.estimatedRevenue.toFixed(2)} €</p>
+                    <p className="text-sm font-bold text-emerald-400">
+                      {m.estimatedRevenue.toFixed(2)} €
+                    </p>
                   </div>
                 ))}
             </div>
@@ -177,14 +255,18 @@ export default function RevenueDashboardPage() {
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
             <h2 className="mb-4 text-sm font-bold text-white">Retailers</h2>
             <div className="flex flex-wrap gap-2">
-              {Array.from(new Set(revenueMetrics.map((m) => m.retailer).filter(Boolean))).map((r) => (
-                <span key={r} className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-zinc-300">
-                  {r}
-                </span>
-              ))}
+              {Array.from(new Set(revenueMetrics.map((m) => m.retailer).filter(Boolean))).map(
+                (r) => (
+                  <span
+                    key={r}
+                    className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs text-zinc-300"
+                  >
+                    {r}
+                  </span>
+                )
+              )}
             </div>
           </div>
-
         </div>
       </div>
     </>

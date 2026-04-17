@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { __test_resetGuestQuota, consumeGuestQuota, getGuestQuotaStatus, shouldTriggerPaywall } from '../services/freemium';
+import {
+  __test_resetGuestQuota,
+  consumeGuestQuota,
+  getGuestQuotaStatus,
+  shouldTriggerPaywall,
+} from '../services/freemium';
 
 describe('guest quota', () => {
   beforeEach(() => {

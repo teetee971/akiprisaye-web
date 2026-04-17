@@ -24,11 +24,16 @@ export function IndiceMarge({ value = 0 }) {
   };
 
   return (
-    <div className={`inline-flex items-center rounded-lg border px-3 py-1 ${getMarginColor(value)}`}>
+    <div
+      className={`inline-flex items-center rounded-lg border px-3 py-1 ${getMarginColor(value)}`}
+    >
       <span className="mr-2">{getMarginIcon(value)}</span>
       <div className="text-center">
         <p className="text-xs font-medium">Différentiel</p>
-        <p className="text-lg font-bold">{value > 0 ? '+' : ''}{value.toFixed(1)}%</p>
+        <p className="text-lg font-bold">
+          {value > 0 ? '+' : ''}
+          {value.toFixed(1)}%
+        </p>
         <p className="text-xs font-semibold">{getMarginLabel(value)}</p>
       </div>
     </div>

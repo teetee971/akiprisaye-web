@@ -1,6 +1,6 @@
 /**
  * Price Comparison Service v1.4.0
- * 
+ *
  * Implements citizen price comparison with:
  * - Read-only data access
  * - EAN-based product matching
@@ -28,9 +28,9 @@ import { getLocalProduct } from './sync/openFoodFactsService';
  * Configuration constants for price comparison service
  */
 const PRICE_COMPARISON_CONFIG = {
-  AVERAGE_PRICE_TOLERANCE_PERCENT: 5,  // Tolerance for 'average' category (±5%)
-  MIN_COVERAGE_WARNING_PERCENT: 50,    // Warn if coverage below 50%
-  MAX_PRICE_AGE_WARNING_DAYS: 30,      // Warn if prices older than 30 days
+  AVERAGE_PRICE_TOLERANCE_PERCENT: 5, // Tolerance for 'average' category (±5%)
+  MIN_COVERAGE_WARNING_PERCENT: 50, // Warn if coverage below 50%
+  MAX_PRICE_AGE_WARNING_DAYS: 30, // Warn if prices older than 30 days
 } as const;
 
 /**
@@ -47,7 +47,7 @@ export function comparePricesByEAN(
   }
 
   // Filter prices for the specified territory
-  const territoryPrices = storePrices.filter(sp => sp.territory === territory);
+  const territoryPrices = storePrices.filter((sp) => sp.territory === territory);
 
   if (territoryPrices.length === 0) {
     return null;
@@ -95,7 +95,7 @@ export function calculateTerritoryAggregation(
     throw new Error('Cannot calculate aggregation with no prices');
   }
 
-  const priceValues = prices.map(p => p.price);
+  const priceValues = prices.map((p) => p.price);
   const totalObservations = prices.reduce((sum, p) => sum + p.volume, 0);
 
   const minPrice = Math.min(...priceValues);
@@ -105,7 +105,7 @@ export function calculateTerritoryAggregation(
   const priceRangePercentage = minPrice > 0 ? (priceRange / minPrice) * 100 : 0;
 
   // Find observation period
-  const dates = prices.map(p => new Date(p.observationDate).getTime());
+  const dates = prices.map((p) => new Date(p.observationDate).getTime());
   const oldestDate = new Date(Math.min(...dates)).toISOString();
   const newestDate = new Date(Math.max(...dates)).toISOString();
 
@@ -143,11 +143,11 @@ export function rankStorePrices(
 
   return sortedPrices.map((storePrice, index) => {
     const absoluteDiffFromCheapest = storePrice.price - cheapestPrice;
-    const percentageDiffFromCheapest = 
+    const percentageDiffFromCheapest =
       cheapestPrice > 0 ? (absoluteDiffFromCheapest / cheapestPrice) * 100 : 0;
 
     const absoluteDiffFromAverage = storePrice.price - averagePrice;
-    const percentageDiffFromAverage = 
+    const percentageDiffFromAverage =
       averagePrice > 0 ? (absoluteDiffFromAverage / averagePrice) * 100 : 0;
 
     // Categorize price position
@@ -158,7 +158,9 @@ export function rankStorePrices(
       priceCategory = 'most_expensive';
     } else if (storePrice.price < averagePrice) {
       priceCategory = 'below_average';
-    } else if (Math.abs(percentageDiffFromAverage) < PRICE_COMPARISON_CONFIG.AVERAGE_PRICE_TOLERANCE_PERCENT) {
+    } else if (
+      Math.abs(percentageDiffFromAverage) < PRICE_COMPARISON_CONFIG.AVERAGE_PRICE_TOLERANCE_PERCENT
+    ) {
       priceCategory = 'average';
     } else {
       priceCategory = 'above_average';
@@ -179,36 +181,30 @@ export function rankStorePrices(
 /**
  * Generate comparison metadata for transparency
  */
-export function generateComparisonMetadata(
-  prices: StorePricePoint[]
-): PriceComparisonMetadata {
+export function generateComparisonMetadata(prices: StorePricePoint[]): PriceComparisonMetadata {
   const totalStores = prices.length;
   const storesWithData = prices.filter((p) => {
-    const hasNumericPrice =
-      typeof p?.price === 'number' &&
-      Number.isFinite(p.price);
+    const hasNumericPrice = typeof p?.price === 'number' && Number.isFinite(p.price);
 
     const d = new Date(p?.observationDate);
-    const hasValidDate =
-      typeof p?.observationDate === 'string' &&
-      Number.isFinite(d.getTime());
+    const hasValidDate = typeof p?.observationDate === 'string' && Number.isFinite(d.getTime());
 
     return hasNumericPrice && hasValidDate;
   }).length;
   const coveragePercentage = (storesWithData / totalStores) * 100;
 
-  const dates = prices.map(p => new Date(p.observationDate).getTime());
+  const dates = prices.map((p) => new Date(p.observationDate).getTime());
   const oldestObservation = new Date(Math.min(...dates)).toISOString();
   const newestObservation = new Date(Math.max(...dates)).toISOString();
 
   // Aggregate sources
   const sourceCounts = new Map<DataSource, { count: number; stores: Set<string> }>();
-  prices.forEach(price => {
+  prices.forEach((price) => {
     const sourceType = price?.source;
     if (!sourceType) {
       logRuntimeIssueOnce(
         'price-comparison-metadata-missing-source',
-        'Missing source while aggregating price-comparison metadata. Entry ignored.',
+        'Missing source while aggregating price-comparison metadata. Entry ignored.'
       );
       return;
     }
@@ -220,24 +216,26 @@ export function generateComparisonMetadata(
   });
 
   const totalObservations = prices.reduce((sum, p) => sum + p.volume, 0);
-  const sources: DataSourceSummary[] = Array.from(sourceCounts.entries()).map(
-    ([source, data]) => ({
-      source,
-      observationCount: data.count,
-      storeCount: data.stores.size,
-      percentage: Math.round((data.count / totalObservations) * 10000) / 100,
-    })
-  );
+  const sources: DataSourceSummary[] = Array.from(sourceCounts.entries()).map(([source, data]) => ({
+    source,
+    observationCount: data.count,
+    storeCount: data.stores.size,
+    percentage: Math.round((data.count / totalObservations) * 10000) / 100,
+  }));
 
   // Generate warnings
   const warnings: string[] = [];
   if (coveragePercentage < PRICE_COMPARISON_CONFIG.MIN_COVERAGE_WARNING_PERCENT) {
-    warnings.push(`Limited data coverage - less than ${PRICE_COMPARISON_CONFIG.MIN_COVERAGE_WARNING_PERCENT}% of stores have data`);
+    warnings.push(
+      `Limited data coverage - less than ${PRICE_COMPARISON_CONFIG.MIN_COVERAGE_WARNING_PERCENT}% of stores have data`
+    );
   }
-  
+
   const ageInDays = (Date.now() - Math.min(...dates)) / (1000 * 60 * 60 * 24);
   if (ageInDays > PRICE_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS) {
-    warnings.push(`Some price data is older than ${PRICE_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS} days`);
+    warnings.push(
+      `Some price data is older than ${PRICE_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS} days`
+    );
   }
 
   return {
@@ -258,10 +256,7 @@ export function generateComparisonMetadata(
 /**
  * Calculate percentage difference between two prices
  */
-export function calculatePercentageDifference(
-  price1: number,
-  price2: number
-): number {
+export function calculatePercentageDifference(price1: number, price2: number): number {
   if (price2 === 0) {
     return 0;
   }
@@ -279,31 +274,27 @@ export function filterStorePrices(
   let filtered = [...prices];
 
   if (filter.territory) {
-    filtered = filtered.filter(p => p.territory === filter.territory);
+    filtered = filtered.filter((p) => p.territory === filter.territory);
   }
 
   if (filter.storeChain) {
-    filtered = filtered.filter(p => p.storeChain === filter.storeChain);
+    filtered = filtered.filter((p) => p.storeChain === filter.storeChain);
   }
 
   if (filter.maxPriceAge) {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - filter.maxPriceAge);
-    filtered = filtered.filter(
-      p => new Date(p.observationDate) >= cutoffDate
-    );
+    filtered = filtered.filter((p) => new Date(p.observationDate) >= cutoffDate);
   }
 
   if (filter.minConfidence) {
     const confidenceLevels = { low: 0, medium: 1, high: 2 };
     const minLevel = confidenceLevels[filter.minConfidence];
-    filtered = filtered.filter(
-      p => confidenceLevels[p.confidence] >= minLevel
-    );
+    filtered = filtered.filter((p) => confidenceLevels[p.confidence] >= minLevel);
   }
 
   if (filter.verifiedOnly) {
-    filtered = filtered.filter(p => p.verified);
+    filtered = filtered.filter((p) => p.verified);
   }
 
   return filtered;
@@ -312,13 +303,11 @@ export function filterStorePrices(
 /**
  * Get the cheapest store for a product in a territory
  */
-export function getCheapestStore(
-  prices: StorePricePoint[]
-): StorePricePoint | null {
+export function getCheapestStore(prices: StorePricePoint[]): StorePricePoint | null {
   if (prices.length === 0) {
     return null;
   }
-  
+
   return prices.reduce((cheapest, current) =>
     current.price < cheapest.price ? current : cheapest
   );
@@ -327,13 +316,11 @@ export function getCheapestStore(
 /**
  * Get the most expensive store for a product in a territory
  */
-export function getMostExpensiveStore(
-  prices: StorePricePoint[]
-): StorePricePoint | null {
+export function getMostExpensiveStore(prices: StorePricePoint[]): StorePricePoint | null {
   if (prices.length === 0) {
     return null;
   }
-  
+
   return prices.reduce((expensive, current) =>
     current.price > expensive.price ? current : expensive
   );

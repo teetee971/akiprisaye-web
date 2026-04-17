@@ -4,7 +4,7 @@
  */
 import { Link } from 'react-router-dom';
 
-import { GlassCard } from "../ui/glass-card";
+import { GlassCard } from '../ui/glass-card';
 
 interface Product {
   name: string;
@@ -24,7 +24,7 @@ interface SavingsActionPlanProps {
   className?: string;
 }
 
-export function SavingsActionPlan({ products, className = "" }: SavingsActionPlanProps) {
+export function SavingsActionPlan({ products, className = '' }: SavingsActionPlanProps) {
   if (!products || products.length === 0) return null;
 
   const { optionA, optionB } = calculateBestOptions(products);
@@ -35,8 +35,8 @@ export function SavingsActionPlan({ products, className = "" }: SavingsActionPla
       const event = new CustomEvent('show-toast', {
         detail: {
           message: '✅ Liste copiée dans le presse-papier',
-          type: 'success'
-        }
+          type: 'success',
+        },
       });
       window.dispatchEvent(event);
     });
@@ -46,12 +46,8 @@ export function SavingsActionPlan({ products, className = "" }: SavingsActionPla
     <GlassCard className={`bg-green-900/10 border-green-500/30 ${className}`}>
       <div className="space-y-4">
         <div className="text-center">
-          <h3 className="text-xl font-bold text-green-300 mb-2">
-            ✅ Plan d'action
-          </h3>
-          <p className="text-sm text-gray-400">
-            Où aller pour économiser maintenant
-          </p>
+          <h3 className="text-xl font-bold text-green-300 mb-2">✅ Plan d'action</h3>
+          <p className="text-sm text-gray-400">Où aller pour économiser maintenant</p>
         </div>
 
         {/* Option A - 1 magasin */}
@@ -69,13 +65,15 @@ export function SavingsActionPlan({ products, className = "" }: SavingsActionPla
               <div className="text-xs text-gray-400">économies</div>
             </div>
           </div>
-          
+
           <div className="space-y-1">
             <div className="text-sm text-gray-300">
               <span className="font-semibold">Allez chez :</span> {optionA.stores[0]}
             </div>
             <div className="text-xs text-gray-400">
-              {optionA.productsCount} produit{optionA.productsCount > 1 ? 's' : ''} sur {products.length} y {optionA.productsCount > 1 ? 'sont' : 'est'} moins cher{optionA.productsCount > 1 ? 's' : ''}
+              {optionA.productsCount} produit{optionA.productsCount > 1 ? 's' : ''} sur{' '}
+              {products.length} y {optionA.productsCount > 1 ? 'sont' : 'est'} moins cher
+              {optionA.productsCount > 1 ? 's' : ''}
             </div>
           </div>
         </div>
@@ -96,7 +94,7 @@ export function SavingsActionPlan({ products, className = "" }: SavingsActionPla
                 <div className="text-xs text-gray-400">économies</div>
               </div>
             </div>
-            
+
             <div className="space-y-1">
               <div className="text-sm text-gray-300">
                 <span className="font-semibold">2 magasins :</span>
@@ -150,20 +148,18 @@ function calculateBestOptions(products: Product[]): {
   // Compter les occurrences de chaque magasin
   const storeCounts = new Map<string, { count: number; savings: number }>();
 
-  products.forEach(product => {
-    const savings = product.currentPrice 
-      ? product.currentPrice - product.bestPrice 
-      : 0;
-    
+  products.forEach((product) => {
+    const savings = product.currentPrice ? product.currentPrice - product.bestPrice : 0;
+
     const existing = storeCounts.get(product.bestStore) || { count: 0, savings: 0 };
     storeCounts.set(product.bestStore, {
       count: existing.count + 1,
-      savings: existing.savings + savings
+      savings: existing.savings + savings,
     });
   });
 
   // Option A : meilleur magasin unique
-  let bestStore = "";
+  let bestStore = '';
   let bestStoreSavings = 0;
   let bestStoreCount = 0;
 
@@ -178,7 +174,7 @@ function calculateBestOptions(products: Product[]): {
   const optionA: StoreOption = {
     stores: [bestStore],
     totalSavings: bestStoreSavings,
-    productsCount: bestStoreCount
+    productsCount: bestStoreCount,
   };
 
   // Option B : combiner 2 magasins
@@ -188,9 +184,9 @@ function calculateBestOptions(products: Product[]): {
 
   if (sortedStores.length >= 2) {
     const optionB: StoreOption = {
-      stores: sortedStores.map(s => s[0]),
+      stores: sortedStores.map((s) => s[0]),
       totalSavings: sortedStores.reduce((sum, s) => sum + s[1].savings, 0),
-      productsCount: sortedStores.reduce((sum, s) => sum + s[1].count, 0)
+      productsCount: sortedStores.reduce((sum, s) => sum + s[1].count, 0),
     };
     return { optionA, optionB };
   }
@@ -202,18 +198,18 @@ function calculateBestOptions(products: Product[]): {
  * Génère une liste de courses formatée
  */
 function generateShoppingList(products: Product[], option: StoreOption): string {
-  let text = "📝 Ma liste de courses économique\n\n";
-  
-  option.stores.forEach(store => {
+  let text = '📝 Ma liste de courses économique\n\n';
+
+  option.stores.forEach((store) => {
     text += `🏪 ${store}\n`;
-    
+
     products
-      .filter(p => p.bestStore === store)
-      .forEach(p => {
+      .filter((p) => p.bestStore === store)
+      .forEach((p) => {
         text += `  • ${p.name} - ${p.bestPrice.toFixed(2)} €\n`;
       });
-    
-    text += "\n";
+
+    text += '\n';
   });
 
   text += `💰 Économies totales : ${option.totalSavings.toFixed(2)} €\n`;

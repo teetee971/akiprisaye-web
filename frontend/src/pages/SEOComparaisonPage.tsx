@@ -31,37 +31,40 @@ import {
 
 // ── Retailer display data ──────────────────────────────────────────────────────
 const RETAILER_META: Record<string, { name: string; color: string; bg: string }> = {
-  carrefour:      { name: 'Carrefour',     color: 'text-blue-400',   bg: 'bg-blue-400/10' },
-  leclerc:        { name: 'E.Leclerc',     color: 'text-yellow-400', bg: 'bg-yellow-400/10' },
-  'super-u':      { name: 'Super U',       color: 'text-red-400',    bg: 'bg-red-400/10' },
-  'leader-price': { name: 'Leader Price',  color: 'text-orange-400', bg: 'bg-orange-400/10' },
-  intermarche:    { name: 'Intermarché',   color: 'text-green-400',  bg: 'bg-green-400/10' },
-  'simply-market':{ name: 'Simply Market', color: 'text-purple-400', bg: 'bg-purple-400/10' },
+  carrefour: { name: 'Carrefour', color: 'text-blue-400', bg: 'bg-blue-400/10' },
+  leclerc: { name: 'E.Leclerc', color: 'text-yellow-400', bg: 'bg-yellow-400/10' },
+  'super-u': { name: 'Super U', color: 'text-red-400', bg: 'bg-red-400/10' },
+  'leader-price': { name: 'Leader Price', color: 'text-orange-400', bg: 'bg-orange-400/10' },
+  intermarche: { name: 'Intermarché', color: 'text-green-400', bg: 'bg-green-400/10' },
+  'simply-market': { name: 'Simply Market', color: 'text-purple-400', bg: 'bg-purple-400/10' },
 };
 
 function getRetailerName(slug: string): string {
-  return RETAILER_META[slug]?.name ?? slug
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+  return (
+    RETAILER_META[slug]?.name ??
+    slug
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ')
+  );
 }
 
 // ── Category comparison rows ──────────────────────────────────────────────────
 const COMPARISON_PRODUCTS = [
-  { name: 'Coca-Cola 1,5L',     r1Coeff: 1.00, r2Coeff: 1.08, base: 2.10 },
-  { name: 'Lait entier 1L',     r1Coeff: 1.00, r2Coeff: 1.05, base: 1.30 },
-  { name: 'Riz Basmati 1kg',    r1Coeff: 1.00, r2Coeff: 1.11, base: 2.80 },
-  { name: 'Nutella 400g',       r1Coeff: 1.00, r2Coeff: 1.06, base: 4.20 },
-  { name: 'Poulet entier /kg',  r1Coeff: 1.00, r2Coeff: 0.96, base: 5.80 },
-  { name: 'Banane /kg',         r1Coeff: 1.00, r2Coeff: 1.03, base: 1.50 },
-  { name: 'Jambon 4 tranches',  r1Coeff: 1.00, r2Coeff: 1.09, base: 2.50 },
-  { name: 'Beurre 250g',        r1Coeff: 1.00, r2Coeff: 1.04, base: 2.20 },
+  { name: 'Coca-Cola 1,5L', r1Coeff: 1.0, r2Coeff: 1.08, base: 2.1 },
+  { name: 'Lait entier 1L', r1Coeff: 1.0, r2Coeff: 1.05, base: 1.3 },
+  { name: 'Riz Basmati 1kg', r1Coeff: 1.0, r2Coeff: 1.11, base: 2.8 },
+  { name: 'Nutella 400g', r1Coeff: 1.0, r2Coeff: 1.06, base: 4.2 },
+  { name: 'Poulet entier /kg', r1Coeff: 1.0, r2Coeff: 0.96, base: 5.8 },
+  { name: 'Banane /kg', r1Coeff: 1.0, r2Coeff: 1.03, base: 1.5 },
+  { name: 'Jambon 4 tranches', r1Coeff: 1.0, r2Coeff: 1.09, base: 2.5 },
+  { name: 'Beurre 250g', r1Coeff: 1.0, r2Coeff: 1.04, base: 2.2 },
 ];
 
 function getMockComparison(
   slug1: string,
   slug2: string,
-  territory: string,
+  territory: string
 ): Array<{ name: string; p1: number; p2: number }> {
   // Deterministic offset per retailer pair
   const r1Hash = slug1.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
@@ -79,7 +82,9 @@ function getMockComparison(
 // ── Slug parser ────────────────────────────────────────────────────────────────
 // Format: <r1>-vs-<r2>-<territory>   e.g. carrefour-vs-leclerc-guadeloupe
 function parseComparisonSlug(slug: string): {
-  retailer1: string; retailer2: string; territory: string;
+  retailer1: string;
+  retailer2: string;
+  territory: string;
 } {
   const vsIndex = slug.indexOf('-vs-');
   if (vsIndex === -1) {
@@ -87,12 +92,10 @@ function parseComparisonSlug(slug: string): {
   }
 
   const afterVs = slug.slice(vsIndex + 4); // everything after "-vs-"
-  const r1      = slug.slice(0, vsIndex);
+  const r1 = slug.slice(0, vsIndex);
 
   // Try to strip territory suffix from r2
-  const territories = Object.entries(TERRITORY_SLUG_MAP).sort(
-    (a, b) => b[0].length - a[0].length,
-  );
+  const territories = Object.entries(TERRITORY_SLUG_MAP).sort((a, b) => b[0].length - a[0].length);
   for (const [tSlug, code] of territories) {
     if (afterVs.endsWith(`-${tSlug}`)) {
       const r2 = afterVs.slice(0, -(tSlug.length + 1));
@@ -104,9 +107,24 @@ function parseComparisonSlug(slug: string): {
 }
 
 // ── Product row ───────────────────────────────────────────────────────────────
-function ComparisonRow({ name, p1, p2, r1Name, r2Name, r1Slug, r2Slug, territory }: {
-  name: string; p1: number; p2: number;
-  r1Name: string; r2Name: string; r1Slug: string; r2Slug: string; territory: string;
+function ComparisonRow({
+  name,
+  p1,
+  p2,
+  r1Name,
+  r2Name,
+  r1Slug,
+  r2Slug,
+  territory,
+}: {
+  name: string;
+  p1: number;
+  p2: number;
+  r1Name: string;
+  r2Name: string;
+  r1Slug: string;
+  r2Slug: string;
+  territory: string;
 }) {
   const winner = p1 < p2 ? 'r1' : p2 < p1 ? 'r2' : 'tie';
   const savings = Math.abs(p2 - p1);
@@ -116,8 +134,10 @@ function ComparisonRow({ name, p1, p2, r1Name, r2Name, r1Slug, r2Slug, territory
   return (
     <tr className="border-t border-white/5">
       <td className="py-3 pr-4 text-xs text-zinc-300">{name}</td>
-      <td className={`py-3 pr-4 text-center text-sm font-bold tabular-nums
-        ${winner === 'r1' ? 'text-emerald-400' : 'text-zinc-400'}`}>
+      <td
+        className={`py-3 pr-4 text-center text-sm font-bold tabular-nums
+        ${winner === 'r1' ? 'text-emerald-400' : 'text-zinc-400'}`}
+      >
         {formatEur(p1)}
         {winner === 'r1' && <span className="ml-1 text-[10px]">✓</span>}
         {r1Url && (
@@ -132,8 +152,10 @@ function ComparisonRow({ name, p1, p2, r1Name, r2Name, r1Slug, r2Slug, territory
           </a>
         )}
       </td>
-      <td className={`py-3 text-center text-sm font-bold tabular-nums
-        ${winner === 'r2' ? 'text-emerald-400' : 'text-zinc-400'}`}>
+      <td
+        className={`py-3 text-center text-sm font-bold tabular-nums
+        ${winner === 'r2' ? 'text-emerald-400' : 'text-zinc-400'}`}
+      >
         {formatEur(p2)}
         {winner === 'r2' && <span className="ml-1 text-[10px]">✓</span>}
         {r2Url && (
@@ -159,18 +181,19 @@ function ComparisonRow({ name, p1, p2, r1Name, r2Name, r1Slug, r2Slug, territory
 export default function SEOComparaisonPage() {
   const { slug = '' } = useParams<{ slug: string }>();
 
-  const { retailer1: r1Slug, retailer2: r2Slug, territory } = useMemo(
-    () => parseComparisonSlug(slug),
-    [slug],
-  );
+  const {
+    retailer1: r1Slug,
+    retailer2: r2Slug,
+    territory,
+  } = useMemo(() => parseComparisonSlug(slug), [slug]);
 
-  const r1Name       = getRetailerName(r1Slug);
-  const r2Name       = getRetailerName(r2Slug);
+  const r1Name = getRetailerName(r1Slug);
+  const r2Name = getRetailerName(r2Slug);
   const territoryName = getTerritoryName(territory);
 
   const rows = useMemo(
     () => getMockComparison(r1Slug, r2Slug, territory),
-    [r1Slug, r2Slug, territory],
+    [r1Slug, r2Slug, territory]
   );
 
   // Tally wins
@@ -178,17 +201,17 @@ export default function SEOComparaisonPage() {
   const r2Wins = rows.filter((r) => r.p2 < r.p1).length;
   const winner = r1Wins > r2Wins ? r1Name : r2Wins > r1Wins ? r2Name : null;
 
-  const totalR1  = rows.reduce((s, r) => s + r.p1, 0);
-  const totalR2  = rows.reduce((s, r) => s + r.p2, 0);
-  const savings  = Math.abs(totalR2 - totalR1);
+  const totalR1 = rows.reduce((s, r) => s + r.p1, 0);
+  const totalR2 = rows.reduce((s, r) => s + r.p2, 0);
+  const savings = Math.abs(totalR2 - totalR1);
   const cheapest = totalR1 < totalR2 ? r1Name : r2Name;
   const cheapestUrl = buildRetailerUrl(cheapest, '');
 
   const jsonLd = buildComparaisonJsonLd(r1Name, r2Name, territory);
 
-  const seoTitle       = `${r1Name} vs ${r2Name} en ${territoryName} — Qui est le moins cher ?`;
+  const seoTitle = `${r1Name} vs ${r2Name} en ${territoryName} — Qui est le moins cher ?`;
   const seoDescription = `Comparez les prix ${r1Name} et ${r2Name} en ${territoryName}. ${winner ? `${winner} est moins cher sur ${Math.max(r1Wins, r2Wins)}/${rows.length} produits.` : ''} Économisez jusqu'à ${formatEur(savings)} sur votre panier.`;
-  const canonical      = `${SITE_URL}/comparer/${slug}`;
+  const canonical = `${SITE_URL}/comparer/${slug}`;
 
   const r1Meta = RETAILER_META[r1Slug];
   const r2Meta = RETAILER_META[r2Slug];
@@ -203,15 +226,28 @@ export default function SEOComparaisonPage() {
       />
 
       <div className="mx-auto max-w-2xl space-y-4">
-
         {/* Breadcrumb */}
         <nav aria-label="Fil d'Ariane" className="text-xs text-zinc-500">
           <ol className="flex flex-wrap items-center gap-1.5">
-            <li><Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
-            <li><Link to="/comparateur" className="hover:text-emerald-400 transition-colors">Comparateur</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
-            <li className="truncate text-zinc-300">{r1Name} vs {r2Name}</li>
+            <li>
+              <Link to="/" className="hover:text-emerald-400 transition-colors">
+                Accueil
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
+            <li>
+              <Link to="/comparateur" className="hover:text-emerald-400 transition-colors">
+                Comparateur
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
+            <li className="truncate text-zinc-300">
+              {r1Name} vs {r2Name}
+            </li>
           </ol>
         </nav>
 
@@ -253,7 +289,14 @@ export default function SEOComparaisonPage() {
                   href={cheapestUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackRetailerClick('', cheapest, territory, totalR1 < totalR2 ? totalR1 : totalR2)}
+                  onClick={() =>
+                    trackRetailerClick(
+                      '',
+                      cheapest,
+                      territory,
+                      totalR1 < totalR2 ? totalR1 : totalR2
+                    )
+                  }
                   className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/60 bg-emerald-400/25 px-6 py-3 text-sm font-extrabold uppercase tracking-wide text-emerald-200 shadow-lg shadow-emerald-900/30 transition-all hover:bg-emerald-400/35 active:scale-95"
                 >
                   VOIR L'OFFRE {cheapest.toUpperCase()} →
@@ -268,15 +311,11 @@ export default function SEOComparaisonPage() {
           <div className="grid grid-cols-3 gap-0 border-b border-white/10">
             <div className="p-4" />
             <div className={`p-4 text-center ${r1Meta?.bg ?? 'bg-white/5'}`}>
-              <div className={`text-sm font-bold ${r1Meta?.color ?? 'text-white'}`}>
-                {r1Name}
-              </div>
+              <div className={`text-sm font-bold ${r1Meta?.color ?? 'text-white'}`}>{r1Name}</div>
               <div className="mt-0.5 text-[10px] text-zinc-500">{r1Wins} victoires</div>
             </div>
             <div className={`p-4 text-center ${r2Meta?.bg ?? 'bg-white/5'}`}>
-              <div className={`text-sm font-bold ${r2Meta?.color ?? 'text-white'}`}>
-                {r2Name}
-              </div>
+              <div className={`text-sm font-bold ${r2Meta?.color ?? 'text-white'}`}>{r2Name}</div>
               <div className="mt-0.5 text-[10px] text-zinc-500">{r2Wins} victoires</div>
             </div>
           </div>
@@ -309,12 +348,16 @@ export default function SEOComparaisonPage() {
               <tfoot>
                 <tr className="border-t-2 border-white/10">
                   <td className="py-3 pl-4 text-xs font-bold text-zinc-400">Total panier</td>
-                  <td className={`py-3 text-center text-sm font-extrabold tabular-nums
-                    ${totalR1 <= totalR2 ? 'text-emerald-400' : 'text-zinc-400'}`}>
+                  <td
+                    className={`py-3 text-center text-sm font-extrabold tabular-nums
+                    ${totalR1 <= totalR2 ? 'text-emerald-400' : 'text-zinc-400'}`}
+                  >
                     {formatEur(totalR1)}
                   </td>
-                  <td className={`py-3 text-center text-sm font-extrabold tabular-nums
-                    ${totalR2 <= totalR1 ? 'text-emerald-400' : 'text-zinc-400'}`}>
+                  <td
+                    className={`py-3 text-center text-sm font-extrabold tabular-nums
+                    ${totalR2 <= totalR1 ? 'text-emerald-400' : 'text-zinc-400'}`}
+                  >
                     {formatEur(totalR2)}
                   </td>
                   <td className="py-3 pl-4 text-center text-xs font-bold text-emerald-400">
@@ -331,15 +374,20 @@ export default function SEOComparaisonPage() {
           <h2 className="sr-only">Analyse comparative</h2>
           <div className="space-y-2 text-xs leading-relaxed text-zinc-500">
             <p>
-              <strong className="text-zinc-400">{r1Name} ou {r2Name} — lequel choisir en {territoryName} ?</strong>{' '}
-              Notre comparateur analyse les prix de centaines de produits pour vous aider à
-              faire les meilleures courses. Sur un panier de {rows.length} produits courants,
-              {winner ? ` ${winner} est globalement moins cher.` : ' les deux enseignes sont proches.'}
+              <strong className="text-zinc-400">
+                {r1Name} ou {r2Name} — lequel choisir en {territoryName} ?
+              </strong>{' '}
+              Notre comparateur analyse les prix de centaines de produits pour vous aider à faire
+              les meilleures courses. Sur un panier de {rows.length} produits courants,
+              {winner
+                ? ` ${winner} est globalement moins cher.`
+                : ' les deux enseignes sont proches.'}
             </p>
             <p>
               En {territoryName}, les prix varient significativement entre les enseignes. Comparer
               avant de faire vos courses peut vous faire économiser jusqu'à{' '}
-              <strong className="text-emerald-400">{formatEur(savings)}</strong> sur un panier moyen.
+              <strong className="text-emerald-400">{formatEur(savings)}</strong> sur un panier
+              moyen.
             </p>
           </div>
         </section>
@@ -390,7 +438,6 @@ export default function SEOComparaisonPage() {
             </Link>
           </div>
         </section>
-
       </div>
 
       {/* ── Sticky CTA bar — always visible above fold on mobile ─────────────── */}

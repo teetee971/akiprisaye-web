@@ -118,19 +118,27 @@ export class InstitutionalAlertService {
 
       const [recentSnap, olderSnap] = await Promise.all([
         getDocs(query(collection(db, 'price_observations'), where('date', '>=', sevenDaysAgo))),
-        getDocs(query(
-          collection(db, 'price_observations'),
-          where('date', '>=', fourteenDaysAgo),
-          where('date', '<', sevenDaysAgo)
-        )),
+        getDocs(
+          query(
+            collection(db, 'price_observations'),
+            where('date', '>=', fourteenDaysAgo),
+            where('date', '<', sevenDaysAgo)
+          )
+        ),
       ]);
 
       type ObsData = {
-        ean?: string; price?: number; territory?: string;
-        storeId?: string; storeName?: string; productName?: string;
+        ean?: string;
+        price?: number;
+        territory?: string;
+        storeId?: string;
+        storeName?: string;
+        productName?: string;
       };
 
-      const avgByEAN = (docs: typeof recentSnap.docs): Map<string, { avg: number; data: ObsData }> => {
+      const avgByEAN = (
+        docs: typeof recentSnap.docs
+      ): Map<string, { avg: number; data: ObsData }> => {
         const map = new Map<string, { sum: number; count: number; data: ObsData }>();
         for (const d of docs) {
           const obs = d.data() as ObsData;
@@ -142,7 +150,9 @@ export class InstitutionalAlertService {
           entry.count += 1;
           map.set(ean, entry);
         }
-        return new Map([...map.entries()].map(([k, v]) => [k, { avg: v.sum / v.count, data: v.data }]));
+        return new Map(
+          [...map.entries()].map(([k, v]) => [k, { avg: v.sum / v.count, data: v.data }])
+        );
       };
 
       const recent = avgByEAN(recentSnap.docs);
@@ -178,21 +188,18 @@ export class InstitutionalAlertService {
   /**
    * Create an institutional alert
    */
-  async createAlert(
-    anomalies: PriceAnomaly[], 
-    territory: string
-  ): Promise<InstitutionalAlert> {
+  async createAlert(anomalies: PriceAnomaly[], territory: string): Promise<InstitutionalAlert> {
     const alert: InstitutionalAlert = {
       id: this.generateAlertId(),
       anomalies,
       territory,
       createdAt: new Date().toISOString(),
       status: 'pending',
-      recipientEmails: this.getRecipientEmails(territory)
+      recipientEmails: this.getRecipientEmails(territory),
     };
-    
+
     await this.storeAlert(alert);
-    
+
     return alert;
   }
 
@@ -201,7 +208,7 @@ export class InstitutionalAlertService {
    */
   async sendAlert(alert: InstitutionalAlert): Promise<void> {
     if (import.meta.env.DEV) console.log('Sending institutional alert:', alert);
-    
+
     // Update alert status
     alert.sentAt = new Date().toISOString();
     alert.status = 'sent';
@@ -217,13 +224,16 @@ export class InstitutionalAlertService {
         const snapshot = await getDocs(
           query(collection(db, 'institutional_alerts'), where('status', '==', 'pending'))
         );
-        return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<InstitutionalAlert, 'id'>) }));
+        return snapshot.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Omit<InstitutionalAlert, 'id'>),
+        }));
       } catch (error) {
         console.error('Failed to fetch pending alerts from Firestore:', error);
       }
     }
     const alerts = safeLocalStorage.getJSON<InstitutionalAlert[]>('institutional_alerts', []);
-    return alerts.filter(a => a.status === 'pending');
+    return alerts.filter((a) => a.status === 'pending');
   }
 
   /**
@@ -232,24 +242,24 @@ export class InstitutionalAlertService {
   async checkAndAlertIfNeeded(): Promise<void> {
     const anomalies = await this.detectAnomalies();
     const suddenIncreases = await this.detectSuddenIncreases();
-    
+
     const allAnomalies = [...anomalies, ...suddenIncreases];
-    
+
     // Group by territory
     const byTerritory = new Map<string, PriceAnomaly[]>();
-    allAnomalies.forEach(a => {
+    allAnomalies.forEach((a) => {
       const existing = byTerritory.get(a.territory) || [];
       existing.push(a);
       byTerritory.set(a.territory, existing);
     });
-    
+
     // Create alerts for each territory with anomalies
     for (const [territory, territoryAnomalies] of byTerritory) {
       if (territoryAnomalies.length > 0) {
         const alert = await this.createAlert(territoryAnomalies, territory);
-        
+
         // Auto-send if critical anomalies detected
-        const hasCritical = territoryAnomalies.some(a => a.severity === 'critical');
+        const hasCritical = territoryAnomalies.some((a) => a.severity === 'critical');
         if (hasCritical) {
           await this.sendAlert(alert);
         }
@@ -264,12 +274,12 @@ export class InstitutionalAlertService {
 
   private getRecipientEmails(territory: string): string[] {
     const emails: Record<string, string[]> = {
-      'GP': ['dgccrf-guadeloupe@example.com', 'consommation-gp@example.com'],
-      'MQ': ['dgccrf-martinique@example.com', 'consommation-mq@example.com'],
-      'GF': ['dgccrf-guyane@example.com'],
-      'RE': ['dgccrf-reunion@example.com']
+      GP: ['dgccrf-guadeloupe@example.com', 'consommation-gp@example.com'],
+      MQ: ['dgccrf-martinique@example.com', 'consommation-mq@example.com'],
+      GF: ['dgccrf-guyane@example.com'],
+      RE: ['dgccrf-reunion@example.com'],
     };
-    
+
     return emails[territory] || [];
   }
 
@@ -283,7 +293,7 @@ export class InstitutionalAlertService {
       }
     }
     const alerts = safeLocalStorage.getJSON<InstitutionalAlert[]>('institutional_alerts', []);
-    const index = alerts.findIndex(a => a.id === alert.id);
+    const index = alerts.findIndex((a) => a.id === alert.id);
     if (index >= 0) {
       alerts[index] = alert;
     } else {

@@ -32,16 +32,16 @@ interface RawDeal {
 
 function adaptDeal(d: RawDeal, idx: number): ConversionProduct {
   return {
-    id:        d.slug ?? `deal-${idx}`,
-    name:      d.name,
-    price:     d.bestPrice,
-    score:     d.score,
+    id: d.slug ?? `deal-${idx}`,
+    name: d.name,
+    price: d.bestPrice,
+    score: d.score,
     priceDrop: d.bestPrice && d.delta ? d.delta / (d.bestPrice + d.delta) : undefined,
-    trending:  d.boost ?? (d.delta != null && d.delta > 0.5),
-    retailer:  d.bestRetailer,
+    trending: d.boost ?? (d.delta != null && d.delta > 0.5),
+    retailer: d.bestRetailer,
     territory: d.territory,
-    url:       d.slug ? `/produit/${d.slug}` : '/comparateur',
-    category:  undefined,
+    url: d.slug ? `/produit/${d.slug}` : '/comparateur',
+    category: undefined,
   };
 }
 
@@ -50,18 +50,18 @@ function seedDealsFromAlerts(): ConversionProduct[] {
   const raw = (alertsData as { alerts?: unknown[] }).alerts ?? [];
   return raw.map((a: unknown, idx: number) => {
     const alert = a as Record<string, unknown>;
-    const bestPrice  = Number(alert.bestPrice ?? alert.price ?? 0);
-    const delta      = Number(alert.delta ?? alert.spread ?? 0);
+    const bestPrice = Number(alert.bestPrice ?? alert.price ?? 0);
+    const delta = Number(alert.delta ?? alert.spread ?? 0);
     return {
-      id:        String(alert.slug ?? alert.id ?? `seed-${idx}`),
-      name:      String(alert.productName ?? alert.product ?? ''),
-      price:     bestPrice,
-      score:     Number(alert.alertScore ?? alert.score ?? 50),
+      id: String(alert.slug ?? alert.id ?? `seed-${idx}`),
+      name: String(alert.productName ?? alert.product ?? ''),
+      price: bestPrice,
+      score: Number(alert.alertScore ?? alert.score ?? 50),
       priceDrop: bestPrice && delta ? delta / (bestPrice + delta) : undefined,
-      trending:  delta > 0.5,
-      retailer:  String(alert.bestRetailer ?? alert.enseigne ?? ''),
+      trending: delta > 0.5,
+      retailer: String(alert.bestRetailer ?? alert.enseigne ?? ''),
       territory: String(alert.territory ?? 'gp'),
-      url:       alert.slug ? `/produit/${String(alert.slug)}` : '/comparateur',
+      url: alert.slug ? `/produit/${String(alert.slug)}` : '/comparateur',
     };
   });
 }
@@ -84,12 +84,15 @@ export function TopDealsDuJourPage() {
           setProducts(sortByScore(raw.slice(0, 20).map(adaptDeal)));
         }
       })
-      .catch(() => { /* keep seed data */ })
-      .finally(() => { /* pipeline upgrade complete */ });
+      .catch(() => {
+        /* keep seed data */
+      })
+      .finally(() => {
+        /* pipeline upgrade complete */
+      });
   }, []);
 
   const sorted = useMemo(() => sortByScore(products), [products]);
-
 
   return (
     <>
@@ -102,7 +105,6 @@ export function TopDealsDuJourPage() {
       <AlertOptInPop />
 
       <main className="min-h-screen bg-gray-950 text-white px-4 py-6 max-w-2xl mx-auto">
-
         {/* Hero H1 + dominant product — always shows seed data immediately */}
         <div className="mb-6">
           <PrimaryConversionBlock products={sorted} />
@@ -132,12 +134,10 @@ export function TopDealsDuJourPage() {
           </h2>
           <p>
             A Ki Pri Sa Yé compare quotidiennement les prix dans les enseignes de Guadeloupe,
-            Martinique, Guyane, La Réunion et Mayotte. Chaque produit est scoré selon la
-            baisse de prix, la popularité et la disponibilité locale.
+            Martinique, Guyane, La Réunion et Mayotte. Chaque produit est scoré selon la baisse de
+            prix, la popularité et la disponibilité locale.
           </p>
-          <p>
-            Les données sont mises à jour automatiquement. Aucun compte requis.
-          </p>
+          <p>Les données sont mises à jour automatiquement. Aucun compte requis.</p>
         </section>
 
         <p className="text-xs text-gray-700 text-center mt-6">

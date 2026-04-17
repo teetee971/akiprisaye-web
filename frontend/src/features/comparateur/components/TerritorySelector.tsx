@@ -27,15 +27,19 @@ function getTerritoryCoverage(territory: Territory): string {
     PM: '4 magasins',
     WF: '3 magasins',
     PF: '18 magasins',
-    NC: '25 magasins'
+    NC: '25 magasins',
   };
   return coverage[territory] || 'N/A';
 }
 
-export function TerritorySelector({ territories, selected, onSelectionChange }: TerritorySelectorProps) {
+export function TerritorySelector({
+  territories,
+  selected,
+  onSelectionChange,
+}: TerritorySelectorProps) {
   const toggleTerritory = (territory: Territory) => {
     if (selected.includes(territory)) {
-      onSelectionChange(selected.filter(t => t !== territory));
+      onSelectionChange(selected.filter((t) => t !== territory));
     } else {
       onSelectionChange([...selected, territory]);
     }
@@ -47,7 +51,9 @@ export function TerritorySelector({ territories, selected, onSelectionChange }: 
   return (
     <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-lg font-semibold text-white">Sélectionnez les territoires à comparer</h4>
+        <h4 className="text-lg font-semibold text-white">
+          Sélectionnez les territoires à comparer
+        </h4>
         <div className="flex gap-2">
           <button
             onClick={selectAll}
@@ -63,13 +69,13 @@ export function TerritorySelector({ territories, selected, onSelectionChange }: 
           </button>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {territories.map(territory => {
+        {territories.map((territory) => {
           const isSelected = selected.includes(territory);
           return (
-            <label 
-              key={territory} 
+            <label
+              key={territory}
               aria-label={getTerritoryLabel(territory)}
               className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
                 isSelected
@@ -85,18 +91,14 @@ export function TerritorySelector({ territories, selected, onSelectionChange }: 
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className={`font-semibold ${
-                    isSelected ? 'text-blue-400' : 'text-white'
-                  }`}>
+                  <span className={`font-semibold ${isSelected ? 'text-blue-400' : 'text-white'}`}>
                     {getTerritoryLabel(territory)}
                   </span>
                   <span className="text-xs px-2 py-0.5 bg-slate-800 rounded-full text-slate-400">
                     {territory}
                   </span>
                 </div>
-                <span className="text-xs text-slate-400">
-                  {getTerritoryCoverage(territory)}
-                </span>
+                <span className="text-xs text-slate-400">{getTerritoryCoverage(territory)}</span>
               </div>
             </label>
           );
@@ -105,7 +107,8 @@ export function TerritorySelector({ territories, selected, onSelectionChange }: 
 
       {selected.length > 0 && (
         <p className="text-sm text-slate-400 text-center">
-          {selected.length} territoire{selected.length > 1 ? 's' : ''} sélectionné{selected.length > 1 ? 's' : ''}
+          {selected.length} territoire{selected.length > 1 ? 's' : ''} sélectionné
+          {selected.length > 1 ? 's' : ''}
         </p>
       )}
     </div>

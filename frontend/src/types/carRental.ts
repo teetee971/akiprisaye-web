@@ -37,20 +37,20 @@ export type RentalDuration = '1d' | '3d' | '7d' | '14d' | '30d';
 /** Options incluses / suppléments */
 export interface CarRentalInclusions {
   unlimitedMileage: boolean;
-  cdwIncluded: boolean;      // Collision Damage Waiver
-  tplIncluded: boolean;      // Third Party Liability
+  cdwIncluded: boolean; // Collision Damage Waiver
+  tplIncluded: boolean; // Third Party Liability
   airportFee: boolean;
-  youngDriverSurcharge?: number;  // surcharge jeune conducteur (€/jour)
-  additionalDriverFee?: number;   // conducteur supplémentaire (€/jour)
+  youngDriverSurcharge?: number; // surcharge jeune conducteur (€/jour)
+  additionalDriverFee?: number; // conducteur supplémentaire (€/jour)
   gpsIncluded: boolean;
   childSeatAvailable: boolean;
 }
 
 /** Prix par durée */
 export interface CarRentalPricing {
-  dailyRate: number;         // tarif journalier de base
-  weeklyRate?: number;       // tarif semaine (7j)
-  deposit: number;           // caution (€)
+  dailyRate: number; // tarif journalier de base
+  weeklyRate?: number; // tarif semaine (7j)
+  deposit: number; // caution (€)
   currency: string;
 }
 
@@ -58,7 +58,7 @@ export interface CarRentalPricing {
 export interface CarRentalSource {
   type: 'official_site' | 'user_report' | 'aggregator' | 'press';
   url?: string;
-  observedAt: string;        // ISO 8601
+  observedAt: string; // ISO 8601
   verificationMethod: 'automated' | 'manual' | 'official';
   reliability: 'high' | 'medium' | 'low';
 }
@@ -66,18 +66,18 @@ export interface CarRentalSource {
 /** Point de données pour une agence / catégorie */
 export interface CarRentalPricePoint {
   id: string;
-  agency: string;            // Nom de l'agence (ex : "Hertz", "Jumbo Car")
-  agencyCode: string;        // Code court (ex : "HTZ", "JMB")
-  isLocalAgency: boolean;    // Agence locale vs multinationale
+  agency: string; // Nom de l'agence (ex : "Hertz", "Jumbo Car")
+  agencyCode: string; // Code court (ex : "HTZ", "JMB")
+  isLocalAgency: boolean; // Agence locale vs multinationale
   territory: Territory;
-  pickupLocation: string;    // Ex : "Aéroport Pointe-à-Pitre / Pôle Caraïbes"
+  pickupLocation: string; // Ex : "Aéroport Pointe-à-Pitre / Pôle Caraïbes"
   category: CarCategory;
-  vehicleExample: string;    // Ex : "Peugeot 208 ou similaire"
+  vehicleExample: string; // Ex : "Peugeot 208 ou similaire"
   transmission: 'manual' | 'automatic';
   pricing: CarRentalPricing;
   inclusions: CarRentalInclusions;
-  minAge: number;            // Âge minimum conducteur
-  observationDate: string;   // ISO 8601
+  minAge: number; // Âge minimum conducteur
+  observationDate: string; // ISO 8601
   source: CarRentalSource;
   confidence: 'high' | 'medium' | 'low';
   verified: boolean;

@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
-import { 
+import {
   syncSchedulerService,
   syncLoggerService,
   type ScheduledJob,
@@ -150,7 +150,7 @@ export default function SyncDashboard() {
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-xl font-semibold mb-4">Jobs planifiés</h2>
             <div className="space-y-4">
-              {jobs.map(job => (
+              {jobs.map((job) => (
                 <div
                   key={job.id}
                   className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
@@ -163,16 +163,18 @@ export default function SyncDashboard() {
                           job.status === 'running'
                             ? 'bg-blue-100 text-blue-800'
                             : job.status === 'error'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-gray-100 text-gray-800'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-gray-100 text-gray-800'
                         }`}
                       >
-                        {job.status === 'running' ? 'En cours' : job.status === 'error' ? 'Erreur' : 'Inactif'}
+                        {job.status === 'running'
+                          ? 'En cours'
+                          : job.status === 'error'
+                            ? 'Erreur'
+                            : 'Inactif'}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Planning: {job.schedule}
-                    </p>
+                    <p className="text-sm text-gray-600 mt-1">Planning: {job.schedule}</p>
                     {job.lastRun && (
                       <p className="text-sm text-gray-500 mt-1">
                         Dernière exécution: {new Date(job.lastRun).toLocaleString('fr-FR')}
@@ -207,13 +209,9 @@ export default function SyncDashboard() {
         </div>
       )}
 
-      {activeTab === 'history' && (
-        <SyncHistory logs={logs} onRefresh={loadData} />
-      )}
+      {activeTab === 'history' && <SyncHistory logs={logs} onRefresh={loadData} />}
 
-      {activeTab === 'config' && (
-        <SyncConfig onSave={loadData} />
-      )}
+      {activeTab === 'config' && <SyncConfig onSave={loadData} />}
     </div>
   );
 }

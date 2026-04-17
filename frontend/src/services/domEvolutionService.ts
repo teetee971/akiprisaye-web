@@ -11,10 +11,7 @@ export async function loadDomEvolution(
 
   for (const m of months) {
     try {
-      const res = await fetch(
-        `/data/observatoire/${territory}_${m}.json`,
-        { cache: 'no-store' }
-      );
+      const res = await fetch(`/data/observatoire/${territory}_${m}.json`, { cache: 'no-store' });
       if (!res.ok) continue;
 
       const json = await res.json();

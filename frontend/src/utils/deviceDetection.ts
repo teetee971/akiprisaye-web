@@ -16,9 +16,7 @@ export interface OptimizedMapConfig {
 /** Check if the current device is mobile based on User-Agent. */
 export function isMobileDevice(): boolean {
   if (typeof window === 'undefined') return false;
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent,
-  );
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
 
 /** Check if the device has touch support. */
@@ -39,7 +37,10 @@ export function getDevicePerformanceTier(): DevicePerformanceTier {
   if (typeof navigator === 'undefined') return 'medium';
 
   const cores = navigator.hardwareConcurrency ?? 4;
-  const connection = (navigator as any).connection ?? (navigator as any).mozConnection ?? (navigator as any).webkitConnection;
+  const connection =
+    (navigator as any).connection ??
+    (navigator as any).mozConnection ??
+    (navigator as any).webkitConnection;
 
   if (cores < 4 || connection?.effectiveType === '2g') return 'low';
   if (cores >= 8) return 'high';

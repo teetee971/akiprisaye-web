@@ -18,23 +18,10 @@ function region(x: number, y: number, index = 0, label: string) {
   return (
     <g>
       <circle cx={x} cy={y} r={28} fill={color(index)} />
-      <text
-        x={x}
-        y={y + 45}
-        textAnchor="middle"
-        fontSize="10"
-        fill="#fff"
-      >
+      <text x={x} y={y + 45} textAnchor="middle" fontSize="10" fill="#fff">
         {label}
       </text>
-      <text
-        x={x}
-        y={y + 4}
-        textAnchor="middle"
-        fontSize="11"
-        fontWeight="bold"
-        fill="#000"
-      >
+      <text x={x} y={y + 4} textAnchor="middle" fontSize="11" fontWeight="bold" fill="#000">
         {index.toFixed(1)}
       </text>
     </g>

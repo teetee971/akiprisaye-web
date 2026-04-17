@@ -27,7 +27,7 @@ export function BadgeUnlockModal({ badge, isOpen, onClose }: BadgeUnlockModalPro
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
@@ -40,9 +40,7 @@ export function BadgeUnlockModal({ badge, isOpen, onClose }: BadgeUnlockModalPro
         tabIndex={-1}
         aria-label="Fermer le dialogue"
       />
-      <div 
-        className="relative z-10 bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all"
-      >
+      <div className="relative z-10 bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -63,13 +61,10 @@ export function BadgeUnlockModal({ badge, isOpen, onClose }: BadgeUnlockModalPro
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
                   animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: `${2 + Math.random() * 2}s`
+                  animationDuration: `${2 + Math.random() * 2}s`,
                 }}
               >
-                <Sparkles 
-                  size={16 + Math.random() * 16} 
-                  className="text-yellow-400 opacity-70"
-                />
+                <Sparkles size={16 + Math.random() * 16} className="text-yellow-400 opacity-70" />
               </div>
             ))}
           </div>
@@ -96,12 +91,8 @@ export function BadgeUnlockModal({ badge, isOpen, onClose }: BadgeUnlockModalPro
             <h2 id="badge-title" className="text-2xl font-bold text-gray-900">
               Badge débloqué ! 🎉
             </h2>
-            <p className="text-xl font-semibold text-blue-600">
-              {badge.name}
-            </p>
-            <p className="text-gray-600">
-              {badge.description}
-            </p>
+            <p className="text-xl font-semibold text-blue-600">{badge.name}</p>
+            <p className="text-gray-600">{badge.description}</p>
           </div>
 
           {/* XP Reward */}

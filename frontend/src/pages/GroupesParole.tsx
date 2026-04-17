@@ -56,7 +56,7 @@ function formatTime(ts: { toDate?: () => Date } | null): string {
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
   const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return 'À l\'instant';
+  if (diffMin < 1) return "À l'instant";
   if (diffMin < 60) return `${diffMin} min`;
   const diffH = Math.floor(diffMin / 60);
   if (diffH < 24) return `${diffH}h`;
@@ -152,10 +152,13 @@ export default function GroupesParole() {
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
 
-  const handleSelectGroup = useCallback((id: string) => {
-    setActiveGroupId(id);
-    navigate(`/groupes-parole/${id}`, { replace: true });
-  }, [navigate]);
+  const handleSelectGroup = useCallback(
+    (id: string) => {
+      setActiveGroupId(id);
+      navigate(`/groupes-parole/${id}`, { replace: true });
+    },
+    [navigate]
+  );
 
   const handleBackToList = useCallback(() => {
     setActiveGroupId(null);
@@ -172,7 +175,7 @@ export default function GroupesParole() {
         user.uid,
         userDisplayName,
         newText,
-        photoUrl.trim() || undefined,
+        photoUrl.trim() || undefined
       );
       setNewText('');
       setPhotoUrl('');
@@ -220,7 +223,7 @@ export default function GroupesParole() {
         createName,
         createDesc,
         user.uid,
-        userDisplayName,
+        userDisplayName
       );
       setShowCreate(false);
       setCreateName('');
@@ -269,10 +272,18 @@ export default function GroupesParole() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex flex-col items-center justify-center p-4 gap-6">
         <Helmet>
           <title>Groupes de Parole — A KI PRI SA YÉ</title>
-                <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/groupes-parole" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/groupes-parole" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/groupes-parole" />
-      </Helmet>
+          <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/groupes-parole" />
+          <link
+            rel="alternate"
+            hrefLang="fr"
+            href="https://teetee971.github.io/akiprisaye-web/groupes-parole"
+          />
+          <link
+            rel="alternate"
+            hrefLang="x-default"
+            href="https://teetee971.github.io/akiprisaye-web/groupes-parole"
+          />
+        </Helmet>
         <div className="text-center mb-2">
           <MessageCircle className="w-14 h-14 text-purple-400 mx-auto mb-3" />
           <h1 className="text-2xl font-bold text-white mb-1">Groupes de Parole Citoyens</h1>
@@ -311,7 +322,13 @@ export default function GroupesParole() {
             <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
               🗣️ Groupes de Parole Citoyens
             </h1>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            <p
+              style={{
+                margin: '0.25rem 0 0',
+                fontSize: '0.85rem',
+                color: 'rgba(255,255,255,0.75)',
+              }}
+            >
               Échangez avec d'autres consommateurs de votre territoire
             </p>
           </HeroImage>
@@ -323,11 +340,12 @@ export default function GroupesParole() {
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <MessageCircle className="w-5 h-5 text-purple-400" />
-            <h1 className="text-lg font-bold text-white flex-1">
-              🗣️ Groupes de Parole Citoyens
-            </h1>
+            <h1 className="text-lg font-bold text-white flex-1">🗣️ Groupes de Parole Citoyens</h1>
             <button
-              onClick={() => { setShowCreate(true); setCreateError(''); }}
+              onClick={() => {
+                setShowCreate(true);
+                setCreateError('');
+              }}
               className="flex items-center gap-1 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors"
               aria-label="Créer un groupe"
             >
@@ -383,14 +401,19 @@ export default function GroupesParole() {
             <GlassCard className="relative z-10 w-full max-w-md p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">Créer un groupe de parole</h2>
-                <button onClick={() => setShowCreate(false)} className="text-slate-400 hover:text-white">
+                <button
+                  onClick={() => setShowCreate(false)}
+                  className="text-slate-400 hover:text-white"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label htmlFor="groupe-territoire" className="block text-sm text-slate-400 mb-1">Territoire *</label>
+                  <label htmlFor="groupe-territoire" className="block text-sm text-slate-400 mb-1">
+                    Territoire *
+                  </label>
                   <select
                     id="groupe-territoire"
                     value={createTerritory}
@@ -406,7 +429,9 @@ export default function GroupesParole() {
                 </div>
 
                 <div>
-                  <label htmlFor="groupe-nom" className="block text-sm text-slate-400 mb-1">Nom du groupe *</label>
+                  <label htmlFor="groupe-nom" className="block text-sm text-slate-400 mb-1">
+                    Nom du groupe *
+                  </label>
                   <input
                     id="groupe-nom"
                     type="text"
@@ -419,7 +444,9 @@ export default function GroupesParole() {
                 </div>
 
                 <div>
-                  <label htmlFor="groupe-description" className="block text-sm text-slate-400 mb-1">Description</label>
+                  <label htmlFor="groupe-description" className="block text-sm text-slate-400 mb-1">
+                    Description
+                  </label>
                   <textarea
                     id="groupe-description"
                     value={createDesc}
@@ -432,9 +459,7 @@ export default function GroupesParole() {
                 </div>
               </div>
 
-              {createError && (
-                <p className="text-red-400 text-sm">{createError}</p>
-              )}
+              {createError && <p className="text-red-400 text-sm">{createError}</p>}
 
               <div className="flex gap-2 justify-end">
                 <button
@@ -448,7 +473,11 @@ export default function GroupesParole() {
                   disabled={creating || !createName.trim()}
                   className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1"
                 >
-                  {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  {creating ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4" />
+                  )}
                   Créer
                 </button>
               </div>
@@ -472,7 +501,10 @@ export default function GroupesParole() {
                   <Flag className="w-5 h-5 text-orange-400" />
                   Signaler ce message
                 </h2>
-                <button onClick={() => setFlagMsgId(null)} className="text-slate-400 hover:text-white">
+                <button
+                  onClick={() => setFlagMsgId(null)}
+                  className="text-slate-400 hover:text-white"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -485,7 +517,9 @@ export default function GroupesParole() {
                 className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="">— Choisir une raison —</option>
-                <option value="Propos haineux ou discriminatoires">Propos haineux ou discriminatoires</option>
+                <option value="Propos haineux ou discriminatoires">
+                  Propos haineux ou discriminatoires
+                </option>
                 <option value="Harcèlement ou intimidation">Harcèlement ou intimidation</option>
                 <option value="Spam ou publicité">Spam ou publicité</option>
                 <option value="Contenu faux ou trompeur">Contenu faux ou trompeur</option>
@@ -504,7 +538,11 @@ export default function GroupesParole() {
                   disabled={flagging || !flagReason}
                   className="px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1"
                 >
-                  {flagging ? <Loader2 className="w-4 h-4 animate-spin" /> : <Flag className="w-4 h-4" />}
+                  {flagging ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Flag className="w-4 h-4" />
+                  )}
                   Signaler
                 </button>
               </div>
@@ -527,7 +565,8 @@ export default function GroupesParole() {
                     : 'Aucun groupe disponible'}
                 </p>
                 <p className="text-slate-500 text-sm">
-                  Cliquez sur <strong className="text-purple-400">Créer un groupe</strong> pour démarrer.
+                  Cliquez sur <strong className="text-purple-400">Créer un groupe</strong> pour
+                  démarrer.
                 </p>
               </div>
             ) : (
@@ -598,7 +637,9 @@ export default function GroupesParole() {
                       {TERRITORIES[activeGroup.territory]?.flag ?? '🌐'}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-white text-sm truncate">{activeGroup.name}</p>
+                      <p className="font-semibold text-white text-sm truncate">
+                        {activeGroup.name}
+                      </p>
                       <p className="text-xs text-slate-500">
                         {TERRITORIES[activeGroup.territory]?.name} ·{' '}
                         <Users className="w-3 h-3 inline" /> {activeGroup.memberCount} membres
@@ -644,7 +685,9 @@ export default function GroupesParole() {
                       key={msg.id}
                       className={`flex ${isMe ? 'justify-end' : 'justify-start'} group`}
                     >
-                      <div className={`max-w-[75%] ${isMe ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}>
+                      <div
+                        className={`max-w-[75%] ${isMe ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}
+                      >
                         {/* Sender name (only for others) */}
                         {!isMe && (
                           <span className="text-xs text-slate-500 px-1">{msg.fromName}</span>
@@ -655,8 +698,8 @@ export default function GroupesParole() {
                               msg.flagged
                                 ? 'bg-orange-900/40 border border-orange-700/50 text-orange-200'
                                 : isMe
-                                ? 'bg-purple-600 text-white rounded-br-sm'
-                                : 'bg-slate-800 text-slate-100 rounded-bl-sm'
+                                  ? 'bg-purple-600 text-white rounded-br-sm'
+                                  : 'bg-slate-800 text-slate-100 rounded-bl-sm'
                             }`}
                           >
                             {msg.flagged && (
@@ -686,14 +729,19 @@ export default function GroupesParole() {
                                 />
                               </a>
                             )}
-                            <p className={`text-xs mt-1 ${isMe ? 'text-purple-200' : 'text-slate-500'}`}>
+                            <p
+                              className={`text-xs mt-1 ${isMe ? 'text-purple-200' : 'text-slate-500'}`}
+                            >
                               {formatTime(msg.at)}
                             </p>
                           </div>
                           {/* Flag button (visible on hover, not for own messages) */}
                           {!isMe && !msg.flagged && (
                             <button
-                              onClick={() => { setFlagMsgId(msg.id); setFlagReasonText(''); }}
+                              onClick={() => {
+                                setFlagMsgId(msg.id);
+                                setFlagReasonText('');
+                              }}
                               className="absolute -right-7 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-slate-600 hover:text-orange-400 p-1"
                               title="Signaler ce message"
                               aria-label="Signaler ce message"
@@ -723,7 +771,10 @@ export default function GroupesParole() {
                         className="flex-1 bg-slate-800 border border-slate-700 text-white placeholder-slate-500 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                       />
                       <button
-                        onClick={() => { setShowPhotoInput(false); setPhotoUrl(''); }}
+                        onClick={() => {
+                          setShowPhotoInput(false);
+                          setPhotoUrl('');
+                        }}
                         className="text-slate-400 hover:text-white p-2"
                         aria-label="Annuler photo"
                       >

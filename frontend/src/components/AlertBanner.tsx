@@ -32,10 +32,11 @@ export default function AlertBanner() {
   return (
     <div className="border-b border-amber-700/50 bg-amber-950/30">
       <div className="max-w-7xl mx-auto px-4 py-2 text-sm text-amber-100 flex items-center justify-between gap-3">
-        <p>
-          Rappel produits : {criticalActiveAlerts.length} alerte(s) critique(s)
-        </p>
-        <Link className="underline text-amber-200 hover:text-amber-100" to="/alertes?severity=critical&active=1">
+        <p>Rappel produits : {criticalActiveAlerts.length} alerte(s) critique(s)</p>
+        <Link
+          className="underline text-amber-200 hover:text-amber-100"
+          to="/alertes?severity=critical&active=1"
+        >
           Voir
         </Link>
       </div>

@@ -37,39 +37,39 @@ describe('RouteBeforeAfterComparison', () => {
 
   it('should render comparison title', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     expect(screen.getByText('Comparaison Avant / Après Optimisation')).toBeInTheDocument();
   });
 
   it('should display distance comparison', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     expect(screen.getByText('Distance totale')).toBeInTheDocument();
     expect(screen.getByText('12.5')).toBeInTheDocument(); // Optimized distance
   });
 
   it('should display time comparison', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     expect(screen.getByText('Temps de trajet')).toBeInTheDocument();
     expect(screen.getByText('25')).toBeInTheDocument(); // Optimized time
   });
 
   it('should display fuel comparison', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     expect(screen.getByText('Carburant')).toBeInTheDocument();
   });
 
   it('should display CO2 comparison', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     expect(screen.getByText('Émissions CO₂')).toBeInTheDocument();
   });
 
   it('should calculate unoptimized distance correctly', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     // Unoptimized = (5.2 * 2) + (3.8 * 2) = 18.0 km
     // Component should show this value in "Avant" column
     const beforeValues = screen.getAllByText(/18\.0/);
@@ -78,29 +78,31 @@ describe('RouteBeforeAfterComparison', () => {
 
   it('should display savings summary', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     expect(screen.getByText('Économie globale')).toBeInTheDocument();
     expect(screen.getByText('En optimisant votre itinéraire')).toBeInTheDocument();
   });
 
   it('should display methodology note', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
-    expect(screen.getByText(/L'itinéraire "avant" correspond à des allers-retours séparés/)).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/L'itinéraire "avant" correspond à des allers-retours séparés/)
+    ).toBeInTheDocument();
   });
 
   it('should apply custom className', () => {
     const { container } = render(
       <RouteBeforeAfterComparison route={mockRoute} className="custom-class" />
     );
-    
+
     const wrapper = container.firstChild as HTMLElement;
     expect(wrapper).toHaveClass('custom-class');
   });
 
   it('should show percentage savings', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     // Should show percentage reductions - look for "-31%" pattern
     const percentages = screen.getAllByText(/-\d+%/);
     expect(percentages.length).toBeGreaterThan(0);
@@ -128,14 +130,14 @@ describe('RouteBeforeAfterComparison', () => {
     };
 
     render(<RouteBeforeAfterComparison route={singleStoreRoute} />);
-    
+
     // Should still render without errors
     expect(screen.getByText('Comparaison Avant / Après Optimisation')).toBeInTheDocument();
   });
 
   it('should calculate fuel savings correctly', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     // Savings displayed should match route.savings.fuel (0.33 displayed as "0.3 L")
     const savingsText = screen.getByText(/0\.3.*L/);
     expect(savingsText).toBeInTheDocument();
@@ -143,7 +145,7 @@ describe('RouteBeforeAfterComparison', () => {
 
   it('should calculate CO2 savings correctly', () => {
     render(<RouteBeforeAfterComparison route={mockRoute} />);
-    
+
     // Savings displayed should match route.savings.co2 (0.76 displayed as "0.8 kg")
     const savingsText = screen.getByText(/0\.8.*kg/);
     expect(savingsText).toBeInTheDocument();

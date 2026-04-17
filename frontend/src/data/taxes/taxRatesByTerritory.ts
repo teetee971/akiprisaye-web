@@ -6,46 +6,61 @@
  */
 
 export interface TaxRate {
-  territory: string
-  territoryCode: string // ISO code or official code
-  taxType: 'tva' | 'octroi_de_mer' | 'octroi_de_mer_regional' | 'taxe_speciale_consommation' | 'droits_douane' | 'tgap' | 'contribution_audiovisuel' | 'taxe_soda' | 'taxe_alcool'
-  taxName: string
+  territory: string;
+  territoryCode: string; // ISO code or official code
+  taxType:
+    | 'tva'
+    | 'octroi_de_mer'
+    | 'octroi_de_mer_regional'
+    | 'taxe_speciale_consommation'
+    | 'droits_douane'
+    | 'tgap'
+    | 'contribution_audiovisuel'
+    | 'taxe_soda'
+    | 'taxe_alcool';
+  taxName: string;
   /**
    * Single rate if known and constant
    */
-  rate?: number | null
+  rate?: number | null;
   /**
    * Minimum rate if range applies
    */
-  minRate?: number | null
+  minRate?: number | null;
   /**
    * Maximum rate if range applies
    */
-  maxRate?: number | null
+  maxRate?: number | null;
   /**
    * Unit of the rate (percentage, euro per liter, etc.)
    */
-  unit: 'percentage' | 'euro_per_liter' | 'euro_per_kg' | 'euro_fixed' | 'euro_per_hectoliter' | 'euro_per_ton'
+  unit:
+    | 'percentage'
+    | 'euro_per_liter'
+    | 'euro_per_kg'
+    | 'euro_fixed'
+    | 'euro_per_hectoliter'
+    | 'euro_per_ton';
   /**
    * Product category or scope
    */
-  scope: string
+  scope: string;
   /**
    * Source ID from taxSources.ts
    */
-  sourceId: string
+  sourceId: string;
   /**
    * Date when this rate was verified or published (ISO format)
    */
-  validFrom: string
+  validFrom: string;
   /**
    * Date when this rate expires or was replaced (ISO format, null if still valid)
    */
-  validUntil: string | null
+  validUntil: string | null;
   /**
    * Additional notes or clarifications
    */
-  notes?: string
+  notes?: string;
 }
 
 /**
@@ -147,7 +162,8 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
-    notes: 'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
+    notes:
+      'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
   },
   {
     territory: 'Guadeloupe',
@@ -157,7 +173,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     minRate: 0,
     maxRate: 2.5,
     unit: 'percentage',
-    scope: 'Additif à l\'octroi de mer',
+    scope: "Additif à l'octroi de mer",
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
@@ -203,7 +219,8 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
-    notes: 'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
+    notes:
+      'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
   },
   {
     territory: 'Martinique',
@@ -213,7 +230,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     minRate: 0,
     maxRate: 2.5,
     unit: 'percentage',
-    scope: 'Additif à l\'octroi de mer',
+    scope: "Additif à l'octroi de mer",
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
@@ -259,7 +276,8 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
-    notes: 'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
+    notes:
+      'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
   },
   {
     territory: 'Guyane',
@@ -269,7 +287,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     minRate: 0,
     maxRate: 2.5,
     unit: 'percentage',
-    scope: 'Additif à l\'octroi de mer',
+    scope: "Additif à l'octroi de mer",
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
@@ -315,7 +333,8 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
-    notes: 'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
+    notes:
+      'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
   },
   {
     territory: 'La Réunion',
@@ -325,7 +344,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     minRate: 0,
     maxRate: 2.5,
     unit: 'percentage',
-    scope: 'Additif à l\'octroi de mer',
+    scope: "Additif à l'octroi de mer",
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
@@ -371,7 +390,8 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
-    notes: 'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
+    notes:
+      'Taux variables selon produits et délibérations locales. Certains produits de première nécessité exonérés.',
   },
   {
     territory: 'Mayotte',
@@ -381,7 +401,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     minRate: 0,
     maxRate: 2.5,
     unit: 'percentage',
-    scope: 'Additif à l\'octroi de mer',
+    scope: "Additif à l'octroi de mer",
     sourceId: 'collectivites_territoriales',
     validFrom: '2004-07-02',
     validUntil: null,
@@ -401,7 +421,8 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'dgddi',
     validFrom: '2013-10-01',
     validUntil: null,
-    notes: 'Taux variable selon catégorie précise du produit. S\'applique sur la valeur CIF (coût, assurance, fret).',
+    notes:
+      "Taux variable selon catégorie précise du produit. S'applique sur la valeur CIF (coût, assurance, fret).",
   },
   {
     territory: 'DOM (Tous)',
@@ -429,7 +450,8 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'dgddi',
     validFrom: '2013-10-01',
     validUntil: null,
-    notes: 'Très variable selon le produit. Produits sensibles (viande, produits laitiers) ont des taux plus élevés.',
+    notes:
+      'Très variable selon le produit. Produits sensibles (viande, produits laitiers) ont des taux plus élevés.',
   },
 
   // TGAP - Taxe Générale sur les Activités Polluantes
@@ -445,7 +467,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'dgddi',
     validFrom: '2023-01-01',
     validUntil: null,
-    notes: 'Tarif progressif pour inciter au recyclage. Varie selon type d\'installation.',
+    notes: "Tarif progressif pour inciter au recyclage. Varie selon type d'installation.",
   },
   {
     territory: 'DOM (Tous)',
@@ -474,7 +496,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'dgddi',
     validFrom: '2018-01-01',
     validUntil: null,
-    notes: 'S\'applique sur tout le territoire français. Vise à réduire la consommation de sucre.',
+    notes: "S'applique sur tout le territoire français. Vise à réduire la consommation de sucre.",
   },
   {
     territory: 'France entière',
@@ -511,7 +533,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     taxName: 'Droits Spiritueux - Taux Plein',
     rate: 1786,
     unit: 'euro_per_hectoliter',
-    scope: 'Spiritueux (rhum, whisky, vodka, etc.) par hectolitre d\'alcool pur',
+    scope: "Spiritueux (rhum, whisky, vodka, etc.) par hectolitre d'alcool pur",
     sourceId: 'dgddi',
     validFrom: '2023-01-01',
     validUntil: null,
@@ -529,16 +551,17 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'dgddi',
     validFrom: '2023-01-01',
     validUntil: null,
-    notes: 'Régime fiscal favorable pour le rhum produit localement. Exonération de 50% à 100% selon contingents.',
+    notes:
+      'Régime fiscal favorable pour le rhum produit localement. Exonération de 50% à 100% selon contingents.',
   },
   {
     territory: 'France entière',
     territoryCode: 'FR-ALL',
     taxType: 'taxe_alcool',
     taxName: 'Droits Bière - Taux Normal',
-    rate: 7.70,
+    rate: 7.7,
     unit: 'euro_per_hectoliter',
-    scope: 'Bière par hectolitre et par degré d\'alcool',
+    scope: "Bière par hectolitre et par degré d'alcool",
     sourceId: 'dgddi',
     validFrom: '2023-01-01',
     validUntil: null,
@@ -555,7 +578,7 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'dgddi',
     validFrom: '2023-01-01',
     validUntil: null,
-    notes: 'Soit 0,04€ par bouteille de 75cl. Taux parmi les plus bas d\'Europe.',
+    notes: "Soit 0,04€ par bouteille de 75cl. Taux parmi les plus bas d'Europe.",
   },
 
   // CONTRIBUTION AUDIOVISUEL PUBLIC (historique)
@@ -570,7 +593,8 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     sourceId: 'dgfip',
     validFrom: '2021-01-01',
     validUntil: '2022-12-31',
-    notes: 'Supprimée et remplacée par affectation d\'une fraction de TVA. Montant historique pour référence.',
+    notes:
+      "Supprimée et remplacée par affectation d'une fraction de TVA. Montant historique pour référence.",
   },
   {
     territory: 'DOM (Tous)',
@@ -585,35 +609,33 @@ export const TAX_RATES_BY_TERRITORY: TaxRate[] = [
     validUntil: '2022-12-31',
     notes: 'Taux réduit pour les DOM. Supprimée comme en métropole en 2022.',
   },
-]
+];
 
 /**
  * Get tax rates for a specific territory
  */
 export function getTaxRatesByTerritory(territoryCode: string): TaxRate[] {
-  return TAX_RATES_BY_TERRITORY.filter((rate) => rate.territoryCode === territoryCode)
+  return TAX_RATES_BY_TERRITORY.filter((rate) => rate.territoryCode === territoryCode);
 }
 
 /**
  * Get tax rates by type
  */
-export function getTaxRatesByType(
-  taxType: TaxRate['taxType']
-): TaxRate[] {
-  return TAX_RATES_BY_TERRITORY.filter((rate) => rate.taxType === taxType)
+export function getTaxRatesByType(taxType: TaxRate['taxType']): TaxRate[] {
+  return TAX_RATES_BY_TERRITORY.filter((rate) => rate.taxType === taxType);
 }
 
 /**
  * Get all unique territories
  */
 export function getAllTerritories(): Array<{ code: string; name: string }> {
-  const territories = new Map<string, string>()
+  const territories = new Map<string, string>();
   TAX_RATES_BY_TERRITORY.forEach((rate) => {
     if (!territories.has(rate.territoryCode)) {
-      territories.set(rate.territoryCode, rate.territory)
+      territories.set(rate.territoryCode, rate.territory);
     }
-  })
-  return Array.from(territories.entries()).map(([code, name]) => ({ code, name }))
+  });
+  return Array.from(territories.entries()).map(([code, name]) => ({ code, name }));
 }
 
 /**
@@ -629,7 +651,7 @@ export function getTaxRate(
       rate.territoryCode === territoryCode &&
       rate.taxType === taxType &&
       (!scope || rate.scope === scope)
-  )
+  );
 }
 
 /**
@@ -644,7 +666,7 @@ export function getTaxRate(
  * @returns Price excluding TVA
  */
 export function calculatePriceHT(priceTTC: number, tvaRate: number): number {
-  return priceTTC / (1 + tvaRate / 100)
+  return priceTTC / (1 + tvaRate / 100);
 }
 
 /**
@@ -661,25 +683,25 @@ export function calculateCumulativeTaxes(
   octroiRate: number = 0,
   omrRate: number = 0
 ): {
-  priceHT: number
-  tvaAmount: number
-  octroiAmount: number
-  omrAmount: number
-  totalTaxes: number
-  priceTTC: number
-  taxPercentage: number
+  priceHT: number;
+  tvaAmount: number;
+  octroiAmount: number;
+  omrAmount: number;
+  totalTaxes: number;
+  priceTTC: number;
+  taxPercentage: number;
 } {
   // Octroi and OMR are applied on HT price
-  const octroiAmount = priceHT * (octroiRate / 100)
-  const omrAmount = priceHT * (omrRate / 100)
-  
+  const octroiAmount = priceHT * (octroiRate / 100);
+  const omrAmount = priceHT * (omrRate / 100);
+
   // TVA is applied on (HT + Octroi + OMR)
-  const baseForTVA = priceHT + octroiAmount + omrAmount
-  const tvaAmount = baseForTVA * (tvaRate / 100)
-  
-  const totalTaxes = tvaAmount + octroiAmount + omrAmount
-  const priceTTC = priceHT + totalTaxes
-  const taxPercentage = (totalTaxes / priceTTC) * 100
+  const baseForTVA = priceHT + octroiAmount + omrAmount;
+  const tvaAmount = baseForTVA * (tvaRate / 100);
+
+  const totalTaxes = tvaAmount + octroiAmount + omrAmount;
+  const priceTTC = priceHT + totalTaxes;
+  const taxPercentage = (totalTaxes / priceTTC) * 100;
 
   return {
     priceHT,
@@ -689,7 +711,7 @@ export function calculateCumulativeTaxes(
     totalTaxes,
     priceTTC,
     taxPercentage,
-  }
+  };
 }
 
 /**
@@ -704,30 +726,30 @@ export function calculateTerritoryDifferential(
   territory1Rates: { tva: number; octroi?: number; omr?: number },
   territory2Rates: { tva: number; octroi?: number; omr?: number }
 ): {
-  territory1TotalTax: number
-  territory2TotalTax: number
-  differenceAmount: number
-  differencePercentage: number
+  territory1TotalTax: number;
+  territory2TotalTax: number;
+  differenceAmount: number;
+  differencePercentage: number;
 } {
   const t1 = calculateCumulativeTaxes(
     priceHT,
     territory1Rates.tva,
     territory1Rates.octroi,
     territory1Rates.omr
-  )
+  );
   const t2 = calculateCumulativeTaxes(
     priceHT,
     territory2Rates.tva,
     territory2Rates.octroi,
     territory2Rates.omr
-  )
+  );
 
   return {
     territory1TotalTax: t1.totalTaxes,
     territory2TotalTax: t2.totalTaxes,
     differenceAmount: t1.totalTaxes - t2.totalTaxes,
     differencePercentage: ((t1.totalTaxes - t2.totalTaxes) / t2.totalTaxes) * 100,
-  }
+  };
 }
 
 /**
@@ -737,10 +759,7 @@ export function calculateTerritoryDifferential(
  * @param priceHT - Base price excluding taxes
  * @returns Percentage of price that is taxes
  */
-export function calculateFiscalBurdenPercentage(
-  priceTTC: number,
-  priceHT: number
-): number {
-  const totalTaxes = priceTTC - priceHT
-  return (totalTaxes / priceTTC) * 100
+export function calculateFiscalBurdenPercentage(priceTTC: number, priceHT: number): number {
+  const totalTaxes = priceTTC - priceHT;
+  return (totalTaxes / priceTTC) * 100;
 }

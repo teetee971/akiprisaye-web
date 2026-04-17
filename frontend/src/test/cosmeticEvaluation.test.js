@@ -108,48 +108,32 @@ describe('Cosmetic Evaluation Service', () => {
 
   describe('calculateScore', () => {
     it('should give 100 for all LOW risk ingredients', () => {
-      const ingredients = [
-        { riskLevel: 'LOW' },
-        { riskLevel: 'LOW' },
-        { riskLevel: 'LOW' },
-      ];
+      const ingredients = [{ riskLevel: 'LOW' }, { riskLevel: 'LOW' }, { riskLevel: 'LOW' }];
       const { score, breakdown } = calculateScore(ingredients);
       expect(score).toBe(100);
       expect(breakdown.safeIngredients).toBe(3);
     });
 
     it('should give 50 for all MODERATE risk ingredients', () => {
-      const ingredients = [
-        { riskLevel: 'MODERATE' },
-        { riskLevel: 'MODERATE' },
-      ];
+      const ingredients = [{ riskLevel: 'MODERATE' }, { riskLevel: 'MODERATE' }];
       const { score } = calculateScore(ingredients);
       expect(score).toBe(50);
     });
 
     it('should give 0 for all HIGH risk ingredients', () => {
-      const ingredients = [
-        { riskLevel: 'HIGH' },
-        { riskLevel: 'HIGH' },
-      ];
+      const ingredients = [{ riskLevel: 'HIGH' }, { riskLevel: 'HIGH' }];
       const { score } = calculateScore(ingredients);
       expect(score).toBe(0);
     });
 
     it('should penalize RESTRICTED ingredients', () => {
-      const ingredients = [
-        { riskLevel: 'LOW' },
-        { riskLevel: 'RESTRICTED' },
-      ];
+      const ingredients = [{ riskLevel: 'LOW' }, { riskLevel: 'RESTRICTED' }];
       const { score } = calculateScore(ingredients);
       expect(score).toBeLessThan(50);
     });
 
     it('should heavily penalize PROHIBITED ingredients', () => {
-      const ingredients = [
-        { riskLevel: 'LOW' },
-        { riskLevel: 'PROHIBITED' },
-      ];
+      const ingredients = [{ riskLevel: 'LOW' }, { riskLevel: 'PROHIBITED' }];
       const { score } = calculateScore(ingredients);
       expect(score).toBeLessThan(25);
     });
@@ -178,9 +162,7 @@ describe('Cosmetic Evaluation Service', () => {
 
   describe('generateWarnings', () => {
     it('should warn about PROHIBITED ingredients', () => {
-      const ingredients = [
-        { inciName: 'TEST', riskLevel: 'PROHIBITED' },
-      ];
+      const ingredients = [{ inciName: 'TEST', riskLevel: 'PROHIBITED' }];
       const warnings = generateWarnings(ingredients);
       expect(warnings.length).toBeGreaterThan(0);
       expect(warnings[0].level).toBe('error');
@@ -188,21 +170,17 @@ describe('Cosmetic Evaluation Service', () => {
     });
 
     it('should warn about RESTRICTED ingredients', () => {
-      const ingredients = [
-        { inciName: 'TEST', riskLevel: 'RESTRICTED' },
-      ];
+      const ingredients = [{ inciName: 'TEST', riskLevel: 'RESTRICTED' }];
       const warnings = generateWarnings(ingredients);
-      const restrictedWarning = warnings.find(w => w.message.includes('restrictions'));
+      const restrictedWarning = warnings.find((w) => w.message.includes('restrictions'));
       expect(restrictedWarning).toBeDefined();
       expect(restrictedWarning.level).toBe('warning');
     });
 
     it('should warn about parfum/fragrance', () => {
-      const ingredients = [
-        { inciName: 'PARFUM', riskLevel: 'MODERATE' },
-      ];
+      const ingredients = [{ inciName: 'PARFUM', riskLevel: 'MODERATE' }];
       const warnings = generateWarnings(ingredients);
-      const parfumWarning = warnings.find(w => w.message.includes('parfum'));
+      const parfumWarning = warnings.find((w) => w.message.includes('parfum'));
       expect(parfumWarning).toBeDefined();
       expect(parfumWarning.level).toBe('info');
     });
@@ -219,11 +197,7 @@ describe('Cosmetic Evaluation Service', () => {
 
   describe('evaluateProduct', () => {
     it('should evaluate a simple product', () => {
-      const result = evaluateProduct(
-        'Test Cream',
-        'Crème visage',
-        'AQUA, GLYCERIN, NIACINAMIDE'
-      );
+      const result = evaluateProduct('Test Cream', 'Crème visage', 'AQUA, GLYCERIN, NIACINAMIDE');
 
       expect(result.product.name).toBe('Test Cream');
       expect(result.product.category).toBe('Crème visage');
@@ -243,8 +217,8 @@ describe('Cosmetic Evaluation Service', () => {
     it('should include official sources', () => {
       const result = evaluateProduct('Test', 'Crème visage', 'AQUA, GLYCERIN');
       expect(result.sources.length).toBeGreaterThan(0);
-      expect(result.sources.some(s => s.type === 'COSING')).toBe(true);
-      expect(result.sources.some(s => s.type === 'EU_REGULATION')).toBe(true);
+      expect(result.sources.some((s) => s.type === 'COSING')).toBe(true);
+      expect(result.sources.some((s) => s.type === 'EU_REGULATION')).toBe(true);
     });
 
     it('should include legal disclaimer', () => {
@@ -255,24 +229,16 @@ describe('Cosmetic Evaluation Service', () => {
     });
 
     it('should handle products with restricted ingredients', () => {
-      const result = evaluateProduct(
-        'Test',
-        'Crème visage',
-        'AQUA, PHENOXYETHANOL'
-      );
+      const result = evaluateProduct('Test', 'Crème visage', 'AQUA, PHENOXYETHANOL');
       expect(result.warnings.length).toBeGreaterThan(0);
       expect(result.score).toBeLessThan(100);
     });
 
     it('should handle unknown ingredients safely', () => {
-      const result = evaluateProduct(
-        'Test',
-        'Crème visage',
-        'AQUA, UNKNOWN_INGREDIENT_XYZ'
-      );
+      const result = evaluateProduct('Test', 'Crème visage', 'AQUA, UNKNOWN_INGREDIENT_XYZ');
       expect(result.product.ingredients.length).toBe(2);
       const unknownIngredient = result.product.ingredients.find(
-        i => i.inciName === 'UNKNOWN_INGREDIENT_XYZ'
+        (i) => i.inciName === 'UNKNOWN_INGREDIENT_XYZ'
       );
       expect(unknownIngredient).toBeDefined();
       expect(unknownIngredient.riskLevel).toBe('MODERATE');
@@ -282,7 +248,7 @@ describe('Cosmetic Evaluation Service', () => {
   describe('Data Integrity', () => {
     it('should only use official sources', () => {
       const result = evaluateProduct('Test', 'Crème visage', 'AQUA, GLYCERIN');
-      
+
       for (const source of result.sources) {
         expect(['COSING', 'ANSES', 'ECHA', 'EU_REGULATION']).toContain(source.type);
         expect(source.url).toBeTruthy();
@@ -292,8 +258,8 @@ describe('Cosmetic Evaluation Service', () => {
 
     it('should have valid regulatory references', () => {
       const result = evaluateProduct('Test', 'Crème visage', 'PHENOXYETHANOL');
-      const phenoxy = result.product.ingredients.find(i => i.inciName === 'PHENOXYETHANOL');
-      
+      const phenoxy = result.product.ingredients.find((i) => i.inciName === 'PHENOXYETHANOL');
+
       expect(phenoxy.regulatoryReferences).toBeDefined();
       expect(phenoxy.regulatoryReferences.length).toBeGreaterThan(0);
     });
@@ -301,7 +267,7 @@ describe('Cosmetic Evaluation Service', () => {
     it('should not make medical claims in disclaimer', () => {
       const result = evaluateProduct('Test', 'Crème visage', 'AQUA');
       const disclaimer = result.disclaimer.toLowerCase();
-      
+
       // Vérifier que le disclaimer interdit les affirmations médicales
       expect(disclaimer).toContain('ne constitue pas');
       expect(disclaimer).toContain('avis médical');
@@ -310,7 +276,7 @@ describe('Cosmetic Evaluation Service', () => {
     it('should emphasize official data only', () => {
       const result = evaluateProduct('Test', 'Crème visage', 'AQUA');
       const disclaimer = result.disclaimer.toLowerCase();
-      
+
       expect(disclaimer).toContain('données officielles');
       expect(disclaimer).toContain('aucune donnée fictive');
     });

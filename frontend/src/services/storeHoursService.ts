@@ -1,6 +1,6 @@
 /**
  * Store Hours Service
- * 
+ *
  * Service for managing and retrieving store hours data
  * Provides sample hours for stores that don't have structured hours yet
  */
@@ -28,14 +28,14 @@ export function getStoreHours(storeId: string, territory?: string): StoreHours |
   // Generate sample hours based on territory timezone
   const territoryCode = territory?.toLowerCase() || 'gp';
   const territoryData = TERRITORIES[territoryCode as keyof typeof TERRITORIES];
-  
+
   if (!territoryData) {
     return null;
   }
 
   const hours = createSampleStoreHours(storeId, territoryData.timezone);
   storeHoursCache.set(storeId, hours);
-  
+
   return hours;
 }
 
@@ -57,19 +57,16 @@ export function clearStoreHoursCache(): void {
 /**
  * Get hours for multiple stores
  */
-export function getBulkStoreHours(
-  storeIds: string[],
-  territory?: string
-): Map<string, StoreHours> {
+export function getBulkStoreHours(storeIds: string[], territory?: string): Map<string, StoreHours> {
   const hoursMap = new Map<string, StoreHours>();
-  
-  storeIds.forEach(storeId => {
+
+  storeIds.forEach((storeId) => {
     const hours = getStoreHours(storeId, territory);
     if (hours) {
       hoursMap.set(storeId, hours);
     }
   });
-  
+
   return hoursMap;
 }
 
@@ -79,54 +76,54 @@ export function getBulkStoreHours(
  */
 export const PREDEFINED_STORE_HOURS: Record<string, Partial<StoreHours>> = {
   // Carrefour stores - typically open longer hours
-  'carrefour_baie_mahault': {
+  carrefour_baie_mahault: {
     regularHours: {
-      'lundi': [{ open: '08:30', close: '20:30' }],
-      'mardi': [{ open: '08:30', close: '20:30' }],
-      'mercredi': [{ open: '08:30', close: '20:30' }],
-      'jeudi': [{ open: '08:30', close: '20:30' }],
-      'vendredi': [{ open: '08:30', close: '20:30' }],
-      'samedi': [{ open: '08:30', close: '20:30' }],
-      'dimanche': [{ open: '09:00', close: '13:00' }],
+      lundi: [{ open: '08:30', close: '20:30' }],
+      mardi: [{ open: '08:30', close: '20:30' }],
+      mercredi: [{ open: '08:30', close: '20:30' }],
+      jeudi: [{ open: '08:30', close: '20:30' }],
+      vendredi: [{ open: '08:30', close: '20:30' }],
+      samedi: [{ open: '08:30', close: '20:30' }],
+      dimanche: [{ open: '09:00', close: '13:00' }],
     },
   },
-  
+
   // E.Leclerc stores
-  'leclerc_abymes': {
+  leclerc_abymes: {
     regularHours: {
-      'lundi': [{ open: '08:00', close: '20:00' }],
-      'mardi': [{ open: '08:00', close: '20:00' }],
-      'mercredi': [{ open: '08:00', close: '20:00' }],
-      'jeudi': [{ open: '08:00', close: '20:00' }],
-      'vendredi': [{ open: '08:00', close: '20:00' }],
-      'samedi': [{ open: '08:00', close: '20:00' }],
-      'dimanche': [{ open: '08:00', close: '13:00' }],
+      lundi: [{ open: '08:00', close: '20:00' }],
+      mardi: [{ open: '08:00', close: '20:00' }],
+      mercredi: [{ open: '08:00', close: '20:00' }],
+      jeudi: [{ open: '08:00', close: '20:00' }],
+      vendredi: [{ open: '08:00', close: '20:00' }],
+      samedi: [{ open: '08:00', close: '20:00' }],
+      dimanche: [{ open: '08:00', close: '13:00' }],
     },
   },
-  
+
   // Leader Price - typically more limited hours
-  'leader_price_pointe_pitre': {
+  leader_price_pointe_pitre: {
     regularHours: {
-      'lundi': [{ open: '07:00', close: '20:00' }],
-      'mardi': [{ open: '07:00', close: '20:00' }],
-      'mercredi': [{ open: '07:00', close: '20:00' }],
-      'jeudi': [{ open: '07:00', close: '20:00' }],
-      'vendredi': [{ open: '07:00', close: '20:00' }],
-      'samedi': [{ open: '07:00', close: '20:00' }],
-      'dimanche': [{ closed: true }],
+      lundi: [{ open: '07:00', close: '20:00' }],
+      mardi: [{ open: '07:00', close: '20:00' }],
+      mercredi: [{ open: '07:00', close: '20:00' }],
+      jeudi: [{ open: '07:00', close: '20:00' }],
+      vendredi: [{ open: '07:00', close: '20:00' }],
+      samedi: [{ open: '07:00', close: '20:00' }],
+      dimanche: [{ closed: true }],
     },
   },
-  
+
   // Intermarché
-  'intermarche_gosier': {
+  intermarche_gosier: {
     regularHours: {
-      'lundi': [{ open: '08:00', close: '19:30' }],
-      'mardi': [{ open: '08:00', close: '19:30' }],
-      'mercredi': [{ open: '08:00', close: '19:30' }],
-      'jeudi': [{ open: '08:00', close: '19:30' }],
-      'vendredi': [{ open: '08:00', close: '19:30' }],
-      'samedi': [{ open: '08:00', close: '19:30' }],
-      'dimanche': [{ closed: true }],
+      lundi: [{ open: '08:00', close: '19:30' }],
+      mardi: [{ open: '08:00', close: '19:30' }],
+      mercredi: [{ open: '08:00', close: '19:30' }],
+      jeudi: [{ open: '08:00', close: '19:30' }],
+      vendredi: [{ open: '08:00', close: '19:30' }],
+      samedi: [{ open: '08:00', close: '19:30' }],
+      dimanche: [{ closed: true }],
     },
   },
 };
@@ -139,14 +136,14 @@ export function initializePredefinedHours(): void {
     // Get territory from store data (you might need to load this differently)
     const territory = 'gp'; // Default to Guadeloupe
     const territoryData = TERRITORIES[territory];
-    
+
     const fullHours: StoreHours = {
       storeId,
       timezone: territoryData.timezone,
       regularHours: hoursOverride.regularHours || {},
       specialHours: hoursOverride.specialHours,
     };
-    
+
     setStoreHours(storeId, fullHours);
   });
 }

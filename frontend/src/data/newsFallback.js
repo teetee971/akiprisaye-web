@@ -4,7 +4,8 @@ export const newsFallback = [
     type: 'dossiers',
     territory: 'gp',
     title: 'Enquête : groupe GBH et impact sur les prix en Guadeloupe',
-    summary: 'Dossier de synthèse sur les écarts de prix, la structure du marché local et les points de vigilance pour les consommateurs.',
+    summary:
+      'Dossier de synthèse sur les écarts de prix, la structure du marché local et les points de vigilance pour les consommateurs.',
     source_name: 'Observatoire AKPSY',
     source_url: '/methodologie',
     canonical_url: '/organigramme-gbh',
@@ -15,14 +16,16 @@ export const newsFallback = [
     verified: true,
     tags: ['enquête', 'gbh', 'vie-chère'],
     evidence: { scope: 'Guadeloupe', confidence: 'partner' },
-    imageUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-rappel-gp-001',
     type: 'rappels',
     territory: 'gp',
     title: 'Rappel conso : lot de sardines en conserve',
-    summary: 'Présence possible d’histamine au-delà du seuil réglementaire. Vérifiez le lot avant consommation.',
+    summary:
+      'Présence possible d’histamine au-delà du seuil réglementaire. Vérifiez le lot avant consommation.',
     source_name: 'RappelConso',
     source_url: 'https://rappel.conso.gouv.fr',
     canonical_url: 'https://rappel.conso.gouv.fr/fiche-rappel/12345/Interne',
@@ -33,7 +36,8 @@ export const newsFallback = [
     verified: true,
     tags: ['alimentaire', 'sécurité', 'rappel'],
     evidence: { lot: 'LC2501', confidence: 'official' },
-    imageUrl: 'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-bonsplans-mq-002',
@@ -52,14 +56,16 @@ export const newsFallback = [
     expires_at: '2026-01-30T23:59:59.000Z',
     tags: ['bébé', 'promotion', 'panier'],
     evidence: { deltaPct: -22, periodDays: 7, confidence: 'partner' },
-    imageUrl: 'https://images.unsplash.com/photo-1519689373023-dd07c7988603?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1519689373023-dd07c7988603?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-reg-fr-003',
     type: 'reglementaire',
     territory: 'fr',
     title: 'Mise à jour du barème d’aides énergie 2026',
-    summary: 'Nouveaux seuils d’éligibilité pour les ménages modestes annoncés au Journal officiel.',
+    summary:
+      'Nouveaux seuils d’éligibilité pour les ménages modestes annoncés au Journal officiel.',
     source_name: 'Service-Public.fr',
     source_url: 'https://www.service-public.fr',
     canonical_url: 'https://www.service-public.fr/particuliers/actualites/A17001',
@@ -69,7 +75,8 @@ export const newsFallback = [
     confidence: 'official',
     verified: true,
     tags: ['aides', 'énergie', 'réglementation'],
-    imageUrl: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-indice-all-004',
@@ -86,7 +93,8 @@ export const newsFallback = [
     verified: true,
     tags: ['indice', 'inflation', 'panier'],
     evidence: { deltaPct: -1.8, periodDays: 7, confidence: 'partner' },
-    imageUrl: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-dossier-re-005',
@@ -103,7 +111,8 @@ export const newsFallback = [
     confidence: 'press',
     verified: true,
     tags: ['dossier', 'comparatif', 'consommation'],
-    imageUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-press-gf-006',
@@ -120,7 +129,8 @@ export const newsFallback = [
     confidence: 'press',
     verified: false,
     tags: ['presse', 'écarts-prix'],
-    imageUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-bonsplans-yt-007',
@@ -137,7 +147,8 @@ export const newsFallback = [
     verified: false,
     expires_at: '2026-01-22T23:59:59.000Z',
     tags: ['signalement', 'à confirmer'],
-    imageUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-reg-gp-008',
@@ -147,14 +158,16 @@ export const newsFallback = [
     summary: 'Mise à jour des prix maximums administrés pour le mois en cours.',
     source_name: 'Préfecture de Guadeloupe',
     source_url: 'https://www.guadeloupe.gouv.fr',
-    canonical_url: 'https://www.guadeloupe.gouv.fr/Actions-de-l-Etat/Economie-et-emploi/Prix-des-carburants',
+    canonical_url:
+      'https://www.guadeloupe.gouv.fr/Actions-de-l-Etat/Economie-et-emploi/Prix-des-carburants',
     published_at: '2026-01-14T12:00:00.000Z',
     impact: 'moyen',
     isSponsored: false,
     confidence: 'official',
     verified: true,
     tags: ['carburants', 'préfecture'],
-    imageUrl: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-rappel-fr-009',
@@ -171,7 +184,8 @@ export const newsFallback = [
     confidence: 'official',
     verified: true,
     tags: ['dgccrf', 'sécurité'],
-    imageUrl: 'https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'fallback-dossier-mq-010',
@@ -188,7 +202,8 @@ export const newsFallback = [
     confidence: 'press',
     verified: false,
     tags: ['comparatif', 'panier'],
-    imageUrl: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1547036967-23d11aacaee0?auto=format&fit=crop&w=600&q=75',
   },
   // ── Enseignes partenaires / affiliées ──────────────────────────────────────
   {
@@ -196,10 +211,13 @@ export const newsFallback = [
     type: 'partner',
     territory: 'all',
     title: 'E.Leclerc : bons plans de la semaine en Guadeloupe & Martinique',
-    summary: 'E.Leclerc DOM propose ses offres promotionnelles hebdomadaires sur les produits essentiels. Comparez et économisez sur votre panier via A KI PRI SA YÉ.',
+    summary:
+      'E.Leclerc DOM propose ses offres promotionnelles hebdomadaires sur les produits essentiels. Comparez et économisez sur votre panier via A KI PRI SA YÉ.',
     source_name: 'E.Leclerc',
-    source_url: 'https://www.e.leclerc/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
-    canonical_url: 'https://www.e.leclerc/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    source_url:
+      'https://www.e.leclerc/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    canonical_url:
+      'https://www.e.leclerc/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
     published_at: '2026-04-14T08:00:00.000Z',
     impact: 'moyen',
     isSponsored: true,
@@ -207,17 +225,21 @@ export const newsFallback = [
     verified: true,
     tags: ['leclerc', 'promotion', 'dom', 'partenaire'],
     evidence: { retailer: 'E.Leclerc', affiliation: true },
-    imageUrl: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'partner-carrefour-dom-001',
     type: 'partner',
     territory: 'all',
     title: 'Carrefour Market DOM : opération produits locaux & prix bloqués',
-    summary: 'Carrefour Market dans les DOM lance une opération "prix bloqués" sur les produits locaux et d\'importation courante. Voir la liste des produits concernés.',
+    summary:
+      'Carrefour Market dans les DOM lance une opération "prix bloqués" sur les produits locaux et d\'importation courante. Voir la liste des produits concernés.',
     source_name: 'Carrefour',
-    source_url: 'https://www.carrefour.fr/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
-    canonical_url: 'https://www.carrefour.fr/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    source_url:
+      'https://www.carrefour.fr/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    canonical_url:
+      'https://www.carrefour.fr/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
     published_at: '2026-04-13T09:00:00.000Z',
     impact: 'moyen',
     isSponsored: true,
@@ -225,17 +247,21 @@ export const newsFallback = [
     verified: true,
     tags: ['carrefour', 'promotion', 'prix-bloqués', 'dom', 'partenaire'],
     evidence: { retailer: 'Carrefour', affiliation: true },
-    imageUrl: 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'partner-superu-gp-001',
     type: 'partner',
     territory: 'gp',
     title: 'Super U Guadeloupe : catalogue promos — semaine du 14 avril',
-    summary: 'Retrouvez les offres de la semaine de Super U en Guadeloupe : produits frais, épicerie et hygiène en promotion. Comparez les prix sur A KI PRI SA YÉ.',
+    summary:
+      'Retrouvez les offres de la semaine de Super U en Guadeloupe : produits frais, épicerie et hygiène en promotion. Comparez les prix sur A KI PRI SA YÉ.',
     source_name: 'Super U',
-    source_url: 'https://www.coursesu.com/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
-    canonical_url: 'https://www.coursesu.com/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    source_url:
+      'https://www.coursesu.com/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    canonical_url:
+      'https://www.coursesu.com/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
     published_at: '2026-04-14T07:30:00.000Z',
     impact: 'moyen',
     isSponsored: true,
@@ -243,17 +269,21 @@ export const newsFallback = [
     verified: true,
     tags: ['super-u', 'guadeloupe', 'catalogue', 'partenaire'],
     evidence: { retailer: 'Super U', affiliation: true },
-    imageUrl: 'https://images.unsplash.com/photo-1583947581924-860bda6a26df?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1583947581924-860bda6a26df?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'partner-intermarche-mq-001',
     type: 'partner',
     territory: 'mq',
     title: 'Intermarché Martinique : opération anti-inflation avril 2026',
-    summary: 'Intermarché Martinique s\'engage sur 60 produits du quotidien avec des prix garantis pour le mois d\'avril. Découvrez la sélection complète en ligne.',
+    summary:
+      "Intermarché Martinique s'engage sur 60 produits du quotidien avec des prix garantis pour le mois d'avril. Découvrez la sélection complète en ligne.",
     source_name: 'Intermarché',
-    source_url: 'https://www.intermarche.com/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
-    canonical_url: 'https://www.intermarche.com/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    source_url:
+      'https://www.intermarche.com/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    canonical_url:
+      'https://www.intermarche.com/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
     published_at: '2026-04-01T08:00:00.000Z',
     impact: 'moyen',
     isSponsored: true,
@@ -262,17 +292,21 @@ export const newsFallback = [
     expires_at: '2026-04-30T23:59:59.000Z',
     tags: ['intermarché', 'martinique', 'anti-inflation', 'partenaire'],
     evidence: { retailer: 'Intermarché', affiliation: true },
-    imageUrl: 'https://images.unsplash.com/photo-1601600576337-c1d8a0d1373c?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1601600576337-c1d8a0d1373c?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'partner-score-re-001',
     type: 'partner',
     territory: 're',
     title: 'Score Réunion : nouveaux prix sur les produits de première nécessité',
-    summary: 'Le groupe LEAL (Score) à La Réunion ajuste ses prix à la baisse sur 45 références de première nécessité.',
+    summary:
+      'Le groupe LEAL (Score) à La Réunion ajuste ses prix à la baisse sur 45 références de première nécessité.',
     source_name: 'Score Réunion',
-    source_url: 'https://www.score.re/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
-    canonical_url: 'https://www.score.re/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    source_url:
+      'https://www.score.re/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    canonical_url:
+      'https://www.score.re/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
     published_at: '2026-04-10T08:00:00.000Z',
     impact: 'moyen',
     isSponsored: true,
@@ -280,17 +314,21 @@ export const newsFallback = [
     verified: true,
     tags: ['score', 'réunion', 'leal', 'promotion', 'partenaire'],
     evidence: { retailer: 'Score Réunion', affiliation: true },
-    imageUrl: 'https://images.unsplash.com/photo-1565118531796-763e5082d113?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1565118531796-763e5082d113?auto=format&fit=crop&w=600&q=75',
   },
   {
     id: 'partner-aldi-dom-001',
     type: 'partner',
     territory: 'all',
     title: 'Aldi DOM : arrivée de nouveaux produits discount — avril 2026',
-    summary: 'Aldi renforce son offre dans les DOM avec de nouveaux produits à prix discount. Découvrez les références disponibles et comparez avec les enseignes locales.',
+    summary:
+      'Aldi renforce son offre dans les DOM avec de nouveaux produits à prix discount. Découvrez les références disponibles et comparez avec les enseignes locales.',
     source_name: 'Aldi',
-    source_url: 'https://www.aldi.fr/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
-    canonical_url: 'https://www.aldi.fr/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    source_url:
+      'https://www.aldi.fr/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
+    canonical_url:
+      'https://www.aldi.fr/?utm_source=akiprisaye&utm_medium=actualites&utm_campaign=partenaires-dom',
     published_at: '2026-04-07T10:00:00.000Z',
     impact: 'info',
     isSponsored: true,
@@ -298,6 +336,7 @@ export const newsFallback = [
     verified: true,
     tags: ['aldi', 'dom', 'discount', 'partenaire'],
     evidence: { retailer: 'Aldi', affiliation: true },
-    imageUrl: 'https://images.unsplash.com/photo-1628102491629-778571d893a3?auto=format&fit=crop&w=600&q=75',
+    imageUrl:
+      'https://images.unsplash.com/photo-1628102491629-778571d893a3?auto=format&fit=crop&w=600&q=75',
   },
 ];

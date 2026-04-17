@@ -12,15 +12,15 @@ import type { Territory } from './priceAlerts';
 
 /** Catégorie de matériel */
 export type EquipmentCategory =
-  | 'btp'           // Bâtiment & Travaux Publics (échafaudages, bétonnières, compresseurs)
-  | 'outillage'     // Outillage électroportatif (perforateurs, ponceuses, scies)
-  | 'levage'        // Levage & manutention (chariots élévateurs, nacelles, grues)
-  | 'terrassement'  // Terrassement (mini-pelles, compacteurs, tractopelles)
-  | 'evenementiel'  // Événementiel (tentes, chapiteaux, tables, chaises)
-  | 'jardinage'     // Jardinage & espaces verts (tondeuses, tronçonneuses, broyeurs)
-  | 'nettoyage'     // Nettoyage (nettoyeurs haute pression, aspirateurs industriels)
-  | 'demenagement'  // Déménagement (camionnettes, remorques, sangles)
-  | 'agriculture';  // Agriculture (motoculteurs, pulvérisateurs)
+  | 'btp' // Bâtiment & Travaux Publics (échafaudages, bétonnières, compresseurs)
+  | 'outillage' // Outillage électroportatif (perforateurs, ponceuses, scies)
+  | 'levage' // Levage & manutention (chariots élévateurs, nacelles, grues)
+  | 'terrassement' // Terrassement (mini-pelles, compacteurs, tractopelles)
+  | 'evenementiel' // Événementiel (tentes, chapiteaux, tables, chaises)
+  | 'jardinage' // Jardinage & espaces verts (tondeuses, tronçonneuses, broyeurs)
+  | 'nettoyage' // Nettoyage (nettoyeurs haute pression, aspirateurs industriels)
+  | 'demenagement' // Déménagement (camionnettes, remorques, sangles)
+  | 'agriculture'; // Agriculture (motoculteurs, pulvérisateurs)
 
 /** Unité de tarification */
 export type RentalUnit = 'hour' | 'halfday' | 'day' | 'week' | 'month';
@@ -36,10 +36,10 @@ export interface EquipmentRentalSource {
 
 /** Prix par unité de temps */
 export interface EquipmentRentalPricing {
-  dailyRate: number;        // tarif journée (TTC)
-  halfDayRate?: number;     // tarif demi-journée
-  weeklyRate?: number;      // tarif semaine
-  deposit?: number;         // caution (€)
+  dailyRate: number; // tarif journée (TTC)
+  halfDayRate?: number; // tarif demi-journée
+  weeklyRate?: number; // tarif semaine
+  deposit?: number; // caution (€)
   currency: string;
   vatIncluded: boolean;
 }
@@ -47,9 +47,9 @@ export interface EquipmentRentalPricing {
 /** Conditions de location */
 export interface EquipmentRentalConditions {
   deliveryAvailable: boolean;
-  deliveryCost?: number;           // coût de livraison (€)
+  deliveryCost?: number; // coût de livraison (€)
   minRentalDuration: RentalUnit;
-  trainingRequired: boolean;       // formation obligatoire
+  trainingRequired: boolean; // formation obligatoire
   insuranceIncluded: boolean;
   fuelIncluded?: boolean;
 }
@@ -57,13 +57,13 @@ export interface EquipmentRentalConditions {
 /** Point de données pour un loueur / matériel */
 export interface EquipmentRentalPricePoint {
   id: string;
-  agency: string;              // Nom du loueur (ex : "Loxam", "Kiloutou")
-  agencyCode: string;          // Code court
-  isLocalAgency: boolean;      // Loueur local vs national
+  agency: string; // Nom du loueur (ex : "Loxam", "Kiloutou")
+  agencyCode: string; // Code court
+  isLocalAgency: boolean; // Loueur local vs national
   territory: Territory;
   category: EquipmentCategory;
-  equipmentName: string;       // Ex : "Mini-pelle 1,5T", "Bétonnière 350L"
-  equipmentBrand?: string;     // Marque si connue
+  equipmentName: string; // Ex : "Mini-pelle 1,5T", "Bétonnière 350L"
+  equipmentBrand?: string; // Marque si connue
   pricing: EquipmentRentalPricing;
   conditions: EquipmentRentalConditions;
   observationDate: string;

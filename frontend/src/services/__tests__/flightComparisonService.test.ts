@@ -13,8 +13,20 @@ import {
 } from '../flightComparisonService';
 import type { FlightPricePoint, FlightRoute, Airport } from '../../types/flightComparison';
 
-const PTP: Airport = { code: 'PTP', name: 'Pointe-à-Pitre', city: 'Pointe-à-Pitre', territory: 'GP', region: 'DOM' };
-const ORY: Airport = { code: 'ORY', name: 'Paris Orly', city: 'Paris', territory: 'GP', region: 'Métropole' };
+const PTP: Airport = {
+  code: 'PTP',
+  name: 'Pointe-à-Pitre',
+  city: 'Pointe-à-Pitre',
+  territory: 'GP',
+  region: 'DOM',
+};
+const ORY: Airport = {
+  code: 'ORY',
+  name: 'Paris Orly',
+  city: 'Paris',
+  territory: 'GP',
+  region: 'Métropole',
+};
 
 const mockRoute: FlightRoute = {
   origin: PTP,
@@ -27,7 +39,7 @@ const makeFlightPrice = (
   airline: string,
   price: number,
   priceType: FlightPricePoint['priceType'] = 'economy',
-  verified = true,
+  verified = true
 ): FlightPricePoint => ({
   id,
   airline,

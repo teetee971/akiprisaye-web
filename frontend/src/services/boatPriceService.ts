@@ -1,9 +1,9 @@
 /**
  * Boat/Ferry Price Service
- * 
+ *
  * Service de comparaison des prix de bateaux/ferries
  * Données simulées structurées pour démonstration
- * 
+ *
  * IMPORTANT:
  * - Données publiques uniquement
  * - Aucun tracking utilisateur
@@ -176,9 +176,7 @@ const SIMULATED_DATA: BoatPrice[] = [
  */
 export function searchBoatPrices(params: BoatSearchParams): BoatPrice[] {
   let results = SIMULATED_DATA.filter(
-    (boat) =>
-      boat.depart === params.depart &&
-      boat.arrivee === params.arrivee
+    (boat) => boat.depart === params.depart && boat.arrivee === params.arrivee
   );
 
   // Filtrer par mois si spécifié
@@ -202,10 +200,10 @@ export function searchBoatPrices(params: BoatSearchParams): BoatPrice[] {
  */
 export function getAvailableMonths(depart: string, arrivee: string): string[] {
   const months = new Set<string>();
-  SIMULATED_DATA.filter(
-    (boat) => boat.depart === depart && boat.arrivee === arrivee
-  ).forEach((boat) => months.add(boat.mois));
-  
+  SIMULATED_DATA.filter((boat) => boat.depart === depart && boat.arrivee === arrivee).forEach(
+    (boat) => months.add(boat.mois)
+  );
+
   return Array.from(months).sort();
 }
 
@@ -230,22 +228,25 @@ export function getArrivalLocations(): string[] {
 /**
  * Calculer les données pour le graphique de prix par mois
  */
-export function getPricesByMonth(depart: string, arrivee: string): {
+export function getPricesByMonth(
+  depart: string,
+  arrivee: string
+): {
   mois: string;
   prixMoyen: number;
   prixMin: number;
   prixMax: number;
 }[] {
   const pricesByMonth = new Map<string, number[]>();
-  
-  SIMULATED_DATA.filter(
-    (boat) => boat.depart === depart && boat.arrivee === arrivee
-  ).forEach((boat) => {
-    if (!pricesByMonth.has(boat.mois)) {
-      pricesByMonth.set(boat.mois, []);
+
+  SIMULATED_DATA.filter((boat) => boat.depart === depart && boat.arrivee === arrivee).forEach(
+    (boat) => {
+      if (!pricesByMonth.has(boat.mois)) {
+        pricesByMonth.set(boat.mois, []);
+      }
+      pricesByMonth.get(boat.mois)!.push(boat.prix);
     }
-    pricesByMonth.get(boat.mois)!.push(boat.prix);
-  });
+  );
 
   return Array.from(pricesByMonth.entries())
     .map(([mois, prices]) => ({

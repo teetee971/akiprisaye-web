@@ -61,9 +61,7 @@ export async function matchJobsToUser(profile: UserProfile): Promise<JobMatch[]>
     const matchScore = calculateMatchScore(job, profile);
     if (matchScore < 30) continue; // Skip low matches
 
-    const requiredTrainings = data.programs.filter((p) =>
-      job.requiredTraining.includes(p.id)
-    );
+    const requiredTrainings = data.programs.filter((p) => job.requiredTraining.includes(p.id));
 
     if (requiredTrainings.length === 0) continue;
 
@@ -114,10 +112,7 @@ function calculateMatchScore(job: JobMarket, profile: UserProfile): number {
 /**
  * Calculate available funding for trainings
  */
-function calculateAvailableFunding(
-  trainings: TrainingProgram[],
-  profile: UserProfile
-): number {
+function calculateAvailableFunding(trainings: TrainingProgram[], profile: UserProfile): number {
   let funding = 0;
 
   for (const training of trainings) {
@@ -127,10 +122,7 @@ function calculateAvailableFunding(
     }
 
     // Pôle Emploi (estimate)
-    if (
-      training.pricing.poleEmploiEligible &&
-      profile.currentStatus === 'unemployed'
-    ) {
+    if (training.pricing.poleEmploiEligible && profile.currentStatus === 'unemployed') {
       funding += Math.min(3000, training.pricing.catalogPrice * 0.5);
     }
 
@@ -163,12 +155,12 @@ export function calculateROI(
 } {
   const trainingCost = training.pricing.catalogPrice;
   const monthlySalary = expectedSalary;
-  
+
   // Assume current income is 0 or minimum (for unemployed)
   const monthlyGain = monthlySalary;
-  
+
   const monthsToBreakEven = monthlyGain > 0 ? Math.ceil(trainingCost / monthlyGain) : 999;
-  const gain5Years = (monthlyGain * 60) - trainingCost; // 5 years = 60 months
+  const gain5Years = monthlyGain * 60 - trainingCost; // 5 years = 60 months
 
   return {
     monthsToBreakEven,
@@ -188,9 +180,7 @@ export async function getTopJobOpportunitiesWithROI(
   const opportunities: JobMatch[] = [];
 
   for (const job of jobs) {
-    const requiredTrainings = data.programs.filter((p) =>
-      job.requiredTraining.includes(p.id)
-    );
+    const requiredTrainings = data.programs.filter((p) => job.requiredTraining.includes(p.id));
 
     if (requiredTrainings.length === 0) continue;
 

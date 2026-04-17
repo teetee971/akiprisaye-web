@@ -58,14 +58,13 @@ const withTimeoutSignal = (signal: AbortSignal, timeoutMs: number): AbortSignal 
 
 const mapItem = (
   item: LeaderPriceCatalogItem,
-  input: PriceSearchInput,
+  input: PriceSearchInput
 ): PriceObservation | null => {
   const price = safeNumber(item.price);
   if (price === null || price <= 0) return null;
 
   const rawUnit = safeString(item.unit);
-  const unit: PriceObservation['unit'] =
-    rawUnit === 'kg' || rawUnit === 'l' ? rawUnit : 'unit';
+  const unit: PriceObservation['unit'] = rawUnit === 'kg' || rawUnit === 'l' ? rawUnit : 'unit';
 
   return normalizePriceObservation({
     source: 'leader_price',
@@ -83,8 +82,7 @@ const mapItem = (
 
 export const leaderPriceProvider: PriceProvider = {
   source: 'leader_price',
-  isEnabled: () =>
-    parseFlag(import.meta.env.VITE_PRICE_PROVIDER_LEADER_PRICE, false),
+  isEnabled: () => parseFlag(import.meta.env.VITE_PRICE_PROVIDER_LEADER_PRICE, false),
 
   async search(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult> {
     if (!input.barcode && !input.query) {
@@ -142,9 +140,7 @@ export const leaderPriceProvider: PriceProvider = {
         status: observations.length > 0 ? 'OK' : 'NO_DATA',
         observations,
         warnings:
-          observations.length === 0
-            ? ['Aucun prix Leader Price trouvé pour cette recherche.']
-            : [],
+          observations.length === 0 ? ['Aucun prix Leader Price trouvé pour cette recherche.'] : [],
       };
     } catch {
       return {

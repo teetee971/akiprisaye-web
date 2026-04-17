@@ -55,9 +55,7 @@ const normalizeTerritoryCode = (territory) => {
 const formatStoreLabel = (storeId) => {
   const raw = String(storeId ?? '').trim();
   if (!raw) return 'Prix local';
-  return raw
-    .replace(/[-_]+/g, ' ')
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  return raw.replace(/[-_]+/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 };
 
 const formatObservedAt = (value) => {
@@ -153,7 +151,9 @@ export default function Comparateur() {
   const [favoriteMerchants, setFavoriteMerchants] = useState(() => {
     if (typeof window === 'undefined') return new Set();
     try {
-      const stored = JSON.parse(window.localStorage.getItem('comparateur-favorite-merchants') || '[]');
+      const stored = JSON.parse(
+        window.localStorage.getItem('comparateur-favorite-merchants') || '[]'
+      );
       return new Set(Array.isArray(stored) ? stored : []);
     } catch {
       return new Set();
@@ -162,8 +162,12 @@ export default function Comparateur() {
   const [searchSuggestions, setSearchSuggestions] = useState(() => {
     if (typeof window === 'undefined') return defaultSearchSuggestions;
     try {
-      const stored = JSON.parse(window.localStorage.getItem('comparateur-search-suggestions') || '[]');
-      const merged = [...new Set([...defaultSearchSuggestions, ...(Array.isArray(stored) ? stored : [])])];
+      const stored = JSON.parse(
+        window.localStorage.getItem('comparateur-search-suggestions') || '[]'
+      );
+      const merged = [
+        ...new Set([...defaultSearchSuggestions, ...(Array.isArray(stored) ? stored : [])]),
+      ];
       return merged.slice(0, 20);
     } catch {
       return defaultSearchSuggestions;
@@ -181,16 +185,18 @@ export default function Comparateur() {
   const [paywall, setPaywall] = useState(null);
   const territory = useMemo(() => {
     if (typeof window === 'undefined') return 'gp';
-    const stored = window.localStorage.getItem('akiprisaye-territory')
-      || window.localStorage.getItem('territory')
-      || 'gp';
+    const stored =
+      window.localStorage.getItem('akiprisaye-territory') ||
+      window.localStorage.getItem('territory') ||
+      'gp';
     return normalizeTerritoryCode(stored);
   }, []);
 
   const filteredResults = useMemo(() => {
     return results.filter((item) => {
       if (maxPriceFilter && Number(item.price) >= 5) return false;
-      if (citizenOnlyFilter && !['observation', 'local-fallback'].includes(item.source)) return false;
+      if (citizenOnlyFilter && !['observation', 'local-fallback'].includes(item.source))
+        return false;
       if (recentOnlyFilter) {
         if (!item.observedAt) return false;
         const observedAt = new Date(item.observedAt);
@@ -203,7 +209,7 @@ export default function Comparateur() {
   }, [results, maxPriceFilter, citizenOnlyFilter, recentOnlyFilter]);
   const sorted = useMemo(
     () => sortResults(filteredResults, sortBy, favoriteMerchants),
-    [filteredResults, sortBy, favoriteMerchants],
+    [filteredResults, sortBy, favoriteMerchants]
   );
   const comparisonInsight = useMemo(() => {
     if (sorted.length < 2) return null;
@@ -219,14 +225,17 @@ export default function Comparateur() {
   }, [sorted]);
   const usesLocalFallback = useMemo(
     () => sorted.some((item) => item.source === 'local-fallback'),
-    [sorted],
+    [sorted]
   );
   const staleLocalFallback = useMemo(() => {
     const localDates = sorted
       .filter((item) => item.source === 'local-fallback' && item.observedAt)
       .map((item) => new Date(item.observedAt));
     if (!localDates.length) return false;
-    const newest = localDates.reduce((max, current) => (current > max ? current : max), localDates[0]);
+    const newest = localDates.reduce(
+      (max, current) => (current > max ? current : max),
+      localDates[0]
+    );
     const daysOld = (Date.now() - newest.getTime()) / (1000 * 60 * 60 * 24);
     return daysOld > 30;
   }, [sorted]);
@@ -283,17 +292,17 @@ export default function Comparateur() {
       const [searchRes, obsRes, webRes] = await Promise.allSettled([
         // 1. /api/price-search (SerpAPI Google Shopping)
         fetch(`/api/price-search?q=${encodeURIComponent(trimmed)}&territory=${territory}`)
-          .then((r) => r.ok ? r.json() : { results: [] })
+          .then((r) => (r.ok ? r.json() : { results: [] }))
           .catch(() => ({ results: [] })),
         // 2. /api/observations (contributions citoyennes, si barcode)
         isBarcode
           ? fetch(`/api/observations?barcode=${encodeURIComponent(trimmed)}&territory=${territory}`)
-            .then((r) => r.ok ? r.json() : { observations: [] })
-            .catch(() => ({ observations: [] }))
+              .then((r) => (r.ok ? r.json() : { observations: [] }))
+              .catch(() => ({ observations: [] }))
           : Promise.resolve({ observations: [] }),
         // 3. /api/web-price (Google Shopping enrichi)
         fetch(`/api/web-price?q=${encodeURIComponent(trimmed)}&territory=${territory}`)
-          .then((r) => r.ok ? r.json() : { results: [] })
+          .then((r) => (r.ok ? r.json() : { results: [] }))
           .catch(() => ({ results: [] })),
       ]);
 
@@ -352,7 +361,10 @@ export default function Comparateur() {
       if (typeof window !== 'undefined') {
         const nextSuggestions = [...new Set([trimmed, ...searchSuggestions])].slice(0, 20);
         setSearchSuggestions(nextSuggestions);
-        window.localStorage.setItem('comparateur-search-suggestions', JSON.stringify(nextSuggestions));
+        window.localStorage.setItem(
+          'comparateur-search-suggestions',
+          JSON.stringify(nextSuggestions)
+        );
       }
       cacheProductResults(mergedResults);
       const entry = {
@@ -382,7 +394,10 @@ export default function Comparateur() {
       if (next.has(key)) next.delete(key);
       else next.add(key);
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem('comparateur-favorite-merchants', JSON.stringify(Array.from(next)));
+        window.localStorage.setItem(
+          'comparateur-favorite-merchants',
+          JSON.stringify(Array.from(next))
+        );
       }
       return next;
     });
@@ -391,12 +406,15 @@ export default function Comparateur() {
     setBasketItems((prev) => {
       const exists = prev.some((item) => item.id === result.id);
       if (exists || prev.length >= 20) return prev;
-      const next = [...prev, {
-        id: result.id,
-        title: result.title,
-        merchant: result.merchant,
-        price: Number(result.price),
-      }];
+      const next = [
+        ...prev,
+        {
+          id: result.id,
+          title: result.title,
+          merchant: result.merchant,
+          price: Number(result.price),
+        },
+      ];
       if (typeof window !== 'undefined') {
         window.localStorage.setItem('comparateur-basket-items', JSON.stringify(next));
       }
@@ -470,8 +488,15 @@ export default function Comparateur() {
         </form>
 
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-          <label htmlFor="comp-sort" className="text-sm">Tri:&nbsp;
-            <select id="comp-sort" name="sort" className="ml-2 border border-slate-700 rounded px-2 py-1 bg-slate-900/40" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <label htmlFor="comp-sort" className="text-sm">
+            Tri:&nbsp;
+            <select
+              id="comp-sort"
+              name="sort"
+              className="ml-2 border border-slate-700 rounded px-2 py-1 bg-slate-900/40"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
               <option value="price_asc">Prix croissant</option>
               <option value="price_desc">Prix décroissant</option>
               <option value="merchant">Source</option>
@@ -481,7 +506,9 @@ export default function Comparateur() {
             <span className="text-xs text-slate-400">
               {sorted.length} résultat{sorted.length > 1 ? 's' : ''}
             </span>
-            <Link className="text-blue-400 text-sm hover:underline" to="/historique">Voir historique</Link>
+            <Link className="text-blue-400 text-sm hover:underline" to="/historique">
+              Voir historique
+            </Link>
             <ShareButton
               title="Comparateur de prix — A KI PRI SA YÉ"
               description="Comparez les prix des produits dans votre territoire ultramarin"
@@ -490,13 +517,25 @@ export default function Comparateur() {
           </div>
         </div>
         <div className="flex flex-wrap gap-2 pt-1">
-          <button type="button" onClick={() => setMaxPriceFilter((v) => !v)} className={`px-2.5 py-1 rounded-full text-xs border ${maxPriceFilter ? 'bg-blue-600 text-white border-blue-500' : 'border-slate-600 text-slate-300'}`}>
+          <button
+            type="button"
+            onClick={() => setMaxPriceFilter((v) => !v)}
+            className={`px-2.5 py-1 rounded-full text-xs border ${maxPriceFilter ? 'bg-blue-600 text-white border-blue-500' : 'border-slate-600 text-slate-300'}`}
+          >
             {maxPriceFilter ? '✓ ' : ''}Moins de 5€
           </button>
-          <button type="button" onClick={() => setCitizenOnlyFilter((v) => !v)} className={`px-2.5 py-1 rounded-full text-xs border ${citizenOnlyFilter ? 'bg-blue-600 text-white border-blue-500' : 'border-slate-600 text-slate-300'}`}>
+          <button
+            type="button"
+            onClick={() => setCitizenOnlyFilter((v) => !v)}
+            className={`px-2.5 py-1 rounded-full text-xs border ${citizenOnlyFilter ? 'bg-blue-600 text-white border-blue-500' : 'border-slate-600 text-slate-300'}`}
+          >
             {citizenOnlyFilter ? '✓ ' : ''}Sources citoyennes uniquement
           </button>
-          <button type="button" onClick={() => setRecentOnlyFilter((v) => !v)} className={`px-2.5 py-1 rounded-full text-xs border ${recentOnlyFilter ? 'bg-blue-600 text-white border-blue-500' : 'border-slate-600 text-slate-300'}`}>
+          <button
+            type="button"
+            onClick={() => setRecentOnlyFilter((v) => !v)}
+            className={`px-2.5 py-1 rounded-full text-xs border ${recentOnlyFilter ? 'bg-blue-600 text-white border-blue-500' : 'border-slate-600 text-slate-300'}`}
+          >
             {recentOnlyFilter ? '✓ ' : ''}Vu &lt; 7 jours
           </button>
         </div>
@@ -506,24 +545,34 @@ export default function Comparateur() {
         <section className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2">
             <p className="text-xs text-emerald-200">Meilleur prix</p>
-            <p className="text-lg font-semibold text-white">{Number(bestPrice?.price || 0).toFixed(2)} €</p>
+            <p className="text-lg font-semibold text-white">
+              {Number(bestPrice?.price || 0).toFixed(2)} €
+            </p>
             <p className="text-xs text-emerald-100 truncate">{bestPrice?.merchant || '—'}</p>
           </div>
           <div className="rounded-xl border border-slate-600/50 bg-slate-900/30 px-3 py-2">
             <p className="text-xs text-slate-400">Prix moyen</p>
-            <p className="text-lg font-semibold text-white">{Number(averagePrice || 0).toFixed(2)} €</p>
-            <p className="text-xs text-slate-400">sur {sorted.length} offre{sorted.length > 1 ? 's' : ''}</p>
+            <p className="text-lg font-semibold text-white">
+              {Number(averagePrice || 0).toFixed(2)} €
+            </p>
+            <p className="text-xs text-slate-400">
+              sur {sorted.length} offre{sorted.length > 1 ? 's' : ''}
+            </p>
           </div>
           <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 px-3 py-2">
             <p className="text-xs text-blue-200">Économie max</p>
-            <p className="text-lg font-semibold text-white">{comparisonInsight ? `${comparisonInsight.savings.toFixed(2)} €` : '0.00 €'}</p>
+            <p className="text-lg font-semibold text-white">
+              {comparisonInsight ? `${comparisonInsight.savings.toFixed(2)} €` : '0.00 €'}
+            </p>
             <p className="text-xs text-blue-100">entre l’offre la plus chère et la moins chère</p>
           </div>
         </section>
       )}
 
       {error && <p className="text-red-600">{error}</p>}
-      {!loading && sorted.length === 0 && <p className="text-slate-500">Aucun résultat pour le moment.</p>}
+      {!loading && sorted.length === 0 && (
+        <p className="text-slate-500">Aucun résultat pour le moment.</p>
+      )}
       {!loading && sorted.length === 0 && query.trim().length >= 2 && (
         <p className="text-xs text-slate-400">
           Astuce : essayez un terme plus générique (ex : “lait”, “riz”, “huile”) ou le code-barres.
@@ -534,11 +583,14 @@ export default function Comparateur() {
           <div>
             <p className="text-xs text-amber-200 font-semibold">📊 Indicateur DOM / Métropole</p>
             <p className="text-xs text-amber-100 mt-0.5">
-              Référence estimée en métropole : <strong>{domGapInfo.refMetropole.toFixed(2)} €</strong>
+              Référence estimée en métropole :{' '}
+              <strong>{domGapInfo.refMetropole.toFixed(2)} €</strong>
               &nbsp;·&nbsp; Surcoût alimentaire DOM : <strong>+{domGapInfo.surcout} %</strong>
             </p>
           </div>
-          <p className="text-[10px] text-amber-300/70 italic">Source : INSEE — Enquête BDF DOM 2017/2018</p>
+          <p className="text-[10px] text-amber-300/70 italic">
+            Source : INSEE — Enquête BDF DOM 2017/2018
+          </p>
         </div>
       )}
       {comparisonInsight && (
@@ -561,7 +613,10 @@ export default function Comparateur() {
 
       <ul className="space-y-2">
         {sorted.map((result) => (
-          <li key={result.id} className="border border-slate-700/60 bg-slate-900/20 rounded-xl p-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4">
+          <li
+            key={result.id}
+            className="border border-slate-700/60 bg-slate-900/20 rounded-xl p-3 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-4"
+          >
             <div className="min-w-0">
               <p className="font-semibold truncate">{result.title}</p>
               <div className="flex items-center gap-2 mt-0.5 flex-wrap">
@@ -571,22 +626,34 @@ export default function Comparateur() {
                   onClick={() => toggleFavoriteMerchant(result.merchant)}
                   className="text-xs px-1.5 py-0.5 rounded border border-amber-300/50 text-amber-300"
                 >
-                  {favoriteMerchants.has(String(result.merchant || '').toLowerCase()) ? '★ Favori' : '☆ Favori'}
+                  {favoriteMerchants.has(String(result.merchant || '').toLowerCase())
+                    ? '★ Favori'
+                    : '☆ Favori'}
                 </button>
                 {formatObservedAt(result.observedAt) && (
-                  <span className="text-xs text-slate-400">Vu le {formatObservedAt(result.observedAt)}</span>
+                  <span className="text-xs text-slate-400">
+                    Vu le {formatObservedAt(result.observedAt)}
+                  </span>
                 )}
                 {freshnessLabel(result.observedAt) && (
-                  <span className="text-xs px-1.5 py-0.5 bg-slate-700/70 text-slate-200 rounded">{freshnessLabel(result.observedAt)}</span>
+                  <span className="text-xs px-1.5 py-0.5 bg-slate-700/70 text-slate-200 rounded">
+                    {freshnessLabel(result.observedAt)}
+                  </span>
                 )}
                 {result.source === 'observation' && (
-                  <span className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded">👥 Citoyen</span>
+                  <span className="text-xs px-1.5 py-0.5 bg-orange-100 text-orange-700 rounded">
+                    👥 Citoyen
+                  </span>
                 )}
                 {(result.source === 'web' || result.source === 'price-search') && (
-                  <span className="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">🌐 Web</span>
+                  <span className="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">
+                    🌐 Web
+                  </span>
                 )}
                 {result.source === 'local-fallback' && (
-                  <span className="text-xs px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">💾 Local</span>
+                  <span className="text-xs px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">
+                    💾 Local
+                  </span>
                 )}
               </div>
             </div>
@@ -594,14 +661,28 @@ export default function Comparateur() {
               <p className="font-bold text-lg">{Number(result.price).toFixed(2)} €</p>
               <div className="flex gap-2 sm:justify-end mt-0.5">
                 {result.url && (
-                  <a href={result.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">
+                  <a
+                    href={result.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:underline"
+                  >
                     Voir →
                   </a>
                 )}
-                <button type="button" className="text-xs text-emerald-300 hover:underline" onClick={() => addToBasket(result)}>
+                <button
+                  type="button"
+                  className="text-xs text-emerald-300 hover:underline"
+                  onClick={() => addToBasket(result)}
+                >
                   + Panier
                 </button>
-                <Link to={`/produit/${encodeURIComponent(result.id)}`} className="text-xs text-slate-400 hover:text-blue-600">Fiche</Link>
+                <Link
+                  to={`/produit/${encodeURIComponent(result.id)}`}
+                  className="text-xs text-slate-400 hover:text-blue-600"
+                >
+                  Fiche
+                </Link>
               </div>
             </div>
           </li>
@@ -614,15 +695,25 @@ export default function Comparateur() {
           <span className="text-xs text-violet-100">{basketItems.length}/20</span>
         </div>
         {!basketItems.length && (
-          <p className="text-sm text-violet-100 mt-2">Ajoutez des produits via “+ Panier” pour comparer le total par enseigne.</p>
+          <p className="text-sm text-violet-100 mt-2">
+            Ajoutez des produits via “+ Panier” pour comparer le total par enseigne.
+          </p>
         )}
         {basketItems.length > 0 && (
           <div className="mt-2 space-y-2">
             <ul className="space-y-1">
               {basketItems.map((item) => (
                 <li key={item.id} className="flex items-center justify-between text-sm gap-2">
-                  <span className="truncate">{item.title} · {item.merchant}</span>
-                  <button type="button" onClick={() => removeFromBasket(item.id)} className="text-xs text-red-300 hover:underline">Retirer</button>
+                  <span className="truncate">
+                    {item.title} · {item.merchant}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeFromBasket(item.id)}
+                    className="text-xs text-red-300 hover:underline"
+                  >
+                    Retirer
+                  </button>
                 </li>
               ))}
             </ul>
@@ -652,13 +743,33 @@ export default function Comparateur() {
       <div className="border rounded p-3">
         <p className="font-medium mb-2">Fonctions Pro</p>
         <div className="flex flex-wrap gap-2">
-          <button className="px-3 py-2 border rounded text-sm" onClick={() => !isPro && setPaywall('pro_feature')}>Export CSV/PDF</button>
-          <button className="px-3 py-2 border rounded text-sm" onClick={() => !isPro && setPaywall('pro_feature')}>Alertes prix</button>
-          <button className="px-3 py-2 border rounded text-sm" onClick={() => !isPro && setPaywall('pro_feature')}>Insights complets</button>
+          <button
+            className="px-3 py-2 border rounded text-sm"
+            onClick={() => !isPro && setPaywall('pro_feature')}
+          >
+            Export CSV/PDF
+          </button>
+          <button
+            className="px-3 py-2 border rounded text-sm"
+            onClick={() => !isPro && setPaywall('pro_feature')}
+          >
+            Alertes prix
+          </button>
+          <button
+            className="px-3 py-2 border rounded text-sm"
+            onClick={() => !isPro && setPaywall('pro_feature')}
+          >
+            Insights complets
+          </button>
         </div>
       </div>
 
-      <PaywallModal open={Boolean(paywall)} reason={paywall || 'quota'} isGuest={!user} onClose={() => setPaywall(null)} />
+      <PaywallModal
+        open={Boolean(paywall)}
+        reason={paywall || 'quota'}
+        isGuest={!user}
+        onClose={() => setPaywall(null)}
+      />
     </div>
   );
 }

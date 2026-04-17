@@ -11,27 +11,48 @@ export interface B2BAccount {
 }
 
 export interface B2BOffer {
-  tier:        B2BOfferTier;
-  name:        string;
-  price:       string;
-  perks:       string[];
+  tier: B2BOfferTier;
+  name: string;
+  price: string;
+  perks: string[];
   targetScope: string;
 }
 
 const OFFERS: Record<B2BOfferTier, B2BOffer> = {
   starter: {
-    tier: 'starter', name: 'Starter', price: '99€ / mois',
-    perks: ['Badge "Enseigne partenaire"', 'Priorité classement local', 'Lien direct vers votre site'],
+    tier: 'starter',
+    name: 'Starter',
+    price: '99€ / mois',
+    perks: [
+      'Badge "Enseigne partenaire"',
+      'Priorité classement local',
+      'Lien direct vers votre site',
+    ],
     targetScope: '1 territoire, < 5 points de vente',
   },
   pro: {
-    tier: 'pro', name: 'Pro', price: '249€ / mois',
-    perks: ['Tout Starter', 'Rapport mensuel prix concurrents', 'Top 3 garanti sur vos catégories', 'Alerte concurrents'],
-    targetScope: 'jusqu\'à 3 territoires, 5–20 points de vente',
+    tier: 'pro',
+    name: 'Pro',
+    price: '249€ / mois',
+    perks: [
+      'Tout Starter',
+      'Rapport mensuel prix concurrents',
+      'Top 3 garanti sur vos catégories',
+      'Alerte concurrents',
+    ],
+    targetScope: "jusqu'à 3 territoires, 5–20 points de vente",
   },
   premium: {
-    tier: 'premium', name: 'Premium', price: 'Sur devis',
-    perks: ['Tout Pro', 'Page enseigne dédiée', 'Accès API données', 'Dashboard B2B personnalisé', 'Support dédié'],
+    tier: 'premium',
+    name: 'Premium',
+    price: 'Sur devis',
+    perks: [
+      'Tout Pro',
+      'Page enseigne dédiée',
+      'Accès API données',
+      'Dashboard B2B personnalisé',
+      'Support dédié',
+    ],
     targetScope: 'tous territoires, enseigne nationale ou groupement',
   },
 };

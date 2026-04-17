@@ -3,10 +3,10 @@ import { formatCurrency } from '../utils/formatters';
 
 /**
  * BasketTerritoryComparison - Display price comparison across territories
- * 
+ *
  * Shows a comparative table when multiple territories are selected.
  * Highlights the cheapest option with a badge.
- * 
+ *
  * @param {Object} props
  * @param {Array} props.comparison - Array of comparison results from compareBasketAcrossTerritories
  * @param {Object} props.basket - Original basket object for context
@@ -38,7 +38,7 @@ export default function BasketTerritoryComparison({ comparison, basket }) {
           </thead>
           <tbody className="divide-y divide-slate-700">
             {comparison.map((result, _index) => (
-              <tr 
+              <tr
                 key={result.territoryId}
                 className={`
                   ${result.isCheapest ? 'bg-green-900/20' : 'hover:bg-slate-800/30'}
@@ -58,24 +58,22 @@ export default function BasketTerritoryComparison({ comparison, basket }) {
                   </div>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <span className={`font-semibold ${result.isCheapest ? 'text-green-400' : 'text-slate-100'}`}>
+                  <span
+                    className={`font-semibold ${result.isCheapest ? 'text-green-400' : 'text-slate-100'}`}
+                  >
                     {formatCurrency(result.totalPrice)}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right">
                   {result.deltaFromMin > 0 ? (
-                    <span className="text-orange-400">
-                      +{formatCurrency(result.deltaFromMin)}
-                    </span>
+                    <span className="text-orange-400">+{formatCurrency(result.deltaFromMin)}</span>
                   ) : (
                     <span className="text-slate-500">—</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-right">
                   {result.deltaFromMin > 0 ? (
-                    <span className="text-orange-400">
-                      +{result.deltaPercentage.toFixed(1)}%
-                    </span>
+                    <span className="text-orange-400">+{result.deltaPercentage.toFixed(1)}%</span>
                   ) : (
                     <span className="text-slate-500">—</span>
                   )}
@@ -93,8 +91,8 @@ export default function BasketTerritoryComparison({ comparison, basket }) {
             💰 Économie potentielle : jusqu'à{' '}
             <strong className="text-green-400">
               {formatCurrency(comparison[comparison.length - 1].deltaFromMin)}
-            </strong>
-            {' '}en choisissant {getTerritoryDisplayName(comparison[0].territoryId)}
+            </strong>{' '}
+            en choisissant {getTerritoryDisplayName(comparison[0].territoryId)}
           </span>
         </div>
       </div>

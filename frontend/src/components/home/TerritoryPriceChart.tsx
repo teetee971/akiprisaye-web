@@ -24,9 +24,9 @@ const PRODUCTS = [
     unit: '€/L',
     data: [
       { territory: 'Hexagone', flag: '🇫🇷', avg: 1.16, color: '#64748b' },
-      { territory: 'Guadeloupe', flag: '🇬🇵', avg: 1.40, color: '#14b8a6' },
-      { territory: 'Martinique',  flag: '🇲🇶', avg: 1.45, color: '#f97316' },
-      { territory: 'Guyane',     flag: '🇬🇫', avg: 1.68, color: '#22c55e' },
+      { territory: 'Guadeloupe', flag: '🇬🇵', avg: 1.4, color: '#14b8a6' },
+      { territory: 'Martinique', flag: '🇲🇶', avg: 1.45, color: '#f97316' },
+      { territory: 'Guyane', flag: '🇬🇫', avg: 1.68, color: '#22c55e' },
       { territory: 'La Réunion', flag: '🇷🇪', avg: 1.45, color: '#a855f7' },
     ],
   },
@@ -37,8 +37,8 @@ const PRODUCTS = [
     data: [
       { territory: 'Hexagone', flag: '🇫🇷', avg: 1.72, color: '#64748b' },
       { territory: 'Guadeloupe', flag: '🇬🇵', avg: 2.04, color: '#14b8a6' },
-      { territory: 'Martinique',  flag: '🇲🇶', avg: 2.08, color: '#f97316' },
-      { territory: 'Guyane',     flag: '🇬🇫', avg: 2.34, color: '#22c55e' },
+      { territory: 'Martinique', flag: '🇲🇶', avg: 2.08, color: '#f97316' },
+      { territory: 'Guyane', flag: '🇬🇫', avg: 2.34, color: '#22c55e' },
       { territory: 'La Réunion', flag: '🇷🇪', avg: 1.96, color: '#a855f7' },
     ],
   },
@@ -49,8 +49,8 @@ const PRODUCTS = [
     data: [
       { territory: 'Hexagone', flag: '🇫🇷', avg: 0.72, color: '#64748b' },
       { territory: 'Guadeloupe', flag: '🇬🇵', avg: 0.87, color: '#14b8a6' },
-      { territory: 'Martinique',  flag: '🇲🇶', avg: 0.92, color: '#f97316' },
-      { territory: 'Guyane',     flag: '🇬🇫', avg: 1.05, color: '#22c55e' },
+      { territory: 'Martinique', flag: '🇲🇶', avg: 0.92, color: '#f97316' },
+      { territory: 'Guyane', flag: '🇬🇫', avg: 1.05, color: '#22c55e' },
       { territory: 'La Réunion', flag: '🇷🇪', avg: 0.88, color: '#a855f7' },
     ],
   },
@@ -61,7 +61,15 @@ interface TooltipPayload {
   unit: string;
 }
 
-function CustomTooltip({ active, payload, unit }: { active?: boolean; payload?: TooltipPayload[]; unit: string }) {
+function CustomTooltip({
+  active,
+  payload,
+  unit,
+}: {
+  active?: boolean;
+  payload?: TooltipPayload[];
+  unit: string;
+}) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
@@ -76,7 +84,15 @@ function CustomTooltip({ active, payload, unit }: { active?: boolean; payload?: 
   );
 }
 
-function CustomXAxisTick({ x, y, payload }: { x?: number; y?: number; payload?: { value: string } }) {
+function CustomXAxisTick({
+  x,
+  y,
+  payload,
+}: {
+  x?: number;
+  y?: number;
+  payload?: { value: string };
+}) {
   const label = payload?.value ?? '';
   // Find flag
   const found = PRODUCTS[0].data.find((d) => d.territory === label);
@@ -122,7 +138,11 @@ export default function TerritoryPriceChart() {
 
       <div className="price-chart-wrap" role="tabpanel" aria-label={product.label}>
         <ResponsiveContainer width="100%" height={280}>
-          <BarChart data={product.data} margin={{ top: 8, right: 16, left: 0, bottom: 8 }} barCategoryGap="30%">
+          <BarChart
+            data={product.data}
+            margin={{ top: 8, right: 16, left: 0, bottom: 8 }}
+            barCategoryGap="30%"
+          >
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" vertical={false} />
             <XAxis
               dataKey="territory"

@@ -11,10 +11,13 @@ export function enforceBuildVersionSync(buildId: string | undefined) {
       // buildId a changé => on purge les caches SW + reload
       if ('caches' in window) {
         const win = window as Window;
-        caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))).finally(() => {
-          localStorage.setItem(KEY, buildId!);
-          win.location.reload();
-        });
+        caches
+          .keys()
+          .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+          .finally(() => {
+            localStorage.setItem(KEY, buildId!);
+            win.location.reload();
+          });
         return;
       }
       localStorage.setItem(KEY, buildId);

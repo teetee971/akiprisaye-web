@@ -1,8 +1,32 @@
 import React, { useRef, useEffect } from 'react';
-import { Chart, BarController, LineController, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ChartConfiguration } from 'chart.js';
+import {
+  Chart,
+  BarController,
+  LineController,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+  ChartConfiguration,
+} from 'chart.js';
 
 // Register Chart.js components (controllers must be registered alongside elements)
-Chart.register(BarController, LineController, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+Chart.register(
+  BarController,
+  LineController,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export interface PriceChartProps {
   data: {
@@ -70,7 +94,7 @@ const PriceChart: React.FC<PriceChartProps> = ({ data, type = 'bar', title, heig
             padding: 12,
             displayColors: true,
             callbacks: {
-              label: function(context) {
+              label: function (context) {
                 let label = context.dataset.label || '';
                 if (label) {
                   label += ': ';
@@ -104,7 +128,7 @@ const PriceChart: React.FC<PriceChartProps> = ({ data, type = 'bar', title, heig
               font: {
                 size: 11,
               },
-              callback: function(value) {
+              callback: function (value) {
                 return new Intl.NumberFormat('fr-FR', {
                   style: 'currency',
                   currency: 'EUR',

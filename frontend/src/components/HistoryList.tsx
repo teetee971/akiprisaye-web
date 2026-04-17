@@ -1,5 +1,3 @@
- 
- 
 import React, { useEffect, useState } from 'react';
 import { GlassCard } from './ui/glass-card';
 import { safeLocalStorage } from '../utils/safeLocalStorage';
@@ -75,7 +73,9 @@ export default function HistoryList() {
           <li key={it.id} className="text-sm text-gray-200">
             <div className="font-medium text-white">{it.name ?? 'Produit'}</div>
             <div className="text-xs text-gray-400">
-              {it.price ? `${it.price}` : ''}{it.store ? ` — ${it.store}` : ''}{it.territory ? ` — ${it.territory}` : ''}
+              {it.price ? `${it.price}` : ''}
+              {it.store ? ` — ${it.store}` : ''}
+              {it.territory ? ` — ${it.territory}` : ''}
             </div>
           </li>
         ))}

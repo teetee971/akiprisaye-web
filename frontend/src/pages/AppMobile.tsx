@@ -36,14 +36,14 @@ export default function AppMobile() {
   const [clearing, setClearing] = useState(false);
 
   useEffect(() => {
-    setPushEnabled(
-      typeof Notification !== 'undefined' && Notification.permission === 'granted'
-    );
+    setPushEnabled(typeof Notification !== 'undefined' && Notification.permission === 'granted');
   }, []);
 
   const handlePushToggle = useCallback(async () => {
     if (pushEnabled) {
-      toast('Les notifications doivent être désactivées dans les paramètres du navigateur.', { icon: 'ℹ️' });
+      toast('Les notifications doivent être désactivées dans les paramètres du navigateur.', {
+        icon: 'ℹ️',
+      });
       return;
     }
     const granted = await requestPushPermission();
@@ -63,8 +63,7 @@ export default function AppMobile() {
   }, []);
 
   const platformLabel = platform === 'ios' ? 'iOS' : platform === 'android' ? 'Android' : 'Web';
-  const platformIcon =
-    platform === 'ios' ? '🍎' : platform === 'android' ? '🤖' : '🌐';
+  const platformIcon = platform === 'ios' ? '🍎' : platform === 'android' ? '🤖' : '🌐';
 
   return (
     <>
@@ -188,8 +187,8 @@ export default function AppMobile() {
               <Info className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-blue-200">
                 Sur iOS/Android natif, les push utilisent{' '}
-                <strong>@capacitor/push-notifications</strong>. En mode web, l'API Notification
-                du navigateur est utilisée.
+                <strong>@capacitor/push-notifications</strong>. En mode web, l'API Notification du
+                navigateur est utilisée.
               </p>
             </div>
           </section>
@@ -214,15 +213,13 @@ export default function AppMobile() {
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <p className="text-sm text-slate-200">
-                      Abonnement Pro :{' '}
-                      <strong className="text-white">2,99 €/mois</strong>
+                      Abonnement Pro : <strong className="text-white">2,99 €/mois</strong>
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <p className="text-sm text-slate-200">
-                      Annuel :{' '}
-                      <strong className="text-white">24,99 €/an</strong>
+                      Annuel : <strong className="text-white">24,99 €/an</strong>
                     </p>
                   </div>
                 </div>
@@ -241,15 +238,13 @@ export default function AppMobile() {
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <p className="text-sm text-slate-200">
-                      Abonnement Pro :{' '}
-                      <strong className="text-white">2,99 €/mois</strong>
+                      Abonnement Pro : <strong className="text-white">2,99 €/mois</strong>
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-emerald-400" />
                     <p className="text-sm text-slate-200">
-                      Annuel :{' '}
-                      <strong className="text-white">24,99 €/an</strong>
+                      Annuel : <strong className="text-white">24,99 €/an</strong>
                     </p>
                   </div>
                 </div>
@@ -258,9 +253,8 @@ export default function AppMobile() {
             <div className="mt-4 bg-violet-900/20 border border-violet-700/30 rounded-lg p-3 flex gap-2">
               <Info className="w-4 h-4 text-violet-400 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-violet-200">
-                Disponible sur l'App Store et Google Play —{' '}
-                <strong>sortie prévue T3 2026</strong>. Commission Apple/Google : 30% (15% small
-                business).
+                Disponible sur l'App Store et Google Play — <strong>sortie prévue T3 2026</strong>.
+                Commission Apple/Google : 30% (15% small business).
               </p>
             </div>
           </section>
@@ -273,9 +267,7 @@ export default function AppMobile() {
             </div>
             <div className="flex flex-col items-center justify-center bg-slate-900 rounded-xl border-2 border-dashed border-slate-600 py-12 gap-3">
               <QrCode className="w-16 h-16 text-slate-600" />
-              <p className="text-sm font-semibold text-slate-400">
-                QR code de téléchargement
-              </p>
+              <p className="text-sm font-semibold text-slate-400">QR code de téléchargement</p>
               <p className="text-xs text-slate-500">Disponible bientôt — T3 2026</p>
             </div>
           </section>

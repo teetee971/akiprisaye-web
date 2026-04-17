@@ -45,7 +45,8 @@ export function getStoresByCompany(territory: Territory): StoreCompanyResult[] {
   const companyMap: Record<string, StoreCompany[]> = {};
 
   for (const store of stores) {
-    const companyName = store.company && store.company.trim().length > 0 ? store.company : 'Indépendant';
+    const companyName =
+      store.company && store.company.trim().length > 0 ? store.company : 'Indépendant';
     if (!companyMap[companyName]) {
       companyMap[companyName] = [];
     }

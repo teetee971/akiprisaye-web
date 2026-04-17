@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   Check,
   X,
@@ -21,64 +21,64 @@ import {
   Building2,
   BadgeCheck,
   Phone,
-} from 'lucide-react'
-import { HeroImage } from '../components/ui/HeroImage'
-import { PAGE_HERO_IMAGES } from '../config/imageAssets'
-import PricingConversionBanner from '../components/PricingConversionBanner'
-import { trackConversion } from '../services/subscriptionConversionService'
+} from 'lucide-react';
+import { HeroImage } from '../components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '../config/imageAssets';
+import PricingConversionBanner from '../components/PricingConversionBanner';
+import { trackConversion } from '../services/subscriptionConversionService';
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
 /* ------------------------------------------------------------------ */
 
 interface PlanFeature {
-  label: string
-  included: boolean
+  label: string;
+  included: boolean;
 }
 
 interface PlanUI {
-  id: string
-  icon: string
-  label: string
-  tagline: string
-  monthlyPrice: number | null    // null = sur devis
-  yearlyPrice: number | null     // full yearly amount, null = sur devis
-  yearlyMonthly: number | null   // monthly equivalent when billed yearly
-  domDiscount: boolean
-  highlight: boolean
-  highlightLabel?: string
-  trialBadge?: string
-  alwaysFree?: boolean
-  ctaLabel: string
-  ctaHref: string
-  features: PlanFeature[]
+  id: string;
+  icon: string;
+  label: string;
+  tagline: string;
+  monthlyPrice: number | null; // null = sur devis
+  yearlyPrice: number | null; // full yearly amount, null = sur devis
+  yearlyMonthly: number | null; // monthly equivalent when billed yearly
+  domDiscount: boolean;
+  highlight: boolean;
+  highlightLabel?: string;
+  trialBadge?: string;
+  alwaysFree?: boolean;
+  ctaLabel: string;
+  ctaHref: string;
+  features: PlanFeature[];
 }
 
 interface AddOn {
-  icon: string
-  title: string
-  price: string
-  description: string
-  includedIn?: string
+  icon: string;
+  title: string;
+  price: string;
+  description: string;
+  includedIn?: string;
 }
 
 interface RevenueOption {
-  icon: React.ReactNode
-  title: string
-  subtitle: string
-  description: string
-  price: string
-  priceDetail: string
-  color: string
-  borderColor: string
-  ctaLabel: string
-  ctaHref: string
-  badge?: string
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  description: string;
+  price: string;
+  priceDetail: string;
+  color: string;
+  borderColor: string;
+  ctaLabel: string;
+  ctaHref: string;
+  badge?: string;
 }
 
 interface FaqItem {
-  q: string
-  a: string
+  q: string;
+  a: string;
 }
 
 /* ------------------------------------------------------------------ */
@@ -166,7 +166,7 @@ const PLANS: PlanUI[] = [
     id: 'BUSINESS',
     icon: '💼',
     label: 'Business',
-    tagline: "Pour équipes, entreprises et exploitation intensive.",
+    tagline: 'Pour équipes, entreprises et exploitation intensive.',
     monthlyPrice: 49,
     yearlyPrice: 468,
     yearlyMonthly: 39,
@@ -186,7 +186,7 @@ const PLANS: PlanUI[] = [
       { label: 'Open-data export', included: false },
     ],
   },
-]
+];
 
 const ADD_ONS: AddOn[] = [
   {
@@ -228,7 +228,7 @@ const ADD_ONS: AddOn[] = [
     price: 'dès 4,99 €',
     description: '10 relevés terrain rémunérés, convertibles en crédits abonnement',
   },
-]
+];
 
 const REVENUE_OPTIONS: RevenueOption[] = [
   {
@@ -238,7 +238,7 @@ const REVENUE_OPTIONS: RevenueOption[] = [
     description:
       "Un don unique pour soutenir la mission citoyenne : surveiller les prix et lutter contre la vie chère outre-mer. Chaque contribution finance les serveurs, les relevés terrain et le développement de l'application.",
     price: 'Dès 2 €',
-    priceDetail: "don unique, déductible des impôts *",
+    priceDetail: 'don unique, déductible des impôts *',
     color: 'from-rose-900/30 to-pink-900/20',
     borderColor: 'border-rose-700/40',
     ctaLabel: '❤️ Faire un don',
@@ -250,7 +250,7 @@ const REVENUE_OPTIONS: RevenueOption[] = [
     title: 'Publicité Locale',
     subtitle: 'Toucher les consommateurs DOM',
     description:
-      "Faites connaître votre enseigne, vos promotions ou vos services directement aux citoyens qui comparent les prix. Visibilité ciblée par territoire (Guadeloupe, Martinique, Guyane, Réunion, Mayotte).",
+      'Faites connaître votre enseigne, vos promotions ou vos services directement aux citoyens qui comparent les prix. Visibilité ciblée par territoire (Guadeloupe, Martinique, Guyane, Réunion, Mayotte).',
     price: 'Dès 49 €/mois',
     priceDetail: 'par territoire — bannière ou encart sponsorisé',
     color: 'from-amber-900/30 to-yellow-900/20',
@@ -292,7 +292,7 @@ const REVENUE_OPTIONS: RevenueOption[] = [
     title: 'Données & Rapports B2B',
     subtitle: 'Études, journalistes, chercheurs',
     description:
-      "Rapports de tendances tarifaires par territoire, par catégorie ou par produit. Données anonymisées et agrégées. Formats CSV, JSON, PDF. Idéal pour études de marché, articles de presse, mémoires universitaires.",
+      'Rapports de tendances tarifaires par territoire, par catégorie ou par produit. Données anonymisées et agrégées. Formats CSV, JSON, PDF. Idéal pour études de marché, articles de presse, mémoires universitaires.',
     price: 'Dès 50 €',
     priceDetail: 'par rapport personnalisé — sur devis pour flux continu',
     color: 'from-blue-900/30 to-cyan-900/20',
@@ -315,7 +315,7 @@ const REVENUE_OPTIONS: RevenueOption[] = [
     ctaHref: '/contribuer',
     badge: '🤝 Communauté',
   },
-]
+];
 
 const FAQ_ITEMS: FaqItem[] = [
   {
@@ -352,26 +352,26 @@ const FAQ_ITEMS: FaqItem[] = [
   },
   {
     q: 'Les add-ons peuvent-ils être annulés séparément ?',
-    a: "Oui. Chaque add-on est géré indépendamment et peut être résilié à tout moment depuis votre compte sans affecter votre plan principal.",
+    a: 'Oui. Chaque add-on est géré indépendamment et peut être résilié à tout moment depuis votre compte sans affecter votre plan principal.',
   },
-]
+];
 
 /* ------------------------------------------------------------------ */
 /* Composant principal                                                 */
 /* ------------------------------------------------------------------ */
 
 export default function PricingPage() {
-  const [cycle, setCycle] = useState<'monthly' | 'yearly'>('monthly')
-  const [marketOpen, setMarketOpen] = useState(false)
-  const [openFaq, setOpenFaq] = useState<number | null>(null)
+  const [cycle, setCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [marketOpen, setMarketOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   // Track pricing page view for conversion analytics
   useEffect(() => {
-    trackConversion({ type: 'pricing_view' })
-  }, [])
+    trackConversion({ type: 'pricing_view' });
+  }, []);
 
   function formatPrice(n: number): string {
-    return n % 1 === 0 ? `${n}` : n.toFixed(2).replace('.', ',')
+    return n % 1 === 0 ? `${n}` : n.toFixed(2).replace('.', ',');
   }
 
   return (
@@ -387,7 +387,6 @@ export default function PricingPage() {
 
       <div className="min-h-screen bg-slate-950 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
           {/* ====================================================== */}
           {/* 1. Hero                                                 */}
           {/* ====================================================== */}
@@ -402,14 +401,15 @@ export default function PricingPage() {
                 Abonnements &amp; Tarifs
               </h1>
               <p className="text-slate-200 text-sm drop-shadow max-w-2xl mt-1">
-                Choisissez d’abord le bon parcours : découvrir gratuitement, suivre vos économies ou équiper une organisation.
+                Choisissez d’abord le bon parcours : découvrir gratuitement, suivre vos économies ou
+                équiper une organisation.
               </p>
             </HeroImage>
 
             {/* Badge row */}
             <div className="mt-5 flex flex-wrap justify-center gap-3">
               {[
-                "🆓 Gratuit à vie pour l’essentiel",
+                '🆓 Gratuit à vie pour l’essentiel',
                 '⏱️ Essai 7 jours sur les plans payants',
                 '🌴 -30% résidents DOM',
               ].map((badge) => (
@@ -437,16 +437,21 @@ export default function PricingPage() {
               },
               {
                 title: 'Je veux aller plus loin',
-                description: 'Alertes, historique et suivi plus poussé pour gagner du temps et de l’argent.',
+                description:
+                  'Alertes, historique et suivi plus poussé pour gagner du temps et de l’argent.',
                 cta: 'Le plan Citoyen concentre l’essentiel premium.',
               },
               {
                 title: 'Je représente une structure',
-                description: 'Besoin d’accès multi-utilisateurs, de données ou d’un cadre institutionnel.',
+                description:
+                  'Besoin d’accès multi-utilisateurs, de données ou d’un cadre institutionnel.',
                 cta: 'Les offres Pro, Business et Institution sont dédiées à cet usage.',
               },
             ].map((item) => (
-              <div key={item.title} className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+              <div
+                key={item.title}
+                className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5"
+              >
                 <h2 className="text-base font-bold text-white">{item.title}</h2>
                 <p className="mt-2 text-sm leading-6 text-slate-400">{item.description}</p>
                 <p className="mt-3 text-sm font-medium text-indigo-300">{item.cta}</p>
@@ -466,10 +471,11 @@ export default function PricingPage() {
               <span className="text-base font-bold text-white">
                 📊 Pourquoi ces prix ? — contexte et positionnement
               </span>
-              {marketOpen
-                ? <ChevronUp className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
-                : <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
-              }
+              {marketOpen ? (
+                <ChevronUp className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" aria-hidden="true" />
+              )}
             </button>
 
             {marketOpen && (
@@ -479,10 +485,18 @@ export default function PricingPage() {
                   <table className="w-full text-sm border-collapse">
                     <thead>
                       <tr className="border-b border-slate-700">
-                        <th className="text-left py-2 pr-4 text-slate-400 font-semibold text-xs uppercase tracking-wide">App / Service</th>
-                        <th className="text-left py-2 pr-4 text-slate-400 font-semibold text-xs uppercase tracking-wide">Cible</th>
-                        <th className="text-left py-2 pr-4 text-slate-400 font-semibold text-xs uppercase tracking-wide">Prix base</th>
-                        <th className="text-left py-2 text-slate-400 font-semibold text-xs uppercase tracking-wide">Points clés</th>
+                        <th className="text-left py-2 pr-4 text-slate-400 font-semibold text-xs uppercase tracking-wide">
+                          App / Service
+                        </th>
+                        <th className="text-left py-2 pr-4 text-slate-400 font-semibold text-xs uppercase tracking-wide">
+                          Cible
+                        </th>
+                        <th className="text-left py-2 pr-4 text-slate-400 font-semibold text-xs uppercase tracking-wide">
+                          Prix base
+                        </th>
+                        <th className="text-left py-2 text-slate-400 font-semibold text-xs uppercase tracking-wide">
+                          Points clés
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800">
@@ -523,18 +537,21 @@ export default function PricingPage() {
                           highlight: true,
                         },
                       ].map((row) => (
-                        <tr
-                          key={row.name}
-                          className={row.highlight ? 'bg-indigo-900/30' : ''}
-                        >
-                          <td className={`py-2.5 pr-4 font-semibold ${row.highlight ? 'text-indigo-300' : 'text-slate-200'}`}>
+                        <tr key={row.name} className={row.highlight ? 'bg-indigo-900/30' : ''}>
+                          <td
+                            className={`py-2.5 pr-4 font-semibold ${row.highlight ? 'text-indigo-300' : 'text-slate-200'}`}
+                          >
                             {row.name}
                           </td>
                           <td className="py-2.5 pr-4 text-slate-400 text-xs">{row.target}</td>
-                          <td className={`py-2.5 pr-4 text-xs font-mono ${row.highlight ? 'text-indigo-300 font-bold' : 'text-slate-300'}`}>
+                          <td
+                            className={`py-2.5 pr-4 text-xs font-mono ${row.highlight ? 'text-indigo-300 font-bold' : 'text-slate-300'}`}
+                          >
                             {row.price}
                           </td>
-                          <td className={`py-2.5 text-xs ${row.highlight ? 'text-indigo-200 font-semibold' : 'text-slate-400'}`}>
+                          <td
+                            className={`py-2.5 text-xs ${row.highlight ? 'text-indigo-200 font-semibold' : 'text-slate-400'}`}
+                          >
                             {row.keys}
                           </td>
                         </tr>
@@ -546,16 +563,28 @@ export default function PricingPage() {
                 {/* Key insights */}
                 <div className="mt-5 grid sm:grid-cols-3 gap-3">
                   <div className="bg-indigo-900/30 border border-indigo-700/40 rounded-xl p-4">
-                    <p className="text-sm font-bold text-indigo-300 mb-1">🎯 Aucun concurrent direct en DOM</p>
-                    <p className="text-xs text-slate-400 leading-relaxed">Marché non adressé, opportunité unique</p>
+                    <p className="text-sm font-bold text-indigo-300 mb-1">
+                      🎯 Aucun concurrent direct en DOM
+                    </p>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Marché non adressé, opportunité unique
+                    </p>
                   </div>
                   <div className="bg-emerald-900/30 border border-emerald-700/40 rounded-xl p-4">
-                    <p className="text-sm font-bold text-emerald-300 mb-1">💶 Prix DOM: +17 à +40% vs métropole</p>
-                    <p className="text-xs text-slate-400 leading-relaxed">Valeur réelle de l'économie potentielle</p>
+                    <p className="text-sm font-bold text-emerald-300 mb-1">
+                      💶 Prix DOM: +17 à +40% vs métropole
+                    </p>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      Valeur réelle de l'économie potentielle
+                    </p>
                   </div>
                   <div className="bg-amber-900/30 border border-amber-700/40 rounded-xl p-4">
-                    <p className="text-sm font-bold text-amber-300 mb-1">📱 3,99 €/mo = moins d'un café</p>
-                    <p className="text-xs text-slate-400 leading-relaxed">ROI immédiat dès 1 produit suivi</p>
+                    <p className="text-sm font-bold text-amber-300 mb-1">
+                      📱 3,99 €/mo = moins d'un café
+                    </p>
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      ROI immédiat dès 1 produit suivi
+                    </p>
                   </div>
                 </div>
               </div>
@@ -598,19 +627,22 @@ export default function PricingPage() {
           {/* ====================================================== */}
           {/* 4. Plans grid (4 plans)                                */}
           {/* ====================================================== */}
-          <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4" aria-label="Plans d'abonnement">
+          <section
+            className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4"
+            aria-label="Plans d'abonnement"
+          >
             {PLANS.map((plan) => {
               const displayPrice =
                 plan.monthlyPrice === null
                   ? null
                   : cycle === 'yearly'
-                  ? plan.yearlyMonthly
-                  : plan.monthlyPrice
+                    ? plan.yearlyMonthly
+                    : plan.monthlyPrice;
 
               const yearlyTotal =
                 cycle === 'yearly' && plan.yearlyPrice !== null && plan.yearlyPrice > 0
                   ? plan.yearlyPrice
-                  : null
+                  : null;
 
               return (
                 <article
@@ -648,7 +680,9 @@ export default function PricingPage() {
                   <div className="flex-1">
                     {/* Icon + name */}
                     <div className="flex items-center gap-2 mb-1 mt-1">
-                      <span className="text-2xl" aria-hidden="true">{plan.icon}</span>
+                      <span className="text-2xl" aria-hidden="true">
+                        {plan.icon}
+                      </span>
                       <h2 className="text-lg font-bold text-white">{plan.label}</h2>
                     </div>
                     <p className="text-xs text-slate-400 mb-4 leading-relaxed">{plan.tagline}</p>
@@ -682,9 +716,7 @@ export default function PricingPage() {
                             </p>
                           )}
                           {plan.domDiscount && cycle === 'monthly' && (
-                            <p className="text-xs text-amber-400 mt-0.5">
-                              −30 % DOM disponible *
-                            </p>
+                            <p className="text-xs text-amber-400 mt-0.5">−30 % DOM disponible *</p>
                           )}
                         </>
                       )}
@@ -700,9 +732,15 @@ export default function PricingPage() {
                           }`}
                         >
                           {feat.included ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                            <Check
+                              className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5"
+                              aria-hidden="true"
+                            />
                           ) : (
-                            <X className="w-3.5 h-3.5 text-slate-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                            <X
+                              className="w-3.5 h-3.5 text-slate-600 flex-shrink-0 mt-0.5"
+                              aria-hidden="true"
+                            />
                           )}
                           {feat.label}
                         </li>
@@ -717,14 +755,14 @@ export default function PricingPage() {
                       plan.highlight
                         ? 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-900/40'
                         : plan.monthlyPrice === 0
-                        ? 'bg-slate-700 hover:bg-slate-600 text-white'
-                        : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-600'
+                          ? 'bg-slate-700 hover:bg-slate-600 text-white'
+                          : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-600'
                     }`}
                   >
                     {plan.ctaLabel}
                   </Link>
                 </article>
-              )
+              );
             })}
           </section>
 
@@ -732,7 +770,9 @@ export default function PricingPage() {
           {/* 5. Institution plan (full-width)                       */}
           {/* ====================================================== */}
           <article className="mt-5 bg-slate-900/70 border border-slate-700/60 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start">
-            <div className="shrink-0 text-4xl" aria-hidden="true">🏛️</div>
+            <div className="shrink-0 text-4xl" aria-hidden="true">
+              🏛️
+            </div>
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
                 <h2 className="text-xl font-bold text-white">Institution</h2>
@@ -753,7 +793,10 @@ export default function PricingPage() {
                   '20 territoires couverts',
                 ].map((feat) => (
                   <li key={feat} className="flex items-center gap-2 text-xs text-slate-300">
-                    <BadgeCheck className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" aria-hidden="true" />
+                    <BadgeCheck
+                      className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0"
+                      aria-hidden="true"
+                    />
                     {feat}
                   </li>
                 ))}
@@ -788,7 +831,9 @@ export default function PricingPage() {
                   key={addon.title}
                   className="flex gap-4 items-start bg-slate-900/70 border border-slate-700/60 rounded-xl p-5 hover:border-slate-600 transition-colors"
                 >
-                  <span className="text-2xl shrink-0" aria-hidden="true">{addon.icon}</span>
+                  <span className="text-2xl shrink-0" aria-hidden="true">
+                    {addon.icon}
+                  </span>
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
                       <h3 className="text-sm font-bold text-white">{addon.title}</h3>
@@ -823,11 +868,16 @@ export default function PricingPage() {
                   {[
                     { icon: '🚫', label: 'Aucune carte bancaire requise pour démarrer' },
                     { icon: '🔓', label: 'Accès à TOUTES les fonctionnalités du plan choisi' },
-                    { icon: '🔔', label: "Rappel 2 jours avant l’expiration de l’essai" },
+                    { icon: '🔔', label: 'Rappel 2 jours avant l’expiration de l’essai' },
                     { icon: '❌', label: 'Annulation en 1 clic, à tout moment' },
                   ].map((item) => (
-                    <li key={item.label} className="flex items-center gap-3 text-sm text-indigo-200">
-                      <span className="text-base" aria-hidden="true">{item.icon}</span>
+                    <li
+                      key={item.label}
+                      className="flex items-center gap-3 text-sm text-indigo-200"
+                    >
+                      <span className="text-base" aria-hidden="true">
+                        {item.icon}
+                      </span>
                       {item.label}
                     </li>
                   ))}
@@ -884,8 +934,8 @@ export default function PricingPage() {
                 Partenariats, soutien et demandes spécifiques
               </h2>
               <p className="mt-3 text-slate-400 max-w-2xl mx-auto text-sm leading-relaxed">
-                Cette section ne remplace pas les offres grand public. Elle regroupe les demandes particulières :
-                partenariats locaux, accompagnement, dons et besoins B2B.
+                Cette section ne remplace pas les offres grand public. Elle regroupe les demandes
+                particulières : partenariats locaux, accompagnement, dons et besoins B2B.
               </p>
             </div>
 
@@ -907,7 +957,9 @@ export default function PricingPage() {
                       <p className="text-xs text-white/60">{opt.subtitle}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-white/80 leading-relaxed flex-1 mb-4">{opt.description}</p>
+                  <p className="text-sm text-white/80 leading-relaxed flex-1 mb-4">
+                    {opt.description}
+                  </p>
                   <div className="mb-4 p-3 bg-black/20 rounded-xl">
                     <p className="text-lg font-extrabold text-white">{opt.price}</p>
                     <p className="text-xs text-white/50 mt-0.5">{opt.priceDetail}</p>
@@ -931,10 +983,7 @@ export default function PricingPage() {
           {/* 10. FAQ                                                */}
           {/* ====================================================== */}
           <section className="mt-16" aria-labelledby="faq-heading">
-            <h2
-              id="faq-heading"
-              className="text-2xl font-extrabold text-white text-center mb-8"
-            >
+            <h2 id="faq-heading" className="text-2xl font-extrabold text-white text-center mb-8">
               Questions fréquentes
             </h2>
             <div className="max-w-3xl mx-auto divide-y divide-slate-800">
@@ -996,9 +1045,8 @@ export default function PricingPage() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </>
-  )
+  );
 }

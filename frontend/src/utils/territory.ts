@@ -9,7 +9,7 @@ export const TERRITORIES = [
   { code: 'MF', name: 'Saint-Martin', flag: '🇲🇫' },
 ] as const;
 
-export type TerritoryCode = typeof TERRITORIES[number]['code'];
+export type TerritoryCode = (typeof TERRITORIES)[number]['code'];
 
 export function getTerritoryName(code: string): string {
   return TERRITORIES.find((t) => t.code === code)?.name ?? code;

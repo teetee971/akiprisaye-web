@@ -1,7 +1,6 @@
- 
 /**
  * Basket Comparison Page
- * 
+ *
  * Compares user's basket across multiple stores to find the best prices.
  * Enhanced with detailed comparison table, savings summary, filters, and optimized basket
  * PROMPT 4: Comparaison automatique du panier entre magasins
@@ -12,11 +11,11 @@ import toast from 'react-hot-toast';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { Share2, Download, Eye } from 'lucide-react';
 import { useTiPanier } from '../hooks/useTiPanier';
-import { 
-  compareBasketAcrossStores, 
+import {
+  compareBasketAcrossStores,
   getBasketComparisonStats,
   getDataFreshnessLabel,
-  type BasketStoreComparison 
+  type BasketStoreComparison,
 } from '../services/basketComparisonService';
 import { requestGeolocation } from '../utils/geolocationEnhanced';
 import { BasketComparisonTable } from '../components/comparison/basket-comparison-table';
@@ -38,7 +37,7 @@ export default function BasketComparisonPage() {
 
   // Get all unique territories from comparisons
   const availableTerritories = useMemo(() => {
-    const territories = new Set(allComparisons.map(c => c.territory));
+    const territories = new Set(allComparisons.map((c) => c.territory));
     return Array.from(territories).sort();
   }, [allComparisons]);
 
@@ -46,13 +45,13 @@ export default function BasketComparisonPage() {
   const [filters, setFilters] = useState<StoreFilterOptions>({
     territories: [],
     maxDistance: undefined,
-    includePromos: true
+    includePromos: true,
   });
 
   // Initialize filters with all territories once available
   useEffect(() => {
     if (availableTerritories.length > 0 && filters.territories.length === 0) {
-      setFilters(prev => ({ ...prev, territories: availableTerritories }));
+      setFilters((prev) => ({ ...prev, territories: availableTerritories }));
     }
   }, [availableTerritories]);
 
@@ -62,13 +61,13 @@ export default function BasketComparisonPage() {
 
     // Filter by territories
     if (filters.territories.length > 0) {
-      filtered = filtered.filter(c => filters.territories.includes(c.territory));
+      filtered = filtered.filter((c) => filters.territories.includes(c.territory));
     }
 
     // Filter by distance
     if (filters.maxDistance !== undefined && userPosition) {
-      filtered = filtered.filter(c => 
-        c.distance !== undefined && c.distance <= filters.maxDistance!
+      filtered = filtered.filter(
+        (c) => c.distance !== undefined && c.distance <= filters.maxDistance!
       );
     }
 
@@ -82,7 +81,7 @@ export default function BasketComparisonPage() {
       // Try to get user location
       const geoResult = await requestGeolocation();
       let position: { lat: number; lon: number } | undefined;
-      
+
       if (geoResult.success && geoResult.position) {
         position = {
           lat: geoResult.position.latitude,
@@ -130,8 +129,8 @@ export default function BasketComparisonPage() {
 
     // Gather all unique products
     const allProducts = new Map<string, string>();
-    comparisons.forEach(comp => {
-      comp.items.forEach(item => {
+    comparisons.forEach((comp) => {
+      comp.items.forEach((item) => {
         if (!allProducts.has(item.id)) {
           allProducts.set(item.id, item.name);
         }
@@ -139,19 +138,19 @@ export default function BasketComparisonPage() {
     });
 
     // Build CSV
-    let csv = 'Produit,' + comparisons.map(c => c.storeName).join(',') + '\n';
-    
+    let csv = 'Produit,' + comparisons.map((c) => c.storeName).join(',') + '\n';
+
     allProducts.forEach((name, id) => {
       let row = `"${name}"`;
-      comparisons.forEach(comp => {
-        const item = comp.items.find(i => i.id === id);
+      comparisons.forEach((comp) => {
+        const item = comp.items.find((i) => i.id === id);
         row += ',' + (item?.price ? item.price.toFixed(2) : 'N/A');
       });
       csv += row + '\n';
     });
 
     // Add totals row
-    csv += 'TOTAL,' + comparisons.map(c => c.totalPrice.toFixed(2)).join(',') + '\n';
+    csv += 'TOTAL,' + comparisons.map((c) => c.totalPrice.toFixed(2)).join(',') + '\n';
 
     // Download
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -164,9 +163,9 @@ export default function BasketComparisonPage() {
   // Share functionality
   const shareComparison = async () => {
     const url = window.location.href;
-    const text = stats.cheapestStore 
+    const text = stats.cheapestStore
       ? `J'ai comparé mon panier sur Akiprisayé ! Meilleur prix: ${stats.cheapestStore.storeName} à ${stats.cheapestStore.totalPrice.toFixed(2)}€. Économie possible: ${stats.priceDifference.toFixed(2)}€ 💰`
-      : 'J\'ai comparé mon panier sur Akiprisayé !';
+      : "J'ai comparé mon panier sur Akiprisayé !";
 
     if (navigator.share) {
       try {
@@ -192,8 +191,14 @@ export default function BasketComparisonPage() {
           gradient="from-slate-950 to-green-900"
           height="h-40 sm:h-52"
         >
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🛒 Comparaison de paniers</h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Comparez votre panier entre territoires et enseignes</p>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🛒 Comparaison de paniers
+          </h1>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Comparez votre panier entre territoires et enseignes
+          </p>
         </HeroImage>
         {/* PROMPT 8: Citizen Message */}
         <div className="bg-blue-900/20 border border-blue-700/50 rounded-xl p-5 mb-6">
@@ -218,15 +223,16 @@ export default function BasketComparisonPage() {
           >
             ← Retour
           </button>
-          
+
           <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
             <div className="flex items-start justify-between flex-wrap gap-4">
               <div>
                 <p className="text-gray-400">
-                  {count} article{count > 1 ? 's' : ''} • {comparisons.length} magasin{comparisons.length > 1 ? 's' : ''} trouvé{comparisons.length > 1 ? 's' : ''}
+                  {count} article{count > 1 ? 's' : ''} • {comparisons.length} magasin
+                  {comparisons.length > 1 ? 's' : ''} trouvé{comparisons.length > 1 ? 's' : ''}
                 </p>
               </div>
-              
+
               {stats.cheapestStore && stats.priceDifference > 0 && (
                 <div className="bg-green-900/20 border border-green-700 rounded-lg p-4">
                   <div className="text-sm text-green-300 mb-1">Économie possible</div>
@@ -322,16 +328,12 @@ export default function BasketComparisonPage() {
             {/* Comparison Table or List View */}
             {viewMode === 'table' ? (
               <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
-                <h2 className="text-xl font-semibold text-white mb-4">
-                  📊 Comparaison détaillée
-                </h2>
+                <h2 className="text-xl font-semibold text-white mb-4">📊 Comparaison détaillée</h2>
                 <BasketComparisonTable comparisons={comparisons} />
               </div>
             ) : (
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-white">
-                  📋 Liste des magasins
-                </h2>
+                <h2 className="text-xl font-semibold text-white">📋 Liste des magasins</h2>
                 {comparisons.map((comparison, index) => {
                   const freshnessInfo = getDataFreshnessLabel(comparison.dataFreshness);
                   const isHighlighted = comparison.storeId === highlightStoreId;
@@ -341,11 +343,11 @@ export default function BasketComparisonPage() {
                     <div
                       key={comparison.storeId}
                       className={`bg-slate-900 rounded-xl p-6 border transition-all ${
-                        isHighlighted 
-                          ? 'border-blue-500 ring-2 ring-blue-500/50' 
+                        isHighlighted
+                          ? 'border-blue-500 ring-2 ring-blue-500/50'
                           : isCheapest
-                          ? 'border-green-700'
-                          : 'border-slate-800'
+                            ? 'border-green-700'
+                            : 'border-slate-800'
                       }`}
                     >
                       {/* Store Header */}
@@ -353,16 +355,14 @@ export default function BasketComparisonPage() {
                         <div className="flex-1 min-w-[200px]">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-2xl">#{index + 1}</span>
-                            <h3 className="text-xl font-bold text-white">
-                              {comparison.storeName}
-                            </h3>
+                            <h3 className="text-xl font-bold text-white">{comparison.storeName}</h3>
                             {isCheapest && (
                               <span className="px-2 py-1 bg-green-900/30 text-green-300 text-xs rounded border border-green-700">
                                 🏆 Meilleur prix
                               </span>
                             )}
                           </div>
-                          
+
                           <div className="space-y-1 text-sm text-gray-400">
                             <div className="flex items-center gap-2">
                               <span>🏢</span>
@@ -370,14 +370,16 @@ export default function BasketComparisonPage() {
                             </div>
                             <div className="flex items-center gap-2">
                               <span>📍</span>
-                              <span>{comparison.address}, {comparison.city} ({comparison.territory})</span>
+                              <span>
+                                {comparison.address}, {comparison.city} ({comparison.territory})
+                              </span>
                             </div>
                             {comparison.distance !== undefined && (
                               <div className="flex items-center gap-2">
                                 <span>📏</span>
                                 <span>
-                                  {comparison.distance < 1 
-                                    ? `${Math.round(comparison.distance * 1000)} m` 
+                                  {comparison.distance < 1
+                                    ? `${Math.round(comparison.distance * 1000)} m`
                                     : `${comparison.distance.toFixed(1)} km`}
                                 </span>
                               </div>
@@ -428,9 +430,7 @@ export default function BasketComparisonPage() {
         {!loading && comparisons.length === 0 && (
           <div className="bg-slate-900 rounded-xl p-8 text-center border border-slate-800">
             <div className="text-5xl mb-4">🔍</div>
-            <h2 className="text-xl font-semibold text-white mb-2">
-              Aucun magasin trouvé
-            </h2>
+            <h2 className="text-xl font-semibold text-white mb-2">Aucun magasin trouvé</h2>
             <p className="text-gray-400 mb-6">
               Les produits de votre panier ne sont pas disponibles dans notre base de données.
             </p>
@@ -442,13 +442,11 @@ export default function BasketComparisonPage() {
           <div className="flex items-start gap-3">
             <span className="text-2xl">⚠️</span>
             <div>
-              <p className="text-amber-200 text-sm font-medium mb-1">
-                Les prix peuvent varier
-              </p>
+              <p className="text-amber-200 text-sm font-medium mb-1">Les prix peuvent varier</p>
               <p className="text-amber-100/80 text-xs">
-                Les prix affichés sont basés sur des observations déclarées et peuvent varier 
-                selon la date et la disponibilité réelle en magasin. Cette comparaison est 
-                indicative et ne constitue pas un engagement de prix.
+                Les prix affichés sont basés sur des observations déclarées et peuvent varier selon
+                la date et la disponibilité réelle en magasin. Cette comparaison est indicative et
+                ne constitue pas un engagement de prix.
               </p>
             </div>
           </div>
@@ -463,8 +461,8 @@ export default function BasketComparisonPage() {
                 Panier personnel – non partagé
               </p>
               <p className="text-slate-300 text-xs">
-                Votre panier est stocké localement sur votre appareil. 
-                Aucune donnée n'est envoyée à nos serveurs. Vos données restent privées.
+                Votre panier est stocké localement sur votre appareil. Aucune donnée n'est envoyée à
+                nos serveurs. Vos données restent privées.
               </p>
             </div>
           </div>

@@ -34,16 +34,16 @@ interface EcartHexagoneProps {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getLevel(ecart: number): 'green' | 'orange' | 'red' | 'negative' {
-  if (ecart <= 0)   return 'negative';
-  if (ecart < 10)   return 'green';
-  if (ecart < 30)   return 'orange';
+  if (ecart <= 0) return 'negative';
+  if (ecart < 10) return 'green';
+  if (ecart < 30) return 'orange';
   return 'red';
 }
 
 const LEVEL_STYLES = {
-  green:    'bg-emerald-900/40 text-emerald-300 border-emerald-700',
-  orange:   'bg-amber-900/40 text-amber-300 border-amber-700',
-  red:      'bg-red-900/40 text-red-300 border-red-700',
+  green: 'bg-emerald-900/40 text-emerald-300 border-emerald-700',
+  orange: 'bg-amber-900/40 text-amber-300 border-amber-700',
+  red: 'bg-red-900/40 text-red-300 border-red-700',
   negative: 'bg-emerald-900/40 text-emerald-300 border-emerald-700',
 } as const;
 
@@ -66,17 +66,21 @@ export function EcartHexagone({
 
   const level = getLevel(ecartPercent);
   const icon =
-    ecartPercent > 0.5  ? <TrendingUp  className="w-3 h-3 flex-shrink-0" /> :
-    ecartPercent < -0.5 ? <TrendingDown className="w-3 h-3 flex-shrink-0" /> :
-                          <Minus        className="w-3 h-3 flex-shrink-0" />;
+    ecartPercent > 0.5 ? (
+      <TrendingUp className="w-3 h-3 flex-shrink-0" />
+    ) : ecartPercent < -0.5 ? (
+      <TrendingDown className="w-3 h-3 flex-shrink-0" />
+    ) : (
+      <Minus className="w-3 h-3 flex-shrink-0" />
+    );
 
   const sign = ecartPercent > 0 ? '+' : '';
   const label = `${sign}${ecartPercent.toFixed(1)}\u202f%`;
 
   const tooltip = showTooltip
-    ? (priceRef !== undefined && priceRef !== null
-        ? `Réf. métropole : ${priceRef.toFixed(2)}\u202f€ — Surcoût DOM : ${label}`
-        : `Écart DOM / Métropole : ${label}`)
+    ? priceRef !== undefined && priceRef !== null
+      ? `Réf. métropole : ${priceRef.toFixed(2)}\u202f€ — Surcoût DOM : ${label}`
+      : `Écart DOM / Métropole : ${label}`
     : undefined;
 
   return (

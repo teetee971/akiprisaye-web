@@ -1,4 +1,3 @@
- 
 /**
  * Optimal Route Display Component
  * Shows the optimized multi-store shopping route with map visualization
@@ -18,7 +17,11 @@ interface OptimalRouteDisplayProps {
   onClose?: () => void;
 }
 
-export default function OptimalRouteDisplay({ route, userPosition, onClose }: OptimalRouteDisplayProps) {
+export default function OptimalRouteDisplay({
+  route,
+  userPosition,
+  onClose,
+}: OptimalRouteDisplayProps) {
   const [showMap, setShowMap] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
 
@@ -27,7 +30,7 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
   }
 
   return (
-    <div 
+    <div
       className="bg-gradient-to-br from-emerald-900/30 to-blue-900/30 border-2 border-emerald-600/50 rounded-lg p-4 mb-4"
       role="region"
       aria-labelledby="route-title"
@@ -36,7 +39,9 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <TrendingDown className="w-5 h-5 text-emerald-400" aria-hidden="true" />
-          <h3 id="route-title" className="text-lg font-semibold text-emerald-300">🗺️ Itinéraire Optimisé</h3>
+          <h3 id="route-title" className="text-lg font-semibold text-emerald-300">
+            🗺️ Itinéraire Optimisé
+          </h3>
         </div>
         <div className="flex items-center gap-2">
           {userPosition && (
@@ -44,7 +49,7 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
               type="button"
               onClick={() => setShowMap(!showMap)}
               className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors flex items-center gap-1"
-              aria-label={showMap ? "Masquer la carte" : "Voir sur la carte"}
+              aria-label={showMap ? 'Masquer la carte' : 'Voir sur la carte'}
             >
               <MapIcon className="w-4 h-4" />
               {showMap ? 'Masquer' : 'Carte'}
@@ -54,7 +59,7 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
             type="button"
             onClick={() => setShowComparison(!showComparison)}
             className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors flex items-center gap-1"
-            aria-label={showComparison ? "Masquer la comparaison" : "Voir avant/après"}
+            aria-label={showComparison ? 'Masquer la comparaison' : 'Voir avant/après'}
           >
             <TrendingDown className="w-4 h-4" />
             {showComparison ? 'Masquer' : 'Comparer'}
@@ -73,51 +78,47 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
       </div>
 
       {/* Summary */}
-      <div className="grid grid-cols-3 gap-2 mb-4 p-3 bg-slate-800/50 rounded-lg" role="group" aria-label="Résumé de l'itinéraire">
+      <div
+        className="grid grid-cols-3 gap-2 mb-4 p-3 bg-slate-800/50 rounded-lg"
+        role="group"
+        aria-label="Résumé de l'itinéraire"
+      >
         <div className="text-center">
-          <div className="text-2xl font-bold text-emerald-300">
-            {route.stores.length}
-          </div>
+          <div className="text-2xl font-bold text-emerald-300">{route.stores.length}</div>
           <div className="text-xs text-gray-400">magasins</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-blue-300">
-            {route.totalDistance.toFixed(1)}
-          </div>
+          <div className="text-2xl font-bold text-blue-300">{route.totalDistance.toFixed(1)}</div>
           <div className="text-xs text-gray-400">km total</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-purple-300">
-            ~{route.totalTime}
-          </div>
+          <div className="text-2xl font-bold text-purple-300">~{route.totalTime}</div>
           <div className="text-xs text-gray-400">minutes</div>
         </div>
       </div>
 
       {/* Savings */}
       {route.savings.distance > 0 && (
-        <div className="mb-4 p-3 bg-emerald-900/20 rounded-lg border border-emerald-700/30" role="region" aria-label="Économies réalisées">
+        <div
+          className="mb-4 p-3 bg-emerald-900/20 rounded-lg border border-emerald-700/30"
+          role="region"
+          aria-label="Économies réalisées"
+        >
           <div className="text-sm font-semibold text-emerald-300 mb-2">
             💰 Économies réalisées :
           </div>
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="flex items-center gap-1">
               <MapPin className="w-3 h-3 text-blue-400" aria-hidden="true" />
-              <span className="text-gray-300">
-                {route.savings.distance.toFixed(1)} km
-              </span>
+              <span className="text-gray-300">{route.savings.distance.toFixed(1)} km</span>
             </div>
             <div className="flex items-center gap-1">
               <Fuel className="w-3 h-3 text-orange-400" aria-hidden="true" />
-              <span className="text-gray-300">
-                {route.savings.fuel.toFixed(1)} L
-              </span>
+              <span className="text-gray-300">{route.savings.fuel.toFixed(1)} L</span>
             </div>
             <div className="flex items-center gap-1">
               <Leaf className="w-3 h-3 text-green-400" aria-hidden="true" />
-              <span className="text-gray-300">
-                {route.savings.co2.toFixed(1)} kg CO₂
-              </span>
+              <span className="text-gray-300">{route.savings.co2.toFixed(1)} kg CO₂</span>
             </div>
           </div>
         </div>
@@ -126,10 +127,13 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
       {/* Route Steps */}
       <div className="space-y-2" role="list" aria-label="Étapes de l'itinéraire">
         <div className="text-sm font-medium text-gray-300 mb-2">Ordre de visite :</div>
-        
+
         {/* Starting point */}
         <div className="flex items-center gap-3 text-sm" role="listitem">
-          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold" aria-hidden="true">
+          <div
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold"
+            aria-hidden="true"
+          >
             🏠
           </div>
           <div className="flex-1">
@@ -141,7 +145,7 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
         {/* Store steps */}
         {route.stores.map((store, index) => (
           <div key={store.id} className="flex items-center gap-3 text-sm" role="listitem">
-            <div 
+            <div
               className="flex-shrink-0 w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white font-bold"
               aria-label={`Étape ${index + 1}`}
             >
@@ -160,7 +164,10 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
 
         {/* Return home */}
         <div className="flex items-center gap-3 text-sm" role="listitem">
-          <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold" aria-hidden="true">
+          <div
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold"
+            aria-hidden="true"
+          >
             🏠
           </div>
           <div className="flex-1">
@@ -173,10 +180,7 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
       {/* Map Visualization */}
       {showMap && userPosition && (
         <div className="mt-4">
-          <RouteMapVisualization 
-            route={route} 
-            userPosition={userPosition}
-          />
+          <RouteMapVisualization route={route} userPosition={userPosition} />
         </div>
       )}
 
@@ -190,7 +194,8 @@ export default function OptimalRouteDisplay({ route, userPosition, onClose }: Op
       {/* Tips */}
       <div className="mt-4 p-3 bg-blue-900/20 rounded-lg border border-blue-700/30" role="note">
         <div className="text-xs text-blue-200">
-          💡 <strong>Conseil :</strong> Cet itinéraire minimise votre distance totale et vos émissions de CO₂.
+          💡 <strong>Conseil :</strong> Cet itinéraire minimise votre distance totale et vos
+          émissions de CO₂.
           {userPosition && !showMap && ' Cliquez sur "Carte" pour visualiser le parcours.'}
           {!showComparison && ' Cliquez sur "Comparer" pour voir les économies réalisées.'}
         </div>

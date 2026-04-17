@@ -3,7 +3,10 @@ import { buildObservatoirePriceSeries, getLatestSnapshotStats } from './observat
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
-function makeSnapshot(date: string, products: Array<{ produit: string; prix: number; enseigne?: string }>) {
+function makeSnapshot(
+  date: string,
+  products: Array<{ produit: string; prix: number; enseigne?: string }>
+) {
   return {
     territoire: 'Test',
     date_snapshot: date,
@@ -21,7 +24,10 @@ describe('buildObservatoirePriceSeries', () => {
   });
 
   it('returns [] for an unknown territory stem', async () => {
-    const series = await buildObservatoirePriceSeries('unknown_territory_xyz', 'Lait demi-écrémé UHT 1L');
+    const series = await buildObservatoirePriceSeries(
+      'unknown_territory_xyz',
+      'Lait demi-écrémé UHT 1L'
+    );
     expect(series).toEqual([]);
   });
 
@@ -47,17 +53,20 @@ describe('buildObservatoirePriceSeries', () => {
         { produit: 'Lait demi-écrémé UHT 1L', prix: 1.55, enseigne: 'Carrefour' },
       ]),
       makeSnapshot('2026-03-05', [
-        { produit: 'Lait demi-écrémé UHT 1L', prix: 1.50, enseigne: 'Carrefour' },
+        { produit: 'Lait demi-écrémé UHT 1L', prix: 1.5, enseigne: 'Carrefour' },
         { produit: 'Lait demi-écrémé UHT 1L', prix: 1.48, enseigne: 'Hyper U' },
       ]),
     ];
 
     let callIdx = 0;
-    vi.stubGlobal('fetch', vi.fn().mockImplementation(() => {
-      const snap = snapshots[callIdx++] ?? null;
-      if (!snap) return Promise.resolve({ ok: false, status: 404 });
-      return Promise.resolve({ ok: true, json: () => Promise.resolve(snap) });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        const snap = snapshots[callIdx++] ?? null;
+        if (!snap) return Promise.resolve({ ok: false, status: 404 });
+        return Promise.resolve({ ok: true, json: () => Promise.resolve(snap) });
+      })
+    );
 
     const series = await buildObservatoirePriceSeries('mq', 'Lait demi-écrémé UHT 1L');
 
@@ -74,14 +83,16 @@ describe('buildObservatoirePriceSeries', () => {
   });
 
   it('performs case-insensitive and diacritic-insensitive product matching', async () => {
-    const snap = makeSnapshot('2026-01-05', [
-      { produit: 'LAIT DEMI-ÉCRÉMÉ UHT 1L', prix: 1.50 },
-    ]);
+    const snap = makeSnapshot('2026-01-05', [{ produit: 'LAIT DEMI-ÉCRÉMÉ UHT 1L', prix: 1.5 }]);
     let callIdx = 0;
-    vi.stubGlobal('fetch', vi.fn().mockImplementation(() => {
-      if (callIdx++ === 0) return Promise.resolve({ ok: true, json: () => Promise.resolve(snap) });
-      return Promise.resolve({ ok: false, status: 404 });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        if (callIdx++ === 0)
+          return Promise.resolve({ ok: true, json: () => Promise.resolve(snap) });
+        return Promise.resolve({ ok: false, status: 404 });
+      })
+    );
 
     const series = await buildObservatoirePriceSeries('mq', 'lait demi-ecreme uht 1l');
     expect(series.length).toBeGreaterThan(0);
@@ -89,14 +100,16 @@ describe('buildObservatoirePriceSeries', () => {
   });
 
   it('skips snapshots that have 0 matching products', async () => {
-    const snap = makeSnapshot('2026-01-05', [
-      { produit: 'Riz long blanc 1kg', prix: 2.5 },
-    ]);
+    const snap = makeSnapshot('2026-01-05', [{ produit: 'Riz long blanc 1kg', prix: 2.5 }]);
     let callIdx = 0;
-    vi.stubGlobal('fetch', vi.fn().mockImplementation(() => {
-      if (callIdx++ === 0) return Promise.resolve({ ok: true, json: () => Promise.resolve(snap) });
-      return Promise.resolve({ ok: false, status: 404 });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(() => {
+        if (callIdx++ === 0)
+          return Promise.resolve({ ok: true, json: () => Promise.resolve(snap) });
+        return Promise.resolve({ ok: false, status: 404 });
+      })
+    );
 
     const series = await buildObservatoirePriceSeries('mq', 'Lait demi-écrémé UHT 1L');
     // no matching products → empty
@@ -119,23 +132,26 @@ describe('getLatestSnapshotStats', () => {
 
   it('computes min/max/avg/storeCount from latest snapshot', async () => {
     const snap = makeSnapshot('2026-03-05', [
-      { produit: 'Lait demi-écrémé UHT 1L', prix: 1.40, enseigne: 'Leclerc' },
-      { produit: 'Lait demi-écrémé UHT 1L', prix: 1.60, enseigne: 'Carrefour' },
-      { produit: 'Lait demi-écrémé UHT 1L', prix: 1.50, enseigne: 'Hyper U' },
-      { produit: 'Riz long blanc 1kg', prix: 2.50, enseigne: 'Carrefour' }, // different product
+      { produit: 'Lait demi-écrémé UHT 1L', prix: 1.4, enseigne: 'Leclerc' },
+      { produit: 'Lait demi-écrémé UHT 1L', prix: 1.6, enseigne: 'Carrefour' },
+      { produit: 'Lait demi-écrémé UHT 1L', prix: 1.5, enseigne: 'Hyper U' },
+      { produit: 'Riz long blanc 1kg', prix: 2.5, enseigne: 'Carrefour' }, // different product
     ]);
 
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      json: vi.fn().mockResolvedValue(snap),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue(snap),
+      })
+    );
 
     const stats = await getLatestSnapshotStats('mq', 'Lait demi-écrémé UHT 1L');
 
     expect(stats).not.toBeNull();
-    expect(stats!.min).toBeCloseTo(1.40, 2);
-    expect(stats!.max).toBeCloseTo(1.60, 2);
-    expect(stats!.avg).toBeCloseTo(1.50, 2);
+    expect(stats!.min).toBeCloseTo(1.4, 2);
+    expect(stats!.max).toBeCloseTo(1.6, 2);
+    expect(stats!.avg).toBeCloseTo(1.5, 2);
     expect(stats!.storeCount).toBe(3);
     expect(stats!.date).toBe('2026-03-05');
   });

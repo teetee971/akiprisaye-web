@@ -35,12 +35,12 @@ export function GamificationProvider({ children, initialProfile }: GamificationP
   }, [initialProfile]);
 
   const notifyXPGain = useCallback((event: XPGainEvent) => {
-    setCurrentXP(prev => prev + event.points);
-    setRecentGains(prev => [...prev, event]);
+    setCurrentXP((prev) => prev + event.points);
+    setRecentGains((prev) => [...prev, event]);
 
     // Auto-remove after 5 seconds
     setTimeout(() => {
-      setRecentGains(prev => prev.filter(e => e.timestamp !== event.timestamp));
+      setRecentGains((prev) => prev.filter((e) => e.timestamp !== event.timestamp));
     }, 5000);
   }, []);
 
@@ -59,14 +59,10 @@ export function GamificationProvider({ children, initialProfile }: GamificationP
     recentGains,
     notifyXPGain,
     clearGains,
-    updateProfile
+    updateProfile,
   };
 
-  return (
-    <GamificationContext.Provider value={value}>
-      {children}
-    </GamificationContext.Provider>
-  );
+  return <GamificationContext.Provider value={value}>{children}</GamificationContext.Provider>;
 }
 
 export function useGamificationContext() {

@@ -100,13 +100,11 @@ function computeCategories(snapshots: ObservatoireSnapshot[]): CategoryInflation
  */
 function computeMetropoleGap(
   territoryStats: ReturnType<typeof calculateStatistics>,
-  metropoleStats: ReturnType<typeof calculateStatistics>,
+  metropoleStats: ReturnType<typeof calculateStatistics>
 ): number {
   if (territoryStats.length === 0 || metropoleStats.length === 0) return 0;
-  const territoryAvg =
-    territoryStats.reduce((s, p) => s + p.avgPrice, 0) / territoryStats.length;
-  const metropoleAvg =
-    metropoleStats.reduce((s, p) => s + p.avgPrice, 0) / metropoleStats.length;
+  const territoryAvg = territoryStats.reduce((s, p) => s + p.avgPrice, 0) / territoryStats.length;
+  const metropoleAvg = metropoleStats.reduce((s, p) => s + p.avgPrice, 0) / metropoleStats.length;
   if (metropoleAvg === 0) return 0;
   return Math.round(((territoryAvg - metropoleAvg) / metropoleAvg) * 1000) / 10;
 }
@@ -142,17 +140,29 @@ export class InflationService {
    */
   async getCategoryInflation(category: string, territory: string): Promise<CategoryInflation> {
     const t = TERRITORY_MAP.find(
-      (t) => t.code.toLowerCase() === territory.toLowerCase() || t.name.toLowerCase() === territory.toLowerCase(),
+      (t) =>
+        t.code.toLowerCase() === territory.toLowerCase() ||
+        t.name.toLowerCase() === territory.toLowerCase()
     );
     const snapshots = await loadObservatoireData(t?.name ?? territory);
     const allCategories = computeCategories(snapshots);
-    const found = allCategories.find((c) => c.category.toLowerCase().includes(category.toLowerCase()));
+    const found = allCategories.find((c) =>
+      c.category.toLowerCase().includes(category.toLowerCase())
+    );
     if (found) return found;
     // Fallback: compute from all data
     const stats = calculateStatistics(snapshots);
     const relevant = stats.filter((s) => s.category.toLowerCase().includes(category.toLowerCase()));
-    const avg = relevant.length > 0 ? relevant.reduce((s, p) => s + p.avgPrice, 0) / relevant.length : 0;
-    return { category, currentAverage: avg, previousAverage: avg, inflationRate: 0, priceChange: 0, products: [] };
+    const avg =
+      relevant.length > 0 ? relevant.reduce((s, p) => s + p.avgPrice, 0) / relevant.length : 0;
+    return {
+      category,
+      currentAverage: avg,
+      previousAverage: avg,
+      inflationRate: 0,
+      priceChange: 0,
+      products: [],
+    };
   }
 
   /**
@@ -167,7 +177,9 @@ export class InflationService {
    */
   async calculatePurchasingPower(territory: string): Promise<PurchasingPowerIndex> {
     const t = TERRITORY_MAP.find(
-      (t) => t.code.toLowerCase() === territory.toLowerCase() || t.name.toLowerCase() === territory.toLowerCase(),
+      (t) =>
+        t.code.toLowerCase() === territory.toLowerCase() ||
+        t.name.toLowerCase() === territory.toLowerCase()
     );
     const snapshots = await loadObservatoireData(t?.name ?? territory);
     const metropoleSnapshots = await loadObservatoireData('Hexagone');
@@ -177,18 +189,23 @@ export class InflationService {
 
     const affordabilityByCategory = categories.map((cat) => {
       const metropoleCat = metropoleStats.filter((s) =>
-        s.category.toLowerCase().includes(cat.category.toLowerCase()),
+        s.category.toLowerCase().includes(cat.category.toLowerCase())
       );
       const metropoleAvg =
-        metropoleCat.length > 0 ? metropoleCat.reduce((s, p) => s + p.avgPrice, 0) / metropoleCat.length : cat.currentAverage;
+        metropoleCat.length > 0
+          ? metropoleCat.reduce((s, p) => s + p.avgPrice, 0) / metropoleCat.length
+          : cat.currentAverage;
       const affordability =
-        metropoleAvg > 0 ? Math.round((metropoleAvg / Math.max(cat.currentAverage, 0.01)) * 100) : 100;
+        metropoleAvg > 0
+          ? Math.round((metropoleAvg / Math.max(cat.currentAverage, 0.01)) * 100)
+          : 100;
       return { category: cat.category, affordability: Math.min(affordability, 100) };
     });
 
     const avgAffordability =
       affordabilityByCategory.length > 0
-        ? affordabilityByCategory.reduce((s, c) => s + c.affordability, 0) / affordabilityByCategory.length
+        ? affordabilityByCategory.reduce((s, c) => s + c.affordability, 0) /
+          affordabilityByCategory.length
         : 95;
 
     return {
@@ -202,7 +219,9 @@ export class InflationService {
   /**
    * Get products with biggest price increases from observatoire data.
    */
-  async getTopPriceIncreases(limit = 10): Promise<Array<{ product: string; change: number; category: string }>> {
+  async getTopPriceIncreases(
+    limit = 10
+  ): Promise<Array<{ product: string; change: number; category: string }>> {
     const results: Array<{ product: string; change: number; category: string }> = [];
     for (const t of TERRITORY_MAP) {
       const snapshots = await loadObservatoireData(t.name);
@@ -212,7 +231,11 @@ export class InflationService {
         changes.forEach((change, key) => {
           if (change > 0) {
             const stat = stats.find((s) => (s.ean ?? s.productName) === key);
-            results.push({ product: stat?.productName ?? key, change, category: stat?.category ?? '' });
+            results.push({
+              product: stat?.productName ?? key,
+              change,
+              category: stat?.category ?? '',
+            });
           }
         });
       }
@@ -223,7 +246,9 @@ export class InflationService {
   /**
    * Get products with biggest price decreases from observatoire data.
    */
-  async getTopPriceDecreases(limit = 10): Promise<Array<{ product: string; change: number; category: string }>> {
+  async getTopPriceDecreases(
+    limit = 10
+  ): Promise<Array<{ product: string; change: number; category: string }>> {
     const results: Array<{ product: string; change: number; category: string }> = [];
     for (const t of TERRITORY_MAP) {
       const snapshots = await loadObservatoireData(t.name);
@@ -233,7 +258,11 @@ export class InflationService {
         changes.forEach((change, key) => {
           if (change < 0) {
             const stat = stats.find((s) => (s.ean ?? s.productName) === key);
-            results.push({ product: stat?.productName ?? key, change, category: stat?.category ?? '' });
+            results.push({
+              product: stat?.productName ?? key,
+              change,
+              category: stat?.category ?? '',
+            });
           }
         });
       }
@@ -256,12 +285,12 @@ export class InflationService {
 
   private async getTerritoryInflations(
     currentMonthKey?: string,
-    comparisonMonthKey?: string,
+    comparisonMonthKey?: string
   ): Promise<TerritoryInflation[]> {
     // Load specific months when provided (period-aware) or fall back to defaults
     const months: string[] | undefined =
       currentMonthKey && comparisonMonthKey
-        ? [comparisonMonthKey, currentMonthKey]  // older first so sort works correctly
+        ? [comparisonMonthKey, currentMonthKey] // older first so sort works correctly
         : undefined;
 
     const metropoleSnapshots = await loadObservatoireData('Hexagone', months);
@@ -277,7 +306,9 @@ export class InflationService {
         const territoryStats = calculateStatistics(snapshots);
         const comparedToMetropole = computeMetropoleGap(territoryStats, metropoleStats);
         const lastUpdated =
-          snapshots.length > 0 ? snapshots[snapshots.length - 1].date_snapshot : new Date().toISOString();
+          snapshots.length > 0
+            ? snapshots[snapshots.length - 1].date_snapshot
+            : new Date().toISOString();
 
         results.push({
           territory: t.code,

@@ -1,5 +1,3 @@
- 
- 
 import { useCallback, useEffect, useState } from 'react';
 import { auth, db } from '../lib/firebase';
 import { doc, setDoc, getDoc, collection, onSnapshot } from 'firebase/firestore';
@@ -37,7 +35,10 @@ function safeParse(raw: string | null): TiPanierItem[] {
     return parsed
       .map((p) => ({
         id: String(p.id),
-        quantity: typeof p.quantity === 'number' && Number.isFinite(p.quantity) ? Math.max(0, Math.floor(p.quantity)) : 0,
+        quantity:
+          typeof p.quantity === 'number' && Number.isFinite(p.quantity)
+            ? Math.max(0, Math.floor(p.quantity))
+            : 0,
         meta: p.meta,
       }))
       .filter((p) => p.id);
@@ -68,10 +69,14 @@ async function writeToFirestore(items: TiPanierItem[], type: PanierType = 'compa
   try {
     const userDocRef = doc(db, 'users', auth.currentUser.uid);
     const field = type === 'wishlist' ? 'wishlist' : 'cart';
-    await setDoc(userDocRef, {
-      [field]: items,
-      [`${field}UpdatedAt`]: new Date(),
-    }, { merge: true });
+    await setDoc(
+      userDocRef,
+      {
+        [field]: items,
+        [`${field}UpdatedAt`]: new Date(),
+      },
+      { merge: true }
+    );
   } catch (error) {
     console.error('Error writing to Firestore:', error);
   }
@@ -109,10 +114,10 @@ export function useTiPanier(type: PanierType = 'comparison') {
   // Track authentication state
   useEffect(() => {
     if (!auth) return;
-    
+
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       setIsAuthenticated(!!user);
-      
+
       // Load from Firestore if authenticated
       if (user && db) {
         const firestoreItems = await readFromFirestore(type);
@@ -128,7 +133,7 @@ export function useTiPanier(type: PanierType = 'comparison') {
   // persist whenever items change
   useEffect(() => {
     writeToStorage(items, type);
-    
+
     // Also persist to Firestore if authenticated
     if (isAuthenticated) {
       writeToFirestore(items, type);
@@ -151,12 +156,19 @@ export function useTiPanier(type: PanierType = 'comparison') {
   const addItem = useCallback((item: TiPanierItem) => {
     setItems((prev) => {
       const idx = prev.findIndex((p) => p.id === item.id);
-      const qty = typeof item.quantity === 'number' && Number.isFinite(item.quantity) ? Math.max(0, Math.floor(item.quantity)) : 1;
+      const qty =
+        typeof item.quantity === 'number' && Number.isFinite(item.quantity)
+          ? Math.max(0, Math.floor(item.quantity))
+          : 1;
       if (idx === -1) {
         return [...prev, { ...item, quantity: qty }];
       }
       const updated = [...prev];
-      updated[idx] = { ...updated[idx], quantity: Math.max(0, updated[idx].quantity + qty), meta: item.meta ?? updated[idx].meta };
+      updated[idx] = {
+        ...updated[idx],
+        quantity: Math.max(0, updated[idx].quantity + qty),
+        meta: item.meta ?? updated[idx].meta,
+      };
       return updated;
     });
   }, []);
@@ -169,20 +181,26 @@ export function useTiPanier(type: PanierType = 'comparison') {
     setItems([]);
   }, []);
 
-  const count = items.reduce((acc, it) => acc + (typeof it.quantity === 'number' ? it.quantity : 0), 0);
+  const count = items.reduce(
+    (acc, it) => acc + (typeof it.quantity === 'number' ? it.quantity : 0),
+    0
+  );
 
   // Calculate min/max prices
-  const priceStats = items.reduce((acc, item) => {
-    const price = extractPrice(item);
-    
-    if (price > 0) {
-      if (acc.min === null || price < acc.min) acc.min = price;
-      if (acc.max === null || price > acc.max) acc.max = price;
-      acc.total += price * item.quantity;
-    }
-    
-    return acc;
-  }, { min: null as number | null, max: null as number | null, total: 0 });
+  const priceStats = items.reduce(
+    (acc, item) => {
+      const price = extractPrice(item);
+
+      if (price > 0) {
+        if (acc.min === null || price < acc.min) acc.min = price;
+        if (acc.max === null || price > acc.max) acc.max = price;
+        acc.total += price * item.quantity;
+      }
+
+      return acc;
+    },
+    { min: null as number | null, max: null as number | null, total: 0 }
+  );
 
   return {
     items,

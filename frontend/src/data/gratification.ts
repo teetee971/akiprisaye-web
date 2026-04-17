@@ -55,31 +55,27 @@ export const GRATIFICATION_BADGES: GratificationBadge[] = [
 /**
  * Check if user has earned a badge
  */
-export const hasBadge = (
-  badgeId: string,
-  userStats: UserStats,
-  accessLevel: string
-): boolean => {
-  const badge = GRATIFICATION_BADGES.find(b => b.id === badgeId);
-  
+export const hasBadge = (badgeId: string, userStats: UserStats, accessLevel: string): boolean => {
+  const badge = GRATIFICATION_BADGES.find((b) => b.id === badgeId);
+
   if (!badge) return false;
-  
+
   // Check access level requirement
   if (badge.accessLevel !== 'ALL' && badge.accessLevel !== accessLevel) {
     return false;
   }
-  
+
   // Badge-specific logic
   switch (badgeId) {
     case 'contributeur_citoyen':
       return userStats.contributionsCount > 0;
-    
+
     case 'veilleur_prix':
       return userStats.scannedProductsCount >= 30;
-    
+
     case 'institutional_partner':
       return accessLevel === 'INSTITUTIONAL';
-    
+
     default:
       return false;
   }
@@ -92,9 +88,7 @@ export const getEarnedBadges = (
   userStats: UserStats,
   accessLevel: string
 ): GratificationBadge[] => {
-  return GRATIFICATION_BADGES.filter(badge =>
-    hasBadge(badge.id, userStats, accessLevel)
-  );
+  return GRATIFICATION_BADGES.filter((badge) => hasBadge(badge.id, userStats, accessLevel));
 };
 
 /**

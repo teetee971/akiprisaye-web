@@ -9,7 +9,16 @@
  */
 
 import { useMemo, useState } from 'react';
-import { Globe, TrendingUp, BarChart3, Cpu, Copy, Check, RefreshCw, AlertTriangle } from 'lucide-react';
+import {
+  Globe,
+  TrendingUp,
+  BarChart3,
+  Cpu,
+  Copy,
+  Check,
+  RefreshCw,
+  AlertTriangle,
+} from 'lucide-react';
 import {
   useVisitorStats,
   type TerritoryStats,
@@ -65,7 +74,13 @@ interface AiInsightPayload {
     topInterestsRealtime: Array<{ key: string; name: string; emoji: string; onlineNow: number }>;
     topInterestsHistorical: Array<{ key: string; name: string; emoji: string; totalViews: number }>;
   }>;
-  globalTopInterests: Array<{ key: string; name: string; emoji: string; onlineNow: number; totalViews: number }>;
+  globalTopInterests: Array<{
+    key: string;
+    name: string;
+    emoji: string;
+    onlineNow: number;
+    totalViews: number;
+  }>;
   aiPromptSuggestion: string;
 }
 
@@ -73,7 +88,7 @@ function buildAiPayload(
   totalOnline: number,
   byTerritory: TerritoryStats[],
   byInterest: ReturnType<typeof useVisitorStats>['byInterest'],
-  interestByTerritory: Record<string, TerritoryInterestStat[]>,
+  interestByTerritory: Record<string, TerritoryInterestStat[]>
 ): AiInsightPayload {
   const now = new Date().toISOString();
 
@@ -125,7 +140,13 @@ function buildAiPayload(
     .filter(Boolean)
     .join('\n');
 
-  return { generatedAt: now, totalOnlineNow: totalOnline, territories, globalTopInterests, aiPromptSuggestion };
+  return {
+    generatedAt: now,
+    totalOnlineNow: totalOnline,
+    territories,
+    globalTopInterests,
+    aiPromptSuggestion,
+  };
 }
 
 // ── Main component ────────────────────────────────────────────────────────────
@@ -141,14 +162,12 @@ export default function AdminAudience() {
 
   const aiPayload = useMemo(
     () => buildAiPayload(totalOnline, byTerritory, byInterest, interestByTerritory),
-    [totalOnline, byTerritory, byInterest, interestByTerritory],
+    [totalOnline, byTerritory, byInterest, interestByTerritory]
   );
 
   const handleCopy = async (type: 'json' | 'prompt') => {
     const text =
-      type === 'json'
-        ? JSON.stringify(aiPayload, null, 2)
-        : aiPayload.aiPromptSuggestion;
+      type === 'json' ? JSON.stringify(aiPayload, null, 2) : aiPayload.aiPromptSuggestion;
     try {
       await navigator.clipboard.writeText(text);
       setCopied(type);
@@ -191,7 +210,8 @@ export default function AdminAudience() {
       {isDegradedMode && (
         <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-400/40 text-amber-200 text-sm">
           <AlertTriangle className="w-4 h-4 shrink-0" />
-          Mode preview statique — les statistiques Firestore temps réel ne sont pas disponibles dans cet environnement.
+          Mode preview statique — les statistiques Firestore temps réel ne sont pas disponibles dans
+          cet environnement.
         </div>
       )}
 
@@ -206,7 +226,9 @@ export default function AdminAudience() {
           <div className="text-center py-12 text-white/40 bg-white/5 rounded-2xl border border-white/10">
             <Globe className="w-10 h-10 mx-auto mb-3 opacity-40" />
             <p>Aucune donnée de connexion disponible pour le moment.</p>
-            <p className="text-sm mt-1">Les statistiques apparaîtront dès que des visiteurs accèdent au site.</p>
+            <p className="text-sm mt-1">
+              Les statistiques apparaîtront dès que des visiteurs accèdent au site.
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -232,7 +254,9 @@ export default function AdminAudience() {
                     <span className="text-2xl w-8 text-center select-none" aria-hidden="true">
                       {medal(idx)}
                     </span>
-                    <span className="text-2xl select-none" aria-hidden="true">{t.flag}</span>
+                    <span className="text-2xl select-none" aria-hidden="true">
+                      {t.flag}
+                    </span>
 
                     {/* Name */}
                     <div className="flex-1 min-w-[120px]">
@@ -244,7 +268,9 @@ export default function AdminAudience() {
                     <div className="text-center w-24">
                       <div className="flex items-center justify-center gap-1.5">
                         <PulseDot active={t.online > 0} />
-                        <span className="text-emerald-300 font-bold tabular-nums text-lg">{t.online}</span>
+                        <span className="text-emerald-300 font-bold tabular-nums text-lg">
+                          {t.online}
+                        </span>
                       </div>
                       <p className="text-white/40 text-xs mt-0.5">en ligne</p>
                       <Bar value={t.online} max={maxOnline} />
@@ -295,15 +321,21 @@ export default function AdminAudience() {
                           🟢 Intérêts actifs maintenant
                         </p>
                         {t.topInterests.length === 0 ? (
-                          <p className="text-white/30 text-sm">Aucun visiteur actif en ce moment.</p>
+                          <p className="text-white/30 text-sm">
+                            Aucun visiteur actif en ce moment.
+                          </p>
                         ) : (
                           <ul className="space-y-1.5">
                             {t.topInterests.map((i, ri) => (
                               <li key={i.key} className="flex items-center gap-2 text-sm">
-                                <span className="text-white/30 w-4 text-right text-xs">{ri + 1}.</span>
+                                <span className="text-white/30 w-4 text-right text-xs">
+                                  {ri + 1}.
+                                </span>
                                 <span>{i.emoji}</span>
                                 <span className="text-white/80 flex-1 truncate">{i.name}</span>
-                                <span className="text-emerald-300 font-mono font-bold text-xs">{i.online}</span>
+                                <span className="text-emerald-300 font-mono font-bold text-xs">
+                                  {i.online}
+                                </span>
                               </li>
                             ))}
                           </ul>
@@ -316,12 +348,16 @@ export default function AdminAudience() {
                           📊 Intérêts historiques (toutes visites)
                         </p>
                         {histInterests.length === 0 ? (
-                          <p className="text-white/30 text-sm">Pas encore de données historiques.</p>
+                          <p className="text-white/30 text-sm">
+                            Pas encore de données historiques.
+                          </p>
                         ) : (
                           <ul className="space-y-1.5">
                             {histInterests.map((i, hi) => (
                               <li key={i.interest} className="flex items-center gap-2 text-sm">
-                                <span className="text-white/30 w-4 text-right text-xs">{hi + 1}.</span>
+                                <span className="text-white/30 w-4 text-right text-xs">
+                                  {hi + 1}.
+                                </span>
                                 <span>{i.emoji}</span>
                                 <span className="text-white/80 flex-1 truncate">{i.name}</span>
                                 <span className="text-blue-300 font-mono font-bold text-xs">
@@ -362,7 +398,9 @@ export default function AdminAudience() {
                   <p className="text-white text-sm font-medium truncate">{i.name}</p>
                   <div className="flex gap-3 mt-0.5">
                     {i.online > 0 && (
-                      <span className="text-emerald-400 text-xs font-mono">{i.online} en ligne</span>
+                      <span className="text-emerald-400 text-xs font-mono">
+                        {i.online} en ligne
+                      </span>
                     )}
                     {i.totalViews > 0 && (
                       <span className="text-blue-400 text-xs font-mono">
@@ -384,8 +422,8 @@ export default function AdminAudience() {
           Données pour robot / IA interne
         </h2>
         <p className="text-white/50 text-sm mb-5">
-          Ces données structurées peuvent être injectées dans un modèle de langage (ChatGPT, Claude, Mistral…)
-          pour générer automatiquement des recommandations d'amélioration du logiciel.
+          Ces données structurées peuvent être injectées dans un modèle de langage (ChatGPT, Claude,
+          Mistral…) pour générer automatiquement des recommandations d'amélioration du logiciel.
         </p>
 
         <div className="flex flex-wrap gap-3 mb-5">
@@ -420,7 +458,8 @@ export default function AdminAudience() {
         {/* JSON summary (first 20 lines) */}
         <details className="group">
           <summary className="cursor-pointer text-xs text-white/40 hover:text-white/70 transition-colors select-none">
-            ▸ Voir le JSON complet ({byTerritory.length} territoire(s), {byInterest.length} intérêt(s))
+            ▸ Voir le JSON complet ({byTerritory.length} territoire(s), {byInterest.length}{' '}
+            intérêt(s))
           </summary>
           <pre className="mt-3 bg-black/40 border border-white/10 rounded-xl p-4 text-white/60 text-xs overflow-x-auto max-h-96 leading-relaxed font-mono">
             {JSON.stringify(aiPayload, null, 2)}

@@ -1,8 +1,8 @@
 /**
  * Eurostat Interoperability Types - v4.2.0
- * 
+ *
  * Types for Eurostat live data interoperability (read-only)
- * 
+ *
  * @module eurostatInteropTypes
  */
 

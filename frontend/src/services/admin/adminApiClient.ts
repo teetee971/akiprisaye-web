@@ -39,9 +39,9 @@ export async function adminFetchJson<T>(path: string, init: RequestInit = {}): P
     }
 
     if (response.status === 404 && isStaticPreview) {
-      errorMessage = "API admin indisponible sur cet environnement de preview statique (404).";
+      errorMessage = 'API admin indisponible sur cet environnement de preview statique (404).';
     } else if (response.status >= 500) {
-      errorMessage = "Erreur serveur API admin. Réessayez dans quelques instants.";
+      errorMessage = 'Erreur serveur API admin. Réessayez dans quelques instants.';
     }
     throw new Error(errorMessage);
   }

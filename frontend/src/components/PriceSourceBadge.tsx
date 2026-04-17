@@ -1,25 +1,25 @@
 // src/components/PriceSourceBadge.tsx
-import React from 'react'
-import type { PriceObservation } from '../types/PriceObservation'
+import React from 'react';
+import type { PriceObservation } from '../types/PriceObservation';
 
 type PriceSourceBadgeProps = {
-  observation: PriceObservation
-}
+  observation: PriceObservation;
+};
 
 const SOURCE_LABELS: Record<NonNullable<PriceObservation['sourceType']>, string> = {
   citizen: 'Signalement citoyen',
   open_data: 'Open Data',
   partner: 'Partenaire',
-}
+};
 
 export default function PriceSourceBadge({ observation }: PriceSourceBadgeProps) {
-  const sourceType = observation.sourceType
-  const sourceLabel = sourceType ? SOURCE_LABELS[sourceType] : 'Source inconnue'
-  const date = new Date(observation.observedAt).toLocaleDateString('fr-FR')
+  const sourceType = observation.sourceType;
+  const sourceLabel = sourceType ? SOURCE_LABELS[sourceType] : 'Source inconnue';
+  const date = new Date(observation.observedAt).toLocaleDateString('fr-FR');
   const confidence =
     typeof observation.confidenceScore === 'number'
       ? Math.round(observation.confidenceScore)
-      : null
+      : null;
 
   return (
     <div className="inline-flex items-center">
@@ -32,5 +32,5 @@ export default function PriceSourceBadge({ observation }: PriceSourceBadgeProps)
         {sourceLabel}
       </span>
     </div>
-  )
+  );
 }

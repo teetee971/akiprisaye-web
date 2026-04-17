@@ -34,7 +34,10 @@ const AVAILABLE_NOW: StatusItem[] = [
 
 const IN_PROGRESS: StatusItem[] = [
   { id: 'open-data-enrichi', text: 'Open data enrichi avec exports mieux documentés.' },
-  { id: 'couverture-etendue', text: 'Couverture plus large des territoires et des catégories suivies.' },
+  {
+    id: 'couverture-etendue',
+    text: 'Couverture plus large des territoires et des catégories suivies.',
+  },
   {
     id: 'historique-profond',
     text: 'Historique de données plus profond et plus lisible pour le grand public.',
@@ -69,7 +72,10 @@ function StatusCard({ title, icon, items, tone = 'neutral' }: StatusCardProps) {
       <ul className="space-y-3 text-sm leading-6 text-slate-300">
         {items.map((item) => (
           <li key={item.id} className="flex gap-3">
-            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-current opacity-80" aria-hidden="true" />
+            <span
+              className="mt-1 h-1.5 w-1.5 rounded-full bg-current opacity-80"
+              aria-hidden="true"
+            />
             <span>{item.text}</span>
           </li>
         ))}
@@ -99,8 +105,8 @@ export default function Transparence() {
               🔎 Transparence
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-200 drop-shadow sm:text-base">
-              Cette page explique simplement ce qui est disponible maintenant, ce qui est encore en cours de
-              déploiement, et comment nous traitons la confidentialité.
+              Cette page explique simplement ce qui est disponible maintenant, ce qui est encore en
+              cours de déploiement, et comment nous traitons la confidentialité.
             </p>
           </HeroImage>
 
@@ -112,9 +118,10 @@ export default function Transparence() {
               <div>
                 <h2 className="text-lg font-semibold text-white">Pourquoi cette page existe</h2>
                 <p className="mt-2 text-sm leading-6 text-slate-300">
-                  Un visiteur doit pouvoir distinguer en quelques secondes ce qui relève de la promesse produit, de la
-                  couverture réelle et des engagements de confidentialité. Nous avons donc séparé ici les statuts
-                  “disponible”, “en préparation” et “engagements”.
+                  Un visiteur doit pouvoir distinguer en quelques secondes ce qui relève de la
+                  promesse produit, de la couverture réelle et des engagements de confidentialité.
+                  Nous avons donc séparé ici les statuts “disponible”, “en préparation” et
+                  “engagements”.
                 </p>
               </div>
             </div>
@@ -150,13 +157,15 @@ export default function Transparence() {
               </div>
               <div className="space-y-4 text-sm leading-6 text-slate-300">
                 <p>
-                  Quand un chiffre ou une couverture territoriale est affiché, il doit idéalement être accompagné d’un
-                  contexte : date, source, périmètre et niveau de maturité. Notre objectif est d’aller vers cette
-                  lecture la plus explicite possible sur les pages publiques.
+                  Quand un chiffre ou une couverture territoriale est affiché, il doit idéalement
+                  être accompagné d’un contexte : date, source, périmètre et niveau de maturité.
+                  Notre objectif est d’aller vers cette lecture la plus explicite possible sur les
+                  pages publiques.
                 </p>
                 <p>
-                  Si une fonctionnalité est encore en test ou seulement partiellement activée, nous préférons l’indiquer
-                  clairement plutôt que de la présenter comme totalement finalisée.
+                  Si une fonctionnalité est encore en test ou seulement partiellement activée, nous
+                  préférons l’indiquer clairement plutôt que de la présenter comme totalement
+                  finalisée.
                 </p>
               </div>
             </div>
@@ -179,7 +188,8 @@ export default function Transparence() {
                 <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
                   <p className="font-medium text-white">Open data</p>
                   <p className="mt-1 text-slate-400">
-                    Présenté comme un chantier progressif, pas comme une promesse déjà totalement livrée.
+                    Présenté comme un chantier progressif, pas comme une promesse déjà totalement
+                    livrée.
                   </p>
                 </div>
               </div>
@@ -187,12 +197,17 @@ export default function Transparence() {
           </section>
 
           {/* RGPD — Données personnelles */}
-          <section className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-6" aria-labelledby="rgpd-title">
+          <section
+            className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-6"
+            aria-labelledby="rgpd-title"
+          >
             <div className="mb-4 flex items-center gap-3">
               <div className="rounded-xl bg-violet-950/70 p-2 text-violet-300">
                 <ShieldCheck className="h-5 w-5" aria-hidden="true" />
               </div>
-              <h2 id="rgpd-title" className="text-lg font-semibold text-white">Données personnelles &amp; RGPD</h2>
+              <h2 id="rgpd-title" className="text-lg font-semibold text-white">
+                Données personnelles &amp; RGPD
+              </h2>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
               {/* Durée de conservation */}
@@ -200,20 +215,44 @@ export default function Transparence() {
                 <h3 className="font-semibold text-white">Durée de conservation</h3>
                 <ul className="space-y-2">
                   <li className="flex gap-3">
-                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80" aria-hidden="true" />
-                    <span><strong className="text-slate-200">Compte utilisateur :</strong> données conservées jusqu'à suppression du compte ou 3 ans d'inactivité.</span>
+                    <span
+                      className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      <strong className="text-slate-200">Compte utilisateur :</strong> données
+                      conservées jusqu'à suppression du compte ou 3 ans d'inactivité.
+                    </span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80" aria-hidden="true" />
-                    <span><strong className="text-slate-200">Signalements de prix :</strong> données pseudonymisées et conservées 24 mois maximum.</span>
+                    <span
+                      className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      <strong className="text-slate-200">Signalements de prix :</strong> données
+                      pseudonymisées et conservées 24 mois maximum.
+                    </span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80" aria-hidden="true" />
-                    <span><strong className="text-slate-200">Historiques de scan :</strong> stockés localement (localStorage) — supprimés à la désinscription ou à la demande.</span>
+                    <span
+                      className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      <strong className="text-slate-200">Historiques de scan :</strong> stockés
+                      localement (localStorage) — supprimés à la désinscription ou à la demande.
+                    </span>
                   </li>
                   <li className="flex gap-3">
-                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80" aria-hidden="true" />
-                    <span><strong className="text-slate-200">Logs d'accès :</strong> conservés 12 mois maximum à des fins de sécurité et de débogage.</span>
+                    <span
+                      className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-violet-400 opacity-80"
+                      aria-hidden="true"
+                    />
+                    <span>
+                      <strong className="text-slate-200">Logs d'accès :</strong> conservés 12 mois
+                      maximum à des fins de sécurité et de débogage.
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -222,12 +261,13 @@ export default function Transparence() {
               <div className="space-y-3 text-sm leading-6 text-slate-300">
                 <h3 className="font-semibold text-white">Vos droits &amp; contact DPO</h3>
                 <p>
-                  Conformément au RGPD (articles 15 à 22), vous disposez d'un droit d'accès, de rectification,
-                  d'effacement, de portabilité et d'opposition au traitement de vos données personnelles.
+                  Conformément au RGPD (articles 15 à 22), vous disposez d'un droit d'accès, de
+                  rectification, d'effacement, de portabilité et d'opposition au traitement de vos
+                  données personnelles.
                 </p>
                 <p>
-                  Pour exercer vos droits ou contacter notre délégué·e à la protection des données (DPO), 
-                  adressez votre demande à :
+                  Pour exercer vos droits ou contacter notre délégué·e à la protection des données
+                  (DPO), adressez votre demande à :
                 </p>
                 <a
                   href="mailto:contact@akiprisaye.re"

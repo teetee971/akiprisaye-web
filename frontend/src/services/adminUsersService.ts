@@ -8,10 +8,10 @@
  * (verified server-side via Firebase custom claims).
  */
 
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { app } from "../lib/firebase";
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { app } from '../lib/firebase';
 
-export type AppRole = "citoyen" | "observateur" | "creator" | "admin";
+export type AppRole = 'citoyen' | 'observateur' | 'creator' | 'admin';
 
 export interface AdminUserResult {
   uid: string;
@@ -41,7 +41,7 @@ const functions = getFunctions(app ?? undefined);
  * Lève une erreur si l'utilisateur est introuvable ou si l'appelant n'est pas admin.
  */
 export async function findUserAdmin(query: string): Promise<AdminUserResult> {
-  const fn = httpsCallable<{ query: string }, AdminUserResult>(functions, "findUser");
+  const fn = httpsCallable<{ query: string }, AdminUserResult>(functions, 'findUser');
   const res = await fn({ query: query.trim() });
   return res.data;
 }
@@ -54,13 +54,10 @@ export async function findUserAdmin(query: string): Promise<AdminUserResult> {
  *
  * Lève une erreur si l'utilisateur est introuvable ou si l'appelant n'est pas admin.
  */
-export async function setUserRoleAdmin(
-  uid: string,
-  role: AppRole,
-): Promise<SetUserRoleResponse> {
+export async function setUserRoleAdmin(uid: string, role: AppRole): Promise<SetUserRoleResponse> {
   const fn = httpsCallable<{ uid: string; role: AppRole }, SetUserRoleResponse>(
     functions,
-    "setUserRole",
+    'setUserRole'
   );
   const res = await fn({ uid, role });
   return res.data;

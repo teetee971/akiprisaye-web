@@ -82,7 +82,13 @@ let MOCK_PRICES: Record<string, ProductResult> = {
   },
 };
 // Populate asynchronously
-buildPriceMap().then((map) => { MOCK_PRICES = map; }).catch(() => { /* keep defaults */ });
+buildPriceMap()
+  .then((map) => {
+    MOCK_PRICES = map;
+  })
+  .catch(() => {
+    /* keep defaults */
+  });
 
 // Extend BarcodeDetector types (not in lib.dom.d.ts yet)
 interface BarcodeDetectorResult {
@@ -241,9 +247,7 @@ export default function ScannerAR() {
     setShowOverlay(true);
   }, [manualEan]);
 
-  const cheapest = product
-    ? product.prices.reduce((a, b) => (a.price < b.price ? a : b))
-    : null;
+  const cheapest = product ? product.prices.reduce((a, b) => (a.price < b.price ? a : b)) : null;
 
   return (
     <>
@@ -277,8 +281,8 @@ export default function ScannerAR() {
           <div className="bg-blue-900/20 border border-blue-700/30 rounded-xl p-4 flex gap-3">
             <AlertTriangle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-blue-200 leading-relaxed">
-              <strong>Mode BarcodeDetector natif actif.</strong> Nécessite Google Vision / TensorFlow.js
-              pour la détection automatique avancée.{' '}
+              <strong>Mode BarcodeDetector natif actif.</strong> Nécessite Google Vision /
+              TensorFlow.js pour la détection automatique avancée.{' '}
               {isBarcodeDetectorSupported()
                 ? '✅ BarcodeDetector API disponible sur ce navigateur.'
                 : '⚠️ BarcodeDetector non disponible — utilisez la saisie manuelle.'}
@@ -313,9 +317,7 @@ export default function ScannerAR() {
                 {showOverlay && product && cheapest && (
                   <div className="absolute top-4 right-4 bg-emerald-900/90 border border-emerald-500 rounded-xl px-3 py-2 backdrop-blur-sm">
                     <p className="text-xs font-bold text-emerald-300">Prix le + bas</p>
-                    <p className="text-lg font-black text-white">
-                      {cheapest.price.toFixed(2)} €
-                    </p>
+                    <p className="text-lg font-black text-white">{cheapest.price.toFixed(2)} €</p>
                     <p className="text-xs text-emerald-200">{cheapest.store}</p>
                   </div>
                 )}
@@ -405,7 +407,9 @@ export default function ScannerAR() {
                 <Package className="w-5 h-5 text-blue-400" />
                 <div>
                   <p className="font-bold text-white">{product.name}</p>
-                  <p className="text-xs text-slate-400">{product.brand} · EAN {product.ean}</p>
+                  <p className="text-xs text-slate-400">
+                    {product.brand} · EAN {product.ean}
+                  </p>
                 </div>
               </div>
               <div className="p-4 space-y-2">
@@ -430,11 +434,15 @@ export default function ScannerAR() {
                             LE MOINS CHER
                           </span>
                         )}
-                        <span className={`text-sm ${i === 0 ? 'text-emerald-200 font-semibold' : 'text-slate-300'}`}>
+                        <span
+                          className={`text-sm ${i === 0 ? 'text-emerald-200 font-semibold' : 'text-slate-300'}`}
+                        >
                           {entry.store}
                         </span>
                       </div>
-                      <span className={`font-bold text-lg ${i === 0 ? 'text-emerald-300' : 'text-slate-200'}`}>
+                      <span
+                        className={`font-bold text-lg ${i === 0 ? 'text-emerald-300' : 'text-slate-200'}`}
+                      >
                         {entry.price.toFixed(2)} €
                       </span>
                     </div>
@@ -443,7 +451,10 @@ export default function ScannerAR() {
                   <p className="text-xs text-slate-500 italic pt-1">
                     Économie max :{' '}
                     <span className="text-emerald-400 font-semibold">
-                      {(Math.max(...product.prices.map((p) => p.price)) - cheapest.price).toFixed(2)} €
+                      {(Math.max(...product.prices.map((p) => p.price)) - cheapest.price).toFixed(
+                        2
+                      )}{' '}
+                      €
                     </span>{' '}
                     en choisissant {cheapest.store}
                   </p>

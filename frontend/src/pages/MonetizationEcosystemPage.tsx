@@ -303,7 +303,11 @@ const TIER_MONTHLY_TARGETS = {
 };
 
 function formatEur(amount: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(amount);
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
 
 export default function MonetizationEcosystemPage() {
@@ -317,8 +321,14 @@ export default function MonetizationEcosystemPage() {
   });
 
   const totalMonthly = REVENUE_STREAMS.reduce((acc, s) => acc + s.monthlyTarget, 0);
-  const liveMonthly = REVENUE_STREAMS.filter((s) => s.status === 'live').reduce((acc, s) => acc + s.monthlyTarget, 0);
-  const betaMonthly = REVENUE_STREAMS.filter((s) => s.status === 'beta').reduce((acc, s) => acc + s.monthlyTarget, 0);
+  const liveMonthly = REVENUE_STREAMS.filter((s) => s.status === 'live').reduce(
+    (acc, s) => acc + s.monthlyTarget,
+    0
+  );
+  const betaMonthly = REVENUE_STREAMS.filter((s) => s.status === 'beta').reduce(
+    (acc, s) => acc + s.monthlyTarget,
+    0
+  );
 
   return (
     <>
@@ -330,7 +340,6 @@ export default function MonetizationEcosystemPage() {
 
       <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-6xl space-y-8">
-
           {/* Header */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
@@ -344,26 +353,36 @@ export default function MonetizationEcosystemPage() {
             </div>
             <div className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5 text-emerald-400" aria-hidden="true" />
-              <span className="text-emerald-400 font-bold text-lg">{formatEur(totalMonthly * 12)}/an</span>
+              <span className="text-emerald-400 font-bold text-lg">
+                {formatEur(totalMonthly * 12)}/an
+              </span>
             </div>
           </div>
 
           {/* Summary KPIs */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Objectif mensuel</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Objectif mensuel
+              </p>
               <p className="mt-1 text-xl font-extrabold text-white">{formatEur(totalMonthly)}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">En ligne (live)</p>
-              <p className="mt-1 text-xl font-extrabold text-emerald-400">{formatEur(liveMonthly)}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                En ligne (live)
+              </p>
+              <p className="mt-1 text-xl font-extrabold text-emerald-400">
+                {formatEur(liveMonthly)}
+              </p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
               <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">En bêta</p>
               <p className="mt-1 text-xl font-extrabold text-amber-400">{formatEur(betaMonthly)}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Sources actives</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Sources actives
+              </p>
               <p className="mt-1 text-xl font-extrabold text-white">
                 {REVENUE_STREAMS.filter((s) => s.status !== 'planned').length}
                 <span className="text-zinc-500 text-sm font-normal">/{REVENUE_STREAMS.length}</span>
@@ -377,10 +396,16 @@ export default function MonetizationEcosystemPage() {
               <div key={tier} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                    {tier === 1 ? <Star className="w-4 h-4 text-indigo-400" aria-hidden="true" /> : <Zap className="w-4 h-4 text-amber-400" aria-hidden="true" />}
+                    {tier === 1 ? (
+                      <Star className="w-4 h-4 text-indigo-400" aria-hidden="true" />
+                    ) : (
+                      <Zap className="w-4 h-4 text-amber-400" aria-hidden="true" />
+                    )}
                     Tier {tier} — {tier === 1 ? 'Core & Existants' : 'Premium (Nouveaux)'}
                   </h2>
-                  <span className="text-sm font-bold text-emerald-400">{formatEur(TIER_MONTHLY_TARGETS[tier])}/mois</span>
+                  <span className="text-sm font-bold text-emerald-400">
+                    {formatEur(TIER_MONTHLY_TARGETS[tier])}/mois
+                  </span>
                 </div>
                 <div className="w-full bg-white/5 rounded-full h-2">
                   <div
@@ -389,7 +414,8 @@ export default function MonetizationEcosystemPage() {
                   />
                 </div>
                 <p className="mt-2 text-xs text-zinc-500">
-                  {((TIER_MONTHLY_TARGETS[tier] / totalMonthly) * 100).toFixed(0)}% du total — {REVENUE_STREAMS.filter((s) => s.tier === tier).length} sources
+                  {((TIER_MONTHLY_TARGETS[tier] / totalMonthly) * 100).toFixed(0)}% du total —{' '}
+                  {REVENUE_STREAMS.filter((s) => s.tier === tier).length} sources
                 </p>
               </div>
             ))}
@@ -398,7 +424,12 @@ export default function MonetizationEcosystemPage() {
           {/* Filters */}
           <div className="flex flex-wrap gap-3">
             <div className="flex flex-col gap-1">
-              <label htmlFor="tier-filter" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Tier</label>
+              <label
+                htmlFor="tier-filter"
+                className="text-[10px] font-bold uppercase tracking-wide text-zinc-500"
+              >
+                Tier
+              </label>
               <select
                 id="tier-filter"
                 value={tierFilter}
@@ -411,7 +442,12 @@ export default function MonetizationEcosystemPage() {
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="status-filter" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Statut</label>
+              <label
+                htmlFor="status-filter"
+                className="text-[10px] font-bold uppercase tracking-wide text-zinc-500"
+              >
+                Statut
+              </label>
               <select
                 id="status-filter"
                 value={statusFilter}
@@ -435,13 +471,19 @@ export default function MonetizationEcosystemPage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xl" aria-hidden="true">{stream.icon}</span>
+                    <span className="text-xl" aria-hidden="true">
+                      {stream.icon}
+                    </span>
                     <div>
                       <p className="text-sm font-bold text-zinc-100 leading-tight">{stream.name}</p>
-                      <p className="text-[10px] text-zinc-500 uppercase tracking-wide">{stream.category} · Tier {stream.tier}</p>
+                      <p className="text-[10px] text-zinc-500 uppercase tracking-wide">
+                        {stream.category} · Tier {stream.tier}
+                      </p>
                     </div>
                   </div>
-                  <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold ${STATUS_COLORS[stream.status]}`}>
+                  <span
+                    className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold ${STATUS_COLORS[stream.status]}`}
+                  >
                     {STATUS_LABELS[stream.status]}
                   </span>
                 </div>
@@ -450,8 +492,12 @@ export default function MonetizationEcosystemPage() {
 
                 <div className="flex items-center justify-between mt-auto pt-2 border-t border-white/5">
                   <div>
-                    <p className="text-[10px] text-zinc-600 uppercase tracking-wide">Objectif/mois</p>
-                    <p className="text-sm font-extrabold text-emerald-400">{formatEur(stream.monthlyTarget)}</p>
+                    <p className="text-[10px] text-zinc-600 uppercase tracking-wide">
+                      Objectif/mois
+                    </p>
+                    <p className="text-sm font-extrabold text-emerald-400">
+                      {formatEur(stream.monthlyTarget)}
+                    </p>
                   </div>
                   {stream.route && (
                     <Link
@@ -501,7 +547,6 @@ export default function MonetizationEcosystemPage() {
               </table>
             </div>
           </div>
-
         </div>
       </div>
     </>

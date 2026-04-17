@@ -1,15 +1,9 @@
- 
 /**
  * ImportPreview Component
  * Display CSV data preview with validation errors
  */
 import { useMemo } from 'react';
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  type ColumnDef,
-} from '@tanstack/react-table';
+import { useReactTable, getCoreRowModel, flexRender, type ColumnDef } from '@tanstack/react-table';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ImportError } from '@/services/csvImportService';
@@ -30,7 +24,7 @@ export function ImportPreview({
   // Group errors by row
   const errorsByRow = useMemo(() => {
     const map = new Map<number, ImportError[]>();
-    errors.forEach(error => {
+    errors.forEach((error) => {
       const existing = map.get(error.row) || [];
       existing.push(error);
       map.set(error.row, existing);
@@ -40,12 +34,12 @@ export function ImportPreview({
 
   // Calculate statistics
   const validRows = useMemo(() => {
-    const uniqueErrorRows = new Set(errors.map(e => e.row));
+    const uniqueErrorRows = new Set(errors.map((e) => e.row));
     return data.length - uniqueErrorRows.size;
   }, [data, errors]);
 
   const errorRows = useMemo(() => {
-    return new Set(errors.map(e => e.row)).size;
+    return new Set(errors.map((e) => e.row)).size;
   }, [errors]);
 
   // Notify parent of validation results
@@ -64,16 +58,12 @@ export function ImportPreview({
       cell: ({ row, getValue }) => {
         const rowNumber = row.index + 2; // +2 for 0-index and header row
         const rowErrors = errorsByRow.get(rowNumber);
-        const fieldError = rowErrors?.find(e => e.field === key);
+        const fieldError = rowErrors?.find((e) => e.field === key);
         const value = getValue() as string;
 
         return (
           <div className="relative group">
-            <span className={cn(
-              fieldError && 'text-red-400 font-medium'
-            )}>
-              {value || '-'}
-            </span>
+            <span className={cn(fieldError && 'text-red-400 font-medium')}>{value || '-'}</span>
             {fieldError && (
               <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block z-10 w-64">
                 <div className="bg-red-500/90 backdrop-blur-sm text-white text-xs p-2 rounded-lg shadow-lg">
@@ -96,11 +86,7 @@ export function ImportPreview({
   });
 
   if (data.length === 0) {
-    return (
-      <div className="py-8 text-center text-slate-600">
-        Aucune donnée à afficher
-      </div>
-    );
+    return <div className="py-8 text-center text-slate-600">Aucune donnée à afficher</div>;
   }
 
   return (
@@ -134,10 +120,12 @@ export function ImportPreview({
             <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-medium text-yellow-400 mb-1">
-                Attention: {errorRows} ligne{errorRows > 1 ? 's' : ''} contient{errorRows > 1 ? '' : ''} des erreurs
+                Attention: {errorRows} ligne{errorRows > 1 ? 's' : ''} contient
+                {errorRows > 1 ? '' : ''} des erreurs
               </p>
               <p className="text-xs text-slate-700">
-                Les lignes avec erreurs seront ignorées lors de l'import. Survolez les champs en rouge pour voir les détails des erreurs.
+                Les lignes avec erreurs seront ignorées lors de l'import. Survolez les champs en
+                rouge pour voir les détails des erreurs.
               </p>
             </div>
           </div>
@@ -158,10 +146,7 @@ export function ImportPreview({
                     key={header.id}
                     className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-700"
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+                    {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
               </tr>
@@ -177,23 +162,13 @@ export function ImportPreview({
                   key={row.id}
                   className={cn(
                     'transition-colors',
-                    hasError
-                      ? 'bg-red-500/5 hover:bg-red-500/10'
-                      : 'hover:bg-slate-50'
+                    hasError ? 'bg-red-500/5 hover:bg-red-500/10' : 'hover:bg-slate-50'
                   )}
                 >
-                  <td className="px-4 py-3 font-mono text-xs text-slate-500">
-                    {rowNumber}
-                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-slate-500">{rowNumber}</td>
                   {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="px-4 py-3 text-slate-800"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                    <td key={cell.id} className="px-4 py-3 text-slate-800">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
                 </tr>
@@ -222,20 +197,14 @@ export function ImportPreview({
                 className="p-3 bg-red-500/5 border border-red-500/20 rounded-lg text-sm"
               >
                 <div className="flex items-start space-x-2">
-                  <span className="text-red-400 font-mono text-xs">
-                    Ligne {error.row}
-                  </span>
+                  <span className="text-red-400 font-mono text-xs">Ligne {error.row}</span>
                   {error.field && (
-                    <span className="text-xs text-slate-500">
-                      · Champ: {error.field}
-                    </span>
+                    <span className="text-xs text-slate-500">· Champ: {error.field}</span>
                   )}
                 </div>
                 <p className="mt-1 text-slate-800">{error.message}</p>
                 {error.value && (
-                  <p className="mt-1 text-xs text-slate-500">
-                    Valeur: "{error.value}"
-                  </p>
+                  <p className="mt-1 text-xs text-slate-500">Valeur: "{error.value}"</p>
                 )}
               </div>
             ))}

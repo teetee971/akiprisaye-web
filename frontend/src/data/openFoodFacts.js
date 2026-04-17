@@ -1,7 +1,6 @@
- 
 /**
  * OpenFoodFacts Integration
- * 
+ *
  * Fetches product information from OpenFoodFacts API
  * Enriches local product database with detailed information
  */
@@ -14,19 +13,19 @@
 export async function fetchProductFromOpenFoodFacts(ean) {
   try {
     const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${ean}.json`);
-    
+
     if (!response.ok) {
       return null;
     }
-    
+
     const data = await response.json();
-    
+
     if (data.status !== 1 || !data.product) {
       return null;
     }
-    
+
     const product = data.product;
-    
+
     // Extract relevant information
     return {
       ean: ean,
@@ -80,20 +79,20 @@ export async function searchProductsOnOpenFoodFacts(query, page = 1, pageSize = 
     url.searchParams.set('json', '1');
     url.searchParams.set('page', page.toString());
     url.searchParams.set('page_size', pageSize.toString());
-    
+
     const response = await fetch(url);
-    
+
     if (!response.ok) {
       return null;
     }
-    
+
     const data = await response.json();
-    
+
     return {
       count: data.count || 0,
       page: data.page || 1,
       pageSize: data.page_size || pageSize,
-      products: (data.products || []).map(product => ({
+      products: (data.products || []).map((product) => ({
         ean: product.code,
         name: product.product_name || product.product_name_fr || 'Produit inconnu',
         brand: product.brands || null,
@@ -117,14 +116,14 @@ export async function searchProductsOnOpenFoodFacts(query, page = 1, pageSize = 
 export async function getCategories() {
   try {
     const response = await fetch('https://world.openfoodfacts.org/categories.json');
-    
+
     if (!response.ok) {
       return [];
     }
-    
+
     const data = await response.json();
-    
-    return (data.tags || []).map(tag => ({
+
+    return (data.tags || []).map((tag) => ({
       id: tag.id,
       name: tag.name,
       products: tag.products || 0,
@@ -169,14 +168,14 @@ function calculateSustainabilityScoreCore(product) {
     local: 0,
     organic: 0,
   };
-  
+
   // Eco-score contribution (30 points)
   if (product.ecoScore) {
-    const ecoScoreMap = { 'a': 30, 'b': 22, 'c': 15, 'd': 7, 'e': 0 };
+    const ecoScoreMap = { a: 30, b: 22, c: 15, d: 7, e: 0 };
     breakdown.ecoScore = ecoScoreMap[product.ecoScore.toLowerCase()] || 0;
     score += breakdown.ecoScore;
   }
-  
+
   // Packaging contribution (20 points)
   if (product.packaging) {
     const packagingLower = product.packaging.toLowerCase();
@@ -191,16 +190,14 @@ function calculateSustainabilityScoreCore(product) {
       score += 5;
     }
   }
-  
+
   // Local production (30 points)
   const domComCountries = ['gp', 'mq', 'gf', 're', 'yt', 'pm', 'bl', 'mf', 'wf', 'pf', 'nc', 'tf'];
-  const isLocal = product.countries?.some(country => 
-    domComCountries.includes(country.toLowerCase()),
+  const isLocal = product.countries?.some((country) =>
+    domComCountries.includes(country.toLowerCase())
   );
-  const isFrance = product.countries?.some(country => 
-    country.toLowerCase().includes('france'),
-  );
-  
+  const isFrance = product.countries?.some((country) => country.toLowerCase().includes('france'));
+
   if (isLocal) {
     breakdown.local = 30;
     score += 30;
@@ -211,18 +208,18 @@ function calculateSustainabilityScoreCore(product) {
     breakdown.local = 15;
     score += 15;
   }
-  
+
   // Organic/Bio labels (20 points)
   const bioLabels = ['bio', 'organic', 'ab-agriculture-biologique', 'eu-organic'];
-  const hasBioLabel = product.labels?.some(label => 
-    bioLabels.some(bio => label.toLowerCase().includes(bio)),
+  const hasBioLabel = product.labels?.some((label) =>
+    bioLabels.some((bio) => label.toLowerCase().includes(bio))
   );
-  
+
   if (hasBioLabel) {
     breakdown.organic = 20;
     score += 20;
   }
-  
+
   return {
     score: Math.min(score, maxScore),
     maxScore,
@@ -235,7 +232,7 @@ function calculateSustainabilityScoreCore(product) {
 // Export memoized version for better performance
 export const calculateSustainabilityScore = memoize(
   calculateSustainabilityScoreCore,
-  (args) => args[0]?.ean || JSON.stringify(args[0]),
+  (args) => args[0]?.ean || JSON.stringify(args[0])
 );
 
 /**
@@ -245,17 +242,18 @@ export const calculateSustainabilityScore = memoize(
  */
 export function formatProductForDisplay(product) {
   if (!product) return null;
-  
+
   const sustainability = calculateSustainabilityScore(product);
-  
+
   return {
     ...product,
     sustainability,
     displayName: `${product.brand ? product.brand + ' - ' : ''}${product.name}`,
-    hasNutritionInfo: product.nutritionData && Object.values(product.nutritionData).some(v => v !== null),
+    hasNutritionInfo:
+      product.nutritionData && Object.values(product.nutritionData).some((v) => v !== null),
     hasAllergens: product.allergens && product.allergens.length > 0,
-    isBio: product.labels?.some(label => label.toLowerCase().includes('bio')),
-    isVegan: product.labels?.some(label => label.toLowerCase().includes('vegan')),
-    isGlutenFree: product.labels?.some(label => label.toLowerCase().includes('gluten-free')),
+    isBio: product.labels?.some((label) => label.toLowerCase().includes('bio')),
+    isVegan: product.labels?.some((label) => label.toLowerCase().includes('vegan')),
+    isGlutenFree: product.labels?.some((label) => label.toLowerCase().includes('gluten-free')),
   };
 }

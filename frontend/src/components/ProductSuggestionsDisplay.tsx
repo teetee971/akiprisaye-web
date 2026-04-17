@@ -13,10 +13,10 @@ interface ProductSuggestionsProps {
   className?: string;
 }
 
-export default function ProductSuggestionsDisplay({ 
-  suggestions, 
+export default function ProductSuggestionsDisplay({
+  suggestions,
   onAddProduct,
-  className = '' 
+  className = '',
 }: ProductSuggestionsProps) {
   if (suggestions.length === 0) {
     return null;
@@ -26,9 +26,7 @@ export default function ProductSuggestionsDisplay({
     <div className={`bg-blue-900/20 border border-blue-700/30 rounded-lg p-4 ${className}`}>
       <div className="flex items-center gap-2 mb-3">
         <Lightbulb className="w-4 h-4 text-yellow-400" />
-        <h3 className="text-sm font-semibold text-blue-200">
-          Suggestions de produits
-        </h3>
+        <h3 className="text-sm font-semibold text-blue-200">Suggestions de produits</h3>
       </div>
 
       <div className="space-y-2">
@@ -38,12 +36,8 @@ export default function ProductSuggestionsDisplay({
             className="flex items-center justify-between p-2 bg-slate-800/30 rounded hover:bg-slate-800/50 transition-colors"
           >
             <div className="flex-1">
-              <div className="text-sm text-gray-200 font-medium">
-                {suggestion.product}
-              </div>
-              <div className="text-xs text-gray-400">
-                {suggestion.reason}
-              </div>
+              <div className="text-sm text-gray-200 font-medium">{suggestion.product}</div>
+              <div className="text-xs text-gray-400">{suggestion.reason}</div>
             </div>
             <button
               onClick={() => onAddProduct(suggestion.product)}

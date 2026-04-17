@@ -55,7 +55,7 @@ export interface IEVRData {
  */
 export function calculateIEVRScore(
   categories: Record<string, number> | null,
-  weights: Record<string, number> | null,
+  weights: Record<string, number> | null
 ): number {
   if (!categories || !weights) {
     throw new Error('Categories and weights are required');
@@ -80,10 +80,7 @@ export function calculateIEVRScore(
 /**
  * Compare a territory score to a reference score (default: 100).
  */
-export function compareToReference(
-  territoryScore: number,
-  referenceScore = 100,
-): ComparisonResult {
+export function compareToReference(territoryScore: number, referenceScore = 100): ComparisonResult {
   const difference = territoryScore - referenceScore;
   const percentDiff = ((territoryScore - referenceScore) / referenceScore) * 100;
 
@@ -105,7 +102,7 @@ export function compareToReference(
  */
 export function calculateEvolution(
   currentScore: number,
-  previousScore: number | null | undefined,
+  previousScore: number | null | undefined
 ): EvolutionResult {
   if (previousScore === null || previousScore === undefined) {
     return { change: 0, percentChange: 0, trend: 'stable' };
@@ -132,7 +129,7 @@ export function calculateEvolution(
 export function generateExplanation(
   territory: string,
   score: number,
-  referenceScore = 100,
+  referenceScore = 100
 ): string {
   const { difference, interpretation } = compareToReference(score, referenceScore);
   const absDiff = Math.abs(Math.round(difference));
@@ -200,7 +197,7 @@ export function validateIEVRData(data: Partial<IEVRData>): true {
 
   const totalWeight = Object.values(data.categories).reduce(
     (sum, cat) => sum + (cat.weight ?? 0),
-    0,
+    0
   );
 
   if (Math.abs(totalWeight - 1) > 0.001) {

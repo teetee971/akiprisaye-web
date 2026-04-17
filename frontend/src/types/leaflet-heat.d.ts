@@ -1,5 +1,3 @@
- 
- 
 /**
  * Type definitions for leaflet.heat
  * https://github.com/Leaflet/Leaflet.heat
@@ -59,10 +57,7 @@ declare module 'leaflet' {
      * @param latlngs Array of [lat, lng, intensity] or [lat, lng] points
      * @param options HeatLayer options
      */
-    constructor(
-      latlngs: Array<[number, number, number?]>,
-      options?: HeatLayerOptions
-    );
+    constructor(latlngs: Array<[number, number, number?]>, options?: HeatLayerOptions);
 
     /**
      * Set the data for the heatmap

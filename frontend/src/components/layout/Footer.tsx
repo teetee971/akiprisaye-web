@@ -46,7 +46,9 @@ export default function Footer() {
         if (data?.lastScrapedAt) setDataFreshDate(data.lastScrapedAt);
         else if (data?.date) setDataFreshDate(data.date);
       })
-      .catch(() => {/* health file absent — silently ignore */});
+      .catch(() => {
+        /* health file absent — silently ignore */
+      });
   }, []);
 
   /**
@@ -80,61 +82,192 @@ export default function Footer() {
     }, 1500);
   };
 
-
   return (
-    <footer id="footer" aria-label="Pied de page" className="border-t border-slate-800 bg-slate-950">
+    <footer
+      id="footer"
+      aria-label="Pied de page"
+      className="border-t border-slate-800 bg-slate-950"
+    >
       {/* ── Multi-column navigation ── */}
       <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm">
-
           {/* Col 1 – Commencer */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Scale className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Commencer</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs">
+              <Scale className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Commencer
+            </p>
             <ul className="space-y-2">
-              <li><Link to="/comparateur" className="text-slate-400 hover:text-white transition-colors">Comparateur prix</Link></li>
-              <li><Link to="/search" className="text-slate-400 hover:text-white transition-colors">Recherche</Link></li>
-              <li><Link to="/scanner" className="text-slate-400 hover:text-white transition-colors">Scanner</Link></li>
-              <li><Link to="/liste" className="text-slate-400 hover:text-white transition-colors">Liste de courses</Link></li>
-              <li><Link to="/pricing" className="text-slate-400 hover:text-white transition-colors">Offres</Link></li>
+              <li>
+                <Link
+                  to="/comparateur"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Comparateur prix
+                </Link>
+              </li>
+              <li>
+                <Link to="/search" className="text-slate-400 hover:text-white transition-colors">
+                  Recherche
+                </Link>
+              </li>
+              <li>
+                <Link to="/scanner" className="text-slate-400 hover:text-white transition-colors">
+                  Scanner
+                </Link>
+              </li>
+              <li>
+                <Link to="/liste" className="text-slate-400 hover:text-white transition-colors">
+                  Liste de courses
+                </Link>
+              </li>
+              <li>
+                <Link to="/pricing" className="text-slate-400 hover:text-white transition-colors">
+                  Offres payantes
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Col 2 – Confiance */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><BarChart2 className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Confiance</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs">
+              <BarChart2 className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Confiance
+            </p>
             <ul className="space-y-2">
-              <li><Link to="/observatoire" className="text-slate-400 hover:text-white transition-colors">Observatoire</Link></li>
-              <li><Link to="/transparence" className="text-slate-400 hover:text-white transition-colors">Transparence</Link></li>
-              <li><Link to="/methodologie" className="text-slate-400 hover:text-white transition-colors">Méthodologie</Link></li>
-              <li><Link to="/donnees-publiques" className="text-slate-400 hover:text-white transition-colors">Données publiques</Link></li>
-              <li><Link to="/faq" className="text-slate-400 hover:text-white transition-colors">FAQ</Link></li>
+              <li>
+                <Link
+                  to="/observatoire"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Observatoire
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/transparence"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Transparence
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/methodologie"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Méthodologie
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/donnees-publiques"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Données publiques
+                </Link>
+              </li>
+              <li>
+                <Link to="/faq" className="text-slate-400 hover:text-white transition-colors">
+                  FAQ
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Col 3 – Ressources */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Wrench className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Ressources</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs">
+              <Wrench className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Ressources
+            </p>
             <ul className="space-y-2">
-              <li><Link to="/actualites" className="text-slate-400 hover:text-white transition-colors">Actualités</Link></li>
-              <li><Link to="/comparateurs" className="text-slate-400 hover:text-white transition-colors">Tous les comparateurs</Link></li>
-              <li><Link to="/comprendre-prix" className="text-slate-400 hover:text-white transition-colors">Comprendre les prix</Link></li>
-              <li><Link to="/contribuer-prix" className="text-slate-400 hover:text-white transition-colors">Contribuer</Link></li>
-              <li><Link to="/contact" className="text-slate-400 hover:text-white transition-colors">Contact</Link></li>
+              <li>
+                <Link
+                  to="/actualites"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Actualités
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/comparateurs"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Tous les comparateurs
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/comprendre-prix"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Comprendre les prix
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contribuer-prix"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Contribuer
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-slate-400 hover:text-white transition-colors">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
           {/* Col 4 – Pro & institutionnels */}
           <div>
-            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs"><Info className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Pro &amp; institutions</p>
+            <p className="font-semibold text-slate-300 mb-3 uppercase tracking-wider text-xs">
+              <Info className="inline-block w-3.5 h-3.5 mr-1.5 opacity-60" /> Pro &amp; institutions
+            </p>
             <ul className="space-y-2">
-              <li><Link to="/inscription-pro" className="text-slate-400 hover:text-blue-300 transition-colors"><Briefcase className="inline-block w-3.5 h-3.5 mr-1" /> Espace Pro</Link></li>
-              <li><Link to="/licence-institution" className="text-slate-400 hover:text-white transition-colors">Licence institution</Link></li>
-              <li><Link to="/pricing#partners" className="text-slate-400 hover:text-white transition-colors">Partenariats</Link></li>
-              <li><Link to="/contact#pro" className="text-slate-400 hover:text-white transition-colors">Parler à l’équipe</Link></li>
-              <li><Link to="/gouvernance" className="text-slate-400 hover:text-white transition-colors">Gouvernance</Link></li>
+              <li>
+                <Link
+                  to="/inscription-pro"
+                  className="text-slate-400 hover:text-blue-300 transition-colors"
+                >
+                  <Briefcase className="inline-block w-3.5 h-3.5 mr-1" /> Espace Pro
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/licence-institution"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Licence institution
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/pricing#partners"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Partenariats
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/contact#pro"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Parler à l’équipe
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/gouvernance"
+                  className="text-slate-400 hover:text-white transition-colors"
+                >
+                  Gouvernance
+                </Link>
+              </li>
             </ul>
           </div>
-
         </div>
       </div>
 
@@ -156,31 +289,41 @@ export default function Footer() {
               textAlign: 'left',
             }}
           >
-            © {new Date().getFullYear()} A KI PRI SA YÉ — Observer, pas vendre. Données citoyennes pour les territoires ultramarins.
+            © {new Date().getFullYear()} A KI PRI SA YÉ — Observer, pas vendre. Données citoyennes
+            pour les territoires ultramarins.
             {debugActive && (
-              <span className="ml-1 text-xs text-orange-400" aria-label="Auth debug activé">🔒</span>
+              <span className="ml-1 text-xs text-orange-400" aria-label="Auth debug activé">
+                🔒
+              </span>
             )}
           </button>
           <div className="flex gap-3 items-center flex-wrap">
-            {dataFreshDate && (() => {
-              const d = new Date(dataFreshDate);
-              const today = new Date();
-              const isToday = d.toDateString() === today.toDateString();
-              const label = isToday
-                ? '⚡ Données fraîches'
-                : `Données du ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`;
-              return (
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full border ${isToday ? 'bg-emerald-900/30 text-emerald-400 border-emerald-700/50' : 'bg-slate-800 text-slate-500 border-slate-700'}`}
-                  title={`Dernière actualisation : ${d.toLocaleString('fr-FR')}`}
-                >
-                  {label}
-                </span>
-              );
-            })()}
-            <Suspense fallback={<SkeletonBadge />}><LiveOnlineBadge /></Suspense>
-            <Link to="/mentions-legales" className="hover:text-slate-400 transition-colors">Mentions légales</Link>
-            <Link to="/transparence" className="hover:text-slate-400 transition-colors">Confidentialité</Link>
+            {dataFreshDate &&
+              (() => {
+                const d = new Date(dataFreshDate);
+                const today = new Date();
+                const isToday = d.toDateString() === today.toDateString();
+                const label = isToday
+                  ? '⚡ Données fraîches'
+                  : `Données du ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`;
+                return (
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full border ${isToday ? 'bg-emerald-900/30 text-emerald-400 border-emerald-700/50' : 'bg-slate-800 text-slate-500 border-slate-700'}`}
+                    title={`Dernière actualisation : ${d.toLocaleString('fr-FR')}`}
+                  >
+                    {label}
+                  </span>
+                );
+              })()}
+            <Suspense fallback={<SkeletonBadge />}>
+              <LiveOnlineBadge />
+            </Suspense>
+            <Link to="/mentions-legales" className="hover:text-slate-400 transition-colors">
+              Mentions légales
+            </Link>
+            <Link to="/transparence" className="hover:text-slate-400 transition-colors">
+              Confidentialité
+            </Link>
             <Link
               to="/versions"
               className="hover:text-slate-400 transition-colors"
@@ -188,9 +331,7 @@ export default function Footer() {
               aria-label={`Version v${VERSION} — ${buildInfo}`}
             >
               v{VERSION}
-              {!isProduction && (
-                <span className="ml-1 text-amber-600">({BUILD_ENV})</span>
-              )}
+              {!isProduction && <span className="ml-1 text-amber-600">({BUILD_ENV})</span>}
             </Link>
           </div>
         </div>

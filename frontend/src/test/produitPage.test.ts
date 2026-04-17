@@ -92,9 +92,9 @@ describe('GPS — store sorting for ProduitPage', () => {
   const userPos: GeoPosition = { lat: 16.2415, lon: -61.5331 };
 
   const stores: (StoreLocation & { price: number })[] = [
-    { id: 'store-far', lat: 16.271, lon: -61.588, price: 3.5 },   // ~6 km
+    { id: 'store-far', lat: 16.271, lon: -61.588, price: 3.5 }, // ~6 km
     { id: 'store-near', lat: 16.2425, lon: -61.534, price: 4.0 }, // ~0.2 km
-    { id: 'store-mid', lat: 16.255, lon: -61.56, price: 3.2 },    // ~3 km
+    { id: 'store-mid', lat: 16.255, lon: -61.56, price: 3.2 }, // ~3 km
   ];
 
   it('attaches a numeric distance to each store', () => {
@@ -135,9 +135,15 @@ const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
     getItem: vi.fn((key: string) => store[key] ?? null),
-    setItem: vi.fn((key: string, value: string) => { store[key] = value; }),
-    removeItem: vi.fn((key: string) => { delete store[key]; }),
-    clear: vi.fn(() => { store = {}; }),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
   };
 })();
 

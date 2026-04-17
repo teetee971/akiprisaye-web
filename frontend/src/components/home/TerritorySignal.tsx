@@ -1,18 +1,18 @@
 /**
  * ⑱ Territory Signal - Community Alert System
- * 
+ *
  * Displays aggregated price trend notifications for the user's territory.
  * Creates sense of belonging and public utility.
- * 
+ *
  * Psychological effect: Community engagement + utility
- * 
+ *
  * Features:
  * - Important price increases detected (weekly)
  * - Price stabilization alerts
  * - Territory-wide trends
  * - Community contribution stats
  * - Shareable insights
- * 
+ *
  * Data: Aggregated from expanded-prices.json + services-prices.json
  */
 
@@ -51,12 +51,12 @@ export function TerritorySignal() {
   const loadTerritorySignals = () => {
     // In real implementation, this would analyze expanded-prices.json
     // For now, generate example signals
-    
+
     const territoryNames: Record<string, string> = {
-      'GP': 'Guadeloupe',
-      'MQ': 'Martinique',
-      'GF': 'Guyane',
-      'RE': 'La Réunion'
+      GP: 'Guadeloupe',
+      MQ: 'Martinique',
+      GF: 'Guyane',
+      RE: 'La Réunion',
     };
 
     const exampleSignals: TerritorySignal[] = [
@@ -64,10 +64,10 @@ export function TerritorySignal() {
         type: 'increase',
         severity: 'high',
         title: '3 hausses importantes détectées cette semaine',
-        description: 'Produits laitiers, fruits frais et carburant en hausse moyenne de +8.5%',
+        description: 'Produits laitiers et fruits frais en hausse moyenne de +8.5%',
         productsAffected: 3,
         dateDetected: '2026-01-07',
-        icon: '📈'
+        icon: '📈',
       },
       {
         type: 'stable',
@@ -76,7 +76,7 @@ export function TerritorySignal() {
         description: 'Après une hausse de 12%, le prix du lait demi-écrémé est stable à 1.45€/L',
         productsAffected: 1,
         dateDetected: '2026-01-06',
-        icon: '✅'
+        icon: '✅',
       },
       {
         type: 'decrease',
@@ -85,8 +85,8 @@ export function TerritorySignal() {
         description: 'Prix moyen passé de 2.20€ à 1.95€ (-11.4%) sur 7 magasins',
         productsAffected: 1,
         dateDetected: '2026-01-05',
-        icon: '📉'
-      }
+        icon: '📉',
+      },
     ];
 
     const exampleStats: TerritoryStats = {
@@ -94,7 +94,7 @@ export function TerritorySignal() {
       territoryName: territoryNames[selectedTerritory] || 'Territoire',
       observations: 1247,
       contributors: 89,
-      lastUpdate: '2026-01-07T15:30:00Z'
+      lastUpdate: '2026-01-07T15:30:00Z',
     };
 
     setSignals(exampleSignals);
@@ -132,22 +132,24 @@ export function TerritorySignal() {
     { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵' },
     { code: 'MQ', name: 'Martinique', flag: '🇲🇶' },
     { code: 'GF', name: 'Guyane', flag: '🇬🇫' },
-    { code: 'RE', name: 'La Réunion', flag: '🇷🇪' }
+    { code: 'RE', name: 'La Réunion', flag: '🇷🇪' },
   ];
 
   const shareSignal = (signal: TerritorySignal) => {
     const text = `${signal.icon} ${signal.title} en ${stats?.territoryName}\n\n${signal.description}\n\nSource: Observatoire A KI PRI SA YÉ`;
-    
+
     if (navigator.share) {
-      navigator.share({
-        title: 'Signal Prix Territoire',
-        text: text,
-        url: window.location.href
-      }).catch(() => {
-        // Fallback: copy to clipboard
-        navigator.clipboard.writeText(text);
-        toast.success('Signal copié dans le presse-papier');
-      });
+      navigator
+        .share({
+          title: 'Signal Prix Territoire',
+          text: text,
+          url: window.location.href,
+        })
+        .catch(() => {
+          // Fallback: copy to clipboard
+          navigator.clipboard.writeText(text);
+          toast.success('Signal copié dans le presse-papier');
+        });
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(text);
@@ -178,7 +180,7 @@ export function TerritorySignal() {
       <div className="mb-6">
         <p className="block text-sm text-gray-400 mb-2">Votre territoire</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {territories.map(territory => (
+          {territories.map((territory) => (
             <button
               key={territory.code}
               onClick={() => setSelectedTerritory(territory.code)}
@@ -215,11 +217,12 @@ export function TerritorySignal() {
             </div>
           </div>
           <div className="mt-3 text-xs text-gray-500 text-center">
-            Dernière mise à jour: {new Date(stats.lastUpdate).toLocaleString('fr-FR', {
+            Dernière mise à jour:{' '}
+            {new Date(stats.lastUpdate).toLocaleString('fr-FR', {
               day: 'numeric',
               month: 'long',
               hour: '2-digit',
-              minute: '2-digit'
+              minute: '2-digit',
             })}
           </div>
         </div>
@@ -237,24 +240,31 @@ export function TerritorySignal() {
                 <span className="text-3xl">{signal.icon}</span>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className={`text-xs px-2 py-0.5 rounded ${
-                      signal.severity === 'high' ? 'bg-red-500/30 text-red-300' :
-                      signal.severity === 'medium' ? 'bg-yellow-500/30 text-yellow-300' :
-                      'bg-blue-500/30 text-blue-300'
-                    }`}>
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded ${
+                        signal.severity === 'high'
+                          ? 'bg-red-500/30 text-red-300'
+                          : signal.severity === 'medium'
+                            ? 'bg-yellow-500/30 text-yellow-300'
+                            : 'bg-blue-500/30 text-blue-300'
+                      }`}
+                    >
                       {getSignalTypeLabel(signal.type)}
                     </span>
                   </div>
                   <h4 className="font-bold text-white mb-2">{signal.title}</h4>
                   <p className="text-sm text-gray-300 mb-2">{signal.description}</p>
                   <div className="flex items-center gap-3 text-xs text-gray-500">
-                    <span>📦 {signal.productsAffected} produit{signal.productsAffected > 1 ? 's' : ''} concerné{signal.productsAffected > 1 ? 's' : ''}</span>
+                    <span>
+                      📦 {signal.productsAffected} produit{signal.productsAffected > 1 ? 's' : ''}{' '}
+                      concerné{signal.productsAffected > 1 ? 's' : ''}
+                    </span>
                     <span>•</span>
                     <span>🕒 {new Date(signal.dateDetected).toLocaleDateString('fr-FR')}</span>
                   </div>
                 </div>
               </div>
-              
+
               {/* Share Button */}
               <button
                 onClick={() => shareSignal(signal)}
@@ -285,9 +295,13 @@ export function TerritorySignal() {
           <div className="flex-1">
             <h4 className="font-semibold text-white mb-1">Devenez contributeur</h4>
             <p className="text-sm text-gray-300 mb-3">
-              Chaque observation compte ! Scannez vos tickets pour améliorer les alertes de votre territoire.
+              Chaque observation compte ! Scannez vos tickets pour améliorer les alertes de votre
+              territoire.
             </p>
-            <button aria-label="Scanner un ticket de caisse" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all">
+            <button
+              aria-label="Scanner un ticket de caisse"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-all"
+            >
               📸 Scanner un ticket
             </button>
           </div>

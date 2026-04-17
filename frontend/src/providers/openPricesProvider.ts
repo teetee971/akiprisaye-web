@@ -1,4 +1,8 @@
-import type { PriceObservation, PriceSearchInput, TerritoryCode } from '../services/priceSearch/price.types';
+import type {
+  PriceObservation,
+  PriceSearchInput,
+  TerritoryCode,
+} from '../services/priceSearch/price.types';
 import { normalizePriceObservation, normalizeText } from './normalize';
 import type { PriceProvider, ProviderResult } from './types';
 
@@ -71,7 +75,10 @@ const deriveTerritoryLabel = (item: OpenPricesItem): string | undefined => {
   );
 };
 
-const territoryMatches = (label: string | undefined, expectedTerritory?: TerritoryCode): boolean => {
+const territoryMatches = (
+  label: string | undefined,
+  expectedTerritory?: TerritoryCode
+): boolean => {
   if (!expectedTerritory) return true;
   const expectedLabel = TERRITORY_LABEL_BY_CODE[expectedTerritory];
   if (!expectedLabel || !label) return false;
@@ -143,7 +150,9 @@ export const openPricesProvider: PriceProvider = {
         source: 'open_prices',
         status: 'UNAVAILABLE',
         observations: [],
-        warnings: ['open_prices indisponible: VITE_PRICE_PROVIDER_OPEN_PRICES_ENDPOINT non configuré.'],
+        warnings: [
+          'open_prices indisponible: VITE_PRICE_PROVIDER_OPEN_PRICES_ENDPOINT non configuré.',
+        ],
       };
     }
 

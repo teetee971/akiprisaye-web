@@ -1,10 +1,9 @@
- 
 /**
  * Indicator Calculation Service - v3.0.0
- * 
+ *
  * Calcul des indicateurs prioritaires de l'observatoire
  * Transparents, traçables, médiatiquement exploitables
- * 
+ *
  * @module indicatorCalculationService
  */
 
@@ -28,7 +27,7 @@ export function calculateAveragePrices(
   config: IndicatorCalculationConfig
 ): IndicatorCalculationResult<AveragePriceIndicator[]> {
   const startTime = Date.now();
-  
+
   try {
     // Filter observations by config
     let filtered = observations.filter((obs) => {
@@ -38,20 +37,21 @@ export function calculateAveragePrices(
       const obsDate = new Date(obs.observedAt);
       const startDate = new Date(config.periode_debut);
       const endDate = new Date(config.periode_fin);
-      
+
       return obsDate >= startDate && obsDate <= endDate;
     });
-    
+
     // Apply quality filter
     if (config.qualite_minimale !== undefined) {
       filtered = filtered.filter(
-        (obs) => obs.confidenceScore !== undefined && obs.confidenceScore >= (config.qualite_minimale ?? 0),
+        (obs) =>
+          obs.confidenceScore !== undefined && obs.confidenceScore >= (config.qualite_minimale ?? 0)
       );
     }
-    
+
     // Group by product EAN or name
     const productGroups = new Map<string, PriceObservation[]>();
-    
+
     filtered.forEach((obs) => {
       const key = obs.barcode || obs.productLabel;
       if (!productGroups.has(key)) {
@@ -59,30 +59,28 @@ export function calculateAveragePrices(
       }
       productGroups.get(key)!.push(obs);
     });
-    
+
     // Calculate averages
     const results: AveragePriceIndicator[] = [];
-    
+
     productGroups.forEach((obsGroup, key) => {
       if (obsGroup.length === 0) return;
-      
+
       const firstObs = obsGroup[0];
-      
+
       // Calculate average based on config
       let averagePrice: number;
-      
+
       if (config.agregation === 'mediane') {
         const prices = obsGroup.map((o) => o.price).sort((a, b) => a - b);
         const mid = Math.floor(prices.length / 2);
-        averagePrice = prices.length % 2 === 0 
-          ? (prices[mid - 1] + prices[mid]) / 2 
-          : prices[mid];
+        averagePrice = prices.length % 2 === 0 ? (prices[mid - 1] + prices[mid]) / 2 : prices[mid];
       } else {
         // Default: moyenne (average)
         const sum = obsGroup.reduce((acc, obs) => acc + obs.price, 0);
         averagePrice = sum / obsGroup.length;
       }
-      
+
       results.push({
         produit: firstObs.productLabel,
         ean: firstObs.barcode,
@@ -95,7 +93,7 @@ export function calculateAveragePrices(
         derniere_mise_a_jour: new Date().toISOString(),
       });
     });
-    
+
     return {
       success: true,
       data: results,
@@ -126,14 +124,14 @@ export function calculateDomHexagoneGaps(
   config: IndicatorCalculationConfig
 ): IndicatorCalculationResult<DomHexagoneGap[]> {
   const startTime = Date.now();
-  
+
   try {
     // Calculate average prices for all territories
     const allAverages = calculateAveragePrices(observations, {
       ...config,
       territoire: undefined, // Include all territories
     });
-    
+
     if (!allAverages.success || !allAverages.data) {
       return {
         success: false,
@@ -145,9 +143,9 @@ export function calculateDomHexagoneGaps(
         },
       };
     }
-    
+
     const results: DomHexagoneGap[] = [];
-    
+
     // Group by product
     const productMap = new Map<string, AveragePriceIndicator[]>();
     allAverages.data.forEach((avg) => {
@@ -157,18 +155,18 @@ export function calculateDomHexagoneGaps(
       }
       productMap.get(key)!.push(avg);
     });
-    
+
     // Calculate gaps for each product
     productMap.forEach((averages, key) => {
       const hexagonePrice = averages.find((a) => a.territoire === 'FR');
       if (!hexagonePrice) return;
-      
+
       const domPrices = averages.filter((a) => a.territoire !== 'FR');
-      
+
       domPrices.forEach((domPrice) => {
         const ecartAbsolu = domPrice.prix_moyen - hexagonePrice.prix_moyen;
         const ecartPourcentage = (ecartAbsolu / hexagonePrice.prix_moyen) * 100;
-        
+
         let signification: 'plus_cher' | 'moins_cher' | 'equivalent';
         if (Math.abs(ecartPourcentage) < 5) {
           signification = 'equivalent';
@@ -177,7 +175,7 @@ export function calculateDomHexagoneGaps(
         } else {
           signification = 'moins_cher';
         }
-        
+
         results.push({
           produit: domPrice.produit,
           ean: domPrice.ean,
@@ -192,7 +190,7 @@ export function calculateDomHexagoneGaps(
         });
       });
     });
-    
+
     return {
       success: true,
       data: results,
@@ -226,7 +224,7 @@ export function calculateIVC(
   referenceDate: string
 ): IndicatorCalculationResult<IVCIndicator> {
   const startTime = Date.now();
-  
+
   try {
     // Define reference period (e.g., 30 days around reference date)
     const refDate = new Date(referenceDate);
@@ -234,14 +232,14 @@ export function calculateIVC(
     startDate.setDate(startDate.getDate() - 15);
     const endDate = new Date(refDate);
     endDate.setDate(endDate.getDate() + 15);
-    
+
     const config: IndicatorCalculationConfig = {
       territoire,
       periode_debut: startDate.toISOString().split('T')[0],
       periode_fin: endDate.toISOString().split('T')[0],
       agregation: 'moyenne',
     };
-    
+
     // Calculate average prices by category
     const categories: ProductCategory[] = [
       'Produits laitiers',
@@ -254,48 +252,53 @@ export function calculateIVC(
       'Bébé',
       'Autres',
     ];
-    
-    const categoryIndices: { categorie: ProductCategory; indice: number; contribution: number }[] = [];
+
+    const categoryIndices: { categorie: ProductCategory; indice: number; contribution: number }[] =
+      [];
     let totalContribution = 0;
-    
+
     for (const categorie of categories) {
       const categoryConfig = { ...config, categorie };
-      
+
       const territoryAvg = calculateAveragePrices(
         observations.filter((o) => o.territory === territoire),
-        categoryConfig,
+        categoryConfig
       );
-      
+
       const hexagoneAvg = calculateAveragePrices(
         observations.filter((o) => o.territory === 'FR'),
-        categoryConfig,
+        categoryConfig
       );
-      
-      if (territoryAvg.success && hexagoneAvg.success && 
-          territoryAvg.data && hexagoneAvg.data &&
-          territoryAvg.data.length > 0 && hexagoneAvg.data.length > 0) {
-        
+
+      if (
+        territoryAvg.success &&
+        hexagoneAvg.success &&
+        territoryAvg.data &&
+        hexagoneAvg.data &&
+        territoryAvg.data.length > 0 &&
+        hexagoneAvg.data.length > 0
+      ) {
         // Calculate average of all products in category
-        const territoryPrice = territoryAvg.data.reduce((s, d) => s + d.prix_moyen, 0) / territoryAvg.data.length;
-        const hexagonePrice = hexagoneAvg.data.reduce((s, d) => s + d.prix_moyen, 0) / hexagoneAvg.data.length;
-        
+        const territoryPrice =
+          territoryAvg.data.reduce((s, d) => s + d.prix_moyen, 0) / territoryAvg.data.length;
+        const hexagonePrice =
+          hexagoneAvg.data.reduce((s, d) => s + d.prix_moyen, 0) / hexagoneAvg.data.length;
+
         const indice = (territoryPrice / hexagonePrice) * 100;
         const contribution = DEFAULT_CATEGORY_WEIGHT / categories.length; // Equal weighting
-        
+
         categoryIndices.push({
           categorie,
           indice: Math.round(indice * 10) / 10,
           contribution: Math.round(contribution * 100),
         });
-        
+
         totalContribution += indice * contribution;
       }
     }
-    
-    const indiceGlobal = categoryIndices.length > 0 
-      ? Math.round(totalContribution * 10) / 10 
-      : 100;
-    
+
+    const indiceGlobal = categoryIndices.length > 0 ? Math.round(totalContribution * 10) / 10 : 100;
+
     return {
       success: true,
       data: {
@@ -308,7 +311,7 @@ export function calculateIVC(
       },
       metadata: {
         observations_utilisees: observations.filter(
-          (o) => o.territory === territoire || o.territory === 'FR',
+          (o) => o.territory === territoire || o.territory === 'FR'
         ).length,
         observations_exclues: 0,
         temps_calcul_ms: Date.now() - startTime,
@@ -336,23 +339,23 @@ export function calculateTemporalEvolution(
   territoire: TerritoryCode
 ): IndicatorCalculationResult<TemporalEvolution> {
   const startTime = Date.now();
-  
+
   try {
     const today = new Date();
     const periods: TemporalPeriod[] = ['J-30', 'J-90', 'J-365'];
-    
+
     // Find current price
     const recentObs = observations.filter((obs) => {
       const match =
         (obs.barcode === productKey || obs.productLabel === productKey) &&
         obs.territory === territoire;
       if (!match) return false;
-      
+
       const obsDate = new Date(obs.observedAt);
       const daysDiff = (today.getTime() - obsDate.getTime()) / (1000 * 60 * 60 * 24);
       return daysDiff <= 30;
     });
-    
+
     if (recentObs.length === 0) {
       return {
         success: false,
@@ -364,34 +367,33 @@ export function calculateTemporalEvolution(
         },
       };
     }
-    
+
     const prixActuel = recentObs.reduce((sum, obs) => sum + obs.price, 0) / recentObs.length;
-    
+
     const evolutions: TemporalEvolution['evolutions'] = [];
-    
+
     for (const period of periods) {
       const daysBack = period === 'J-30' ? 30 : period === 'J-90' ? 90 : 365;
       const periodStart = new Date(today);
       periodStart.setDate(periodStart.getDate() - daysBack - 7);
       const periodEnd = new Date(today);
       periodEnd.setDate(periodEnd.getDate() - daysBack + 7);
-      
+
       const periodObs = observations.filter((obs) => {
         const match =
           (obs.barcode === productKey || obs.productLabel === productKey) &&
           obs.territory === territoire;
         if (!match) return false;
-        
+
         const obsDate = new Date(obs.observedAt);
         return obsDate >= periodStart && obsDate <= periodEnd;
       });
-      
+
       if (periodObs.length > 0) {
-        const prixAnterieur =
-          periodObs.reduce((sum, obs) => sum + obs.price, 0) / periodObs.length;
+        const prixAnterieur = periodObs.reduce((sum, obs) => sum + obs.price, 0) / periodObs.length;
         const variationAbsolue = prixActuel - prixAnterieur;
         const variationPourcentage = (variationAbsolue / prixAnterieur) * 100;
-        
+
         evolutions.push({
           periode: period,
           prix_anterieur: Math.round(prixAnterieur * 100) / 100,
@@ -400,15 +402,16 @@ export function calculateTemporalEvolution(
         });
       }
     }
-    
+
     // Determine trend
     let tendance: 'hausse' | 'baisse' | 'stable' = 'stable';
     if (evolutions.length > 0) {
-      const avgVariation = evolutions.reduce((sum, e) => sum + e.variation_pourcentage, 0) / evolutions.length;
+      const avgVariation =
+        evolutions.reduce((sum, e) => sum + e.variation_pourcentage, 0) / evolutions.length;
       if (avgVariation > 2) tendance = 'hausse';
       else if (avgVariation < -2) tendance = 'baisse';
     }
-    
+
     return {
       success: true,
       data: {
@@ -448,12 +451,12 @@ export function calculateStoreDispersion(
   periodeDays: number = 30
 ): IndicatorCalculationResult<StoreDispersion> {
   const startTime = Date.now();
-  
+
   try {
     const today = new Date();
     const periodStart = new Date(today);
     periodStart.setDate(periodStart.getDate() - periodeDays);
-    
+
     // Filter observations
     const filtered = observations.filter((obs) => {
       const match =
@@ -461,11 +464,11 @@ export function calculateStoreDispersion(
         obs.territory === territoire &&
         obs.storeLabel;
       if (!match) return false;
-      
+
       const obsDate = new Date(obs.observedAt);
       return obsDate >= periodStart && obsDate <= today;
     });
-    
+
     if (filtered.length === 0) {
       return {
         success: false,
@@ -477,7 +480,7 @@ export function calculateStoreDispersion(
         },
       };
     }
-    
+
     // Group by enseigne
     const storeGroups = new Map<string, number[]>();
     filtered.forEach((obs) => {
@@ -487,31 +490,30 @@ export function calculateStoreDispersion(
       }
       storeGroups.get(obs.storeLabel)!.push(obs.price);
     });
-    
+
     // Calculate store averages
     const storePrices: { enseigne: string; prix: number }[] = [];
     storeGroups.forEach((prices, enseigne) => {
       const avg = prices.reduce((sum, p) => sum + p, 0) / prices.length;
       storePrices.push({ enseigne, prix: Math.round(avg * 100) / 100 });
     });
-    
+
     // Sort by price
     storePrices.sort((a, b) => a.prix - b.prix);
-    
+
     // Calculate statistics
     const prices = storePrices.map((sp) => sp.prix);
     const prixMin = prices[0];
     const prixMax = prices[prices.length - 1];
     const prixMoyen = prices.reduce((sum, p) => sum + p, 0) / prices.length;
-    
+
     const midIndex = Math.floor(prices.length / 2);
-    const prixMedian = prices.length % 2 === 0
-      ? (prices[midIndex - 1] + prices[midIndex]) / 2
-      : prices[midIndex];
-    
+    const prixMedian =
+      prices.length % 2 === 0 ? (prices[midIndex - 1] + prices[midIndex]) / 2 : prices[midIndex];
+
     const variance = prices.reduce((sum, p) => sum + Math.pow(p - prixMoyen, 2), 0) / prices.length;
     const ecartType = Math.sqrt(variance);
-    
+
     // Create store details with positions
     const parEnseigne = storePrices.map((sp) => {
       let position: 'min' | 'median' | 'max' | 'autre';
@@ -519,7 +521,7 @@ export function calculateStoreDispersion(
       else if (sp.prix === prixMax) position = 'max';
       else if (Math.abs(sp.prix - prixMedian) < 0.01) position = 'median';
       else position = 'autre';
-      
+
       return {
         enseigne: sp.enseigne,
         prix: sp.prix,
@@ -527,7 +529,7 @@ export function calculateStoreDispersion(
         ecart_vs_median: Math.round((sp.prix - prixMedian) * 100) / 100,
       };
     });
-    
+
     return {
       success: true,
       data: {

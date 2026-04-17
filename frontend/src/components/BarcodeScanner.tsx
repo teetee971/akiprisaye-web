@@ -1,4 +1,3 @@
- 
 import React, { useState, useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import uxMonitor from '../utils/uxMonitor';
@@ -17,9 +16,11 @@ interface BarcodeScannerProps {
 const UI_COOLDOWN_MS = 1500;
 
 export default function BarcodeScanner({ onScan, onClose, options = {} }: BarcodeScannerProps) {
-  const isScanDebug = typeof window !== 'undefined' && ['scanDebug', 'debug'].some(
-    (param) => new URLSearchParams(window.location.search).get(param) === '1',
-  );
+  const isScanDebug =
+    typeof window !== 'undefined' &&
+    ['scanDebug', 'debug'].some(
+      (param) => new URLSearchParams(window.location.search).get(param) === '1'
+    );
 
   // Scan state management
   const [scanState, setScanState] = useState<ScanState>('idle');
@@ -33,12 +34,16 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
   const [torchEnabled, setTorchEnabled] = useState(false);
   const [zoomSupported, setZoomSupported] = useState(false);
   const [zoomValue, setZoomValue] = useState(1);
-  const [zoomRange, setZoomRange] = useState<{ min: number; max: number; step: number } | null>(null);
+  const [zoomRange, setZoomRange] = useState<{ min: number; max: number; step: number } | null>(
+    null
+  );
   const [scanMode, setScanMode] = useState<'camera' | 'upload'>('camera');
   const [userMessage, setUserMessage] = useState<ScannerMessage | null>(null);
 
   // Scan feedback state
-  const [scanFeedback, setScanFeedback] = useState<'searching' | 'focusing' | 'detecting' | null>(null);
+  const [scanFeedback, setScanFeedback] = useState<'searching' | 'focusing' | 'detecting' | null>(
+    null
+  );
   const [showNoResultFallback, setShowNoResultFallback] = useState(false);
   const [debugInfo, setDebugInfo] = useState({
     permission: 'unknown' as 'granted' | 'prompt' | 'denied' | 'unsupported' | 'unknown',
@@ -96,9 +101,15 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
     if (debugEnabled) console.log(`[SCAN] State transition: ${from} → ${to}`, reason || '');
   };
 
-  const checkCameraPermission = async (): Promise<'granted' | 'prompt' | 'denied' | 'unsupported'> => {
+  const checkCameraPermission = async (): Promise<
+    'granted' | 'prompt' | 'denied' | 'unsupported'
+  > => {
     try {
-      if (typeof navigator === 'undefined' || !navigator.permissions || !navigator.permissions.query) {
+      if (
+        typeof navigator === 'undefined' ||
+        !navigator.permissions ||
+        !navigator.permissions.query
+      ) {
         return 'unsupported';
       }
       const result = await navigator.permissions.query({ name: 'camera' as PermissionName });
@@ -245,7 +256,11 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
     if (permission === 'granted' || permission === 'prompt' || permission === 'unsupported') {
       try {
-        if (typeof navigator === 'undefined' || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (
+          typeof navigator === 'undefined' ||
+          !navigator.mediaDevices ||
+          !navigator.mediaDevices.getUserMedia
+        ) {
           throw new Error('getUserMedia non disponible sur ce navigateur');
         }
 
@@ -297,7 +312,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
         if (track) {
           const settings = track.getSettings();
-          const capabilities = typeof track.getCapabilities === 'function' ? track.getCapabilities() : null;
+          const capabilities =
+            typeof track.getCapabilities === 'function' ? track.getCapabilities() : null;
 
           const hasTorch = Boolean(capabilities && 'torch' in capabilities && capabilities.torch);
           setTorchSupported(hasTorch);
@@ -328,7 +344,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
             type: 'warning',
             title: 'Toujours rien détecté',
             message:
-              "Aucun code détecté après quelques secondes. Continuez le scan, saisissez le code manuellement, ou prenez une photo du code-barres.",
+              'Aucun code détecté après quelques secondes. Continuez le scan, saisissez le code manuellement, ou prenez une photo du code-barres.',
           });
           transitionState('scanning', `No result after ${timeout}ms - fallback suggested`);
         }, timeout);
@@ -349,7 +365,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               const validation = validateEan(code);
 
               if (!validation.valid || !isAcceptedEanCode(validation.ean)) {
-                if (debugEnabled) console.log('[SCAN] Ignored non-valid EAN code from camera:', code, validation);
+                if (debugEnabled)
+                  console.log('[SCAN] Ignored non-valid EAN code from camera:', code, validation);
                 setScanFeedback('searching');
                 return;
               }
@@ -365,7 +382,11 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               lastDetectedRef.current = { code: validation.ean, timestamp: now };
 
               const lastUiEmit = lastUiEmitRef.current;
-              if (lastUiEmit && lastUiEmit.code === validation.ean && now - lastUiEmit.at < UI_COOLDOWN_MS) {
+              if (
+                lastUiEmit &&
+                lastUiEmit.code === validation.ean &&
+                now - lastUiEmit.at < UI_COOLDOWN_MS
+              ) {
                 setScanFeedback('searching');
                 return;
               }
@@ -400,7 +421,7 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 });
                 lastDebugUpdateAtRef.current = now;
               }
-            },
+            }
           );
         }
 
@@ -525,12 +546,14 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           if (codes.length > 0) {
             ean = codes[0].rawValue;
             detectionMethod = 'native';
-            if (enableDebugLogging) console.log('[SCAN] ✅ Barcode detected with BarcodeDetector:', ean);
+            if (enableDebugLogging)
+              console.log('[SCAN] ✅ Barcode detected with BarcodeDetector:', ean);
           } else if (enableDebugLogging) {
             console.log('[SCAN] ℹ️ BarcodeDetector found no codes, trying ZXing...');
           }
         } catch (detErr) {
-          if (enableDebugLogging) console.log('[SCAN] BarcodeDetector failed, will try other methods:', detErr);
+          if (enableDebugLogging)
+            console.log('[SCAN] BarcodeDetector failed, will try other methods:', detErr);
         }
       } else if (enableDebugLogging) {
         console.log('[SCAN] ℹ️ Native BarcodeDetector not available, using ZXing');
@@ -582,7 +605,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           }
         } catch (ocrErr) {
           console.error('[SCAN] OCR error:', ocrErr);
-          if (enableDebugLogging) console.log('[SCAN] ⚠️ OCR fallback failed, will prompt for manual entry');
+          if (enableDebugLogging)
+            console.log('[SCAN] ⚠️ OCR fallback failed, will prompt for manual entry');
         }
       } else if (!ean && !enableOcrFallback && enableDebugLogging) {
         console.log('[SCAN] ℹ️ OCR fallback is disabled - skipping OCR detection');
@@ -619,7 +643,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           message: `✅ Code détecté avec ${methodName}: ${normalizedEan}`,
         });
 
-        if (enableDebugLogging) console.log('[SCAN] ✅ Final EAN to process:', ean, 'via', detectionMethod);
+        if (enableDebugLogging)
+          console.log('[SCAN] ✅ Final EAN to process:', ean, 'via', detectionMethod);
 
         transitionState('processing', `Barcode from image: ${ean}`);
 
@@ -640,15 +665,21 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           type: 'warning',
           title: 'Code non détecté',
           message:
-            "❌ Aucun code détecté automatiquement. 💡 Conseils : assurez-vous que le code-barres est bien visible, net et bien éclairé. Vous pouvez aussi saisir le code manuellement ci-dessous.",
+            '❌ Aucun code détecté automatiquement. 💡 Conseils : assurez-vous que le code-barres est bien visible, net et bien éclairé. Vous pouvez aussi saisir le code manuellement ci-dessous.',
         });
         transitionState('error', 'No barcode found in image');
 
         if (enableDebugLogging) {
           console.log('[SCAN] ⚠️ Detection summary:');
-          console.log('  - Native BarcodeDetector:', 'BarcodeDetector' in window ? 'tried but no result' : 'not available');
+          console.log(
+            '  - Native BarcodeDetector:',
+            'BarcodeDetector' in window ? 'tried but no result' : 'not available'
+          );
           console.log('  - ZXing detection: tried but no result');
-          console.log('  - OCR fallback:', enableOcrFallback ? 'tried but no EAN pattern found' : 'disabled');
+          console.log(
+            '  - OCR fallback:',
+            enableOcrFallback ? 'tried but no EAN pattern found' : 'disabled'
+          );
         }
 
         uxMonitor.scanCompleted('barcode', false);
@@ -659,7 +690,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
       setUserMessage({
         type: 'error',
         title: 'Erreur',
-        message: 'Une erreur est survenue lors du traitement de l’image. Essayez la saisie manuelle.',
+        message:
+          'Une erreur est survenue lors du traitement de l’image. Essayez la saisie manuelle.',
       });
       setIsScanning(false);
       transitionState('error', 'Image processing failed');
@@ -857,8 +889,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
               <div className="mt-3 pt-3 border-t border-blue-700/30">
                 <p className="text-xs text-blue-300">
-                  <strong>⚠️ Important :</strong> La caméra nécessite HTTPS ou localhost. Si vous voyez "getUserMedia non
-                  disponible", utilisez l'import d'image.
+                  <strong>⚠️ Important :</strong> La caméra nécessite HTTPS ou localhost. Si vous
+                  voyez "getUserMedia non disponible", utilisez l'import d'image.
                 </p>
               </div>
             </div>
@@ -880,7 +912,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
               <div className="mt-3 pt-3 border-t border-current/30">
                 <p className="text-xs opacity-80">
-                  💡 <strong>Astuce :</strong> Vous pouvez également utiliser la saisie manuelle en bas de page.
+                  💡 <strong>Astuce :</strong> Vous pouvez également utiliser la saisie manuelle en
+                  bas de page.
                 </p>
               </div>
             </div>
@@ -892,34 +925,48 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
               <p className="font-semibold mb-2">🔐 Comment autoriser l'accès à la caméra ?</p>
               <ul className="space-y-2 ml-4 list-disc">
                 <li>
-                  <strong>Chrome/Edge :</strong> Cliquez sur l'icône 🔒 ou ℹ️ dans la barre d'adresse → Paramètres du site
-                  → Caméra → Autoriser
+                  <strong>Chrome/Edge :</strong> Cliquez sur l'icône 🔒 ou ℹ️ dans la barre
+                  d'adresse → Paramètres du site → Caméra → Autoriser
                 </li>
                 <li>
                   <strong>Safari (iOS) :</strong> Réglages → Safari → Caméra → Autoriser
                 </li>
                 <li>
-                  <strong>Firefox :</strong> Cliquez sur l'icône 🔒 → Autorisations → Caméra → Autoriser
+                  <strong>Firefox :</strong> Cliquez sur l'icône 🔒 → Autorisations → Caméra →
+                  Autoriser
                 </li>
               </ul>
-              <p className="mt-3 text-xs">Une fois l'autorisation donnée, rechargez la page et réessayez.</p>
+              <p className="mt-3 text-xs">
+                Une fois l'autorisation donnée, rechargez la page et réessayez.
+              </p>
             </div>
           )}
 
           {/* Error message */}
-          {error && <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-4 text-red-200">{error}</div>}
+          {error && (
+            <div className="bg-red-900/20 border border-red-700/30 rounded-lg p-4 text-red-200">
+              {error}
+            </div>
+          )}
 
           {isScanning && showNoResultFallback && (
             <div className="bg-amber-900/30 border border-amber-600/40 rounded-lg p-4 text-amber-100 text-sm space-y-3">
               <p className="font-semibold">⏱️ Astuce rapide</p>
               <p className="mt-1">
-                Continuez à viser le code au centre, ou utilisez immédiatement la photo du code-barres / la saisie manuelle ci-dessous.
+                Continuez à viser le code au centre, ou utilisez immédiatement la photo du
+                code-barres / la saisie manuelle ci-dessous.
               </p>
               <label className="block">
                 <div className="px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-center cursor-pointer transition-colors">
                   📸 Prendre une photo du code-barres
                 </div>
-                <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} className="hidden" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
               </label>
             </div>
           )}
@@ -935,7 +982,11 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
           )}
 
           <button
-            onClick={() => document.getElementById('manual-entry')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+            onClick={() =>
+              document
+                .getElementById('manual-entry')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            }
             className="w-full px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-colors"
           >
             ✍️ Saisir manuellement
@@ -948,7 +999,13 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 <div className="px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-lg text-center cursor-pointer transition-colors">
                   🖼️ Prendre une photo du code-barres
                 </div>
-                <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} className="hidden" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
               </label>
 
               <button
@@ -967,14 +1024,22 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 <div className="px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold text-center cursor-pointer transition-colors">
                   🖼️ Prendre une photo du code-barres
                 </div>
-                <input type="file" accept="image/*" capture="environment" onChange={handleImageUpload} className="hidden" />
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
               </label>
             </div>
           )}
 
           {/* Manual input */}
           <div className="border-t border-slate-700 pt-4">
-            <p id="manual-entry" className="text-gray-400 text-sm mb-3">Ou saisir manuellement :</p>
+            <p id="manual-entry" className="text-gray-400 text-sm mb-3">
+              Ou saisir manuellement :
+            </p>
             <form onSubmit={handleManualSubmit} className="flex gap-2">
               <input
                 type="text"
@@ -996,7 +1061,9 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
 
           {isScanDebug && (
             <div className="border-t border-slate-700 pt-4 text-xs text-slate-200 space-y-2">
-              <p className="font-semibold text-amber-300">🧪 Debug scanner (?debug=1 ou ?scanDebug=1)</p>
+              <p className="font-semibold text-amber-300">
+                🧪 Debug scanner (?debug=1 ou ?scanDebug=1)
+              </p>
               <ul className="space-y-1 font-mono bg-slate-950/80 border border-slate-700 rounded p-3">
                 <li>userAgent: {debugInfo.userAgent}</li>
                 <li>permission: {debugInfo.permission}</li>
@@ -1014,8 +1081,8 @@ export default function BarcodeScanner({ onScan, onClose, options = {} }: Barcod
                 <li>capabilities: {debugInfo.cameraCapabilities}</li>
               </ul>
               <p className="text-slate-400">
-                Test rapide: autoriser la caméra, vérifier que video {'>'} 0x0, puis essayer aussi l’import d’image (ex:
-                EAN 3292090000016).
+                Test rapide: autoriser la caméra, vérifier que video {'>'} 0x0, puis essayer aussi
+                l’import d’image (ex: EAN 3292090000016).
               </p>
             </div>
           )}

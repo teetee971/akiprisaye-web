@@ -93,7 +93,12 @@ describe('errorTracker', () => {
 
   it('getErrors returns only error entries from buffer', () => {
     // Manually push an event entry to the buffer
-    monitoringBuffer.addItem({ category: 'event', name: 'login_success', route: '/', timestamp: '' });
+    monitoringBuffer.addItem({
+      category: 'event',
+      name: 'login_success',
+      route: '/',
+      timestamp: '',
+    });
     // Push an error entry
     monitoringBuffer.addItem({
       type: 'runtime_error',
@@ -158,7 +163,14 @@ describe('eventLogger', () => {
   });
 
   it('getEvents filters out non-event entries', () => {
-    monitoringBuffer.addItem({ type: 'runtime_error', message: 'err', route: '/', timestamp: '', userAgent: '', buildId: '' });
+    monitoringBuffer.addItem({
+      type: 'runtime_error',
+      message: 'err',
+      route: '/',
+      timestamp: '',
+      userAgent: '',
+      buildId: '',
+    });
     logEvent('scan_success');
     const events = getEvents();
     expect(events).toHaveLength(1);

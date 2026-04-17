@@ -12,32 +12,30 @@ interface LanguageSuggestionModalProps {
   onDecline: () => void;
 }
 
-export function LanguageSuggestionModal({ 
-  language, 
-  onAccept, 
-  onDecline 
+export function LanguageSuggestionModal({
+  language,
+  onAccept,
+  onDecline,
 }: LanguageSuggestionModalProps) {
   const { t } = useTranslation();
-  
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-6 animate-fade-in">
         <div className="text-center mb-6">
           <div className="text-6xl mb-4">{language.flag}</div>
-          <h2 className="text-2xl font-bold mb-2">
-            {t('common:app.name')}
-          </h2>
+          <h2 className="text-2xl font-bold mb-2">{t('common:app.name')}</h2>
           <p className="text-gray-600 dark:text-gray-400">
             Nous avons détecté que vous êtes en {language.territory}
           </p>
         </div>
-        
+
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
           <p className="text-center font-medium">
             Préférez-vous utiliser l'application en <strong>{language.native}</strong> ?
           </p>
         </div>
-        
+
         <div className="flex flex-col gap-3">
           <button
             onClick={onAccept}
@@ -52,7 +50,7 @@ export function LanguageSuggestionModal({
             Non, continuer en Français
           </button>
         </div>
-        
+
         <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-4">
           Vous pourrez toujours changer de langue dans les paramètres
         </p>

@@ -42,7 +42,9 @@ export function ScoreAntiCrise({ score = 0, trend = 'stable' }) {
   };
 
   return (
-    <div className={`inline-flex items-center rounded-lg border-2 px-4 py-2 ${getScoreColor(score)}`}>
+    <div
+      className={`inline-flex items-center rounded-lg border-2 px-4 py-2 ${getScoreColor(score)}`}
+    >
       <div className="text-center">
         <div className="flex items-center space-x-2">
           <div>
@@ -53,9 +55,7 @@ export function ScoreAntiCrise({ score = 0, trend = 'stable' }) {
             {getTrendIcon(trend)}
           </span>
         </div>
-        <p className="text-xs font-semibold mt-1">
-          {getScoreLabel(score)}
-        </p>
+        <p className="text-xs font-semibold mt-1">{getScoreLabel(score)}</p>
       </div>
     </div>
   );

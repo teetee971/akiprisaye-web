@@ -72,7 +72,7 @@ export const simulateFetchPrice = async (target: PredatorTarget): Promise<number
 const comparePrices = (
   localData: number,
   competitorData: number,
-  thresholdPercent = DEFAULT_THRESHOLD_PERCENT,
+  thresholdPercent = DEFAULT_THRESHOLD_PERCENT
 ): PredatorScanResult | null => {
   if (!Number.isFinite(localData) || !Number.isFinite(competitorData)) return null;
 
@@ -91,12 +91,13 @@ const comparePrices = (
 export const buildPredatorAlert = (
   target: PredatorTarget,
   observedPrice: number,
-  thresholdPercent = DEFAULT_THRESHOLD_PERCENT,
+  thresholdPercent = DEFAULT_THRESHOLD_PERCENT
 ): PredatorAlert | null => {
   const comparison = comparePrices(target.referencePrice, observedPrice, thresholdPercent);
   if (!comparison) return null;
 
-  const severity: PredatorAlert['severity'] = Math.abs(comparison.deltaPercent) >= 10 ? 'high' : 'medium';
+  const severity: PredatorAlert['severity'] =
+    Math.abs(comparison.deltaPercent) >= 10 ? 'high' : 'medium';
   const direction = comparison.deltaPercent > 0 ? 'hausse' : 'baisse';
 
   return {
@@ -112,13 +113,13 @@ export const buildPredatorAlert = (
 
 export const runPredatorMonitoring = async (
   targets: PredatorTarget[] = PREDATOR_TARGETS,
-  thresholdPercent = DEFAULT_THRESHOLD_PERCENT,
+  thresholdPercent = DEFAULT_THRESHOLD_PERCENT
 ): Promise<PredatorAlert[]> => {
   const alerts = await Promise.all(
     targets.map(async (target) => {
       const observedPrice = await simulateFetchPrice(target);
       return buildPredatorAlert(target, observedPrice, thresholdPercent);
-    }),
+    })
   );
 
   return alerts.filter((alert): alert is PredatorAlert => Boolean(alert));

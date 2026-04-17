@@ -30,9 +30,9 @@ export interface UntappedOpportunity extends OpportunityCandidate {
 
 // ── Thresholds ────────────────────────────────────────────────────────────────
 
-const MIN_DELTA            = 0.20;   // minimum price spread to be interesting
-const MAX_CLICKS           = 5;      // must have low organic traffic
-const MIN_REVENUE_OS_SCORE = 50;     // must have some underlying revenue potential
+const MIN_DELTA = 0.2; // minimum price spread to be interesting
+const MAX_CLICKS = 5; // must have low organic traffic
+const MIN_REVENUE_OS_SCORE = 50; // must have some underlying revenue potential
 
 // ── Core finder ───────────────────────────────────────────────────────────────
 
@@ -46,17 +46,16 @@ const MIN_REVENUE_OS_SCORE = 50;     // must have some underlying revenue potent
  *
  * @param products  Full scored product list
  */
-export function findUntappedOpportunities(
-  products: OpportunityCandidate[],
-): UntappedOpportunity[] {
+export function findUntappedOpportunities(products: OpportunityCandidate[]): UntappedOpportunity[] {
   return products
-    .filter((p) => (
-      (p.delta ?? 0)           > MIN_DELTA             &&
-      (p.clicks ?? 0)          < MAX_CLICKS             &&
-      (p.revenueOSScore ?? 0)  > MIN_REVENUE_OS_SCORE
-    ))
+    .filter(
+      (p) =>
+        (p.delta ?? 0) > MIN_DELTA &&
+        (p.clicks ?? 0) < MAX_CLICKS &&
+        (p.revenueOSScore ?? 0) > MIN_REVENUE_OS_SCORE
+    )
     .map((p) => {
-      const score  = computeOpportunityScore(p);
+      const score = computeOpportunityScore(p);
       const reason = buildReason(p);
       return { ...p, opportunityScore: score, reason };
     })
@@ -72,17 +71,16 @@ export function findUntappedOpportunities(
  * fewest clicks receive the highest priority.
  */
 export function computeOpportunityScore(p: OpportunityCandidate): number {
-  const deltaScore   = Math.min(100, ((p.delta ?? 0) / 5) * 100);
+  const deltaScore = Math.min(100, ((p.delta ?? 0) / 5) * 100);
   const revenueScore = Math.min(100, p.revenueOSScore ?? 0);
   // Invert click count: 0 clicks = 100, MAX_CLICKS clicks = 0
-  const clickGap     = Math.max(0, MAX_CLICKS - (p.clicks ?? 0));
-  const clickScore   = (clickGap / MAX_CLICKS) * 100;
+  const clickGap = Math.max(0, MAX_CLICKS - (p.clicks ?? 0));
+  const clickScore = (clickGap / MAX_CLICKS) * 100;
 
-  return Math.min(100, Math.max(0, Math.round(
-    deltaScore   * 0.40 +
-    revenueScore * 0.40 +
-    clickScore   * 0.20,
-  )));
+  return Math.min(
+    100,
+    Math.max(0, Math.round(deltaScore * 0.4 + revenueScore * 0.4 + clickScore * 0.2))
+  );
 }
 
 /**
@@ -90,7 +88,7 @@ export function computeOpportunityScore(p: OpportunityCandidate): number {
  */
 export function buildReason(p: OpportunityCandidate): string {
   const parts: string[] = [];
-  if ((p.delta ?? 0) > 0.50) parts.push(`écart de prix élevé (${(p.delta ?? 0).toFixed(2)} €)`);
+  if ((p.delta ?? 0) > 0.5) parts.push(`écart de prix élevé (${(p.delta ?? 0).toFixed(2)} €)`);
   if ((p.clicks ?? 0) === 0) parts.push('aucun clic enregistré — contenu à créer');
   else if ((p.clicks ?? 0) < 3) parts.push('très peu de visibilité');
   if ((p.revenueOSScore ?? 0) > 70) parts.push('fort potentiel revenu');
@@ -106,7 +104,7 @@ export function buildReason(p: OpportunityCandidate): string {
  */
 export function getTopOpportunities(
   products: OpportunityCandidate[],
-  limit = 20,
+  limit = 20
 ): UntappedOpportunity[] {
   return findUntappedOpportunities(products).slice(0, limit);
 }

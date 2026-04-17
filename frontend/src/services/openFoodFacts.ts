@@ -207,7 +207,7 @@ export async function fetchOffProductByBarcode(
         method: 'GET',
         signal: externalSignal ?? controller?.signal,
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
       }
     );
@@ -295,9 +295,10 @@ function safeNumber(value: unknown): number | undefined {
 }
 
 function mapToUiModel(barcode: string, product: OffApiProduct): OffProductUiModel {
-  const nutriments = typeof product.nutriments === 'object' && product.nutriments !== null
-    ? product.nutriments as Record<string, unknown>
-    : {};
+  const nutriments =
+    typeof product.nutriments === 'object' && product.nutriments !== null
+      ? (product.nutriments as Record<string, unknown>)
+      : {};
 
   return {
     barcode,

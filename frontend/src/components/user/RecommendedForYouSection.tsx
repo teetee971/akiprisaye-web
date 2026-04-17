@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { sortByScore, getBadges, getBestDeal, type ConversionProduct } from '../../engine/conversionEngine';
+import {
+  sortByScore,
+  getBadges,
+  getBestDeal,
+  type ConversionProduct,
+} from '../../engine/conversionEngine';
 import { StickyBestPriceCTA } from '../conversion/StickyBestPriceCTA';
 import { FavoriteButton } from '../conversion/FavoriteButton';
 import { PostClickConfirmation } from '../conversion/PostClickConfirmation';
@@ -40,8 +45,8 @@ function toConversionProduct(p: RecommendedProduct): ConversionProduct {
 
 const URGENCY_MAP: Record<string, UrgencyVariant> = {
   '🔥 Prix en baisse': 'price-drop',
-  '⭐ Top deal':       'best-today',
-  '📈 Populaire':      'trending',
+  '⭐ Top deal': 'best-today',
+  '📈 Populaire': 'trending',
 };
 
 export function RecommendedForYouSection({ products = [] }: RecommendedForYouSectionProps) {
@@ -51,14 +56,16 @@ export function RecommendedForYouSection({ products = [] }: RecommendedForYouSec
     return (
       <section className="rounded-xl bg-gray-900 border border-gray-700 p-4">
         <h2 className="text-lg font-semibold text-white mb-2">⭐ Recommandé pour vous</h2>
-        <p className="text-gray-400 text-sm">Naviguez sur des produits pour recevoir des recommandations personnalisées.</p>
+        <p className="text-gray-400 text-sm">
+          Naviguez sur des produits pour recevoir des recommandations personnalisées.
+        </p>
       </section>
     );
   }
 
   const converted = products.map(toConversionProduct);
-  const sorted    = sortByScore(converted);
-  const best      = getBestDeal(converted);
+  const sorted = sortByScore(converted);
+  const best = getBestDeal(converted);
 
   return (
     <section className="rounded-xl bg-gray-900 border border-gray-700 p-4">
@@ -100,9 +107,7 @@ export function RecommendedForYouSection({ products = [] }: RecommendedForYouSec
                     {((p.price ?? 0) / (1 - (p.priceDrop ?? 0))).toFixed(2)} €
                   </span>
                 )}
-                {p.retailer && (
-                  <span className="text-xs text-gray-500">{p.retailer}</span>
-                )}
+                {p.retailer && <span className="text-xs text-gray-500">{p.retailer}</span>}
               </div>
 
               {/* Dynamic urgency badges */}
@@ -121,10 +126,7 @@ export function RecommendedForYouSection({ products = [] }: RecommendedForYouSec
       {/* Sticky CTA wired to best product — shows post-click confirmation */}
       {best && (
         <div className="mt-4">
-          <StickyBestPriceCTA
-            product={best}
-            onAfterClick={() => setConfirmedProduct(best.name)}
-          />
+          <StickyBestPriceCTA product={best} onAfterClick={() => setConfirmedProduct(best.name)} />
         </div>
       )}
 

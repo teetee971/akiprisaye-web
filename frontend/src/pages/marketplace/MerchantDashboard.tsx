@@ -14,11 +14,29 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import {
-  Building2, Store, Package, BarChart3, CreditCard, Zap,
-  CheckCircle, Clock, AlertCircle, XCircle,
-  Plus, Trash2, Edit3, TrendingUp, TrendingDown,
-  Download, Eye, MousePointer, Trophy, MapPin,
-  FileText, Star, ChevronRight,
+  Building2,
+  Store,
+  Package,
+  BarChart3,
+  CreditCard,
+  Zap,
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  XCircle,
+  Plus,
+  Trash2,
+  Edit3,
+  TrendingUp,
+  TrendingDown,
+  Download,
+  Eye,
+  MousePointer,
+  Trophy,
+  MapPin,
+  FileText,
+  Star,
+  ChevronRight,
 } from 'lucide-react';
 import {
   getAllMerchants,
@@ -55,20 +73,44 @@ import type {
 
 function StatusBadge({ status }: { status: MerchantStatus }) {
   const cfg = {
-    PENDING:   { label: 'En attente de validation', cls: 'bg-yellow-600/20 text-yellow-300 border-yellow-600/30', icon: <Clock className="w-3 h-3" /> },
-    APPROVED:  { label: 'Compte approuvé', cls: 'bg-green-600/20 text-green-300 border-green-600/30', icon: <CheckCircle className="w-3 h-3" /> },
-    SUSPENDED: { label: 'Compte suspendu', cls: 'bg-red-600/20 text-red-400 border-red-600/30', icon: <XCircle className="w-3 h-3" /> },
-    REJECTED:  { label: 'Dossier à corriger', cls: 'bg-orange-600/20 text-orange-300 border-orange-600/30', icon: <AlertCircle className="w-3 h-3" /> },
+    PENDING: {
+      label: 'En attente de validation',
+      cls: 'bg-yellow-600/20 text-yellow-300 border-yellow-600/30',
+      icon: <Clock className="w-3 h-3" />,
+    },
+    APPROVED: {
+      label: 'Compte approuvé',
+      cls: 'bg-green-600/20 text-green-300 border-green-600/30',
+      icon: <CheckCircle className="w-3 h-3" />,
+    },
+    SUSPENDED: {
+      label: 'Compte suspendu',
+      cls: 'bg-red-600/20 text-red-400 border-red-600/30',
+      icon: <XCircle className="w-3 h-3" />,
+    },
+    REJECTED: {
+      label: 'Dossier à corriger',
+      cls: 'bg-orange-600/20 text-orange-300 border-orange-600/30',
+      icon: <AlertCircle className="w-3 h-3" />,
+    },
   };
   const c = cfg[status];
   return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border ${c.cls}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border ${c.cls}`}
+    >
       {c.icon} {c.label}
     </span>
   );
 }
 
-function StatCard({ icon, label, value, sub, color }: {
+function StatCard({
+  icon,
+  label,
+  value,
+  sub,
+  color,
+}: {
   icon: React.ReactNode;
   label: string;
   value: string | number;
@@ -89,7 +131,11 @@ function StatCard({ icon, label, value, sub, color }: {
 
 // ─── Onglet Aperçu ─────────────────────────────────────────────────────────────
 
-function TabOverview({ merchant, stores, analytics }: {
+function TabOverview({
+  merchant,
+  stores,
+  analytics,
+}: {
   merchant: MerchantProfile;
   stores: MerchantStore[];
   analytics: MerchantAnalytics;
@@ -98,10 +144,32 @@ function TabOverview({ merchant, stores, analytics }: {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={<Store className="w-5 h-5 text-white" />} label="Magasins" value={stores.length} color="bg-blue-600" sub={plan?.storesMax ? `/ ${plan.storesMax} max` : 'Illimité'} />
-        <StatCard icon={<Eye className="w-5 h-5 text-white" />} label="Vues ce mois" value={analytics.vuesMagasin} color="bg-purple-600" />
-        <StatCard icon={<MousePointer className="w-5 h-5 text-white" />} label="Clics ce mois" value={analytics.clics} color="bg-green-600" />
-        <StatCard icon={<Trophy className="w-5 h-5 text-white" />} label="Score prix" value={`${analytics.positionnementPrix}%`} color="bg-orange-600" sub="Comparaisons gagnées" />
+        <StatCard
+          icon={<Store className="w-5 h-5 text-white" />}
+          label="Magasins"
+          value={stores.length}
+          color="bg-blue-600"
+          sub={plan?.storesMax ? `/ ${plan.storesMax} max` : 'Illimité'}
+        />
+        <StatCard
+          icon={<Eye className="w-5 h-5 text-white" />}
+          label="Vues ce mois"
+          value={analytics.vuesMagasin}
+          color="bg-purple-600"
+        />
+        <StatCard
+          icon={<MousePointer className="w-5 h-5 text-white" />}
+          label="Clics ce mois"
+          value={analytics.clics}
+          color="bg-green-600"
+        />
+        <StatCard
+          icon={<Trophy className="w-5 h-5 text-white" />}
+          label="Score prix"
+          value={`${analytics.positionnementPrix}%`}
+          color="bg-orange-600"
+          sub="Comparaisons gagnées"
+        />
       </div>
 
       <div className="bg-white/[0.05] border border-white/10 rounded-xl p-6">
@@ -133,7 +201,9 @@ function TabOverview({ merchant, stores, analytics }: {
           </div>
           <div>
             <span className="text-gray-400">Statut activité :</span>
-            <span className={`ml-2 font-medium ${merchant.activityStatus === 'ACTIVE' ? 'text-green-400' : 'text-red-400'}`}>
+            <span
+              className={`ml-2 font-medium ${merchant.activityStatus === 'ACTIVE' ? 'text-green-400' : 'text-red-400'}`}
+            >
               {merchant.activityStatus}
             </span>
           </div>
@@ -150,7 +220,8 @@ function TabOverview({ merchant, stores, analytics }: {
           <div>
             <p className="text-yellow-300 font-medium">Dossier en attente de validation</p>
             <p className="text-yellow-400/80 text-sm mt-1">
-              Notre équipe examinera votre dossier dans les 48h ouvrées. Vous recevrez une notification par email.
+              Notre équipe examinera votre dossier dans les 48h ouvrées. Vous recevrez une
+              notification par email.
             </p>
           </div>
         </div>
@@ -170,13 +241,23 @@ function TabOverview({ merchant, stores, analytics }: {
 
 // ─── Onglet Magasins ───────────────────────────────────────────────────────────
 
-function TabStores({ merchant, stores, onRefresh }: {
+function TabStores({
+  merchant,
+  stores,
+  onRefresh,
+}: {
   merchant: MerchantProfile;
   stores: MerchantStore[];
   onRefresh: () => void;
 }) {
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ nom: '', adresse: '', ville: '', latitude: '', longitude: '' });
+  const [form, setForm] = useState({
+    nom: '',
+    adresse: '',
+    ville: '',
+    latitude: '',
+    longitude: '',
+  });
   const plan = MARKETPLACE_PLANS.find((p) => p.id === merchant.plan);
   const atLimit = plan?.storesMax !== null && stores.length >= (plan?.storesMax ?? Infinity);
 
@@ -201,7 +282,8 @@ function TabStores({ merchant, stores, onRefresh }: {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">
-          Mes magasins ({stores.length}{plan?.storesMax ? ` / ${plan.storesMax}` : ''})
+          Mes magasins ({stores.length}
+          {plan?.storesMax ? ` / ${plan.storesMax}` : ''})
         </h3>
         {!atLimit && (
           <button
@@ -225,17 +307,31 @@ function TabStores({ merchant, stores, onRefresh }: {
             <input
               key={f}
               type={f === 'latitude' || f === 'longitude' ? 'number' : 'text'}
-              placeholder={{ nom: 'Nom du magasin *', adresse: 'Adresse *', ville: 'Ville *', latitude: 'Latitude GPS *', longitude: 'Longitude GPS *' }[f]}
+              placeholder={
+                {
+                  nom: 'Nom du magasin *',
+                  adresse: 'Adresse *',
+                  ville: 'Ville *',
+                  latitude: 'Latitude GPS *',
+                  longitude: 'Longitude GPS *',
+                }[f]
+              }
               value={form[f]}
               onChange={(e) => setForm((p) => ({ ...p, [f]: e.target.value }))}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500"
             />
           ))}
           <div className="flex gap-3 pt-2">
-            <button onClick={handleAdd} className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-2 rounded-xl font-medium transition-colors">
+            <button
+              onClick={handleAdd}
+              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-2 rounded-xl font-medium transition-colors"
+            >
               Enregistrer
             </button>
-            <button onClick={() => setShowForm(false)} className="bg-white/10 hover:bg-white/20 text-white text-sm px-5 py-2 rounded-xl transition-colors">
+            <button
+              onClick={() => setShowForm(false)}
+              className="bg-white/10 hover:bg-white/20 text-white text-sm px-5 py-2 rounded-xl transition-colors"
+            >
               Annuler
             </button>
           </div>
@@ -246,12 +342,17 @@ function TabStores({ merchant, stores, onRefresh }: {
         <div className="text-center py-12 text-gray-400">
           <Store className="w-12 h-12 mx-auto mb-3 opacity-40" />
           <p>Aucun magasin enregistré</p>
-          <p className="text-sm mt-1">Ajoutez votre premier point de vente pour apparaître sur la carte.</p>
+          <p className="text-sm mt-1">
+            Ajoutez votre premier point de vente pour apparaître sur la carte.
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
           {stores.map((store) => (
-            <div key={store.id} className="bg-white/[0.05] border border-white/10 rounded-xl p-4 flex items-center justify-between">
+            <div
+              key={store.id}
+              className="bg-white/[0.05] border border-white/10 rounded-xl p-4 flex items-center justify-between"
+            >
               <div>
                 <div className="font-medium text-white">{store.nom}</div>
                 <div className="text-sm text-gray-400 flex items-center gap-1 mt-0.5">
@@ -263,11 +364,16 @@ function TabStores({ merchant, stores, onRefresh }: {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`text-xs px-2 py-1 rounded-full ${store.visible ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'}`}>
+                <span
+                  className={`text-xs px-2 py-1 rounded-full ${store.visible ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'}`}
+                >
                   {store.visible ? 'Visible' : 'Masqué'}
                 </span>
                 <button
-                  onClick={() => { deleteStore(store.id, merchant.id); onRefresh(); }}
+                  onClick={() => {
+                    deleteStore(store.id, merchant.id);
+                    onRefresh();
+                  }}
                   className="p-2 rounded-lg bg-red-600/20 hover:bg-red-600/40 text-red-400 transition-colors"
                   title="Supprimer ce magasin"
                 >
@@ -318,7 +424,7 @@ function TabProducts({ merchant, stores }: { merchant: MerchantProfile; stores: 
     const val = parseFloat(newPrice);
     if (isNaN(val) || val <= 0) return;
     const updated = updateProductPrice(productId, merchant.id, val, merchant.nomCommercial);
-    if (updated) setProducts((prev) => prev.map((p) => p.id === productId ? updated : p));
+    if (updated) setProducts((prev) => prev.map((p) => (p.id === productId ? updated : p)));
   };
 
   if (stores.length === 0) {
@@ -339,7 +445,9 @@ function TabProducts({ merchant, stores }: { merchant: MerchantProfile; stores: 
           className="bg-slate-800 border border-white/20 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
         >
           {stores.map((s) => (
-            <option key={s.id} value={s.id}>{s.nom}</option>
+            <option key={s.id} value={s.id}>
+              {s.nom}
+            </option>
           ))}
         </select>
         <button
@@ -354,22 +462,52 @@ function TabProducts({ merchant, stores }: { merchant: MerchantProfile; stores: 
         <div className="bg-white/[0.07] border border-blue-500/30 rounded-xl p-5 space-y-3">
           <h4 className="text-white font-medium">Nouveau produit</h4>
           <div className="grid grid-cols-2 gap-3">
-            <input type="text" placeholder="Code EAN (13 chiffres) *" value={form.ean}
-              onChange={(e) => setForm((p) => ({ ...p, ean: e.target.value.replace(/\D/g, '').slice(0, 13) }))}
-              className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm font-mono focus:outline-none focus:border-blue-500" />
-            <input type="text" placeholder="Nom du produit *" value={form.nomProduit}
+            <input
+              type="text"
+              placeholder="Code EAN (13 chiffres) *"
+              value={form.ean}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, ean: e.target.value.replace(/\D/g, '').slice(0, 13) }))
+              }
+              className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm font-mono focus:outline-none focus:border-blue-500"
+            />
+            <input
+              type="text"
+              placeholder="Nom du produit *"
+              value={form.nomProduit}
               onChange={(e) => setForm((p) => ({ ...p, nomProduit: e.target.value }))}
-              className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500" />
-            <input type="number" step="0.01" min="0" placeholder="Prix (€) *" value={form.prix}
+              className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500"
+            />
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder="Prix (€) *"
+              value={form.prix}
               onChange={(e) => setForm((p) => ({ ...p, prix: e.target.value }))}
-              className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500" />
-            <input type="text" placeholder="Unité (kg, L, pièce…)" value={form.unite}
+              className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500"
+            />
+            <input
+              type="text"
+              placeholder="Unité (kg, L, pièce…)"
+              value={form.unite}
               onChange={(e) => setForm((p) => ({ ...p, unite: e.target.value }))}
-              className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500" />
+              className="bg-white/10 border border-white/20 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500"
+            />
           </div>
           <div className="flex gap-3 pt-1">
-            <button onClick={handleAddProduct} className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-2 rounded-xl font-medium transition-colors">Enregistrer</button>
-            <button onClick={() => setShowForm(false)} className="bg-white/10 hover:bg-white/20 text-white text-sm px-5 py-2 rounded-xl transition-colors">Annuler</button>
+            <button
+              onClick={handleAddProduct}
+              className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-5 py-2 rounded-xl font-medium transition-colors"
+            >
+              Enregistrer
+            </button>
+            <button
+              onClick={() => setShowForm(false)}
+              className="bg-white/10 hover:bg-white/20 text-white text-sm px-5 py-2 rounded-xl transition-colors"
+            >
+              Annuler
+            </button>
           </div>
         </div>
       )}
@@ -411,10 +549,14 @@ function TabProducts({ merchant, stores }: { merchant: MerchantProfile; stores: 
                       />
                     </td>
                     <td className="py-3 pr-4">
-                      <span className="text-xs text-gray-500">{new Date(p.updatedAt).toLocaleDateString('fr-FR')}</span>
+                      <span className="text-xs text-gray-500">
+                        {new Date(p.updatedAt).toLocaleDateString('fr-FR')}
+                      </span>
                     </td>
                     <td className="py-3">
-                      <span className="text-xs text-gray-500">{history.length} entrée{history.length !== 1 ? 's' : ''}</span>
+                      <span className="text-xs text-gray-500">
+                        {history.length} entrée{history.length !== 1 ? 's' : ''}
+                      </span>
                     </td>
                   </tr>
                 );
@@ -429,7 +571,11 @@ function TabProducts({ merchant, stores }: { merchant: MerchantProfile; stores: 
 
 // ─── Onglet Analytics ──────────────────────────────────────────────────────────
 
-function TabAnalytics({ merchant, analytics, canExport }: {
+function TabAnalytics({
+  merchant,
+  analytics,
+  canExport,
+}: {
   merchant: MerchantProfile;
   analytics: MerchantAnalytics;
   canExport: boolean;
@@ -449,10 +595,32 @@ function TabAnalytics({ merchant, analytics, canExport }: {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <StatCard icon={<Eye className="w-5 h-5 text-white" />} label="Vues fiche magasin" value={analytics.vuesMagasin} color="bg-blue-600" />
-        <StatCard icon={<MousePointer className="w-5 h-5 text-white" />} label="Clics" value={analytics.clics} color="bg-purple-600" />
-        <StatCard icon={<TrendingDown className="w-5 h-5 text-white" />} label="Comparaisons gagnées" value={analytics.comparaisonsGagnees} color="bg-green-600" sub="Moins cher que les concurrents" />
-        <StatCard icon={<TrendingUp className="w-5 h-5 text-white" />} label="Comparaisons perdues" value={analytics.comparaisonsPerdues} color="bg-orange-600" sub="Plus cher que les concurrents" />
+        <StatCard
+          icon={<Eye className="w-5 h-5 text-white" />}
+          label="Vues fiche magasin"
+          value={analytics.vuesMagasin}
+          color="bg-blue-600"
+        />
+        <StatCard
+          icon={<MousePointer className="w-5 h-5 text-white" />}
+          label="Clics"
+          value={analytics.clics}
+          color="bg-purple-600"
+        />
+        <StatCard
+          icon={<TrendingDown className="w-5 h-5 text-white" />}
+          label="Comparaisons gagnées"
+          value={analytics.comparaisonsGagnees}
+          color="bg-green-600"
+          sub="Moins cher que les concurrents"
+        />
+        <StatCard
+          icon={<TrendingUp className="w-5 h-5 text-white" />}
+          label="Comparaisons perdues"
+          value={analytics.comparaisonsPerdues}
+          color="bg-orange-600"
+          sub="Plus cher que les concurrents"
+        />
       </div>
 
       <div className="bg-white/[0.05] border border-white/10 rounded-xl p-5">
@@ -464,7 +632,9 @@ function TabAnalytics({ merchant, analytics, canExport }: {
               style={{ width: `${analytics.positionnementPrix}%` }}
             />
           </div>
-          <span className="text-2xl font-bold text-white w-16 text-right">{analytics.positionnementPrix}%</span>
+          <span className="text-2xl font-bold text-white w-16 text-right">
+            {analytics.positionnementPrix}%
+          </span>
         </div>
         <p className="text-gray-400 text-sm mt-2">
           {analytics.positionnementPrix >= 60
@@ -478,7 +648,9 @@ function TabAnalytics({ merchant, analytics, canExport }: {
       {!canExport && (
         <div className="bg-blue-900/30 border border-blue-500/30 rounded-xl p-4 flex items-center justify-between">
           <div>
-            <p className="text-blue-300 font-medium text-sm">Export CSV/PDF disponible avec le plan Pro ou Groupe</p>
+            <p className="text-blue-300 font-medium text-sm">
+              Export CSV/PDF disponible avec le plan Pro ou Groupe
+            </p>
             <p className="text-blue-400/70 text-xs mt-0.5">Téléchargez vos données complètes.</p>
           </div>
           <ChevronRight className="w-5 h-5 text-blue-400" />
@@ -490,7 +662,11 @@ function TabAnalytics({ merchant, analytics, canExport }: {
 
 // ─── Onglet Facturation ────────────────────────────────────────────────────────
 
-function TabBilling({ merchant, invoices, subscriptionActive }: {
+function TabBilling({
+  merchant,
+  invoices,
+  subscriptionActive,
+}: {
   merchant: MerchantProfile;
   invoices: MerchantInvoice[];
   subscriptionActive: boolean;
@@ -503,15 +679,33 @@ function TabBilling({ merchant, invoices, subscriptionActive }: {
       <div className="bg-white/[0.05] border border-white/10 rounded-xl p-5">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-white font-semibold">Abonnement actuel</h3>
-          <span className={`text-xs px-3 py-1 rounded-full font-medium ${subscriptionActive ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'}`}>
+          <span
+            className={`text-xs px-3 py-1 rounded-full font-medium ${subscriptionActive ? 'bg-green-600/20 text-green-400' : 'bg-gray-600/20 text-gray-400'}`}
+          >
             {subscriptionActive ? 'Actif' : 'Inactif'}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><span className="text-gray-400">Plan :</span><span className="text-white ml-2 font-medium">{plan?.label}</span></div>
-          <div><span className="text-gray-400">Facturation :</span><span className="text-white ml-2">{merchant.billingCycle === 'annual' ? 'Annuelle' : 'Mensuelle'}</span></div>
-          <div><span className="text-gray-400">TVA applicable :</span><span className="text-white ml-2">{tvaRate}%</span></div>
-          <div><span className="text-gray-400">Depuis le :</span><span className="text-white ml-2">{new Date(merchant.planStartDate).toLocaleDateString('fr-FR')}</span></div>
+          <div>
+            <span className="text-gray-400">Plan :</span>
+            <span className="text-white ml-2 font-medium">{plan?.label}</span>
+          </div>
+          <div>
+            <span className="text-gray-400">Facturation :</span>
+            <span className="text-white ml-2">
+              {merchant.billingCycle === 'annual' ? 'Annuelle' : 'Mensuelle'}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-400">TVA applicable :</span>
+            <span className="text-white ml-2">{tvaRate}%</span>
+          </div>
+          <div>
+            <span className="text-gray-400">Depuis le :</span>
+            <span className="text-white ml-2">
+              {new Date(merchant.planStartDate).toLocaleDateString('fr-FR')}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -525,22 +719,40 @@ function TabBilling({ merchant, invoices, subscriptionActive }: {
         ) : (
           <div className="space-y-2">
             {invoices.map((inv) => (
-              <div key={inv.id} className="bg-white/[0.05] border border-white/10 rounded-xl p-4 flex items-center justify-between text-sm">
+              <div
+                key={inv.id}
+                className="bg-white/[0.05] border border-white/10 rounded-xl p-4 flex items-center justify-between text-sm"
+              >
                 <div>
                   <div className="text-white font-medium">{inv.numero}</div>
                   <div className="text-gray-400 text-xs mt-0.5">{inv.description}</div>
-                  <div className="text-gray-500 text-xs mt-0.5">{new Date(inv.dateEmission).toLocaleDateString('fr-FR')}</div>
+                  <div className="text-gray-500 text-xs mt-0.5">
+                    {new Date(inv.dateEmission).toLocaleDateString('fr-FR')}
+                  </div>
                 </div>
                 <div className="text-right">
                   <div className="text-white font-bold">{inv.montantTTC.toFixed(2)} € TTC</div>
-                  <div className="text-gray-400 text-xs">HT : {inv.montantHT.toFixed(2)} € / TVA {inv.tvaRate}%</div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full mt-1 inline-block ${
-                    inv.status === 'paid' ? 'bg-green-600/20 text-green-400' :
-                    inv.status === 'pending' ? 'bg-yellow-600/20 text-yellow-400' :
-                    inv.status === 'cancelled' ? 'bg-gray-600/20 text-gray-400' :
-                    'bg-red-600/20 text-red-400'
-                  }`}>
-                    {inv.status === 'paid' ? 'Payée' : inv.status === 'pending' ? 'En attente' : inv.status === 'cancelled' ? 'Annulée' : 'Échec'}
+                  <div className="text-gray-400 text-xs">
+                    HT : {inv.montantHT.toFixed(2)} € / TVA {inv.tvaRate}%
+                  </div>
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full mt-1 inline-block ${
+                      inv.status === 'paid'
+                        ? 'bg-green-600/20 text-green-400'
+                        : inv.status === 'pending'
+                          ? 'bg-yellow-600/20 text-yellow-400'
+                          : inv.status === 'cancelled'
+                            ? 'bg-gray-600/20 text-gray-400'
+                            : 'bg-red-600/20 text-red-400'
+                    }`}
+                  >
+                    {inv.status === 'paid'
+                      ? 'Payée'
+                      : inv.status === 'pending'
+                        ? 'En attente'
+                        : inv.status === 'cancelled'
+                          ? 'Annulée'
+                          : 'Échec'}
                   </span>
                 </div>
               </div>
@@ -554,25 +766,60 @@ function TabBilling({ merchant, invoices, subscriptionActive }: {
 
 // ─── Onglet Visibilité ────────────────────────────────────────────────────────
 
-function TabVisibility({ merchant, plan }: { merchant: MerchantProfile; plan: typeof MARKETPLACE_PLANS[0] | undefined }) {
+function TabVisibility({
+  merchant,
+  plan,
+}: {
+  merchant: MerchantProfile;
+  plan: (typeof MARKETPLACE_PLANS)[0] | undefined;
+}) {
   const boosts = [
-    { type: 'badge_partenaire', label: 'Badge "Enseigne Partenaire"', desc: 'Affiché sur toutes vos fiches magasin et dans les résultats.', price: 0, included: plan?.partnerBadge },
-    { type: 'mise_en_avant_locale', label: 'Mise en avant locale', desc: 'Votre enseigne apparaît en tête des résultats locaux pour 30 jours.', price: 29.99, included: plan?.boostVisibility },
-    { type: 'boost_carte', label: 'Boost carte interactive', desc: 'Épingle mise en avant sur la carte des territoires.', price: 19.99, included: plan?.boostVisibility },
-    { type: 'priorite_resultats', label: 'Priorité dans les résultats', desc: 'Priorité dans le comparateur A KI PRI SA YÉ.', price: 0, included: plan?.prioritySearch },
+    {
+      type: 'badge_partenaire',
+      label: 'Badge "Enseigne Partenaire"',
+      desc: 'Affiché sur toutes vos fiches magasin et dans les résultats.',
+      price: 0,
+      included: plan?.partnerBadge,
+    },
+    {
+      type: 'mise_en_avant_locale',
+      label: 'Mise en avant locale',
+      desc: 'Votre enseigne apparaît en tête des résultats locaux pour 30 jours.',
+      price: 29.99,
+      included: plan?.boostVisibility,
+    },
+    {
+      type: 'boost_carte',
+      label: 'Boost carte interactive',
+      desc: 'Épingle mise en avant sur la carte des territoires.',
+      price: 19.99,
+      included: plan?.boostVisibility,
+    },
+    {
+      type: 'priorite_resultats',
+      label: 'Priorité dans les résultats',
+      desc: 'Priorité dans le comparateur A KI PRI SA YÉ.',
+      price: 0,
+      included: plan?.prioritySearch,
+    },
   ];
 
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-white">Options de visibilité</h3>
       {boosts.map((b) => (
-        <div key={b.type} className="bg-white/[0.05] border border-white/10 rounded-xl p-4 flex items-center justify-between">
+        <div
+          key={b.type}
+          className="bg-white/[0.05] border border-white/10 rounded-xl p-4 flex items-center justify-between"
+        >
           <div>
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 text-yellow-400" />
               <span className="text-white font-medium">{b.label}</span>
               {b.included && (
-                <span className="text-xs bg-green-600/20 text-green-400 px-2 py-0.5 rounded-full">Inclus dans votre plan</span>
+                <span className="text-xs bg-green-600/20 text-green-400 px-2 py-0.5 rounded-full">
+                  Inclus dans votre plan
+                </span>
               )}
             </div>
             <p className="text-gray-400 text-sm mt-1">{b.desc}</p>
@@ -585,9 +832,7 @@ function TabVisibility({ merchant, plan }: { merchant: MerchantProfile; plan: ty
               </button>
             </div>
           )}
-          {b.included && (
-            <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 ml-4" />
-          )}
+          {b.included && <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 ml-4" />}
         </div>
       ))}
     </div>
@@ -597,15 +842,15 @@ function TabVisibility({ merchant, plan }: { merchant: MerchantProfile; plan: ty
 // ─── Composant principal ─────────────────────────────────────────────────────
 
 const TABS = [
-  { id: 'overview',    label: 'Aperçu',        icon: Building2 },
-  { id: 'stores',      label: 'Magasins',       icon: Store },
-  { id: 'products',    label: 'Produits & Prix', icon: Package },
-  { id: 'analytics',  label: 'Analytics',       icon: BarChart3 },
-  { id: 'billing',    label: 'Facturation',      icon: CreditCard },
-  { id: 'visibility', label: 'Visibilité',       icon: Zap },
+  { id: 'overview', label: 'Aperçu', icon: Building2 },
+  { id: 'stores', label: 'Magasins', icon: Store },
+  { id: 'products', label: 'Produits & Prix', icon: Package },
+  { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+  { id: 'billing', label: 'Facturation', icon: CreditCard },
+  { id: 'visibility', label: 'Visibilité', icon: Zap },
 ] as const;
 
-type TabId = typeof TABS[number]['id'];
+type TabId = (typeof TABS)[number]['id'];
 
 export default function MerchantDashboard() {
   const navigate = useNavigate();
@@ -703,18 +948,18 @@ export default function MerchantDashboard() {
           {activeTab === 'stores' && (
             <TabStores merchant={merchant} stores={stores} onRefresh={handleRefresh} />
           )}
-          {activeTab === 'products' && (
-            <TabProducts merchant={merchant} stores={stores} />
-          )}
+          {activeTab === 'products' && <TabProducts merchant={merchant} stores={stores} />}
           {activeTab === 'analytics' && analytics && (
             <TabAnalytics merchant={merchant} analytics={analytics} canExport={canExport} />
           )}
           {activeTab === 'billing' && (
-            <TabBilling merchant={merchant} invoices={invoices} subscriptionActive={subscriptionActive} />
+            <TabBilling
+              merchant={merchant}
+              invoices={invoices}
+              subscriptionActive={subscriptionActive}
+            />
           )}
-          {activeTab === 'visibility' && (
-            <TabVisibility merchant={merchant} plan={plan} />
-          )}
+          {activeTab === 'visibility' && <TabVisibility merchant={merchant} plan={plan} />}
         </div>
       </div>
     </>

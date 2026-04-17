@@ -1,4 +1,11 @@
-export type PlanId = 'FREE' | 'FREEMIUM' | 'CITIZEN_PREMIUM' | 'PRO' | 'BUSINESS' | 'INSTITUTION' | 'CREATOR';
+export type PlanId =
+  | 'FREE'
+  | 'FREEMIUM'
+  | 'CITIZEN_PREMIUM'
+  | 'PRO'
+  | 'BUSINESS'
+  | 'INSTITUTION'
+  | 'CREATOR';
 
 export type FeatureId =
   | 'WATCHLIST_BASE'

@@ -1,4 +1,3 @@
- 
 import { useState, useEffect } from 'react';
 import {
   loadSavingsData,
@@ -9,7 +8,7 @@ import {
   SavingsData,
   SavingsStats,
   Badge,
-  MonthlySavings
+  MonthlySavings,
 } from '../services/savingsService';
 
 /**
@@ -55,6 +54,6 @@ export function useSavingsData() {
     monthlySavings,
     goalProgress,
     isLoading,
-    refresh
+    refresh,
   };
 }

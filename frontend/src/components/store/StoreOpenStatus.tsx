@@ -1,7 +1,6 @@
- 
 /**
  * StoreOpenStatus Component
- * 
+ *
  * Displays a colored badge indicating if a store is currently open, closing soon, or closed
  */
 
@@ -15,14 +14,14 @@ interface StoreOpenStatusProps {
   className?: string;
 }
 
-export function StoreOpenStatus({ 
-  hours, 
-  showIcon = true, 
+export function StoreOpenStatus({
+  hours,
+  showIcon = true,
   compact = false,
-  className = '' 
+  className = '',
 }: StoreOpenStatusProps) {
   const statusInfo = useStoreOpenStatus(hours);
-  
+
   if (!hours || statusInfo.status === 'unknown') {
     return null;
   }
@@ -54,44 +53,38 @@ export function StoreOpenStatus({
 
   if (compact) {
     return (
-      <div 
+      <div
         className={`inline-flex items-center gap-1.5 ${className}`}
         role="status"
         aria-label={`Statut: ${statusInfo.message}`}
       >
         {showIcon && (
-          <span 
+          <span
             className={`w-2 h-2 rounded-full ${dotColorClasses[colorClass as keyof typeof dotColorClasses]}`}
             aria-hidden="true"
           />
         )}
-        <span className="text-xs font-medium">
-          {statusInfo.message}
-        </span>
+        <span className="text-xs font-medium">{statusInfo.message}</span>
       </div>
     );
   }
 
   return (
-    <div 
+    <div
       className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border ${bgColorClasses[colorClass as keyof typeof bgColorClasses]} ${className}`}
       role="status"
       aria-label={`Statut: ${statusInfo.message}`}
     >
       {showIcon && (
-        <span 
+        <span
           className={`w-2.5 h-2.5 rounded-full ${dotColorClasses[colorClass as keyof typeof dotColorClasses]} animate-pulse`}
           aria-hidden="true"
         />
       )}
       <div className="flex flex-col">
-        <span className="text-sm font-bold leading-tight">
-          {statusLabels[statusInfo.status]}
-        </span>
+        <span className="text-sm font-bold leading-tight">{statusLabels[statusInfo.status]}</span>
         {statusInfo.nextChangeMessage && (
-          <span className="text-xs leading-tight opacity-80">
-            {statusInfo.nextChangeMessage}
-          </span>
+          <span className="text-xs leading-tight opacity-80">{statusInfo.nextChangeMessage}</span>
         )}
       </div>
     </div>

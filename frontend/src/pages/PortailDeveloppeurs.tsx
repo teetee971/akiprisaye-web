@@ -6,33 +6,124 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { Code2, Key, FileText, Zap, Shield, Globe, ChevronRight, Copy, UserPlus, CheckCircle } from 'lucide-react';
+import {
+  Code2,
+  Key,
+  FileText,
+  Zap,
+  Shield,
+  Globe,
+  ChevronRight,
+  Copy,
+  UserPlus,
+  CheckCircle,
+} from 'lucide-react';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 // ── Endpoints planifiés ───────────────────────────────────────────────────────
 
 const API_ENDPOINTS = [
-  { method: 'GET', path: '/api/fuel-prices', desc: 'Prix carburants DOM-COM en temps réel', status: 'live' },
-  { method: 'GET', path: '/api/news', desc: 'Rappels produits RappelConso V2 + actualités curatées par territoire', status: 'live' },
-  { method: 'GET', path: '/api/exchange-rates', desc: 'Taux de change EUR/USD/XOF live (open.er-api.com)', status: 'live' },
-  { method: 'GET', path: '/api/signalconso', desc: 'Signalements consommateurs DOM par catégorie (DGCCRF)', status: 'live' },
-  { method: 'GET', path: '/api/indice', desc: 'Indice IEVR — panier essentiel Guadeloupe', status: 'live' },
-  { method: 'GET', path: '/api/prices/realtime', desc: 'Prix temps réel par EAN et territoire (OpenPrices)', status: 'live' },
-  { method: 'GET', path: '/api/prices/feed', desc: 'Flux de prix par territoire, date et page', status: 'live' },
-  { method: 'GET', path: '/api/health', desc: 'Statut de santé de l\'API', status: 'live' },
-  { method: 'POST', path: '/api/browser-rendering/crawl', desc: 'Beta Cloudflare Browser Rendering : crawl asynchrone HTML / Markdown / JSON structuré (max 50 pages, bearer token serveur)', status: 'live' },
-  { method: 'GET', path: '/api/browser-rendering/crawl?id=:jobId', desc: 'Suivi paginé d\'un job de crawl (>10 Mo) et statuts running/completed/errored', status: 'live' },
-  { method: 'GET', path: '/api/v1/prices', desc: 'Prix des produits par territoire et enseigne (V1)', status: 'planned' },
-  { method: 'GET', path: '/api/v1/products/:ean', desc: 'Fiche produit complète par code EAN', status: 'planned' },
-  { method: 'GET', path: '/api/v1/territories', desc: 'Liste des territoires DOM-COM couverts', status: 'planned' },
-  { method: 'POST', path: '/api/v1/observations', desc: 'Soumettre une observation de prix citoyenne', status: 'planned' },
+  {
+    method: 'GET',
+    path: '/api/fuel-prices',
+    desc: 'Prix carburants DOM-COM en temps réel',
+    status: 'live',
+  },
+  {
+    method: 'GET',
+    path: '/api/news',
+    desc: 'Rappels produits RappelConso V2 + actualités curatées par territoire',
+    status: 'live',
+  },
+  {
+    method: 'GET',
+    path: '/api/exchange-rates',
+    desc: 'Taux de change EUR/USD/XOF live (open.er-api.com)',
+    status: 'live',
+  },
+  {
+    method: 'GET',
+    path: '/api/signalconso',
+    desc: 'Signalements consommateurs DOM par catégorie (DGCCRF)',
+    status: 'live',
+  },
+  {
+    method: 'GET',
+    path: '/api/indice',
+    desc: 'Indice IEVR — panier essentiel Guadeloupe',
+    status: 'live',
+  },
+  {
+    method: 'GET',
+    path: '/api/prices/realtime',
+    desc: 'Prix temps réel par EAN et territoire (OpenPrices)',
+    status: 'live',
+  },
+  {
+    method: 'GET',
+    path: '/api/prices/feed',
+    desc: 'Flux de prix par territoire, date et page',
+    status: 'live',
+  },
+  { method: 'GET', path: '/api/health', desc: "Statut de santé de l'API", status: 'live' },
+  {
+    method: 'POST',
+    path: '/api/browser-rendering/crawl',
+    desc: 'Beta Cloudflare Browser Rendering : crawl asynchrone HTML / Markdown / JSON structuré (max 50 pages, bearer token serveur)',
+    status: 'live',
+  },
+  {
+    method: 'GET',
+    path: '/api/browser-rendering/crawl?id=:jobId',
+    desc: "Suivi paginé d'un job de crawl (>10 Mo) et statuts running/completed/errored",
+    status: 'live',
+  },
+  {
+    method: 'GET',
+    path: '/api/v1/prices',
+    desc: 'Prix des produits par territoire et enseigne (V1)',
+    status: 'planned',
+  },
+  {
+    method: 'GET',
+    path: '/api/v1/products/:ean',
+    desc: 'Fiche produit complète par code EAN',
+    status: 'planned',
+  },
+  {
+    method: 'GET',
+    path: '/api/v1/territories',
+    desc: 'Liste des territoires DOM-COM couverts',
+    status: 'planned',
+  },
+  {
+    method: 'POST',
+    path: '/api/v1/observations',
+    desc: 'Soumettre une observation de prix citoyenne',
+    status: 'planned',
+  },
 ];
 
 const PLANS_API = [
-  { name: 'Gratuit', calls: '100 / jour', features: ['Endpoints publics', 'Format JSON'], cta: 'Commencer' },
-  { name: 'Pro', calls: '10 000 / jour', features: ['Tous les endpoints', 'Historique 12 mois', 'Support e-mail'], cta: 'Essai 30 jours' },
-  { name: 'Institution', calls: 'Illimité', features: ['Accès complet', 'SLA 99,9 %', 'Support dédié', 'Données brutes'], cta: 'Devis' },
+  {
+    name: 'Gratuit',
+    calls: '100 / jour',
+    features: ['Endpoints publics', 'Format JSON'],
+    cta: 'Commencer',
+  },
+  {
+    name: 'Pro',
+    calls: '10 000 / jour',
+    features: ['Tous les endpoints', 'Historique 12 mois', 'Support e-mail'],
+    cta: 'Essai 30 jours',
+  },
+  {
+    name: 'Institution',
+    calls: 'Illimité',
+    features: ['Accès complet', 'SLA 99,9 %', 'Support dédié', 'Données brutes'],
+    cta: 'Devis',
+  },
 ];
 
 const EXAMPLE_RESPONSE = `{
@@ -110,7 +201,7 @@ export default function PortailDeveloppeurs() {
     } catch {
       const subject = encodeURIComponent(`Demande d'accès développeur — ${form.plan}`);
       const body = encodeURIComponent(
-        `Nom : ${form.nom}\nEmail : ${form.email}\nPlan souhaité : ${form.plan}\nProjet : ${form.projet || '(non renseigné)'}\n\nCas d'usage :\n${form.useCase}`,
+        `Nom : ${form.nom}\nEmail : ${form.email}\nPlan souhaité : ${form.plan}\nProjet : ${form.projet || '(non renseigné)'}\n\nCas d'usage :\n${form.useCase}`
       );
       window.open(`mailto:contact@akiprisaye.fr?subject=${subject}&body=${body}`);
     }
@@ -129,8 +220,8 @@ export default function PortailDeveloppeurs() {
             <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-4" />
             <h2 className="text-xl font-bold text-gray-900 mb-2">Demande envoyée !</h2>
             <p className="text-gray-600 text-sm mb-6">
-              Votre demande d'accès développeur <strong>{form.plan}</strong> a bien été reçue. Notre équipe vous
-              répondra à <strong>{form.email}</strong> dans les 48 heures ouvrées.
+              Votre demande d'accès développeur <strong>{form.plan}</strong> a bien été reçue. Notre
+              équipe vous répondra à <strong>{form.email}</strong> dans les 48 heures ouvrées.
             </p>
             <button
               onClick={() => setSubmitted(false)}
@@ -152,7 +243,10 @@ export default function PortailDeveloppeurs() {
           name="description"
           content="API publique documentée pour les développeurs et intégrations tierces — prix, produits, territoires DOM-COM — A KI PRI SA YÉ"
         />
-        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/portail-developpeurs" />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/portail-developpeurs"
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -173,22 +267,24 @@ export default function PortailDeveloppeurs() {
               👨‍💻 Portail Développeurs
             </h1>
             <p className="text-indigo-100 text-sm mt-1 drop-shadow max-w-xl">
-              Intégrez les données de prix DOM-COM dans vos applications, outils d'analyse ou services institutionnels
+              Intégrez les données de prix DOM-COM dans vos applications, outils d'analyse ou
+              services institutionnels
             </p>
           </HeroImage>
         </div>
 
         <div className="max-w-4xl mx-auto px-4 py-6 pb-12 space-y-5">
-
           {/* Statut */}
           <div className="flex gap-3 bg-green-50 border border-green-200 rounded-xl p-4">
             <Zap className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-green-800">10 endpoints en production — données.gouv.fr, Cloudflare &amp; partenaires</p>
+              <p className="text-sm font-semibold text-green-800">
+                10 endpoints en production — données.gouv.fr, Cloudflare &amp; partenaires
+              </p>
               <p className="text-sm text-green-700 mt-0.5">
-                Prix carburants, rappels produits (RappelConso V2), signalements consommateurs DOM (SignalConso DGCCRF),
-                taux de change live, indice IEVR et crawl Browser Rendering sécurisé sont disponibles.
-                Documentation OpenAPI complète et SDK prévus en V3.
+                Prix carburants, rappels produits (RappelConso V2), signalements consommateurs DOM
+                (SignalConso DGCCRF), taux de change live, indice IEVR et crawl Browser Rendering
+                sécurisé sont disponibles. Documentation OpenAPI complète et SDK prévus en V3.
               </p>
             </div>
           </div>
@@ -200,9 +296,13 @@ export default function PortailDeveloppeurs() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-700 w-16">Méthode</th>
+                    <th className="text-left px-4 py-3 font-semibold text-gray-700 w-16">
+                      Méthode
+                    </th>
                     <th className="text-left px-4 py-3 font-semibold text-gray-700">Endpoint</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">Description</th>
+                    <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden sm:table-cell">
+                      Description
+                    </th>
                     <th className="text-left px-4 py-3 font-semibold text-gray-700 w-20">Statut</th>
                   </tr>
                 </thead>
@@ -215,7 +315,9 @@ export default function PortailDeveloppeurs() {
                         </span>
                       </td>
                       <td className="px-4 py-3 font-mono text-xs text-indigo-700">{ep.path}</td>
-                      <td className="px-4 py-3 text-gray-600 hidden sm:table-cell text-xs">{ep.desc}</td>
+                      <td className="px-4 py-3 text-gray-600 hidden sm:table-cell text-xs">
+                        {ep.desc}
+                      </td>
                       <td className="px-4 py-3">
                         {ep.status === 'live' ? (
                           <span className="text-xs font-medium bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
@@ -233,42 +335,65 @@ export default function PortailDeveloppeurs() {
               </table>
             </div>
             <div className="mt-4 bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm text-slate-700 space-y-2">
-              <p className="font-semibold text-slate-900">🕷️ Browser Rendering Crawl (beta Cloudflare)</p>
-              <p>
-                Proxy serveur sécurisé vers <code className="text-xs bg-white px-1 py-0.5 rounded">/crawl</code> :
-                HTML, Markdown ou JSON structuré via Workers AI, avec limite locale de <strong>50 pages</strong> par requête.
+              <p className="font-semibold text-slate-900">
+                🕷️ Browser Rendering Crawl (beta Cloudflare)
               </p>
               <p>
-                Paramètres avancés supportés : <code className="text-xs bg-white px-1 py-0.5 rounded">options.includePatterns</code>,
-                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">options.excludePatterns</code>,
-                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">modifiedSince</code>,
+                Proxy serveur sécurisé vers{' '}
+                <code className="text-xs bg-white px-1 py-0.5 rounded">/crawl</code> : HTML,
+                Markdown ou JSON structuré via Workers AI, avec limite locale de{' '}
+                <strong>50 pages</strong> par requête.
+              </p>
+              <p>
+                Paramètres avancés supportés :{' '}
+                <code className="text-xs bg-white px-1 py-0.5 rounded">
+                  options.includePatterns
+                </code>
+                ,
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">
+                  options.excludePatterns
+                </code>
+                ,<code className="text-xs bg-white px-1 py-0.5 rounded ml-1">modifiedSince</code>,
                 <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">jsonOptions</code>,
-                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">rejectResourceTypes</code> et
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">
+                  rejectResourceTypes
+                </code>{' '}
+                et
                 <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">authenticate</code>.
               </p>
               <p>
-                Cloudflare gère l&apos;asynchronisme, la pagination automatique au-delà de 10 Mo et le respect de
-                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">robots.txt</code> / <code className="text-xs bg-white px-1 py-0.5 rounded">crawl-delay</code>.
+                Cloudflare gère l&apos;asynchronisme, la pagination automatique au-delà de 10 Mo et
+                le respect de
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">robots.txt</code> /{' '}
+                <code className="text-xs bg-white px-1 py-0.5 rounded">crawl-delay</code>.
               </p>
             </div>
             <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-950 space-y-3">
               <p className="font-semibold">🔐 Autorisation Cloudflare à sélectionner</p>
               <p>
-                Dans l&apos;écran <strong>Create Custom Token</strong> de Cloudflare, choisir exactement :
+                Dans l&apos;écran <strong>Create Custom Token</strong> de Cloudflare, choisir
+                exactement :
                 <strong className="ml-1">Compte → Browser Rendering → Modifier / Edit</strong>.
               </p>
               <p>
-                Restreignez ensuite le jeton au <strong>compte Cloudflare concerné</strong>. Il n&apos;est pas nécessaire
-                d&apos;ajouter des permissions <code className="text-xs bg-white px-1 py-0.5 rounded">Zone</code>,
+                Restreignez ensuite le jeton au <strong>compte Cloudflare concerné</strong>. Il
+                n&apos;est pas nécessaire d&apos;ajouter des permissions{' '}
+                <code className="text-xs bg-white px-1 py-0.5 rounded">Zone</code>,
                 <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">DNS</code>,
                 <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">Workers</code> ou
-                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">Pages</code> pour ce proxy.
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">Pages</code> pour ce
+                proxy.
               </p>
               <p>
-                Le <code className="text-xs bg-white px-1 py-0.5 rounded">CLOUDFLARE_BROWSER_RENDERING_API_TOKEN</code>
+                Le{' '}
+                <code className="text-xs bg-white px-1 py-0.5 rounded">
+                  CLOUDFLARE_BROWSER_RENDERING_API_TOKEN
+                </code>
                 est le jeton Cloudflare. Le
-                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">BROWSER_RENDERING_SHARED_SECRET</code> est
-                un secret applicatif à créer manuellement pour protéger l&apos;endpoint serveur.
+                <code className="text-xs bg-white px-1 py-0.5 rounded ml-1">
+                  BROWSER_RENDERING_SHARED_SECRET
+                </code>{' '}
+                est un secret applicatif à créer manuellement pour protéger l&apos;endpoint serveur.
               </p>
               <pre className="bg-white border border-amber-200 rounded-lg p-3 text-xs text-slate-800 overflow-x-auto whitespace-pre-wrap">
                 {BROWSER_RENDERING_ENV_SNIPPET}
@@ -281,7 +406,9 @@ export default function PortailDeveloppeurs() {
             <h2 className="font-bold text-gray-900 mb-3">💻 Exemple de réponse</h2>
             <div className="bg-slate-900 rounded-xl p-5 relative">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-slate-400 font-mono">GET /api/news?territory=gp&amp;type=rappels&amp;limit=10</span>
+                <span className="text-xs text-slate-400 font-mono">
+                  GET /api/news?territory=gp&amp;type=rappels&amp;limit=10
+                </span>
                 <button
                   onClick={() => navigator.clipboard.writeText(EXAMPLE_RESPONSE).catch(() => {})}
                   className="flex items-center gap-1 text-xs text-slate-400 hover:text-white transition-colors"
@@ -303,7 +430,9 @@ export default function PortailDeveloppeurs() {
               {PLANS_API.map((plan) => (
                 <div key={plan.name} className="bg-white border border-gray-200 rounded-xl p-5">
                   <p className="font-bold text-gray-900 mb-1">{plan.name}</p>
-                  <p className="text-sm font-semibold text-indigo-700 mb-3">{plan.calls} requêtes</p>
+                  <p className="text-sm font-semibold text-indigo-700 mb-3">
+                    {plan.calls} requêtes
+                  </p>
                   <ul className="space-y-1.5 mb-4">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
@@ -326,9 +455,21 @@ export default function PortailDeveloppeurs() {
           {/* Sécurité */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { icon: Key, title: 'Authentification API', desc: 'Clé API sécurisée par offre, rotation automatique' },
-              { icon: Shield, title: 'Rate limiting', desc: 'Quotas par plan, protection contre les abus' },
-              { icon: Globe, title: 'Open Source', desc: 'SDK JavaScript / Python open-source sur GitHub' },
+              {
+                icon: Key,
+                title: 'Authentification API',
+                desc: 'Clé API sécurisée par offre, rotation automatique',
+              },
+              {
+                icon: Shield,
+                title: 'Rate limiting',
+                desc: 'Quotas par plan, protection contre les abus',
+              },
+              {
+                icon: Globe,
+                title: 'Open Source',
+                desc: 'SDK JavaScript / Python open-source sur GitHub',
+              },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="bg-white border border-gray-200 rounded-xl p-4">
                 <Icon className="w-5 h-5 text-indigo-600 mb-2" />
@@ -347,12 +488,15 @@ export default function PortailDeveloppeurs() {
             <form onSubmit={handleSubmit} noValidate className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="portal-nom" className="block text-sm font-medium text-gray-700 mb-1">
-                      Nom complet *
-                    </label>
+                  <label
+                    htmlFor="portal-nom"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Nom complet *
+                  </label>
                   <input
                     id="portal-nom"
-                      type="text"
+                    type="text"
                     value={form.nom}
                     onChange={(e) => handleChange('nom', e.target.value)}
                     placeholder="Prénom Nom"
@@ -363,12 +507,15 @@ export default function PortailDeveloppeurs() {
                   {errors.nom && <p className="text-xs text-red-600 mt-1">{errors.nom}</p>}
                 </div>
                 <div>
-                  <label htmlFor="portal-email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Adresse e-mail *
-                    </label>
+                  <label
+                    htmlFor="portal-email"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Adresse e-mail *
+                  </label>
                   <input
                     id="portal-email"
-                      type="email"
+                    type="email"
                     value={form.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     placeholder="vous@exemple.com"
@@ -382,12 +529,15 @@ export default function PortailDeveloppeurs() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="portal-projet" className="block text-sm font-medium text-gray-700 mb-1">
-                      Nom du projet / application
-                    </label>
+                  <label
+                    htmlFor="portal-projet"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Nom du projet / application
+                  </label>
                   <input
                     id="portal-projet"
-                      type="text"
+                    type="text"
                     value={form.projet}
                     onChange={(e) => handleChange('projet', e.target.value)}
                     placeholder="Ex : MonApp Prix DOM"
@@ -395,12 +545,15 @@ export default function PortailDeveloppeurs() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="portal-plan" className="block text-sm font-medium text-gray-700 mb-1">
-                      Plan souhaité
-                    </label>
+                  <label
+                    htmlFor="portal-plan"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Plan souhaité
+                  </label>
                   <select
                     id="portal-plan"
-                      value={form.plan}
+                    value={form.plan}
                     onChange={(e) => handleChange('plan', e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-white"
                   >
@@ -414,12 +567,15 @@ export default function PortailDeveloppeurs() {
               </div>
 
               <div>
-                <label htmlFor="portal-cas-usage" className="block text-sm font-medium text-gray-700 mb-1">
-                      Description du cas d'usage *
-                    </label>
+                <label
+                  htmlFor="portal-cas-usage"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Description du cas d'usage *
+                </label>
                 <textarea
                   id="portal-cas-usage"
-                      rows={4}
+                  rows={4}
                   value={form.useCase}
                   onChange={(e) => handleChange('useCase', e.target.value)}
                   placeholder="Décrivez brièvement comment vous souhaitez utiliser l'API (ex : application mobile de comparaison de prix, outil d'analyse, tableau de bord institutionnel…)"
@@ -445,8 +601,8 @@ export default function PortailDeveloppeurs() {
             <FileText className="w-8 h-8 text-indigo-200 mx-auto mb-3" />
             <h3 className="text-lg font-bold text-white mb-2">Accès anticipé pour institutions</h3>
             <p className="text-indigo-200 text-sm mb-4 max-w-lg mx-auto">
-              Collectivités, observatoires, chercheurs : contactez-nous pour un accès en avant-première
-              à l'API institutionnelle.
+              Collectivités, observatoires, chercheurs : contactez-nous pour un accès en
+              avant-première à l'API institutionnelle.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link

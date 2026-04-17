@@ -42,7 +42,8 @@ function normaliseSource(raw: string): string {
   if (s.includes('open_food_facts') || s.includes('openfoodfacts')) return 'open_food_facts';
   if (s.includes('open_prices') || s.includes('openprices')) return 'open_prices';
   if (s.includes('data.gouv') || s.includes('data_gouv')) return 'data_gouv';
-  if (s.includes('citizen') || s.includes('citoyen') || s.includes('contribution')) return 'citizen';
+  if (s.includes('citizen') || s.includes('citoyen') || s.includes('contribution'))
+    return 'citizen';
   return s;
 }
 
@@ -86,7 +87,7 @@ export interface RawObservation {
  */
 export async function ingestPriceObservations(
   territory: TerritoryCode,
-  rawObservations: RawObservation[],
+  rawObservations: RawObservation[]
 ): Promise<number> {
   // Group by EAN
   const byEAN = new Map<string, { productName: string; obs: RawObservation[] }>();
@@ -147,7 +148,7 @@ export async function ingestPriceObservations(
  */
 export async function fetchAndIngestFromAPI(
   territory: TerritoryCode,
-  query: string,
+  query: string
 ): Promise<void> {
   const base = import.meta.env.BASE_URL ?? '/';
   const url = `${base}api/price-search?q=${encodeURIComponent(query)}&territory=${territory}`;
@@ -158,7 +159,7 @@ export async function fetchAndIngestFromAPI(
       logWarn(`[ingestion] API returned ${res.status} for query="${query}"`);
       return;
     }
-    const data = await res.json() as { observations?: RawObservation[] };
+    const data = (await res.json()) as { observations?: RawObservation[] };
     if (Array.isArray(data.observations) && data.observations.length > 0) {
       await ingestPriceObservations(territory, data.observations);
     }

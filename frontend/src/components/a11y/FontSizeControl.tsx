@@ -38,7 +38,7 @@ export default function FontSizeControl() {
           <Minus size={20} />
           <span className="sr-only">A-</span>
         </button>
-        
+
         <div className="flex-1">
           <input
             id="font-size-range"
@@ -67,7 +67,7 @@ export default function FontSizeControl() {
             <span>200%</span>
           </div>
         </div>
-        
+
         <button
           onClick={handleIncrease}
           disabled={preferences.fontSize >= 200}

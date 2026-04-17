@@ -1,10 +1,19 @@
- 
 /**
  * Price History Chart Component
  * Interactive chart displaying price evolution over time with variation indicators
  */
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts';
 import { Info, TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import type { PriceHistoryPoint } from '../types/priceHistory';
 
@@ -15,7 +24,10 @@ interface PriceHistoryChartProps {
 }
 
 /** Compute overall variation % between first and last average price across all stores */
-function computeVariation(data: PriceHistoryPoint[]): { pct: number; trend: 'down' | 'up' | 'stable' } {
+function computeVariation(data: PriceHistoryPoint[]): {
+  pct: number;
+  trend: 'down' | 'up' | 'stable';
+} {
   if (data.length < 2) return { pct: 0, trend: 'stable' };
   const sorted = [...data].sort((a, b) => a.date.localeCompare(b.date));
   const first = sorted.slice(0, Math.ceil(sorted.length * 0.1) || 1);
@@ -30,10 +42,14 @@ function computeVariation(data: PriceHistoryPoint[]): { pct: number; trend: 'dow
   return { pct, trend };
 }
 
-export function PriceHistoryChart({ data, showTrendLine = false, showAverage = false }: PriceHistoryChartProps) {
+export function PriceHistoryChart({
+  data,
+  showTrendLine = false,
+  showAverage = false,
+}: PriceHistoryChartProps) {
   // Group data by store
   const storeData = new Map<string, PriceHistoryPoint[]>();
-  data.forEach(point => {
+  data.forEach((point) => {
     const existing = storeData.get(point.storeName) || [];
     existing.push(point);
     storeData.set(point.storeName, existing);
@@ -54,7 +70,7 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
   // Calculate average if needed
   const avgPrice = data.length > 0 ? data.reduce((sum, p) => sum + p.price, 0) / data.length : 0;
   if (showAverage) {
-    chartData.forEach(entry => {
+    chartData.forEach((entry) => {
       entry.average = avgPrice;
     });
   }
@@ -65,21 +81,37 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
 
   // Compute variation badge
   const { pct, trend } = computeVariation(data);
-  const variationBadge = trend === 'down'
-    ? { label: `${Math.abs(pct).toFixed(1)}% en baisse`, icon: <TrendingDown className="w-4 h-4" />, className: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700' }
-    : trend === 'up'
-    ? { label: `${Math.abs(pct).toFixed(1)}% en hausse`, icon: <TrendingUp className="w-4 h-4" />, className: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700' }
-    : { label: 'Prix stable', icon: <Minus className="w-4 h-4" />, className: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600' };
+  const variationBadge =
+    trend === 'down'
+      ? {
+          label: `${Math.abs(pct).toFixed(1)}% en baisse`,
+          icon: <TrendingDown className="w-4 h-4" />,
+          className:
+            'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700',
+        }
+      : trend === 'up'
+        ? {
+            label: `${Math.abs(pct).toFixed(1)}% en hausse`,
+            icon: <TrendingUp className="w-4 h-4" />,
+            className:
+              'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 border-red-300 dark:border-red-700',
+          }
+        : {
+            label: 'Prix stable',
+            icon: <Minus className="w-4 h-4" />,
+            className:
+              'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600',
+          };
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-          Évolution des Prix
-        </h3>
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white">Évolution des Prix</h3>
         <div className="flex items-center gap-3">
           {data.length > 1 && (
-            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-semibold ${variationBadge.className}`}>
+            <span
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-semibold ${variationBadge.className}`}
+            >
               {variationBadge.icon}
               {variationBadge.label}
             </span>
@@ -104,13 +136,13 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
           <ResponsiveContainer width="100%" height={400}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.2} />
-              <XAxis 
-                dataKey="date" 
+              <XAxis
+                dataKey="date"
                 stroke="#64748b"
                 style={{ fontSize: '12px' }}
                 label={{ value: 'Date', position: 'insideBottom', offset: -5, fill: '#64748b' }}
               />
-              <YAxis 
+              <YAxis
                 stroke="#64748b"
                 style={{ fontSize: '12px' }}
                 tickFormatter={(value) => `${value.toFixed(2)}€`}
@@ -122,20 +154,23 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
                   border: 'none',
                   borderRadius: '8px',
                   color: '#fff',
-                  fontSize: '12px'
+                  fontSize: '12px',
                 }}
                 formatter={(value, name) => {
                   const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
-                  const label = typeof name === 'string' && name === 'average' ? 'Prix moyen' : String(name ?? '');
+                  const label =
+                    typeof name === 'string' && name === 'average'
+                      ? 'Prix moyen'
+                      : String(name ?? '');
                   return [`${numericValue.toFixed(2)}€`, label];
                 }}
                 labelFormatter={(label) => `Date: ${label}`}
               />
-              <Legend 
+              <Legend
                 wrapperStyle={{ fontSize: '12px' }}
-                formatter={(value) => value === 'average' ? 'Prix moyen' : value}
+                formatter={(value) => (value === 'average' ? 'Prix moyen' : value)}
               />
-              
+
               {stores.map((store, i) => (
                 <Line
                   key={store}
@@ -155,7 +190,12 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
                     y={avgPrice}
                     stroke="#94a3b8"
                     strokeDasharray="6 3"
-                    label={{ value: `Moy. territoire ${avgPrice.toFixed(2)}€`, fill: '#94a3b8', fontSize: 11, position: 'insideTopRight' }}
+                    label={{
+                      value: `Moy. territoire ${avgPrice.toFixed(2)}€`,
+                      fill: '#94a3b8',
+                      fontSize: 11,
+                      position: 'insideTopRight',
+                    }}
                   />
                   <Line
                     type="monotone"
@@ -177,7 +217,7 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
               <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Prix min</p>
                 <p className="font-bold text-green-600 dark:text-green-400">
-                  {Math.min(...data.map(p => p.price)).toFixed(2)} €
+                  {Math.min(...data.map((p) => p.price)).toFixed(2)} €
                 </p>
               </div>
               <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
@@ -189,7 +229,7 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
               <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-3">
                 <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Prix max</p>
                 <p className="font-bold text-red-500 dark:text-red-400">
-                  {Math.max(...data.map(p => p.price)).toFixed(2)} €
+                  {Math.max(...data.map((p) => p.price)).toFixed(2)} €
                 </p>
               </div>
             </div>
@@ -201,11 +241,13 @@ export function PriceHistoryChart({ data, showTrendLine = false, showAverage = f
               <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="mb-1">
-                  <strong>Sources:</strong> Contributions citoyennes vérifiées, données officielles et partenaires commerciaux.
+                  <strong>Sources:</strong> Contributions citoyennes vérifiées, données officielles
+                  et partenaires commerciaux.
                 </p>
                 <p>
-                  <strong>Mise à jour:</strong> Les prix affichés correspondent aux dernières observations enregistrées.
-                  Chaque point représente une observation réelle à une date donnée.
+                  <strong>Mise à jour:</strong> Les prix affichés correspondent aux dernières
+                  observations enregistrées. Chaque point représente une observation réelle à une
+                  date donnée.
                 </p>
               </div>
             </div>

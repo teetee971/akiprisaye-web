@@ -5,7 +5,13 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { buildRetailerUrl, getRetailerBaseUrl, knownRetailers, safeRetailerUrl, isValidRetailerUrl } from '../utils/retailerLinks';
+import {
+  buildRetailerUrl,
+  getRetailerBaseUrl,
+  knownRetailers,
+  safeRetailerUrl,
+  isValidRetailerUrl,
+} from '../utils/retailerLinks';
 
 describe('getRetailerBaseUrl', () => {
   it('returns a URL for known retailers', () => {
@@ -107,7 +113,9 @@ describe('safeRetailerUrl', () => {
 
   it('passes through subdomain URLs on allowed domains', () => {
     expect(safeRetailerUrl('https://drive.carrefour.fr/')).toBe('https://drive.carrefour.fr/');
-    expect(safeRetailerUrl('https://www.lidl.fr/c/promotions')).toBe('https://www.lidl.fr/c/promotions');
+    expect(safeRetailerUrl('https://www.lidl.fr/c/promotions')).toBe(
+      'https://www.lidl.fr/c/promotions'
+    );
   });
 });
 

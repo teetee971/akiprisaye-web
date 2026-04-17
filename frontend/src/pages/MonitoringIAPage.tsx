@@ -14,9 +14,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Activity, AlertTriangle, CheckCircle, Clock, Database,
-  Globe, RefreshCw, Shield, Zap, TrendingUp, Cpu, Radio,
-  FileText, ExternalLink,
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Database,
+  Globe,
+  RefreshCw,
+  Shield,
+  Zap,
+  TrendingUp,
+  Cpu,
+  Radio,
+  FileText,
+  ExternalLink,
 } from 'lucide-react';
 import { SEOHead } from '../components/ui/SEOHead';
 import { db as firebaseDb } from '../lib/firebase';
@@ -77,8 +88,12 @@ function ScoreGauge({ score }: { score: number }) {
         <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
           <circle cx="50" cy="50" r="40" fill="none" stroke="#334155" strokeWidth="10" />
           <circle
-            cx="50" cy="50" r="40" fill="none"
-            stroke={color} strokeWidth="10"
+            cx="50"
+            cy="50"
+            r="40"
+            fill="none"
+            stroke={color}
+            strokeWidth="10"
             strokeDasharray={`${(score / 100) * 251.2} 251.2`}
             strokeLinecap="round"
             className="transition-all duration-1000"
@@ -91,7 +106,9 @@ function ScoreGauge({ score }: { score: number }) {
       </div>
       <div className="text-center mt-2">
         <span className="text-lg">{emoji}</span>
-        <p className="text-sm font-semibold" style={{ color }}>{label}</p>
+        <p className="text-sm font-semibold" style={{ color }}>
+          {label}
+        </p>
       </div>
     </div>
   );
@@ -130,15 +147,25 @@ function ScrapingCard({ session }: { session: ScrapingSession }) {
           <Database size={16} className="text-blue-400" />
           <span className="font-semibold text-white text-sm">{session.date}</span>
         </div>
-        <span className={`text-xs px-2 py-0.5 rounded-full ${session.status === 'success' ? 'bg-green-900/40 text-green-300' : 'bg-red-900/40 text-red-300'}`}>
+        <span
+          className={`text-xs px-2 py-0.5 rounded-full ${session.status === 'success' ? 'bg-green-900/40 text-green-300' : 'bg-red-900/40 text-red-300'}`}
+        >
           {session.status === 'success' ? '✅ Succès' : '❌ Échec'}
         </span>
       </div>
       <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="text-gray-300">⛽ Carburants: <span className="text-white font-medium">{session.counts.fuel}</span></div>
-        <div className="text-gray-300">🥦 Alim.: <span className="text-white font-medium">{session.counts.food}</span></div>
-        <div className="text-gray-300">📋 BQP: <span className="text-white font-medium">{session.counts.bqp}</span></div>
-        <div className="text-gray-300">📡 Services: <span className="text-white font-medium">{session.counts.services}</span></div>
+        <div className="text-gray-300">
+          ⛽ Carburants: <span className="text-white font-medium">{session.counts.fuel}</span>
+        </div>
+        <div className="text-gray-300">
+          🥦 Alim.: <span className="text-white font-medium">{session.counts.food}</span>
+        </div>
+        <div className="text-gray-300">
+          📋 BQP: <span className="text-white font-medium">{session.counts.bqp}</span>
+        </div>
+        <div className="text-gray-300">
+          📡 Services: <span className="text-white font-medium">{session.counts.services}</span>
+        </div>
       </div>
       <div className="mt-2 pt-2 border-t border-slate-700/40 flex items-center justify-between text-xs">
         <span className="text-gray-400">{total} entrées collectées</span>
@@ -164,9 +191,13 @@ export default function MonitoringIAPage() {
     setLoading(true);
     try {
       const db = firebaseDb;
-      if (!db) { setLoading(false); return; }
+      if (!db) {
+        setLoading(false);
+        return;
+      }
 
-      const { collection, doc, getDoc, getDocs, query, orderBy, limit } = await import('firebase/firestore');
+      const { collection, doc, getDoc, getDocs, query, orderBy, limit } =
+        await import('firebase/firestore');
 
       // Load latest monitoring report
       const latestSnap = await getDoc(doc(db, 'monitoring', '_latest'));
@@ -209,14 +240,29 @@ export default function MonitoringIAPage() {
   }, [autoRefresh, loadData]);
 
   // Group checks by category
-  const categorized = report ? {
-    '🌐 Disponibilité': report.checks.filter((c) => c.label.includes('Site') || c.label.includes('Pages')),
-    '🚀 CI/CD': report.checks.filter((c) => c.label.includes('CI')),
-    '🔥 Firestore': report.checks.filter((c) => c.label.includes('Lettre') || c.label.includes('Firestore') || c.label.includes('Prix') || c.label.includes('snapshot')),
-    '📰 RSS': report.checks.filter((c) => c.label.includes('RSS') || c.label.includes('Flux')),
-    '📦 Données': report.checks.filter((c) => c.label.includes('fuel') || c.label.includes('json') || c.label.includes('statique')),
-    '🔒 Sécurité': report.checks.filter((c) => c.label.includes('Scanning') || c.label.includes('CodeQL')),
-  } : {};
+  const categorized = report
+    ? {
+        '🌐 Disponibilité': report.checks.filter(
+          (c) => c.label.includes('Site') || c.label.includes('Pages')
+        ),
+        '🚀 CI/CD': report.checks.filter((c) => c.label.includes('CI')),
+        '🔥 Firestore': report.checks.filter(
+          (c) =>
+            c.label.includes('Lettre') ||
+            c.label.includes('Firestore') ||
+            c.label.includes('Prix') ||
+            c.label.includes('snapshot')
+        ),
+        '📰 RSS': report.checks.filter((c) => c.label.includes('RSS') || c.label.includes('Flux')),
+        '📦 Données': report.checks.filter(
+          (c) =>
+            c.label.includes('fuel') || c.label.includes('json') || c.label.includes('statique')
+        ),
+        '🔒 Sécurité': report.checks.filter(
+          (c) => c.label.includes('Scanning') || c.label.includes('CodeQL')
+        ),
+      }
+    : {};
 
   return (
     <>
@@ -234,12 +280,16 @@ export default function MonitoringIAPage() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Cpu size={20} className="text-blue-400" />
-                  <span className="text-sm text-blue-400 font-medium uppercase tracking-wider">IA de Surveillance</span>
+                  <span className="text-sm text-blue-400 font-medium uppercase tracking-wider">
+                    IA de Surveillance
+                  </span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-black text-white mb-1">🤖 Monitoring Global</h1>
+                <h1 className="text-2xl sm:text-3xl font-black text-white mb-1">
+                  🤖 Monitoring Global
+                </h1>
                 <p className="text-gray-400 text-sm max-w-lg">
-                  Surveillance autonome 24h/24 de l'intégralité du logiciel.
-                  Mise à jour automatique toutes les heures par IA.
+                  Surveillance autonome 24h/24 de l'intégralité du logiciel. Mise à jour automatique
+                  toutes les heures par IA.
                 </p>
               </div>
               {report && <ScoreGauge score={report.globalScore} />}
@@ -281,13 +331,17 @@ export default function MonitoringIAPage() {
           {!loading && !report && (
             <div className="text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-700/30">
               <AlertTriangle size={40} className="mx-auto mb-3 text-yellow-400" />
-              <h2 className="text-lg font-bold text-white mb-2">Surveillance IA non encore initialisée</h2>
+              <h2 className="text-lg font-bold text-white mb-2">
+                Surveillance IA non encore initialisée
+              </h2>
               <p className="text-gray-400 text-sm max-w-md mx-auto mb-4">
-                Le premier rapport sera généré lors du prochain cycle (toutes les heures via GitHub Actions).
+                Le premier rapport sera généré lors du prochain cycle (toutes les heures via GitHub
+                Actions).
               </p>
               <a
                 href="https://github.com/teetee971/akiprisaye-web/actions"
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm transition-colors"
               >
                 <ExternalLink size={14} /> Voir les workflows GitHub Actions
@@ -302,8 +356,12 @@ export default function MonitoringIAPage() {
                 <div className="bg-gradient-to-br from-blue-900/20 to-indigo-900/20 border border-blue-500/30 rounded-2xl p-6">
                   <div className="flex items-center gap-2 mb-3">
                     <Zap size={18} className="text-blue-400" />
-                    <h2 className="font-bold text-white">Analyse IA — {report.aiAnalysis.status_global?.toUpperCase()}</h2>
-                    <span className="text-xs text-gray-400 ml-auto">{report.timestamp?.slice(0, 16).replace('T', ' ')} UTC</span>
+                    <h2 className="font-bold text-white">
+                      Analyse IA — {report.aiAnalysis.status_global?.toUpperCase()}
+                    </h2>
+                    <span className="text-xs text-gray-400 ml-auto">
+                      {report.timestamp?.slice(0, 16).replace('T', ' ')} UTC
+                    </span>
                   </div>
                   <p className="text-gray-300 text-sm mb-3">{report.aiAnalysis.rapport}</p>
                   {report.aiAnalysis.action_prioritaire && (
@@ -318,9 +376,27 @@ export default function MonitoringIAPage() {
               {/* Summary badges */}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: 'OK', count: report.summary.ok, icon: CheckCircle, color: 'text-green-400', bg: 'bg-green-900/20 border-green-500/30' },
-                  { label: 'Avertissements', count: report.summary.warn, icon: AlertTriangle, color: 'text-yellow-400', bg: 'bg-yellow-900/20 border-yellow-500/30' },
-                  { label: 'Erreurs', count: report.summary.error, icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-900/20 border-red-500/30' },
+                  {
+                    label: 'OK',
+                    count: report.summary.ok,
+                    icon: CheckCircle,
+                    color: 'text-green-400',
+                    bg: 'bg-green-900/20 border-green-500/30',
+                  },
+                  {
+                    label: 'Avertissements',
+                    count: report.summary.warn,
+                    icon: AlertTriangle,
+                    color: 'text-yellow-400',
+                    bg: 'bg-yellow-900/20 border-yellow-500/30',
+                  },
+                  {
+                    label: 'Erreurs',
+                    count: report.summary.error,
+                    icon: AlertTriangle,
+                    color: 'text-red-400',
+                    bg: 'bg-red-900/20 border-red-500/30',
+                  },
                 ].map(({ label, count, icon: Icon, color, bg }) => (
                   <div key={label} className={`border rounded-xl p-4 text-center ${bg}`}>
                     <Icon size={20} className={`${color} mx-auto mb-1`} />
@@ -332,16 +408,23 @@ export default function MonitoringIAPage() {
 
               {/* Checks by category */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {Object.entries(categorized).filter(([, checks]) => checks.length > 0).map(([cat, checks]) => (
-                  <div key={cat} className="bg-slate-800/40 border border-slate-700/30 rounded-xl p-4">
-                    <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-                      <Activity size={14} className="text-blue-400" /> {cat}
-                    </h3>
-                    <div className="space-y-1.5">
-                      {checks.map((c: CheckResult, i: number) => <CheckRow key={i} check={c} />)}
+                {Object.entries(categorized)
+                  .filter(([, checks]) => checks.length > 0)
+                  .map(([cat, checks]) => (
+                    <div
+                      key={cat}
+                      className="bg-slate-800/40 border border-slate-700/30 rounded-xl p-4"
+                    >
+                      <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+                        <Activity size={14} className="text-blue-400" /> {cat}
+                      </h3>
+                      <div className="space-y-1.5">
+                        {checks.map((c: CheckResult, i: number) => (
+                          <CheckRow key={i} check={c} />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </>
           )}
@@ -353,7 +436,9 @@ export default function MonitoringIAPage() {
                 <Database size={18} className="text-blue-400" /> Sessions de scraping récentes
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {sessions.map((s) => <ScrapingCard key={s.date} session={s} />)}
+                {sessions.map((s) => (
+                  <ScrapingCard key={s.date} session={s} />
+                ))}
               </div>
             </div>
           )}
@@ -366,24 +451,41 @@ export default function MonitoringIAPage() {
               </h2>
               <div className="space-y-2">
                 {shocks.map((s, i) => {
-                  const sev = s.severity ?? (Math.abs(s.pct ?? s.pctVsPrevious ?? 0) >= 20 ? 'grave' : 'modere');
+                  const sev =
+                    s.severity ??
+                    (Math.abs(s.pct ?? s.pctVsPrevious ?? 0) >= 20 ? 'grave' : 'modere');
                   const pct = s.pct ?? s.pctVsPrevious ?? 0;
                   return (
-                    <div key={i} className="flex items-center gap-3 bg-slate-800/60 border border-slate-700/40 rounded-lg px-4 py-2.5">
-                      <span className="text-lg">{sev === 'grave' ? '🔴' : sev === 'eleve' ? '🟠' : '🟡'}</span>
-                      <span className="text-white font-medium text-sm flex-1">{s.territory} {s.fuel ?? s.type}</span>
-                      <span className={`text-sm font-bold ${s.direction === 'hausse' ? 'text-red-400' : 'text-green-400'}`}>
-                        {pct > 0 ? '+' : ''}{pct.toFixed(1)}%
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 bg-slate-800/60 border border-slate-700/40 rounded-lg px-4 py-2.5"
+                    >
+                      <span className="text-lg">
+                        {sev === 'grave' ? '🔴' : sev === 'eleve' ? '🟠' : '🟡'}
+                      </span>
+                      <span className="text-white font-medium text-sm flex-1">
+                        {s.territory} {s.fuel ?? s.type}
+                      </span>
+                      <span
+                        className={`text-sm font-bold ${s.direction === 'hausse' ? 'text-red-400' : 'text-green-400'}`}
+                      >
+                        {pct > 0 ? '+' : ''}
+                        {pct.toFixed(1)}%
                       </span>
                       {s.oldPrice && s.newPrice && (
-                        <span className="text-xs text-gray-400">{s.oldPrice}€ → {s.newPrice}€</span>
+                        <span className="text-xs text-gray-400">
+                          {s.oldPrice}€ → {s.newPrice}€
+                        </span>
                       )}
                     </div>
                   );
                 })}
               </div>
               <div className="mt-3">
-                <Link to="../chocs-prix" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                <Link
+                  to="../chocs-prix"
+                  className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                >
                   <TrendingUp size={14} /> Voir tous les chocs de prix
                 </Link>
               </div>
@@ -397,14 +499,54 @@ export default function MonitoringIAPage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
-                { icon: '🤖', name: 'Scraping multi-sources', freq: 'Quotidien 6h UTC', desc: 'Carburants, alim., BQP, services' },
-                { icon: '⛽', name: 'Prix carburants officiels', freq: 'Quotidien 6h30 UTC', desc: 'prix-carburants.gouv.fr' },
-                { icon: '🔍', name: 'Détection chocs de prix', freq: 'Quotidien 8h UTC', desc: 'Analyse z-score + GitHub Issues' },
-                { icon: '☀️', name: 'Briefing journalier IA', freq: 'Quotidien 7h UTC', desc: 'RSS + GPT-4o-mini → Firestore' },
-                { icon: '📰', name: 'Lettre hebdo IA', freq: 'Lundi 7h UTC', desc: 'Analyse + éditoriale GPT-4o-mini' },
-                { icon: '📊', name: 'Snapshot observatoire', freq: 'Lundi 8h UTC', desc: 'Agrégation hebdo + analyse IA' },
-                { icon: '🤖', name: 'Surveillance IA globale', freq: 'Toutes les heures', desc: 'Site, CI, Firestore, RSS, sécurité' },
-                { icon: '🔒', name: 'Analyse sécurité CodeQL', freq: 'Hebdomadaire', desc: 'Vulnérabilités code automatiques' },
+                {
+                  icon: '🤖',
+                  name: 'Scraping multi-sources',
+                  freq: 'Quotidien 6h UTC',
+                  desc: 'Carburants, alim., BQP, services',
+                },
+                {
+                  icon: '⛽',
+                  name: 'Prix carburants officiels',
+                  freq: 'Quotidien 6h30 UTC',
+                  desc: 'prix-carburants.gouv.fr',
+                },
+                {
+                  icon: '🔍',
+                  name: 'Détection chocs de prix',
+                  freq: 'Quotidien 8h UTC',
+                  desc: 'Analyse z-score + GitHub Issues',
+                },
+                {
+                  icon: '☀️',
+                  name: 'Briefing journalier IA',
+                  freq: 'Quotidien 7h UTC',
+                  desc: 'RSS + GPT-4o-mini → Firestore',
+                },
+                {
+                  icon: '📰',
+                  name: 'Lettre hebdo IA',
+                  freq: 'Lundi 7h UTC',
+                  desc: 'Analyse + éditoriale GPT-4o-mini',
+                },
+                {
+                  icon: '📊',
+                  name: 'Snapshot observatoire',
+                  freq: 'Lundi 8h UTC',
+                  desc: 'Agrégation hebdo + analyse IA',
+                },
+                {
+                  icon: '🤖',
+                  name: 'Surveillance IA globale',
+                  freq: 'Toutes les heures',
+                  desc: 'Site, CI, Firestore, RSS, sécurité',
+                },
+                {
+                  icon: '🔒',
+                  name: 'Analyse sécurité CodeQL',
+                  freq: 'Hebdomadaire',
+                  desc: 'Vulnérabilités code automatiques',
+                },
               ].map((a) => (
                 <div key={a.name} className="flex items-start gap-3 bg-slate-900/40 rounded-lg p-3">
                   <span className="text-xl shrink-0">{a.icon}</span>
@@ -419,7 +561,8 @@ export default function MonitoringIAPage() {
             <div className="mt-4 text-center">
               <a
                 href="https://github.com/teetee971/akiprisaye-web/actions"
-                target="_blank" rel="noopener noreferrer"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300"
               >
                 <ExternalLink size={14} /> Voir les workflows sur GitHub Actions
@@ -429,13 +572,22 @@ export default function MonitoringIAPage() {
 
           {/* Links */}
           <div className="flex flex-wrap gap-3 justify-center">
-            <Link to="../statut" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">
+            <Link
+              to="../statut"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors"
+            >
               <Globe size={14} /> Statut plateforme
             </Link>
-            <Link to="../chocs-prix" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">
+            <Link
+              to="../chocs-prix"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors"
+            >
               <TrendingUp size={14} /> Chocs de prix
             </Link>
-            <Link to="../lettre-jour" className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors">
+            <Link
+              to="../lettre-jour"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors"
+            >
               <FileText size={14} /> Lettre du Jour
             </Link>
           </div>

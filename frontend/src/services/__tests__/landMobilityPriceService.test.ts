@@ -1,4 +1,3 @@
- 
 /**
  * Unit Tests for Land Mobility Price Service v2.3.0
  */
@@ -36,7 +35,7 @@ const mockBusPrices: BusPricePoint[] = [
       operator: 'Martinique Transport',
     },
     ticketType: 'single',
-    price: 1.50,
+    price: 1.5,
     currency: 'EUR',
     priceUnit: 'ticket',
     observationDate: '2025-12-20T10:00:00Z',
@@ -60,7 +59,7 @@ const mockBusPrices: BusPricePoint[] = [
       operator: 'Urban Bus',
     },
     ticketType: 'single',
-    price: 1.30,
+    price: 1.3,
     currency: 'EUR',
     priceUnit: 'ticket',
     observationDate: '2025-12-21T14:30:00Z',
@@ -87,9 +86,9 @@ const mockTaxiPrices: TaxiPricePoint[] = [
     },
     serviceType: 'taxi',
     operator: 'Taxi Martinique',
-    price: 25.00,
-    baseFare: 5.00,
-    perKmRate: 2.50,
+    price: 25.0,
+    baseFare: 5.0,
+    perKmRate: 2.5,
     currency: 'EUR',
     priceUnit: 'trip',
     observationDate: '2025-12-20T10:00:00Z',
@@ -113,9 +112,9 @@ const mockTaxiPrices: TaxiPricePoint[] = [
     },
     serviceType: 'vtc',
     operator: 'Uber Martinique',
-    price: 22.00,
-    baseFare: 3.00,
-    perKmRate: 2.20,
+    price: 22.0,
+    baseFare: 3.0,
+    perKmRate: 2.2,
     currency: 'EUR',
     priceUnit: 'trip',
     observationDate: '2025-12-21T15:00:00Z',
@@ -240,27 +239,27 @@ describe('Land Mobility Price Service v2.3.0', () => {
 
     it('should successfully compare bus prices', () => {
       const result = compareLandMobilityPrices('BUS', mockBusPrices, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.category).toBe('BUS');
       expect(result!.territory).toBe('MQ');
       expect(result!.rankings).toHaveLength(2);
       expect(result!.rankings[0].rank).toBe(1);
-      expect(result!.rankings[0].mobilityPrice.price).toBe(1.30);
+      expect(result!.rankings[0].mobilityPrice.price).toBe(1.3);
     });
 
     it('should successfully compare taxi prices', () => {
       const result = compareLandMobilityPrices('TAXI', mockTaxiPrices, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.category).toBe('TAXI');
       expect(result!.rankings).toHaveLength(2);
-      expect(result!.rankings[0].mobilityPrice.price).toBe(22.00);
+      expect(result!.rankings[0].mobilityPrice.price).toBe(22.0);
     });
 
     it('should successfully compare fuel prices', () => {
       const result = compareLandMobilityPrices('FUEL', mockFuelPrices, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.category).toBe('FUEL');
       expect(result!.rankings).toHaveLength(3);
@@ -273,7 +272,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
     it('should filter by category', () => {
       const filtered = applyLandMobilityFilters(allPrices, { category: 'BUS' });
       expect(filtered).toHaveLength(2);
-      expect(filtered.every(p => p.category === 'BUS')).toBe(true);
+      expect(filtered.every((p) => p.category === 'BUS')).toBe(true);
     });
 
     it('should filter by territory', () => {
@@ -295,7 +294,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
 
     it('should filter by verified only', () => {
       const filtered = applyLandMobilityFilters(mockBusPrices, { verifiedOnly: true });
-      expect(filtered.every(p => p.verified)).toBe(true);
+      expect(filtered.every((p) => p.verified)).toBe(true);
       expect(filtered).toHaveLength(1);
     });
 
@@ -306,20 +305,20 @@ describe('Land Mobility Price Service v2.3.0', () => {
         verifiedOnly: true,
       });
       expect(filtered).toHaveLength(2);
-      expect(filtered.every(p => p.category === 'TAXI' && p.verified)).toBe(true);
+      expect(filtered.every((p) => p.category === 'TAXI' && p.verified)).toBe(true);
     });
   });
 
   describe('calculateLandMobilityAggregation', () => {
     it('should calculate aggregation correctly', () => {
       const aggregation = calculateLandMobilityAggregation(mockBusPrices, 'BUS', 'MQ');
-      
+
       expect(aggregation.category).toBe('BUS');
       expect(aggregation.territory).toBe('MQ');
       expect(aggregation.providerCount).toBe(2);
-      expect(aggregation.minPrice).toBe(1.30);
-      expect(aggregation.maxPrice).toBe(1.50);
-      expect(aggregation.averagePrice).toBe(1.40);
+      expect(aggregation.minPrice).toBe(1.3);
+      expect(aggregation.maxPrice).toBe(1.5);
+      expect(aggregation.averagePrice).toBe(1.4);
     });
 
     it('should throw error for empty price list', () => {
@@ -329,7 +328,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
     it('should handle single provider', () => {
       const singlePrice = [mockBusPrices[0]];
       const aggregation = calculateLandMobilityAggregation(singlePrice, 'BUS', 'MQ');
-      
+
       expect(aggregation.providerCount).toBe(1);
       expect(aggregation.minPrice).toBe(aggregation.maxPrice);
       expect(aggregation.priceRange).toBe(0);
@@ -338,9 +337,9 @@ describe('Land Mobility Price Service v2.3.0', () => {
 
   describe('rankLandMobilityPrices', () => {
     it('should rank prices correctly', () => {
-      const averagePrice = 1.40;
+      const averagePrice = 1.4;
       const ranked = rankLandMobilityPrices(mockBusPrices, averagePrice);
-      
+
       expect(ranked).toHaveLength(2);
       expect(ranked[0].rank).toBe(1);
       expect(ranked[0].priceCategory).toBe('cheapest');
@@ -349,12 +348,12 @@ describe('Land Mobility Price Service v2.3.0', () => {
     });
 
     it('should calculate differences correctly', () => {
-      const averagePrice = 1.40;
+      const averagePrice = 1.4;
       const ranked = rankLandMobilityPrices(mockBusPrices, averagePrice);
-      
+
       expect(ranked[0].absoluteDifferenceFromCheapest).toBe(0);
       expect(ranked[0].percentageDifferenceFromCheapest).toBe(0);
-      expect(ranked[1].absoluteDifferenceFromCheapest).toBeCloseTo(0.20, 2);
+      expect(ranked[1].absoluteDifferenceFromCheapest).toBeCloseTo(0.2, 2);
     });
 
     it('should return empty array for empty input', () => {
@@ -366,7 +365,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
   describe('generateLandMobilityMetadata', () => {
     it('should generate metadata with correct structure', () => {
       const metadata = generateLandMobilityMetadata(mockBusPrices);
-      
+
       expect(metadata.methodology).toBe('v2.3.0');
       expect(metadata.aggregationMethod).toBe('mean');
       expect(metadata.dataQuality.providersWithData).toBe(2);
@@ -376,7 +375,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
 
     it('should calculate source summary correctly', () => {
       const metadata = generateLandMobilityMetadata(mockBusPrices);
-      
+
       expect(metadata.sources.length).toBeGreaterThan(0);
       const totalPercentage = metadata.sources.reduce((sum, s) => sum + s.percentage, 0);
       expect(totalPercentage).toBeCloseTo(100, 0);
@@ -387,7 +386,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
     it('should return cheapest option', () => {
       const cheapest = getCheapestOption(mockBusPrices);
       expect(cheapest).not.toBeNull();
-      expect(cheapest!.price).toBe(1.30);
+      expect(cheapest!.price).toBe(1.3);
     });
 
     it('should return null for empty array', () => {
@@ -400,7 +399,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
     it('should return most expensive option', () => {
       const expensive = getMostExpensiveOption(mockBusPrices);
       expect(expensive).not.toBeNull();
-      expect(expensive!.price).toBe(1.50);
+      expect(expensive!.price).toBe(1.5);
     });
 
     it('should return null for empty array', () => {
@@ -411,12 +410,12 @@ describe('Land Mobility Price Service v2.3.0', () => {
 
   describe('calculatePercentageDifference', () => {
     it('should calculate percentage difference correctly', () => {
-      const diff = calculatePercentageDifference(1.50, 1.30);
+      const diff = calculatePercentageDifference(1.5, 1.3);
       expect(diff).toBeCloseTo(15.38, 2);
     });
 
     it('should return 0 when base price is 0', () => {
-      const diff = calculatePercentageDifference(1.50, 0);
+      const diff = calculatePercentageDifference(1.5, 0);
       expect(diff).toBe(0);
     });
   });
@@ -425,7 +424,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
     it('should group prices by category', () => {
       const allPrices = [...mockBusPrices, ...mockTaxiPrices, ...mockFuelPrices];
       const grouped = groupPricesByCategory(allPrices);
-      
+
       expect(grouped.size).toBe(3);
       expect(grouped.get('BUS')).toHaveLength(2);
       expect(grouped.get('TAXI')).toHaveLength(2);
@@ -437,7 +436,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
     it('should group prices by territory', () => {
       const allPrices = [...mockBusPrices, ...mockTaxiPrices, ...mockFuelPrices];
       const grouped = groupPricesByTerritory(allPrices);
-      
+
       expect(grouped.has('MQ')).toBe(true);
       expect(grouped.get('MQ')!.length).toBe(7);
     });
@@ -455,7 +454,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
     it('should filter fuel prices by type', () => {
       const filtered = filterFuelByType(mockFuelPrices, 'SP95');
       expect(filtered).toHaveLength(2);
-      expect(filtered.every(p => p.fuelType === 'SP95')).toBe(true);
+      expect(filtered.every((p) => p.fuelType === 'SP95')).toBe(true);
     });
   });
 
@@ -471,7 +470,7 @@ describe('Land Mobility Price Service v2.3.0', () => {
     it('should handle single provider scenario', () => {
       const singlePrice = [mockBusPrices[0]];
       const result = compareLandMobilityPrices('BUS', singlePrice, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.rankings).toHaveLength(1);
       expect(result!.rankings[0].rank).toBe(1);
@@ -484,28 +483,28 @@ describe('Land Mobility Price Service v2.3.0', () => {
         conditions: undefined,
       };
       const result = compareLandMobilityPrices('BUS', [incompletePrice], 'MQ');
-      
+
       expect(result).not.toBeNull();
     });
 
     it('should handle identical prices', () => {
       const identicalPrices: BusPricePoint[] = [
-        { ...mockBusPrices[0], price: 1.50 },
-        { ...mockBusPrices[0], line: { ...mockBusPrices[0].line, operator: 'Other' }, price: 1.50 },
+        { ...mockBusPrices[0], price: 1.5 },
+        { ...mockBusPrices[0], line: { ...mockBusPrices[0].line, operator: 'Other' }, price: 1.5 },
       ];
       const result = compareLandMobilityPrices('BUS', identicalPrices, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.aggregation.priceRange).toBe(0);
     });
 
     it('should handle mixed fuel types', () => {
       const result = compareLandMobilityPrices('FUEL', mockFuelPrices, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.rankings.length).toBe(3);
       // Should include both SP95 and DIESEL
-      const fuelTypes = result!.rankings.map(r => (r.mobilityPrice as FuelPricePoint).fuelType);
+      const fuelTypes = result!.rankings.map((r) => (r.mobilityPrice as FuelPricePoint).fuelType);
       expect(fuelTypes.includes('SP95')).toBe(true);
       expect(fuelTypes.includes('DIESEL')).toBe(true);
     });

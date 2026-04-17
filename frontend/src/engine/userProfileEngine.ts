@@ -54,13 +54,21 @@ export interface AggregatedEvents {
  * @param events  Raw TrackedEvent[] from eventTracker.getEvents()
  */
 export function aggregateEvents(
-  events: { type: string; product?: string; retailer?: string; territory?: string; page?: string; ts: number; [k: string]: unknown }[],
+  events: {
+    type: string;
+    product?: string;
+    retailer?: string;
+    territory?: string;
+    page?: string;
+    ts: number;
+    [k: string]: unknown;
+  }[]
 ): AggregatedEvents {
-  const views      = new Set<string>();
-  const retailers  = new Set<string>();
-  const products   = new Set<string>();
+  const views = new Set<string>();
+  const retailers = new Set<string>();
+  const products = new Set<string>();
   const categories = new Set<string>();
-  const days       = new Set<string>();
+  const days = new Set<string>();
   let lastTerritory: TerritoryCode | undefined;
   let lastSeenAt = 0;
 
@@ -75,10 +83,16 @@ export function aggregateEvents(
     if ((e.type === 'view' || e.type === 'deal_view' || e.type === 'page_view') && e.product) {
       views.add(e.product);
     }
-    if ((e.type === 'affiliate_click' || e.type === 'conversion' || e.type === 'click') && e.retailer) {
+    if (
+      (e.type === 'affiliate_click' || e.type === 'conversion' || e.type === 'click') &&
+      e.retailer
+    ) {
       retailers.add(e.retailer);
     }
-    if ((e.type === 'affiliate_click' || e.type === 'conversion' || e.type === 'click') && e.product) {
+    if (
+      (e.type === 'affiliate_click' || e.type === 'conversion' || e.type === 'click') &&
+      e.product
+    ) {
       products.add(e.product);
     }
     if (e.category) categories.add(String(e.category));
@@ -89,12 +103,12 @@ export function aggregateEvents(
 
   return {
     lastTerritory,
-    views:        [...views],
-    retailers:    [...retailers],
-    products:     [...products],
+    views: [...views],
+    retailers: [...retailers],
+    products: [...products],
     avgDepth,
     repeatVisits: days.size,
-    categories:   [...categories],
+    categories: [...categories],
     lastSeenAt,
   };
 }
@@ -108,14 +122,14 @@ export function aggregateEvents(
  */
 export function buildUserProfile(events: AggregatedEvents): UserProfile {
   return {
-    territory:        events.lastTerritory,
-    viewedProducts:   dedup(events.views ?? []),
+    territory: events.lastTerritory,
+    viewedProducts: dedup(events.views ?? []),
     clickedRetailers: dedup(events.retailers ?? []),
-    clickedProducts:  dedup(events.products ?? []),
-    avgSessionDepth:  events.avgDepth ?? 0,
-    repeatVisits:     events.repeatVisits ?? 0,
+    clickedProducts: dedup(events.products ?? []),
+    avgSessionDepth: events.avgDepth ?? 0,
+    repeatVisits: events.repeatVisits ?? 0,
     favoriteCategories: dedup(events.categories ?? []),
-    lastSeenAt:       events.lastSeenAt ?? 0,
+    lastSeenAt: events.lastSeenAt ?? 0,
   };
 }
 

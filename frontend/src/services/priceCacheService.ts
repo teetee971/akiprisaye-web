@@ -137,16 +137,13 @@ export function computePriceStats(observations: CachedObservation[]): PriceStats
   const max = inliers[inliers.length - 1];
   const mean = inliers.reduce((s, p) => s + p, 0) / inliers.length;
   const mid = Math.floor(inliers.length / 2);
-  const median =
-    inliers.length % 2 === 0
-      ? (inliers[mid - 1] + inliers[mid]) / 2
-      : inliers[mid];
+  const median = inliers.length % 2 === 0 ? (inliers[mid - 1] + inliers[mid]) / 2 : inliers[mid];
 
   // Freshness: proportion of observations < 7 days old
   const now = Date.now();
   const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
   const recent = observations.filter(
-    (o) => now - new Date(o.observedAt).getTime() < sevenDaysMs,
+    (o) => now - new Date(o.observedAt).getTime() < sevenDaysMs
   ).length;
   const freshness = recent / count;
 
@@ -164,7 +161,7 @@ export function computePriceStats(observations: CachedObservation[]): PriceStats
 export async function getCachedPrices(
   territory: string,
   ean: string,
-  ignoreExpiry = false,
+  ignoreExpiry = false
 ): Promise<CachedPriceRecord | null> {
   if (!('indexedDB' in window)) return null;
   try {
@@ -186,7 +183,7 @@ export async function setCachedPrices(
   ean: string,
   productName: string,
   observations: CachedObservation[],
-  ttlMs = DEFAULT_TTL_MS,
+  ttlMs = DEFAULT_TTL_MS
 ): Promise<void> {
   if (!('indexedDB' in window)) return;
   try {

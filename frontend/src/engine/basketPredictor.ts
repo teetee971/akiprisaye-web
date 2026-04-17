@@ -77,9 +77,9 @@ export function predictBestBasket(products: BasketItem[]): BasketResult[] {
     const totalCost = items.reduce((sum, i) => sum + i.price, 0);
     results.push({
       retailer,
-      totalCost:      parseFloat(totalCost.toFixed(2)),
+      totalCost: parseFloat(totalCost.toFixed(2)),
       availableCount: items.length,
-      products:       items.map(({ name, price }) => ({ name, price })),
+      products: items.map(({ name, price }) => ({ name, price })),
     });
   }
 
@@ -97,7 +97,7 @@ export function predictBestBasket(products: BasketItem[]): BasketResult[] {
  */
 export function predictMixedBasket(
   products: BasketItem[],
-  minSaving = 0.50,
+  minSaving = 0.5
 ): MixedBasketResult | null {
   // Find the cheapest retailer for each unique product
   const bestByProduct = new Map<string, BasketItem>();
@@ -109,7 +109,9 @@ export function predictMixedBasket(
   }
 
   const assignments = [...bestByProduct.values()].map(({ name, retailer, price }) => ({
-    name, retailer, price,
+    name,
+    retailer,
+    price,
   }));
 
   const mixedTotal = assignments.reduce((sum, a) => sum + a.price, 0);
@@ -122,7 +124,7 @@ export function predictMixedBasket(
   if (saving < minSaving) return null;
 
   return {
-    totalCost:   parseFloat(mixedTotal.toFixed(2)),
+    totalCost: parseFloat(mixedTotal.toFixed(2)),
     saving,
     assignments,
   };

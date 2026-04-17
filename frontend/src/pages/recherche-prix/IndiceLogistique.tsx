@@ -1,17 +1,15 @@
- 
- 
 /**
  * Module : Indice Logistique DOM (ILD)
- * 
+ *
  * Outil d'information présentant les contraintes structurelles
  * de l'acheminement des marchandises vers les territoires ultramarins.
- * 
+ *
  * IMPORTANT :
  * - Aucun calcul de prix
  * - Aucun score global
  * - Aucune recommandation
  * - Aucun classement
- * 
+ *
  * Objectif : INFORMER sur les spécificités logistiques DOM
  */
 
@@ -21,7 +19,7 @@ import {
   getTerritoryProfile,
   getAllProfiles,
   getFactorDescription,
-  type TerritoryLogisticsProfile
+  type TerritoryLogisticsProfile,
 } from '../../services/logisticsIndexService';
 
 const IndiceLogistique: React.FC = () => {
@@ -31,7 +29,7 @@ const IndiceLogistique: React.FC = () => {
   const handleTerritoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const territory = event.target.value;
     setSelectedTerritory(territory);
-    
+
     if (territory) {
       const newProfile = getTerritoryProfile(territory);
       setProfile(newProfile);
@@ -45,7 +43,7 @@ const IndiceLogistique: React.FC = () => {
     { code: 'MQ', name: 'Martinique' },
     { code: 'GF', name: 'Guyane' },
     { code: 'RE', name: 'La Réunion' },
-    { code: 'YT', name: 'Mayotte' }
+    { code: 'YT', name: 'Mayotte' },
   ];
 
   return (
@@ -68,11 +66,14 @@ const IndiceLogistique: React.FC = () => {
             <div className="text-sm text-blue-200">
               <p className="font-semibold mb-1">Outil d'information publique</p>
               <p>
-                L'Indice Logistique DOM est un <strong>indicateur descriptif</strong> présentant 
-                les contraintes structurelles de l'acheminement des marchandises vers les territoires ultramarins.
+                L'Indice Logistique DOM est un <strong>indicateur descriptif</strong> présentant les
+                contraintes structurelles de l'acheminement des marchandises vers les territoires
+                ultramarins.
               </p>
               <p className="mt-2">
-                <strong>Il ne constitue ni un prix, ni un classement, ni une recommandation.</strong>
+                <strong>
+                  Il ne constitue ni un prix, ni un classement, ni une recommandation.
+                </strong>
               </p>
             </div>
           </div>
@@ -92,7 +93,7 @@ const IndiceLogistique: React.FC = () => {
             className="w-full px-4 py-3 bg-slate-800 border border-slate-600 text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
           >
             <option value="">-- Choisir un territoire --</option>
-            {territories.map(t => (
+            {territories.map((t) => (
               <option key={t.code} value={t.code}>
                 {t.name}
               </option>
@@ -121,15 +122,16 @@ const IndiceLogistique: React.FC = () => {
                   {profile.distance_metropole}
                 </div>
                 <div className="text-sm text-gray-400 mt-1">
-                  {getFactorDescription('distance_metropole', profile.distance_metropole)?.explanation}
+                  {
+                    getFactorDescription('distance_metropole', profile.distance_metropole)
+                      ?.explanation
+                  }
                 </div>
               </div>
 
               {/* Délais */}
               <div className="border border-slate-700 rounded-lg p-4">
-                <div className="text-sm font-medium text-gray-400 mb-1">
-                  Délais d'acheminement
-                </div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Délais d'acheminement</div>
                 <div className="text-lg font-semibold text-gray-100 capitalize">
                   {profile.delais_typiques}
                 </div>
@@ -153,14 +155,15 @@ const IndiceLogistique: React.FC = () => {
 
               {/* Capacité portuaire */}
               <div className="border border-slate-700 rounded-lg p-4">
-                <div className="text-sm font-medium text-gray-400 mb-1">
-                  Capacité portuaire
-                </div>
+                <div className="text-sm font-medium text-gray-400 mb-1">Capacité portuaire</div>
                 <div className="text-lg font-semibold text-gray-100 capitalize">
                   {profile.capacite_portuaire}
                 </div>
                 <div className="text-sm text-gray-400 mt-1">
-                  {getFactorDescription('capacite_portuaire', profile.capacite_portuaire)?.explanation}
+                  {
+                    getFactorDescription('capacite_portuaire', profile.capacite_portuaire)
+                      ?.explanation
+                  }
                 </div>
               </div>
             </div>
@@ -169,7 +172,7 @@ const IndiceLogistique: React.FC = () => {
           {/* Dépendances transport */}
           <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-6">
             <h3 className="text-lg font-bold text-gray-100 mb-4">Modes de transport</h3>
-            
+
             <div className="space-y-4">
               {/* Maritime */}
               <div className="flex items-start">
@@ -182,7 +185,10 @@ const IndiceLogistique: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-sm text-gray-400">
-                    {getFactorDescription('dependance_maritime', profile.dependance_maritime)?.explanation}
+                    {
+                      getFactorDescription('dependance_maritime', profile.dependance_maritime)
+                        ?.explanation
+                    }
                   </p>
                 </div>
               </div>
@@ -198,7 +204,10 @@ const IndiceLogistique: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-sm text-gray-400">
-                    {getFactorDescription('dependance_aerienne', profile.dependance_aerienne)?.explanation}
+                    {
+                      getFactorDescription('dependance_aerienne', profile.dependance_aerienne)
+                        ?.explanation
+                    }
                   </p>
                 </div>
               </div>
@@ -211,7 +220,7 @@ const IndiceLogistique: React.FC = () => {
               <AlertTriangle className="w-5 h-5 text-orange-600 mr-2" />
               <h3 className="text-lg font-bold text-gray-100">Exposition aux risques</h3>
             </div>
-            
+
             <ul className="space-y-2">
               {profile.exposition_risques.map((risque) => (
                 <li key={risque} className="flex items-start">
@@ -233,9 +242,10 @@ const IndiceLogistique: React.FC = () => {
               ))}
             </ul>
             <p className="text-xs text-gray-500 mt-3">
-              Date de référence : {new Date(profile.date_reference).toLocaleDateString('fr-FR', {
+              Date de référence :{' '}
+              {new Date(profile.date_reference).toLocaleDateString('fr-FR', {
                 year: 'numeric',
-                month: 'long'
+                month: 'long',
               })}
             </p>
           </div>
@@ -248,14 +258,16 @@ const IndiceLogistique: React.FC = () => {
           <h2 className="text-lg font-bold text-gray-100 mb-4">
             Comprendre l'indice logistique DOM
           </h2>
-          
+
           <div className="space-y-4 text-sm text-gray-300">
             <div>
-              <h3 className="font-semibold text-gray-100 mb-2">Qu'est-ce que l'Indice Logistique DOM ?</h3>
+              <h3 className="font-semibold text-gray-100 mb-2">
+                Qu'est-ce que l'Indice Logistique DOM ?
+              </h3>
               <p>
-                L'ILD présente de manière <strong>qualitative et descriptive</strong> les contraintes 
-                structurelles qui caractérisent l'acheminement des marchandises vers les départements 
-                et territoires d'outre-mer.
+                L'ILD présente de manière <strong>qualitative et descriptive</strong> les
+                contraintes structurelles qui caractérisent l'acheminement des marchandises vers les
+                départements et territoires d'outre-mer.
               </p>
             </div>
 
@@ -282,9 +294,10 @@ const IndiceLogistique: React.FC = () => {
             <div>
               <h3 className="font-semibold text-gray-100 mb-2">Pourquoi ces informations ?</h3>
               <p>
-                Les territoires ultramarins présentent des <strong>caractéristiques logistiques uniques</strong> : 
-                éloignement, insularité, dépendance aux importations. Comprendre ces réalités structurelles 
-                permet aux citoyens, institutions et acteurs économiques de mieux appréhender les 
+                Les territoires ultramarins présentent des{' '}
+                <strong>caractéristiques logistiques uniques</strong> : éloignement, insularité,
+                dépendance aux importations. Comprendre ces réalités structurelles permet aux
+                citoyens, institutions et acteurs économiques de mieux appréhender les
                 particularités de l'approvisionnement des DOM.
               </p>
             </div>

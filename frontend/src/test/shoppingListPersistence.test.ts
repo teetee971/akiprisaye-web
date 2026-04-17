@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { addShoppingListItem, getShoppingListCount, getShoppingListItems } from '../store/useShoppingListStore';
+import {
+  addShoppingListItem,
+  getShoppingListCount,
+  getShoppingListItems,
+} from '../store/useShoppingListStore';
 
 describe('shopping list persistence', () => {
   beforeEach(() => localStorage.clear());

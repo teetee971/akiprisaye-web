@@ -11,7 +11,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { parseReceipt }     from '../services/receiptParser';
+import { parseReceipt } from '../services/receiptParser';
 import {
   normalizeReceipt,
   detectTerritory,
@@ -32,7 +32,7 @@ import {
 
 /** Find an item by case-insensitive name fragment */
 function findItem(items: ReturnType<typeof parseReceipt>['items'], fragment: string) {
-  return items.find(i => i.name.toUpperCase().includes(fragment.toUpperCase()));
+  return items.find((i) => i.name.toUpperCase().includes(fragment.toUpperCase()));
 }
 
 // ─── Parse suite ──────────────────────────────────────────────────────────────
@@ -41,11 +41,11 @@ describe('parseReceipt — Super U Petit Canal fixture', () => {
   const result = parseReceipt(RAW_OCR_TEXT);
 
   // Store header
-  it('extrait le nom de l\'enseigne', () => {
+  it("extrait le nom de l'enseigne", () => {
     expect(result.storeName).toContain('SUPER U');
   });
 
-  it('extrait l\'adresse du magasin', () => {
+  it("extrait l'adresse du magasin", () => {
     expect(result.storeAddress).toMatch(/bazin/i);
   });
 
@@ -54,7 +54,7 @@ describe('parseReceipt — Super U Petit Canal fixture', () => {
     expect(result.date).toBe(EXPECTED_PARSED.date);
   });
 
-  it('extrait l\'heure', () => {
+  it("extrait l'heure", () => {
     expect(result.time).toBe(EXPECTED_PARSED.time);
   });
 
@@ -122,10 +122,10 @@ describe('parseReceipt — Super U Petit Canal fixture', () => {
 // ─── Normalizer suite ─────────────────────────────────────────────────────────
 
 describe('normalizeReceipt — Super U Petit Canal fixture', () => {
-  const parsed      = parseReceipt(RAW_OCR_TEXT);
+  const parsed = parseReceipt(RAW_OCR_TEXT);
   const observations = normalizeReceipt(parsed);
 
-  it('produit au moins autant d\'observations que d\'items parsés', () => {
+  it("produit au moins autant d'observations que d'items parsés", () => {
     expect(observations.length).toBeGreaterThanOrEqual(parsed.items.length);
   });
 
@@ -165,7 +165,7 @@ describe('normalizeReceipt — Super U Petit Canal fixture', () => {
     }
   });
 
-  it('aucune observation n\'a un prix nul ou négatif', () => {
+  it("aucune observation n'a un prix nul ou négatif", () => {
     for (const obs of observations) {
       expect(obs.price).toBeGreaterThan(0);
     }
@@ -174,8 +174,8 @@ describe('normalizeReceipt — Super U Petit Canal fixture', () => {
   describe('catégories par produit', () => {
     for (const expected of EXPECTED_NORMALIZED_ITEMS) {
       it(`${expected.labelFragment} → catégorie "${expected.category}"`, () => {
-        const obs = observations.find(o =>
-          o.productLabel.toUpperCase().includes(expected.labelFragment.toUpperCase()),
+        const obs = observations.find((o) =>
+          o.productLabel.toUpperCase().includes(expected.labelFragment.toUpperCase())
         );
         expect(obs, `observation "${expected.labelFragment}" introuvable`).toBeDefined();
         expect(obs!.price).toBeCloseTo(expected.price, 2);
@@ -185,19 +185,19 @@ describe('normalizeReceipt — Super U Petit Canal fixture', () => {
   });
 
   describe('suppression des lignes invalides', () => {
-    it('ne produit pas d\'observation pour les lignes à prix nul', () => {
+    it("ne produit pas d'observation pour les lignes à prix nul", () => {
       const parsed2 = parseReceipt(RAW_OCR_TEXT);
       // inject a zero-price item
       parsed2.items.push({ name: 'GRATUIT', price: 0 });
       const obs2 = normalizeReceipt(parsed2);
-      expect(obs2.find(o => o.productLabel.includes('GRATUIT'))).toBeUndefined();
+      expect(obs2.find((o) => o.productLabel.includes('GRATUIT'))).toBeUndefined();
     });
 
-    it('ne produit pas d\'observation pour les libellés trop courts', () => {
+    it("ne produit pas d'observation pour les libellés trop courts", () => {
       const parsed3 = parseReceipt(RAW_OCR_TEXT);
-      parsed3.items.push({ name: 'AB', price: 1.00 });
+      parsed3.items.push({ name: 'AB', price: 1.0 });
       const obs3 = normalizeReceipt(parsed3);
-      expect(obs3.find(o => o.productLabel === 'AB')).toBeUndefined();
+      expect(obs3.find((o) => o.productLabel === 'AB')).toBeUndefined();
     });
   });
 });
@@ -238,25 +238,25 @@ describe('detectTerritory', () => {
 
 describe('detectCategory', () => {
   const cases: Array<[string, string]> = [
-    ['Lait UHT demi-écrémé 1L',            'Produits laitiers'],
-    ['Emmental râpé 500g',                  'Produits laitiers'],
-    ['Camembert cœur de lion',              'Produits laitiers'],
-    ['Carottes bio 1,5 kg',                 'Fruits et légumes'],
-    ['Tomates locales',                     'Fruits et légumes'],
-    ['Jambon cru 150g',                     'Viandes et poissons'],
-    ['Cordon bleu poulet x6',               'Viandes et poissons'],
-    ['Café moulu robusta 250g',             'Épicerie'],
-    ['Chocolat noir 72%',                   'Épicerie'],
-    ['Pâte à tartiner noisette 200g',       'Épicerie'],
-    ['Sucre roux 1,5 kg',                   'Épicerie'],
-    ['Pain de mie hamburger x4',            'Épicerie'],
-    ['Haricots rouges secs 1 kg',           'Épicerie'],
-    ['Margarine Oméga 3',                   'Boissons'],
-    ['Rhum Damoiseau blanc 1L',             'Boissons'],
-    ['Coca-Cola PET 2L',                    'Boissons'],
-    ['Essuie-tout Papeco 2 rouleaux',       'Entretien'],
-    ['Papier toilette Doudou 10+2 rouleaux','Entretien'],
-    ['Croquettes chien',                    'Autres'],
+    ['Lait UHT demi-écrémé 1L', 'Produits laitiers'],
+    ['Emmental râpé 500g', 'Produits laitiers'],
+    ['Camembert cœur de lion', 'Produits laitiers'],
+    ['Carottes bio 1,5 kg', 'Fruits et légumes'],
+    ['Tomates locales', 'Fruits et légumes'],
+    ['Jambon cru 150g', 'Viandes et poissons'],
+    ['Cordon bleu poulet x6', 'Viandes et poissons'],
+    ['Café moulu robusta 250g', 'Épicerie'],
+    ['Chocolat noir 72%', 'Épicerie'],
+    ['Pâte à tartiner noisette 200g', 'Épicerie'],
+    ['Sucre roux 1,5 kg', 'Épicerie'],
+    ['Pain de mie hamburger x4', 'Épicerie'],
+    ['Haricots rouges secs 1 kg', 'Épicerie'],
+    ['Margarine Oméga 3', 'Boissons'],
+    ['Rhum Damoiseau blanc 1L', 'Boissons'],
+    ['Coca-Cola PET 2L', 'Boissons'],
+    ['Essuie-tout Papeco 2 rouleaux', 'Entretien'],
+    ['Papier toilette Doudou 10+2 rouleaux', 'Entretien'],
+    ['Croquettes chien', 'Autres'],
   ];
 
   for (const [label, expected] of cases) {
@@ -330,14 +330,15 @@ describe('computeConfidenceScore', () => {
   });
 
   it('score réduit pour un label ambigu (Virianna)', () => {
-    const clear    = { name: 'CAFE MOULU ROBUSTA 250G', price: 4.14 };
+    const clear = { name: 'CAFE MOULU ROBUSTA 250G', price: 4.14 };
     const ambiguous = { name: 'FROMAGE FONDANT VIRIANNA', price: 2.89 };
-    expect(computeConfidenceScore(ambiguous, baseParsed))
-      .toBeLessThan(computeConfidenceScore(clear, baseParsed));
+    expect(computeConfidenceScore(ambiguous, baseParsed)).toBeLessThan(
+      computeConfidenceScore(clear, baseParsed)
+    );
   });
 
   it('score réduit pour un libellé très court', () => {
-    const short = { name: 'AB', price: 1.00 };
+    const short = { name: 'AB', price: 1.0 };
     const score = computeConfidenceScore(short, baseParsed);
     expect(score).toBeLessThan(0.75);
   });
@@ -356,6 +357,6 @@ describe('normalizeReceipt — territory override', () => {
   it('utilise le territoire forcé quand fourni', () => {
     const parsed = parseReceipt(RAW_OCR_TEXT);
     const obs = normalizeReceipt(parsed, { territory: 'MQ' });
-    expect(obs.every(o => o.territory === 'MQ')).toBe(true);
+    expect(obs.every((o) => o.territory === 'MQ')).toBe(true);
   });
 });

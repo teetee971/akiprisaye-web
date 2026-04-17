@@ -44,45 +44,39 @@ export function useRoute(): UseRouteReturn {
   const [error, setError] = useState<string | null>(null);
 
   // Calculate route between two points
-  const calculateRoute = useCallback(
-    async (from: RoutePoint, to: RoutePoint) => {
-      setLoading(true);
-      setError(null);
+  const calculateRoute = useCallback(async (from: RoutePoint, to: RoutePoint) => {
+    setLoading(true);
+    setError(null);
 
-      try {
-        // Build query params
-        const params = new URLSearchParams({
-          from: `${from.lat},${from.lon}`,
-          to: `${to.lat},${to.lon}`,
-        });
+    try {
+      // Build query params
+      const params = new URLSearchParams({
+        from: `${from.lat},${from.lon}`,
+        to: `${to.lat},${to.lon}`,
+      });
 
-        const response = await fetch(
-          `${API_BASE_URL}/api/map/route?${params.toString()}`
-        );
+      const response = await fetch(`${API_BASE_URL}/api/map/route?${params.toString()}`);
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        if (data.success && data.data) {
-          setRoute(data.data);
-          setError(null);
-        } else {
-          throw new Error(data.error || 'Failed to calculate route');
-        }
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to calculate route';
-        setError(errorMessage);
-        setRoute(null);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    },
-    []
-  );
+
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        setRoute(data.data);
+        setError(null);
+      } else {
+        throw new Error(data.error || 'Failed to calculate route');
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to calculate route';
+      setError(errorMessage);
+      setRoute(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // Clear route
   const clearRoute = useCallback(() => {

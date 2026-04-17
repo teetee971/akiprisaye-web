@@ -37,7 +37,7 @@ export function useChallenges(options: UseChallengesOptions = {}): UseChallenges
     try {
       const response = await fetch(`${API_BASE}/challenges?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch challenges');
-      
+
       const data = await response.json();
       setChallenges(data);
     } catch (err) {
@@ -52,7 +52,7 @@ export function useChallenges(options: UseChallengesOptions = {}): UseChallenges
     try {
       const response = await fetch(`${API_BASE}/challenges/history?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch challenge history');
-      
+
       const data = await response.json();
       setChallengeHistory(data);
     } catch (err) {
@@ -71,10 +71,7 @@ export function useChallenges(options: UseChallengesOptions = {}): UseChallenges
     setError(null);
 
     try {
-      await Promise.all([
-        fetchChallenges(),
-        fetchChallengeHistory()
-      ]);
+      await Promise.all([fetchChallenges(), fetchChallengeHistory()]);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch challenges';
       setError(errorMessage);
@@ -89,8 +86,8 @@ export function useChallenges(options: UseChallengesOptions = {}): UseChallenges
     }
   }, [autoFetch, userId, refresh]);
 
-  const activeChallenges = challenges.filter(c => c.isActive && !c.isCompleted);
-  const completedChallenges = challenges.filter(c => c.isCompleted);
+  const activeChallenges = challenges.filter((c) => c.isActive && !c.isCompleted);
+  const completedChallenges = challenges.filter((c) => c.isCompleted);
 
   return {
     challenges,
@@ -99,6 +96,6 @@ export function useChallenges(options: UseChallengesOptions = {}): UseChallenges
     challengeHistory,
     loading,
     error,
-    refresh
+    refresh,
   };
 }

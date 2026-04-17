@@ -38,28 +38,63 @@ interface FormData {
 // ─── Data ───────────────────────────────────────────────────────────────────────
 
 const TERRITOIRES = [
-  { code: 'gp', label: 'Guadeloupe',            opmr: 'Préfecture de Guadeloupe — OPMR', opmrUrl: 'https://www.guadeloupe.gouv.fr/Politiques-publiques/Economie-emploi-et-entreprises/Observatoire-des-Prix-des-Marges-et-des-Revenus' },
-  { code: 'mq', label: 'Martinique',             opmr: 'Préfecture de Martinique — OPMR', opmrUrl: 'https://www.martinique.gouv.fr/' },
-  { code: 'gf', label: 'Guyane',                 opmr: 'Préfecture de Guyane — OPMR',     opmrUrl: 'https://www.guyane.gouv.fr/' },
-  { code: 're', label: 'La Réunion',              opmr: 'Préfecture de La Réunion — OPMR', opmrUrl: 'https://www.reunion.gouv.fr/' },
-  { code: 'yt', label: 'Mayotte',                 opmr: 'Préfecture de Mayotte — OPMR',    opmrUrl: 'https://www.mayotte.gouv.fr/' },
+  {
+    code: 'gp',
+    label: 'Guadeloupe',
+    opmr: 'Préfecture de Guadeloupe — OPMR',
+    opmrUrl:
+      'https://www.guadeloupe.gouv.fr/Politiques-publiques/Economie-emploi-et-entreprises/Observatoire-des-Prix-des-Marges-et-des-Revenus',
+  },
+  {
+    code: 'mq',
+    label: 'Martinique',
+    opmr: 'Préfecture de Martinique — OPMR',
+    opmrUrl: 'https://www.martinique.gouv.fr/',
+  },
+  {
+    code: 'gf',
+    label: 'Guyane',
+    opmr: 'Préfecture de Guyane — OPMR',
+    opmrUrl: 'https://www.guyane.gouv.fr/',
+  },
+  {
+    code: 're',
+    label: 'La Réunion',
+    opmr: 'Préfecture de La Réunion — OPMR',
+    opmrUrl: 'https://www.reunion.gouv.fr/',
+  },
+  {
+    code: 'yt',
+    label: 'Mayotte',
+    opmr: 'Préfecture de Mayotte — OPMR',
+    opmrUrl: 'https://www.mayotte.gouv.fr/',
+  },
 ];
 
 const PLAINTE_TYPES: { id: TypePlainte; label: string; emoji: string }[] = [
-  { id: 'prix_abusif',        label: 'Prix abusif / excessif',          emoji: '💸' },
-  { id: 'promo_mensongere',   label: 'Promotion mensongère / prix barré trompeur', emoji: '🏷️' },
-  { id: 'bqp',                label: 'Non-respect du Bouclier Qualité Prix', emoji: '🛡️' },
-  { id: 'pratique_deloyale',  label: 'Pratique commerciale déloyale',   emoji: '⚖️' },
+  { id: 'prix_abusif', label: 'Prix abusif / excessif', emoji: '💸' },
+  { id: 'promo_mensongere', label: 'Promotion mensongère / prix barré trompeur', emoji: '🏷️' },
+  { id: 'bqp', label: 'Non-respect du Bouclier Qualité Prix', emoji: '🛡️' },
+  { id: 'pratique_deloyale', label: 'Pratique commerciale déloyale', emoji: '⚖️' },
 ];
 
 // ─── Letter generator ──────────────────────────────────────────────────────────
 
 function generateLetter(f: FormData): string {
-  const terr = TERRITOIRES.find(t => t.code === f.territoire);
-  const today = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-  const ecart = f.prixConstate && f.prixReference
-    ? Math.round(((parseFloat(f.prixConstate) - parseFloat(f.prixReference)) / parseFloat(f.prixReference)) * 100)
-    : null;
+  const terr = TERRITOIRES.find((t) => t.code === f.territoire);
+  const today = new Date().toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+  const ecart =
+    f.prixConstate && f.prixReference
+      ? Math.round(
+          ((parseFloat(f.prixConstate) - parseFloat(f.prixReference)) /
+            parseFloat(f.prixReference)) *
+            100
+        )
+      : null;
 
   const objet: Record<TypePlainte, string> = {
     prix_abusif: 'Réclamation pour prix abusif — ' + f.produit,
@@ -104,9 +139,13 @@ Madame, Monsieur,
 
 ${corps[f.typePlainte]}
 
-${f.details ? `Informations complémentaires : ${f.details}
+${
+  f.details
+    ? `Informations complémentaires : ${f.details}
 
-` : ''}Je vous demande, en application des dispositions du Code de la Consommation et de la réglementation spécifique aux DROM :
+`
+    : ''
+}Je vous demande, en application des dispositions du Code de la Consommation et de la réglementation spécifique aux DROM :
   1. De corriger immédiatement ce prix / cette pratique ;
   2. De me confirmer par écrit les mesures correctives prises dans un délai de 15 jours ouvrés ;
   3. De procéder, le cas échéant, au remboursement de la différence de prix constatée.
@@ -147,10 +186,14 @@ export default function ReclamationIA() {
   function handlePrint() {
     const w = window.open('', '_blank');
     if (!w) return;
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Lettre de réclamation</title>
+    w.document
+      .write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Lettre de réclamation</title>
       <style>body{font-family:serif;font-size:13pt;max-width:700px;margin:40px auto;line-height:1.7;color:#111;}
       pre{white-space:pre-wrap;font-family:serif;}@media print{body{margin:20mm;}}</style></head>
-      <body><pre>${letter.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</pre></body></html>`);
+      <body><pre>${letter
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}</pre></body></html>`);
     w.document.close();
     w.focus();
     w.print();
@@ -160,15 +203,25 @@ export default function ReclamationIA() {
     navigator.clipboard.writeText(letter).catch(() => {});
   }
 
-  const terr = TERRITOIRES.find(t => t.code === form.territoire);
+  const terr = TERRITOIRES.find((t) => t.code === form.territoire);
   const isFormValid = form.enseigne.trim() && form.produit.trim() && form.prixConstate.trim();
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', padding: '1.5rem 1rem 3rem' }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        padding: '1.5rem 1rem 3rem',
+      }}
+    >
       <div style={{ maxWidth: 800, margin: '0 auto' }}>
-
         <div style={{ marginBottom: '1rem' }}>
-          <Link to="/innovation-lab" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}>← Innovation Lab</Link>
+          <Link
+            to="/innovation-lab"
+            style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none' }}
+          >
+            ← Innovation Lab
+          </Link>
         </div>
 
         <HeroImage
@@ -180,96 +233,324 @@ export default function ReclamationIA() {
           <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
             ✍️ Réclamation IA
           </h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
             Générez une lettre de réclamation officielle en 2 minutes
           </p>
         </HeroImage>
 
         {/* Tabs */}
         <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem' }}>
-          {[{ id: 'form', label: '📝 Remplir le formulaire' }, { id: 'preview', label: '📄 Lettre générée' }].map(t => (
-            <button key={t.id} onClick={() => setStep(t.id as 'form' | 'preview')}
+          {[
+            { id: 'form', label: '📝 Remplir le formulaire' },
+            { id: 'preview', label: '📄 Lettre générée' },
+          ].map((t) => (
+            <button
+              key={t.id}
+              onClick={() => setStep(t.id as 'form' | 'preview')}
               disabled={t.id === 'preview' && !isFormValid}
-              style={{ padding: '0.45rem 1rem', borderRadius: 8, border: `1px solid ${step === t.id ? 'rgba(99,102,241,0.55)' : 'rgba(148,163,184,0.2)'}`,
-                background: step === t.id ? 'rgba(99,102,241,0.15)' : 'transparent', color: step === t.id ? '#a5b4fc' : '#64748b',
-                fontSize: '0.82rem', fontWeight: step === t.id ? 700 : 400, cursor: t.id === 'preview' && !isFormValid ? 'not-allowed' : 'pointer' }}>
+              style={{
+                padding: '0.45rem 1rem',
+                borderRadius: 8,
+                border: `1px solid ${step === t.id ? 'rgba(99,102,241,0.55)' : 'rgba(148,163,184,0.2)'}`,
+                background: step === t.id ? 'rgba(99,102,241,0.15)' : 'transparent',
+                color: step === t.id ? '#a5b4fc' : '#64748b',
+                fontSize: '0.82rem',
+                fontWeight: step === t.id ? 700 : 400,
+                cursor: t.id === 'preview' && !isFormValid ? 'not-allowed' : 'pointer',
+              }}
+            >
               {t.label}
             </button>
           ))}
         </div>
 
         {step === 'form' && (
-          <div style={{ padding: '1.25rem 1.4rem', borderRadius: 16, background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.12)' }}>
-
+          <div
+            style={{
+              padding: '1.25rem 1.4rem',
+              borderRadius: 16,
+              background: 'rgba(15,23,42,0.75)',
+              border: '1px solid rgba(148,163,184,0.12)',
+            }}
+          >
             {/* Type de plainte */}
             <div style={{ marginBottom: '1rem' }}>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.5rem' }}>Type de réclamation *</span>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  color: '#94a3b8',
+                  fontWeight: 600,
+                  display: 'block',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                Type de réclamation *
+              </span>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                {PLAINTE_TYPES.map(p => (
-                  <button key={p.id} onClick={() => setForm(f => ({ ...f, typePlainte: p.id }))}
-                    style={{ padding: '0.4rem 0.8rem', borderRadius: 8, border: `1px solid ${form.typePlainte === p.id ? 'rgba(99,102,241,0.55)' : 'rgba(148,163,184,0.2)'}`,
-                      background: form.typePlainte === p.id ? 'rgba(99,102,241,0.15)' : 'rgba(30,41,59,0.5)',
-                      color: form.typePlainte === p.id ? '#a5b4fc' : '#94a3b8', fontSize: '0.78rem', cursor: 'pointer' }}>
+                {PLAINTE_TYPES.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => setForm((f) => ({ ...f, typePlainte: p.id }))}
+                    style={{
+                      padding: '0.4rem 0.8rem',
+                      borderRadius: 8,
+                      border: `1px solid ${form.typePlainte === p.id ? 'rgba(99,102,241,0.55)' : 'rgba(148,163,184,0.2)'}`,
+                      background:
+                        form.typePlainte === p.id ? 'rgba(99,102,241,0.15)' : 'rgba(30,41,59,0.5)',
+                      color: form.typePlainte === p.id ? '#a5b4fc' : '#94a3b8',
+                      fontSize: '0.78rem',
+                      cursor: 'pointer',
+                    }}
+                  >
                     {p.emoji} {p.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', marginBottom: '0.75rem' }}>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '0.75rem',
+                marginBottom: '0.75rem',
+              }}
+            >
               {[
-                { key: 'nom', label: 'Votre nom complet', placeholder: 'Marie Dupont', required: false },
-                { key: 'adresse', label: 'Votre adresse', placeholder: '12 rue de la Paix, Pointe-à-Pitre', required: false },
-                { key: 'enseigne', label: 'Enseigne concernée *', placeholder: 'Carrefour, Leader Price…', required: true },
-                { key: 'produit', label: 'Produit concerné *', placeholder: 'Huile de tournesol 1L', required: true },
-                { key: 'prixConstate', label: 'Prix constaté (€) *', placeholder: '4,50', required: true },
-                { key: 'prixReference', label: 'Prix de référence (€)', placeholder: '3,20 (prix métro, BQP…)', required: false },
-              ].map(field => (
+                {
+                  key: 'nom',
+                  label: 'Votre nom complet',
+                  placeholder: 'Marie Dupont',
+                  required: false,
+                },
+                {
+                  key: 'adresse',
+                  label: 'Votre adresse',
+                  placeholder: '12 rue de la Paix, Pointe-à-Pitre',
+                  required: false,
+                },
+                {
+                  key: 'enseigne',
+                  label: 'Enseigne concernée *',
+                  placeholder: 'Carrefour, Leader Price…',
+                  required: true,
+                },
+                {
+                  key: 'produit',
+                  label: 'Produit concerné *',
+                  placeholder: 'Huile de tournesol 1L',
+                  required: true,
+                },
+                {
+                  key: 'prixConstate',
+                  label: 'Prix constaté (€) *',
+                  placeholder: '4,50',
+                  required: true,
+                },
+                {
+                  key: 'prixReference',
+                  label: 'Prix de référence (€)',
+                  placeholder: '3,20 (prix métro, BQP…)',
+                  required: false,
+                },
+              ].map((field) => (
                 <div key={field.key}>
-                  <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>{field.label}</label>
-                  <input value={(form as unknown as Record<string, string>)[field.key]} onChange={e => setForm(f => ({ ...f, [field.key]: e.target.value }))}
-                    placeholder={field.placeholder} required={field.required}
-                    style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }} />
+                  <label
+                    style={{
+                      fontSize: '0.72rem',
+                      color: '#94a3b8',
+                      fontWeight: 600,
+                      display: 'block',
+                      marginBottom: '0.3rem',
+                    }}
+                  >
+                    {field.label}
+                  </label>
+                  <input
+                    value={(form as unknown as Record<string, string>)[field.key]}
+                    onChange={(e) => setForm((f) => ({ ...f, [field.key]: e.target.value }))}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem 0.7rem',
+                      borderRadius: 8,
+                      background: 'rgba(30,41,59,0.8)',
+                      border: '1px solid rgba(99,102,241,0.35)',
+                      color: '#f1f5f9',
+                      fontSize: '0.85rem',
+                      boxSizing: 'border-box',
+                    }}
+                  />
                 </div>
               ))}
               <div>
-                <label htmlFor="recl-territoire" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Territoire *</label>
-                <select id="recl-territoire" value={form.territoire} onChange={e => setForm(f => ({ ...f, territoire: e.target.value }))}
-                  style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }}>
-                  {TERRITOIRES.map(t => <option key={t.code} value={t.code}>{t.label}</option>)}
+                <label
+                  htmlFor="recl-territoire"
+                  style={{
+                    fontSize: '0.72rem',
+                    color: '#94a3b8',
+                    fontWeight: 600,
+                    display: 'block',
+                    marginBottom: '0.3rem',
+                  }}
+                >
+                  Territoire *
+                </label>
+                <select
+                  id="recl-territoire"
+                  value={form.territoire}
+                  onChange={(e) => setForm((f) => ({ ...f, territoire: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem 0.7rem',
+                    borderRadius: 8,
+                    background: 'rgba(30,41,59,0.8)',
+                    border: '1px solid rgba(99,102,241,0.35)',
+                    color: '#f1f5f9',
+                    fontSize: '0.85rem',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  {TERRITOIRES.map((t) => (
+                    <option key={t.code} value={t.code}>
+                      {t.label}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <label htmlFor="recl-date-constat" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Date du constat</label>
-                <input id="recl-date-constat" type="date" value={form.dateConstat} onChange={e => setForm(f => ({ ...f, dateConstat: e.target.value }))}
-                  style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.85rem', boxSizing: 'border-box' }} />
+                <label
+                  htmlFor="recl-date-constat"
+                  style={{
+                    fontSize: '0.72rem',
+                    color: '#94a3b8',
+                    fontWeight: 600,
+                    display: 'block',
+                    marginBottom: '0.3rem',
+                  }}
+                >
+                  Date du constat
+                </label>
+                <input
+                  id="recl-date-constat"
+                  type="date"
+                  value={form.dateConstat}
+                  onChange={(e) => setForm((f) => ({ ...f, dateConstat: e.target.value }))}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem 0.7rem',
+                    borderRadius: 8,
+                    background: 'rgba(30,41,59,0.8)',
+                    border: '1px solid rgba(99,102,241,0.35)',
+                    color: '#f1f5f9',
+                    fontSize: '0.85rem',
+                    boxSizing: 'border-box',
+                  }}
+                />
               </div>
             </div>
 
             <div style={{ marginBottom: '1rem' }}>
-              <label htmlFor="recl-details" style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600, display: 'block', marginBottom: '0.3rem' }}>Détails supplémentaires (optionnel)</label>
-              <textarea id="recl-details" value={form.details} onChange={e => setForm(f => ({ ...f, details: e.target.value }))} rows={3}
+              <label
+                htmlFor="recl-details"
+                style={{
+                  fontSize: '0.72rem',
+                  color: '#94a3b8',
+                  fontWeight: 600,
+                  display: 'block',
+                  marginBottom: '0.3rem',
+                }}
+              >
+                Détails supplémentaires (optionnel)
+              </label>
+              <textarea
+                id="recl-details"
+                value={form.details}
+                onChange={(e) => setForm((f) => ({ ...f, details: e.target.value }))}
+                rows={3}
                 placeholder="Photos, témoins, circonstances particulières…"
-                style={{ width: '100%', padding: '0.5rem 0.7rem', borderRadius: 8, background: 'rgba(30,41,59,0.8)', border: '1px solid rgba(99,102,241,0.35)', color: '#f1f5f9', fontSize: '0.82rem', boxSizing: 'border-box', resize: 'vertical' }} />
+                style={{
+                  width: '100%',
+                  padding: '0.5rem 0.7rem',
+                  borderRadius: 8,
+                  background: 'rgba(30,41,59,0.8)',
+                  border: '1px solid rgba(99,102,241,0.35)',
+                  color: '#f1f5f9',
+                  fontSize: '0.82rem',
+                  boxSizing: 'border-box',
+                  resize: 'vertical',
+                }}
+              />
             </div>
 
-            <button onClick={() => setStep('preview')} disabled={!isFormValid}
-              style={{ padding: '0.6rem 1.5rem', borderRadius: 8, background: isFormValid ? 'rgba(99,102,241,0.85)' : 'rgba(99,102,241,0.3)', color: '#fff', fontSize: '0.88rem', fontWeight: 700, border: 'none', cursor: isFormValid ? 'pointer' : 'not-allowed' }}>
+            <button
+              onClick={() => setStep('preview')}
+              disabled={!isFormValid}
+              style={{
+                padding: '0.6rem 1.5rem',
+                borderRadius: 8,
+                background: isFormValid ? 'rgba(99,102,241,0.85)' : 'rgba(99,102,241,0.3)',
+                color: '#fff',
+                fontSize: '0.88rem',
+                fontWeight: 700,
+                border: 'none',
+                cursor: isFormValid ? 'pointer' : 'not-allowed',
+              }}
+            >
               ⚖️ Générer la lettre →
             </button>
 
             {/* Official links */}
-            <div style={{ marginTop: '1rem', padding: '0.8rem 1rem', borderRadius: 10, background: 'rgba(99,102,241,0.05)', border: '1px solid rgba(99,102,241,0.15)' }}>
-              <p style={{ margin: '0 0 0.5rem', fontSize: '0.72rem', color: '#94a3b8', fontWeight: 600 }}>Liens officiels utiles</p>
+            <div
+              style={{
+                marginTop: '1rem',
+                padding: '0.8rem 1rem',
+                borderRadius: 10,
+                background: 'rgba(99,102,241,0.05)',
+                border: '1px solid rgba(99,102,241,0.15)',
+              }}
+            >
+              <p
+                style={{
+                  margin: '0 0 0.5rem',
+                  fontSize: '0.72rem',
+                  color: '#94a3b8',
+                  fontWeight: 600,
+                }}
+              >
+                Liens officiels utiles
+              </p>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {[
                   { label: 'SignalConso DGCCRF', url: 'https://signal.conso.gouv.fr' },
-                  { label: 'Service-Public — Droits conso.', url: 'https://www.service-public.fr/particuliers/vosdroits/F24687' },
+                  {
+                    label: 'Service-Public — Droits conso.',
+                    url: 'https://www.service-public.fr/particuliers/vosdroits/F24687',
+                  },
                   { label: `OPMR ${terr?.label ?? ''}`, url: terr?.opmrUrl ?? '#' },
-                  { label: 'BQP — Bouclier Qualité Prix', url: 'https://www.economie.gouv.fr/outre-mer/bouclier-qualite-prix' },
-                ].map(l => (
-                  <a key={l.label} href={l.url} target="_blank" rel="noopener noreferrer"
-                    style={{ fontSize: '0.65rem', color: '#a5b4fc', textDecoration: 'none', padding: '2px 8px', borderRadius: 20, background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.25)' }}>
+                  {
+                    label: 'BQP — Bouclier Qualité Prix',
+                    url: 'https://www.economie.gouv.fr/outre-mer/bouclier-qualite-prix',
+                  },
+                ].map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: '0.65rem',
+                      color: '#a5b4fc',
+                      textDecoration: 'none',
+                      padding: '2px 8px',
+                      borderRadius: 20,
+                      background: 'rgba(99,102,241,0.1)',
+                      border: '1px solid rgba(99,102,241,0.25)',
+                    }}
+                  >
                     🔗 {l.label}
                   </a>
                 ))}
@@ -281,28 +562,77 @@ export default function ReclamationIA() {
         {step === 'preview' && (
           <div>
             <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-              <button onClick={handlePrint}
-                style={{ padding: '0.5rem 1.1rem', borderRadius: 8, background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.4)', color: '#86efac', fontSize: '0.82rem', fontWeight: 700, cursor: 'pointer' }}>
+              <button
+                onClick={handlePrint}
+                style={{
+                  padding: '0.5rem 1.1rem',
+                  borderRadius: 8,
+                  background: 'rgba(34,197,94,0.2)',
+                  border: '1px solid rgba(34,197,94,0.4)',
+                  color: '#86efac',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
                 🖨️ Imprimer / Télécharger PDF
               </button>
-              <button onClick={handleCopy}
-                style={{ padding: '0.5rem 1.1rem', borderRadius: 8, background: 'rgba(99,102,241,0.15)', border: '1px solid rgba(99,102,241,0.35)', color: '#a5b4fc', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>
+              <button
+                onClick={handleCopy}
+                style={{
+                  padding: '0.5rem 1.1rem',
+                  borderRadius: 8,
+                  background: 'rgba(99,102,241,0.15)',
+                  border: '1px solid rgba(99,102,241,0.35)',
+                  color: '#a5b4fc',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
                 📋 Copier le texte
               </button>
-              <a href={`mailto:?subject=${encodeURIComponent('Réclamation — ' + form.produit)}&body=${encodeURIComponent(letter)}`}
-                style={{ padding: '0.5rem 1.1rem', borderRadius: 8, background: 'rgba(14,165,233,0.12)', border: '1px solid rgba(14,165,233,0.3)', color: '#7dd3fc', fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none' }}>
+              <a
+                href={`mailto:?subject=${encodeURIComponent('Réclamation — ' + form.produit)}&body=${encodeURIComponent(letter)}`}
+                style={{
+                  padding: '0.5rem 1.1rem',
+                  borderRadius: 8,
+                  background: 'rgba(14,165,233,0.12)',
+                  border: '1px solid rgba(14,165,233,0.3)',
+                  color: '#7dd3fc',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                }}
+              >
                 ✉️ Envoyer par email
               </a>
             </div>
 
-            <div style={{ padding: '1.5rem', borderRadius: 14, background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(148,163,184,0.15)', fontFamily: 'Georgia, serif' }}>
-              <pre style={{ margin: 0, whiteSpace: 'pre-wrap', fontSize: '0.82rem', color: '#e2e8f0', lineHeight: 1.8, fontFamily: 'Georgia, serif' }}>
+            <div
+              style={{
+                padding: '1.5rem',
+                borderRadius: 14,
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(148,163,184,0.15)',
+                fontFamily: 'Georgia, serif',
+              }}
+            >
+              <pre
+                style={{
+                  margin: 0,
+                  whiteSpace: 'pre-wrap',
+                  fontSize: '0.82rem',
+                  color: '#e2e8f0',
+                  lineHeight: 1.8,
+                  fontFamily: 'Georgia, serif',
+                }}
+              >
                 {letter.replace(/\*\*(.*?)\*\*/g, (_, m) => m.toUpperCase())}
               </pre>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
- 
 /**
  * Enhanced Password Input Component
- * 
+ *
  * Features:
  * - Show/hide password toggle (👁️)
  * - Secure password generator (crypto.getRandomValues)
@@ -9,7 +8,7 @@
  * - Copy to clipboard action
  * - Mobile-first design (≥ 44px touch targets)
  * - Full accessibility (ARIA labels)
- * 
+ *
  * Security:
  * - 100% client-side (offline)
  * - No external dependencies
@@ -37,19 +36,19 @@ interface PasswordInputProps {
  */
 function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
   if (password.length === 0) return 'weak';
-  
+
   let score = 0;
-  
+
   // Length
   if (password.length >= 8) score++;
   if (password.length >= 12) score++;
-  
+
   // Character types
   if (/[a-z]/.test(password)) score++;
   if (/[A-Z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
   if (/[^a-zA-Z0-9]/.test(password)) score++;
-  
+
   if (score <= 2) return 'weak';
   if (score <= 4) return 'medium';
   return 'strong';
@@ -58,8 +57,7 @@ function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
 /**
  * Character set for password generation
  */
-const CHARSET =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=';
+const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=';
 
 // NOTE SÉCURITÉ
 // La sélection via crypto.getRandomValues() avec modulo
@@ -106,21 +104,21 @@ export function PasswordInput({
   required = false,
   minLength = 8,
   autoComplete = 'new-password',
-  className = ''
+  className = '',
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState(false);
-  
+
   const strength = getPasswordStrength(value);
   const tooShort = value.length > 0 && value.length < minLength;
-  
+
   /**
    * Toggle password visibility
    */
   const toggleVisibility = useCallback(() => {
-    setShowPassword(prev => !prev);
+    setShowPassword((prev) => !prev);
   }, []);
-  
+
   /**
    * Generate new password
    */
@@ -129,7 +127,7 @@ export function PasswordInput({
     onChange(newPassword);
     setShowPassword(true); // Show generated password
   }, [onChange]);
-  
+
   /**
    * Copy password to clipboard
    */
@@ -142,22 +140,22 @@ export function PasswordInput({
       console.error('Failed to copy:', err);
     }
   }, [value]);
-  
+
   // Strength indicator styling
   const strengthConfig = {
     weak: { label: 'Faible', color: 'bg-red-500', textColor: 'text-red-300' },
     medium: { label: 'Moyen', color: 'bg-yellow-500', textColor: 'text-yellow-300' },
-    strong: { label: 'Fort', color: 'bg-green-500', textColor: 'text-green-300' }
+    strong: { label: 'Fort', color: 'bg-green-500', textColor: 'text-green-300' },
   };
-  
+
   const currentStrength = strengthConfig[strength];
-  
+
   return (
     <div className={className}>
       <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-2">
         {label}
       </label>
-      
+
       {/* Password Input with Actions */}
       <div className="relative">
         <input
@@ -173,7 +171,7 @@ export function PasswordInput({
           aria-invalid={tooShort}
           aria-describedby={tooShort ? `${id}-error` : undefined}
         />
-        
+
         {/* Action Buttons */}
         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
           {/* Show/Hide Toggle */}
@@ -184,11 +182,9 @@ export function PasswordInput({
             aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
             title={showPassword ? 'Masquer' : 'Afficher'}
           >
-            <span className="text-lg">
-              {showPassword ? '🙈' : '👁️'}
-            </span>
+            <span className="text-lg">{showPassword ? '🙈' : '👁️'}</span>
           </button>
-          
+
           {/* Copy Button */}
           {value && (
             <button
@@ -198,9 +194,7 @@ export function PasswordInput({
               aria-label="Copier le mot de passe"
               title="Copier"
             >
-              <span className="text-lg">
-                {copyFeedback ? '✅' : '📋'}
-              </span>
+              <span className="text-lg">{copyFeedback ? '✅' : '📋'}</span>
               {copyFeedback && (
                 <span className="absolute -top-8 right-0 bg-green-600 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
                   Copié !
@@ -210,17 +204,17 @@ export function PasswordInput({
           )}
         </div>
       </div>
-      
+
       {/* Password Strength Indicator */}
       {value && (
         <div className="mt-2">
           <div className="flex items-center gap-2 text-xs">
             <span className="text-gray-400">Force :</span>
             <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
-              <div 
+              <div
                 className={`h-full ${currentStrength.color} transition-all duration-300`}
-                style={{ 
-                  width: strength === 'weak' ? '33%' : strength === 'medium' ? '66%' : '100%' 
+                style={{
+                  width: strength === 'weak' ? '33%' : strength === 'medium' ? '66%' : '100%',
                 }}
               />
             </div>
@@ -232,15 +226,11 @@ export function PasswordInput({
       )}
 
       {tooShort && (
-        <p
-          id={`${id}-error`}
-          className="mt-2 text-xs text-red-300"
-          role="alert"
-        >
+        <p id={`${id}-error`} className="mt-2 text-xs text-red-300" role="alert">
           Le mot de passe doit contenir au moins {minLength} caractères.
         </p>
       )}
-      
+
       {/* Generate Button */}
       <button
         type="button"
@@ -251,7 +241,7 @@ export function PasswordInput({
         <span>🎲</span>
         <span>Générer un mot de passe sécurisé</span>
       </button>
-      
+
       {/* Helper Text */}
       <p className="mt-2 text-xs text-gray-400">
         💡 Astuce : Utilisez un gestionnaire de mots de passe pour sauvegarder

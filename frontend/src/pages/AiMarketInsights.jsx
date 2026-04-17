@@ -1,4 +1,3 @@
- 
 import { useEffect, useState } from 'react';
 import {
   Chart as ChartJS,
@@ -26,7 +25,18 @@ import {
 } from '../services/marketInsightsService';
 
 // Register Chart.js components (controllers required for bar/line charts)
-ChartJS.register(CategoryScale, LinearScale, BarController, BarElement, LineController, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarController,
+  BarElement,
+  LineController,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function AiMarketInsights() {
   const { user } = useAuth();
@@ -38,7 +48,7 @@ export default function AiMarketInsights() {
 
   useEffect(() => {
     checkAdminAccess();
-  // checkAdminAccess is stable and doesn't need to be in deps - it's a function that depends only on user
+    // checkAdminAccess is stable and doesn't need to be in deps - it's a function that depends only on user
   }, [user]);
 
   useEffect(() => {
@@ -134,7 +144,11 @@ export default function AiMarketInsights() {
 
   // Prepare historical trend data
   const trendData = {
-    labels: history.map((h) => new Date(h.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })).reverse(),
+    labels: history
+      .map((h) =>
+        new Date(h.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
+      )
+      .reverse(),
     datasets: [
       {
         label: 'Indice global (%)',
@@ -243,50 +257,57 @@ export default function AiMarketInsights() {
         )}
 
         {/* Top Price Gaps */}
-        {data.byCategory && data.byCategory.some((cat) => cat.topGaps && cat.topGaps.length > 0) && (
-          <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
-            <h2 className="text-xl font-semibold mb-4">Écarts les plus importants</h2>
-            <div className="space-y-4">
-              {data.byCategory.map(
-                (cat) =>
-                  cat.topGaps &&
-                  cat.topGaps.length > 0 && (
-                    <div key={cat.category}>
-                      <h3 className="text-lg font-medium text-blue-400 mb-2">{cat.category}</h3>
-                      <div className="space-y-2">
-                        {cat.topGaps.map((product, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between p-3 bg-slate-800/50 rounded"
-                          >
-                            <span className="text-sm">{product.title}</span>
-                            <div className="flex items-center gap-4">
-                              <span className="text-xs text-slate-400">
-                                DOM: {product.domPrice.toFixed(2)}€ | Hex: {product.hexPrice.toFixed(2)}€
-                              </span>
-                              <span
-                                className={`text-sm font-semibold ${
-                                  product.diff > 20 ? 'text-red-400' : product.diff > 10 ? 'text-amber-400' : 'text-green-400'
-                                }`}
-                              >
-                                {formatPercent(product.diff)}
-                              </span>
+        {data.byCategory &&
+          data.byCategory.some((cat) => cat.topGaps && cat.topGaps.length > 0) && (
+            <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4">Écarts les plus importants</h2>
+              <div className="space-y-4">
+                {data.byCategory.map(
+                  (cat) =>
+                    cat.topGaps &&
+                    cat.topGaps.length > 0 && (
+                      <div key={cat.category}>
+                        <h3 className="text-lg font-medium text-blue-400 mb-2">{cat.category}</h3>
+                        <div className="space-y-2">
+                          {cat.topGaps.map((product, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-center justify-between p-3 bg-slate-800/50 rounded"
+                            >
+                              <span className="text-sm">{product.title}</span>
+                              <div className="flex items-center gap-4">
+                                <span className="text-xs text-slate-400">
+                                  DOM: {product.domPrice.toFixed(2)}€ | Hex:{' '}
+                                  {product.hexPrice.toFixed(2)}€
+                                </span>
+                                <span
+                                  className={`text-sm font-semibold ${
+                                    product.diff > 20
+                                      ? 'text-red-400'
+                                      : product.diff > 10
+                                        ? 'text-amber-400'
+                                        : 'text-green-400'
+                                  }`}
+                                >
+                                  {formatPercent(product.diff)}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ),
-              )}
+                    )
+                )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Info Footer */}
         <div className="mt-8 p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
           <p className="text-sm text-blue-300">
-            💡 <strong>Note:</strong> Les données sont mises à jour automatiquement chaque jour à minuit (heure de Paris).
-            L'analyse compare les prix des produits disponibles en DOM-COM avec les prix de référence de l'Hexagone.
+            💡 <strong>Note:</strong> Les données sont mises à jour automatiquement chaque jour à
+            minuit (heure de Paris). L'analyse compare les prix des produits disponibles en DOM-COM
+            avec les prix de référence de l'Hexagone.
           </p>
         </div>
       </div>

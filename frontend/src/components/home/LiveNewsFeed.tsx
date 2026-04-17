@@ -25,28 +25,28 @@ interface ActualitesData {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  économie:      '#3b82f6',
-  logistique:    '#f59e0b',
-  politique:     '#8b5cf6',
-  solidarité:    '#10b981',
-  réglementation:'#6366f1',
-  distribution:  '#0ea5e9',
-  sécurité:      '#ef4444',
-  'bon plan':    '#22c55e',
-  énergie:       '#f59e0b',
-  agriculture:   '#84cc16',
-  étude:         '#64748b',
-  default:       '#6b7280',
+  économie: '#3b82f6',
+  logistique: '#f59e0b',
+  politique: '#8b5cf6',
+  solidarité: '#10b981',
+  réglementation: '#6366f1',
+  distribution: '#0ea5e9',
+  sécurité: '#ef4444',
+  'bon plan': '#22c55e',
+  énergie: '#f59e0b',
+  agriculture: '#84cc16',
+  étude: '#64748b',
+  default: '#6b7280',
 };
 
 const TERRITORY_LABELS: Record<string, string> = {
-  all:         'Tous territoires',
-  guadeloupe:  '🇬🇵 Guadeloupe',
-  martinique:  '🇲🇶 Martinique',
-  guyane:      '🇬🇫 Guyane',
-  GF:          '🇬🇫 Guyane',
-  reunion:     '🇷🇪 La Réunion',
-  mayotte:     '🇾🇹 Mayotte',
+  all: 'Tous territoires',
+  guadeloupe: '🇬🇵 Guadeloupe',
+  martinique: '🇲🇶 Martinique',
+  guyane: '🇬🇫 Guyane',
+  GF: '🇬🇫 Guyane',
+  reunion: '🇷🇪 La Réunion',
+  mayotte: '🇾🇹 Mayotte',
 };
 
 function readingTime(content: string): number {
@@ -55,9 +55,11 @@ function readingTime(content: string): number {
 
 function formatDate(dateStr: string): string {
   try {
-    return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(
-      new Date(dateStr),
-    );
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date(dateStr));
   } catch {
     return dateStr;
   }
@@ -81,7 +83,9 @@ export default function LiveNewsFeed() {
     load();
 
     const timer = setInterval(load, 60 * 60 * 1000);
-    const handleVisibility = () => { if (document.visibilityState === 'visible') load(); };
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') load();
+    };
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
@@ -116,7 +120,9 @@ export default function LiveNewsFeed() {
         />
         <div className="section-context-banner-overlay" aria-hidden="true" />
         <div className="section-context-banner-caption">
-          <span className="section-context-banner-title" aria-hidden="true">📰 Actualités économiques</span>
+          <span className="section-context-banner-title" aria-hidden="true">
+            📰 Actualités économiques
+          </span>
           <span className="section-context-banner-badge">INSEE · Gouvernement · Associations</span>
         </div>
       </div>
@@ -126,7 +132,8 @@ export default function LiveNewsFeed() {
           📰 Actualités économiques
         </h2>
         <p className="news-feed-sub slide-up">
-          Données vérifiées — INSEE, gouvernement, associations locales, observatoire citoyen A KI PRI SA YÉ
+          Données vérifiées — INSEE, gouvernement, associations locales, observatoire citoyen A KI
+          PRI SA YÉ
         </p>
       </div>
       <div className="news-feed-grid">
@@ -145,7 +152,9 @@ export default function LiveNewsFeed() {
                     width="400"
                     height="160"
                     className="news-card-image"
-                    onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }}
+                    onError={(e) => {
+                      (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+                    }}
                   />
                 )}
                 <div className="news-card-image-overlay" aria-hidden="true" />
@@ -157,7 +166,9 @@ export default function LiveNewsFeed() {
                     {article.category}
                   </span>
                   {(article as NewsArticle & { verified?: boolean }).verified && (
-                    <span className="news-card-verified" title="Source vérifiée">✓ vérifié</span>
+                    <span className="news-card-verified" title="Source vérifiée">
+                      ✓ vérifié
+                    </span>
                   )}
                 </div>
               </div>
@@ -167,14 +178,20 @@ export default function LiveNewsFeed() {
                   <span className="news-card-icon" role="img" aria-label={article.category}>
                     {article.icon}
                   </span>
-                  {article.territory && article.territory !== 'all' && TERRITORY_LABELS[article.territory] && (
-                    <span className="news-card-territory">{TERRITORY_LABELS[article.territory]}</span>
-                  )}
+                  {article.territory &&
+                    article.territory !== 'all' &&
+                    TERRITORY_LABELS[article.territory] && (
+                      <span className="news-card-territory">
+                        {TERRITORY_LABELS[article.territory]}
+                      </span>
+                    )}
                 </div>
                 <h3 className="news-card-title">{article.title}</h3>
                 <div className="news-card-meta">
                   <p className="news-card-date">{formatDate(article.date)}</p>
-                  <span className="news-card-reading-time">⏱ {readingTime(article.content)} min</span>
+                  <span className="news-card-reading-time">
+                    ⏱ {readingTime(article.content)} min
+                  </span>
                 </div>
                 <p className="news-card-content">{article.content}</p>
                 <div className="news-card-footer">
@@ -186,7 +203,9 @@ export default function LiveNewsFeed() {
                       rel="noopener noreferrer"
                       aria-label={`Lire l'article : ${article.title}`}
                     >
-                      {article.source_name ? `Source : ${article.source_name} →` : 'Lire la source →'}
+                      {article.source_name
+                        ? `Source : ${article.source_name} →`
+                        : 'Lire la source →'}
                     </a>
                   )}
                 </div>

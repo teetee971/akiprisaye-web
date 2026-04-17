@@ -36,8 +36,9 @@ const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, 
 const buildCatalogueUrl = () => `${CATALOGUE_BASE_URL}/data/catalogue.json`.replace(/\/{2,}/g, '/');
 
 const normalizeCatalogue = (data: unknown): Product[] => {
-  const rawProducts =
-    Array.isArray(data) ? data : Array.isArray((data as { products?: unknown })?.products)
+  const rawProducts = Array.isArray(data)
+    ? data
+    : Array.isArray((data as { products?: unknown })?.products)
       ? (data as { products: unknown[] }).products
       : null;
 
@@ -49,7 +50,7 @@ const normalizeCatalogue = (data: unknown): Product[] => {
     (item): item is Product =>
       typeof item === 'object' &&
       item !== null &&
-      typeof (item as { name?: unknown }).name === 'string',
+      typeof (item as { name?: unknown }).name === 'string'
   );
 
   if (normalized.length === 0) {
@@ -80,7 +81,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setProducts(nextProducts);
         localStorage.setItem(
           CATALOGUE_CACHE_KEY,
-          JSON.stringify({ timestamp: Date.now(), products: nextProducts }),
+          JSON.stringify({ timestamp: Date.now(), products: nextProducts })
         );
         setLoading(false);
         return;
@@ -121,7 +122,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({ products, loading, error, reloadProducts }),
-    [products, loading, error, reloadProducts],
+    [products, loading, error, reloadProducts]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

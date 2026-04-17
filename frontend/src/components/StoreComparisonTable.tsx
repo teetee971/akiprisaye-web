@@ -1,16 +1,16 @@
 // src/components/StoreComparisonTable.tsx
-import React, { useState } from 'react'
-import { useFavorites } from '../hooks/useFavorites'
-import Sparkline from './Sparkline'
-import { GlassCard } from './ui/glass-card'
-import type { StoreComparison } from '../services/storeComparisonService'
+import React, { useState } from 'react';
+import { useFavorites } from '../hooks/useFavorites';
+import Sparkline from './Sparkline';
+import { GlassCard } from './ui/glass-card';
+import type { StoreComparison } from '../services/storeComparisonService';
 
 type StoreComparisonTableProps = {
-  comparisons: StoreComparison[]
-  productName: string
-  onAddToCart?: (store: string, price: number) => void
-  territoryLabel?: string
-}
+  comparisons: StoreComparison[];
+  productName: string;
+  onAddToCart?: (store: string, price: number) => void;
+  territoryLabel?: string;
+};
 
 export default function StoreComparisonTable({
   comparisons,
@@ -18,34 +18,38 @@ export default function StoreComparisonTable({
   onAddToCart,
   territoryLabel = 'Disponible dans votre territoire',
 }: StoreComparisonTableProps) {
-  const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const { isFavorite, toggleFavorite } = useFavorites()
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   if (!comparisons || comparisons.length === 0) {
     return (
       <GlassCard>
         <p className="text-white/70">
-          Aucune comparaison disponible pour ce produit. Essayez un autre produit ou changez de territoire.
+          Aucune comparaison disponible pour ce produit. Essayez un autre produit ou changez de
+          territoire.
         </p>
       </GlassCard>
-    )
+    );
   }
 
-  const formatPrice = (price: number) => price.toFixed(2) + ' €'
+  const formatPrice = (price: number) => price.toFixed(2) + ' €';
   const formatPercentage = (pct: number) => {
-    const sign = pct > 0 ? '+' : ''
-    return sign + pct.toFixed(1) + '%'
-  }
+    const sign = pct > 0 ? '+' : '';
+    return sign + pct.toFixed(1) + '%';
+  };
   const showToast = (message: string) => {
-    setToastMessage(message)
-    window.setTimeout(() => setToastMessage(null), 1400)
-  }
+    setToastMessage(message);
+    window.setTimeout(() => setToastMessage(null), 1400);
+  };
 
   return (
     <div className="overflow-x-auto">
       <GlassCard>
-        <table className="w-full min-w-[600px]" aria-label={`Comparaison des prix pour ${productName}`}>
+        <table
+          className="w-full min-w-[600px]"
+          aria-label={`Comparaison des prix pour ${productName}`}
+        >
           <caption className="sr-only">
             Tableau de comparaison des prix de {productName} entre différentes enseignes
           </caption>
@@ -64,27 +68,27 @@ export default function StoreComparisonTable({
               const prices = comp.observations
                 .slice()
                 .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                .map(obs => obs.price)
+                .map((obs) => obs.price);
 
-              const favoriteId = `comparison:${productName}:${comp.store}`
-              const favoriteActive = isFavorite(favoriteId)
+              const favoriteId = `comparison:${productName}:${comp.store}`;
+              const favoriteActive = isFavorite(favoriteId);
 
               const lastUpdated = comp.observations.reduce<Date | null>((latest, obs) => {
-                const date = new Date(obs.date)
-                if (Number.isNaN(date.getTime())) return latest
-                if (!latest || date > latest) return date
-                return latest
-              }, null)
-              const formattedUpdated = lastUpdated ? lastUpdated.toLocaleDateString('fr-FR') : '—'
+                const date = new Date(obs.date);
+                if (Number.isNaN(date.getTime())) return latest;
+                if (!latest || date > latest) return date;
+                return latest;
+              }, null);
+              const formattedUpdated = lastUpdated ? lastUpdated.toLocaleDateString('fr-FR') : '—';
               const daysSinceObservation = lastUpdated
                 ? Math.floor((Date.now() - lastUpdated.getTime()) / 86400000)
-                : null
+                : null;
               const freshnessLabel =
                 daysSinceObservation === null
                   ? null
                   : daysSinceObservation <= 7
-                  ? 'Récent'
-                  : 'À vérifier'
+                    ? 'Récent'
+                    : 'À vérifier';
 
               return (
                 <tr
@@ -113,9 +117,13 @@ export default function StoreComparisonTable({
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <span className="text-lg font-bold text-blue-400">{formatPrice(comp.currentPrice)}</span>
+                    <span className="text-lg font-bold text-blue-400">
+                      {formatPrice(comp.currentPrice)}
+                    </span>
                     <div className="mt-1 text-xs text-white/60">
-                      {lastUpdated ? `Prix observé le ${formattedUpdated}` : "Date d’observation non disponible"}
+                      {lastUpdated
+                        ? `Prix observé le ${formattedUpdated}`
+                        : 'Date d’observation non disponible'}
                     </div>
                     {freshnessLabel && (
                       <span
@@ -134,7 +142,9 @@ export default function StoreComparisonTable({
                       <span className="text-green-400 text-sm">—</span>
                     ) : (
                       <div className="text-sm">
-                        <div className="text-red-400">+{formatPrice(comp.differenceFromBest.amount)}</div>
+                        <div className="text-red-400">
+                          +{formatPrice(comp.differenceFromBest.amount)}
+                        </div>
                         <div className="text-red-300 text-xs">
                           ({formatPercentage(comp.differenceFromBest.percentage)})
                         </div>
@@ -144,7 +154,11 @@ export default function StoreComparisonTable({
                   <td className="py-3 px-4 text-center">
                     <span
                       className={`text-sm font-medium ${
-                        comp.trend30d > 0 ? 'text-red-400' : comp.trend30d < 0 ? 'text-green-400' : 'text-white/60'
+                        comp.trend30d > 0
+                          ? 'text-red-400'
+                          : comp.trend30d < 0
+                            ? 'text-green-400'
+                            : 'text-white/60'
                       }`}
                       aria-label={`Tendance sur 30 jours: ${formatPercentage(comp.trend30d)}`}
                     >
@@ -152,12 +166,17 @@ export default function StoreComparisonTable({
                     </span>
                   </td>
                   <td className="py-3 px-4 text-center">
-                    <div className="flex justify-center" aria-label="Graphique de l'historique des prix">
+                    <div
+                      className="flex justify-center"
+                      aria-label="Graphique de l'historique des prix"
+                    >
                       <Sparkline
                         data={prices}
                         width={100}
                         height={30}
-                        stroke={comp.trend30d > 0 ? '#f87171' : comp.trend30d < 0 ? '#4ade80' : '#60a5fa'}
+                        stroke={
+                          comp.trend30d > 0 ? '#f87171' : comp.trend30d < 0 ? '#4ade80' : '#60a5fa'
+                        }
                       />
                     </div>
                   </td>
@@ -173,7 +192,9 @@ export default function StoreComparisonTable({
                       <button
                         onClick={() =>
                           (() => {
-                            const message = favoriteActive ? 'Favori retiré' : '⭐ Ajouté aux favoris'
+                            const message = favoriteActive
+                              ? 'Favori retiré'
+                              : '⭐ Ajouté aux favoris';
                             toggleFavorite({
                               id: favoriteId,
                               label: `${productName} • ${comp.store}`,
@@ -181,8 +202,8 @@ export default function StoreComparisonTable({
                               productName,
                               store: comp.store,
                               route: `/comparaison-enseignes?product=${encodeURIComponent(productName)}`,
-                            })
-                            showToast(message)
+                            });
+                            showToast(message);
                           })()
                         }
                         className={`px-3 py-1.5 text-sm rounded border transition-colors ${
@@ -197,7 +218,7 @@ export default function StoreComparisonTable({
                     </div>
                   </td>
                 </tr>
-              )
+              );
             })}
           </tbody>
         </table>
@@ -213,5 +234,5 @@ export default function StoreComparisonTable({
         </div>
       )}
     </div>
-  )
+  );
 }

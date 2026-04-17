@@ -64,14 +64,23 @@ export interface Addon {
 
 export const FEATURES: Record<FeatureKey, { label: string; description?: string }> = {
   f_scan: { label: 'Scan produits (EAN)', description: 'Scan et recherche produit.' },
-  f_prices_view: { label: 'Accès aux prix et agrégats', description: 'Derniers prix, min/max/médiane.' },
-  f_contribute: { label: 'Contribution citoyenne', description: 'Ajout de prix (modéré) + historique.' },
+  f_prices_view: {
+    label: 'Accès aux prix et agrégats',
+    description: 'Derniers prix, min/max/médiane.',
+  },
+  f_contribute: {
+    label: 'Contribution citoyenne',
+    description: 'Ajout de prix (modéré) + historique.',
+  },
   f_api_access: { label: 'Accès API', description: 'Endpoints de consultation (selon plan).' },
   f_ocr_receipts: { label: 'OCR tickets', description: 'Extraction de prix via tickets.' },
   f_exports: { label: 'Exports CSV/JSON', description: 'Exports pour analyses.' },
   f_history: { label: 'Historique avancé', description: 'Historique étendu et tendances.' },
   f_alerts: { label: 'Alertes prix', description: 'Alertes sur variations / seuils.' },
-  f_multi_territories: { label: 'Multi-territoires', description: 'Comparaison entre territoires.' },
+  f_multi_territories: {
+    label: 'Multi-territoires',
+    description: 'Comparaison entre territoires.',
+  },
   f_team: { label: 'Équipe & rôles', description: 'Plusieurs comptes + permissions.' },
   f_sla_support: { label: 'Support prioritaire / SLA', description: 'Support accéléré.' },
 };
@@ -152,7 +161,14 @@ export const PLANS: Plan[] = [
     ctaLabel: 'Choisir Pro',
     ctaHref: '/checkout?plan=pro',
     includedAddonIds: [],
-    featureKeys: ['f_scan', 'f_prices_view', 'f_contribute', 'f_history', 'f_alerts', 'f_api_access'],
+    featureKeys: [
+      'f_scan',
+      'f_prices_view',
+      'f_contribute',
+      'f_history',
+      'f_alerts',
+      'f_api_access',
+    ],
     limits: { scansPerMonth: 1000, exportsPerMonth: 10, territories: 3 },
   },
   {
@@ -220,12 +236,14 @@ export function formatMoneyEURFromCents(cents: number): string {
 }
 
 export function formatPlanPrice(plan: Plan, period: BillingPeriod): string {
-  const cents = period === 'monthly' ? plan.pricing.monthly.amountCents : plan.pricing.yearly.amountCents;
+  const cents =
+    period === 'monthly' ? plan.pricing.monthly.amountCents : plan.pricing.yearly.amountCents;
   return formatMoneyEURFromCents(cents);
 }
 
 export function formatAddonPrice(addon: Addon, period: BillingPeriod): string {
-  const cents = period === 'monthly' ? addon.pricing.monthly.amountCents : addon.pricing.yearly.amountCents;
+  const cents =
+    period === 'monthly' ? addon.pricing.monthly.amountCents : addon.pricing.yearly.amountCents;
   return formatMoneyEURFromCents(cents);
 }
 

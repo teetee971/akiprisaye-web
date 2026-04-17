@@ -31,4 +31,3 @@ export async function getAdminDashboardOverview(params: {
 
   return adminFetchJson(`/admin/dashboard/overview?${query}`);
 }
-

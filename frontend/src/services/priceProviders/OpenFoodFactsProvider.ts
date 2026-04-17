@@ -1,4 +1,3 @@
- 
 import type { ProductPrice } from '../../types/ProductPrice';
 import type { PriceProvider } from './PriceProvider';
 
@@ -22,11 +21,7 @@ interface OpenFoodFactsResponse {
 }
 
 const normalizeText = (value: string): string =>
-  value
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .trim();
+  value.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 
 const resolveRegion = (countriesTags?: string[]): 'FR' | 'DOM' | undefined => {
   if (!countriesTags || countriesTags.length === 0) {
@@ -34,7 +29,16 @@ const resolveRegion = (countriesTags?: string[]): 'FR' | 'DOM' | undefined => {
   }
 
   const normalized = countriesTags.map((tag) => normalizeText(tag));
-  if (normalized.some((tag) => tag.includes('martinique') || tag.includes('guadeloupe') || tag.includes('reunion') || tag.includes('guyane') || tag.includes('mayotte'))) {
+  if (
+    normalized.some(
+      (tag) =>
+        tag.includes('martinique') ||
+        tag.includes('guadeloupe') ||
+        tag.includes('reunion') ||
+        tag.includes('guyane') ||
+        tag.includes('mayotte')
+    )
+  ) {
     return 'DOM';
   }
   if (normalized.some((tag) => tag.includes('france'))) {

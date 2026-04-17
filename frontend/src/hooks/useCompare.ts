@@ -20,14 +20,10 @@ export interface UseCompareResult {
 
 const DEBOUNCE_MS = 450;
 
-export function useCompare(
-  query: string,
-  territory: string,
-  retailer: string,
-): UseCompareResult {
-  const [data, setData]       = useState<CompareResponse | null>(null);
+export function useCompare(query: string, territory: string, retailer: string): UseCompareResult {
+  const [data, setData] = useState<CompareResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Track latest request to discard stale responses
   const requestIdRef = useRef(0);
@@ -47,7 +43,11 @@ export function useCompare(
 
     const timer = setTimeout(async () => {
       try {
-        const result = await fetchCompare({ query: query.trim(), territory, retailer: retailer || undefined });
+        const result = await fetchCompare({
+          query: query.trim(),
+          territory,
+          retailer: retailer || undefined,
+        });
         if (id === requestIdRef.current) {
           setData(result);
           setError(null);

@@ -21,8 +21,8 @@
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const STORAGE_KEY = 'akp:events:v1';
-const MAX_EVENTS  = 1_000;
-const TTL_MS      = 30 * 24 * 60 * 60 * 1000; // 30 days
+const MAX_EVENTS = 1_000;
+const TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -63,9 +63,7 @@ function read(): TrackedEvent[] {
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
     const cutoff = Date.now() - TTL_MS;
-    return (parsed as TrackedEvent[]).filter(
-      (e) => typeof e.ts === 'number' && e.ts > cutoff,
-    );
+    return (parsed as TrackedEvent[]).filter((e) => typeof e.ts === 'number' && e.ts > cutoff);
   } catch {
     return [];
   }
@@ -93,19 +91,14 @@ function write(events: TrackedEvent[]): void {
  * @param type     Event category (see EventType)
  * @param payload  Additional context (product, retailer, price, etc.)
  */
-export function trackEvent(
-  type: EventType,
-  payload: Omit<TrackedEvent, 'type' | 'ts'> = {},
-): void {
+export function trackEvent(type: EventType, payload: Omit<TrackedEvent, 'type' | 'ts'> = {}): void {
   if (typeof window === 'undefined') return; // SSR guard
 
   const events = read();
   events.push({ ...payload, type, ts: Date.now() });
 
   // Evict oldest when over cap
-  const trimmed = events.length > MAX_EVENTS
-    ? events.slice(events.length - MAX_EVENTS)
-    : events;
+  const trimmed = events.length > MAX_EVENTS ? events.slice(events.length - MAX_EVENTS) : events;
 
   write(trimmed);
 }

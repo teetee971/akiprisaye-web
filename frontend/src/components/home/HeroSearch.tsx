@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { HeroImage } from '../ui/HeroImage';
 
 // Real Unsplash photo: supermarket grocery scene (free to use)
-const HERO_IMG = 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=1600&q=70';
+const HERO_IMG =
+  'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fm=webp&fit=crop&w=1600&q=70';
 
 export default function HeroSearch() {
   const navigate = useNavigate();
@@ -31,7 +32,9 @@ export default function HeroSearch() {
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white drop-shadow-lg">
           Comparez les prix réels près de chez vous.
         </h1>
-        <p className="text-base md:text-lg text-slate-200 drop-shadow">Données locales DOM-TOM &amp; France. Gratuit.</p>
+        <p className="text-base md:text-lg text-slate-200 drop-shadow">
+          Données locales DOM-TOM &amp; France. Gratuit.
+        </p>
       </HeroImage>
 
       <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
@@ -61,7 +64,9 @@ export default function HeroSearch() {
         Scanner un ticket
       </button>
 
-      <p className="text-xs text-slate-400">Sans compte. Vos recherches restent sur votre appareil.</p>
+      <p className="text-xs text-slate-400">
+        Sans compte. Vos recherches restent sur votre appareil.
+      </p>
     </section>
   );
 }

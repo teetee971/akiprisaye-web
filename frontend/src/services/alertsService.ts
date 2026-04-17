@@ -1,5 +1,10 @@
 import { alertsDataset } from '../data/alerts';
-import type { AlertSeverity, SanitaryAlert, SanitaryAlertsResponse, TerritoryCode } from '../types/alerts';
+import type {
+  AlertSeverity,
+  SanitaryAlert,
+  SanitaryAlertsResponse,
+  TerritoryCode,
+} from '../types/alerts';
 
 const severityOrder: Record<AlertSeverity, number> = {
   critical: 3,
@@ -16,17 +21,11 @@ function parseDate(value?: string): number {
 }
 
 export function normalizeText(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .trim();
+  return value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 }
 
 export function tokenize(value: string): string[] {
-  return normalizeText(value)
-    .split(/\s+/)
-    .filter(Boolean);
+  return normalizeText(value).split(/\s+/).filter(Boolean);
 }
 
 export function matchesSearch(alert: SanitaryAlert, q?: string): boolean {
@@ -34,15 +33,9 @@ export function matchesSearch(alert: SanitaryAlert, q?: string): boolean {
   const tokens = tokenize(q);
   if (tokens.length === 0) return true;
 
-  const haystack = normalizeText([
-    alert.title,
-    alert.brand,
-    alert.productName,
-    alert.ean,
-    alert.lot,
-  ]
-    .filter(Boolean)
-    .join(' '));
+  const haystack = normalizeText(
+    [alert.title, alert.brand, alert.productName, alert.ean, alert.lot].filter(Boolean).join(' ')
+  );
 
   return tokens.every((token) => haystack.includes(token));
 }
@@ -79,7 +72,9 @@ function localFallback(options: GetAlertsOptions = {}): FetchAlertsResult {
     .filter((alert) => !territory || alert.territory === territory)
     .filter((alert) => !onlyActive || alert.status === 'active')
     .filter((alert) => !severity || alert.severity === severity)
-    .filter((alert) => !normalizedCategory || normalizeText(alert.category ?? '') === normalizedCategory)
+    .filter(
+      (alert) => !normalizedCategory || normalizeText(alert.category ?? '') === normalizedCategory
+    )
     .filter((alert) => matchesSearch(alert, q));
 
   const sorted = sortAlerts(filtered);
@@ -111,7 +106,7 @@ export async function getAlerts(options: GetAlertsOptions = {}): Promise<FetchAl
 
     if (!response.ok) throw new Error(`HTTP_${response.status}`);
 
-    const payload = await response.json() as SanitaryAlertsResponse;
+    const payload = (await response.json()) as SanitaryAlertsResponse;
     latestSnapshot = sortAlerts(payload.alerts ?? []);
     return {
       alerts: latestSnapshot,
@@ -129,7 +124,7 @@ export async function getAlertById(id: string): Promise<SanitaryAlert | null> {
   try {
     const response = await fetch(`/api/sanitary-alerts?id=${encodeURIComponent(id)}`);
     if (!response.ok) throw new Error('id_lookup_failed');
-    const payload = await response.json() as SanitaryAlertsResponse;
+    const payload = (await response.json()) as SanitaryAlertsResponse;
     const resolved = payload.alerts.find((alert) => alert.id === id) ?? null;
     if (resolved) latestSnapshot = [resolved, ...latestSnapshot.filter((alert) => alert.id !== id)];
     return resolved;

@@ -1,6 +1,12 @@
-import { sortItemsByAisle } from "../utils/aisleHelper";
+import { sortItemsByAisle } from '../utils/aisleHelper';
 import { emitUpgradePrompt } from '../billing/upgradePrompt';
-import { computeAlerts, computeConfidenceScore, computeTrend, normalizePrice, type PriceHistoryPoint } from '../domain/shoppingList/premium';
+import {
+  computeAlerts,
+  computeConfidenceScore,
+  computeTrend,
+  normalizePrice,
+  type PriceHistoryPoint,
+} from '../domain/shoppingList/premium';
 
 const STORAGE_KEY = 'akiprisaye_shopping_list_v1';
 
@@ -21,7 +27,6 @@ export function setUserPlan(plan: UserPlan) {
   window.localStorage.setItem(PLAN_STORAGE_KEY, plan);
   window.dispatchEvent(new CustomEvent('akiprisaye:user-plan-updated', { detail: { plan } }));
 }
-
 
 const DEFAULT_TRIAL_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -47,7 +52,11 @@ export function getUserAccessState(): UserAccessState {
 export function startPremiumTrial(durationMs = DEFAULT_TRIAL_DURATION_MS): number {
   const endsAt = Date.now() + Math.max(1, durationMs);
   window.localStorage.setItem('akiprisaye_premium_trial_ends_at', String(endsAt));
-  window.dispatchEvent(new CustomEvent('akiprisaye:user-plan-updated', { detail: { plan: getUserPlan(), premiumTrialEndsAt: endsAt } }));
+  window.dispatchEvent(
+    new CustomEvent('akiprisaye:user-plan-updated', {
+      detail: { plan: getUserPlan(), premiumTrialEndsAt: endsAt },
+    })
+  );
   return endsAt;
 }
 
@@ -89,7 +98,7 @@ function inferPriceHistory(item: ShoppingListStoreItem): PriceHistoryPoint[] {
     .filter((price) => Number.isFinite(price))
     .map((price, index, array) => ({
       price,
-      observedAt: new Date(endAt - ((array.length - 1 - index) * 24 * 60 * 60 * 1000)).toISOString(),
+      observedAt: new Date(endAt - (array.length - 1 - index) * 24 * 60 * 60 * 1000).toISOString(),
     }));
 }
 
@@ -106,7 +115,11 @@ function enrichWithPremium(item: ShoppingListStoreItem): ShoppingListStoreItem {
     ...item,
     normalized,
     premium: {
-      score: computeConfidenceScore({ source: item.source, lastObservedAt: item.lastObservedAt, priceHistory }),
+      score: computeConfidenceScore({
+        source: item.source,
+        lastObservedAt: item.lastObservedAt,
+        priceHistory,
+      }),
       trend7: computeTrend(priceHistory, 7).trend,
       trend30: computeTrend(priceHistory, 30).trend,
       alerts: computeAlerts({ price: item.price, priceHistory }),
@@ -140,7 +153,10 @@ export function hydrateShoppingList() {
 export function addShoppingListItem(item: ShoppingListStoreItem, maxItems: number) {
   const items = readStorage();
   if (!items.find((current) => current.id === item.id) && items.length >= maxItems) {
-    emitUpgradePrompt({ quotaName: 'maxItems', message: `Limite atteinte (${maxItems} articles).` });
+    emitUpgradePrompt({
+      quotaName: 'maxItems',
+      message: `Limite atteinte (${maxItems} articles).`,
+    });
     return { ok: false as const, reason: 'MAX_ITEMS' as const };
   }
 
@@ -161,7 +177,7 @@ export function addShoppingListItem(item: ShoppingListStoreItem, maxItems: numbe
               lastObservedAt: item.lastObservedAt ?? current.lastObservedAt,
               history: item.price ? [...(current.history ?? []), item.price] : current.history,
             })
-          : current,
+          : current
       )
     : [...items, enrichWithPremium(item)];
 
@@ -176,7 +192,9 @@ export function removeShoppingListItem(id: string) {
 }
 
 export function updateShoppingListItem(id: string, patch: Partial<ShoppingListStoreItem>) {
-  const next = readStorage().map((item) => (item.id === id ? enrichWithPremium({ ...item, ...patch }) : item));
+  const next = readStorage().map((item) =>
+    item.id === id ? enrichWithPremium({ ...item, ...patch }) : item
+  );
   writeStorage(next);
   return next;
 }

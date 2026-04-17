@@ -1,8 +1,8 @@
 /**
  * Observatoire Temps Réel - Real-Time Price Observatory
- * 
+ *
  * A KI PRI SA YÉ - MODE E - DÉPLOIEMENT AUTOMATIQUE
- * 
+ *
  * Features:
  * - Pilot product (Lait demi-écrémé 1L)
  * - Territory selector
@@ -51,7 +51,14 @@ import {
 type Territory = 'Guadeloupe' | 'Martinique' | 'Guyane' | 'La Réunion' | 'Mayotte' | 'Hexagone';
 type Granularity = 'hour' | 'day' | 'week' | 'month';
 
-const TERRITORIES: Territory[] = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte', 'Hexagone'];
+const TERRITORIES: Territory[] = [
+  'Guadeloupe',
+  'Martinique',
+  'Guyane',
+  'La Réunion',
+  'Mayotte',
+  'Hexagone',
+];
 
 const GRANULARITIES: Array<{ value: Granularity; label: string }> = [
   { value: 'hour', label: 'Heure' },
@@ -77,32 +84,36 @@ export default function ObservatoireTempsReel() {
     setLoading(true);
     setError(null);
     loadObservatoireData(selectedTerritory)
-      .then(data => {
+      .then((data) => {
         if (data.length === 0) {
-          setError("La donnée de l'observatoire est momentanément indisponible. Merci de réessayer ultérieurement.");
+          setError(
+            "La donnée de l'observatoire est momentanément indisponible. Merci de réessayer ultérieurement."
+          );
           return;
         }
         setSnapshots(data);
         const stats = calculateStatistics(data);
         setStatistics(stats);
-        
+
         // Set pilot product as default if not selected
         // Pilot product: Lait demi-écrémé 1L (EAN: 3560070123456)
         if (!selectedProduct && stats.length > 0) {
-          const pilotProduct = stats.find(s => 
-            s.ean === '3560070123456' || 
-            s.productName.toLowerCase().includes('lait demi-écrémé')
+          const pilotProduct = stats.find(
+            (s) =>
+              s.ean === '3560070123456' || s.productName.toLowerCase().includes('lait demi-écrémé')
           );
           setSelectedProduct(pilotProduct?.productName || stats[0].productName);
         }
-        
+
         if (data.length > 0) {
           setLastUpdate(data[data.length - 1].date_snapshot);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error loading observatory data:', err);
-        setError("La donnée de l'observatoire est momentanément indisponible. Merci de réessayer ultérieurement.");
+        setError(
+          "La donnée de l'observatoire est momentanément indisponible. Merci de réessayer ultérieurement."
+        );
       })
       .finally(() => {
         setLoading(false);
@@ -118,10 +129,10 @@ export default function ObservatoireTempsReel() {
 
     // Extract price data for selected product
     const priceData: PriceDataPoint[] = [];
-    snapshots.forEach(snapshot => {
+    snapshots.forEach((snapshot) => {
       snapshot.donnees
-        .filter(obs => obs.produit === selectedProduct)
-        .forEach(obs => {
+        .filter((obs) => obs.produit === selectedProduct)
+        .forEach((obs) => {
           priceData.push({
             date: snapshot.date_snapshot,
             price: obs.prix,
@@ -146,10 +157,10 @@ export default function ObservatoireTempsReel() {
 
     const dataByDate = new Map<string, { date: string; prices: number[] }>();
 
-    snapshots.forEach(snapshot => {
+    snapshots.forEach((snapshot) => {
       snapshot.donnees
-        .filter(obs => obs.produit === selectedProduct)
-        .forEach(obs => {
+        .filter((obs) => obs.produit === selectedProduct)
+        .forEach((obs) => {
           const date = snapshot.date_snapshot;
           if (!dataByDate.has(date)) {
             dataByDate.set(date, { date, prices: [] });
@@ -159,7 +170,7 @@ export default function ObservatoireTempsReel() {
     });
 
     return Array.from(dataByDate.values())
-      .map(entry => ({
+      .map((entry) => ({
         date: new Date(entry.date).toLocaleDateString('fr-FR', {
           day: '2-digit',
           month: 'short',
@@ -174,14 +185,14 @@ export default function ObservatoireTempsReel() {
 
   // Current product stats
   const currentStats = useMemo(() => {
-    return statistics.find(s => s.productName === selectedProduct);
+    return statistics.find((s) => s.productName === selectedProduct);
   }, [statistics, selectedProduct]);
 
   // Prepare open data records
   const openDataRecords: OpenDataPriceRecord[] = useMemo(() => {
     const records: OpenDataPriceRecord[] = [];
-    snapshots.forEach(snapshot => {
-      snapshot.donnees.forEach(obs => {
+    snapshots.forEach((snapshot) => {
+      snapshot.donnees.forEach((obs) => {
         records.push({
           ean: obs.ean,
           productName: obs.produit,
@@ -211,22 +222,21 @@ export default function ObservatoireTempsReel() {
               <p className="text-sm text-blue-300 uppercase tracking-wide font-semibold">
                 Mode Production
               </p>
-              <h1 className="text-4xl sm:text-5xl font-bold text-white">
-                Observatoire Temps Réel
-              </h1>
+              <h1 className="text-4xl sm:text-5xl font-bold text-white">Observatoire Temps Réel</h1>
             </div>
           </div>
           <p className="text-lg text-slate-300 max-w-3xl">
-            Suivi en temps réel des prix sur les territoires. Données vérifiables, traçables et 
+            Suivi en temps réel des prix sur les territoires. Données vérifiables, traçables et
             téléchargeables. Licence Ouverte Etalab 2.0.
           </p>
-          
+
           {/* Last Update Badge */}
           {lastUpdate && (
             <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg px-4 py-2">
               <span className="text-emerald-400">🟢</span>
               <span className="text-sm text-emerald-200">
-                Dernière mise à jour : {new Date(lastUpdate).toLocaleDateString('fr-FR', {
+                Dernière mise à jour :{' '}
+                {new Date(lastUpdate).toLocaleDateString('fr-FR', {
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',
@@ -264,7 +274,7 @@ export default function ObservatoireTempsReel() {
         {/* Controls */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
           <h2 className="text-xl font-semibold text-white">Sélection</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Territory Selector */}
             <div>
@@ -274,10 +284,10 @@ export default function ObservatoireTempsReel() {
               <select
                 id="territory"
                 value={selectedTerritory}
-                onChange={e => setSelectedTerritory(e.target.value as Territory)}
+                onChange={(e) => setSelectedTerritory(e.target.value as Territory)}
                 className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                {TERRITORIES.map(territory => (
+                {TERRITORIES.map((territory) => (
                   <option key={territory} value={territory}>
                     {territory}
                   </option>
@@ -293,11 +303,11 @@ export default function ObservatoireTempsReel() {
               <select
                 id="product"
                 value={selectedProduct}
-                onChange={e => setSelectedProduct(e.target.value)}
+                onChange={(e) => setSelectedProduct(e.target.value)}
                 className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={loading || statistics.length === 0}
               >
-                {statistics.map(stat => (
+                {statistics.map((stat) => (
                   <option key={stat.productName} value={stat.productName}>
                     {stat.productName}
                   </option>
@@ -307,16 +317,19 @@ export default function ObservatoireTempsReel() {
 
             {/* Granularity Selector */}
             <div>
-              <label htmlFor="granularity" className="block text-sm font-medium text-slate-300 mb-2">
+              <label
+                htmlFor="granularity"
+                className="block text-sm font-medium text-slate-300 mb-2"
+              >
                 Granularité temporelle
               </label>
               <select
                 id="granularity"
                 value={selectedGranularity}
-                onChange={e => setSelectedGranularity(e.target.value as Granularity)}
+                onChange={(e) => setSelectedGranularity(e.target.value as Granularity)}
                 className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                {GRANULARITIES.map(gran => (
+                {GRANULARITIES.map((gran) => (
                   <option key={gran.value} value={gran.value}>
                     {gran.label}
                   </option>
@@ -362,8 +375,8 @@ export default function ObservatoireTempsReel() {
               })}
             </div>
             <p className="text-sm text-slate-400">
-              ℹ️ Ces alertes sont générées automatiquement par des méthodes statistiques transparentes. 
-              Aucune IA opaque. Tout est explicable.
+              ℹ️ Ces alertes sont générées automatiquement par des méthodes statistiques
+              transparentes. Aucune IA opaque. Tout est explicable.
             </p>
           </div>
         )}
@@ -453,7 +466,7 @@ export default function ObservatoireTempsReel() {
             Toutes les données sont disponibles en Open Data sous{' '}
             <span className="font-semibold text-blue-400">Licence Ouverte Etalab 2.0</span>
           </p>
-          
+
           <div className="flex flex-wrap gap-3">
             <button
               onClick={() => downloadPricesJSON(openDataRecords, [selectedTerritory])}
@@ -515,9 +528,9 @@ export default function ObservatoireTempsReel() {
             🏛️ Positionnement Institutionnel
           </h3>
           <p className="text-slate-300 leading-relaxed">
-            A KI PRI SA YÉ est un <strong>observatoire civique numérique</strong>, aligné avec 
-            les institutions publiques (OPMR, DGCCRF, collectivités) et accessible aux médias. 
-            Nous ne sommes pas un comparateur commercial ni une startup classique.
+            A KI PRI SA YÉ est un <strong>observatoire civique numérique</strong>, aligné avec les
+            institutions publiques (OPMR, DGCCRF, collectivités) et accessible aux médias. Nous ne
+            sommes pas un comparateur commercial ni une startup classique.
           </p>
         </div>
       </div>

@@ -57,14 +57,13 @@ const withTimeoutSignal = (signal: AbortSignal, timeoutMs: number): AbortSignal 
 
 const mapItem = (
   item: IntermarcheCatalogItem,
-  input: PriceSearchInput,
+  input: PriceSearchInput
 ): PriceObservation | null => {
   const price = safeNumber(item.price);
   if (price === null || price <= 0) return null;
 
   const rawUnit = safeString(item.unit);
-  const unit: PriceObservation['unit'] =
-    rawUnit === 'kg' || rawUnit === 'l' ? rawUnit : 'unit';
+  const unit: PriceObservation['unit'] = rawUnit === 'kg' || rawUnit === 'l' ? rawUnit : 'unit';
 
   return normalizePriceObservation({
     source: 'intermarche',
@@ -82,8 +81,7 @@ const mapItem = (
 
 export const intermarcheProvider: PriceProvider = {
   source: 'intermarche',
-  isEnabled: () =>
-    parseFlag(import.meta.env.VITE_PRICE_PROVIDER_INTERMARCHE, false),
+  isEnabled: () => parseFlag(import.meta.env.VITE_PRICE_PROVIDER_INTERMARCHE, false),
 
   async search(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult> {
     if (!input.barcode && !input.query) {
@@ -141,9 +139,7 @@ export const intermarcheProvider: PriceProvider = {
         status: observations.length > 0 ? 'OK' : 'NO_DATA',
         observations,
         warnings:
-          observations.length === 0
-            ? ['Aucun prix Intermarché trouvé pour cette recherche.']
-            : [],
+          observations.length === 0 ? ['Aucun prix Intermarché trouvé pour cette recherche.'] : [],
       };
     } catch {
       return {

@@ -1,4 +1,3 @@
- 
 /**
  * XPGainToast Component
  * Toast notification for XP gains
@@ -21,7 +20,7 @@ const sourceIcons: Record<string, string> = {
   badge: '🏅',
   challenge: '🎯',
   streak: '🔥',
-  social: '👥'
+  social: '👥',
 };
 
 export function XPGainToast({ event, onDismiss, duration = 4000 }: XPGainToastProps) {
@@ -69,9 +68,7 @@ export function XPGainToast({ event, onDismiss, duration = 4000 }: XPGainToastPr
               <Zap size={16} className="text-yellow-300 flex-shrink-0" />
               <span className="font-bold text-xl">+{event.points} XP</span>
             </div>
-            <p className="text-sm text-white/90">
-              {event.message}
-            </p>
+            <p className="text-sm text-white/90">{event.message}</p>
           </div>
 
           {/* Close Button */}
@@ -86,10 +83,10 @@ export function XPGainToast({ event, onDismiss, duration = 4000 }: XPGainToastPr
 
         {/* Progress Bar */}
         <div className="mt-3 h-1 bg-white/20 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-white/60 rounded-full transition-all"
             style={{
-              animation: `shrink ${duration}ms linear forwards`
+              animation: `shrink ${duration}ms linear forwards`,
             }}
           />
         </div>

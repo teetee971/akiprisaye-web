@@ -1,9 +1,9 @@
 /**
  * Base de données d'ingrédients cosmétiques officiels
- * 
+ *
  * Sources: CosIng (EU Cosmetic Ingredients Database), ECHA, ANSES
  * Règlement CE 1223/2009
- * 
+ *
  * Cette base contient uniquement des ingrédients réels avec leurs données officielles.
  * Aucune donnée fictive.
  */
@@ -14,7 +14,7 @@
  */
 export const OFFICIAL_INGREDIENTS = {
   // Eau et solvants
-  'AQUA': {
+  AQUA: {
     inciName: 'AQUA',
     commonName: 'Eau',
     casNumber: '7732-18-5',
@@ -29,7 +29,7 @@ export const OFFICIAL_INGREDIENTS = {
       },
     ],
   },
-  'WATER': {
+  WATER: {
     inciName: 'WATER',
     commonName: 'Eau',
     casNumber: '7732-18-5',
@@ -46,7 +46,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // Glycérine
-  'GLYCERIN': {
+  GLYCERIN: {
     inciName: 'GLYCERIN',
     commonName: 'Glycérine',
     casNumber: '56-81-5',
@@ -63,7 +63,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // Conservateurs
-  'PHENOXYETHANOL': {
+  PHENOXYETHANOL: {
     inciName: 'PHENOXYETHANOL',
     commonName: 'Phénoxyéthanol',
     casNumber: '122-99-6',
@@ -86,7 +86,7 @@ export const OFFICIAL_INGREDIENTS = {
     regulatoryReferences: ['Annexe V - Conservateurs autorisés'],
   },
 
-  'METHYLPARABEN': {
+  METHYLPARABEN: {
     inciName: 'METHYLPARABEN',
     commonName: 'Méthylparabène',
     casNumber: '99-76-3',
@@ -109,7 +109,7 @@ export const OFFICIAL_INGREDIENTS = {
     regulatoryReferences: ['Annexe V - Conservateurs autorisés'],
   },
 
-  'PROPYLPARABEN': {
+  PROPYLPARABEN: {
     inciName: 'PROPYLPARABEN',
     commonName: 'Propylparabène',
     casNumber: '94-13-3',
@@ -269,7 +269,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // Actifs
-  'TOCOPHEROL': {
+  TOCOPHEROL: {
     inciName: 'TOCOPHEROL',
     commonName: 'Vitamine E',
     casNumber: '59-02-9',
@@ -285,7 +285,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'PANTHENOL': {
+  PANTHENOL: {
     inciName: 'PANTHENOL',
     commonName: 'Panthénol (Provitamine B5)',
     casNumber: '16485-10-2',
@@ -301,7 +301,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'NIACINAMIDE': {
+  NIACINAMIDE: {
     inciName: 'NIACINAMIDE',
     commonName: 'Niacinamide (Vitamine B3)',
     casNumber: '98-92-0',
@@ -342,7 +342,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['SURFACTANT', 'CLEANSING', 'FOAMING'],
     riskLevel: 'MODERATE',
     hazardCategories: ['IRRITANT'],
-    restrictions: 'Peut être irritant pour certaines peaux sensibles. Déconseillé sur peaux atopiques.',
+    restrictions:
+      'Peut être irritant pour certaines peaux sensibles. Déconseillé sur peaux atopiques.',
     sources: [
       {
         name: 'CosIng',
@@ -360,7 +361,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['SURFACTANT', 'CLEANSING', 'FOAMING'],
     riskLevel: 'MODERATE',
     hazardCategories: ['PEG', 'IRRITANT'],
-    restrictions: 'Éthoxylé — peut être contaminé par du 1,4-dioxane (CMR cat. 1B). Potentiellement irritant.',
+    restrictions:
+      'Éthoxylé — peut être contaminé par du 1,4-dioxane (CMR cat. 1B). Potentiellement irritant.',
     sources: [
       {
         name: 'CosIng',
@@ -370,7 +372,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'PARFUM': {
+  PARFUM: {
     inciName: 'PARFUM',
     commonName: 'Parfum',
     casNumber: null,
@@ -378,7 +380,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['FRAGRANCE'],
     riskLevel: 'MODERATE',
     hazardCategories: ['ALLERGEN'],
-    restrictions: 'Peut contenir des allergènes. Les 26 allergènes doivent être indiqués séparément selon le Règlement CE 1223/2009',
+    restrictions:
+      'Peut contenir des allergènes. Les 26 allergènes doivent être indiqués séparément selon le Règlement CE 1223/2009',
     sources: [
       {
         name: 'CosIng',
@@ -394,7 +397,7 @@ export const OFFICIAL_INGREDIENTS = {
     regulatoryReferences: ['Article 19 - Étiquetage des allergènes'],
   },
 
-  'FRAGRANCE': {
+  FRAGRANCE: {
     inciName: 'FRAGRANCE',
     commonName: 'Parfum',
     casNumber: null,
@@ -402,7 +405,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['FRAGRANCE'],
     riskLevel: 'MODERATE',
     hazardCategories: ['ALLERGEN'],
-    restrictions: 'Peut contenir des allergènes. Les 26 allergènes doivent être indiqués séparément selon le Règlement CE 1223/2009',
+    restrictions:
+      'Peut contenir des allergènes. Les 26 allergènes doivent être indiqués séparément selon le Règlement CE 1223/2009',
     sources: [
       {
         name: 'CosIng',
@@ -419,7 +423,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // ── Formaldéhyde et libérateurs ──────────────────────────────────────────
-  'FORMALDEHYDE': {
+  FORMALDEHYDE: {
     inciName: 'FORMALDEHYDE',
     commonName: 'Formaldéhyde',
     casNumber: '50-00-0',
@@ -427,7 +431,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['PRESERVATIVE'],
     riskLevel: 'RESTRICTED',
     hazardCategories: ['CMR'],
-    restrictions: 'CMR cat. 1B (cancérogène). Concentration max. 0,2% (0,1% bucco-dentaires). Annexe V.',
+    restrictions:
+      'CMR cat. 1B (cancérogène). Concentration max. 0,2% (0,1% bucco-dentaires). Annexe V.',
     sources: [
       {
         name: 'CosIng',
@@ -451,7 +456,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['PRESERVATIVE'],
     riskLevel: 'HIGH',
     hazardCategories: ['CMR'],
-    restrictions: 'Libérateur de formaldéhyde (CMR cat. 1B). Autorisé avec restrictions — max 0,6%. Peut provoquer des allergies de contact.',
+    restrictions:
+      'Libérateur de formaldéhyde (CMR cat. 1B). Autorisé avec restrictions — max 0,6%. Peut provoquer des allergies de contact.',
     sources: [
       {
         name: 'CosIng',
@@ -474,7 +480,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['PRESERVATIVE'],
     riskLevel: 'HIGH',
     hazardCategories: ['CMR', 'ALLERGEN'],
-    restrictions: 'Libérateur de formaldéhyde (CMR cat. 1B). Allergène fréquent. Déconseillé dans les produits sans rinçage.',
+    restrictions:
+      'Libérateur de formaldéhyde (CMR cat. 1B). Allergène fréquent. Déconseillé dans les produits sans rinçage.',
     sources: [
       {
         name: 'CosIng',
@@ -485,7 +492,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // ── Parabènes (perturbateurs endocriniens) ───────────────────────────────
-  'METHYLPARABEN': {
+  METHYLPARABEN: {
     inciName: 'METHYLPARABEN',
     commonName: 'Méthylparabène',
     casNumber: '99-76-3',
@@ -493,7 +500,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['PRESERVATIVE'],
     riskLevel: 'MODERATE',
     hazardCategories: ['PE'],
-    restrictions: 'Perturbateur endocrinien avéré (ANSES 2020). Max 0,4% seul, 0,8% en mélange. Annexe V n°12.',
+    restrictions:
+      'Perturbateur endocrinien avéré (ANSES 2020). Max 0,4% seul, 0,8% en mélange. Annexe V n°12.',
     sources: [
       {
         name: 'CosIng',
@@ -508,7 +516,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'ETHYLPARABEN': {
+  ETHYLPARABEN: {
     inciName: 'ETHYLPARABEN',
     commonName: 'Éthylparabène',
     casNumber: '120-47-8',
@@ -526,7 +534,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'PROPYLPARABEN': {
+  PROPYLPARABEN: {
     inciName: 'PROPYLPARABEN',
     commonName: 'Propylparabène',
     casNumber: '94-13-3',
@@ -534,7 +542,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['PRESERVATIVE'],
     riskLevel: 'RESTRICTED',
     hazardCategories: ['PE'],
-    restrictions: 'Perturbateur endocrinien. Max 0,14% seul, 0,19% en mélange (propyl+butyl). Interdit dans les produits destinés aux enfants < 3 ans (zone fessière). Annexe V n°14.',
+    restrictions:
+      'Perturbateur endocrinien. Max 0,14% seul, 0,19% en mélange (propyl+butyl). Interdit dans les produits destinés aux enfants < 3 ans (zone fessière). Annexe V n°14.',
     sources: [
       {
         name: 'CosIng',
@@ -549,7 +558,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'BUTYLPARABEN': {
+  BUTYLPARABEN: {
     inciName: 'BUTYLPARABEN',
     commonName: 'Butylparabène',
     casNumber: '94-26-8',
@@ -557,7 +566,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['PRESERVATIVE'],
     riskLevel: 'RESTRICTED',
     hazardCategories: ['PE'],
-    restrictions: 'Perturbateur endocrinien. Même restriction que propylparaben. Interdit produits zone fessière enfants < 3 ans. Annexe V n°14.',
+    restrictions:
+      'Perturbateur endocrinien. Même restriction que propylparaben. Interdit produits zone fessière enfants < 3 ans. Annexe V n°14.',
     sources: [
       {
         name: 'CosIng',
@@ -567,7 +577,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'ISOBUTYLPARABEN': {
+  ISOBUTYLPARABEN: {
     inciName: 'ISOBUTYLPARABEN',
     commonName: 'Isobutylparabène',
     casNumber: '4247-02-3',
@@ -575,7 +585,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['PRESERVATIVE'],
     riskLevel: 'PROHIBITED',
     hazardCategories: ['PE'],
-    restrictions: 'Interdit dans tous les produits cosmétiques dans l\'UE (Règlement 2014/358/UE). Perturbateur endocrinien.',
+    restrictions:
+      "Interdit dans tous les produits cosmétiques dans l'UE (Règlement 2014/358/UE). Perturbateur endocrinien.",
     sources: [
       {
         name: 'Règlement CE 1223/2009 — Annexe II',
@@ -586,7 +597,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // ── Triclosan ────────────────────────────────────────────────────────────
-  'TRICLOSAN': {
+  TRICLOSAN: {
     inciName: 'TRICLOSAN',
     commonName: 'Triclosan',
     casNumber: '3380-34-5',
@@ -594,7 +605,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['ANTIMICROBIAL', 'PRESERVATIVE'],
     riskLevel: 'RESTRICTED',
     hazardCategories: ['PE'],
-    restrictions: 'Perturbateur endocrinien. Max 0,3% dentifrice/savons/déodorants bâton. Interdit dans de nombreuses applications. Annexe V n°45.',
+    restrictions:
+      'Perturbateur endocrinien. Max 0,3% dentifrice/savons/déodorants bâton. Interdit dans de nombreuses applications. Annexe V n°45.',
     sources: [
       {
         name: 'CosIng',
@@ -618,7 +630,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['UV_FILTER', 'UV_ABSORBER'],
     riskLevel: 'RESTRICTED',
     hazardCategories: ['PE'],
-    restrictions: 'Perturbateur endocrinien (mimique œstrogènes). Max 6% (10% protection solaire corporelle). Étiquetage obligatoire > 0,5%. Annexe VI n°4.',
+    restrictions:
+      'Perturbateur endocrinien (mimique œstrogènes). Max 6% (10% protection solaire corporelle). Étiquetage obligatoire > 0,5%. Annexe VI n°4.',
     sources: [
       {
         name: 'CosIng',
@@ -634,7 +647,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // ── BHA / BHT ────────────────────────────────────────────────────────────
-  'BHA': {
+  BHA: {
     inciName: 'BHA',
     commonName: 'Hydroxyanisole butylé (BHA)',
     casNumber: '25013-16-5',
@@ -642,7 +655,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['ANTIOXIDANT'],
     riskLevel: 'HIGH',
     hazardCategories: ['PE_SUSPECTE', 'CMR'],
-    restrictions: 'Perturbateur endocrinien suspecté. CMR cat. 1B (IARC : probablement cancérogène). Classé SVHC par l\'ECHA.',
+    restrictions:
+      "Perturbateur endocrinien suspecté. CMR cat. 1B (IARC : probablement cancérogène). Classé SVHC par l'ECHA.",
     sources: [
       {
         name: 'ECHA — SVHC List',
@@ -657,7 +671,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'BHT': {
+  BHT: {
     inciName: 'BHT',
     commonName: 'Hydroxytoluène butylé (BHT)',
     casNumber: '128-37-0',
@@ -676,7 +690,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // ── Silicones non biodégradables ─────────────────────────────────────────
-  'DIMETHICONE': {
+  DIMETHICONE: {
     inciName: 'DIMETHICONE',
     commonName: 'Diméthicone (Silicone)',
     casNumber: '9006-65-9',
@@ -684,7 +698,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['SKIN_CONDITIONING', 'FILM_FORMING'],
     riskLevel: 'LOW',
     hazardCategories: ['SILICONE'],
-    restrictions: 'Silicone non biodégradable. Accumulation dans l\'environnement aquatique. Occlusive à forte concentration.',
+    restrictions:
+      "Silicone non biodégradable. Accumulation dans l'environnement aquatique. Occlusive à forte concentration.",
     sources: [
       {
         name: 'CosIng',
@@ -694,7 +709,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'CYCLOPENTASILOXANE': {
+  CYCLOPENTASILOXANE: {
     inciName: 'CYCLOPENTASILOXANE',
     commonName: 'Cyclopentasiloxane (D5)',
     casNumber: '541-02-6',
@@ -702,7 +717,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['SOLVENT', 'SKIN_CONDITIONING', 'EMOLLIENT'],
     riskLevel: 'HIGH',
     hazardCategories: ['SILICONE', 'PE_SUSPECTE'],
-    restrictions: 'Silicone cyclique D5 : perturbateur endocrinien suspecté. Interdit à > 0,1% dans les cosmétiques rincés (REACH 2020). Persistant dans l\'environnement.',
+    restrictions:
+      "Silicone cyclique D5 : perturbateur endocrinien suspecté. Interdit à > 0,1% dans les cosmétiques rincés (REACH 2020). Persistant dans l'environnement.",
     sources: [
       {
         name: 'ECHA — Restriction D4/D5',
@@ -717,7 +733,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'CYCLOTETRASILOXANE': {
+  CYCLOTETRASILOXANE: {
     inciName: 'CYCLOTETRASILOXANE',
     commonName: 'Cyclotétrasiloxane (D4)',
     casNumber: '556-67-2',
@@ -725,7 +741,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['SOLVENT', 'EMOLLIENT'],
     riskLevel: 'RESTRICTED',
     hazardCategories: ['SILICONE', 'PE'],
-    restrictions: 'Silicone cyclique D4 : perturbateur endocrinien avéré (REACH Annexe XVII). Interdit > 0,1% dans les cosmétiques rincés. PBT (persistant, bioaccumulable, toxique).',
+    restrictions:
+      'Silicone cyclique D4 : perturbateur endocrinien avéré (REACH Annexe XVII). Interdit > 0,1% dans les cosmétiques rincés. PBT (persistant, bioaccumulable, toxique).',
     sources: [
       {
         name: 'ECHA — Restriction D4',
@@ -735,7 +752,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'CYCLOMETHICONE': {
+  CYCLOMETHICONE: {
     inciName: 'CYCLOMETHICONE',
     commonName: 'Cycloméhicone (mélange D4/D5)',
     casNumber: null,
@@ -743,7 +760,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['SOLVENT', 'EMOLLIENT'],
     riskLevel: 'HIGH',
     hazardCategories: ['SILICONE', 'PE_SUSPECTE'],
-    restrictions: 'Mélange de cyclométhicones incluant D4 (PE avéré) et D5 (PE suspecté). Même restrictions que D4/D5.',
+    restrictions:
+      'Mélange de cyclométhicones incluant D4 (PE avéré) et D5 (PE suspecté). Même restrictions que D4/D5.',
     sources: [
       {
         name: 'ECHA',
@@ -762,7 +780,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['EMULSIFYING', 'SURFACTANT'],
     riskLevel: 'LOW',
     hazardCategories: ['PEG'],
-    restrictions: 'Éthoxylé — potentiellement contaminé par 1,4-dioxane (CMR) selon le processus de fabrication.',
+    restrictions:
+      'Éthoxylé — potentiellement contaminé par 1,4-dioxane (CMR) selon le processus de fabrication.',
     sources: [
       {
         name: 'CosIng',
@@ -791,7 +810,7 @@ export const OFFICIAL_INGREDIENTS = {
   },
 
   // ── Allergènes réglementés (Annexe III Règlement 1223/2009) ─────────────
-  'LINALOOL': {
+  LINALOOL: {
     inciName: 'LINALOOL',
     commonName: 'Linalol',
     casNumber: '78-70-6',
@@ -799,7 +818,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['FRAGRANCE'],
     riskLevel: 'MODERATE',
     hazardCategories: ['ALLERGEN'],
-    restrictions: 'Allergène réglementé — déclaration obligatoire si > 0,001% (sans rinçage) ou > 0,01% (avec rinçage). Annexe III.',
+    restrictions:
+      'Allergène réglementé — déclaration obligatoire si > 0,001% (sans rinçage) ou > 0,01% (avec rinçage). Annexe III.',
     sources: [
       {
         name: 'CosIng',
@@ -814,7 +834,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'LIMONENE': {
+  LIMONENE: {
     inciName: 'LIMONENE',
     commonName: 'Limonène',
     casNumber: '5989-27-5',
@@ -822,7 +842,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['FRAGRANCE', 'SOLVENT'],
     riskLevel: 'MODERATE',
     hazardCategories: ['ALLERGEN'],
-    restrictions: 'Allergène réglementé — déclaration obligatoire. Annexe III. Oxydation possible au contact de l\'air (irritant cutané).',
+    restrictions:
+      "Allergène réglementé — déclaration obligatoire. Annexe III. Oxydation possible au contact de l'air (irritant cutané).",
     sources: [
       {
         name: 'CosIng',
@@ -832,7 +853,7 @@ export const OFFICIAL_INGREDIENTS = {
     ],
   },
 
-  'CITRONELLOL': {
+  CITRONELLOL: {
     inciName: 'CITRONELLOL',
     commonName: 'Citronellol',
     casNumber: '106-22-9',
@@ -842,11 +863,15 @@ export const OFFICIAL_INGREDIENTS = {
     hazardCategories: ['ALLERGEN'],
     restrictions: 'Allergène réglementé — déclaration obligatoire. Annexe III.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
-  'GERANIOL': {
+  GERANIOL: {
     inciName: 'GERANIOL',
     commonName: 'Géraniol',
     casNumber: '106-24-1',
@@ -856,11 +881,15 @@ export const OFFICIAL_INGREDIENTS = {
     hazardCategories: ['ALLERGEN'],
     restrictions: 'Allergène réglementé — déclaration obligatoire. Annexe III.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
-  'EUGENOL': {
+  EUGENOL: {
     inciName: 'EUGENOL',
     commonName: 'Eugénol',
     casNumber: '97-53-0',
@@ -868,13 +897,18 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['FRAGRANCE', 'ANTISEBORRHOEIC'],
     riskLevel: 'MODERATE',
     hazardCategories: ['ALLERGEN'],
-    restrictions: 'Allergène réglementé — déclaration obligatoire. Annexe III. Allergène fréquent des parfums et produits dentaires.',
+    restrictions:
+      'Allergène réglementé — déclaration obligatoire. Annexe III. Allergène fréquent des parfums et produits dentaires.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
-  'COUMARIN': {
+  COUMARIN: {
     inciName: 'COUMARIN',
     commonName: 'Coumarine',
     casNumber: '91-64-5',
@@ -882,9 +916,14 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['FRAGRANCE'],
     riskLevel: 'MODERATE',
     hazardCategories: ['ALLERGEN', 'CMR'],
-    restrictions: 'Allergène réglementé. Hépatotoxique à forte dose. Déclaration obligatoire > seuil réglementaire. Annexe III.',
+    restrictions:
+      'Allergène réglementé. Hépatotoxique à forte dose. Déclaration obligatoire > seuil réglementaire. Annexe III.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
@@ -896,13 +935,18 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['FRAGRANCE', 'PRESERVATIVE', 'SOLVENT'],
     riskLevel: 'MODERATE',
     hazardCategories: ['ALLERGEN'],
-    restrictions: 'Allergène réglementé (Annexe III). Conservateur autorisé avec restrictions (max 1%). Peut irriter les muqueuses.',
+    restrictions:
+      'Allergène réglementé (Annexe III). Conservateur autorisé avec restrictions (max 1%). Peut irriter les muqueuses.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
-  'CITRAL': {
+  CITRAL: {
     inciName: 'CITRAL',
     commonName: 'Citral',
     casNumber: '5392-40-5',
@@ -912,7 +956,11 @@ export const OFFICIAL_INGREDIENTS = {
     hazardCategories: ['ALLERGEN'],
     restrictions: 'Allergène réglementé — déclaration obligatoire. Annexe III.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
@@ -926,11 +974,15 @@ export const OFFICIAL_INGREDIENTS = {
     hazardCategories: ['ALLERGEN'],
     restrictions: 'Allergène réglementé — déclaration obligatoire. Annexe III.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
-  'ISOEUGENOL': {
+  ISOEUGENOL: {
     inciName: 'ISOEUGENOL',
     commonName: 'Isoeugénol',
     casNumber: '97-54-1',
@@ -938,13 +990,18 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['FRAGRANCE'],
     riskLevel: 'MODERATE',
     hazardCategories: ['ALLERGEN'],
-    restrictions: 'Allergène fort réglementé. Interdit dans certaines applications (parfums fine fragrance) en EU depuis 2023. Annexe III.',
+    restrictions:
+      'Allergène fort réglementé. Interdit dans certaines applications (parfums fine fragrance) en EU depuis 2023. Annexe III.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
-  'HYDROXYCITRONELLAL': {
+  HYDROXYCITRONELLAL: {
     inciName: 'HYDROXYCITRONELLAL',
     commonName: 'Hydroxycitronellal',
     casNumber: '107-75-5',
@@ -954,7 +1011,11 @@ export const OFFICIAL_INGREDIENTS = {
     hazardCategories: ['ALLERGEN'],
     restrictions: 'Allergène réglementé — déclaration obligatoire. Annexe III.',
     sources: [
-      { name: 'CosIng', url: 'https://ec.europa.eu/growth/tools-databases/cosing/', type: 'COSING' },
+      {
+        name: 'CosIng',
+        url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
+        type: 'COSING',
+      },
     ],
   },
 
@@ -967,7 +1028,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['UV_FILTER', 'COLORANT'],
     riskLevel: 'MODERATE',
     hazardCategories: ['NANO', 'CMR'],
-    restrictions: 'Forme nano : CMR cat. 1A par inhalation (IARC groupe 2B). Autorisé en form nano dans crèmes solaires (voie cutanée, pas spray). Déclaration [nano] obligatoire.',
+    restrictions:
+      'Forme nano : CMR cat. 1A par inhalation (IARC groupe 2B). Autorisé en form nano dans crèmes solaires (voie cutanée, pas spray). Déclaration [nano] obligatoire.',
     sources: [
       {
         name: 'IARC Monograph — TiO2',
@@ -990,7 +1052,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['UV_FILTER', 'SKIN_PROTECTING'],
     riskLevel: 'LOW',
     hazardCategories: ['NANO'],
-    restrictions: 'Forme nano autorisée (crèmes solaires cutanées). Interdit dans les sprays/aérosols. Déclaration [nano] obligatoire. Annexe VI n°30.',
+    restrictions:
+      'Forme nano autorisée (crèmes solaires cutanées). Interdit dans les sprays/aérosols. Déclaration [nano] obligatoire. Annexe VI n°30.',
     sources: [
       {
         name: 'CosIng — Annexe VI n°30',
@@ -1008,7 +1071,8 @@ export const OFFICIAL_INGREDIENTS = {
     function: ['COLORANT'],
     riskLevel: 'RESTRICTED',
     hazardCategories: ['NANO', 'CMR'],
-    restrictions: 'CMR cat. 2 (IARC groupe 2B). Forme nano : interdit dans les produits cosmétiques selon l\'ANSES. Annexe II (forme nano).',
+    restrictions:
+      "CMR cat. 2 (IARC groupe 2B). Forme nano : interdit dans les produits cosmétiques selon l'ANSES. Annexe II (forme nano).",
     sources: [
       {
         name: 'ANSES — Évaluation nanoparticules',

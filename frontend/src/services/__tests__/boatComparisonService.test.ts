@@ -11,8 +11,18 @@ import {
 } from '../boatComparisonService';
 import type { BoatPricePoint, BoatRoute, Port } from '../../types/boatComparison';
 
-const POINTE_A_PITRE: Port = { code: 'PPT', name: 'Port de Pointe-à-Pitre', city: 'Pointe-à-Pitre', territory: 'GP' };
-const MARIE_GALANTE: Port = { code: 'MGT', name: 'Port de Marie-Galante', city: 'Grand-Bourg', territory: 'GP' };
+const POINTE_A_PITRE: Port = {
+  code: 'PPT',
+  name: 'Port de Pointe-à-Pitre',
+  city: 'Pointe-à-Pitre',
+  territory: 'GP',
+};
+const MARIE_GALANTE: Port = {
+  code: 'MGT',
+  name: 'Port de Marie-Galante',
+  city: 'Grand-Bourg',
+  territory: 'GP',
+};
 
 const mockRoute: BoatRoute = {
   origin: POINTE_A_PITRE,
@@ -26,7 +36,7 @@ const makeBoatPrice = (
   operator: string,
   passengerPrice: number,
   serviceClass: BoatPricePoint['serviceClass'] = 'standard',
-  verified = true,
+  verified = true
 ): BoatPricePoint => ({
   id,
   operator,
@@ -116,7 +126,11 @@ describe('filterBoatPrices', () => {
   });
 
   it('filters by routeType', () => {
-    const coastal = { ...mockPrices[0], id: 'b4', route: { ...mockRoute, routeType: 'coastal' as const } };
+    const coastal = {
+      ...mockPrices[0],
+      id: 'b4',
+      route: { ...mockRoute, routeType: 'coastal' as const },
+    };
     const all = [...mockPrices, coastal];
     const filtered = filterBoatPrices(all, { routeType: 'coastal' });
     expect(filtered).toHaveLength(1);

@@ -1,16 +1,15 @@
- 
 /**
  * priceAnalysis.ts — Price calculation and analysis utilities
- * 
+ *
  * Purpose: Pure functions for price-related calculations
  * Used by: Price alerts, comparisons, charts, analysis components
- * 
+ *
  * @module priceAnalysis
  */
 
 /**
  * Calculate percentage change between two prices
- * 
+ *
  * @param currentPrice - Current price
  * @param previousPrice - Previous price
  * @returns Percentage change (can be positive or negative)
@@ -22,7 +21,7 @@ export function calculatePercentageChange(currentPrice: number, previousPrice: n
 
 /**
  * Calculate absolute price change
- * 
+ *
  * @param currentPrice - Current price
  * @param previousPrice - Previous price
  * @returns Absolute change (can be positive or negative)
@@ -33,7 +32,7 @@ export function calculateAbsoluteChange(currentPrice: number, previousPrice: num
 
 /**
  * Calculate price as percentage of income
- * 
+ *
  * @param price - Price or budget amount
  * @param income - Income amount
  * @returns Percentage of income
@@ -45,7 +44,7 @@ export function calculatePercentOfIncome(price: number, income: number): number 
 
 /**
  * Calculate savings compared to reference price
- * 
+ *
  * @param currentPrice - Current price
  * @param referencePrice - Reference price (e.g., best price)
  * @returns Savings as percentage
@@ -57,7 +56,7 @@ export function calculateSavingsPercentage(currentPrice: number, referencePrice:
 
 /**
  * Find best (minimum) price in a list
- * 
+ *
  * @param prices - Array of price values
  * @returns Minimum price or 0 if array is empty
  */
@@ -68,7 +67,7 @@ export function findBestPrice(prices: number[]): number {
 
 /**
  * Find worst (maximum) price in a list
- * 
+ *
  * @param prices - Array of price values
  * @returns Maximum price or 0 if array is empty
  */
@@ -79,7 +78,7 @@ export function findWorstPrice(prices: number[]): number {
 
 /**
  * Calculate average price
- * 
+ *
  * @param prices - Array of price values
  * @returns Average price or 0 if array is empty
  */
@@ -91,16 +90,16 @@ export function calculateAveragePrice(prices: number[]): number {
 
 /**
  * Calculate median price
- * 
+ *
  * @param prices - Array of price values
  * @returns Median price or 0 if array is empty
  */
 export function calculateMedianPrice(prices: number[]): number {
   if (prices.length === 0) return 0;
-  
+
   const sorted = [...prices].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  
+
   if (sorted.length % 2 === 0) {
     return (sorted[mid - 1] + sorted[mid]) / 2;
   }
@@ -109,7 +108,7 @@ export function calculateMedianPrice(prices: number[]): number {
 
 /**
  * Compare unit prices to detect false bargains
- * 
+ *
  * @param formats - Array of product formats with unitPrice
  * @returns Object with best, worst formats and analysis
  */
@@ -117,11 +116,11 @@ export function analyzeFalseBargains<T extends { unitPrice: number }>(formats: T
   if (formats.length === 0) {
     return { best: null, worst: null, sortedFormats: [] };
   }
-  
+
   const sortedFormats = [...formats].sort((a, b) => a.unitPrice - b.unitPrice);
   const best = sortedFormats[0];
   const worst = sortedFormats[sortedFormats.length - 1];
-  
+
   return {
     best,
     worst,
@@ -131,7 +130,7 @@ export function analyzeFalseBargains<T extends { unitPrice: number }>(formats: T
 
 /**
  * Calculate deficit or surplus
- * 
+ *
  * @param income - Income amount
  * @param budget - Budget amount
  * @returns Object with difference, isDeficit flag, and percentage
@@ -140,7 +139,7 @@ export function calculateBudgetAnalysis(income: number, budget: number) {
   const difference = income - budget;
   const isDeficit = difference < 0;
   const percentOfIncome = calculatePercentOfIncome(budget, income);
-  
+
   return {
     difference,
     isDeficit,
@@ -151,7 +150,7 @@ export function calculateBudgetAnalysis(income: number, budget: number) {
 
 /**
  * Check if a price is abnormal compared to historical data
- * 
+ *
  * @param currentPrice - Current price
  * @param historicalPrices - Array of historical prices
  * @param deviationThreshold - Standard deviation threshold (default: 2)
@@ -163,12 +162,12 @@ export function isAbnormalPrice(
   deviationThreshold: number = 2
 ): boolean {
   if (historicalPrices.length === 0) return false;
-  
+
   const mean = calculateAveragePrice(historicalPrices);
-  const squaredDiffs = historicalPrices.map(price => Math.pow(price - mean, 2));
+  const squaredDiffs = historicalPrices.map((price) => Math.pow(price - mean, 2));
   const variance = squaredDiffs.reduce((acc, val) => acc + val, 0) / historicalPrices.length;
   const stdDev = Math.sqrt(variance);
-  
+
   const deviation = Math.abs(currentPrice - mean) / stdDev;
   return deviation > deviationThreshold;
 }
@@ -186,12 +185,12 @@ export interface TerritoryBasketComparison {
 
 /**
  * Compare a basket across multiple territories
- * 
+ *
  * @param basket - Basket object with price per territory or price calculation function
  * @param territoryIds - Array of territory IDs to compare
  * @param getPriceForTerritory - Function to get price for a given territory (optional)
  * @returns Array of comparison results sorted by price (cheapest first)
- * 
+ *
  * @example
  * const results = compareBasketAcrossTerritories(
  *   { GP: 45.50, MQ: 48.20, GF: 46.80 },
@@ -214,10 +213,10 @@ export function compareBasketAcrossTerritories(
 
   // Calculate prices for each territory
   const territoryPrices: Array<{ territoryId: string; totalPrice: number }> = [];
-  
+
   for (const territoryId of territoryIds) {
     let price: number;
-    
+
     if (getPriceForTerritory) {
       // Use custom price calculation function
       price = getPriceForTerritory(basket, territoryId);
@@ -231,7 +230,7 @@ export function compareBasketAcrossTerritories(
       // Skip territories without price data
       continue;
     }
-    
+
     territoryPrices.push({ territoryId, totalPrice: price });
   }
 
@@ -240,10 +239,10 @@ export function compareBasketAcrossTerritories(
   }
 
   // Find minimum price
-  const minPrice = Math.min(...territoryPrices.map(tp => tp.totalPrice));
+  const minPrice = Math.min(...territoryPrices.map((tp) => tp.totalPrice));
 
   // Build comparison results
-  const results: TerritoryBasketComparison[] = territoryPrices.map(tp => ({
+  const results: TerritoryBasketComparison[] = territoryPrices.map((tp) => ({
     territoryId: tp.territoryId,
     totalPrice: tp.totalPrice,
     deltaFromMin: tp.totalPrice - minPrice,

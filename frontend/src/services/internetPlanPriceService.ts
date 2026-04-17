@@ -1,9 +1,9 @@
 /**
  * Internet Plan Price Service
- * 
+ *
  * Service de comparaison des prix des abonnements Internet
  * Données simulées structurées pour démonstration
- * 
+ *
  * IMPORTANT:
  * - Données publiques uniquement
  * - Aucun tracking utilisateur
@@ -13,10 +13,10 @@
 
 export interface InternetPlanPrice {
   operateur: string;
-  technologie: string;      // "ADSL", "Fibre", "4G Box", "Satellite"
+  technologie: string; // "ADSL", "Fibre", "4G Box", "Satellite"
   prixMensuel: number;
-  debitDescendant: string;  // e.g., "100 Mb/s", "1 Gb/s"
-  engagement: string;       // "Oui" ou "Non"
+  debitDescendant: string; // e.g., "100 Mb/s", "1 Gb/s"
+  engagement: string; // "Oui" ou "Non"
   territoire: string;
   source: string;
   dateReleve: string;
@@ -280,9 +280,7 @@ const SIMULATED_DATA: InternetPlanPrice[] = [
  * Tri par: 1. Prix, 2. Date de relevé
  */
 export function searchInternetPlanPrices(params: InternetPlanSearchParams): InternetPlanPrice[] {
-  let results = SIMULATED_DATA.filter(
-    (plan) => plan.territoire === params.territoire
-  );
+  let results = SIMULATED_DATA.filter((plan) => plan.territoire === params.territoire);
 
   // Filtrer par technologie si spécifiée
   if (params.technologie) {

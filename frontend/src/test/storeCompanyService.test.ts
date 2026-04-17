@@ -80,15 +80,15 @@ describe('Store-Company Integration Service', () => {
     it('should get all stores with company information', () => {
       const stores = getAllStoresWithCompanies();
       expect(stores.length).toBeGreaterThan(0);
-      
+
       // Check that some stores have company data
-      const storesWithCompanies = stores.filter(s => s.company !== undefined);
+      const storesWithCompanies = stores.filter((s) => s.company !== undefined);
       expect(storesWithCompanies.length).toBeGreaterThan(0);
     });
 
     it('should include company status for each store', () => {
       const stores = getAllStoresWithCompanies();
-      stores.forEach(store => {
+      stores.forEach((store) => {
         if (store.company) {
           expect(store.companyStatus).toBeDefined();
           expect(store.isCompanyActive).toBeDefined();
@@ -101,8 +101,8 @@ describe('Store-Company Integration Service', () => {
     it('should get stores for Guadeloupe with company data', () => {
       const stores = getStoresByTerritoryWithCompanies('Guadeloupe');
       expect(stores.length).toBeGreaterThan(0);
-      
-      stores.forEach(store => {
+
+      stores.forEach((store) => {
         expect(store.territory).toBe('Guadeloupe');
       });
     });
@@ -149,7 +149,7 @@ describe('Store-Company Integration Service', () => {
   describe('validateStoreCompanyLinks', () => {
     it('should validate store-company links', () => {
       const validation = validateStoreCompanyLinks();
-      
+
       expect(validation).toHaveProperty('valid');
       expect(validation).toHaveProperty('errors');
       expect(validation).toHaveProperty('warnings');
@@ -159,9 +159,9 @@ describe('Store-Company Integration Service', () => {
 
     it('should report link validity against seed data', () => {
       const validation = validateStoreCompanyLinks();
-      
+
       expect(validation.valid).toBe(validation.errors.length === 0);
-      validation.errors.forEach(error => {
+      validation.errors.forEach((error) => {
         expect(error).toMatch(/references non-existent company/i);
       });
     });
@@ -171,8 +171,8 @@ describe('Store-Company Integration Service', () => {
     it('should correctly filter Martinique stores with companies', () => {
       const stores = getStoresByTerritoryWithCompanies('Martinique');
       expect(stores.length).toBeGreaterThan(0);
-      
-      stores.forEach(store => {
+
+      stores.forEach((store) => {
         expect(store.territory).toBe('Martinique');
         if (store.companyId) {
           expect(store.company).toBeDefined();
@@ -184,7 +184,7 @@ describe('Store-Company Integration Service', () => {
   describe('Integration - Company data enrichment', () => {
     it('should enrich store data with full company details', () => {
       const store = getStoreWithCompany('leclerc_abymes');
-      
+
       expect(store).not.toBeNull();
       if (store?.company) {
         expect(store.company.legalName).toBeDefined();

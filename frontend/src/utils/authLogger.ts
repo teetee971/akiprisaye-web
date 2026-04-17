@@ -78,8 +78,8 @@ const MAX_HISTORY = 20;
 
 /* ── Trace persistence (debug mode only) ────────────────────────────── */
 
-const TRACE_KEY   = 'auth:trace';
-const TRACE_TTL   = 30 * 60 * 1000; // 30 minutes
+const TRACE_KEY = 'auth:trace';
+const TRACE_TTL = 30 * 60 * 1000; // 30 minutes
 
 interface PersistedTrace {
   events: AuthLogEntry[];
@@ -96,7 +96,7 @@ function loadPersistedTrace(): void {
       return;
     }
     for (const e of parsed.events ?? []) {
-      if (!history.some(h => h.ts === e.ts && h.event === e.event)) {
+      if (!history.some((h) => h.ts === e.ts && h.event === e.event)) {
         history.push(e);
       }
     }
@@ -140,7 +140,11 @@ export function getAuthEventHistory(): AuthLogEntry[] {
 /** Clears all in-memory events and removes the persisted trace. */
 export function clearAuthHistory(): void {
   history.length = 0;
-  try { sessionStorage.removeItem(TRACE_KEY); } catch { /* */ }
+  try {
+    sessionStorage.removeItem(TRACE_KEY);
+  } catch {
+    /* */
+  }
 }
 
 /* ── Diagnostic report ───────────────────────────────────────────────── */

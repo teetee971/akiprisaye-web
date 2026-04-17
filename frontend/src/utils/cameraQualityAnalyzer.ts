@@ -1,6 +1,6 @@
 /**
  * Camera Quality Analyzer - v1.0.0
- * 
+ *
  * Analyse en temps réel de la qualité de la caméra
  * Fournit des conseils pour améliorer les scans
  */
@@ -57,16 +57,22 @@ export function analyzeSharpness(imageData: ImageData): number {
   for (let y = 1; y < height - 1; y += 5) {
     for (let x = 1; x < width - 1; x += 5) {
       const idx = (y * width + x) * 4;
-      
+
       // Niveaux de gris
       const center = 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
-      
+
       // Voisins (simplified Laplacian: détection de bords)
       const left = 0.299 * data[idx - 4] + 0.587 * data[idx - 3] + 0.114 * data[idx - 2];
       const right = 0.299 * data[idx + 4] + 0.587 * data[idx + 5] + 0.114 * data[idx + 6];
-      const top = 0.299 * data[idx - width * 4] + 0.587 * data[idx - width * 4 + 1] + 0.114 * data[idx - width * 4 + 2];
-      const bottom = 0.299 * data[idx + width * 4] + 0.587 * data[idx + width * 4 + 1] + 0.114 * data[idx + width * 4 + 2];
-      
+      const top =
+        0.299 * data[idx - width * 4] +
+        0.587 * data[idx - width * 4 + 1] +
+        0.114 * data[idx - width * 4 + 2];
+      const bottom =
+        0.299 * data[idx + width * 4] +
+        0.587 * data[idx + width * 4 + 1] +
+        0.114 * data[idx + width * 4 + 2];
+
       const laplacian = Math.abs(4 * center - left - right - top - bottom);
       variance += laplacian * laplacian;
       count++;
@@ -121,17 +127,17 @@ export function analyzeCameraQuality(videoElement: HTMLVideoElement): CameraQual
 
   // Score global (0-100)
   let score = 0;
-  
+
   // Luminosité contribue 40%
   if (lighting === 'perfect') score += 40;
   else if (brightness >= 70 && brightness <= 180) score += 30;
   else score += 10;
-  
+
   // Netteté contribue 40%
   if (sharpness > 150) score += 40;
   else if (sharpness > 100) score += 30;
   else if (sharpness > 50) score += 15;
-  
+
   // Distance contribue 20%
   if (distance === 'perfect') score += 20;
   else score += 10;
@@ -169,7 +175,7 @@ export function generateQualityTips(quality: CameraQuality): QualityTip[] {
   } else if (quality.lighting === 'too_bright') {
     tips.push({
       type: 'lighting',
-      message: 'Trop de lumière. Évitez les reflets ou ajustez l\'angle.',
+      message: "Trop de lumière. Évitez les reflets ou ajustez l'angle.",
       priority: 'helpful',
       icon: '☀️',
     });

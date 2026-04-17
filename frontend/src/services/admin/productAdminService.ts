@@ -1,4 +1,3 @@
- 
 /**
  * Admin Product Service
  * CRUD operations for product management
@@ -21,17 +20,35 @@ interface RawCatalogueItem {
 function mapCategoryToProductCategory(raw: string): ProductCategory {
   const u = (raw ?? '').toUpperCase();
   if (u.includes('LÉGUME') || u.includes('LEGUME') || u.includes('FRUIT')) return 'fruits-legumes';
-  if (u.includes('LAIT') || u.includes('YAOURT') || u.includes('FROMAGE')) return 'produits-laitiers';
-  if (u.includes('VIANDE') || u.includes('BOEUF') || u.includes('PORC') || u.includes('VOLAILLE')) return 'viande';
+  if (u.includes('LAIT') || u.includes('YAOURT') || u.includes('FROMAGE'))
+    return 'produits-laitiers';
+  if (u.includes('VIANDE') || u.includes('BOEUF') || u.includes('PORC') || u.includes('VOLAILLE'))
+    return 'viande';
   if (u.includes('POISSON') || u.includes('FRUITS DE MER')) return 'poisson';
-  if (u.includes('BOISSON') || u.includes('JUS') || u.includes('EAU') || u.includes('SODA')) return 'boissons';
-  if (u.includes('HYGIÈNE') || u.includes('HYGIENE') || u.includes('BEAUTÉ') || u.includes('SOIN')) return 'hygiene';
-  if (u.includes('ENTRETIEN') || u.includes('NETTOYAGE') || u.includes('LESSIVE')) return 'entretien';
+  if (u.includes('BOISSON') || u.includes('JUS') || u.includes('EAU') || u.includes('SODA'))
+    return 'boissons';
+  if (u.includes('HYGIÈNE') || u.includes('HYGIENE') || u.includes('BEAUTÉ') || u.includes('SOIN'))
+    return 'hygiene';
+  if (u.includes('ENTRETIEN') || u.includes('NETTOYAGE') || u.includes('LESSIVE'))
+    return 'entretien';
   if (u.includes('BÉBÉ') || u.includes('BEBE')) return 'bebe';
   if (u.includes('SURGELÉ') || u.includes('SURGELE')) return 'surgeles';
-  if (u.includes('PAIN') || u.includes('PÂTISSERIE') || u.includes('PATISSERIE') || u.includes('BOULANG')) return 'pain-patisserie';
-  if (u.includes('ÉPICERIE') || u.includes('EPICERIE') || u.includes('CONSERVE') || u.includes('CONDIMENT')) return 'epicerie';
-  if (u.includes('ALIMENTAIRE') || u.includes('CEREAL') || u.includes('CÉRÉALE')) return 'alimentaire';
+  if (
+    u.includes('PAIN') ||
+    u.includes('PÂTISSERIE') ||
+    u.includes('PATISSERIE') ||
+    u.includes('BOULANG')
+  )
+    return 'pain-patisserie';
+  if (
+    u.includes('ÉPICERIE') ||
+    u.includes('EPICERIE') ||
+    u.includes('CONSERVE') ||
+    u.includes('CONDIMENT')
+  )
+    return 'epicerie';
+  if (u.includes('ALIMENTAIRE') || u.includes('CEREAL') || u.includes('CÉRÉALE'))
+    return 'alimentaire';
   return 'autre';
 }
 
@@ -45,7 +62,10 @@ function inferUnit(name: string): Unit {
 }
 
 function slugify(text: string, index: number): string {
-  return `static-${index}-${text.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)}`;
+  return `static-${index}-${text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .slice(0, 40)}`;
 }
 
 let _staticProductsCache: Product[] | null = null;
@@ -56,15 +76,17 @@ export async function getProductsStatic(): Promise<Product[]> {
     const res = await fetch('/data/catalogue.json');
     if (!res.ok) throw new Error('catalogue.json not found');
     const raw: RawCatalogueItem[] = await res.json();
-    _staticProductsCache = raw.map((item, idx): Product => ({
-      id: slugify(item.name ?? `product-${idx}`, idx),
-      name: item.name ?? `Produit ${idx + 1}`,
-      brand: item.tags?.find((t) => !['LOCAL', 'BIO', 'SOUVERAIN', 'PROMO'].includes(t)),
-      category: mapCategoryToProductCategory(item.category ?? ''),
-      ean: undefined,
-      unit: inferUnit(item.name ?? ''),
-      quantity: 1,
-    }));
+    _staticProductsCache = raw.map(
+      (item, idx): Product => ({
+        id: slugify(item.name ?? `product-${idx}`, idx),
+        name: item.name ?? `Produit ${idx + 1}`,
+        brand: item.tags?.find((t) => !['LOCAL', 'BIO', 'SOUVERAIN', 'PROMO'].includes(t)),
+        category: mapCategoryToProductCategory(item.category ?? ''),
+        ean: undefined,
+        unit: inferUnit(item.name ?? ''),
+        quantity: 1,
+      })
+    );
     return _staticProductsCache;
   } catch {
     return [];

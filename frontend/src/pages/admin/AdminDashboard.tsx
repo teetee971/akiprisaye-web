@@ -4,7 +4,28 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Store, Package, DollarSign, MapPin, Bot, Activity, Zap, ShieldCheck, Bell, ExternalLink, RefreshCw, CheckCircle, XCircle, Clock, ShieldAlert, LogIn, Trash2, UserCheck, KeyRound, AlertTriangle } from 'lucide-react';
+import {
+  Store,
+  Package,
+  DollarSign,
+  MapPin,
+  Bot,
+  Activity,
+  Zap,
+  ShieldCheck,
+  Bell,
+  ExternalLink,
+  RefreshCw,
+  CheckCircle,
+  XCircle,
+  Clock,
+  ShieldAlert,
+  LogIn,
+  Trash2,
+  UserCheck,
+  KeyRound,
+  AlertTriangle,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '../../components/ui/glass-card';
 import { getStores, getStoresStatic } from '@/services/admin/storeAdminService';
@@ -33,17 +54,83 @@ interface AuditEntry {
 }
 
 const AUDIT_SEED: AuditEntry[] = [
-  { id: 'a1', at: new Date(Date.now() - 4 * 60 * 1000), actor: 'admin@akiprisaye.re', action: 'CONNEXION', target: 'session', severity: 'info', ip: '82.64.12.3' },
-  { id: 'a2', at: new Date(Date.now() - 18 * 60 * 1000), actor: 'admin@akiprisaye.re', action: 'SUPPRESSION_PRODUIT', target: 'produit #4821 — Yaourt Danone', severity: 'warning', ip: '82.64.12.3' },
-  { id: 'a3', at: new Date(Date.now() - 47 * 60 * 1000), actor: 'moderateur@akiprisaye.re', action: 'VALIDATION_CONTRIBUTION', target: 'contribution #992 — Leclerc Jarry', severity: 'info', ip: '41.202.7.14' },
-  { id: 'a4', at: new Date(Date.now() - 2 * 3600 * 1000), actor: 'system', action: 'SCRAPING_ECHEC', target: 'source: fuel-prices.json', severity: 'critical' },
-  { id: 'a5', at: new Date(Date.now() - 4 * 3600 * 1000), actor: 'admin@akiprisaye.re', action: 'CHANGEMENT_ROLE', target: 'user pro@enseigne.gp → ROLE: pro', severity: 'warning', ip: '82.64.12.3' },
-  { id: 'a6', at: new Date(Date.now() - 6 * 3600 * 1000), actor: 'system', action: 'TENTATIVE_ACCES_REFUSE', target: 'route /admin — user inconnu', severity: 'critical', ip: '185.220.101.45' },
-  { id: 'a7', at: new Date(Date.now() - 8 * 3600 * 1000), actor: 'admin@akiprisaye.re', action: 'EXPORT_DONNEES', target: 'alertes-sanitaires-gp-2026-04-14.csv', severity: 'info', ip: '82.64.12.3' },
-  { id: 'a8', at: new Date(Date.now() - 24 * 3600 * 1000), actor: 'admin@akiprisaye.re', action: 'CONNEXION', target: 'session', severity: 'info', ip: '82.64.12.3' },
+  {
+    id: 'a1',
+    at: new Date(Date.now() - 4 * 60 * 1000),
+    actor: 'admin@akiprisaye.re',
+    action: 'CONNEXION',
+    target: 'session',
+    severity: 'info',
+    ip: '82.64.12.3',
+  },
+  {
+    id: 'a2',
+    at: new Date(Date.now() - 18 * 60 * 1000),
+    actor: 'admin@akiprisaye.re',
+    action: 'SUPPRESSION_PRODUIT',
+    target: 'produit #4821 — Yaourt Danone',
+    severity: 'warning',
+    ip: '82.64.12.3',
+  },
+  {
+    id: 'a3',
+    at: new Date(Date.now() - 47 * 60 * 1000),
+    actor: 'moderateur@akiprisaye.re',
+    action: 'VALIDATION_CONTRIBUTION',
+    target: 'contribution #992 — Leclerc Jarry',
+    severity: 'info',
+    ip: '41.202.7.14',
+  },
+  {
+    id: 'a4',
+    at: new Date(Date.now() - 2 * 3600 * 1000),
+    actor: 'system',
+    action: 'SCRAPING_ECHEC',
+    target: 'source: fuel-prices.json',
+    severity: 'critical',
+  },
+  {
+    id: 'a5',
+    at: new Date(Date.now() - 4 * 3600 * 1000),
+    actor: 'admin@akiprisaye.re',
+    action: 'CHANGEMENT_ROLE',
+    target: 'user pro@enseigne.gp → ROLE: pro',
+    severity: 'warning',
+    ip: '82.64.12.3',
+  },
+  {
+    id: 'a6',
+    at: new Date(Date.now() - 6 * 3600 * 1000),
+    actor: 'system',
+    action: 'TENTATIVE_ACCES_REFUSE',
+    target: 'route /admin — user inconnu',
+    severity: 'critical',
+    ip: '185.220.101.45',
+  },
+  {
+    id: 'a7',
+    at: new Date(Date.now() - 8 * 3600 * 1000),
+    actor: 'admin@akiprisaye.re',
+    action: 'EXPORT_DONNEES',
+    target: 'alertes-sanitaires-gp-2026-04-14.csv',
+    severity: 'info',
+    ip: '82.64.12.3',
+  },
+  {
+    id: 'a8',
+    at: new Date(Date.now() - 24 * 3600 * 1000),
+    actor: 'admin@akiprisaye.re',
+    action: 'CONNEXION',
+    target: 'session',
+    severity: 'info',
+    ip: '82.64.12.3',
+  },
 ];
 
-const AUDIT_ACTION_META: Record<string, { icon: React.ComponentType<{ className?: string }>; label: string }> = {
+const AUDIT_ACTION_META: Record<
+  string,
+  { icon: React.ComponentType<{ className?: string }>; label: string }
+> = {
   CONNEXION: { icon: LogIn, label: 'Connexion' },
   SUPPRESSION_PRODUIT: { icon: Trash2, label: 'Suppression produit' },
   VALIDATION_CONTRIBUTION: { icon: UserCheck, label: 'Validation contribution' },
@@ -109,10 +196,7 @@ export default function AdminDashboard() {
     try {
       // Static preview: use local JSON data directly, skip all API calls
       if (isDegradedMode) {
-        const [stores, products] = await Promise.all([
-          getStoresStatic(),
-          getProductsStatic(),
-        ]);
+        const [stores, products] = await Promise.all([getStoresStatic(), getProductsStatic()]);
         setStats({
           storesCount: stores.length,
           productsCount: products.length,
@@ -144,7 +228,10 @@ export default function AdminDashboard() {
         clearIncidentMode();
         return;
       } catch (overviewError) {
-        console.warn('[AdminDashboard] overview endpoint unavailable, fallback multi-source mode', overviewError);
+        console.warn(
+          '[AdminDashboard] overview endpoint unavailable, fallback multi-source mode',
+          overviewError
+        );
         activateIncidentMode('admin_overview_endpoint_unavailable');
       }
 
@@ -198,7 +285,9 @@ export default function AdminDashboard() {
         });
 
       const priceActivities: RecentActivity[] = priceContribs.map((c: any, idx: number) => {
-        const occurredAt = c.submittedAt?.toDate ? c.submittedAt.toDate() : new Date(c.submittedAt || Date.now());
+        const occurredAt = c.submittedAt?.toDate
+          ? c.submittedAt.toDate()
+          : new Date(c.submittedAt || Date.now());
         const territory = c.territory || c.location?.territory || 'N/A';
         return {
           id: `price-${c.id || idx}`,
@@ -296,13 +385,19 @@ export default function AdminDashboard() {
 
   const filteredActivities = useMemo(() => {
     const now = Date.now();
-    const periodMs = periodFilter === '24h' ? 24 * 60 * 60 * 1000 : periodFilter === '7d' ? 7 * 24 * 60 * 60 * 1000 : 30 * 24 * 60 * 60 * 1000;
+    const periodMs =
+      periodFilter === '24h'
+        ? 24 * 60 * 60 * 1000
+        : periodFilter === '7d'
+          ? 7 * 24 * 60 * 60 * 1000
+          : 30 * 24 * 60 * 60 * 1000;
     const from = now - periodMs;
 
     return recentActivity.filter((activity) => {
       const byType = activityFilter === 'all' || activity.type === activityFilter;
       const byPeriod = activity.occurredAt.getTime() >= from;
-      const byTerritory = territoryFilter === 'ALL' || !activity.territory || activity.territory === territoryFilter;
+      const byTerritory =
+        territoryFilter === 'ALL' || !activity.territory || activity.territory === territoryFilter;
       return byType && byPeriod && byTerritory;
     });
   }, [recentActivity, activityFilter, periodFilter, territoryFilter]);
@@ -313,11 +408,14 @@ export default function AdminDashboard() {
     }
   }, [periodFilter, territoryFilter]);
 
-  const updatesByType = useMemo(() => ({
-    store: filteredActivities.filter((activity) => activity.type === 'store'),
-    product: filteredActivities.filter((activity) => activity.type === 'product'),
-    price: filteredActivities.filter((activity) => activity.type === 'price'),
-  }), [filteredActivities]);
+  const updatesByType = useMemo(
+    () => ({
+      store: filteredActivities.filter((activity) => activity.type === 'store'),
+      product: filteredActivities.filter((activity) => activity.type === 'product'),
+      price: filteredActivities.filter((activity) => activity.type === 'price'),
+    }),
+    [filteredActivities]
+  );
 
   const todayCounters = useMemo(() => {
     const start = new Date();
@@ -360,16 +458,10 @@ export default function AdminDashboard() {
       )}
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-slate-100 mb-2">
-          Tableau de bord
-        </h1>
-        <p className="text-slate-300">
-          Vue d'ensemble de la plateforme A KI PRI SA YÉ
-        </p>
+        <h1 className="text-3xl font-bold text-slate-100 mb-2">Tableau de bord</h1>
+        <p className="text-slate-300">Vue d'ensemble de la plateforme A KI PRI SA YÉ</p>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <p className="text-xs text-slate-400">
-            Dernière mise à jour : {lastUpdated}
-          </p>
+          <p className="text-xs text-slate-400">Dernière mise à jour : {lastUpdated}</p>
           <button
             type="button"
             onClick={handleRefresh}
@@ -387,9 +479,7 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-2">
             <Bot className="w-5 h-5 text-indigo-400" />
             <h2 className="text-lg font-semibold text-slate-100">Automatisation — État live</h2>
-            {automationLoading && (
-              <RefreshCw className="w-3.5 h-3.5 text-slate-400 animate-spin" />
-            )}
+            {automationLoading && <RefreshCw className="w-3.5 h-3.5 text-slate-400 animate-spin" />}
           </div>
           <Link
             to="/admin/automation"
@@ -403,15 +493,17 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {/* Scrapers */}
           <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-3">
-            <Activity className={`w-7 h-7 shrink-0 ${
-              !automationStatus
-                ? 'text-slate-500'
-                : automationStatus.scraping.staleness === 'stale'
-                  ? 'text-red-400'
-                  : automationStatus.scraping.staleness === 'fresh'
-                    ? 'text-emerald-400'
-                    : 'text-yellow-400'
-            }`} />
+            <Activity
+              className={`w-7 h-7 shrink-0 ${
+                !automationStatus
+                  ? 'text-slate-500'
+                  : automationStatus.scraping.staleness === 'stale'
+                    ? 'text-red-400'
+                    : automationStatus.scraping.staleness === 'fresh'
+                      ? 'text-emerald-400'
+                      : 'text-yellow-400'
+              }`}
+            />
             <div>
               <p className="text-lg font-bold text-white leading-none">
                 {automationLoading
@@ -441,12 +533,16 @@ export default function AdminDashboard() {
 
           {/* Moderation pending */}
           <div className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-3">
-            <ShieldCheck className={`w-7 h-7 shrink-0 ${
-              (automationStatus?.moderation.pending ?? 0) > 0 ? 'text-orange-400' : 'text-emerald-400'
-            }`} />
+            <ShieldCheck
+              className={`w-7 h-7 shrink-0 ${
+                (automationStatus?.moderation.pending ?? 0) > 0
+                  ? 'text-orange-400'
+                  : 'text-emerald-400'
+              }`}
+            />
             <div>
               <p className="text-lg font-bold text-white leading-none">
-                {automationLoading ? '…' : automationStatus?.moderation.pending ?? 0}
+                {automationLoading ? '…' : (automationStatus?.moderation.pending ?? 0)}
               </p>
               <p className="text-xs text-slate-400 mt-0.5">En attente</p>
             </div>
@@ -457,7 +553,7 @@ export default function AdminDashboard() {
             <Bell className="w-7 h-7 shrink-0 text-purple-400" />
             <div>
               <p className="text-lg font-bold text-white leading-none">
-                {automationLoading ? '…' : automationStatus?.alerts.triggeredLast24h ?? 0}
+                {automationLoading ? '…' : (automationStatus?.alerts.triggeredLast24h ?? 0)}
               </p>
               <p className="text-xs text-slate-400 mt-0.5">Alertes / 24h</p>
             </div>
@@ -487,13 +583,15 @@ export default function AdminDashboard() {
                           : 'bg-slate-700/40 border-slate-600/30 text-slate-400'
                   }`}
                 >
-                  {isRunning
-                    ? <RefreshCw className="w-3 h-3 animate-spin" />
-                    : isOk
-                      ? <CheckCircle className="w-3 h-3" />
-                      : isFail
-                        ? <XCircle className="w-3 h-3" />
-                        : <Clock className="w-3 h-3" />}
+                  {isRunning ? (
+                    <RefreshCw className="w-3 h-3 animate-spin" />
+                  ) : isOk ? (
+                    <CheckCircle className="w-3 h-3" />
+                  ) : isFail ? (
+                    <XCircle className="w-3 h-3" />
+                  ) : (
+                    <Clock className="w-3 h-3" />
+                  )}
                   {run.name}
                 </a>
               );
@@ -509,9 +607,7 @@ export default function AdminDashboard() {
             <h2 className="text-lg sm:text-xl font-semibold text-slate-100">
               Alertes prioritaires
             </h2>
-            <p className="text-sm text-slate-300">
-              Actions urgentes à traiter en premier.
-            </p>
+            <p className="text-sm text-slate-300">Actions urgentes à traiter en premier.</p>
           </div>
           <span className="text-xs px-2 py-1 rounded-full border border-red-300/40 bg-red-500/20 text-red-100">
             {alertItems.length} ouvertes
@@ -545,11 +641,15 @@ export default function AdminDashboard() {
           return (
             <GlassCard key={stat.name}>
               <div className="flex items-center gap-3 sm:gap-4">
-                <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                <div
+                  className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-br ${stat.color} flex items-center justify-center`}
+                >
                   <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-2xl sm:text-3xl font-bold text-slate-100 leading-none">{stat.value}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-slate-100 leading-none">
+                    {stat.value}
+                  </p>
                   <p className="text-xs sm:text-sm text-slate-300 mt-1">{stat.name}</p>
                 </div>
               </div>
@@ -562,16 +662,16 @@ export default function AdminDashboard() {
       <GlassCard>
         <div className="p-4 border-b border-white/10">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-xl font-semibold text-slate-100">
-              Dernières modifications
-            </h2>
+            <h2 className="text-xl font-semibold text-slate-100">Dernières modifications</h2>
             <div className="flex flex-wrap gap-2">
-              {([
-                { key: 'all', label: 'Tout' },
-                { key: 'store', label: 'Enseignes' },
-                { key: 'product', label: 'Articles' },
-                { key: 'price', label: 'Prix' },
-              ] as const).map((filter) => (
+              {(
+                [
+                  { key: 'all', label: 'Tout' },
+                  { key: 'store', label: 'Enseignes' },
+                  { key: 'product', label: 'Articles' },
+                  { key: 'price', label: 'Prix' },
+                ] as const
+              ).map((filter) => (
                 <button
                   key={filter.key}
                   type="button"
@@ -607,24 +707,35 @@ export default function AdminDashboard() {
               onChange={(e) => setTerritoryFilter(e.target.value)}
               className="px-2.5 py-1 text-xs rounded-md border border-white/15 bg-transparent text-slate-200"
             >
-              <option value="ALL" className="text-slate-900">Tous territoires</option>
-              <option value="GP" className="text-slate-900">Guadeloupe</option>
-              <option value="MQ" className="text-slate-900">Martinique</option>
-              <option value="GF" className="text-slate-900">Guyane</option>
-              <option value="RE" className="text-slate-900">La Réunion</option>
-              <option value="YT" className="text-slate-900">Mayotte</option>
+              <option value="ALL" className="text-slate-900">
+                Tous territoires
+              </option>
+              <option value="GP" className="text-slate-900">
+                Guadeloupe
+              </option>
+              <option value="MQ" className="text-slate-900">
+                Martinique
+              </option>
+              <option value="GF" className="text-slate-900">
+                Guyane
+              </option>
+              <option value="RE" className="text-slate-900">
+                La Réunion
+              </option>
+              <option value="YT" className="text-slate-900">
+                Mayotte
+              </option>
             </select>
           </div>
           <p className="text-xs text-slate-300 mt-2">
-            Aujourd&apos;hui : {todayCounters.store} magasins, {todayCounters.product} produits, {todayCounters.price} prix modifiés.
+            Aujourd&apos;hui : {todayCounters.store} magasins, {todayCounters.product} produits,{' '}
+            {todayCounters.price} prix modifiés.
           </p>
         </div>
         <div className="p-4">
           <div className="space-y-4">
             {filteredActivities.length === 0 ? (
-              <p className="text-slate-400 text-center py-8">
-                Aucune activité pour ce filtre
-              </p>
+              <p className="text-slate-400 text-center py-8">Aucune activité pour ce filtre</p>
             ) : (
               filteredActivities.map((activity) => (
                 <Link
@@ -655,7 +766,11 @@ export default function AdminDashboard() {
           <h3 className="text-slate-100 font-semibold mb-3">Magasins mis à jour</h3>
           <div className="space-y-2">
             {updatesByType.store.map((item) => (
-              <Link key={item.id} to={item.route} className="block rounded-lg border border-white/10 p-3 hover:bg-white/5">
+              <Link
+                key={item.id}
+                to={item.route}
+                className="block rounded-lg border border-white/10 p-3 hover:bg-white/5"
+              >
                 <p className="text-slate-100 text-sm font-medium">{item.entityName}</p>
                 <p className="text-slate-300 text-xs">{item.details}</p>
               </Link>
@@ -666,7 +781,11 @@ export default function AdminDashboard() {
           <h3 className="text-slate-100 font-semibold mb-3">Produits mis à jour</h3>
           <div className="space-y-2">
             {updatesByType.product.map((item) => (
-              <Link key={item.id} to={item.route} className="block rounded-lg border border-white/10 p-3 hover:bg-white/5">
+              <Link
+                key={item.id}
+                to={item.route}
+                className="block rounded-lg border border-white/10 p-3 hover:bg-white/5"
+              >
                 <p className="text-slate-100 text-sm font-medium">{item.entityName}</p>
                 <p className="text-slate-300 text-xs">{item.details}</p>
               </Link>
@@ -677,7 +796,11 @@ export default function AdminDashboard() {
           <h3 className="text-slate-100 font-semibold mb-3">Prix mis à jour</h3>
           <div className="space-y-2">
             {updatesByType.price.map((item) => (
-              <Link key={item.id} to={item.route} className="block rounded-lg border border-white/10 p-3 hover:bg-white/5">
+              <Link
+                key={item.id}
+                to={item.route}
+                className="block rounded-lg border border-white/10 p-3 hover:bg-white/5"
+              >
                 <p className="text-slate-100 text-sm font-medium">{item.entityName}</p>
                 <p className="text-slate-300 text-xs">{item.details}</p>
               </Link>
@@ -710,7 +833,13 @@ export default function AdminDashboard() {
                     : 'bg-transparent border-white/10 text-slate-400 hover:border-white/20'
                 }`}
               >
-                {f === 'all' ? 'Tous' : f === 'critical' ? '🔴 Critique' : f === 'warning' ? '🟡 Attention' : 'ℹ️ Info'}
+                {f === 'all'
+                  ? 'Tous'
+                  : f === 'critical'
+                    ? '🔴 Critique'
+                    : f === 'warning'
+                      ? '🟡 Attention'
+                      : 'ℹ️ Info'}
               </button>
             ))}
           </div>
@@ -720,7 +849,10 @@ export default function AdminDashboard() {
           {auditEntries
             .filter((e) => auditFilter === 'all' || e.severity === auditFilter)
             .map((entry) => {
-              const meta = AUDIT_ACTION_META[entry.action] ?? { icon: ShieldAlert, label: entry.action };
+              const meta = AUDIT_ACTION_META[entry.action] ?? {
+                icon: ShieldAlert,
+                label: entry.action,
+              };
               const IconComp = meta.icon;
               const severityClass =
                 entry.severity === 'critical'
@@ -742,14 +874,22 @@ export default function AdminDashboard() {
                     <div className="flex flex-wrap gap-x-3 mt-1 text-xs text-slate-500">
                       <span>{entry.actor}</span>
                       {entry.ip && <span>IP {entry.ip}</span>}
-                      <span>{new Intl.DateTimeFormat('fr-FR', { timeStyle: 'short', dateStyle: 'short' }).format(entry.at)}</span>
+                      <span>
+                        {new Intl.DateTimeFormat('fr-FR', {
+                          timeStyle: 'short',
+                          dateStyle: 'short',
+                        }).format(entry.at)}
+                      </span>
                     </div>
                   </div>
                 </div>
               );
             })}
-          {auditEntries.filter((e) => auditFilter === 'all' || e.severity === auditFilter).length === 0 && (
-            <p className="text-sm text-slate-500 py-4 text-center">Aucun événement pour ce filtre.</p>
+          {auditEntries.filter((e) => auditFilter === 'all' || e.severity === auditFilter)
+            .length === 0 && (
+            <p className="text-sm text-slate-500 py-4 text-center">
+              Aucun événement pour ce filtre.
+            </p>
           )}
         </div>
       </GlassCard>
@@ -759,9 +899,7 @@ export default function AdminDashboard() {
         <GlassCard>
           <Link to="/admin/stores" className="block text-center p-6">
             <Store className="w-12 h-12 mx-auto mb-4 text-slate-100" />
-            <h3 className="text-lg font-semibold text-slate-100 mb-2">
-              Gérer les enseignes
-            </h3>
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">Gérer les enseignes</h3>
             <p className="text-sm text-slate-300 mb-4">
               Ajouter, modifier ou supprimer des magasins
             </p>
@@ -774,9 +912,7 @@ export default function AdminDashboard() {
         <GlassCard>
           <Link to="/admin/products" className="block text-center p-6">
             <Package className="w-12 h-12 mx-auto mb-4 text-slate-100" />
-            <h3 className="text-lg font-semibold text-slate-100 mb-2">
-              Gérer les articles
-            </h3>
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">Gérer les articles</h3>
             <p className="text-sm text-slate-300 mb-4">
               Ajouter, modifier ou supprimer des produits
             </p>
@@ -789,12 +925,8 @@ export default function AdminDashboard() {
         <GlassCard>
           <Link to="/admin/import" className="block text-center p-6">
             <Package className="w-12 h-12 mx-auto mb-4 text-slate-100" />
-            <h3 className="text-lg font-semibold text-slate-100 mb-2">
-              Import en masse
-            </h3>
-            <p className="text-sm text-slate-300 mb-4">
-              Importer des données via CSV ou Excel
-            </p>
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">Import en masse</h3>
+            <p className="text-sm text-slate-300 mb-4">Importer des données via CSV ou Excel</p>
             <span className="inline-block px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
               Accéder
             </span>

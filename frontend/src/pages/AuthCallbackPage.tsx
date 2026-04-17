@@ -21,11 +21,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import { useAuth } from '@/context/authHook';
-import {
-  signInGoogleRedirect,
-  signInFacebookRedirect,
-  signInAppleRedirect,
-} from '@/services/auth';
+import { signInGoogleRedirect, signInFacebookRedirect, signInAppleRedirect } from '@/services/auth';
 import {
   setRedirectPendingFlag,
   getRedirectPendingFlag,
@@ -38,12 +34,12 @@ import { authLog } from '@/utils/authLogger';
 const REDIRECT_TIMEOUT_MS = 15_000;
 
 type Phase =
-  | 'initiating'   // About to call signInWithRedirect()
-  | 'pending'      // OAuth return; waiting for AuthContext to resolve
-  | 'success'      // Auth resolved with a user → redirecting
-  | 'no-user'      // Auth resolved without a user → error shown
-  | 'timeout'      // Did not resolve within REDIRECT_TIMEOUT_MS
-  | 'invalid';     // Page loaded without a valid pending context
+  | 'initiating' // About to call signInWithRedirect()
+  | 'pending' // OAuth return; waiting for AuthContext to resolve
+  | 'success' // Auth resolved with a user → redirecting
+  | 'no-user' // Auth resolved without a user → error shown
+  | 'timeout' // Did not resolve within REDIRECT_TIMEOUT_MS
+  | 'invalid'; // Page loaded without a valid pending context
 
 export default function AuthCallbackPage() {
   const { user, loading, authResolved, lastIncident } = useAuth();
@@ -51,7 +47,9 @@ export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState<Phase>('initiating');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [activeProvider, setActiveProvider] = useState<'google' | 'facebook' | 'apple' | null>(null);
+  const [activeProvider, setActiveProvider] = useState<'google' | 'facebook' | 'apple' | null>(
+    null
+  );
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initiatedRef = useRef(false);
 
@@ -65,7 +63,10 @@ export default function AuthCallbackPage() {
 
     if (existingFlag) {
       // ── OAuth return: the flag was set on the previous page load ──────────
-      authLog('AUTH_REDIRECT_RESULT_RESOLVED', { provider: existingFlag.provider, next: existingFlag.next });
+      authLog('AUTH_REDIRECT_RESULT_RESOLVED', {
+        provider: existingFlag.provider,
+        next: existingFlag.next,
+      });
       setActiveProvider(existingFlag.provider);
       setPhase('pending');
       return;
@@ -88,9 +89,9 @@ export default function AuthCallbackPage() {
 
     (async () => {
       try {
-        if (provider === 'google')   await signInGoogleRedirect();
+        if (provider === 'google') await signInGoogleRedirect();
         if (provider === 'facebook') await signInFacebookRedirect();
-        if (provider === 'apple')    await signInAppleRedirect();
+        if (provider === 'apple') await signInAppleRedirect();
         // If we reach here the browser navigates away; no further code runs.
       } catch (err: unknown) {
         clearRedirectPendingFlag();
@@ -133,10 +134,10 @@ export default function AuthCallbackPage() {
 
     if (user) {
       authLog('AUTH_STATE_USER_PRESENT', { uid: user.uid });
-      toast.success(
-        `Bienvenue${user.displayName ? `, ${user.displayName.split(' ')[0]}` : ''} !`,
-        { id: 'auth-success', duration: 3000 },
-      );
+      toast.success(`Bienvenue${user.displayName ? `, ${user.displayName.split(' ')[0]}` : ''} !`, {
+        id: 'auth-success',
+        duration: 3000,
+      });
       authLog('AUTH_NAVIGATE_AFTER_SUCCESS', { destination });
       setPhase('success');
       navigate(destination, { replace: true });
@@ -160,12 +161,14 @@ export default function AuthCallbackPage() {
     const message =
       phase === 'timeout'
         ? 'La connexion a pris trop de temps. Veuillez réessayer.'
-        : errorMsg ?? 'Connexion annulée ou refusée. Veuillez réessayer.';
+        : (errorMsg ?? 'Connexion annulée ou refusée. Veuillez réessayer.');
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center p-4">
         <div className="bg-slate-900 rounded-2xl p-6 shadow-lg w-full max-w-sm text-center">
-          <div className="text-3xl mb-4" aria-hidden="true">⚠️</div>
+          <div className="text-3xl mb-4" aria-hidden="true">
+            ⚠️
+          </div>
           <p className="text-red-300 text-sm mb-6">{message}</p>
           <button
             type="button"

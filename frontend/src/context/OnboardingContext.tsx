@@ -62,11 +62,7 @@ export function OnboardingProvider({ children }: { children: React.ReactNode }) 
     setIsTourActive,
   };
 
-  return (
-    <OnboardingContext.Provider value={value}>
-      {children}
-    </OnboardingContext.Provider>
-  );
+  return <OnboardingContext.Provider value={value}>{children}</OnboardingContext.Provider>;
 }
 
 /**

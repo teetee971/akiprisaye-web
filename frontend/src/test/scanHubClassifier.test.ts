@@ -24,13 +24,15 @@ describe('classifyScanText', () => {
   });
 
   it('classifies nutritional table correctly', () => {
-    const text = 'Valeurs nutritionnelles pour 100g kcal 350 Matières grasses 12g Glucides 45g Protéines 8g Sel 0,5g';
+    const text =
+      'Valeurs nutritionnelles pour 100g kcal 350 Matières grasses 12g Glucides 45g Protéines 8g Sel 0,5g';
     const result = classifyScanText(text);
     expect(result.type).toBe('nutrition');
   });
 
   it('classifies ingredients list correctly', () => {
-    const text = 'Ingrédients: farine, sucre, oeufs. Allergènes: gluten. Peut contenir des traces de noix.';
+    const text =
+      'Ingrédients: farine, sucre, oeufs. Allergènes: gluten. Peut contenir des traces de noix.';
     const result = classifyScanText(text);
     expect(result.type).toBe('ingredients');
   });
@@ -53,12 +55,7 @@ describe('classifyScanText', () => {
   });
 
   it('confidence is always between 35 and 98', () => {
-    const texts = [
-      'TOTAL TTC ticket caisse TVA rendu monnaie',
-      'Ingrédients: eau, sel',
-      '',
-      'x',
-    ];
+    const texts = ['TOTAL TTC ticket caisse TVA rendu monnaie', 'Ingrédients: eau, sel', '', 'x'];
     for (const t of texts) {
       const { confidence } = classifyScanText(t);
       expect(confidence).toBeGreaterThanOrEqual(35);
@@ -217,7 +214,7 @@ CB                            5,73 €
   });
 
   it('extracts TVA', () => {
-    expect(result.tvaAmount).toBeCloseTo(0.30, 2);
+    expect(result.tvaAmount).toBeCloseTo(0.3, 2);
   });
 
   it('extracts payment method', () => {

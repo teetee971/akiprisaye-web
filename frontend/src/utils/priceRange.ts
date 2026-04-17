@@ -1,9 +1,6 @@
 export type TimeRange = 'hour' | 'day' | 'week' | 'month';
 
-export function filterByRange<T extends { observedAt: string }>(
-  data: T[],
-  range: TimeRange
-): T[] {
+export function filterByRange<T extends { observedAt: string }>(data: T[], range: TimeRange): T[] {
   const now = Date.now();
   const limits: Record<TimeRange, number> = {
     hour: 3_600_000,
@@ -12,7 +9,5 @@ export function filterByRange<T extends { observedAt: string }>(
     month: 2_592_000_000,
   };
 
-  return data.filter(
-    (entry) => now - new Date(entry.observedAt).getTime() <= limits[range]
-  );
+  return data.filter((entry) => now - new Date(entry.observedAt).getTime() <= limits[range]);
 }

@@ -31,7 +31,9 @@ type BarcodeDetectorLike = {
   detect: (source: HTMLVideoElement) => Promise<Array<{ rawValue?: string }>>;
 };
 
-type BarcodeDetectorConstructor = new (options?: { formats?: BarcodeDetectorFormat[] }) => BarcodeDetectorLike;
+type BarcodeDetectorConstructor = new (options?: {
+  formats?: BarcodeDetectorFormat[];
+}) => BarcodeDetectorLike;
 
 const SUPPORTED_FORMATS: BarcodeDetectorFormat[] = ['ean_13', 'ean_8', 'upc_a', 'upc_e'];
 const DEFAULT_LOOKUP_TERRITORY: Territoire = 'martinique';
@@ -52,10 +54,16 @@ function nowIso() {
   return new Date().toISOString();
 }
 
-
-function parseQuantityDetails(quantity?: string): { quantityValue?: number; quantityUnit?: 'kg' | 'g' | 'l' | 'ml' | 'unit'; unit?: 'kg' | 'l' | 'unit' } {
+function parseQuantityDetails(quantity?: string): {
+  quantityValue?: number;
+  quantityUnit?: 'kg' | 'g' | 'l' | 'ml' | 'unit';
+  unit?: 'kg' | 'l' | 'unit';
+} {
   if (!quantity) return {};
-  const match = quantity.toLowerCase().replace(',', '.').match(/(\d+(?:\.\d+)?)\s*(kg|g|ml|l|x|unite|unité|unit)/);
+  const match = quantity
+    .toLowerCase()
+    .replace(',', '.')
+    .match(/(\d+(?:\.\d+)?)\s*(kg|g|ml|l|x|unite|unité|unit)/);
   if (!match) return {};
 
   const quantityValue = Number.parseFloat(match[1]);
@@ -81,7 +89,7 @@ function parseDisplayPrice(displayPrice?: string) {
 export async function resolveBarcode(
   barcode: string,
   territoire: Territoire = DEFAULT_LOOKUP_TERRITORY,
-  source: DataSource = 'scan_utilisateur',
+  source: DataSource = 'scan_utilisateur'
 ): Promise<ResolvedProduct | null> {
   if (!barcode) return null;
 
@@ -102,16 +110,27 @@ export async function resolveBarcode(
 
   const resolved = {
     name: viewModel.nom || `Produit (EAN: ${barcode})`,
-    brand: viewModel.marque !== 'Non spécifiée' ? viewModel.marque : ((result.product as { marque?: string }).marque),
+    brand:
+      viewModel.marque !== 'Non spécifiée'
+        ? viewModel.marque
+        : (result.product as { marque?: string }).marque,
     quantity: viewModel.contenance ?? (result.product as { quantity?: string }).quantity,
-    imageThumbUrl: (result.product as { imageThumbnail?: string; image_small_url?: string; image_thumb_url?: string }).imageThumbnail
-      ?? (result.product as { image_small_url?: string; image_thumb_url?: string }).image_small_url
-      ?? (result.product as { image_thumb_url?: string }).image_thumb_url
-      ?? viewModel.imageUrl
-      ?? undefined,
-    imageUrl: viewModel.imageUrl
-      ?? (result.product as { imageThumbnail?: string }).imageThumbnail
-      ?? undefined,
+    imageThumbUrl:
+      (
+        result.product as {
+          imageThumbnail?: string;
+          image_small_url?: string;
+          image_thumb_url?: string;
+        }
+      ).imageThumbnail ??
+      (result.product as { image_small_url?: string; image_thumb_url?: string }).image_small_url ??
+      (result.product as { image_thumb_url?: string }).image_thumb_url ??
+      viewModel.imageUrl ??
+      undefined,
+    imageUrl:
+      viewModel.imageUrl ??
+      (result.product as { imageThumbnail?: string }).imageThumbnail ??
+      undefined,
     price: parseDisplayPrice(viewModel.prix),
   };
 
@@ -174,40 +193,43 @@ export function useContinuousBarcodeScanner(options: UseContinuousBarcodeScanner
     setResults((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  const addToCart = useCallback((product: ResolvedProduct, barcode: string) => {
-    addItem({
-      id: barcode,
-      quantity: 1,
-      meta: {
-        name: product.name,
-        brand: product.brand,
-        price: product.price,
-        barcode,
-      },
-    });
-
-    const quantityDetails = parseQuantityDetails(product.quantity);
-
-    addShoppingListItem(
-      {
+  const addToCart = useCallback(
+    (product: ResolvedProduct, barcode: string) => {
+      addItem({
         id: barcode,
-        name: product.name || `Produit (EAN: ${barcode})`,
         quantity: 1,
-        price: product.price,
-        history: product.price ? [product.price] : undefined,
-        source: 'scan_utilisateur',
-        lastObservedAt: new Date().toISOString(),
-        imageThumbUrl: product.imageThumbUrl ?? product.imageUrl ?? undefined,
-        imageUrl: product.imageUrl ?? product.imageThumbUrl ?? undefined,
-        ...quantityDetails,
-      },
-      maxItems,
-    );
-  }, [addItem, maxItems]);
+        meta: {
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          barcode,
+        },
+      });
+
+      const quantityDetails = parseQuantityDetails(product.quantity);
+
+      addShoppingListItem(
+        {
+          id: barcode,
+          name: product.name || `Produit (EAN: ${barcode})`,
+          quantity: 1,
+          price: product.price,
+          history: product.price ? [product.price] : undefined,
+          source: 'scan_utilisateur',
+          lastObservedAt: new Date().toISOString(),
+          imageThumbUrl: product.imageThumbUrl ?? product.imageUrl ?? undefined,
+          imageUrl: product.imageUrl ?? product.imageThumbUrl ?? undefined,
+          ...quantityDetails,
+        },
+        maxItems
+      );
+    },
+    [addItem, maxItems]
+  );
 
   const okItems = useMemo(
     () => results.filter((item) => item.status === 'ok' && item.product),
-    [results],
+    [results]
   );
 
   const addAllOk = useCallback(() => {
@@ -219,17 +241,22 @@ export function useContinuousBarcodeScanner(options: UseContinuousBarcodeScanner
     return okItems.length;
   }, [addToCart, okItems]);
 
-  const addItemToCart = useCallback((id: string) => {
-    const target = results.find((item) => item.id === id);
-    if (target?.product) {
-      addToCart(target.product, target.barcode);
-      return true;
-    }
-    return false;
-  }, [addToCart, results]);
+  const addItemToCart = useCallback(
+    (id: string) => {
+      const target = results.find((item) => item.id === id);
+      if (target?.product) {
+        addToCart(target.product, target.barcode);
+        return true;
+      }
+      return false;
+    },
+    [addToCart, results]
+  );
 
   useEffect(() => {
-    setBarcodeSupport(typeof window !== 'undefined' && typeof window.BarcodeDetector === 'function');
+    setBarcodeSupport(
+      typeof window !== 'undefined' && typeof window.BarcodeDetector === 'function'
+    );
   }, []);
 
   useEffect(() => {
@@ -304,39 +331,45 @@ export function useContinuousBarcodeScanner(options: UseContinuousBarcodeScanner
       lastDetectedAtRef.current = now;
 
       const id = uid();
-      setResults((prev) => [
-        {
-          id,
-          barcode,
-          status: 'loading' as const,
-          detectedAt: nowIso(),
-        },
-        ...prev,
-      ].slice(0, RESULT_LIMIT));
+      setResults((prev) =>
+        [
+          {
+            id,
+            barcode,
+            status: 'loading' as const,
+            detectedAt: nowIso(),
+          },
+          ...prev,
+        ].slice(0, RESULT_LIMIT)
+      );
 
       try {
         const product = await resolveBarcode(barcode, territoire, source);
-        setResults((prev) => prev.map((item) => {
-          if (item.id !== id) return item;
-          if (!product) {
-            return { ...item, status: 'not_found' };
-          }
-          return { ...item, status: 'ok', product };
-        }));
+        setResults((prev) =>
+          prev.map((item) => {
+            if (item.id !== id) return item;
+            if (!product) {
+              return { ...item, status: 'not_found' };
+            }
+            return { ...item, status: 'ok', product };
+          })
+        );
 
         if (product && autoAddToCart && getShoppingListCount() < maxItems) {
           addToCart(product, barcode);
         }
       } catch (error) {
-        setResults((prev) => prev.map((item) => (
-          item.id === id
-            ? {
-                ...item,
-                status: 'error',
-                errorMessage: error instanceof Error ? error.message : 'Erreur inconnue',
-              }
-            : item
-        )));
+        setResults((prev) =>
+          prev.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  status: 'error',
+                  errorMessage: error instanceof Error ? error.message : 'Erreur inconnue',
+                }
+              : item
+          )
+        );
       }
     };
 

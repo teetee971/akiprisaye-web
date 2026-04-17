@@ -42,7 +42,7 @@ const SUPPLY_CHAIN_STEPS: SupplyStep[] = [
     label: 'Entrepôt & Préparation',
     location: 'Port de Le Havre',
     costEstimate: '~0,08 €',
-    detail: "Stockage en entrepôt frigorifique, palettisation, dédouanement export.",
+    detail: 'Stockage en entrepôt frigorifique, palettisation, dédouanement export.',
     color: 'bg-amber-50 border-amber-200 text-amber-800',
   },
   {
@@ -50,7 +50,8 @@ const SUPPLY_CHAIN_STEPS: SupplyStep[] = [
     label: 'Transport maritime',
     location: 'Le Havre → Pointe-à-Pitre',
     costEstimate: '~0,25 €',
-    detail: 'Fret maritime (~8 jours de traversée). Coût inclut la réservation du conteneur réfrigéré.',
+    detail:
+      'Fret maritime (~8 jours de traversée). Coût inclut la réservation du conteneur réfrigéré.',
     color: 'bg-cyan-50 border-cyan-200 text-cyan-800',
   },
   {
@@ -74,7 +75,7 @@ const SUPPLY_CHAIN_STEPS: SupplyStep[] = [
     label: 'Mise en rayon',
     location: 'Grande Surface, Guadeloupe',
     costEstimate: '~0,30 € (marge enseigne)',
-    detail: "Mise en rayon, gestion des stocks, promotion éventuelle.",
+    detail: 'Mise en rayon, gestion des stocks, promotion éventuelle.',
     color: 'bg-green-50 border-green-200 text-green-800',
   },
 ];
@@ -126,13 +127,13 @@ export default function ChaineFourniture() {
         </div>
 
         <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
-
           {/* Info banner */}
           <div className="flex gap-3 bg-cyan-50 border border-cyan-200 rounded-xl p-4">
             <Info className="w-5 h-5 text-cyan-600 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-cyan-800">
-              Exemple basé sur un produit alimentaire courant importé de Métropole vers la Guadeloupe.
-              Les chiffres sont des estimations issues des données publiques (douanes, observatoires des prix).
+              Exemple basé sur un produit alimentaire courant importé de Métropole vers la
+              Guadeloupe. Les chiffres sont des estimations issues des données publiques (douanes,
+              observatoires des prix).
             </p>
           </div>
 
@@ -161,7 +162,9 @@ export default function ChaineFourniture() {
                 <div key={step.label} className="flex gap-4">
                   {/* Ligne verticale */}
                   <div className="flex flex-col items-center">
-                    <div className={`w-9 h-9 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${step.color}`}>
+                    <div
+                      className={`w-9 h-9 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${step.color}`}
+                    >
                       <Icon className="w-4 h-4" />
                     </div>
                     {i < SUPPLY_CHAIN_STEPS.length - 1 && (
@@ -193,10 +196,22 @@ export default function ChaineFourniture() {
               {COST_BREAKDOWN.map((row) => (
                 <div key={row.label}>
                   <div className="flex items-center justify-between text-sm mb-1">
-                    <span className={row.label === 'Prix final rayon' ? 'font-bold text-gray-900' : 'text-gray-700'}>
+                    <span
+                      className={
+                        row.label === 'Prix final rayon'
+                          ? 'font-bold text-gray-900'
+                          : 'text-gray-700'
+                      }
+                    >
                       {row.label}
                     </span>
-                    <span className={row.label === 'Prix final rayon' ? 'font-bold text-indigo-700' : 'text-gray-600'}>
+                    <span
+                      className={
+                        row.label === 'Prix final rayon'
+                          ? 'font-bold text-indigo-700'
+                          : 'text-gray-600'
+                      }
+                    >
                       {row.value}
                     </span>
                   </div>
@@ -209,7 +224,10 @@ export default function ChaineFourniture() {
                       aria-label={`${row.label} : ${row.pct}%`}
                       className="w-full h-2 bg-gray-100 rounded-full overflow-hidden"
                     >
-                      <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${row.pct}%` }} />
+                      <div
+                        className="h-full bg-indigo-500 rounded-full"
+                        style={{ width: `${row.pct}%` }}
+                      />
                     </div>
                   )}
                 </div>

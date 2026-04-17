@@ -1,5 +1,17 @@
-import React, { lazy, Suspense, useState, useRef, useEffect } from 'react';
-import { Search, PlayCircle, Package, RefreshCw, ChevronRight, Share2, MessageCircle, Facebook, Twitter, Link2, Check } from 'lucide-react';
+import React, { lazy, Suspense, useState, useRef, useEffect, useMemo } from 'react';
+import {
+  Search,
+  PlayCircle,
+  Package,
+  RefreshCw,
+  ChevronRight,
+  Share2,
+  MessageCircle,
+  Facebook,
+  Twitter,
+  Link2,
+  Check,
+} from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import type { Product } from '../context/AppContext';
@@ -38,80 +50,125 @@ function readStoredTerritory(): string | null {
 }
 
 // Lazy-loaded sections & widgets — kept out of the initial JS bundle
-const HowItWorksSection    = lazy(() => import('./home-v5/HowItWorksSection'));
-const ObservatorySection   = lazy(() => import('./home-v5/ObservatorySection'));
-const MiniFaqSection       = lazy(() => import('./home-v5/MiniFaqSection'));
-const TerritoryPriceChart  = lazy(() => import('../components/home/TerritoryPriceChart'));
-const PriceEvolutionChart  = lazy(() => import('../components/home/PriceEvolutionChart'));
-const LiveNewsFeed         = lazy(() => import('../components/home/LiveNewsFeed'));
-const NewsTeaser           = lazy(() => import('../components/home/NewsTeaser'));
-const PanierVitalWidget    = lazy(() => import('../components/home/PanierVitalWidget'));
+const HowItWorksSection = lazy(() => import('./home-v5/HowItWorksSection'));
+const ObservatorySection = lazy(() => import('./home-v5/ObservatorySection'));
+const MiniFaqSection = lazy(() => import('./home-v5/MiniFaqSection'));
+const TerritoryPriceChart = lazy(() => import('../components/home/TerritoryPriceChart'));
+const PriceEvolutionChart = lazy(() => import('../components/home/PriceEvolutionChart'));
+const LiveNewsFeed = lazy(() => import('../components/home/LiveNewsFeed'));
+const NewsTeaser = lazy(() => import('../components/home/NewsTeaser'));
+const PanierVitalWidget = lazy(() => import('../components/home/PanierVitalWidget'));
 const CategoryOvercostChart = lazy(() => import('../components/home/CategoryOvercostChart'));
-const StoreRankingWidget   = lazy(() => import('../components/home/StoreRankingWidget'));
-const PalmaresWidget       = lazy(() => import('../components/home/PalmaresWidget'));
+const StoreRankingWidget = lazy(() => import('../components/home/StoreRankingWidget'));
+const PalmaresWidget = lazy(() => import('../components/home/PalmaresWidget'));
 const InflationBarometerWidget = lazy(() => import('../components/home/InflationBarometerWidget'));
-const ProduitChocWidget    = lazy(() => import('../components/home/ProduitChocWidget'));
-const IndiceEquiteWidget   = lazy(() => import('../components/home/IndiceEquiteWidget'));
-const AppDemoShowcase      = lazy(() => import('../components/home/AppDemoShowcase'));
-const VideoVieChere        = lazy(() => import('../components/home/VideoVieChere'));
+const ProduitChocWidget = lazy(() => import('../components/home/ProduitChocWidget'));
+const IndiceEquiteWidget = lazy(() => import('../components/home/IndiceEquiteWidget'));
+const AppDemoShowcase = lazy(() => import('../components/home/AppDemoShowcase'));
+const VideoVieChere = lazy(() => import('../components/home/VideoVieChere'));
 const PriceExplainerBanner = lazy(() => import('../components/home/PriceExplainerBanner'));
-const LettreHebdoWidget    = lazy(() => import('../components/home/LettreHebdoWidget'));
-const LettreJourWidget     = lazy(() => import('../components/home/LettreJourWidget'));
+const LettreHebdoWidget = lazy(() => import('../components/home/LettreHebdoWidget'));
+const LettreJourWidget = lazy(() => import('../components/home/LettreJourWidget'));
 // "Effet Waouh" widgets — built, now integrated
-const ConseilBudgetDuJour      = lazy(() => import('../components/home/ConseilBudgetDuJour'));
-const PersonalizedDealOfDay    = lazy(() => import('../components/home/PersonalizedDealOfDay'));
-const DailyShockCard           = lazy(() => import('../components/home/DailyShockCard').then((m) => ({ default: m.DailyShockCard })));
-const AnonymousSocialComparison = lazy(() => import('../components/home/AnonymousSocialComparison'));
-const MonthlySavingsDashboard  = lazy(() => import('../components/home/MonthlySavingsDashboard').then((m) => ({ default: m.MonthlySavingsDashboard })));
-const TerritorySignal          = lazy(() => import('../components/home/TerritorySignal').then((m) => ({ default: m.TerritorySignal })));
-const SmartShoppingList        = lazy(() => import('../components/home/SmartShoppingList').then((m) => ({ default: m.SmartShoppingList })));
-const ShareVictory             = lazy(() => import('../components/home/ShareVictory'));
-const ProofStats               = lazy(() => import('../components/home/ProofStats'));
+const ConseilBudgetDuJour = lazy(() => import('../components/home/ConseilBudgetDuJour'));
+const PersonalizedDealOfDay = lazy(() => import('../components/home/PersonalizedDealOfDay'));
+const DailyShockCard = lazy(() =>
+  import('../components/home/DailyShockCard').then((m) => ({ default: m.DailyShockCard }))
+);
+const AnonymousSocialComparison = lazy(
+  () => import('../components/home/AnonymousSocialComparison')
+);
+const MonthlySavingsDashboard = lazy(() =>
+  import('../components/home/MonthlySavingsDashboard').then((m) => ({
+    default: m.MonthlySavingsDashboard,
+  }))
+);
+const TerritorySignal = lazy(() =>
+  import('../components/home/TerritorySignal').then((m) => ({ default: m.TerritorySignal }))
+);
+const SmartShoppingList = lazy(() =>
+  import('../components/home/SmartShoppingList').then((m) => ({ default: m.SmartShoppingList }))
+);
+const ShareVictory = lazy(() => import('../components/home/ShareVictory'));
+const ProofStats = lazy(() => import('../components/home/ProofStats'));
 
 const DEFAULT_HOME_STATS = [
-  { value: '12',     label: 'Territoires', backContent: "12 départements et territoires d'outre-mer couverts", icon: '🗺️' },
-  { value: '5 000+', label: 'Produits',    backContent: 'Plus de 5 000 produits suivis en temps réel',         icon: '🛒' },
-  { value: '1 200+', label: 'Scans',       backContent: 'Plus de 1 200 scans validés par les citoyens',        icon: '📷' },
-  { value: '300+',   label: 'Alertes',     backContent: 'Plus de 300 alertes prix actives',                    icon: '🔔' },
+  {
+    value: '12',
+    label: 'Territoires',
+    backContent: "12 départements et territoires d'outre-mer couverts",
+    icon: '🗺️',
+  },
+  {
+    value: '5 000+',
+    label: 'Produits',
+    backContent: 'Plus de 5 000 produits suivis en temps réel',
+    icon: '🛒',
+  },
+  {
+    value: '1 200+',
+    label: 'Scans',
+    backContent: 'Plus de 1 200 scans validés par les citoyens',
+    icon: '📷',
+  },
+  { value: '300+', label: 'Alertes', backContent: 'Plus de 300 alertes prix actives', icon: '🔔' },
 ];
 
 // Local placeholder images (no external dependency)
-const PROMO_IMG_SCAN  = `${import.meta.env.BASE_URL}media/images/hero-recherche.webp`;
-const PROMO_IMG_TOP   = `${import.meta.env.BASE_URL}media/images/hero-actualites.webp`;
+const PROMO_IMG_SCAN = `${import.meta.env.BASE_URL}media/images/hero-recherche.webp`;
+const PROMO_IMG_TOP = `${import.meta.env.BASE_URL}media/images/hero-actualites.webp`;
 const PROMO_IMG_SHARE = `${import.meta.env.BASE_URL}media/images/section-professional-3d.webp`;
 
 const PROMOS = [
-  { id: 1, title: '📷 SCANNER',              subtitle: 'Scannez un code-barres',         img: PROMO_IMG_SCAN,  to: '/scanner' },
-  { id: 2, title: '🏆 TOP ÉCONOMIES',         subtitle: 'Meilleures offres du moment',    img: PROMO_IMG_TOP,   to: '/top-economies' },
-  { id: 3, title: '🤝 CONTRIBUER UN PRIX',    subtitle: 'Renforcez l\'observatoire',      img: PROMO_IMG_SHARE, to: '/contribuer' },
+  {
+    id: 1,
+    title: '📷 SCANNER',
+    subtitle: 'Scannez un code-barres',
+    img: PROMO_IMG_SCAN,
+    to: '/scanner',
+  },
+  {
+    id: 2,
+    title: '🏆 TOP ÉCONOMIES',
+    subtitle: 'Meilleures offres du moment',
+    img: PROMO_IMG_TOP,
+    to: '/top-economies',
+  },
+  {
+    id: 3,
+    title: '🤝 CONTRIBUER UN PRIX',
+    subtitle: "Renforcez l'observatoire",
+    img: PROMO_IMG_SHARE,
+    to: '/contribuer',
+  },
 ];
 
 const CATEGORY_EMOJIS: Record<string, string> = {
-  'ÉPICERIE':           '🛒',
-  'BOUCHERIE':          '🥩',
-  'BOULANGERIE':        '🍞',
-  'BOISSONS':           '🥤',
-  'CHARCUTERIE':        '🍖',
-  'CONFISERIE':         '🍬',
-  'CRÈMERIE':           '🧀',
-  'FRUITS ET LÉGUMES':  '🥦',
-  'HYGIÈNE':            '🧴',
-  'PLATS CUISINÉS':     '🍽️',
-  'POISSONNERIE':       '🐟',
-  'SURGELÉS':           '🧊',
-  'ULTRA FRAIS':        '🥗',
-  'BAZAR':              '🏬',
+  ÉPICERIE: '🛒',
+  BOUCHERIE: '🥩',
+  BOULANGERIE: '🍞',
+  BOISSONS: '🥤',
+  CHARCUTERIE: '🍖',
+  CONFISERIE: '🍬',
+  CRÈMERIE: '🧀',
+  'FRUITS ET LÉGUMES': '🥦',
+  HYGIÈNE: '🧴',
+  'PLATS CUISINÉS': '🍽️',
+  POISSONNERIE: '🐟',
+  SURGELÉS: '🧊',
+  'ULTRA FRAIS': '🥗',
+  BAZAR: '🏬',
 };
 
 const TAG_STYLES: Record<string, string> = {
-  'PROMO':        'bg-rose-500/20 text-rose-300',
-  'LOCAL':        'bg-green-500/20 text-green-300',
-  'ESSENTIEL':    'bg-blue-500/20 text-blue-300',
-  'SOUVERAIN':    'bg-yellow-500/20 text-yellow-300',
-  'FRAÎCHE':      'bg-teal-500/20 text-teal-300',
-  'GROS VOLUME':  'bg-purple-500/20 text-purple-300',
-  'PRESTIGE':     'bg-amber-500/20 text-amber-300',
-  'SIGNATURE':    'bg-indigo-500/20 text-indigo-300',
+  PROMO: 'bg-rose-500/20 text-rose-300',
+  LOCAL: 'bg-green-500/20 text-green-300',
+  ESSENTIEL: 'bg-blue-500/20 text-blue-300',
+  SOUVERAIN: 'bg-yellow-500/20 text-yellow-300',
+  FRAÎCHE: 'bg-teal-500/20 text-teal-300',
+  'GROS VOLUME': 'bg-purple-500/20 text-purple-300',
+  PRESTIGE: 'bg-amber-500/20 text-amber-300',
+  SIGNATURE: 'bg-indigo-500/20 text-indigo-300',
 };
 
 // ─── CatalogueTile ─────────────────────────────────────────────────────────
@@ -132,9 +189,10 @@ function CatalogueTile({ product: p, categoryEmojis, tagStyles }: CatalogueTileP
   const [showShare, setShowShare] = useState(false);
   const [copied, setCopied] = useState(false);
   const shareRef = useRef<HTMLDivElement>(null);
-  const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}${import.meta.env.BASE_URL || '/'}recherche?q=${encodeURIComponent(p.name)}`
-    : searchPath;
+  const shareUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}${import.meta.env.BASE_URL || '/'}recherche?q=${encodeURIComponent(p.name)}`
+      : searchPath;
   const shareText = `${p.name} — ${p.price}€ chez ${p.store ?? ''} 🛒 A KI PRI SA YÉ`;
 
   // Close share menu on outside click
@@ -151,7 +209,11 @@ function CatalogueTile({ product: p, categoryEmojis, tagStyles }: CatalogueTileP
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    try { await navigator.clipboard.writeText(shareUrl); } catch { /* ignore */ }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+    } catch {
+      /* ignore */
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
     setShowShare(false);
@@ -169,7 +231,9 @@ function CatalogueTile({ product: p, categoryEmojis, tagStyles }: CatalogueTileP
       onClick={() => navigate(searchPath)}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(searchPath); }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') navigate(searchPath);
+      }}
       aria-label={`Voir les prix de ${p.name}`}
     >
       {/* Thumbnail */}
@@ -199,7 +263,9 @@ function CatalogueTile({ product: p, categoryEmojis, tagStyles }: CatalogueTileP
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-[9px] font-black text-blue-400 uppercase mb-0.5">{p.category ?? 'ÉPICERIE'}</p>
+        <p className="text-[9px] font-black text-blue-400 uppercase mb-0.5">
+          {p.category ?? 'ÉPICERIE'}
+        </p>
         <p className="text-sm font-bold text-slate-200 truncate">{p.name}</p>
         <p className="text-[10px] text-slate-400">{p.store ?? 'SUPER U'}</p>
         {tags.length > 0 && (
@@ -221,10 +287,19 @@ function CatalogueTile({ product: p, categoryEmojis, tagStyles }: CatalogueTileP
         <span className="font-black text-emerald-400">{p.price}€</span>
 
         {/* Share button */}
-        <div className="relative" role="presentation" ref={shareRef} onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+        <div
+          className="relative"
+          role="presentation"
+          ref={shareRef}
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+        >
           <button
             type="button"
-            onClick={(e) => { e.stopPropagation(); setShowShare((v) => !v); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowShare((v) => !v);
+            }}
             className="p-1.5 rounded-full bg-slate-700/60 hover:bg-slate-600 text-slate-300 hover:text-white transition-colors"
             aria-label={`Partager ${p.name}`}
             aria-expanded={showShare}
@@ -234,22 +309,65 @@ function CatalogueTile({ product: p, categoryEmojis, tagStyles }: CatalogueTileP
 
           {showShare && (
             <>
-              <div className="fixed inset-0 z-10" onClick={() => setShowShare(false)} aria-hidden="true" />
+              <div
+                className="fixed inset-0 z-10"
+                onClick={() => setShowShare(false)}
+                aria-hidden="true"
+              />
               <div
                 role="menu"
                 className="absolute right-0 bottom-full mb-1 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-20 overflow-hidden text-sm"
               >
-                <button type="button" role="menuitem" onClick={(e) => openShare(`https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`, e)} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={(e) =>
+                    openShare(
+                      `https://wa.me/?text=${encodeURIComponent(shareText + '\n' + shareUrl)}`,
+                      e
+                    )
+                  }
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200"
+                >
                   <MessageCircle className="w-4 h-4 text-green-400 flex-shrink-0" /> WhatsApp
                 </button>
-                <button type="button" role="menuitem" onClick={(e) => openShare(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, e)} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={(e) =>
+                    openShare(
+                      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+                      e
+                    )
+                  }
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200"
+                >
                   <Facebook className="w-4 h-4 text-blue-400 flex-shrink-0" /> Facebook
                 </button>
-                <button type="button" role="menuitem" onClick={(e) => openShare(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, e)} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200">
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={(e) =>
+                    openShare(
+                      `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
+                      e
+                    )
+                  }
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left text-slate-200"
+                >
                   <Twitter className="w-4 h-4 text-sky-400 flex-shrink-0" /> X / Twitter
                 </button>
-                <button type="button" role="menuitem" onClick={handleCopy} className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left border-t border-slate-700 text-slate-200">
-                  {copied ? <Check className="w-4 h-4 text-green-400 flex-shrink-0" /> : <Link2 className="w-4 h-4 text-slate-400 flex-shrink-0" />}
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={handleCopy}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-slate-700 text-left border-t border-slate-700 text-slate-200"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
+                  ) : (
+                    <Link2 className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  )}
                   {copied ? 'Lien copié !' : 'Copier le lien'}
                 </button>
               </div>
@@ -273,20 +391,80 @@ const Home = () => {
   const navigate = useNavigate();
   const { products, loading, error, reloadProducts } = useApp();
   const pageRef = useRef<HTMLDivElement>(null);
+  const dailyStar = useMemo(() => {
+    const fallback = {
+      name: 'Huile de tournesol 1L',
+      store: 'votre magasin local',
+      price: 2.1,
+      territory: activeTerritoryCode
+        ? (TERRITORY_DISPLAY[activeTerritoryCode]?.name ?? 'votre territoire')
+        : 'votre territoire',
+    };
+
+    if (!products || products.length === 0) return fallback;
+
+    const source = products.filter((p) => /huile/i.test(p.name) && /tournesol/i.test(p.name));
+    const pool = source.length > 0 ? source : products;
+    const cheapest = pool.reduce(
+      (min, p) => (Number(p.price) < Number(min.price) ? p : min),
+      pool[0]
+    );
+    if (!cheapest) return fallback;
+
+    return {
+      name: cheapest.name,
+      store: cheapest.store || fallback.store,
+      price: Number(cheapest.price) || fallback.price,
+      territory: activeTerritoryCode
+        ? (TERRITORY_DISPLAY[activeTerritoryCode]?.name ?? 'votre territoire')
+        : 'votre territoire',
+    };
+  }, [products, activeTerritoryCode]);
 
   // Load dynamic stats from JSON (updated by scraping pipeline)
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}data/site-stats.json`)
-      .then((r) => r.ok ? r.json() as Promise<{ territories?: string; products?: string; scans?: string; alerts?: string }> : Promise.reject())
+      .then((r) =>
+        r.ok
+          ? (r.json() as Promise<{
+              territories?: string;
+              products?: string;
+              scans?: string;
+              alerts?: string;
+            }>)
+          : Promise.reject()
+      )
       .then((data) => {
         setHomeStats([
-          { value: data.territories ?? '12',     label: 'Territoires', backContent: "12 départements et territoires d'outre-mer couverts", icon: '🗺️' },
-          { value: data.products  ?? '5 000+',   label: 'Produits',    backContent: 'Produits suivis en temps réel',                      icon: '🛒' },
-          { value: data.scans     ?? '1 200+',   label: 'Scans',       backContent: 'Scans validés par les citoyens',                     icon: '📷' },
-          { value: data.alerts    ?? '300+',     label: 'Alertes',     backContent: 'Alertes prix actives',                               icon: '🔔' },
+          {
+            value: data.territories ?? '12',
+            label: 'Territoires',
+            backContent: "12 départements et territoires d'outre-mer couverts",
+            icon: '🗺️',
+          },
+          {
+            value: data.products ?? '5 000+',
+            label: 'Produits',
+            backContent: 'Produits suivis en temps réel',
+            icon: '🛒',
+          },
+          {
+            value: data.scans ?? '1 200+',
+            label: 'Scans',
+            backContent: 'Scans validés par les citoyens',
+            icon: '📷',
+          },
+          {
+            value: data.alerts ?? '300+',
+            label: 'Alertes',
+            backContent: 'Alertes prix actives',
+            icon: '🔔',
+          },
         ]);
       })
-      .catch(() => { /* keep DEFAULT_HOME_STATS */ });
+      .catch(() => {
+        /* keep DEFAULT_HOME_STATS */
+      });
   }, []);
 
   useScrollReveal(pageRef);
@@ -308,7 +486,9 @@ const Home = () => {
   const handleTerritorySelect = (code: string) => {
     try {
       localStorage.setItem('akiprisaye-territory', code);
-    } catch { /* */ }
+    } catch {
+      /* */
+    }
     setActiveTerritoryCode(code);
     navigate(`/recherche-produits?territoire=${code.toUpperCase()}`);
   };
@@ -329,7 +509,8 @@ const Home = () => {
         </div>
         <h1 className="text-4xl font-black italic uppercase tracking-tighter">Aki Pri Sa Yé</h1>
         <p className="mt-2 text-sm text-slate-400 max-w-sm mx-auto leading-snug">
-          Comparez les prix des supermarchés en Guadeloupe, Martinique, Guyane, La Réunion et Mayotte.
+          Comparez les prix des supermarchés en Guadeloupe, Martinique, Guyane, La Réunion et
+          Mayotte.
         </p>
       </div>
 
@@ -342,7 +523,9 @@ const Home = () => {
             </span>
             <button
               type="button"
-              onClick={() => navigate(`/recherche-produits?territoire=${activeTerritoryCode.toUpperCase()}`)}
+              onClick={() =>
+                navigate(`/recherche-produits?territoire=${activeTerritoryCode.toUpperCase()}`)
+              }
               className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/20 transition-colors"
             >
               <span aria-hidden="true">{TERRITORY_DISPLAY[activeTerritoryCode].flag}</span>
@@ -351,7 +534,11 @@ const Home = () => {
             <button
               type="button"
               onClick={() => {
-                try { localStorage.removeItem('akiprisaye-territory'); } catch { /* */ }
+                try {
+                  localStorage.removeItem('akiprisaye-territory');
+                } catch {
+                  /* */
+                }
                 setActiveTerritoryCode(null);
               }}
               className="text-[10px] text-slate-600 hover:text-slate-400 underline"
@@ -366,7 +553,12 @@ const Home = () => {
               Territoire :
             </span>
             <div className="flex gap-1.5 flex-wrap">
-              {(Object.entries(TERRITORY_DISPLAY).slice(0, 6) as [string, { flag: string; name: string }][]).map(([code, t]) => (
+              {(
+                Object.entries(TERRITORY_DISPLAY).slice(0, 6) as [
+                  string,
+                  { flag: string; name: string },
+                ][]
+              ).map(([code, t]) => (
                 <button
                   key={code}
                   type="button"
@@ -396,7 +588,9 @@ const Home = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button type="submit" className="sr-only">rechercher</button>
+          <button type="submit" className="sr-only">
+            rechercher
+          </button>
         </div>
       </form>
 
@@ -418,6 +612,59 @@ const Home = () => {
           <PlayCircle size={16} />
           Scanner un code-barres
         </button>
+      </div>
+
+      {/* ── STAR DU JOUR : UNE INFO MAJEURE ───────────────────────── */}
+      <div className="px-6 mb-8">
+        <div className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/15 to-slate-900 p-5">
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-300 mb-2">
+            La star du jour
+          </p>
+          <p className="text-xl sm:text-2xl font-black leading-tight">
+            Aujourd&apos;hui, <span className="text-amber-300">{dailyStar.name.toLowerCase()}</span>{' '}
+            est au prix le plus bas chez <span className="text-emerald-300">{dailyStar.store}</span>{' '}
+            ({dailyStar.price.toFixed(2)}€).
+          </p>
+          <p className="text-xs text-slate-400 mt-2">
+            Information simple et utile pour {dailyStar.territory}. Mise à jour quotidienne.
+          </p>
+        </div>
+      </div>
+
+      {/* ── SERVICES : VOLS/CARBURANT DÉPORTÉS ────────────────────── */}
+      <div className="px-6 mb-8">
+        <button
+          type="button"
+          onClick={() => navigate('/comparateurs')}
+          className="w-full rounded-2xl border border-slate-700 bg-slate-900/70 px-4 py-3 text-left hover:border-blue-400/60 transition-colors"
+        >
+          <p className="text-sm font-bold text-slate-200">Plus de services</p>
+          <p className="text-xs text-slate-400">
+            Vols, carburant, fret et autres comparateurs sont disponibles dans ce menu.
+          </p>
+        </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <button
+            type="button"
+            onClick={() => navigate('/suggestions?type=bug_report')}
+            className="rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-left hover:border-red-400/60 transition-colors"
+          >
+            <p className="text-sm font-bold text-red-200">🐛 Signaler un bug</p>
+            <p className="text-xs text-slate-300">
+              Aidez-nous à corriger un problème technique rapidement.
+            </p>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/suggestions?type=feature_request')}
+            className="rounded-2xl border border-purple-500/30 bg-purple-500/10 px-4 py-3 text-left hover:border-purple-400/60 transition-colors"
+          >
+            <p className="text-sm font-bold text-purple-200">✨ Demander une fonctionnalité</p>
+            <p className="text-xs text-slate-300">
+              Proposez une amélioration utile pour tous les utilisateurs.
+            </p>
+          </button>
+        </div>
       </div>
       {/* ── ACTUALITÉS (TEASER) ────────────────────────────────────── */}
       <Suspense fallback={<div className="px-6 mb-6 h-24" />}>
@@ -461,11 +708,15 @@ const Home = () => {
                 height={162}
                 fetchPriority={idx === 0 ? 'high' : undefined}
                 loading={idx === 0 ? undefined : 'lazy'}
-                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = 'none';
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
               <div className="absolute bottom-4 left-5">
-                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">{promo.title}</p>
+                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">
+                  {promo.title}
+                </p>
                 <p className="text-sm font-bold">{promo.subtitle}</p>
               </div>
               <PlayCircle className="absolute top-4 right-4 text-white/30" size={24} />
@@ -473,7 +724,6 @@ const Home = () => {
           ))}
         </div>
       </div>
-
 
       {/* ── OBSERVATOIRE EN DIRECT ─────────────────────────────────── */}
       <div className="bento-grid-section mb-4" aria-label="Observatoire des prix">
@@ -504,7 +754,6 @@ const Home = () => {
         </Suspense>
       </div>
 
-
       {/* ── CATALOGUE DES PRIX DU MOMENT ─────────────────────────────────────── */}
       <div className="bento-grid-section mb-10">
         <p className="bento-grid-title">Catalogue des prix du moment</p>
@@ -516,14 +765,16 @@ const Home = () => {
               ))}
             </div>
           ) : products && products.length > 0 ? (
-            products.slice(0, 15).map((p: Product, i: number) => (
-              <CatalogueTile
-                key={p.id ?? i}
-                product={p}
-                categoryEmojis={CATEGORY_EMOJIS}
-                tagStyles={TAG_STYLES}
-              />
-            ))
+            products
+              .slice(0, 15)
+              .map((p: Product, i: number) => (
+                <CatalogueTile
+                  key={p.id ?? i}
+                  product={p}
+                  categoryEmojis={CATEGORY_EMOJIS}
+                  tagStyles={TAG_STYLES}
+                />
+              ))
           ) : (
             <div className="text-center py-10 border border-dashed border-slate-700/50 rounded-3xl">
               <Package className="mx-auto text-slate-800 mb-2" size={32} />
@@ -546,91 +797,91 @@ const Home = () => {
 
       {/* ── SECTION ÉTENDUE (toujours visible) ────────────────────── */}
       <div id="home-extended-content" className="space-y-12 px-4 pb-8">
-          <Suspense
-            fallback={
-              <div className="space-y-6 py-4">
-                <Skeleton className="h-48 w-full" />
-                <Skeleton className="h-32 w-full" />
-                <Skeleton className="h-48 w-full" />
-              </div>
-            }
-          >
-            {/* Social proof — données citoyennes agrégées */}
-            <section aria-label="Données de la communauté">
-              <Suspense fallback={<Skeleton className="h-16 w-full" />}>
-                <ProofStats />
-              </Suspense>
-            </section>
-
-            {/* Comparaison communautaire anonyme */}
-            <Suspense fallback={<Skeleton className="h-32 w-full" />}>
-              <AnonymousSocialComparison />
+        <Suspense
+          fallback={
+            <div className="space-y-6 py-4">
+              <Skeleton className="h-48 w-full" />
+              <Skeleton className="h-32 w-full" />
+              <Skeleton className="h-48 w-full" />
+            </div>
+          }
+        >
+          {/* Social proof — données citoyennes agrégées */}
+          <section aria-label="Données de la communauté">
+            <Suspense fallback={<Skeleton className="h-16 w-full" />}>
+              <ProofStats />
             </Suspense>
+          </section>
 
-            {/* Observatoire citoyen */}
-            <ObservatorySection />
-
-            {/* Hausses de la semaine */}
-            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-              <DailyShockCard />
-            </Suspense>
-
-            {/* Comment ça marche */}
-            <HowItWorksSection />
-
-            {/* Pourquoi les prix sont plus élevés */}
-            <PriceExplainerBanner />
-
-            {/* Indice équité */}
-            <IndiceEquiteWidget />
-
-            {/* Tableau de bord économies mensuelles */}
-            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-              <MonthlySavingsDashboard />
-            </Suspense>
-
-            {/* Liste de courses intelligente */}
-            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-              <SmartShoppingList />
-            </Suspense>
-
-            {/* Surcoût par catégorie */}
-            <CategoryOvercostChart />
-
-            {/* Carte des prix par territoire */}
-            <TerritoryPriceChart />
-
-            {/* Signaux territoire — alertes communautaires */}
-            <Suspense fallback={<Skeleton className="h-48 w-full" />}>
-              <TerritorySignal />
-            </Suspense>
-
-            {/* Évolution des prix */}
-            <PriceEvolutionChart />
-
-            {/* Actualités en direct */}
-            <LiveNewsFeed />
-
-            {/* Lettre hebdomadaire IA */}
-            <LettreHebdoWidget />
-
-            {/* Lettre journalière IA */}
-            <LettreJourWidget />
-
-            {/* Vidéo vie chère */}
-            <VideoVieChere />
-
-            {/* Démo application */}
-            <AppDemoShowcase />
-
-            {/* Partager ses victoires */}
-            <Suspense fallback={<Skeleton className="h-32 w-full" />}>
-              <ShareVictory />
-            </Suspense>
-
-            {/* FAQ */}
-            <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={handleToggleFaq} />
+          {/* Comparaison communautaire anonyme */}
+          <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+            <AnonymousSocialComparison />
           </Suspense>
+
+          {/* Observatoire citoyen */}
+          <ObservatorySection />
+
+          {/* Hausses de la semaine */}
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <DailyShockCard />
+          </Suspense>
+
+          {/* Comment ça marche */}
+          <HowItWorksSection />
+
+          {/* Pourquoi les prix sont plus élevés */}
+          <PriceExplainerBanner />
+
+          {/* Indice équité */}
+          <IndiceEquiteWidget />
+
+          {/* Tableau de bord économies mensuelles */}
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <MonthlySavingsDashboard />
+          </Suspense>
+
+          {/* Liste de courses intelligente */}
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <SmartShoppingList />
+          </Suspense>
+
+          {/* Surcoût par catégorie */}
+          <CategoryOvercostChart />
+
+          {/* Carte des prix par territoire */}
+          <TerritoryPriceChart />
+
+          {/* Signaux territoire — alertes communautaires */}
+          <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+            <TerritorySignal />
+          </Suspense>
+
+          {/* Évolution des prix */}
+          <PriceEvolutionChart />
+
+          {/* Actualités en direct */}
+          <LiveNewsFeed />
+
+          {/* Lettre hebdomadaire IA */}
+          <LettreHebdoWidget />
+
+          {/* Lettre journalière IA */}
+          <LettreJourWidget />
+
+          {/* Vidéo vie chère */}
+          <VideoVieChere />
+
+          {/* Démo application */}
+          <AppDemoShowcase />
+
+          {/* Partager ses victoires */}
+          <Suspense fallback={<Skeleton className="h-32 w-full" />}>
+            <ShareVictory />
+          </Suspense>
+
+          {/* FAQ */}
+          <MiniFaqSection expandedFaq={expandedFaq} onToggleFaq={handleToggleFaq} />
+        </Suspense>
       </div>
     </div>
   );

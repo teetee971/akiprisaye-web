@@ -1,4 +1,3 @@
- 
 /**
  * Feature Flags Service
  *
@@ -56,13 +55,13 @@ export function getDefaultFeatureFlags(): UserFeatureFlags {
       storeDetail: true,
       basket: true,
       priceHistory: true,
-      
+
       // Pro features - disabled by default
       advancedAnalytics: false,
       bulkExport: false,
       apiAccess: false,
       customReports: false,
-      
+
       // Collectivité features - disabled by default
       territoryDashboard: false,
       policyTools: false,
@@ -121,7 +120,7 @@ export function getUserFeatureFlags(userId?: string): UserFeatureFlags {
 
 /**
  * Check if user has access to a specific feature
- * 
+ *
  * @param userId - User identifier (optional)
  * @param feature - Feature to check
  * @returns true if user has access, false otherwise
@@ -136,7 +135,7 @@ export function hasFeatureAccess(
 
 /**
  * Get user mode
- * 
+ *
  * @param userId - User identifier (optional)
  * @returns Current user mode
  */
@@ -147,7 +146,7 @@ export function getUserMode(userId?: string): FeatureMode {
 
 /**
  * Check if a mode is active
- * 
+ *
  * @param userId - User identifier (optional)
  * @param mode - Mode to check
  * @returns true if mode is active, false otherwise

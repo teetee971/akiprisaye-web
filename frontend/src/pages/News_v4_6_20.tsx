@@ -8,14 +8,7 @@
 
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import {
-  Database,
-  MapPin,
-  Leaf,
-  Cpu,
-  ArrowLeft,
-  ExternalLink,
-} from 'lucide-react';
+import { Database, MapPin, Leaf, Cpu, ArrowLeft, ExternalLink } from 'lucide-react';
 
 interface Section {
   icon: React.ReactNode;
@@ -29,15 +22,15 @@ const SECTIONS: Section[] = [
     title: '📊 Explosion du Gisement de Données',
     items: [
       'Le catalogue passe de quelques dizaines à 254 articles réels audités sur le terrain.',
-      'Zone de couverture étendue : Le Moule, Saint-François, Morne-à-l\'Eau et Les Abymes.',
+      "Zone de couverture étendue : Le Moule, Saint-François, Morne-à-l'Eau et Les Abymes.",
       'Nouvelles enseignes : Carrefour Milenis, U Express, Carrefour Market Bayside, Leader Price et Shilo H Int.',
     ],
   },
   {
     icon: <MapPin className="w-5 h-5 text-amber-400" />,
-    title: '📉 Moteur d\'Arbitrage Géographique',
+    title: "📉 Moteur d'Arbitrage Géographique",
     items: [
-      'Détection d\'anomalies : écarts allant jusqu\'à 42 % sur l\'huile de tournesol et 31 % sur les tomates locales entre communes voisines.',
+      "Détection d'anomalies : écarts allant jusqu'à 42 % sur l'huile de tournesol et 31 % sur les tomates locales entre communes voisines.",
       'Optimisation de panier : comparez instantanément vos marques préférées (Coca-Cola, Kiri, Nutella) entre formats "Express" et Hyper.',
     ],
   },
@@ -55,7 +48,7 @@ const SECTIONS: Section[] = [
     title: '⚙️ Hardening Technique (Codex Engine)',
     items: [
       'Intelligence Artificielle : le moteur de recherche utilise désormais la Similarité de Jaccard pour reconnaître les produits même si les libellés sur les tickets sont abrégés.',
-      'Scan Mobile Ready : injection massive de codes EAN (codes-barres). L\'application est prête pour le scan en rayon.',
+      "Scan Mobile Ready : injection massive de codes EAN (codes-barres). L'application est prête pour le scan en rayon.",
       'Infrastructure Industrielle : migration réussie vers un environnement de build 2 vCPU / 1 Go RAM sur Railway pour une fluidité totale malgré le poids des données.',
     ],
   },
@@ -73,7 +66,6 @@ export default function News_v4_6_20() {
       </Helmet>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 space-y-8">
-
         {/* Back link */}
         <Link
           to="/versions"
@@ -115,7 +107,10 @@ export default function News_v4_6_20() {
               </h2>
               <ul className="space-y-2 pl-1">
                 {section.items.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm text-slate-300 leading-relaxed">
+                  <li
+                    key={item}
+                    className="flex items-start gap-2 text-sm text-slate-300 leading-relaxed"
+                  >
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-slate-500 shrink-0" />
                     {item}
                   </li>
@@ -129,8 +124,8 @@ export default function News_v4_6_20() {
         <div className="bg-slate-900 border border-emerald-800/50 rounded-2xl p-6 space-y-3 text-center">
           <p className="text-slate-300 text-sm leading-relaxed italic">
             "Avec la v4.6.20, nous ne listons plus des prix, nous fournissons une arme contre
-            l'inflation. En rendant les prix transparents du Moule aux Abymes, nous redonnons
-            le pouvoir de choix au citoyen guadeloupéen. Observer pour ne plus subir."
+            l'inflation. En rendant les prix transparents du Moule aux Abymes, nous redonnons le
+            pouvoir de choix au citoyen guadeloupéen. Observer pour ne plus subir."
           </p>
           <a
             href="https://akiprisaye-web.pages.dev/"
@@ -152,7 +147,6 @@ export default function News_v4_6_20() {
             Voir toutes les versions →
           </Link>
         </div>
-
       </div>
     </div>
   );

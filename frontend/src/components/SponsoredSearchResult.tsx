@@ -58,9 +58,7 @@ export function SponsoredSearchResult({
           {store && <span className="text-xs text-gray-500">{store}</span>}
         </div>
         <div className="text-sm font-medium text-white truncate">{productName}</div>
-        {description && (
-          <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{description}</p>
-        )}
+        {description && <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{description}</p>}
         <div className="flex items-center gap-2 mt-1.5">
           {price !== undefined && (
             <span className="text-sm font-bold text-white">{price.toFixed(2)}€</span>
@@ -68,9 +66,7 @@ export function SponsoredSearchResult({
           {originalPrice !== undefined && originalPrice > (price ?? 0) && (
             <span className="text-xs text-gray-500 line-through">{originalPrice.toFixed(2)}€</span>
           )}
-          {discount && (
-            <span className="text-xs text-emerald-400 font-medium">{discount}</span>
-          )}
+          {discount && <span className="text-xs text-emerald-400 font-medium">{discount}</span>}
           {rating !== undefined && (
             <span className="text-xs text-amber-400 flex items-center gap-0.5 ml-auto">
               <Star className="w-3 h-3 fill-current" />

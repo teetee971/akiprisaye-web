@@ -11,7 +11,7 @@ const TIMELINE = [
   {
     month: '2025-12',
     comment:
-      "Décembre 2025 : les fêtes accentuent les surcoûts, notamment en Guadeloupe et en Martinique.",
+      'Décembre 2025 : les fêtes accentuent les surcoûts, notamment en Guadeloupe et en Martinique.',
   },
   {
     month: '2026-01',
@@ -70,9 +70,7 @@ export default function DomMapTimeline() {
     <div className="bg-black/30 border border-white/10 rounded-xl p-4 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold">
-          Carte du surcoût — {TIMELINE[step].month}
-        </h2>
+        <h2 className="font-semibold">Carte du surcoût — {TIMELINE[step].month}</h2>
 
         <button
           onClick={() => setPlaying((p) => !p)}

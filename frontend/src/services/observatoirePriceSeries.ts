@@ -22,7 +22,7 @@ const TERRITORY_STEMS: Record<string, string> = {
   guyane: 'guyane',
   re: 'la_réunion',
   reunion: 'la_réunion',
-  'la_réunion': 'la_réunion',
+  la_réunion: 'la_réunion',
   yt: 'mayotte',
   mayotte: 'mayotte',
   fr: 'hexagone',
@@ -43,7 +43,7 @@ const SNAPSHOT_MONTHS: Record<string, string[]> = {
   guadeloupe: ['2025-11', '2025-12', '2026-01', '2026-02', '2026-03'],
   martinique: ['2026-01', '2026-02', '2026-03'],
   guyane: ['2026-01', '2026-02', '2026-03'],
-  'la_réunion': ['2026-01', '2026-02', '2026-03'],
+  la_réunion: ['2026-01', '2026-02', '2026-03'],
   mayotte: ['2026-01', '2026-02', '2026-03'],
   hexagone: ['2025-11', '2025-12', '2026-01', '2026-02', '2026-03'],
   saint_pierre_et_miquelon: ['2026-01', '2026-02', '2026-03'],
@@ -65,11 +65,7 @@ interface Snapshot {
 
 /** Normalise a product name for comparison: lowercase, trim, remove diacritics. */
 function normaliseName(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .trim();
+  return name.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 }
 
 /** Fetch and parse a single snapshot file (returns null on 404/error). */
@@ -93,7 +89,7 @@ async function fetchSnapshot(stem: string, month: string): Promise<Snapshot | nu
  */
 export async function buildObservatoirePriceSeries(
   territory: string,
-  productName: string,
+  productName: string
 ): Promise<Observation[]> {
   const stem = TERRITORY_STEMS[territory.toLowerCase()] ?? territory.toLowerCase();
   const months = SNAPSHOT_MONTHS[stem] ?? [];
@@ -136,7 +132,7 @@ export async function buildObservatoirePriceSeries(
  */
 export async function getLatestSnapshotStats(
   territory: string,
-  productName: string,
+  productName: string
 ): Promise<{ min: number; max: number; avg: number; storeCount: number; date: string } | null> {
   const stem = TERRITORY_STEMS[territory.toLowerCase()] ?? territory.toLowerCase();
   const months = SNAPSHOT_MONTHS[stem] ?? [];
@@ -150,7 +146,7 @@ export async function getLatestSnapshotStats(
   if (!snap || !snap.donnees || !snap.date_snapshot) return null;
 
   const matchingRows = snap.donnees.filter(
-    (row) => row.produit && normaliseName(row.produit) === normProduct,
+    (row) => row.produit && normaliseName(row.produit) === normProduct
   );
   const prices = matchingRows
     .map((row) => row.prix)

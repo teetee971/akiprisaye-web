@@ -18,7 +18,7 @@ export function PriceBreakdownPieChart({ breakdown }: PriceBreakdownPieChartProp
     { name: 'Marge distributeur', value: breakdown.margin, color: '#10b981' },
     { name: 'Octroi de mer', value: breakdown.octroi, color: '#f59e0b' },
     { name: 'TVA', value: breakdown.tva, color: '#ef4444' },
-    { name: 'Transport/Logistique', value: breakdown.transport, color: '#8b5cf6' }
+    { name: 'Transport/Logistique', value: breakdown.transport, color: '#8b5cf6' },
   ];
 
   const total = data.reduce((sum, item) => sum + item.value, 0);
@@ -43,7 +43,7 @@ export function PriceBreakdownPieChart({ breakdown }: PriceBreakdownPieChartProp
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
-          <Tooltip 
+          <Tooltip
             formatter={(value) => {
               const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
               return `${numericValue.toFixed(2)}€`;
@@ -52,26 +52,24 @@ export function PriceBreakdownPieChart({ breakdown }: PriceBreakdownPieChartProp
               backgroundColor: 'rgba(0, 0, 0, 0.8)',
               border: 'none',
               borderRadius: '8px',
-              color: '#fff'
+              color: '#fff',
             }}
           />
           <Legend />
         </PieChart>
       </ResponsiveContainer>
       <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
-        {data.map(item => (
+        {data.map((item) => (
           <div key={item.name} className="flex justify-between items-center">
             <span className="flex items-center gap-2">
-              <div 
-                className="w-3 h-3 rounded-full" 
+              <div
+                className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: item.color }}
                 aria-hidden="true"
               />
               <span className="text-slate-700 dark:text-slate-300">{item.name}</span>
             </span>
-            <strong className="text-slate-900 dark:text-white">
-              {item.value.toFixed(2)}€
-            </strong>
+            <strong className="text-slate-900 dark:text-white">{item.value.toFixed(2)}€</strong>
           </div>
         ))}
       </div>

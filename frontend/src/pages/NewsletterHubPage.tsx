@@ -31,7 +31,7 @@ const NEWSLETTERS = [
     border: 'border-amber-500/30',
     badge: 'bg-amber-900/40 text-amber-300 border-amber-500/30',
     description:
-      "Votre briefing quotidien généré par IA sur la vie chère en Outre-mer. Prix du jour, alertes, actualités sélectionnées, météo économique.",
+      'Votre briefing quotidien généré par IA sur la vie chère en Outre-mer. Prix du jour, alertes, actualités sélectionnées, météo économique.',
     highlights: [
       'Résumé des hausses de prix du jour',
       'Top 5 des articles actus Outre-mer',
@@ -51,7 +51,7 @@ const NEWSLETTERS = [
     border: 'border-blue-500/30',
     badge: 'bg-blue-900/40 text-blue-300 border-blue-500/30',
     description:
-      "Analyse approfondie de la semaine écoulée : tendances des prix, enquêtes citoyennes, comparaisons inter-territoriales, conseils pratiques.",
+      'Analyse approfondie de la semaine écoulée : tendances des prix, enquêtes citoyennes, comparaisons inter-territoriales, conseils pratiques.',
     highlights: [
       'Analyse des tendances hebdomadaires',
       "Comparaison entre territoires d'Outre-mer",
@@ -67,7 +67,7 @@ const NEWSLETTERS = [
 function SubscribeForm({ newsletterId }: { newsletterId?: string }) {
   const [email, setEmail] = useState('');
   const [selected, setSelected] = useState<string[]>(
-    newsletterId ? [newsletterId] : ['lettre-jour', 'lettre-hebdo'],
+    newsletterId ? [newsletterId] : ['lettre-jour', 'lettre-hebdo']
   );
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -133,8 +133,7 @@ function SubscribeForm({ newsletterId }: { newsletterId?: string }) {
                 className="w-4 h-4 accent-blue-500"
               />
               <span className="text-sm text-white">
-                {n.emoji} {n.title}{' '}
-                <span className="text-gray-400">— {n.frequency}</span>
+                {n.emoji} {n.title} <span className="text-gray-400">— {n.frequency}</span>
               </span>
             </label>
           ))}
@@ -204,7 +203,10 @@ export default function NewsletterHubPage() {
               { icon: '🌍', label: 'Territoires couverts', value: '8' },
               { icon: '🤖', label: 'Générées par IA', value: '100%' },
             ].map(({ icon, label, value }) => (
-              <div key={label} className="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4 text-center">
+              <div
+                key={label}
+                className="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4 text-center"
+              >
                 <div className="text-2xl mb-1">{icon}</div>
                 <div className="text-xl font-bold text-white">{value}</div>
                 <div className="text-xs text-gray-400">{label}</div>
@@ -223,7 +225,9 @@ export default function NewsletterHubPage() {
                 >
                   {/* Badge */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${n.badge}`}>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${n.badge}`}
+                    >
                       <Calendar size={12} /> {n.frequency}
                     </span>
                     <span className="text-3xl">{n.emoji}</span>
@@ -257,7 +261,10 @@ export default function NewsletterHubPage() {
                       className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium transition-colors"
                     >
                       <Bell size={14} /> S'abonner
-                      <ChevronRight size={14} className={`transition-transform ${activeSubscribe === n.id ? 'rotate-90' : ''}`} />
+                      <ChevronRight
+                        size={14}
+                        className={`transition-transform ${activeSubscribe === n.id ? 'rotate-90' : ''}`}
+                      />
                     </button>
                   </div>
 
@@ -274,9 +281,7 @@ export default function NewsletterHubPage() {
 
           {/* Global subscribe form */}
           <div className="bg-slate-800/60 border border-slate-700/40 rounded-2xl p-6 max-w-lg mx-auto">
-            <h2 className="text-lg font-bold text-white mb-1 text-center">
-              📬 Abonnement global
-            </h2>
+            <h2 className="text-lg font-bold text-white mb-1 text-center">📬 Abonnement global</h2>
             <p className="text-sm text-gray-400 text-center mb-5">
               Inscrivez-vous aux deux lettres en une seule fois.
             </p>
@@ -285,9 +290,12 @@ export default function NewsletterHubPage() {
 
           {/* Info note */}
           <div className="mt-8 p-4 bg-slate-800/40 border border-slate-700/30 rounded-xl text-sm text-gray-400 text-center">
-            Les lettres sont générées par IA à partir de sources d'actualités officielles (France Info, La 1ère) et de données de l'observatoire citoyen des prix.
+            Les lettres sont générées par IA à partir de sources d'actualités officielles (France
+            Info, La 1ère) et de données de l'observatoire citoyen des prix.
             <br />
-            <span className="text-gray-500">Aucune donnée personnelle n'est partagée avec des tiers.</span>
+            <span className="text-gray-500">
+              Aucune donnée personnelle n'est partagée avec des tiers.
+            </span>
           </div>
         </div>
       </div>

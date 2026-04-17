@@ -194,18 +194,13 @@ const filterByInput = (
     }
     if (input.query) {
       const query = input.query;
-      return (
-        matchesText(observation.productName, query) ||
-        matchesText(observation.brand, query)
-      );
+      return matchesText(observation.productName, query) || matchesText(observation.brand, query);
     }
     return true;
   });
 };
 
-export async function comparePrices(
-  input: PriceSearchInput
-): Promise<{
+export async function comparePrices(input: PriceSearchInput): Promise<{
   status: PriceSearchStatus;
   interval: PriceInterval | null;
   items: NormalizedPriceObservation[];

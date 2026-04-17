@@ -1,7 +1,7 @@
 /**
  * Password Input Component Tests
  * Node-safe tests only (no clipboard, no crypto in Node)
- * 
+ *
  * Tests password strength calculation logic
  */
 
@@ -10,19 +10,19 @@ import { describe, it, expect } from 'vitest';
 // Test password strength calculation (extracted for testing)
 function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
   if (password.length === 0) return 'weak';
-  
+
   let score = 0;
-  
+
   // Length
   if (password.length >= 8) score++;
   if (password.length >= 12) score++;
-  
+
   // Character types
   if (/[a-z]/.test(password)) score++;
   if (/[A-Z]/.test(password)) score++;
   if (/[0-9]/.test(password)) score++;
   if (/[^a-zA-Z0-9]/.test(password)) score++;
-  
+
   if (score <= 2) return 'weak';
   if (score <= 4) return 'medium';
   return 'strong';
@@ -97,7 +97,7 @@ describe('Password Strength Calculator', () => {
     it('should handle very long passwords', () => {
       const veryLong = 'a'.repeat(100);
       expect(getPasswordStrength(veryLong)).toBe('medium'); // 8+ chars, but only lowercase
-      
+
       const complexLong = 'Aa1!' + 'x'.repeat(96);
       expect(getPasswordStrength(complexLong)).toBe('strong');
     });

@@ -46,16 +46,12 @@ const withTimeoutSignal = (signal: AbortSignal, timeoutMs: number): AbortSignal 
   return controller.signal;
 };
 
-const mapItem = (
-  item: MacaveCatalogItem,
-  input: PriceSearchInput,
-): PriceObservation | null => {
+const mapItem = (item: MacaveCatalogItem, input: PriceSearchInput): PriceObservation | null => {
   const price = safeNumber(item.price);
   if (price === null || price <= 0) return null;
 
   const rawUnit = safeString(item.unit);
-  const unit: PriceObservation['unit'] =
-    rawUnit === 'kg' || rawUnit === 'l' ? rawUnit : 'unit';
+  const unit: PriceObservation['unit'] = rawUnit === 'kg' || rawUnit === 'l' ? rawUnit : 'unit';
 
   return normalizePriceObservation({
     source: 'macave_leclerc',
@@ -73,8 +69,7 @@ const mapItem = (
 
 export const macaveLeclercProvider: PriceProvider = {
   source: 'macave_leclerc',
-  isEnabled: () =>
-    parseFlag(import.meta.env.VITE_PRICE_PROVIDER_MACAVE_LECLERC, false),
+  isEnabled: () => parseFlag(import.meta.env.VITE_PRICE_PROVIDER_MACAVE_LECLERC, false),
 
   async search(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult> {
     if (!input.barcode && !input.query) {

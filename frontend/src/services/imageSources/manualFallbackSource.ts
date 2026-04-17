@@ -15,28 +15,30 @@
  * Le résultat est toujours needsReview=true, image=null.
  */
 
-import type { ImageCandidate, ImageSourceAdapter, ProductDescriptor } from '../../types/product-image';
+import type {
+  ImageCandidate,
+  ImageSourceAdapter,
+  ProductDescriptor,
+} from '../../types/product-image';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Patterns de produits à placer systématiquement en revue manuelle
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ALWAYS_REVIEW_PATTERNS: Array<{ pattern: RegExp; reason: string }> = [
-  { pattern: /sucre\s+b[âa]tonnets/i,              reason: 'Produit très spécifique, peu couvert par OFF' },
-  { pattern: /museau\s+de?\s+b[œoe]uf/i,           reason: 'Charcuterie traiteur — faible couverture OFF' },
-  { pattern: /saucisson\s+ail/i,                    reason: 'Charcuterie générique — marque absente' },
-  { pattern: /fromage\s+past[a-z]*\s+noix/i,        reason: 'Fromage spécifique — libellé incomplet' },
-  { pattern: /parmigiano\s+r[âa]p[eé]/i,           reason: 'Fromage AOP — plusieurs marques possibles' },
-  { pattern: /emmental\s+r[âa]p[eé]/i,             reason: 'Fromage générique — marque absente' },
-  { pattern: /hitcoko/i,                            reason: 'Marque inconnue / peu courante' },
+  { pattern: /sucre\s+b[âa]tonnets/i, reason: 'Produit très spécifique, peu couvert par OFF' },
+  { pattern: /museau\s+de?\s+b[œoe]uf/i, reason: 'Charcuterie traiteur — faible couverture OFF' },
+  { pattern: /saucisson\s+ail/i, reason: 'Charcuterie générique — marque absente' },
+  { pattern: /fromage\s+past[a-z]*\s+noix/i, reason: 'Fromage spécifique — libellé incomplet' },
+  { pattern: /parmigiano\s+r[âa]p[eé]/i, reason: 'Fromage AOP — plusieurs marques possibles' },
+  { pattern: /emmental\s+r[âa]p[eé]/i, reason: 'Fromage générique — marque absente' },
+  { pattern: /hitcoko/i, reason: 'Marque inconnue / peu courante' },
 ];
 
 /**
  * Retourne true et la raison si le produit doit être mis en revue directement.
  */
-export function shouldForceManualReview(
-  label: string,
-): { force: boolean; reason: string } {
+export function shouldForceManualReview(label: string): { force: boolean; reason: string } {
   for (const { pattern, reason } of ALWAYS_REVIEW_PATTERNS) {
     if (pattern.test(label)) {
       return { force: true, reason };

@@ -9,7 +9,7 @@ import {
 
 /**
  * Module de comparaison des coûts de fret aérien
- * 
+ *
  * UX Mobile-first (Samsung S24+ prioritaire)
  * Page unique, lisible à une main
  * Aucun pop-up, aucun scroll horizontal
@@ -60,13 +60,9 @@ export default function FretAerien() {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center gap-3 mb-2">
             <Plane className="w-6 h-6 text-sky-400" />
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-              Coûts du fret aérien
-            </h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-100">Coûts du fret aérien</h1>
           </div>
-          <p className="text-sm text-gray-400">
-            Module en préparation - Données simulées
-          </p>
+          <p className="text-sm text-gray-400">Module en préparation - Données simulées</p>
         </div>
       </header>
 
@@ -78,7 +74,10 @@ export default function FretAerien() {
             <form onSubmit={handleSearch} className="space-y-4">
               {/* Aéroport de départ */}
               <div>
-                <label htmlFor="aeroportDepart" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="aeroportDepart"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Aéroport de départ
                 </label>
                 <select
@@ -99,7 +98,10 @@ export default function FretAerien() {
 
               {/* Aéroport d'arrivée */}
               <div>
-                <label htmlFor="aeroportArrivee" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="aeroportArrivee"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Aéroport d'arrivée
                 </label>
                 <select
@@ -120,7 +122,10 @@ export default function FretAerien() {
 
               {/* Type de marchandise */}
               <div>
-                <label htmlFor="typeMarchandise" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="typeMarchandise"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Type de marchandise (optionnel)
                 </label>
                 <select
@@ -174,10 +179,10 @@ export default function FretAerien() {
                     </div>
                     <div className="mt-4 p-3 bg-sky-500/10 border border-sky-500/20 rounded-lg">
                       <p className="text-sm text-sky-300">
-                        <strong>ℹ️ À noter :</strong> Le fret aérien est utilisé principalement
-                        pour les marchandises urgentes, sensibles (médicaments, produits frais),
-                        ou de faible volume. Les coûts sont significativement plus élevés que
-                        le fret maritime.
+                        <strong>ℹ️ À noter :</strong> Le fret aérien est utilisé principalement pour
+                        les marchandises urgentes, sensibles (médicaments, produits frais), ou de
+                        faible volume. Les coûts sont significativement plus élevés que le fret
+                        maritime.
                       </p>
                     </div>
                   </div>
@@ -230,10 +235,10 @@ export default function FretAerien() {
                                     result.typeMarchandise === 'Médical'
                                       ? 'bg-red-500/10 text-red-400 border border-red-500/20'
                                       : result.typeMarchandise === 'Alimentaire'
-                                      ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                                      : result.typeMarchandise === 'Urgent'
-                                      ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
-                                      : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+                                        ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+                                        : result.typeMarchandise === 'Urgent'
+                                          ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20'
+                                          : 'bg-slate-500/10 text-slate-400 border border-slate-500/20'
                                   }`}
                                 >
                                   {result.typeMarchandise}
@@ -283,24 +288,26 @@ export default function FretAerien() {
                 <h4 className="font-semibold text-gray-200 mb-2">✈️ Capacité limitée</h4>
                 <p className="text-gray-400">
                   Les avions cargo ont une capacité de chargement beaucoup plus limitée que les
-                  navires maritimes. Un avion cargo transportera quelques dizaines de tonnes,
-                  contre plusieurs milliers de tonnes pour un porte-conteneurs. Cette contrainte
-                  de volume rend le coût par kg significativement plus élevé.
+                  navires maritimes. Un avion cargo transportera quelques dizaines de tonnes, contre
+                  plusieurs milliers de tonnes pour un porte-conteneurs. Cette contrainte de volume
+                  rend le coût par kg significativement plus élevé.
                 </p>
               </div>
 
               <div className="p-4 bg-slate-800/30 rounded-lg">
                 <h4 className="font-semibold text-gray-200 mb-2">⛽ Coûts du carburant</h4>
                 <p className="text-gray-400">
-                  Le transport aérien consomme proportionnellement beaucoup plus de carburant
-                  que le transport maritime pour une même distance parcourue. Le kérosène aéronautique
+                  Le transport aérien consomme proportionnellement beaucoup plus de carburant que le
+                  transport maritime pour une même distance parcourue. Le kérosène aéronautique
                   représente une part importante des coûts d'exploitation, ce qui se répercute
                   directement sur les tarifs du fret aérien.
                 </p>
               </div>
 
               <div className="p-4 bg-slate-800/30 rounded-lg">
-                <h4 className="font-semibold text-gray-200 mb-2">⏱️ Priorité aux marchandises sensibles</h4>
+                <h4 className="font-semibold text-gray-200 mb-2">
+                  ⏱️ Priorité aux marchandises sensibles
+                </h4>
                 <p className="text-gray-400">
                   Le fret aérien est privilégié pour les envois urgents ou les produits nécessitant
                   une livraison rapide : médicaments, produits frais périssables, échantillons
@@ -310,7 +317,9 @@ export default function FretAerien() {
               </div>
 
               <div className="p-4 bg-slate-800/30 rounded-lg">
-                <h4 className="font-semibold text-gray-200 mb-2">🏥 Impact sur produits essentiels</h4>
+                <h4 className="font-semibold text-gray-200 mb-2">
+                  🏥 Impact sur produits essentiels
+                </h4>
                 <p className="text-gray-400">
                   Pour les territoires ultramarins, le fret aérien permet d'assurer la continuité
                   territoriale pour les produits médicaux essentiels, les denrées périssables de
@@ -323,9 +332,8 @@ export default function FretAerien() {
                 <p className="text-sm text-yellow-300">
                   <strong>⚠️ Important :</strong> Les coûts affichés sont indicatifs et ne
                   permettent pas de calculer l'impact sur les prix à la consommation. De nombreux
-                  autres facteurs (taxes, manutention, stockage, distribution) influencent le
-                  prix final des produits dans les DOM. Aucune extrapolation automatique n'est
-                  proposée.
+                  autres facteurs (taxes, manutention, stockage, distribution) influencent le prix
+                  final des produits dans les DOM. Aucune extrapolation automatique n'est proposée.
                 </p>
               </div>
             </div>
@@ -336,23 +344,20 @@ export default function FretAerien() {
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-sky-400 flex-shrink-0 mt-0.5" />
               <div className="space-y-3">
-                <h3 className="text-base font-semibold text-gray-100">
-                  Méthodologie & Sources
-                </h3>
+                <h3 className="text-base font-semibold text-gray-100">Méthodologie & Sources</h3>
                 <div className="text-sm text-gray-400 space-y-2">
                   <p>
-                    <strong className="text-gray-300">Sources :</strong> Données simulées
-                    basées sur les tarifs publics des compagnies aériennes cargo, les rapports
-                    des aéroports, et les observations du secteur logistique. Les coûts affichés
-                    sont indicatifs et peuvent varier selon la saison, le volume, et les conditions
-                    contractuelles.
+                    <strong className="text-gray-300">Sources :</strong> Données simulées basées sur
+                    les tarifs publics des compagnies aériennes cargo, les rapports des aéroports,
+                    et les observations du secteur logistique. Les coûts affichés sont indicatifs et
+                    peuvent varier selon la saison, le volume, et les conditions contractuelles.
                   </p>
                   <p>
                     <strong className="text-gray-300">Méthode de comparaison :</strong> Les
-                    résultats sont triés par coût au kg croissant, puis par date de relevé (les
-                    plus récents en premier). Les tarifs varient selon le type de marchandise,
-                    le poids total, et les services associés (manutention spécialisée, chaîne du
-                    froid, etc.).
+                    résultats sont triés par coût au kg croissant, puis par date de relevé (les plus
+                    récents en premier). Les tarifs varient selon le type de marchandise, le poids
+                    total, et les services associés (manutention spécialisée, chaîne du froid,
+                    etc.).
                   </p>
                   <p>
                     <strong className="text-gray-300">Limites :</strong> Les coûts affichés ne
@@ -368,13 +373,13 @@ export default function FretAerien() {
                     commercial.
                   </p>
                   <p>
-                    <strong className="text-gray-300">Données indicatives :</strong> Les
-                    coûts ne constituent pas une offre contractuelle. Consultez les conditions
-                    générales des opérateurs aériens pour obtenir des devis officiels et à jour.
+                    <strong className="text-gray-300">Données indicatives :</strong> Les coûts ne
+                    constituent pas une offre contractuelle. Consultez les conditions générales des
+                    opérateurs aériens pour obtenir des devis officiels et à jour.
                   </p>
                   <p>
-                    <strong className="text-gray-300">Outil d'information :</strong> Ce module
-                    est conçu pour informer le public sur les mécanismes de formation des coûts
+                    <strong className="text-gray-300">Outil d'information :</strong> Ce module est
+                    conçu pour informer le public sur les mécanismes de formation des coûts
                     logistiques, sans prétention d'exhaustivité ni d'actualité en temps réel.
                   </p>
                 </div>

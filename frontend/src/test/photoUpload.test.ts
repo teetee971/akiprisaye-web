@@ -108,7 +108,7 @@ describe('validateImageFile', () => {
   it('respects a custom maxSizeMB parameter', () => {
     const file = makeFile('img.jpg', 'image/jpeg', 3 * 1024 * 1024); // 3 MB
 
-    expect(validateImageFile(file, 5).valid).toBe(true);  // 3 < 5 MB → ok
+    expect(validateImageFile(file, 5).valid).toBe(true); // 3 < 5 MB → ok
     expect(validateImageFile(file, 2).valid).toBe(false); // 3 > 2 MB → reject
   });
 });
@@ -181,11 +181,15 @@ describe('COMPRESSION_PRESETS', () => {
 
   it('thumbnail preset has smallest dimensions', () => {
     expect(COMPRESSION_PRESETS.thumbnail.maxWidth).toBeLessThan(COMPRESSION_PRESETS.small.maxWidth);
-    expect(COMPRESSION_PRESETS.thumbnail.maxHeight).toBeLessThan(COMPRESSION_PRESETS.small.maxHeight);
+    expect(COMPRESSION_PRESETS.thumbnail.maxHeight).toBeLessThan(
+      COMPRESSION_PRESETS.small.maxHeight
+    );
   });
 
   it('upload preset has the largest max size', () => {
-    expect(COMPRESSION_PRESETS.upload.maxSizeMB).toBeGreaterThanOrEqual(COMPRESSION_PRESETS.large.maxSizeMB);
+    expect(COMPRESSION_PRESETS.upload.maxSizeMB).toBeGreaterThanOrEqual(
+      COMPRESSION_PRESETS.large.maxSizeMB
+    );
   });
 
   it('all presets use JPEG format', () => {
@@ -231,8 +235,8 @@ describe('photoService localStorage helpers', () => {
     setMainPhoto(productId, 'p2');
 
     const updated = getStoredPhotos(productId);
-    expect(updated.find(p => p.id === 'p1')?.isMain).toBe(false);
-    expect(updated.find(p => p.id === 'p2')?.isMain).toBe(true);
+    expect(updated.find((p) => p.id === 'p1')?.isMain).toBe(false);
+    expect(updated.find((p) => p.id === 'p2')?.isMain).toBe(true);
   });
 
   it('deletePhoto removes the specified photo and keeps others', () => {

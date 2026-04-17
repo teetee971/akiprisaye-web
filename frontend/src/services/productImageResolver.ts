@@ -101,7 +101,7 @@ interface OFFSearchResponse {
  * En cas d'erreur réseau / timeout: retourne [].
  */
 export async function searchProductImagesOffAdapter(
-  queryStr: string,
+  queryStr: string
 ): Promise<ProductImageCandidate[]> {
   const candidates: ProductImageCandidate[] = [];
   try {
@@ -174,8 +174,8 @@ async function getExistingPrimaryImage(productKey: string): Promise<ProductImage
       query(
         collection(db, 'product_images'),
         where('productKey', '==', productKey),
-        where('isPrimary', '==', true),
-      ),
+        where('isPrimary', '==', true)
+      )
     );
     if (snap.empty) return null;
     return { ...(snap.docs[0].data() as Omit<ProductImageAsset, 'id'>), id: snap.docs[0].id };
@@ -187,13 +187,18 @@ async function getExistingPrimaryImage(productKey: string): Promise<ProductImage
 /** Persiste une image produit retenue */
 export async function attachImageToProduct(
   productKey: string,
-  image: ProductImageAsset,
+  image: ProductImageAsset
 ): Promise<void> {
   if (!db) return;
   try {
     await addDoc(
       collection(db, 'product_images'),
-      sanitize({ ...image, productKey, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }) as Record<string, unknown>,
+      sanitize({
+        ...image,
+        productKey,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      }) as Record<string, unknown>
     );
   } catch (err) {
     console.error('[ProductImageResolver] attachImageToProduct:', err);
@@ -206,7 +211,7 @@ export async function enqueueImageReview(
   rawLabel: string,
   candidates: ProductImageCandidate[],
   reasons: string[],
-  receiptId?: string,
+  receiptId?: string
 ): Promise<void> {
   if (!db) return;
   const entry: ImageReviewQueueEntry = {
@@ -222,7 +227,7 @@ export async function enqueueImageReview(
   try {
     await addDoc(
       collection(db, 'image_review_queue'),
-      sanitize({ ...entry, createdAt: serverTimestamp() }) as Record<string, unknown>,
+      sanitize({ ...entry, createdAt: serverTimestamp() }) as Record<string, unknown>
     );
   } catch (err) {
     console.error('[ProductImageResolver] enqueueImageReview:', err);
@@ -231,14 +236,14 @@ export async function enqueueImageReview(
 
 async function persistCandidates(
   productKey: string,
-  candidates: ProductImageCandidate[],
+  candidates: ProductImageCandidate[]
 ): Promise<void> {
   if (!db || candidates.length === 0) return;
   try {
     for (const c of candidates.slice(0, MAX_CANDIDATES)) {
       await addDoc(
         collection(db, 'product_image_candidates'),
-        sanitize({ ...c, productKey, createdAt: serverTimestamp() }) as Record<string, unknown>,
+        sanitize({ ...c, productKey, createdAt: serverTimestamp() }) as Record<string, unknown>
       );
     }
   } catch {
@@ -258,7 +263,7 @@ async function persistCandidates(
  */
 export async function resolveImageForProduct(
   input: ImageSearchInput,
-  adapter: ImageSearchAdapter = searchProductImagesOffAdapter,
+  adapter: ImageSearchAdapter = searchProductImagesOffAdapter
 ): Promise<ProductSearchImageResult> {
   const base: ProductSearchImageResult = {
     productKey: input.productKey,
@@ -277,12 +282,22 @@ export async function resolveImageForProduct(
 
   // 2. Produit ambigu → revue directe
   if (isAmbiguousProduct(input.rawLabel)) {
-    await enqueueImageReview(input.productKey, input.rawLabel, [], ['Produit ambigu — validation manuelle requise'], input.receiptId);
+    await enqueueImageReview(
+      input.productKey,
+      input.rawLabel,
+      [],
+      ['Produit ambigu — validation manuelle requise'],
+      input.receiptId
+    );
     return { ...base, chosenImage: null, status: 'ambiguous', needsReview: true };
   }
 
   // 3. Générer requêtes
-  const queries = generateSearchQueryVariants(input.rawLabel, input.brand ?? undefined, input.size ?? undefined);
+  const queries = generateSearchQueryVariants(
+    input.rawLabel,
+    input.brand ?? undefined,
+    input.size ?? undefined
+  );
 
   // 4. Rechercher (max 3 requêtes pour limiter la charge)
   const allCandidates: ProductImageCandidate[] = [];
@@ -332,7 +347,7 @@ export async function resolveImageForProduct(
       input.rawLabel,
       enrichedCandidates,
       [`Score max: ${scored[0]?.confidenceScore ?? 0}/100 < ${THRESHOLD_REVIEW}`],
-      input.receiptId,
+      input.receiptId
     );
     return {
       ...base,
@@ -366,7 +381,7 @@ export async function resolveImageForProduct(
       input.rawLabel,
       enrichedCandidates,
       [`Score ${best.candidate.confidenceScore}/100 — validation recommandée`],
-      input.receiptId,
+      input.receiptId
     );
   }
 
@@ -403,7 +418,7 @@ type TicketItem = {
 export async function hydrateMissingProductImagesFromTicket(
   receiptId: string,
   receiptRecord?: { items: TicketItem[] },
-  adapter: ImageSearchAdapter = searchProductImagesOffAdapter,
+  adapter: ImageSearchAdapter = searchProductImagesOffAdapter
 ): Promise<ProductSearchImageResult[]> {
   let items = receiptRecord?.items;
 
@@ -463,20 +478,20 @@ export interface ImageResolutionReport {
 }
 
 export function buildImageResolutionReport(
-  results: ProductSearchImageResult[],
+  results: ProductSearchImageResult[]
 ): ImageResolutionReport {
-  const autoMatched    = results.filter((r) => r.status === 'matched' && !r.needsReview);
+  const autoMatched = results.filter((r) => r.status === 'matched' && !r.needsReview);
   const reviewRequired = results.filter((r) => r.needsReview || r.status === 'ambiguous');
-  const notFound       = results.filter((r) => r.status === 'not_found');
+  const notFound = results.filter((r) => r.status === 'not_found');
   return {
     autoMatched,
     reviewRequired,
     notFound,
     summary: {
-      total:         results.length,
-      autoMatched:   autoMatched.length,
+      total: results.length,
+      autoMatched: autoMatched.length,
       reviewRequired: reviewRequired.length,
-      notFound:      notFound.length,
+      notFound: notFound.length,
     },
   };
 }

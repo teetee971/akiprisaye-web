@@ -30,9 +30,21 @@ interface TopDealsSectionProps {
 // ── Heat badge ────────────────────────────────────────────────────────────────
 
 const HEAT_CONFIG = {
-  hot:    { emoji: '🔥', label: 'Meilleur deal',    className: 'bg-red-500/20 text-red-300 border-red-500/30' },
-  warm:   { emoji: '🟠', label: 'Bon deal',          className: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
-  normal: { emoji: '🟢', label: 'Bonne économie',    className: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+  hot: {
+    emoji: '🔥',
+    label: 'Meilleur deal',
+    className: 'bg-red-500/20 text-red-300 border-red-500/30',
+  },
+  warm: {
+    emoji: '🟠',
+    label: 'Bon deal',
+    className: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+  },
+  normal: {
+    emoji: '🟢',
+    label: 'Bonne économie',
+    className: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  },
 } as const;
 
 // ── Territory labels ──────────────────────────────────────────────────────────
@@ -52,23 +64,21 @@ function territoryLabel(code: string): string {
 // ── Deal card ─────────────────────────────────────────────────────────────────
 
 function DealCard({ deal }: { deal: Deal }) {
-  const heat   = classifyDealHeat(deal.delta);
+  const heat = classifyDealHeat(deal.delta);
   const config = HEAT_CONFIG[heat];
-  const delta  = formatDelta(deal.delta);
+  const delta = formatDelta(deal.delta);
 
   // Build a validated affiliate URL; skip the CTA if the domain isn't trusted.
-  const affiliateUrl = deal.bestRetailer
-    ? buildRetailerUrl(deal.bestRetailer, undefined)
-    : null;
+  const affiliateUrl = deal.bestRetailer ? buildRetailerUrl(deal.bestRetailer, undefined) : null;
   const hasValidUrl = isValidRetailerUrl(affiliateUrl);
 
   const handleCTA = () => {
     if (!hasValidUrl || !affiliateUrl) return;
     trackRevenueClick({
-      url:      typeof window !== 'undefined' ? window.location.pathname : '/',
-      product:  deal.name,
+      url: typeof window !== 'undefined' ? window.location.pathname : '/',
+      product: deal.name,
       retailer: deal.bestRetailer ?? '',
-      price:    deal.bestPrice ?? 0,
+      price: deal.bestPrice ?? 0,
     });
     window.open(affiliateUrl, '_blank', 'noopener,noreferrer');
   };
@@ -77,9 +87,7 @@ function DealCard({ deal }: { deal: Deal }) {
     <div className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-white/20 hover:bg-white/[0.05]">
       {/* Header row */}
       <div className="flex items-start justify-between gap-2">
-        <span className="text-sm font-semibold leading-snug text-white">
-          {deal.name}
-        </span>
+        <span className="text-sm font-semibold leading-snug text-white">{deal.name}</span>
         {/* Heat badge */}
         <span
           className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${config.className}`}
@@ -91,9 +99,7 @@ function DealCard({ deal }: { deal: Deal }) {
 
       {/* Territory */}
       {deal.territory && (
-        <p className="text-[11px] text-zinc-500">
-          📍 {territoryLabel(deal.territory)}
-        </p>
+        <p className="text-[11px] text-zinc-500">📍 {territoryLabel(deal.territory)}</p>
       )}
 
       {/* Price info */}
@@ -156,9 +162,7 @@ export default function TopDealsSection({
       aria-label="Top deals — meilleures économies"
       className="mx-auto w-full max-w-2xl px-4 py-8"
     >
-      <h2 className="mb-1 text-center text-lg font-extrabold tracking-tight text-white">
-        {title}
-      </h2>
+      <h2 className="mb-1 text-center text-lg font-extrabold tracking-tight text-white">{title}</h2>
       <p className="mb-6 text-center text-xs text-zinc-500">
         Mis à jour automatiquement · données locales DOM-TOM
       </p>

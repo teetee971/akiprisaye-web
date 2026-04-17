@@ -1,6 +1,6 @@
 /**
  * Boat/Ferry Comparison Types v1.0.0
- * 
+ *
  * Principles:
  * - Observer, not sell: Transparent price observation without affiliate links
  * - Read-only comparison (no data modification)
@@ -17,11 +17,11 @@ import type { Territory, DataSource } from './priceAlerts';
  * Port information
  */
 export interface Port {
-  code: string;           // Port code
-  name: string;          // Full name
-  city: string;          // City name
-  territory: Territory;  // Territory
-  island?: string;       // Island name if applicable
+  code: string; // Port code
+  name: string; // Full name
+  city: string; // City name
+  territory: Territory; // Territory
+  island?: string; // Island name if applicable
 }
 
 /**
@@ -31,7 +31,7 @@ export interface BoatRoute {
   origin: Port;
   destination: Port;
   routeType: 'inter_island' | 'inter_territory' | 'coastal';
-  islandGroup?: string;  // e.g., 'Antilles', 'Océan Indien'
+  islandGroup?: string; // e.g., 'Antilles', 'Océan Indien'
 }
 
 /**
@@ -55,7 +55,7 @@ export type ServiceClass = 'standard' | 'comfort' | 'premium';
 export interface BoatSourceReference {
   type: DataSource;
   url?: string;
-  observedAt: string;          // ISO 8601
+  observedAt: string; // ISO 8601
   observedBy?: string;
   verificationMethod: 'automated' | 'manual' | 'official';
   reliability: 'high' | 'medium' | 'low';
@@ -66,20 +66,21 @@ export interface BoatSourceReference {
  */
 export interface BoatPricePoint {
   id: string;
-  operator: string;            // Operator name
-  operatorCode: string;        // Operator code
+  operator: string; // Operator name
+  operatorCode: string; // Operator code
   route: BoatRoute;
   pricing: {
-    passengerPrice: number;    // Base passenger price (adult)
-    childPrice?: number;       // Child price if different
-    vehiclePrice?: {           // Vehicle transport pricing
+    passengerPrice: number; // Base passenger price (adult)
+    childPrice?: number; // Child price if different
+    vehiclePrice?: {
+      // Vehicle transport pricing
       car: number;
       motorcycle?: number;
       van?: number;
       truck?: number;
     };
   };
-  currency: string;            // Currency code (default: EUR)
+  currency: string; // Currency code (default: EUR)
   serviceClass: ServiceClass;
   fareConditions: {
     refundable: boolean;
@@ -88,15 +89,15 @@ export interface BoatPricePoint {
     deckAccess: boolean;
     cabinAvailable: boolean;
   };
-  observationDate: string;     // ISO 8601
+  observationDate: string; // ISO 8601
   source: BoatSourceReference;
-  volume: number;              // Number of observations
+  volume: number; // Number of observations
   confidence: 'high' | 'medium' | 'low';
   verified: boolean;
   schedule: {
-    frequency: string;         // e.g., "daily", "3x/week", "weekly"
+    frequency: string; // e.g., "daily", "3x/week", "weekly"
     departureTimes?: string[]; // Departure times if available
-    duration: string;          // Journey duration (e.g., "2h30", "45min")
+    duration: string; // Journey duration (e.g., "2h30", "45min")
   };
   capacity?: {
     passengers: number;
@@ -137,11 +138,11 @@ export interface BoatRouteAggregation {
     carMax: number;
   };
   observationPeriod: {
-    from: string;              // ISO 8601
-    to: string;                // ISO 8601
+    from: string; // ISO 8601
+    to: string; // ISO 8601
   };
   totalObservations: number;
-  lastUpdate: string;          // ISO 8601
+  lastUpdate: string; // ISO 8601
   frequencyAnalysis: {
     dailyServices: number;
     weeklyServices: number;
@@ -193,7 +194,7 @@ export interface BoatComparisonResult {
   aggregation: BoatRouteAggregation;
   vehicleTransportAnalysis?: VehicleTransportAnalysis;
   regularPassengerAnalysis?: RegularPassengerAnalysis;
-  comparisonDate: string;      // ISO 8601
+  comparisonDate: string; // ISO 8601
   metadata: BoatComparisonMetadata;
 }
 
@@ -201,7 +202,7 @@ export interface BoatComparisonResult {
  * Metadata for transparency
  */
 export interface BoatComparisonMetadata {
-  methodology: string;         // Methodology version
+  methodology: string; // Methodology version
   aggregationMethod: 'mean' | 'median' | 'weighted';
   dataQuality: {
     totalOperators: number;
@@ -213,7 +214,7 @@ export interface BoatComparisonMetadata {
   sources: BoatSourceSummary[];
   warnings?: string[];
   limitations: string[];
-  disclaimer: string;          // "Observer, pas vendre" message
+  disclaimer: string; // "Observer, pas vendre" message
 }
 
 /**
@@ -235,11 +236,11 @@ export interface BoatComparisonFilter {
   destinationTerritory?: Territory;
   operator?: string;
   serviceClass?: ServiceClass;
-  maxPriceAge?: number;        // Max age in days
+  maxPriceAge?: number; // Max age in days
   minConfidence?: 'low' | 'medium' | 'high';
   verifiedOnly?: boolean;
-  vehicleTransport?: boolean;  // Only operators with vehicle transport
-  dailyService?: boolean;      // Only daily services
+  vehicleTransport?: boolean; // Only operators with vehicle transport
+  dailyService?: boolean; // Only daily services
 }
 
 /**
@@ -251,8 +252,8 @@ export interface TerritoryBoatStatistics {
   operatorCount: number;
   averagePassengerPrice: number;
   averageVehiclePrice?: number;
-  connectivityIndex: number;   // Measure of route availability
-  isolationScore: number;      // Higher = more isolated
+  connectivityIndex: number; // Measure of route availability
+  isolationScore: number; // Higher = more isolated
   islandConnectivity: {
     island: string;
     routeCount: number;
@@ -264,7 +265,7 @@ export interface TerritoryBoatStatistics {
  * Inter-island connectivity analysis
  */
 export interface InterIslandConnectivity {
-  islandGroup: string;         // e.g., 'Antilles', 'Océan Indien'
+  islandGroup: string; // e.g., 'Antilles', 'Océan Indien'
   islands: {
     name: string;
     territory: Territory;
@@ -275,5 +276,5 @@ export interface InterIslandConnectivity {
   }[];
   totalRoutes: number;
   averagePrice: number;
-  connectivityScore: number;   // Higher = better connected
+  connectivityScore: number; // Higher = better connected
 }

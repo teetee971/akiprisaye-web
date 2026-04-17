@@ -2,15 +2,30 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
-  Building2, Download, RefreshCw, Search, CheckSquare, Square,
-  AlertTriangle, CheckCircle2, XCircle, MapPin, Database, Filter,
-  Info, ExternalLink,
+  Building2,
+  Download,
+  RefreshCw,
+  Search,
+  CheckSquare,
+  Square,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  MapPin,
+  Database,
+  Filter,
+  Info,
+  ExternalLink,
 } from 'lucide-react';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, type User as FbUser } from 'firebase/auth';
 import {
-  searchInseeProsBatiment, importInseeEtablissements, getExistingSirets,
-  type InseeEtablissement, type InseeSearchResult, type ImportResult,
+  searchInseeProsBatiment,
+  importInseeEtablissements,
+  getExistingSirets,
+  type InseeEtablissement,
+  type InseeSearchResult,
+  type ImportResult,
 } from '@/services/inseeProService';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -69,7 +84,12 @@ export default function AdminInseeImport() {
     setImportResults(null);
     setSelected(new Set());
     try {
-      const result = await searchInseeProsBatiment({ territory, naf: nafFilter, page: newPage, perPage });
+      const result = await searchInseeProsBatiment({
+        territory,
+        naf: nafFilter,
+        page: newPage,
+        perPage,
+      });
       const sirets = result.results.map((e: InseeEtablissement) => e.siret);
       const existing = await getExistingSirets();
       setExistingSirets(existing);
@@ -87,8 +107,8 @@ export default function AdminInseeImport() {
     setImporting(true);
     setError(null);
     try {
-      const toImport = searchResult.results.filter(
-        (e: InseeEtablissement) => selected.has(e.siret),
+      const toImport = searchResult.results.filter((e: InseeEtablissement) =>
+        selected.has(e.siret)
       );
       const results = await importInseeEtablissements(toImport);
       setImportResults(results);
@@ -118,7 +138,11 @@ export default function AdminInseeImport() {
     setSelected(next);
   }
 
-  function handleRowKeyDown(event: React.KeyboardEvent<HTMLDivElement>, siret: string, exists: boolean) {
+  function handleRowKeyDown(
+    event: React.KeyboardEvent<HTMLDivElement>,
+    siret: string,
+    exists: boolean
+  ) {
     if (exists) return;
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -132,15 +156,15 @@ export default function AdminInseeImport() {
         <div className="text-center">
           <XCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
           <p className="text-white font-semibold text-lg">Connexion requise</p>
-          <p className="text-slate-400 text-sm mt-1">Vous devez être connecté pour accéder à cette page.</p>
+          <p className="text-slate-400 text-sm mt-1">
+            Vous devez être connecté pour accéder à cette page.
+          </p>
         </div>
       </div>
     );
   }
 
-  const totalPages = searchResult
-    ? Math.ceil(searchResult.total / perPage)
-    : 0;
+  const totalPages = searchResult ? Math.ceil(searchResult.total / perPage) : 0;
   const newCount = searchResult
     ? searchResult.results.filter((e: InseeEtablissement) => !existingSirets.has(e.siret)).length
     : 0;
@@ -156,7 +180,6 @@ export default function AdminInseeImport() {
       </Helmet>
 
       <div className="min-h-screen bg-slate-950 text-white px-4 py-8 max-w-5xl mx-auto">
-
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-1">
@@ -173,8 +196,14 @@ export default function AdminInseeImport() {
           <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
           <div className="text-sm text-blue-200 space-y-1">
             <p className="font-semibold text-blue-300">À propos des données INSEE</p>
-            <p>Les données Sirene sont publiques (Licence Ouverte v2.0). Elles contiennent la raison sociale, le SIRET, le code NAF et la commune.</p>
-            <p className="text-blue-300/70">⚠️ Les coordonnées (téléphone, email) ne sont <strong>pas</strong> incluses. Les professionnels devront compléter leur profil après import.</p>
+            <p>
+              Les données Sirene sont publiques (Licence Ouverte v2.0). Elles contiennent la raison
+              sociale, le SIRET, le code NAF et la commune.
+            </p>
+            <p className="text-blue-300/70">
+              ⚠️ Les coordonnées (téléphone, email) ne sont <strong>pas</strong> incluses. Les
+              professionnels devront compléter leur profil après import.
+            </p>
           </div>
         </div>
 
@@ -217,16 +246,22 @@ export default function AdminInseeImport() {
                       r.status === 'imported'
                         ? 'bg-green-900/10 border border-green-700/30'
                         : r.status === 'already_exists'
-                        ? 'bg-blue-900/10 border border-blue-700/30'
-                        : 'bg-red-900/10 border border-red-700/30'
+                          ? 'bg-blue-900/10 border border-blue-700/30'
+                          : 'bg-red-900/10 border border-red-700/30'
                     }`}
                   >
-                    {r.status === 'imported' && <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />}
-                    {r.status === 'already_exists' && <Info className="w-4 h-4 text-blue-400 shrink-0" />}
+                    {r.status === 'imported' && (
+                      <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                    )}
+                    {r.status === 'already_exists' && (
+                      <Info className="w-4 h-4 text-blue-400 shrink-0" />
+                    )}
                     {r.status === 'error' && <XCircle className="w-4 h-4 text-red-400 shrink-0" />}
                     <span className="font-mono text-xs text-slate-400">{r.siret}</span>
                     <span className="text-slate-300 truncate">{r.raisonSociale}</span>
-                    {r.errorMsg && <span className="text-red-400 text-xs ml-auto shrink-0">{r.errorMsg}</span>}
+                    {r.errorMsg && (
+                      <span className="text-red-400 text-xs ml-auto shrink-0">{r.errorMsg}</span>
+                    )}
                   </div>
                 ))}
               </div>
@@ -234,7 +269,11 @@ export default function AdminInseeImport() {
 
             <div className="flex gap-3">
               <button
-                onClick={() => { setImportResults(null); setSearchResult(null); setSelected(new Set()); }}
+                onClick={() => {
+                  setImportResults(null);
+                  setSearchResult(null);
+                  setSelected(new Set());
+                }}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm font-semibold transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -261,7 +300,10 @@ export default function AdminInseeImport() {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label htmlFor="insee-territoire" className="block text-xs text-slate-400 mb-1 flex items-center gap-1">
+                <label
+                  htmlFor="insee-territoire"
+                  className="block text-xs text-slate-400 mb-1 flex items-center gap-1"
+                >
                   <MapPin className="w-3.5 h-3.5" /> Territoire
                 </label>
                 <select
@@ -271,13 +313,18 @@ export default function AdminInseeImport() {
                   className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
                 >
                   {TERRITORY_OPTIONS.map((t) => (
-                    <option key={t.code} value={t.code}>{t.label}</option>
+                    <option key={t.code} value={t.code}>
+                      {t.label}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label htmlFor="insee-naf" className="block text-xs text-slate-400 mb-1 flex items-center gap-1">
+                <label
+                  htmlFor="insee-naf"
+                  className="block text-xs text-slate-400 mb-1 flex items-center gap-1"
+                >
                   <Building2 className="w-3.5 h-3.5" /> Code NAF
                 </label>
                 <select
@@ -287,13 +334,17 @@ export default function AdminInseeImport() {
                   className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
                 >
                   {NAF_OPTIONS.map((n) => (
-                    <option key={n.code} value={n.code}>{n.label}</option>
+                    <option key={n.code} value={n.code}>
+                      {n.label}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label htmlFor="insee-per-page" className="block text-xs text-slate-400 mb-1">Résultats par page</label>
+                <label htmlFor="insee-per-page" className="block text-xs text-slate-400 mb-1">
+                  Résultats par page
+                </label>
                 <select
                   id="insee-per-page"
                   value={perPage}
@@ -301,7 +352,9 @@ export default function AdminInseeImport() {
                   className="w-full bg-slate-900 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-orange-500"
                 >
                   {[20, 50, 100].map((n) => (
-                    <option key={n} value={n}>{n} résultats</option>
+                    <option key={n} value={n}>
+                      {n} résultats
+                    </option>
                   ))}
                 </select>
               </div>
@@ -331,7 +384,8 @@ export default function AdminInseeImport() {
             {/* Stats bar */}
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <span className="text-slate-300">
-                <span className="font-bold text-white">{searchResult.total}</span> entreprises trouvées
+                <span className="font-bold text-white">{searchResult.total}</span> entreprises
+                trouvées
               </span>
               <span className="text-slate-500">—</span>
               <span className="text-slate-300">
@@ -351,12 +405,17 @@ export default function AdminInseeImport() {
             <div className="rounded-xl bg-slate-800 border border-slate-700 overflow-hidden">
               {/* Select all */}
               <div className="px-4 py-3 border-b border-slate-700 flex items-center gap-3">
-                <button onClick={toggleAll} className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors">
+                <button
+                  onClick={toggleAll}
+                  className="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors"
+                >
                   {searchResult.results
                     .filter((e: InseeEtablissement) => !existingSirets.has(e.siret))
-                    .every((e: InseeEtablissement) => selected.has(e.siret)) && newCount > 0
-                    ? <CheckSquare className="w-4 h-4 text-orange-400" />
-                    : <Square className="w-4 h-4" />}
+                    .every((e: InseeEtablissement) => selected.has(e.siret)) && newCount > 0 ? (
+                    <CheckSquare className="w-4 h-4 text-orange-400" />
+                  ) : (
+                    <Square className="w-4 h-4" />
+                  )}
                   {selected.size > 0 ? `Désélectionner (${selected.size})` : 'Tout sélectionner'}
                 </button>
               </div>
@@ -379,11 +438,13 @@ export default function AdminInseeImport() {
                       } ${isSelected ? 'bg-orange-900/10' : ''}`}
                     >
                       <div className="shrink-0">
-                        {exists
-                          ? <Square className="w-4 h-4 text-slate-600" />
-                          : isSelected
-                          ? <CheckSquare className="w-4 h-4 text-orange-400" />
-                          : <Square className="w-4 h-4 text-slate-400" />}
+                        {exists ? (
+                          <Square className="w-4 h-4 text-slate-600" />
+                        ) : isSelected ? (
+                          <CheckSquare className="w-4 h-4 text-orange-400" />
+                        ) : (
+                          <Square className="w-4 h-4 text-slate-400" />
+                        )}
                       </div>
 
                       <div className="flex-1 min-w-0">
@@ -422,7 +483,9 @@ export default function AdminInseeImport() {
                 >
                   ← Précédent
                 </button>
-                <span className="text-xs text-slate-400">{page} / {totalPages}</span>
+                <span className="text-xs text-slate-400">
+                  {page} / {totalPages}
+                </span>
                 <button
                   onClick={() => handleSearch(page + 1)}
                   disabled={page >= totalPages}
@@ -434,7 +497,11 @@ export default function AdminInseeImport() {
 
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => { setSearchResult(null); setSelected(new Set()); setError(null); }}
+                  onClick={() => {
+                    setSearchResult(null);
+                    setSelected(new Set());
+                    setError(null);
+                  }}
                   className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm transition-colors"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
@@ -445,9 +512,11 @@ export default function AdminInseeImport() {
                   disabled={selected.size === 0 || importing}
                   className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-green-700 hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed font-semibold text-sm transition-colors"
                 >
-                  {importing
-                    ? <RefreshCw className="w-4 h-4 animate-spin" />
-                    : <Download className="w-4 h-4" />}
+                  {importing ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
                   Importer les {selected.size} sélectionnés
                 </button>
               </div>

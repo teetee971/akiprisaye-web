@@ -30,9 +30,7 @@ export function classifyB2BTier(score: number): ScoredB2BRetailer['tier'] {
   return 'starter';
 }
 
-export function rankB2BRetailers(
-  retailers: Map<string, B2BRetailerSignals>,
-): ScoredB2BRetailer[] {
+export function rankB2BRetailers(retailers: Map<string, B2BRetailerSignals>): ScoredB2BRetailer[] {
   return [...retailers.entries()]
     .map(([name, s]) => {
       const score = computeB2BRetailerScore(s);

@@ -34,7 +34,8 @@ export const alertsDataset: SanitaryAlert[] = [
     publishedAt: '2026-02-10T14:20:00.000Z',
     reason: 'Détection de fragments métalliques dans la chaîne de conditionnement.',
     risk: 'Blessures buccales et digestives potentielles.',
-    instructions: 'Isoler le produit, ne pas utiliser, contacter le service consommateur ou le point de vente.',
+    instructions:
+      'Isoler le produit, ne pas utiliser, contacter le service consommateur ou le point de vente.',
     sourceName: 'ARS Guadeloupe',
     updatedAt: '2026-02-12T07:40:00.000Z',
   },

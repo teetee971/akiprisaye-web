@@ -28,10 +28,7 @@ export interface ConversionProduct {
   territory?: string;
 }
 
-export type DealBadge =
-  | '🔥 Prix en baisse'
-  | '⭐ Top deal'
-  | '📈 Populaire';
+export type DealBadge = '🔥 Prix en baisse' | '⭐ Top deal' | '📈 Populaire';
 
 // ── Core functions ────────────────────────────────────────────────────────────
 
@@ -39,9 +36,7 @@ export type DealBadge =
  * Returns the single best product, sorted by score descending.
  * Returns undefined when the list is empty or no product has a score.
  */
-export function getBestDeal(
-  products: ConversionProduct[],
-): ConversionProduct | undefined {
+export function getBestDeal(products: ConversionProduct[]): ConversionProduct | undefined {
   return [...products]
     .filter((p) => p.price != null && p.score != null)
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
@@ -54,8 +49,8 @@ export function getBestDeal(
 export function getBadges(product: ConversionProduct): DealBadge[] {
   const badges: DealBadge[] = [];
   if ((product.priceDrop ?? 0) > 0.1) badges.push('🔥 Prix en baisse');
-  if ((product.score ?? 0) > 90)      badges.push('⭐ Top deal');
-  if (product.trending)               badges.push('📈 Populaire');
+  if ((product.score ?? 0) > 90) badges.push('⭐ Top deal');
+  if (product.trending) badges.push('📈 Populaire');
   return badges;
 }
 
@@ -65,20 +60,15 @@ export function getBadges(product: ConversionProduct): DealBadge[] {
  */
 export function shouldShowPriceDropAlert(
   product: ConversionProduct,
-  favoriteIds: string[],
+  favoriteIds: string[]
 ): boolean {
-  return (
-    (product.priceDrop ?? 0) > 0.2 &&
-    favoriteIds.includes(product.id)
-  );
+  return (product.priceDrop ?? 0) > 0.2 && favoriteIds.includes(product.id);
 }
 
 /**
  * Sorts products by score descending, best first.
  * Products without a score are pushed to the bottom.
  */
-export function sortByScore(
-  products: ConversionProduct[],
-): ConversionProduct[] {
+export function sortByScore(products: ConversionProduct[]): ConversionProduct[] {
   return [...products].sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
 }

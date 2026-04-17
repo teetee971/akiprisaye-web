@@ -13,13 +13,21 @@ export default function LutteVieChereIndexPage() {
     <>
       <Helmet>
         <title>Lutte contre la Vie Chère - A KI PRI SA YÉ</title>
-        <meta 
-          name="description" 
-          content="Ensemble, agissons pour des prix justes dans les territoires d'Outre-mer" 
+        <meta
+          name="description"
+          content="Ensemble, agissons pour des prix justes dans les territoires d'Outre-mer"
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/vie-chere" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/vie-chere" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/vie-chere" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/vie-chere" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/vie-chere"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/vie-chere"
+        />
       </Helmet>
       <HeroImage
         src={PAGE_HERO_IMAGES.lutteVieChere}
@@ -27,8 +35,12 @@ export default function LutteVieChereIndexPage() {
         gradient="from-slate-950 to-orange-900"
         height="h-40 sm:h-52"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>✊ Lutte contre la vie chère</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Tous les outils pour comprendre et combattre la cherté des prix</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          ✊ Lutte contre la vie chère
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Tous les outils pour comprendre et combattre la cherté des prix
+        </p>
       </HeroImage>
       <LutteVieChere />
     </>

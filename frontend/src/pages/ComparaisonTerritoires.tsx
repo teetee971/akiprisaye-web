@@ -32,7 +32,7 @@ const HERO_SRC =
 
 // ─── Territories to display ───────────────────────────────────────────────────
 const DOM_TERRITORIES = TERRITORIES.filter((t) =>
-  ['gp', 'mq', 'gf', 're', 'yt', 'pm', 'bl', 'mf', 'fr'].includes(t.code),
+  ['gp', 'mq', 'gf', 're', 'yt', 'pm', 'bl', 'mf', 'fr'].includes(t.code)
 );
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ interface TerritoryData {
   flag: string;
   eco: EconomicIndicator | null;
   categoryAvgs: CategoryAvg[];
-  basketAvg: number | null;   // average price across all tracked food categories
+  basketAvg: number | null; // average price across all tracked food categories
   hexBasketAvg: number | null;
   affordabilityIndex: number | null; // basket / (salaire_median / 100)  — lower = more affordable
 }
@@ -129,7 +129,9 @@ export default function ComparaisonTerritoires() {
         setEcoData(json.territories ?? []);
         setEcoSources(json._meta?.sources ?? []);
       })
-      .catch(() => {/* silently ignore – indicators degrade gracefully */})
+      .catch(() => {
+        /* silently ignore – indicators degrade gracefully */
+      })
       .finally(() => setEcoLoading(false));
   }, []);
 
@@ -137,19 +139,27 @@ export default function ComparaisonTerritoires() {
   useEffect(() => {
     let cancelled = false;
     setPriceLoading(true);
-    const domTerr = DOM_TERRITORIES.filter((t) => t.code !== 'bl' && t.code !== 'pm' && t.code !== 'mf');
+    const domTerr = DOM_TERRITORIES.filter(
+      (t) => t.code !== 'bl' && t.code !== 'pm' && t.code !== 'mf'
+    );
     Promise.all(
       domTerr.map((t) =>
-        loadObservatoireData(t.dataFileStem, ['2026-03', '2026-02', '2026-01']).catch(() => []),
-      ),
+        loadObservatoireData(t.dataFileStem, ['2026-03', '2026-02', '2026-01']).catch(() => [])
+      )
     )
       .then((all) => {
         if (cancelled) return;
         setAllMonthly(buildMonthlyAggregates(all.flat()));
       })
-      .catch(() => {/* ignore */})
-      .finally(() => { if (!cancelled) setPriceLoading(false); });
-    return () => { cancelled = true; };
+      .catch(() => {
+        /* ignore */
+      })
+      .finally(() => {
+        if (!cancelled) setPriceLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // ── Build territory rows ──────────────────────────────────────────────────
@@ -169,7 +179,7 @@ export default function ComparaisonTerritoires() {
               m.category === cat &&
               m.territory.toLowerCase().replace(/[-_\s]/g, '') ===
                 t.labelFull.toLowerCase().replace(/[-_\s]/g, '') &&
-              m.month === month,
+              m.month === month
           );
           if (entry) break;
         }
@@ -177,7 +187,7 @@ export default function ComparaisonTerritoires() {
         let hexEntry = null;
         for (const month of LATEST) {
           hexEntry = allMonthly.find(
-            (m) => m.category === cat && m.territory === 'Hexagone' && m.month === month,
+            (m) => m.category === cat && m.territory === 'Hexagone' && m.month === month
           );
           if (hexEntry) break;
         }
@@ -198,7 +208,8 @@ export default function ComparaisonTerritoires() {
       const validCats = categoryAvgs.filter((c) => c.avgPrice > 0);
       const basketAvg =
         validCats.length > 0
-          ? Math.round((validCats.reduce((s, c) => s + c.avgPrice, 0) / validCats.length) * 100) / 100
+          ? Math.round((validCats.reduce((s, c) => s + c.avgPrice, 0) / validCats.length) * 100) /
+            100
           : null;
 
       const hexCats = categoryAvgs.filter((c) => c.hexAvg != null && c.hexAvg > 0);
@@ -214,7 +225,16 @@ export default function ComparaisonTerritoires() {
           ? Math.round(((basketAvg * 50) / eco.salaire_median_mensuel_net_eur) * 100) / 100
           : null;
 
-      return { code: t.code, label: t.label, flag: t.flag, eco, categoryAvgs, basketAvg, hexBasketAvg, affordabilityIndex };
+      return {
+        code: t.code,
+        label: t.label,
+        flag: t.flag,
+        eco,
+        categoryAvgs,
+        basketAvg,
+        hexBasketAvg,
+        affordabilityIndex,
+      };
     });
   }, [ecoData, allMonthly]);
 
@@ -230,14 +250,24 @@ export default function ComparaisonTerritoires() {
           name="description"
           content="Tableau de bord macro : indicateurs économiques réels (IEDOM/INSEE) croisés avec les prix alimentaires constatés dans les DROM-COM."
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires" />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires"
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/comparaison-territoires"
+        />
       </Helmet>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4 max-w-5xl">
-
           {/* Hero */}
           <HeroImage
             src={HERO_SRC}
@@ -263,10 +293,10 @@ export default function ComparaisonTerritoires() {
               <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-blue-800 dark:text-blue-200">
                 <p>
-                  Cette page croise des <strong>données économiques officielles</strong> (IEDOM, INSEE,
-                  CEROM) avec les <strong>prix alimentaires relevés citoyens</strong> (Observatoire A KI
-                  PRI SA YÉ). L'indice d'accessibilité estime la part du salaire médian consacrée à
-                  un panier de 50 articles de référence.
+                  Cette page croise des <strong>données économiques officielles</strong> (IEDOM,
+                  INSEE, CEROM) avec les <strong>prix alimentaires relevés citoyens</strong>{' '}
+                  (Observatoire A KI PRI SA YÉ). L'indice d'accessibilité estime la part du salaire
+                  médian consacrée à un panier de 50 articles de référence.
                 </p>
               </div>
             </div>
@@ -288,7 +318,8 @@ export default function ComparaisonTerritoires() {
                     Vue d'ensemble — indicateurs clés
                   </h2>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    PIB/habitant et salaire médian net mensuel en EUR · Taux de chômage au sens du BIT
+                    PIB/habitant et salaire médian net mensuel en EUR · Taux de chômage au sens du
+                    BIT
                   </p>
                 </div>
 
@@ -296,7 +327,9 @@ export default function ComparaisonTerritoires() {
                   <table className="w-full text-sm" style={{ minWidth: '520px' }}>
                     <thead>
                       <tr className="bg-slate-50 dark:bg-slate-700/50 text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                        <th className="text-left px-3 py-3 sticky left-0 bg-slate-50 dark:bg-slate-800 z-10 min-w-[120px]">Territoire</th>
+                        <th className="text-left px-3 py-3 sticky left-0 bg-slate-50 dark:bg-slate-800 z-10 min-w-[120px]">
+                          Territoire
+                        </th>
                         <th className="text-right px-3 py-3 hidden sm:table-cell">Population</th>
                         <th className="text-right px-3 py-3 hidden sm:table-cell">PIB/hab.</th>
                         <th className="text-right px-3 py-3">Chômage</th>
@@ -335,20 +368,26 @@ export default function ComparaisonTerritoires() {
                           <td className="px-3 py-3 text-right font-semibold text-slate-900 dark:text-white hidden sm:table-cell">
                             {row.eco ? `${fmt(row.eco.pib_par_habitant_eur)} €` : '—'}
                           </td>
-                          <td className={`px-3 py-3 text-right font-semibold ${row.eco ? colorForChomage(row.eco.taux_chomage_pct) : 'text-slate-400'}`}>
+                          <td
+                            className={`px-3 py-3 text-right font-semibold ${row.eco ? colorForChomage(row.eco.taux_chomage_pct) : 'text-slate-400'}`}
+                          >
                             {row.eco ? `${row.eco.taux_chomage_pct} %` : '—'}
                           </td>
                           <td className="px-3 py-3 text-right text-slate-600 dark:text-slate-400 hidden xs:table-cell">
                             {row.eco ? `${row.eco.taux_pauvrete_pct} %` : '—'}
                           </td>
-                          <td className={`px-3 py-3 text-right font-semibold ${row.eco ? colorForSurplus(row.eco.surcout_alimentaire_pct) : 'text-slate-400'}`}>
+                          <td
+                            className={`px-3 py-3 text-right font-semibold ${row.eco ? colorForSurplus(row.eco.surcout_alimentaire_pct) : 'text-slate-400'}`}
+                          >
                             {row.eco != null
                               ? row.eco.surcout_alimentaire_pct === 0
                                 ? 'réf.'
                                 : pct(row.eco.surcout_alimentaire_pct)
                               : '—'}
                           </td>
-                          <td className={`px-3 py-3 text-right pr-4 font-semibold ${row.affordabilityIndex != null ? colorForSurplus((row.affordabilityIndex - 1) * 100) : 'text-slate-400'}`}>
+                          <td
+                            className={`px-3 py-3 text-right pr-4 font-semibold ${row.affordabilityIndex != null ? colorForSurplus((row.affordabilityIndex - 1) * 100) : 'text-slate-400'}`}
+                          >
                             {row.affordabilityIndex != null
                               ? `× ${row.affordabilityIndex.toFixed(2)}`
                               : '—'}
@@ -360,146 +399,167 @@ export default function ComparaisonTerritoires() {
                 </div>
 
                 <p className="text-xs text-slate-400 px-4 py-2 border-t border-slate-100 dark:border-slate-700">
-                  <strong>Accessibilité</strong> = coût d'un panier de 50 articles / salaire médian net mensuel. Plus l'indice est élevé, plus le panier pèse sur le budget. 
-                  Cliquez sur un territoire pour détailler ses prix par catégorie.
+                  <strong>Accessibilité</strong> = coût d'un panier de 50 articles / salaire médian
+                  net mensuel. Plus l'indice est élevé, plus le panier pèse sur le budget. Cliquez
+                  sur un territoire pour détailler ses prix par catégorie.
                 </p>
               </div>
 
               {/* Expanded territory detail */}
-              {expandedTerritory && (() => {
-                const row = territoryRows.find((r) => r.code === expandedTerritory);
-                if (!row) return null;
-                return (
-                  <div className="mb-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-indigo-200 dark:border-indigo-700 p-5">
-                    <div className="flex items-center gap-3 mb-5">
-                      <span className="text-3xl">{row.flag}</span>
-                      <div>
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">{row.label}</h3>
+              {expandedTerritory &&
+                (() => {
+                  const row = territoryRows.find((r) => r.code === expandedTerritory);
+                  if (!row) return null;
+                  return (
+                    <div className="mb-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-indigo-200 dark:border-indigo-700 p-5">
+                      <div className="flex items-center gap-3 mb-5">
+                        <span className="text-3xl">{row.flag}</span>
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                            {row.label}
+                          </h3>
+                          {row.eco && (
+                            <p className="text-xs text-slate-500">{row.eco.source_note}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                         {row.eco && (
-                          <p className="text-xs text-slate-500">{row.eco.source_note}</p>
+                          <>
+                            <StatCard
+                              icon={<Users className="w-4 h-4 text-indigo-500" />}
+                              label="Population"
+                              value={`${fmt(row.eco.population)} hab.`}
+                              sub={`recensement ${row.eco.population_year}`}
+                            />
+                            <StatCard
+                              icon={<TrendingUp className="w-4 h-4 text-emerald-500" />}
+                              label="PIB / habitant"
+                              value={`${fmt(row.eco.pib_par_habitant_eur)} €`}
+                              sub={`source CEROM ${row.eco.pib_year}`}
+                            />
+                            <StatCard
+                              icon={<Briefcase className="w-4 h-4 text-amber-500" />}
+                              label="Chômage"
+                              value={`${row.eco.taux_chomage_pct} %`}
+                              sub={`BIT ${row.eco.chomage_year}`}
+                              valueClass={colorForChomage(row.eco.taux_chomage_pct)}
+                            />
+                            <StatCard
+                              icon={<Ship className="w-4 h-4 text-blue-500" />}
+                              label="Distance France"
+                              value={
+                                row.eco.distance_metropole_km === 0
+                                  ? 'référence'
+                                  : `${fmt(row.eco.distance_metropole_km)} km`
+                              }
+                              sub={
+                                row.eco.transport_maritime_duree_jours > 0
+                                  ? `≈ ${row.eco.transport_maritime_duree_jours} j. bateau`
+                                  : 'territoire de référence'
+                              }
+                            />
+                          </>
                         )}
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                      {/* Salaire vs Hexagone */}
                       {row.eco && (
-                        <>
-                          <StatCard
-                            icon={<Users className="w-4 h-4 text-indigo-500" />}
-                            label="Population"
-                            value={`${fmt(row.eco.population)} hab.`}
-                            sub={`recensement ${row.eco.population_year}`}
-                          />
-                          <StatCard
-                            icon={<TrendingUp className="w-4 h-4 text-emerald-500" />}
-                            label="PIB / habitant"
-                            value={`${fmt(row.eco.pib_par_habitant_eur)} €`}
-                            sub={`source CEROM ${row.eco.pib_year}`}
-                          />
-                          <StatCard
-                            icon={<Briefcase className="w-4 h-4 text-amber-500" />}
-                            label="Chômage"
-                            value={`${row.eco.taux_chomage_pct} %`}
-                            sub={`BIT ${row.eco.chomage_year}`}
-                            valueClass={colorForChomage(row.eco.taux_chomage_pct)}
-                          />
-                          <StatCard
-                            icon={<Ship className="w-4 h-4 text-blue-500" />}
-                            label="Distance France"
-                            value={
-                              row.eco.distance_metropole_km === 0
-                                ? 'référence'
-                                : `${fmt(row.eco.distance_metropole_km)} km`
-                            }
-                            sub={
-                              row.eco.transport_maritime_duree_jours > 0
-                                ? `≈ ${row.eco.transport_maritime_duree_jours} j. bateau`
-                                : 'territoire de référence'
-                            }
-                          />
-                        </>
-                      )}
-                    </div>
-
-                    {/* Salaire vs Hexagone */}
-                    {row.eco && (
-                      <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl">
-                        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
-                          Salaire médian net mensuel
-                        </h4>
-                        <div className="flex items-center gap-3">
-                          <div className="flex-1">
-                            <div className="flex justify-between text-xs mb-1">
-                              <span className="text-slate-500">{row.label}</span>
-                              <span className="font-semibold text-slate-800 dark:text-slate-200">
-                                {fmt(row.eco.salaire_median_mensuel_net_eur)} €
-                              </span>
-                            </div>
-                            <div className="h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-indigo-500 rounded-full"
-                                style={{ width: barWidth(row.eco.salaire_median_mensuel_net_eur, 2400) }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        {row.eco.code !== 'fr' && (
-                          <div className="flex items-center gap-3 mt-2">
+                        <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-700/30 rounded-xl">
+                          <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+                            Salaire médian net mensuel
+                          </h4>
+                          <div className="flex items-center gap-3">
                             <div className="flex-1">
                               <div className="flex justify-between text-xs mb-1">
-                                <span className="text-slate-500">France métropolitaine (réf.)</span>
-                                <span className="font-semibold text-slate-800 dark:text-slate-200">1 940 €</span>
+                                <span className="text-slate-500">{row.label}</span>
+                                <span className="font-semibold text-slate-800 dark:text-slate-200">
+                                  {fmt(row.eco.salaire_median_mensuel_net_eur)} €
+                                </span>
                               </div>
                               <div className="h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
-                                <div className="h-full bg-slate-400 rounded-full" style={{ width: barWidth(1940, 2400) }} />
+                                <div
+                                  className="h-full bg-indigo-500 rounded-full"
+                                  style={{
+                                    width: barWidth(row.eco.salaire_median_mensuel_net_eur, 2400),
+                                  }}
+                                />
                               </div>
                             </div>
                           </div>
-                        )}
-                        {row.eco.sursalaire_fonctionnaire_pct > 0 && (
-                          <p className="text-xs text-slate-500 mt-2">
-                            ℹ️ Le sursalaire de la fonction publique (+{row.eco.sursalaire_fonctionnaire_pct} %) compense
-                            partiellement le surcoût de la vie. Il ne bénéficie pas aux salariés du privé.
-                          </p>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Category price comparison */}
-                    {row.categoryAvgs.some((c) => c.avgPrice > 0) && (
-                      <div>
-                        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
-                          <ShoppingCart className="w-4 h-4 text-emerald-500" />
-                          Prix moyens constatés vs Hexagone — données Observatoire
-                        </h4>
-                        <div className="space-y-2">
-                          {row.categoryAvgs.filter((c) => c.avgPrice > 0).map((cat) => (
-                            <div key={cat.category} className="flex items-center gap-3 text-sm">
-                              <span className="w-36 text-slate-600 dark:text-slate-400 text-xs truncate">
-                                {cat.category}
-                              </span>
-                              <span className="w-16 text-right font-semibold text-slate-900 dark:text-white text-xs">
-                                {cat.avgPrice.toFixed(2)} €
-                              </span>
-                              {cat.hexAvg != null && (
-                                <span className="text-xs text-slate-400">(Hex : {cat.hexAvg.toFixed(2)} €)</span>
-                              )}
-                              {cat.surplusPct != null && (
-                                <span className={`ml-auto text-xs font-semibold ${colorForSurplus(cat.surplusPct)}`}>
-                                  {cat.surplusPct === 0 ? 'parité' : pct(cat.surplusPct)}
-                                </span>
-                              )}
+                          {row.eco.code !== 'fr' && (
+                            <div className="flex items-center gap-3 mt-2">
+                              <div className="flex-1">
+                                <div className="flex justify-between text-xs mb-1">
+                                  <span className="text-slate-500">
+                                    France métropolitaine (réf.)
+                                  </span>
+                                  <span className="font-semibold text-slate-800 dark:text-slate-200">
+                                    1 940 €
+                                  </span>
+                                </div>
+                                <div className="h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-slate-400 rounded-full"
+                                    style={{ width: barWidth(1940, 2400) }}
+                                  />
+                                </div>
+                              </div>
                             </div>
-                          ))}
+                          )}
+                          {row.eco.sursalaire_fonctionnaire_pct > 0 && (
+                            <p className="text-xs text-slate-500 mt-2">
+                              ℹ️ Le sursalaire de la fonction publique (+
+                              {row.eco.sursalaire_fonctionnaire_pct} %) compense partiellement le
+                              surcoût de la vie. Il ne bénéficie pas aux salariés du privé.
+                            </p>
+                          )}
                         </div>
-                        <p className="text-xs text-slate-400 mt-3">
-                          Prix issus des relevés citoyens — dernière période disponible (mars 2026 ou plus récent).
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })()}
+                      )}
+
+                      {/* Category price comparison */}
+                      {row.categoryAvgs.some((c) => c.avgPrice > 0) && (
+                        <div>
+                          <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                            <ShoppingCart className="w-4 h-4 text-emerald-500" />
+                            Prix moyens constatés vs Hexagone — données Observatoire
+                          </h4>
+                          <div className="space-y-2">
+                            {row.categoryAvgs
+                              .filter((c) => c.avgPrice > 0)
+                              .map((cat) => (
+                                <div key={cat.category} className="flex items-center gap-3 text-sm">
+                                  <span className="w-36 text-slate-600 dark:text-slate-400 text-xs truncate">
+                                    {cat.category}
+                                  </span>
+                                  <span className="w-16 text-right font-semibold text-slate-900 dark:text-white text-xs">
+                                    {cat.avgPrice.toFixed(2)} €
+                                  </span>
+                                  {cat.hexAvg != null && (
+                                    <span className="text-xs text-slate-400">
+                                      (Hex : {cat.hexAvg.toFixed(2)} €)
+                                    </span>
+                                  )}
+                                  {cat.surplusPct != null && (
+                                    <span
+                                      className={`ml-auto text-xs font-semibold ${colorForSurplus(cat.surplusPct)}`}
+                                    >
+                                      {cat.surplusPct === 0 ? 'parité' : pct(cat.surplusPct)}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                          </div>
+                          <p className="text-xs text-slate-400 mt-3">
+                            Prix issus des relevés citoyens — dernière période disponible (mars 2026
+                            ou plus récent).
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
               {/* Octroi de mer explanation */}
               <div className="mb-8 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-5">
@@ -509,24 +569,34 @@ export default function ComparaisonTerritoires() {
                 <div className="grid sm:grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-400">
                   <div>
                     <p className="mb-2">
-                      L'<strong className="text-slate-800 dark:text-slate-200">octroi de mer</strong> est
-                      une taxe douanière perçue par les collectivités des DROM sur les marchandises importées
-                      et les productions locales (taux différenciés). Elle finance jusqu'à <strong>40 %</strong> des
-                      budgets des collectivités.
+                      L'
+                      <strong className="text-slate-800 dark:text-slate-200">
+                        octroi de mer
+                      </strong>{' '}
+                      est une taxe douanière perçue par les collectivités des DROM sur les
+                      marchandises importées et les productions locales (taux différenciés). Elle
+                      finance jusqu'à <strong>40 %</strong> des budgets des collectivités.
                     </p>
                     <p>
-                      Instaurée depuis le XVIIe siècle, elle a été modernisée en 2004 et prorogée jusqu'en
-                      2030. Son taux varie selon le type de produit (0 % à 30 %) et la collectivité.
+                      Instaurée depuis le XVIIe siècle, elle a été modernisée en 2004 et prorogée
+                      jusqu'en 2030. Son taux varie selon le type de produit (0 % à 30 %) et la
+                      collectivité.
                     </p>
                   </div>
                   <div className="space-y-2">
                     {territoryRows
                       .filter((r) => r.eco && r.eco.octroi_de_mer_taux_moyen_pct > 0)
-                      .sort((a, b) => (b.eco?.octroi_de_mer_taux_moyen_pct ?? 0) - (a.eco?.octroi_de_mer_taux_moyen_pct ?? 0))
+                      .sort(
+                        (a, b) =>
+                          (b.eco?.octroi_de_mer_taux_moyen_pct ?? 0) -
+                          (a.eco?.octroi_de_mer_taux_moyen_pct ?? 0)
+                      )
                       .map((row) => (
                         <div key={row.code} className="flex items-center gap-2">
                           <span className="text-base">{row.flag}</span>
-                          <span className="text-xs text-slate-600 dark:text-slate-400 w-36 truncate">{row.label}</span>
+                          <span className="text-xs text-slate-600 dark:text-slate-400 w-36 truncate">
+                            {row.label}
+                          </span>
                           <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                             <div
                               className="h-full bg-orange-400 rounded-full"
@@ -538,7 +608,9 @@ export default function ComparaisonTerritoires() {
                           </span>
                         </div>
                       ))}
-                    <p className="text-xs text-slate-400 mt-1">Taux moyen toutes catégories — source DGDDI 2023</p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      Taux moyen toutes catégories — source DGDDI 2023
+                    </p>
                   </div>
                 </div>
               </div>
@@ -560,7 +632,10 @@ export default function ComparaisonTerritoires() {
                 {showSources && (
                   <ul className="mt-3 space-y-1">
                     {ecoSources.map((s, i) => (
-                      <li key={i} className="text-xs text-slate-500 dark:text-slate-400 flex items-start gap-1.5">
+                      <li
+                        key={i}
+                        className="text-xs text-slate-500 dark:text-slate-400 flex items-start gap-1.5"
+                      >
                         <span className="mt-0.5 text-slate-400">•</span>
                         {s}
                       </li>

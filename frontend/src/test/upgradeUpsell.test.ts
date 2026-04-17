@@ -49,7 +49,14 @@ describe('billing/plans — FREEMIUM', () => {
   });
 
   it('all plans have required quotas properties', () => {
-    const planIds: PlanId[] = ['FREE', 'FREEMIUM', 'CITIZEN_PREMIUM', 'PRO', 'BUSINESS', 'INSTITUTION'];
+    const planIds: PlanId[] = [
+      'FREE',
+      'FREEMIUM',
+      'CITIZEN_PREMIUM',
+      'PRO',
+      'BUSINESS',
+      'INSTITUTION',
+    ];
     for (const id of planIds) {
       const plan = PLAN_DEFINITIONS[id];
       expect(plan.quotas.maxItems).toBeGreaterThan(0);
@@ -144,7 +151,7 @@ describe('billing/upgradePrompt — event bus', () => {
 /* UpgradeBanner — logique de seuil (sans React, logique pure)        */
 /* ------------------------------------------------------------------ */
 
-describe('UpgradeBanner — seuil d\'affichage', () => {
+describe("UpgradeBanner — seuil d'affichage", () => {
   const checkBannerLevel = (used: number, max: number) => {
     const ratio = used / max;
     if (ratio >= 1) return 'blocked';

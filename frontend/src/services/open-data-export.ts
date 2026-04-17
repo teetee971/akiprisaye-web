@@ -1,7 +1,7 @@
 /**
  * Open Data Export Service
  * "A KI PRI SA YÉ" - Export observations, anomalies, and alerts in open formats
- * 
+ *
  * Compliance with open data standards (Etalab 2.0)
  * Multiple formats: JSON, CSV
  * Anonymized and transparent
@@ -54,10 +54,12 @@ export interface ObservationsExport {
  */
 export interface AnomaliesExport {
   metadata: OpenDataMetadata;
-  donnees: Array<Omit<PriceAnomaly, 'observation_id'> & {
-    /** Anonymized: only date, not observation ID */
-    date_detection: string;
-  }>;
+  donnees: Array<
+    Omit<PriceAnomaly, 'observation_id'> & {
+      /** Anonymized: only date, not observation ID */
+      date_detection: string;
+    }
+  >;
   statistiques: {
     total_anomalies: number;
     par_niveau: Record<string, number>;
@@ -90,7 +92,11 @@ export interface AlertesExport {
 /**
  * Create base metadata
  */
-function createBaseMetadata(titre: string, description: string, format: ExportFormat): OpenDataMetadata {
+function createBaseMetadata(
+  titre: string,
+  description: string,
+  format: ExportFormat
+): OpenDataMetadata {
   return {
     titre,
     description,
@@ -102,13 +108,28 @@ function createBaseMetadata(titre: string, description: string, format: ExportFo
     frequence_maj: 'temps réel (ajout citoyen)',
     couverture_temporelle: 'depuis 2025',
     couverture_spatiale: [
-      'Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte',
-      'Saint-Pierre-et-Miquelon', 'Saint-Barthélemy', 'Saint-Martin',
-      'Wallis-et-Futuna', 'Polynésie française', 'Nouvelle-Calédonie'
+      'Guadeloupe',
+      'Martinique',
+      'Guyane',
+      'La Réunion',
+      'Mayotte',
+      'Saint-Pierre-et-Miquelon',
+      'Saint-Barthélemy',
+      'Saint-Martin',
+      'Wallis-et-Futuna',
+      'Polynésie française',
+      'Nouvelle-Calédonie',
     ],
-    mots_cles: ['prix', 'outre-mer', 'transparence', 'observatoire', 'ticket de caisse', 'open data'],
+    mots_cles: [
+      'prix',
+      'outre-mer',
+      'transparence',
+      'observatoire',
+      'ticket de caisse',
+      'open data',
+    ],
     format,
-    url_source: 'https://akiprisaye.fr'
+    url_source: 'https://akiprisaye.fr',
   };
 }
 
@@ -116,22 +137,22 @@ function createBaseMetadata(titre: string, description: string, format: ExportFo
  * Export observations to JSON
  */
 export function exportObservationsJSON(observations: Observation[]): ObservationsExport {
-  const territories = [...new Set(observations.map(obs => obs.territoire))].sort();
+  const territories = [...new Set(observations.map((obs) => obs.territoire))].sort();
   const categories = new Set<string>();
-  
+
   for (const obs of observations) {
     for (const product of obs.produits) {
       if (product.categorie) categories.add(product.categorie);
     }
   }
-  
-  const dates = observations.map(obs => obs.date).sort();
-  
+
+  const dates = observations.map((obs) => obs.date).sort();
+
   return {
     metadata: createBaseMetadata(
       'Observations de prix réels - A KI PRI SA YÉ',
-      'Prix réels observés sur tickets de caisse dans les territoires d\'Outre-mer. ' +
-      'Données citoyennes vérifiées, sans estimation ni extrapolation.',
+      "Prix réels observés sur tickets de caisse dans les territoires d'Outre-mer. " +
+        'Données citoyennes vérifiées, sans estimation ni extrapolation.',
       'json'
     ),
     donnees: observations,
@@ -140,10 +161,10 @@ export function exportObservationsJSON(observations: Observation[]): Observation
       territoires: territories,
       periode: {
         debut: dates[0] || '',
-        fin: dates[dates.length - 1] || ''
+        fin: dates[dates.length - 1] || '',
       },
-      categories: Array.from(categories).sort()
-    }
+      categories: Array.from(categories).sort(),
+    },
   };
 }
 
@@ -152,7 +173,7 @@ export function exportObservationsJSON(observations: Observation[]): Observation
  */
 export function exportAnomaliesJSON(anomalies: PriceAnomaly[]): AnomaliesExport {
   // Anonymize: remove observation_id
-  const donneesAnonymisees = anomalies.map(anomaly => ({
+  const donneesAnonymisees = anomalies.map((anomaly) => ({
     produit: anomaly.produit,
     territoire: anomaly.territoire,
     commune: anomaly.commune,
@@ -167,22 +188,22 @@ export function exportAnomaliesJSON(anomalies: PriceAnomaly[]): AnomaliesExport 
     niveau: anomaly.niveau,
     observations_historiques: anomaly.observations_historiques,
     explication: anomaly.explication,
-    date_detection: new Date().toISOString().split('T')[0]
+    date_detection: new Date().toISOString().split('T')[0],
   }));
-  
+
   const parNiveau: Record<string, number> = {};
   const parTerritoire: Record<string, number> = {};
-  
+
   for (const anomaly of anomalies) {
     parNiveau[anomaly.niveau] = (parNiveau[anomaly.niveau] || 0) + 1;
     parTerritoire[anomaly.territoire] = (parTerritoire[anomaly.territoire] || 0) + 1;
   }
-  
+
   return {
     metadata: createBaseMetadata(
       'Anomalies de prix détectées - A KI PRI SA YÉ',
       'Anomalies de prix détectées automatiquement par analyse statistique des observations réelles. ' +
-      'Méthodes explicables et reproductibles.',
+        'Méthodes explicables et reproductibles.',
       'json'
     ),
     donnees: donneesAnonymisees,
@@ -190,8 +211,8 @@ export function exportAnomaliesJSON(anomalies: PriceAnomaly[]): AnomaliesExport 
       total_anomalies: anomalies.length,
       par_niveau: parNiveau,
       par_territoire: parTerritoire,
-      methode_detection: 'relative_deviation'
-    }
+      methode_detection: 'relative_deviation',
+    },
   };
 }
 
@@ -200,39 +221,43 @@ export function exportAnomaliesJSON(anomalies: PriceAnomaly[]): AnomaliesExport 
  */
 export function exportAlertesJSON(alerts: Alert[]): AlertesExport {
   // Fully anonymize: only aggregate data
-  const donneesAnonymisees = alerts.map(alert => ({
+  const donneesAnonymisees = alerts.map((alert) => ({
     type: alert.type,
     produit: alert.produit,
     territoire: alert.territoire,
     ecart_pourcent: alert.ecart_pourcent,
     date_observation: alert.date_observation,
-    niveau: alert.type === 'hausse_anormale' ? 
-      (Math.abs(alert.ecart_pourcent) >= 50 ? 'forte' : 
-       Math.abs(alert.ecart_pourcent) >= 30 ? 'moyenne' : 'faible') 
-      : 'info'
+    niveau:
+      alert.type === 'hausse_anormale'
+        ? Math.abs(alert.ecart_pourcent) >= 50
+          ? 'forte'
+          : Math.abs(alert.ecart_pourcent) >= 30
+            ? 'moyenne'
+            : 'faible'
+        : 'info',
   }));
-  
+
   const parType: Record<string, number> = {};
   const parTerritoire: Record<string, number> = {};
-  
+
   for (const alert of alerts) {
     parType[alert.type] = (parType[alert.type] || 0) + 1;
     parTerritoire[alert.territoire] = (parTerritoire[alert.territoire] || 0) + 1;
   }
-  
+
   return {
     metadata: createBaseMetadata(
       'Alertes citoyennes agrégées - A KI PRI SA YÉ',
       'Alertes citoyennes anonymisées déclenchées par des règles définies par les utilisateurs. ' +
-      'Données agrégées, sans information personnelle.',
+        'Données agrégées, sans information personnelle.',
       'json'
     ),
     donnees: donneesAnonymisees,
     statistiques: {
       total_alertes: alerts.length,
       par_type: parType,
-      par_territoire: parTerritoire
-    }
+      par_territoire: parTerritoire,
+    },
   };
 }
 
@@ -258,11 +283,11 @@ export function exportObservationsCSV(observations: Observation[]): string {
     'source',
     'fiabilite',
     'verifie',
-    'created_at'
+    'created_at',
   ];
-  
+
   let csv = headers.join(',') + '\n';
-  
+
   for (const obs of observations) {
     for (const product of obs.produits) {
       const row = [
@@ -283,12 +308,12 @@ export function exportObservationsCSV(observations: Observation[]): string {
         obs.source,
         obs.fiabilite,
         obs.verifie,
-        obs.created_at
+        obs.created_at,
       ];
       csv += row.join(',') + '\n';
     }
   }
-  
+
   return csv;
 }
 
@@ -309,11 +334,11 @@ export function exportAnomaliesCSV(anomalies: PriceAnomaly[]): string {
     'seuil',
     'niveau',
     'observations_historiques',
-    'explication'
+    'explication',
   ];
-  
+
   let csv = headers.join(',') + '\n';
-  
+
   for (const anomaly of anomalies) {
     const row = [
       `"${anomaly.produit.replace(/"/g, '""')}"`,
@@ -328,11 +353,11 @@ export function exportAnomaliesCSV(anomalies: PriceAnomaly[]): string {
       anomaly.seuil,
       anomaly.niveau,
       anomaly.observations_historiques,
-      `"${anomaly.explication.replace(/"/g, '""')}"`
+      `"${anomaly.explication.replace(/"/g, '""')}"`,
     ];
     csv += row.join(',') + '\n';
   }
-  
+
   return csv;
 }
 
@@ -340,34 +365,31 @@ export function exportAnomaliesCSV(anomalies: PriceAnomaly[]): string {
  * Convert alerts to CSV (fully anonymized)
  */
 export function exportAlertesCSV(alerts: Alert[]): string {
-  const headers = [
-    'type',
-    'produit',
-    'territoire',
-    'ecart_pourcent',
-    'date_observation',
-    'niveau'
-  ];
-  
+  const headers = ['type', 'produit', 'territoire', 'ecart_pourcent', 'date_observation', 'niveau'];
+
   let csv = headers.join(',') + '\n';
-  
+
   for (const alert of alerts) {
-    const niveau = alert.type === 'hausse_anormale' ? 
-      (Math.abs(alert.ecart_pourcent) >= 50 ? 'forte' : 
-       Math.abs(alert.ecart_pourcent) >= 30 ? 'moyenne' : 'faible') 
-      : 'info';
-    
+    const niveau =
+      alert.type === 'hausse_anormale'
+        ? Math.abs(alert.ecart_pourcent) >= 50
+          ? 'forte'
+          : Math.abs(alert.ecart_pourcent) >= 30
+            ? 'moyenne'
+            : 'faible'
+        : 'info';
+
     const row = [
       alert.type,
       `"${alert.produit.replace(/"/g, '""')}"`,
       alert.territoire,
       alert.ecart_pourcent,
       alert.date_observation,
-      niveau
+      niveau,
     ];
     csv += row.join(',') + '\n';
   }
-  
+
   return csv;
 }
 

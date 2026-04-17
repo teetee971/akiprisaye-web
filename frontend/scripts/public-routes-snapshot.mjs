@@ -27,6 +27,37 @@ const generated = [
 
 const mode = process.argv.includes('--write') ? 'write' : 'check';
 
+function extractRoutesFromSnapshot(content) {
+  return content
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'));
+}
+
+function printDriftDetails(existingContent) {
+  const existingRoutes = new Set(extractRoutesFromSnapshot(existingContent));
+  const generatedRoutes = new Set(routes);
+
+  const missingInSnapshot = routes.filter((route) => !existingRoutes.has(route));
+  const extraInSnapshot = [...existingRoutes].filter((route) => !generatedRoutes.has(route)).sort((a, b) => a.localeCompare(b));
+
+  const preview = (label, list) => {
+    if (list.length === 0) return;
+    const max = 20;
+    const shown = list.slice(0, max);
+    console.error(`   ${label} (${list.length}) :`);
+    for (const item of shown) {
+      console.error(`   - ${item}`);
+    }
+    if (list.length > max) {
+      console.error(`   … +${list.length - max} autre(s)`);
+    }
+  };
+
+  preview('Routes manquantes dans le snapshot', missingInSnapshot);
+  preview('Routes en trop dans le snapshot', extraInSnapshot);
+}
+
 if (mode === 'write') {
   writeFileSync(SNAPSHOT_PATH, generated, 'utf8');
   console.log(`✅ Snapshot écrit: ${path.relative(ROOT, SNAPSHOT_PATH)} (${routes.length} routes).`);
@@ -41,6 +72,7 @@ if (!existsSync(SNAPSHOT_PATH)) {
 const existing = readFileSync(SNAPSHOT_PATH, 'utf8');
 if (existing !== generated) {
   console.error('❌ Snapshot des routes obsolète. Exécutez: npm run snapshot:routes');
+  printDriftDetails(existing);
   process.exit(1);
 }
 

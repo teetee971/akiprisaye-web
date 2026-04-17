@@ -14,7 +14,9 @@ export function capHighPriority<T extends { priority: string }>(items: T[]): T[]
   return [...high, ...rest];
 }
 
-export function capDuplications<T extends { type?: string; recommendationType?: string }>(patches: T[]): T[] {
+export function capDuplications<T extends { type?: string; recommendationType?: string }>(
+  patches: T[]
+): T[] {
   let dupCount = 0;
   return patches.filter((p) => {
     const isDup = p.type === 'DUPLICATE_PAGE' || p.recommendationType === 'DUPLICATE_PAGE';
@@ -30,6 +32,8 @@ export function isWhitelisted(file: string): boolean {
   return (WHITELISTED_PATCH_FILES as readonly string[]).includes(file);
 }
 
-export function validateRecommendations<T extends { reason?: string; type: string }>(items: T[]): T[] {
+export function validateRecommendations<T extends { reason?: string; type: string }>(
+  items: T[]
+): T[] {
   return items.filter((i) => i.reason && i.reason.trim().length > 0);
 }

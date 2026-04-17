@@ -85,7 +85,7 @@ describe('Anti-Crisis Reading', () => {
 
     it('should return reading for valid territory (90d)', () => {
       const reading = getAntiCrisisReading('FR-973', '90d');
-      
+
       expect(reading).not.toBeNull();
       expect(reading!.territoryId).toBe('FR-973');
       expect(reading!.territoryName).toBe('Guyane');
@@ -95,7 +95,7 @@ describe('Anti-Crisis Reading', () => {
 
     it('should return reading for valid territory (30d)', () => {
       const reading = getAntiCrisisReading('FR-973', '30d');
-      
+
       expect(reading).not.toBeNull();
       expect(reading!.territoryId).toBe('FR-973');
       expect(reading!.territoryName).toBe('Guyane');
@@ -109,7 +109,7 @@ describe('Anti-Crisis Reading', () => {
 
     it('should qualify territory with ILPP below average and stable categories', () => {
       const reading = getAntiCrisisReading('FR-973', '90d'); // ILPP 55, below 61.4
-      
+
       expect(reading!.qualifiesForReading).toBe(true);
       expect(reading!.comparisonToNational).toBe('below');
       expect(reading!.differenceFromNational).toBeLessThan(0);
@@ -117,7 +117,7 @@ describe('Anti-Crisis Reading', () => {
 
     it('should not qualify territory with ILPP above average', () => {
       const reading = getAntiCrisisReading('FR-972', '90d'); // ILPP 72, above 61.4
-      
+
       expect(reading!.qualifiesForReading).toBe(false);
       expect(reading!.comparisonToNational).toBe('above');
       expect(reading!.differenceFromNational).toBeGreaterThan(0);
@@ -125,7 +125,7 @@ describe('Anti-Crisis Reading', () => {
 
     it('should not qualify territory without stable categories', () => {
       const reading = getAntiCrisisReading('FR-976', '90d'); // Mayotte, empty antiCrise array
-      
+
       expect(reading!.qualifiesForReading).toBe(false);
       expect(reading!.stableCategories.length).toBe(0);
     });
@@ -142,25 +142,25 @@ describe('Anti-Crisis Reading', () => {
   describe('getAllAntiCrisisReadings', () => {
     it('should return only qualifying territories for 90d', () => {
       const readings = getAllAntiCrisisReadings('90d');
-      
+
       expect(readings.length).toBeGreaterThan(0);
-      readings.forEach(reading => {
+      readings.forEach((reading) => {
         expect(reading.qualifiesForReading).toBe(true);
       });
     });
 
     it('should return only qualifying territories for 30d', () => {
       const readings = getAllAntiCrisisReadings('30d');
-      
+
       expect(readings.length).toBeGreaterThan(0);
-      readings.forEach(reading => {
+      readings.forEach((reading) => {
         expect(reading.qualifiesForReading).toBe(true);
       });
     });
 
     it('should sort by ILPP ascending (lowest pressure first)', () => {
       const readings = getAllAntiCrisisReadings('90d');
-      
+
       for (let i = 1; i < readings.length; i++) {
         expect(readings[i].ilpp).toBeGreaterThanOrEqual(readings[i - 1].ilpp);
       }
@@ -168,8 +168,8 @@ describe('Anti-Crisis Reading', () => {
 
     it('should only include territories with stable categories', () => {
       const readings = getAllAntiCrisisReadings('90d');
-      
-      readings.forEach(reading => {
+
+      readings.forEach((reading) => {
         expect(reading.stableCategories.length).toBeGreaterThan(0);
       });
     });
@@ -179,7 +179,7 @@ describe('Anti-Crisis Reading', () => {
     it('should explain qualifying territory', () => {
       const reading = getAntiCrisisReading('FR-973', '90d')!;
       const explanation = explainAntiCrisisReading(reading);
-      
+
       expect(explanation).toContain('Guyane');
       expect(explanation).toContain('inférieure');
       expect(explanation).toContain('moyenne nationale');
@@ -189,7 +189,7 @@ describe('Anti-Crisis Reading', () => {
     it('should explain non-qualifying territory', () => {
       const reading = getAntiCrisisReading('FR-972', '90d')!;
       const explanation = explainAntiCrisisReading(reading);
-      
+
       expect(explanation).toContain('Martinique');
       expect(explanation).toContain('supérieure');
       expect(explanation).toContain('moyenne nationale');
@@ -197,12 +197,12 @@ describe('Anti-Crisis Reading', () => {
 
     it('should never contain purchase advice or recommendations', () => {
       const allTerritories = ['FR-971', 'FR-972', 'FR-973', 'FR-974', 'FR-976'];
-      
-      allTerritories.forEach(territoryId => {
+
+      allTerritories.forEach((territoryId) => {
         const reading = getAntiCrisisReading(territoryId, '90d');
         if (reading) {
           const explanation = explainAntiCrisisReading(reading);
-          
+
           expect(explanation.toLowerCase()).not.toContain('acheter');
           expect(explanation.toLowerCase()).not.toContain('recommand');
           expect(explanation.toLowerCase()).not.toContain('conseil');
@@ -240,7 +240,7 @@ describe('Anti-Crisis Reading', () => {
   describe('getAntiCrisisReadingStats', () => {
     it('should return valid statistics', () => {
       const stats = getAntiCrisisReadingStats();
-      
+
       expect(stats.totalTerritories).toBeGreaterThan(0);
       expect(stats.qualifyingTerritories).toBeGreaterThanOrEqual(0);
       expect(stats.percentageQualifying).toBeGreaterThanOrEqual(0);
@@ -254,7 +254,7 @@ describe('Anti-Crisis Reading', () => {
 
     it('should have valid ILPP range for qualifying territories', () => {
       const stats = getAntiCrisisReadingStats();
-      
+
       if (stats.lowestIlpp !== null && stats.highestIlpp !== null) {
         expect(stats.lowestIlpp).toBeLessThanOrEqual(stats.highestIlpp);
         expect(stats.lowestIlpp).toBeGreaterThanOrEqual(0);
@@ -265,18 +265,29 @@ describe('Anti-Crisis Reading', () => {
 
   describe('Legal compliance', () => {
     it('should never mention specific products in antiCrise arrays', () => {
-      const allTerritories = ['FR-971', 'FR-972', 'FR-973', 'FR-974', 'FR-976', 'FR-977', 'FR-978', 'FR-75', 'FR-13', 'FR-69'];
+      const allTerritories = [
+        'FR-971',
+        'FR-972',
+        'FR-973',
+        'FR-974',
+        'FR-976',
+        'FR-977',
+        'FR-978',
+        'FR-75',
+        'FR-13',
+        'FR-69',
+      ];
       const timeRanges: Array<'30d' | '90d'> = ['30d', '90d'];
-      
-      allTerritories.forEach(territoryId => {
+
+      allTerritories.forEach((territoryId) => {
         const data = getTerritoryData(territoryId);
         if (data) {
-          timeRanges.forEach(timeRange => {
-            data.antiCrise[timeRange].forEach(category => {
+          timeRanges.forEach((timeRange) => {
+            data.antiCrise[timeRange].forEach((category) => {
               // Should be categories, not specific products
               expect(category).toBeTruthy();
               expect(category.length).toBeGreaterThanOrEqual(3); // At least 3 characters
-              
+
               // Should not contain brand names or store names (basic check)
               expect(category.toLowerCase()).not.toContain('carrefour');
               expect(category.toLowerCase()).not.toContain('leclerc');
@@ -290,13 +301,13 @@ describe('Anti-Crisis Reading', () => {
     it('should use descriptive language only', () => {
       const readings90d = getAllAntiCrisisReadings('90d');
       const readings30d = getAllAntiCrisisReadings('30d');
-      
-      [...readings90d, ...readings30d].forEach(reading => {
+
+      [...readings90d, ...readings30d].forEach((reading) => {
         const explanation = explainAntiCrisisReading(reading);
-        
+
         // Should use observational language
         expect(explanation.toLowerCase()).toMatch(/présente|observ|constata|identifi|montrant/);
-        
+
         // Should not use imperative or advisory language
         expect(explanation.toLowerCase()).not.toMatch(/achet|allez|préfér|choisiss|optez/);
       });

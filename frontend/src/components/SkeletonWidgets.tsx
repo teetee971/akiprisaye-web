@@ -64,10 +64,7 @@ interface SkeletonStatGridProps {
  */
 export function SkeletonStatGrid({ count = 4 }: SkeletonStatGridProps) {
   return (
-    <div
-      className="grid grid-cols-2 md:grid-cols-4 gap-3"
-      aria-hidden="true"
-    >
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-3" aria-hidden="true">
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}

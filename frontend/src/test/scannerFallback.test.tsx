@@ -28,7 +28,12 @@ vi.mock('../hooks/useContinuousBarcodeScanner', () => ({
     okItems: [],
     autoAddToCart: false,
     setAutoAddToCart: vi.fn(),
-    debugInfo: { status: 'idle', lastCode: null, stableCounter: 0, secondsSinceLastDetection: null },
+    debugInfo: {
+      status: 'idle',
+      lastCode: null,
+      stableCounter: 0,
+      secondsSinceLastDetection: null,
+    },
   }),
 }));
 
@@ -41,7 +46,7 @@ describe('ScannerHub fallback', () => {
         <MemoryRouter>
           <ScannerHub />
         </MemoryRouter>
-      </HelmetProvider>,
+      </HelmetProvider>
     );
 
     expect(screen.getByText(/BarcodeDetector non disponible/i)).toBeTruthy();

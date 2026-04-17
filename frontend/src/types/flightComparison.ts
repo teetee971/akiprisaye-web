@@ -1,6 +1,6 @@
 /**
  * Flight Comparison Types v1.0.0
- * 
+ *
  * Principles:
  * - Observer, not sell: Transparent price observation without affiliate links
  * - Read-only comparison (no data modification)
@@ -17,11 +17,11 @@ import type { Territory, DataSource } from './priceAlerts';
  * Airport information
  */
 export interface Airport {
-  code: string;           // IATA code (e.g., 'PTP', 'ORY', 'CDG')
-  name: string;          // Full name
-  city: string;          // City name
-  territory: Territory;  // Territory
-  region?: string;       // Region (e.g., 'Métropole', 'DOM', 'Regional')
+  code: string; // IATA code (e.g., 'PTP', 'ORY', 'CDG')
+  name: string; // Full name
+  city: string; // City name
+  territory: Territory; // Territory
+  region?: string; // Region (e.g., 'Métropole', 'DOM', 'Regional')
 }
 
 /**
@@ -42,12 +42,12 @@ export type SeasonType = 'high' | 'low' | 'shoulder';
  * Price observation timing metadata
  */
 export interface PriceTimingMetadata {
-  purchaseDate: string;        // ISO 8601 - when price was observed
-  travelDate: string;          // ISO 8601 - scheduled travel date
+  purchaseDate: string; // ISO 8601 - when price was observed
+  travelDate: string; // ISO 8601 - scheduled travel date
   daysBeforeDeparture: number; // Number of days between purchase and travel
-  season: SeasonType;          // Season classification
-  isHoliday: boolean;          // During holiday period
-  holidayName?: string;        // Name of holiday if applicable
+  season: SeasonType; // Season classification
+  isHoliday: boolean; // During holiday period
+  holidayName?: string; // Name of holiday if applicable
 }
 
 /**
@@ -56,7 +56,7 @@ export interface PriceTimingMetadata {
 export interface FlightSourceReference {
   type: DataSource;
   url?: string;
-  observedAt: string;          // ISO 8601
+  observedAt: string; // ISO 8601
   observedBy?: string;
   verificationMethod: 'automated' | 'manual' | 'official';
   reliability: 'high' | 'medium' | 'low';
@@ -67,12 +67,12 @@ export interface FlightSourceReference {
  */
 export interface FlightPricePoint {
   id: string;
-  airline: string;             // Airline name
-  airlineCode: string;         // IATA airline code
-  bookingUrl?: string;         // Direct link to airline booking page
+  airline: string; // Airline name
+  airlineCode: string; // IATA airline code
+  bookingUrl?: string; // Direct link to airline booking page
   route: FlightRoute;
-  price: number;               // Price in euros
-  currency: string;            // Currency code (default: EUR)
+  price: number; // Price in euros
+  currency: string; // Currency code (default: EUR)
   priceType: 'economy' | 'premium_economy' | 'business' | 'first';
   fareConditions: {
     refundable: boolean;
@@ -82,7 +82,7 @@ export interface FlightPricePoint {
   };
   timing: PriceTimingMetadata;
   source: FlightSourceReference;
-  volume: number;              // Number of observations
+  volume: number; // Number of observations
   confidence: 'high' | 'medium' | 'low';
   verified: boolean;
   additionalFees?: {
@@ -91,8 +91,8 @@ export interface FlightPricePoint {
     booking?: number;
     total: number;
   };
-  stops: number;               // Number of stops (0 = direct)
-  duration?: string;           // Flight duration (e.g., "8h30")
+  stops: number; // Number of stops (0 = direct)
+  duration?: string; // Flight duration (e.g., "8h30")
 }
 
 /**
@@ -122,11 +122,11 @@ export interface FlightRouteAggregation {
   medianPrice: number;
   standardDeviation: number;
   observationPeriod: {
-    from: string;              // ISO 8601
-    to: string;                // ISO 8601
+    from: string; // ISO 8601
+    to: string; // ISO 8601
   };
   totalObservations: number;
-  lastUpdate: string;          // ISO 8601
+  lastUpdate: string; // ISO 8601
   seasonalVariation?: {
     highSeasonAverage: number;
     lowSeasonAverage: number;
@@ -141,7 +141,7 @@ export interface FlightRouteAggregation {
 export interface PurchaseTimingAnalysis {
   route: FlightRoute;
   timingBuckets: {
-    label: string;             // e.g., "0-7 jours", "8-14 jours", etc.
+    label: string; // e.g., "0-7 jours", "8-14 jours", etc.
     daysBeforeDeparture: { min: number; max: number };
     averagePrice: number;
     minPrice: number;
@@ -163,7 +163,7 @@ export interface SeasonalPriceAnalysis {
   route: FlightRoute;
   seasons: {
     type: SeasonType;
-    months: number[];          // Month numbers (1-12)
+    months: number[]; // Month numbers (1-12)
     averagePrice: number;
     minPrice: number;
     maxPrice: number;
@@ -181,7 +181,7 @@ export interface FlightComparisonResult {
   aggregation: FlightRouteAggregation;
   purchaseTimingAnalysis?: PurchaseTimingAnalysis;
   seasonalAnalysis?: SeasonalPriceAnalysis;
-  comparisonDate: string;      // ISO 8601
+  comparisonDate: string; // ISO 8601
   metadata: FlightComparisonMetadata;
 }
 
@@ -189,7 +189,7 @@ export interface FlightComparisonResult {
  * Metadata for transparency
  */
 export interface FlightComparisonMetadata {
-  methodology: string;         // Methodology version
+  methodology: string; // Methodology version
   aggregationMethod: 'mean' | 'median' | 'weighted';
   dataQuality: {
     totalAirlines: number;
@@ -201,7 +201,7 @@ export interface FlightComparisonMetadata {
   sources: FlightSourceSummary[];
   warnings?: string[];
   limitations: string[];
-  disclaimer: string;          // "Observer, pas vendre" message
+  disclaimer: string; // "Observer, pas vendre" message
 }
 
 /**
@@ -223,10 +223,10 @@ export interface FlightComparisonFilter {
   destinationTerritory?: Territory;
   airline?: string;
   priceType?: 'economy' | 'premium_economy' | 'business' | 'first';
-  maxPriceAge?: number;        // Max age in days
+  maxPriceAge?: number; // Max age in days
   minConfidence?: 'low' | 'medium' | 'high';
   verifiedOnly?: boolean;
-  directOnly?: boolean;        // Only direct flights
+  directOnly?: boolean; // Only direct flights
   season?: SeasonType;
   daysBeforeDeparture?: { min?: number; max?: number };
 }
@@ -247,8 +247,8 @@ export interface TerritoryFlightStatistics {
     route: FlightRoute;
     price: number;
   };
-  connectivityIndex: number;   // Measure of route availability
-  isolationScore: number;      // Higher = more isolated
+  connectivityIndex: number; // Measure of route availability
+  isolationScore: number; // Higher = more isolated
   priceComparison: {
     vsMetropoleAverage: number;
     vsMetropolePercentage: number;

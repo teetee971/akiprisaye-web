@@ -13,7 +13,10 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lightbulb, TrendingDown, ShoppingCart, ArrowRight } from 'lucide-react';
 import { computePrediction } from '../services/predictionService';
-import { buildObservatoirePriceSeries, KNOWN_OBSERVATOIRE_PRODUCTS } from '../services/observatoirePriceSeries';
+import {
+  buildObservatoirePriceSeries,
+  KNOWN_OBSERVATOIRE_PRODUCTS,
+} from '../services/observatoirePriceSeries';
 
 interface Tip {
   icon: 'deal' | 'trend' | 'stock';
@@ -42,18 +45,30 @@ const ICON_CONFIG = {
 /** Map territory code to observatoire stem */
 function toStem(territory: string): string {
   const map: Record<string, string> = {
-    gp: 'guadeloupe', mq: 'martinique', gf: 'guyane',
-    re: 'la_réunion', yt: 'mayotte', fr: 'hexagone',
-    guadeloupe: 'guadeloupe', martinique: 'martinique', guyane: 'guyane',
-    reunion: 'la_réunion', mayotte: 'mayotte', hexagone: 'hexagone',
+    gp: 'guadeloupe',
+    mq: 'martinique',
+    gf: 'guyane',
+    re: 'la_réunion',
+    yt: 'mayotte',
+    fr: 'hexagone',
+    guadeloupe: 'guadeloupe',
+    martinique: 'martinique',
+    guyane: 'guyane',
+    reunion: 'la_réunion',
+    mayotte: 'mayotte',
+    hexagone: 'hexagone',
   };
   return map[territory.toLowerCase()] ?? territory.toLowerCase();
 }
 
 /** Map territory stem to display name */
 const TERRITORY_DISPLAY: Record<string, string> = {
-  guadeloupe: 'Guadeloupe', martinique: 'Martinique', guyane: 'Guyane',
-  'la_réunion': 'La Réunion', mayotte: 'Mayotte', hexagone: 'Hexagone',
+  guadeloupe: 'Guadeloupe',
+  martinique: 'Martinique',
+  guyane: 'Guyane',
+  la_réunion: 'La Réunion',
+  mayotte: 'Mayotte',
+  hexagone: 'Hexagone',
 };
 
 export default function SmartSavingsTips({
@@ -77,7 +92,7 @@ export default function SmartSavingsTips({
       // Fetch multi-month series for all known products (in parallel, up to 6)
       const candidates = KNOWN_OBSERVATOIRE_PRODUCTS.slice(0, 8);
       const seriesList = await Promise.all(
-        candidates.map((product) => buildObservatoirePriceSeries(stem, product)),
+        candidates.map((product) => buildObservatoirePriceSeries(stem, product))
       );
 
       for (let i = 0; i < candidates.length; i++) {
@@ -137,7 +152,9 @@ export default function SmartSavingsTips({
     }
 
     void buildTips();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [stem, maxTips, territoryName]);
 
   if (loading) {
@@ -154,7 +171,9 @@ export default function SmartSavingsTips({
   if (tips.length === 0) return null;
 
   return (
-    <div className={`rounded-2xl border border-slate-700 bg-slate-900/70 overflow-hidden ${className}`}>
+    <div
+      className={`rounded-2xl border border-slate-700 bg-slate-900/70 overflow-hidden ${className}`}
+    >
       <div className="px-4 py-3 border-b border-slate-700 flex items-center gap-2">
         <Lightbulb className="w-4 h-4 text-yellow-400" />
         <h3 className="font-semibold text-sm">Conseils malins — {territoryName}</h3>
@@ -170,7 +189,9 @@ export default function SmartSavingsTips({
               onClick={() => navigate(`/comparateur?q=${encodeURIComponent(tip.product)}`)}
               className="w-full px-4 py-3 flex items-start gap-3 text-left hover:bg-slate-800/60 transition-colors cursor-pointer"
             >
-              <div className={`flex-shrink-0 w-8 h-8 rounded-lg border ${bg} flex items-center justify-center`}>
+              <div
+                className={`flex-shrink-0 w-8 h-8 rounded-lg border ${bg} flex items-center justify-center`}
+              >
                 <Icon className={`w-4 h-4 ${text}`} />
               </div>
               <div className="min-w-0">

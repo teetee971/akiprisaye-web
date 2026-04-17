@@ -1,7 +1,6 @@
- 
 /**
  * Cheapest Products Section Component
- * 
+ *
  * Displays the cheapest products observed at a store with territory comparison.
  * PROMPT 2: Produits les moins chers du magasin
  */
@@ -20,9 +19,9 @@ interface CheapestProductsSectionProps {
   storeName: string;
 }
 
-export default function CheapestProductsSection({ 
-  products, 
-  storeName 
+export default function CheapestProductsSection({
+  products,
+  storeName,
 }: CheapestProductsSectionProps) {
   const { addItem } = useTiPanier('comparison');
   if (products.length === 0) {
@@ -49,7 +48,7 @@ export default function CheapestProductsSection({
             Top {products.length} des prix observés dans cette enseigne
           </p>
         </div>
-        
+
         {/* Legend */}
         <div className="text-sm text-gray-400 space-y-1">
           <div className="flex items-center gap-2">
@@ -85,17 +84,17 @@ export default function CheapestProductsSection({
                     </span>
                   )}
                 </div>
-                
+
                 <h4 className="text-white font-medium truncate">
                   {product.brand} {product.name}
                 </h4>
-                
+
                 <div className="flex items-center gap-2 text-sm text-gray-400 mt-1">
                   <span>{product.size}</span>
                   <span>•</span>
                   <span className="capitalize">{product.category}</span>
                 </div>
-                
+
                 <div className="flex items-center gap-2 text-xs text-gray-500 mt-2">
                   <span>📅 Observé {formatObservationDate(product.observationDate)}</span>
                 </div>
@@ -126,17 +125,19 @@ export default function CheapestProductsSection({
                 <div className="text-2xl font-bold text-white mb-1">
                   {product.price.toFixed(2)} €
                 </div>
-                
+
                 {product.territoryAverage !== undefined && (
                   <div className="space-y-1">
-                    <div className={`text-sm font-medium ${getPriceComparisonColor(product.priceComparison)}`}>
+                    <div
+                      className={`text-sm font-medium ${getPriceComparisonColor(product.priceComparison)}`}
+                    >
                       {getPriceComparisonIcon(product.priceComparison)} vs moyenne
                     </div>
-                    
+
                     <div className="text-xs text-gray-400">
                       Moy: {product.territoryAverage.toFixed(2)} €
                     </div>
-                    
+
                     {product.savingsPercent !== undefined && product.savingsPercent > 0 && (
                       <div className="text-xs text-green-400 font-medium">
                         -{product.savingsPercent}%
@@ -155,13 +156,11 @@ export default function CheapestProductsSection({
         <div className="flex items-start gap-3">
           <span className="text-xl flex-shrink-0">💡</span>
           <div>
-            <p className="text-blue-200 text-sm font-medium mb-1">
-              Méthodologie claire
-            </p>
+            <p className="text-blue-200 text-sm font-medium mb-1">Méthodologie claire</p>
             <p className="text-blue-100/80 text-xs">
-              Ces prix sont issus d'observations déclarées et comparés à la moyenne 
-              du territoire calculée sur toutes les enseignes référencées. 
-              Les données peuvent varier selon la disponibilité et la date d'observation.
+              Ces prix sont issus d'observations déclarées et comparés à la moyenne du territoire
+              calculée sur toutes les enseignes référencées. Les données peuvent varier selon la
+              disponibilité et la date d'observation.
             </p>
           </div>
         </div>

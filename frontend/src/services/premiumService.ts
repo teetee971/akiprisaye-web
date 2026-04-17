@@ -1,14 +1,14 @@
 /**
  * Premium Status Service
- * 
+ *
  * Manages premium subscription status for Android app
- * 
+ *
  * CONTEXT (NON-NEGOTIABLE):
  * - CITOYEN mode is 100% FREE forever (web and Android)
  * - Premium features only available via Google Play Billing (Android only)
  * - No payment on web version
  * - Premium status is checked via Google Play Billing API
- * 
+ *
  * PREMIUM FEATURES:
  * - Advanced price history (3+ years)
  * - Multi-store comparison

@@ -13,13 +13,13 @@
 
 import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { useParams, useSearchParams, Link } from 'react-router-dom';
-import { useCompare }  from '../hooks/useCompare';
-import { useHistory }  from '../hooks/useHistory';
-import { useSignal }   from '../hooks/useSignal';
-import { Skeleton }    from '../components/ui/Skeleton';
-import { SEOHead }     from '../components/ui/SEOHead';
-import { formatEur }   from '../utils/currency';
-import { formatDate }  from '../utils/format';
+import { useCompare } from '../hooks/useCompare';
+import { useHistory } from '../hooks/useHistory';
+import { useSignal } from '../hooks/useSignal';
+import { Skeleton } from '../components/ui/Skeleton';
+import { SEOHead } from '../components/ui/SEOHead';
+import { formatEur } from '../utils/currency';
+import { formatDate } from '../utils/format';
 import { buildRetailerUrl } from '../utils/retailerLinks';
 import { trackProductView, trackRetailerClick } from '../utils/priceClickTracker';
 import { PrimaryCTA } from '../components/PrimaryCTA';
@@ -40,41 +40,42 @@ import type { SignalResult, HistoryPoint } from '../types/api';
 
 // ── Lazy chart + client-side signal ──────────────────────────────────────────
 const LazyPriceHistory = lazy(() =>
-  import('../components/insights/PriceHistory').then((m) => ({ default: m.PriceHistory })),
+  import('../components/insights/PriceHistory').then((m) => ({ default: m.PriceHistory }))
 );
 const LazySmartSignal = lazy(() =>
-  import('../components/insights/SmartSignal').then((m) => ({ default: m.SmartSignal })),
+  import('../components/insights/SmartSignal').then((m) => ({ default: m.SmartSignal }))
 );
 
 // ── Signal visual config ──────────────────────────────────────────────────────
 const SIGNAL_RING: Record<string, string> = {
-  buy:     'border-emerald-400/30 bg-emerald-400/10',
-  wait:    'border-amber-400/30   bg-amber-400/10',
+  buy: 'border-emerald-400/30 bg-emerald-400/10',
+  wait: 'border-amber-400/30   bg-amber-400/10',
   neutral: 'border-white/10       bg-white/[0.03]',
 };
 const SIGNAL_TEXT: Record<string, string> = {
-  buy:     'text-emerald-300',
-  wait:    'text-amber-300',
+  buy: 'text-emerald-300',
+  wait: 'text-amber-300',
   neutral: 'text-white',
 };
 const SIGNAL_ICON: Record<string, string> = {
-  buy:     '↓',
-  wait:    '↑',
+  buy: '↓',
+  wait: '↑',
   neutral: '→',
 };
 
 // ── Smart Signal contextual badge ────────────────────────────────────────────
 interface SmartSignalBadgeProps {
-  savings:   number | null;
-  average:   number | null;
+  savings: number | null;
+  average: number | null;
   bestPrice: number | null;
-  signal:    string | undefined;
+  signal: string | undefined;
 }
 function SmartSignalBadge({ savings, average, bestPrice, signal }: SmartSignalBadgeProps) {
   if (signal === 'buy' && savings != null && savings > 0.01) {
-    const pct = average != null && bestPrice != null && average > 0
-      ? Math.round(((average - bestPrice) / average) * 100)
-      : null;
+    const pct =
+      average != null && bestPrice != null && average > 0
+        ? Math.round(((average - bestPrice) / average) * 100)
+        : null;
     return (
       <div className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-3 py-1.5 text-xs font-bold text-emerald-300">
         🔻 {pct != null ? `-${pct}% vs moyenne` : 'Meilleur prix'} · Bon moment pour acheter
@@ -116,12 +117,12 @@ function SourceBadge({ source }: { source: SourceId }) {
 
 // ── Price row ─────────────────────────────────────────────────────────────────
 interface PriceRowProps {
-  p:             PriceObservationRow;
-  rank:          number;
-  isBest:        boolean;
+  p: PriceObservationRow;
+  rank: number;
+  isBest: boolean;
   savingsVsBest: number | null;
-  barcode:       string;
-  territory:     string;
+  barcode: string;
+  territory: string;
 }
 function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceRowProps) {
   const retailerUrl = buildRetailerUrl(p.retailer, barcode);
@@ -133,9 +134,11 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
   return (
     <div
       className={`group relative flex items-center justify-between rounded-xl border px-4 py-4 transition-all duration-150
-        ${isBest
-          ? 'border-emerald-400/40 bg-emerald-400/[0.08] ring-1 ring-emerald-400/20 hover:bg-emerald-400/[0.12]'
-          : 'border-white/8 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04]'}`}
+        ${
+          isBest
+            ? 'border-emerald-400/40 bg-emerald-400/[0.08] ring-1 ring-emerald-400/20 hover:bg-emerald-400/[0.12]'
+            : 'border-white/8 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04]'
+        }`}
     >
       <div className="flex min-w-0 items-center gap-3">
         {/* Rank bubble */}
@@ -163,7 +166,9 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
       {/* Price + CTA */}
       <div className="ml-4 flex flex-shrink-0 items-center gap-3">
         <div className="text-right">
-          <div className={`text-lg font-bold tabular-nums ${isBest ? 'text-emerald-400' : 'text-white'}`}>
+          <div
+            className={`text-lg font-bold tabular-nums ${isBest ? 'text-emerald-400' : 'text-white'}`}
+          >
             {formatEur(p.price)}
           </div>
           {!isBest && savingsVsBest != null && savingsVsBest > 0.005 && (
@@ -181,11 +186,13 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
             rel="noopener noreferrer"
             onClick={handleRetailerClick}
             className={`flex-shrink-0 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all duration-150 active:scale-95
-              ${isBest
-                ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300 hover:bg-emerald-400/30'
-                : 'border-white/15 bg-white/5 text-zinc-400 opacity-0 group-hover:opacity-100 hover:border-white/30 hover:bg-white/10 hover:text-white'}`}
+              ${
+                isBest
+                  ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300 hover:bg-emerald-400/30'
+                  : 'border-white/15 bg-white/5 text-zinc-400 opacity-0 group-hover:opacity-100 hover:border-white/30 hover:bg-white/10 hover:text-white'
+              }`}
           >
-            {isBest ? 'VOIR L\'OFFRE →' : 'Voir →'}
+            {isBest ? "VOIR L'OFFRE →" : 'Voir →'}
           </a>
         )}
       </div>
@@ -195,16 +202,22 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
 
 // ── Best-price hero block ─────────────────────────────────────────────────────
 interface BestPriceHeroProps {
-  bestPrice:    number | null;
-  savings:      number | null;
-  retailer:     string | undefined;
-  retailerUrl:  string | null;
+  bestPrice: number | null;
+  savings: number | null;
+  retailer: string | undefined;
+  retailerUrl: string | null;
   signalStatus: string | undefined;
-  barcode:      string;
-  territory:    string;
+  barcode: string;
+  territory: string;
 }
 function BestPriceHero({
-  bestPrice, savings, retailer, retailerUrl, signalStatus, barcode, territory,
+  bestPrice,
+  savings,
+  retailer,
+  retailerUrl,
+  signalStatus,
+  barcode,
+  territory,
 }: BestPriceHeroProps) {
   if (bestPrice === null) return null;
 
@@ -213,14 +226,15 @@ function BestPriceHero({
   };
 
   const signalColor =
-    signalStatus === 'buy'  ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30' :
-    signalStatus === 'wait' ? 'text-amber-400   bg-amber-400/10   border-amber-400/30'   :
-                              'text-white        bg-white/5        border-white/10';
+    signalStatus === 'buy'
+      ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30'
+      : signalStatus === 'wait'
+        ? 'text-amber-400   bg-amber-400/10   border-amber-400/30'
+        : 'text-white        bg-white/5        border-white/10';
 
   return (
     <div className="rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-950/40 to-zinc-900/60 p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
         {/* Left: best price */}
         <div>
           <div className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500">
@@ -237,7 +251,9 @@ function BestPriceHero({
           {savings != null && savings > 0.01 && (
             <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5">
               <span className="text-xs font-semibold text-emerald-300">
-                Économisez&nbsp;<span className="text-base font-extrabold">{formatEur(savings)}</span>&nbsp;maintenant
+                Économisez&nbsp;
+                <span className="text-base font-extrabold">{formatEur(savings)}</span>
+                &nbsp;maintenant
               </span>
             </div>
           )}
@@ -247,7 +263,7 @@ function BestPriceHero({
         <div className="flex flex-col items-start gap-2 sm:items-end">
           {signalStatus && signalStatus !== 'neutral' && (
             <div className={`rounded-xl border px-4 py-2 text-sm font-bold ${signalColor}`}>
-              {signalStatus === 'buy'  ? '↓ Bon moment pour acheter' : '↑ Attendre recommandé'}
+              {signalStatus === 'buy' ? '↓ Bon moment pour acheter' : '↑ Attendre recommandé'}
             </div>
           )}
           {retailerUrl && retailer && (
@@ -268,7 +284,9 @@ function BestPriceHero({
 }
 
 // ── API signal card ───────────────────────────────────────────────────────────
-interface SignalCardProps { signal: SignalResult; }
+interface SignalCardProps {
+  signal: SignalResult;
+}
 function SignalCard({ signal }: SignalCardProps) {
   const ring = SIGNAL_RING[signal.status] ?? SIGNAL_RING.neutral;
   const text = SIGNAL_TEXT[signal.status] ?? SIGNAL_TEXT.neutral;
@@ -289,9 +307,9 @@ function SignalCard({ signal }: SignalCardProps) {
 
 // ── Signal section ────────────────────────────────────────────────────────────
 interface SignalSectionProps {
-  signal:         SignalResult | null;
-  history:        HistoryPoint[];
-  signalLoading:  boolean;
+  signal: SignalResult | null;
+  history: HistoryPoint[];
+  signalLoading: boolean;
   historyLoading: boolean;
 }
 function SignalSection({ signal, history, signalLoading, historyLoading }: SignalSectionProps) {
@@ -311,22 +329,30 @@ interface BreadcrumbsProps {
 }
 function Breadcrumbs({ product, territory }: BreadcrumbsProps) {
   const territoryName = getTerritoryName(territory);
-  
+
   return (
     <nav aria-label="Fil d'Ariane" className="mb-4 text-xs text-zinc-500">
       <ol className="flex flex-wrap items-center gap-1.5">
         <li>
-          <Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link>
+          <Link to="/" className="hover:text-emerald-400 transition-colors">
+            Accueil
+          </Link>
         </li>
-        <li aria-hidden="true" className="text-zinc-700">›</li>
+        <li aria-hidden="true" className="text-zinc-700">
+          ›
+        </li>
         <li>
-          <Link to="/comparateur" className="hover:text-emerald-400 transition-colors">Comparateur</Link>
+          <Link to="/comparateur" className="hover:text-emerald-400 transition-colors">
+            Comparateur
+          </Link>
         </li>
         {product.category && (
           <>
-            <li aria-hidden="true" className="text-zinc-700">›</li>
+            <li aria-hidden="true" className="text-zinc-700">
+              ›
+            </li>
             <li>
-              <Link 
+              <Link
                 to={`/categorie/${product.category.toLowerCase().replace(/\s+/g, '-')}?territory=${territory}`}
                 className="hover:text-emerald-400 transition-colors"
               >
@@ -335,7 +361,9 @@ function Breadcrumbs({ product, territory }: BreadcrumbsProps) {
             </li>
           </>
         )}
-        <li aria-hidden="true" className="text-zinc-700">›</li>
+        <li aria-hidden="true" className="text-zinc-700">
+          ›
+        </li>
         <li className="text-zinc-300 truncate max-w-[200px]">{product.name}</li>
       </ol>
     </nav>
@@ -351,7 +379,14 @@ interface SEOContentBlockProps {
   savings: number | null;
   storeCount: number;
 }
-function SEOContentBlock({ product, territory, minPrice, maxPrice, savings, storeCount }: SEOContentBlockProps) {
+function SEOContentBlock({
+  product,
+  territory,
+  minPrice,
+  maxPrice,
+  savings,
+  storeCount,
+}: SEOContentBlockProps) {
   const territoryName = getTerritoryName(territory);
   const brand = product.brand ?? '';
   const brandLabel = brand ? `${brand} ` : '';
@@ -361,25 +396,37 @@ function SEOContentBlock({ product, territory, minPrice, maxPrice, savings, stor
       <h2 className="sr-only">Informations complémentaires</h2>
       <div className="text-xs leading-relaxed text-zinc-500 space-y-2">
         <p>
-          <strong className="text-zinc-400">Comparatif {brandLabel}{product.name} en {territoryName}</strong> —{' '}
-          Retrouvez les meilleurs prix dans {storeCount} enseigne{storeCount > 1 ? 's' : ''} locales et faites des économies sur vos courses.
+          <strong className="text-zinc-400">
+            Comparatif {brandLabel}
+            {product.name} en {territoryName}
+          </strong>{' '}
+          — Retrouvez les meilleurs prix dans {storeCount} enseigne{storeCount > 1 ? 's' : ''}{' '}
+          locales et faites des économies sur vos courses.
         </p>
         {minPrice != null && maxPrice != null && minPrice !== maxPrice && (
           <p>
-            Les prix varient de <span className="text-emerald-400 font-medium">{formatEur(minPrice)}</span> à{' '}
+            Les prix varient de{' '}
+            <span className="text-emerald-400 font-medium">{formatEur(minPrice)}</span> à{' '}
             <span className="text-zinc-300 font-medium">{formatEur(maxPrice)}</span>.
             {savings != null && savings > 0.01 && (
-              <> Économisez jusqu'à <span className="text-emerald-400 font-bold">{formatEur(savings)}</span> en comparant les enseignes.</>
+              <>
+                {' '}
+                Économisez jusqu'à{' '}
+                <span className="text-emerald-400 font-bold">{formatEur(savings)}</span> en
+                comparant les enseignes.
+              </>
             )}
           </p>
         )}
         <p>
-          Où acheter {brandLabel}{product.name} moins cher en {territoryName}&nbsp;? Notre comparateur analyse quotidiennement
-          les prix dans les principales enseignes (Carrefour, E.Leclerc, Super U, Leader Price…) pour vous aider à trouver la meilleure offre.
+          Où acheter {brandLabel}
+          {product.name} moins cher en {territoryName}&nbsp;? Notre comparateur analyse
+          quotidiennement les prix dans les principales enseignes (Carrefour, E.Leclerc, Super U,
+          Leader Price…) pour vous aider à trouver la meilleure offre.
         </p>
         <p>
-          Données actualisées quotidiennement à partir de relevés terrains et sources officielles pour{' '}
-          {territoryName}.
+          Données actualisées quotidiennement à partir de relevés terrains et sources officielles
+          pour {territoryName}.
         </p>
       </div>
     </section>
@@ -406,7 +453,14 @@ interface FaqSectionProps {
   average: number | null;
   bestRetailer: string | undefined;
 }
-function FaqSection({ product, territory, bestPrice, savings, average, bestRetailer }: FaqSectionProps) {
+function FaqSection({
+  product,
+  territory,
+  bestPrice,
+  savings,
+  average,
+  bestRetailer,
+}: FaqSectionProps) {
   const territoryName = getTerritoryName(territory);
   const brandLabel = product.brand ? `${product.brand} ` : '';
   const productLabel = `${brandLabel}${product.name}`;
@@ -471,7 +525,8 @@ function RelatedProductsSection({ product, currentTerritory, slug }: RelatedProd
       {/* Territory variants — great for internal linking across DOM pages */}
       <div className="mb-4">
         <h2 className="mb-2 text-xs font-bold uppercase tracking-widest text-zinc-500">
-          Prix {product.brand ? `${product.brand} ` : ''}{product.name} dans d'autres territoires
+          Prix {product.brand ? `${product.brand} ` : ''}
+          {product.name} dans d'autres territoires
         </h2>
         <div className="flex flex-wrap gap-2">
           {otherTerritories.map((t) => (
@@ -523,31 +578,25 @@ export default function SEOProductPage() {
   const queryId = slug.includes('-') ? slug.split('-')[0] : slug;
 
   const { data: compareData, loading: compareLoading } = useCompare(queryId || slug, territory, '');
-  const { data: history,     loading: historyLoading  } = useHistory(queryId || slug, territory, '30d');
-  const { data: signal,      loading: signalLoading   } = useSignal(queryId || slug, territory);
+  const { data: history, loading: historyLoading } = useHistory(queryId || slug, territory, '30d');
+  const { data: signal, loading: signalLoading } = useSignal(queryId || slug, territory);
 
   // Cheapest first (already sorted server-side but re-sort for safety)
   const sorted = useMemo(
     () => [...(compareData?.observations ?? [])].sort((a, b) => a.price - b.price),
-    [compareData?.observations],
+    [compareData?.observations]
   );
 
   const maxSavings: number | null = useMemo(
     () =>
-      sorted.length > 1
-        ? +(sorted[sorted.length - 1].price - sorted[0].price).toFixed(2)
-        : null,
-    [sorted],
+      sorted.length > 1 ? +(sorted[sorted.length - 1].price - sorted[0].price).toFixed(2) : null,
+    [sorted]
   );
 
   // Track product view once data is loaded
   useEffect(() => {
     if (compareData?.product && !compareLoading) {
-      trackProductView(
-        compareData.product.barcode || queryId,
-        compareData.product.name,
-        territory,
-      );
+      trackProductView(compareData.product.barcode || queryId, compareData.product.name, territory);
     }
   }, [compareData, compareLoading, queryId, territory]);
 
@@ -580,7 +629,7 @@ export default function SEOProductPage() {
         compareData.summary?.min ?? null,
         compareData.summary?.savings ?? null,
         compareData.summary?.average ?? null,
-        sorted[0]?.retailer,
+        sorted[0]?.retailer
       )
     : null;
 
@@ -596,10 +645,7 @@ export default function SEOProductPage() {
   if (compareLoading) {
     return (
       <div className="min-h-screen bg-slate-950 px-4 py-8">
-        <SEOHead
-          title={`Chargement... — Comparateur de prix`}
-          noIndex
-        />
+        <SEOHead title={`Chargement... — Comparateur de prix`} noIndex />
         <div className="mx-auto max-w-2xl space-y-4">
           <Skeleton className="h-48" />
           <Skeleton className="h-28" />
@@ -632,10 +678,8 @@ export default function SEOProductPage() {
   }
 
   const { product, summary } = compareData;
-  const bestRetailer    = sorted[0]?.retailer;
-  const bestRetailerUrl = bestRetailer
-    ? buildRetailerUrl(bestRetailer, product.barcode)
-    : null;
+  const bestRetailer = sorted[0]?.retailer;
+  const bestRetailerUrl = bestRetailer ? buildRetailerUrl(bestRetailer, product.barcode) : null;
 
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8 pb-24 sm:pb-8">
@@ -648,13 +692,13 @@ export default function SEOProductPage() {
       />
 
       <div className="mx-auto max-w-2xl space-y-4">
-        
         {/* Breadcrumbs */}
         <Breadcrumbs product={product} territory={territory} />
 
         {/* ── SEO H1 — Product question format (great for Google) ────────── */}
         <h1 className="text-xl font-bold text-white sm:text-2xl">
-          Quel est le prix {product.brand ? `du ${product.brand} ` : 'de '}{product.name} en {getTerritoryName(territory)} ?
+          Quel est le prix {product.brand ? `du ${product.brand} ` : 'de '}
+          {product.name} en {getTerritoryName(territory)} ?
         </h1>
 
         {/* ── Product identity ──────────────────────────────────────────────── */}
@@ -678,7 +722,7 @@ export default function SEOProductPage() {
             <h2 className="text-lg font-bold leading-snug text-white sm:text-xl">{product.name}</h2>
             {product.category ? (
               <div className="mt-1 text-xs text-zinc-500">
-                <Link 
+                <Link
                   to={`/categorie/${product.category.toLowerCase().replace(/\s+/g, '-')}?territory=${territory}`}
                   className="hover:text-emerald-400 transition-colors"
                 >
@@ -771,12 +815,7 @@ export default function SEOProductPage() {
         />
 
         {/* ── Related products / territory links (internal linking) ─────────── */}
-        <RelatedProductsSection
-          product={product}
-          currentTerritory={territory}
-          slug={slug}
-        />
-
+        <RelatedProductsSection product={product} currentTerritory={territory} slug={slug} />
       </div>
 
       {/* ── Sticky CTA bar — always visible above fold on mobile ─────────────── */}

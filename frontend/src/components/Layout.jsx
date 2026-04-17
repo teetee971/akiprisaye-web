@@ -30,7 +30,6 @@ function AlertEvaluatorSideEffect() {
   return null;
 }
 
-
 function HashScrollManager() {
   const location = useLocation();
 
@@ -38,7 +37,9 @@ function HashScrollManager() {
     if (!location.hash) return undefined;
 
     const targetId = decodeURIComponent(location.hash.slice(1));
-    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     let timeoutId;
     let attempts = 0;
 
@@ -99,7 +100,9 @@ export default function Layout() {
       {incidentReason && !incidentDismissed && (
         <div className="mx-auto mt-2 w-full max-w-6xl rounded-lg border border-amber-400/40 bg-amber-500/20 px-4 py-2 text-sm text-amber-100">
           <div className="flex items-center justify-between gap-3">
-            <span>Mode incident actif: certains services live sont indisponibles ({incidentReason}).</span>
+            <span>
+              Mode incident actif: certains services live sont indisponibles ({incidentReason}).
+            </span>
             <button
               type="button"
               onClick={() => setIncidentDismissed(true)}
@@ -112,7 +115,11 @@ export default function Layout() {
       )}
       <AlertEvaluatorSideEffect />
       <HashScrollManager />
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-2 md:pb-4">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-6xl flex-1 px-4 pb-10 pt-2 md:pb-4"
+      >
         <Outlet />
       </main>
       <FabActions />

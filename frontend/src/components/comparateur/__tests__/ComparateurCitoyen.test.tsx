@@ -1,4 +1,3 @@
- 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
@@ -122,7 +121,9 @@ describe('ComparateurCitoyen', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/impossible de charger les données de l'observatoire/i)
+      ).toBeInTheDocument();
     });
 
     // Should show error state with retry button
@@ -140,7 +141,9 @@ describe('ComparateurCitoyen', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/impossible de charger les données de l'observatoire/i)
+      ).toBeInTheDocument();
     });
   });
 
@@ -157,7 +160,9 @@ describe('ComparateurCitoyen', () => {
 
     // Wait for error to appear
     await waitFor(() => {
-      expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/impossible de charger les données de l'observatoire/i)
+      ).toBeInTheDocument();
     });
 
     // Clear previous fetch calls
@@ -198,7 +203,9 @@ describe('ComparateurCitoyen', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/impossible de charger les données de l'observatoire/i)
+      ).toBeInTheDocument();
     });
   });
 
@@ -217,7 +224,11 @@ describe('ComparateurCitoyen', () => {
     // Check metadata elements
     expect(screen.getAllByText(/Guadeloupe/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/[0-9]{1,2} .*2026/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText((_, el) => (el?.textContent || '').toLowerCase().includes('releve citoyen')).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText((_, el) =>
+        (el?.textContent || '').toLowerCase().includes('releve citoyen')
+      ).length
+    ).toBeGreaterThan(0);
     // Use getAllByText since "vérifié" may appear in multiple elements
     expect(screen.getAllByText(/vérifié/i).length).toBeGreaterThan(0);
   });
@@ -243,7 +254,9 @@ describe('ComparateurCitoyen', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/impossible de charger les données de l'observatoire/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/impossible de charger les données de l'observatoire/i)
+      ).toBeInTheDocument();
     });
   });
 });

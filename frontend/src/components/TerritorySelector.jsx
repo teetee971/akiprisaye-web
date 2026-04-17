@@ -3,8 +3,13 @@ import { getActiveTerritories } from '../constants/territories';
 
 // Construire la liste des territoires avec "Tous" en premier
 const ALL_TERRITORY_CODE = 'all';
-const allTerritoriesOption = { code: ALL_TERRITORY_CODE, name: 'Tous les territoires', type: 'Tous', flag: '🌍' };
-const activeTerritories = getActiveTerritories().map(t => ({
+const allTerritoriesOption = {
+  code: ALL_TERRITORY_CODE,
+  name: 'Tous les territoires',
+  type: 'Tous',
+  flag: '🌍',
+};
+const activeTerritories = getActiveTerritories().map((t) => ({
   code: t.code,
   name: t.name,
   type: t.type,
@@ -15,7 +20,7 @@ const territories = [allTerritoriesOption, ...activeTerritories];
 export default function TerritorySelector({ value, onChange, className = '' }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const selectedTerritory = territories.find(t => t.code === value) || territories[0];
+  const selectedTerritory = territories.find((t) => t.code === value) || territories[0];
 
   const handleSelect = (territory) => {
     onChange(territory.code);
@@ -51,11 +56,7 @@ export default function TerritorySelector({ value, onChange, className = '' }) {
 
       {isOpen && (
         <>
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
-          />
+          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} aria-hidden="true" />
           <div className="absolute z-20 w-full mt-2 bg-slate-900/95 backdrop-blur-[14px] border border-white/[0.22] rounded-lg shadow-xl max-h-80 overflow-y-auto">
             {territories.map((territory) => (
               <button

@@ -44,21 +44,18 @@ export function useFavorites() {
     [favorites]
   );
 
-  const toggleFavorite = useCallback(
-    (item: Omit<FavoriteItem, 'createdAt'>) => {
-      setFavorites((prev) => {
-        const exists = prev.some((fav) => fav.id === item.id);
-        const next = exists
-          ? prev.filter((fav) => fav.id !== item.id)
-          : [{ ...item, createdAt: new Date().toISOString() }, ...prev];
-        if (typeof window !== 'undefined' && safeLocalStorage) {
-          safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-        }
-        return next;
-      });
-    },
-    []
-  );
+  const toggleFavorite = useCallback((item: Omit<FavoriteItem, 'createdAt'>) => {
+    setFavorites((prev) => {
+      const exists = prev.some((fav) => fav.id === item.id);
+      const next = exists
+        ? prev.filter((fav) => fav.id !== item.id)
+        : [{ ...item, createdAt: new Date().toISOString() }, ...prev];
+      if (typeof window !== 'undefined' && safeLocalStorage) {
+        safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      }
+      return next;
+    });
+  }, []);
 
   const removeFavorite = useCallback((id: string) => {
     setFavorites((prev) => {

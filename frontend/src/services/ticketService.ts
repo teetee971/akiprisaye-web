@@ -51,13 +51,24 @@ class TicketService {
       relatedUrl: data.relatedUrl,
       createdAt: now,
       updatedAt: now,
-      statusHistory: [{ from: 'open' as TicketStatus, to: 'open' as TicketStatus, changedAt: now, note: 'Ticket créé' }],
+      statusHistory: [
+        {
+          from: 'open' as TicketStatus,
+          to: 'open' as TicketStatus,
+          changedAt: now,
+          note: 'Ticket créé',
+        },
+      ],
       isPublic: false,
       isResolved: false,
       needsResponse: true,
     };
     if (db) {
-      const ref = await addDoc(collection(db, 'tickets'), { ...ticket, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      const ref = await addDoc(collection(db, 'tickets'), {
+        ...ticket,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
       ticket.id = ref.id;
     }
     return ticket;
@@ -72,14 +83,33 @@ class TicketService {
   async listTickets(filters?: TicketFilters): Promise<Ticket[]> {
     if (!db) return [];
     let q = query(collection(db, 'tickets'), orderBy('createdAt', 'desc'), limit(200));
-    if (filters?.type) q = query(collection(db, 'tickets'), where('type', '==', filters.type), orderBy('createdAt', 'desc'));
-    if (filters?.status) q = query(collection(db, 'tickets'), where('status', '==', filters.status), orderBy('createdAt', 'desc'));
-    if (filters?.isPublic !== undefined) q = query(collection(db, 'tickets'), where('isPublic', '==', filters.isPublic), orderBy('createdAt', 'desc'));
+    if (filters?.type)
+      q = query(
+        collection(db, 'tickets'),
+        where('type', '==', filters.type),
+        orderBy('createdAt', 'desc')
+      );
+    if (filters?.status)
+      q = query(
+        collection(db, 'tickets'),
+        where('status', '==', filters.status),
+        orderBy('createdAt', 'desc')
+      );
+    if (filters?.isPublic !== undefined)
+      q = query(
+        collection(db, 'tickets'),
+        where('isPublic', '==', filters.isPublic),
+        orderBy('createdAt', 'desc')
+      );
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ ...d.data(), id: d.id } as Ticket));
+    return snap.docs.map((d) => ({ ...d.data(), id: d.id }) as Ticket);
   }
 
-  async updateTicket(ticketId: string, updates: UpdateTicketData, adminId?: string): Promise<Ticket | null> {
+  async updateTicket(
+    ticketId: string,
+    updates: UpdateTicketData,
+    adminId?: string
+  ): Promise<Ticket | null> {
     if (!db) return null;
     const ref = doc(db, 'tickets', ticketId);
     const snap = await getDoc(ref);
@@ -88,7 +118,12 @@ class TicketService {
     const now = new Date();
     const updatedFields: Partial<Ticket> = { ...updates, updatedAt: now };
     if (updates.status && updates.status !== ticket.status) {
-      const change: TicketStatusChange = { from: ticket.status, to: updates.status, changedAt: now, changedBy: adminId };
+      const change: TicketStatusChange = {
+        from: ticket.status,
+        to: updates.status,
+        changedAt: now,
+        changedBy: adminId,
+      };
       updatedFields.statusHistory = [...(ticket.statusHistory ?? []), change];
       if (updates.status === 'resolved' || updates.status === 'closed') {
         updatedFields.isResolved = true;
@@ -107,27 +142,54 @@ class TicketService {
 
   async getUserTickets(userEmail: string): Promise<Ticket[]> {
     if (!db) return [];
-    const q = query(collection(db, 'tickets'), where('userEmail', '==', userEmail), orderBy('createdAt', 'desc'));
+    const q = query(
+      collection(db, 'tickets'),
+      where('userEmail', '==', userEmail),
+      orderBy('createdAt', 'desc')
+    );
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ ...d.data(), id: d.id } as Ticket));
+    return snap.docs.map((d) => ({ ...d.data(), id: d.id }) as Ticket);
   }
 
   async getPublicTickets(lim = 50): Promise<Ticket[]> {
     if (!db) return [];
-    const q = query(collection(db, 'tickets'), where('isPublic', '==', true), orderBy('createdAt', 'desc'), limit(lim));
+    const q = query(
+      collection(db, 'tickets'),
+      where('isPublic', '==', true),
+      orderBy('createdAt', 'desc'),
+      limit(lim)
+    );
     const snap = await getDocs(q);
-    return snap.docs.map(d => ({ ...d.data(), id: d.id } as Ticket));
+    return snap.docs.map((d) => ({ ...d.data(), id: d.id }) as Ticket);
   }
 
   async getTicketStats() {
     const tickets = await this.listTickets();
     const stats = {
       total: tickets.length,
-      byStatus: { open: 0, in_progress: 0, under_review: 0, resolved: 0, closed: 0, duplicate: 0 } as Record<TicketStatus, number>,
-      byType: { suggestion: 0, feature_request: 0, bug_report: 0, data_quality: 0, question: 0, other: 0 } as Record<TicketType, number>,
+      byStatus: {
+        open: 0,
+        in_progress: 0,
+        under_review: 0,
+        resolved: 0,
+        closed: 0,
+        duplicate: 0,
+      } as Record<TicketStatus, number>,
+      byType: {
+        suggestion: 0,
+        feature_request: 0,
+        bug_report: 0,
+        data_quality: 0,
+        question: 0,
+        other: 0,
+      } as Record<TicketType, number>,
       byPriority: { low: 0, medium: 0, high: 0, urgent: 0 } as Record<TicketPriority, number>,
     };
-    tickets.forEach(t => { stats.byStatus[t.status]++; stats.byType[t.type]++; stats.byPriority[t.priority]++; });
+    tickets.forEach((t) => {
+      stats.byStatus[t.status]++;
+      stats.byType[t.type]++;
+      stats.byPriority[t.priority]++;
+    });
     return stats;
   }
 }

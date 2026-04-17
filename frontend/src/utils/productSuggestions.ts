@@ -11,26 +11,32 @@ export interface ProductSuggestion {
 
 // Product associations based on common shopping patterns
 const PRODUCT_ASSOCIATIONS: Record<string, string[]> = {
-  'Pâtes': ['Huile', 'Sauce tomate (non listé)'],
-  'Riz': ['Légumes', 'Viande', 'Huile'],
-  'Pain': ['Beurre (non listé)', 'Confiture (non listé)'],
-  'Lait': ['Céréales (non listé)', 'Café (non listé)'],
-  'Farine': ['Sucre', 'Huile'],
-  'Viande': ['Légumes', 'Riz', 'Pâtes'],
-  'Poisson': ['Légumes', 'Riz'],
-  'Légumes': ['Huile', 'Viande', 'Poisson'],
-  'Fruits': ['Lait'],
+  Pâtes: ['Huile', 'Sauce tomate (non listé)'],
+  Riz: ['Légumes', 'Viande', 'Huile'],
+  Pain: ['Beurre (non listé)', 'Confiture (non listé)'],
+  Lait: ['Céréales (non listé)', 'Café (non listé)'],
+  Farine: ['Sucre', 'Huile'],
+  Viande: ['Légumes', 'Riz', 'Pâtes'],
+  Poisson: ['Légumes', 'Riz'],
+  Légumes: ['Huile', 'Viande', 'Poisson'],
+  Fruits: ['Lait'],
   'Café (non listé)': ['Lait', 'Sucre'],
-  'Eau': ['Autres boissons (non listé)'],
-  'Essence': ['Diesel'],
-  'Diesel': ['Essence'],
+  Eau: ['Autres boissons (non listé)'],
+  Essence: ['Diesel'],
+  Diesel: ['Essence'],
 };
 
 // Meal-based suggestions
 const MEAL_PATTERNS: Record<string, string[]> = {
-  'petit_dejeuner': ['Pain', 'Lait', 'Café (non listé)', 'Beurre (non listé)', 'Confiture (non listé)'],
-  'dejeuner': ['Viande', 'Poisson', 'Légumes', 'Riz', 'Pâtes'],
-  'diner': ['Viande', 'Poisson', 'Légumes', 'Pain'],
+  petit_dejeuner: [
+    'Pain',
+    'Lait',
+    'Café (non listé)',
+    'Beurre (non listé)',
+    'Confiture (non listé)',
+  ],
+  dejeuner: ['Viande', 'Poisson', 'Légumes', 'Riz', 'Pâtes'],
+  diner: ['Viande', 'Poisson', 'Légumes', 'Pain'],
 };
 
 /**
@@ -47,7 +53,7 @@ export function getSuggestedProducts(currentList: string[]): ProductSuggestion[]
   for (const product of currentList) {
     const related = PRODUCT_ASSOCIATIONS[product];
     if (related) {
-      related.forEach(relatedProduct => {
+      related.forEach((relatedProduct) => {
         // Remove "(non listé)" suffix for comparison
         const cleanProduct = relatedProduct.replace(' (non listé)', '');
         if (!alreadyInList.has(cleanProduct) && !suggestedProducts.has(cleanProduct)) {
@@ -55,7 +61,7 @@ export function getSuggestedProducts(currentList: string[]): ProductSuggestion[]
           suggestions.push({
             product: cleanProduct,
             reason: `Complète bien ${product}`,
-            category: 'complementary'
+            category: 'complementary',
           });
         }
       });
@@ -64,18 +70,18 @@ export function getSuggestedProducts(currentList: string[]): ProductSuggestion[]
 
   // Detect meal patterns and suggest missing items
   for (const [mealType, products] of Object.entries(MEAL_PATTERNS)) {
-    const matchCount = products.filter(p => alreadyInList.has(p)).length;
-    
+    const matchCount = products.filter((p) => alreadyInList.has(p)).length;
+
     // If user has some items from a meal pattern, suggest others
     if (matchCount >= 2 && matchCount < products.length) {
-      products.forEach(product => {
+      products.forEach((product) => {
         const cleanProduct = product.replace(' (non listé)', '');
         if (!alreadyInList.has(cleanProduct) && !suggestedProducts.has(cleanProduct)) {
           suggestedProducts.add(cleanProduct);
           suggestions.push({
             product: cleanProduct,
             reason: `Pour compléter votre ${mealType.replace('_', ' ')}`,
-            category: 'meal_pattern'
+            category: 'meal_pattern',
           });
         }
       });
@@ -92,8 +98,8 @@ export function getSuggestedProducts(currentList: string[]): ProductSuggestion[]
 export function getFrequentlyForgottenItems(currentList: string[]): string[] {
   const essentials = ['Eau', 'Pain', 'Lait'];
   const alreadyInList = new Set(currentList);
-  
-  return essentials.filter(item => !alreadyInList.has(item));
+
+  return essentials.filter((item) => !alreadyInList.has(item));
 }
 
 /**
@@ -105,11 +111,11 @@ export function analyzeShoppingList(currentList: string[]): {
   suggestions: string[];
 } {
   const categories: Record<string, number> = {
-    'alimentaire_base': 0,
-    'frais': 0,
-    'carburant': 0,
-    'hygiene': 0,
-    'bricolage': 0
+    alimentaire_base: 0,
+    frais: 0,
+    carburant: 0,
+    hygiene: 0,
+    bricolage: 0,
   };
 
   // This would need to be connected to the actual product categories
@@ -127,6 +133,6 @@ export function analyzeShoppingList(currentList: string[]): {
   return {
     categories,
     totalItems: currentList.length,
-    suggestions
+    suggestions,
   };
 }

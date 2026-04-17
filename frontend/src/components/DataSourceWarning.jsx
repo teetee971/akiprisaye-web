@@ -1,6 +1,6 @@
 /**
  * DataSourceWarning Component
- * 
+ *
  * Displays critical warnings about data sources throughout the application.
  * Shows when data is demonstration/non-official.
  * Updated to Civic Glass design - NO EMOJIS
@@ -16,7 +16,8 @@ export function DataSourceWarning({ dataStatus, requiredSources, compact = false
     return (
       <div className="bg-red-600/10 border-l-4 border-red-500 p-3 text-sm backdrop-blur-sm">
         <p className="text-red-200 font-semibold">
-          <span className="font-bold">AVERTISSEMENT:</span> Données de démonstration - Ne pas utiliser en production
+          <span className="font-bold">AVERTISSEMENT:</span> Données de démonstration - Ne pas
+          utiliser en production
         </p>
         {requiredSources && (
           <p className="text-red-300 text-xs mt-1">
@@ -35,11 +36,10 @@ export function DataSourceWarning({ dataStatus, requiredSources, compact = false
             <span className="font-bold">AVERTISSEMENT:</span> Données de démonstration
           </p>
           <p className="text-red-300 text-sm">
-            Ne pas utiliser en production. Sources officielles requises: {requiredSources?.join(', ') || 'non spécifiées'}
+            Ne pas utiliser en production. Sources officielles requises:{' '}
+            {requiredSources?.join(', ') || 'non spécifiées'}
           </p>
-          <p className="text-red-300 text-sm mt-2">
-            Statut actuel: {dataStatus || 'DEMO'}
-          </p>
+          <p className="text-red-300 text-sm mt-2">Statut actuel: {dataStatus || 'DEMO'}</p>
         </div>
       </div>
     </div>

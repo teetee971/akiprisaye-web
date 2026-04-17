@@ -1,4 +1,12 @@
-export type NewsType = 'bons_plans' | 'rappels' | 'reglementaire' | 'indice' | 'dossiers' | 'press' | 'partner' | 'user';
+export type NewsType =
+  | 'bons_plans'
+  | 'rappels'
+  | 'reglementaire'
+  | 'indice'
+  | 'dossiers'
+  | 'press'
+  | 'partner'
+  | 'user';
 
 export type NewsTerritory = 'gp' | 'mq' | 'gf' | 're' | 'yt' | 'fr' | 'all';
 
@@ -74,7 +82,9 @@ export function isAuthorizedSource(url: string): boolean {
   const hostname = extractHostname(url);
   if (!hostname) return false;
 
-  return AUTHORIZED_SOURCES.some((source) => hostname === source || hostname.endsWith(`.${source}`));
+  return AUTHORIZED_SOURCES.some(
+    (source) => hostname === source || hostname.endsWith(`.${source}`)
+  );
 }
 
 export interface CategoryConfig {
@@ -86,8 +96,32 @@ export interface CategoryConfig {
 }
 
 export const categoryConfigs: Record<NewsCategory, CategoryConfig> = {
-  PRIX: { label: 'PRIX', color: 'text-green-400', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/30', icon: '📉' },
-  POLITIQUE: { label: 'POLITIQUE', color: 'text-purple-400', bgColor: 'bg-purple-500/10', borderColor: 'border-purple-500/30', icon: '🏛️' },
-  ALERTE: { label: 'ALERTE', color: 'text-red-400', bgColor: 'bg-red-500/10', borderColor: 'border-red-500/30', icon: '⚠️' },
-  INNOVATION: { label: 'INNOVATION', color: 'text-blue-400', bgColor: 'bg-blue-500/10', borderColor: 'border-blue-500/30', icon: '💡' },
+  PRIX: {
+    label: 'PRIX',
+    color: 'text-green-400',
+    bgColor: 'bg-green-500/10',
+    borderColor: 'border-green-500/30',
+    icon: '📉',
+  },
+  POLITIQUE: {
+    label: 'POLITIQUE',
+    color: 'text-purple-400',
+    bgColor: 'bg-purple-500/10',
+    borderColor: 'border-purple-500/30',
+    icon: '🏛️',
+  },
+  ALERTE: {
+    label: 'ALERTE',
+    color: 'text-red-400',
+    bgColor: 'bg-red-500/10',
+    borderColor: 'border-red-500/30',
+    icon: '⚠️',
+  },
+  INNOVATION: {
+    label: 'INNOVATION',
+    color: 'text-blue-400',
+    bgColor: 'bg-blue-500/10',
+    borderColor: 'border-blue-500/30',
+    icon: '💡',
+  },
 };

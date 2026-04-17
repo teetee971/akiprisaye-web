@@ -7,7 +7,7 @@ const DEBOUNCE_MS = 450;
 export function useHistory(
   productId: string,
   territory: string,
-  range: '7d' | '30d',
+  range: '7d' | '30d'
 ): { data: HistoryPoint[]; loading: boolean } {
   const [data, setData] = useState<HistoryPoint[]>([]);
   const [loading, setLoading] = useState(false);

@@ -90,7 +90,7 @@ export async function createGroup(
   name: string,
   description: string,
   uid: string,
-  displayName: string,
+  displayName: string
 ): Promise<string> {
   checkDb();
   const ref = await addDoc(collection(db!, 'groupes_parole'), {
@@ -134,7 +134,7 @@ export async function leaveGroup(groupId: string, uid: string): Promise<void> {
  */
 export function subscribeToGroups(
   territory: TerritoryCode | null,
-  onUpdate: (groups: GroupParole[]) => void,
+  onUpdate: (groups: GroupParole[]) => void
 ): Unsubscribe {
   if (!db) {
     onUpdate([]);
@@ -146,13 +146,9 @@ export function subscribeToGroups(
         collection(db, 'groupes_parole'),
         where('territory', '==', territory),
         orderBy('createdAt', 'desc'),
-        limit(50),
+        limit(50)
       )
-    : query(
-        collection(db, 'groupes_parole'),
-        orderBy('createdAt', 'desc'),
-        limit(50),
-      );
+    : query(collection(db, 'groupes_parole'), orderBy('createdAt', 'desc'), limit(50));
 
   return onSnapshot(baseQuery, (snap) => {
     const groups: GroupParole[] = snap.docs.map((d) => ({
@@ -173,15 +169,13 @@ export function subscribeToGroups(
 /**
  * Récupérer les groupes d'un territoire (lecture unique).
  */
-export async function getGroupsByTerritory(
-  territory: TerritoryCode,
-): Promise<GroupParole[]> {
+export async function getGroupsByTerritory(territory: TerritoryCode): Promise<GroupParole[]> {
   if (!db) return [];
   const q = query(
     collection(db, 'groupes_parole'),
     where('territory', '==', territory),
     orderBy('createdAt', 'desc'),
-    limit(50),
+    limit(50)
   );
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({
@@ -206,7 +200,7 @@ export async function sendGroupMessage(
   uid: string,
   displayName: string,
   text: string,
-  photoUrl?: string,
+  photoUrl?: string
 ): Promise<void> {
   checkDb();
   const trimmed = text.trim();
@@ -231,7 +225,7 @@ export async function sendGroupMessage(
  */
 export function subscribeToGroupMessages(
   groupId: string,
-  onUpdate: (msgs: GroupMessage[]) => void,
+  onUpdate: (msgs: GroupMessage[]) => void
 ): Unsubscribe {
   if (!db) {
     onUpdate([]);
@@ -241,7 +235,7 @@ export function subscribeToGroupMessages(
   const q = query(
     collection(db, 'groupes_parole', groupId, 'messages'),
     orderBy('at', 'asc'),
-    limit(200),
+    limit(200)
   );
 
   return onSnapshot(q, (snap) => {
@@ -262,11 +256,7 @@ export function subscribeToGroupMessages(
 /**
  * Signaler manuellement un message comme inapproprié.
  */
-export async function flagMessage(
-  groupId: string,
-  msgId: string,
-  reason: string,
-): Promise<void> {
+export async function flagMessage(groupId: string, msgId: string, reason: string): Promise<void> {
   if (!db) return;
   await updateDoc(doc(db, 'groupes_parole', groupId, 'messages', msgId), {
     flagged: true,

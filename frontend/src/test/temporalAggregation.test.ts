@@ -30,10 +30,7 @@ import {
 
 // ─── Load real JSON files ──────────────────────────────────────────────────────
 
-const DATA_DIR = resolve(
-  fileURLToPath(import.meta.url),
-  '../../../public/data/observatoire',
-);
+const DATA_DIR = resolve(fileURLToPath(import.meta.url), '../../../public/data/observatoire');
 
 function loadSnapshot(filename: string): ObservatoireSnapshot {
   const raw = readFileSync(join(DATA_DIR, filename), 'utf-8');
@@ -117,27 +114,21 @@ describe('buildMonthlyAggregates — real Guadeloupe data', () => {
 
   it('observationCount matches raw count in the real snapshot', () => {
     const monthly = buildMonthlyAggregates([gp_2025_11]);
-    const riz = monthly.find(
-      (m) => m.productKey === RIZ_EAN && m.month === '2025-11',
-    );
+    const riz = monthly.find((m) => m.productKey === RIZ_EAN && m.month === '2025-11');
     expect(riz).toBeDefined();
-    const rawCount = gp_2025_11.donnees.filter(
-      (o) => (o.ean ?? o.produit) === RIZ_EAN,
-    ).length;
+    const rawCount = gp_2025_11.donnees.filter((o) => (o.ean ?? o.produit) === RIZ_EAN).length;
     expect(riz!.observationCount).toBe(rawCount);
   });
 
   it('captures all distinct enseignes present in real snapshot for lait', () => {
     const monthly = buildMonthlyAggregates([gp_2025_11]);
-    const lait = monthly.find(
-      (m) => m.productKey === LAIT_EAN && m.month === '2025-11',
-    );
+    const lait = monthly.find((m) => m.productKey === LAIT_EAN && m.month === '2025-11');
     expect(lait).toBeDefined();
     const rawEnseignes = new Set(
       gp_2025_11.donnees
         .filter((o) => (o.ean ?? o.produit) === LAIT_EAN)
         .map((o) => o.enseigne)
-        .filter(Boolean),
+        .filter(Boolean)
     );
     for (const e of rawEnseignes) {
       expect(lait!.enseignes).toContain(e);
@@ -147,9 +138,7 @@ describe('buildMonthlyAggregates — real Guadeloupe data', () => {
   it('includes non-food categories (Hygiène, Entretien / Nettoyage, Cosmétiques, Lessive)', () => {
     const monthly = buildMonthlyAggregates([gp_2026_01, gp_2026_02]);
     const cats = new Set(monthly.map((m) => m.category));
-    const nonFood = [...cats].filter(
-      (c) => !['Épicerie', 'Produits laitiers'].includes(c),
-    );
+    const nonFood = [...cats].filter((c) => !['Épicerie', 'Produits laitiers'].includes(c));
     expect(nonFood.length).toBeGreaterThan(0);
   });
 });
@@ -160,9 +149,7 @@ describe('buildAnnualAggregates — real Guadeloupe data', () => {
   it('groups 2025-11 and 2025-12 snapshots into year 2025', () => {
     const monthly = buildMonthlyAggregates([gp_2025_11, gp_2025_12]);
     const annual = buildAnnualAggregates(monthly);
-    const lait2025 = annual.find(
-      (a) => a.productKey === LAIT_EAN && a.year === '2025',
-    );
+    const lait2025 = annual.find((a) => a.productKey === LAIT_EAN && a.year === '2025');
     expect(lait2025).toBeDefined();
     expect(lait2025!.monthsCovered).toContain('2025-11');
     expect(lait2025!.monthsCovered).toContain('2025-12');
@@ -171,9 +158,7 @@ describe('buildAnnualAggregates — real Guadeloupe data', () => {
   it('groups 2026-01 and 2026-02 snapshots into year 2026', () => {
     const monthly = buildMonthlyAggregates([gp_2026_01, gp_2026_02]);
     const annual = buildAnnualAggregates(monthly);
-    const lait2026 = annual.find(
-      (a) => a.productKey === LAIT_EAN && a.year === '2026',
-    );
+    const lait2026 = annual.find((a) => a.productKey === LAIT_EAN && a.year === '2026');
     expect(lait2026).toBeDefined();
     expect(lait2026!.monthsCovered.every((m) => m.startsWith('2026'))).toBe(true);
   });
@@ -203,9 +188,7 @@ describe('buildPriceTrendSeries — real 4-month Guadeloupe series', () => {
   it('returns a series entry for every distinct product in the real snapshots', () => {
     const series = buildPriceTrendSeries(gpSnapshots);
     const allProductKeys = new Set(
-      gpSnapshots.flatMap((s) =>
-        s.donnees.map((o) => (o.ean || o.produit)),
-      ),
+      gpSnapshots.flatMap((s) => s.donnees.map((o) => o.ean || o.produit))
     );
     for (const key of allProductKeys) {
       expect(series.some((ts) => ts.productKey === key)).toBe(true);
@@ -341,14 +324,10 @@ describe('detectPriceAnomalies — real + synthetic spike', () => {
     const monthly = buildMonthlyAggregates(gpSnapshots);
     // Inject synthetic spike on lait in Feb 2026
     const spiked = monthly.map((m) =>
-      m.productKey === LAIT_EAN && m.month === '2026-02'
-        ? { ...m, avgPrice: m.avgPrice * 3.5 }
-        : m,
+      m.productKey === LAIT_EAN && m.month === '2026-02' ? { ...m, avgPrice: m.avgPrice * 3.5 } : m
     );
     const anomalies = detectPriceAnomalies(spiked);
-    const flag = anomalies.find(
-      (a) => a.productKey === LAIT_EAN && a.month === '2026-02',
-    );
+    const flag = anomalies.find((a) => a.productKey === LAIT_EAN && a.month === '2026-02');
     expect(flag).toBeDefined();
     expect(flag!.zScore).toBeGreaterThan(1.5);
   });

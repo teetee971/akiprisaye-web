@@ -76,31 +76,43 @@ export function usePrivacyConsent() {
   const hasAnswered = stored !== null;
 
   /** Grant one or all categories */
-  const grantConsent = useCallback((categories: ConsentCategory | ConsentCategory[] | 'all') => {
-    const next = { ...consent };
-    const cats: ConsentCategory[] =
-      categories === 'all' ? ['history', 'analytics'] :
-      Array.isArray(categories) ? categories : [categories];
-    for (const c of cats) next[c] = true;
-    persist(next);
-    setStored(loadStored());
-  }, [consent]);
+  const grantConsent = useCallback(
+    (categories: ConsentCategory | ConsentCategory[] | 'all') => {
+      const next = { ...consent };
+      const cats: ConsentCategory[] =
+        categories === 'all'
+          ? ['history', 'analytics']
+          : Array.isArray(categories)
+            ? categories
+            : [categories];
+      for (const c of cats) next[c] = true;
+      persist(next);
+      setStored(loadStored());
+    },
+    [consent]
+  );
 
   /** Revoke one or all categories and clear associated data */
-  const revokeConsent = useCallback((categories: ConsentCategory | ConsentCategory[] | 'all') => {
-    const next = { ...consent };
-    const cats: ConsentCategory[] =
-      categories === 'all' ? ['history', 'analytics'] :
-      Array.isArray(categories) ? categories : [categories];
-    for (const c of cats) next[c] = false;
-    persist(next);
-    setStored(loadStored());
+  const revokeConsent = useCallback(
+    (categories: ConsentCategory | ConsentCategory[] | 'all') => {
+      const next = { ...consent };
+      const cats: ConsentCategory[] =
+        categories === 'all'
+          ? ['history', 'analytics']
+          : Array.isArray(categories)
+            ? categories
+            : [categories];
+      for (const c of cats) next[c] = false;
+      persist(next);
+      setStored(loadStored());
 
-    // Erase history if revoked
-    if (cats.includes('history')) {
-      safeLocalStorage.removeItem('akiprisaye:history:v1');
-    }
-  }, [consent]);
+      // Erase history if revoked
+      if (cats.includes('history')) {
+        safeLocalStorage.removeItem('akiprisaye:history:v1');
+      }
+    },
+    [consent]
+  );
 
   /** Accept all – convenience wrapper */
   const acceptAll = useCallback(() => grantConsent('all'), [grantConsent]);

@@ -1,11 +1,5 @@
- 
 import { useEffect, useState } from 'react';
-import {
-  MapContainer,
-  TileLayer,
-  Circle,
-  Tooltip,
-} from 'react-leaflet';
+import { MapContainer, TileLayer, Circle, Tooltip } from 'react-leaflet';
 
 import { computePressureIndex } from '../services/pressureIndexService';
 import { DOM_COORDINATES } from '../data/domCoordinates';
@@ -20,7 +14,7 @@ export default function PressureHeatmapDOM() {
 
   useEffect(() => {
     let mounted = true;
-    computePressureIndex().then(res => {
+    computePressureIndex().then((res) => {
       if (mounted) setData(res);
     });
     return () => {
@@ -41,7 +35,7 @@ export default function PressureHeatmapDOM() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {data.map(t => {
+        {data.map((t) => {
           const coord = DOM_COORDINATES[t.territory];
           if (!coord) return null;
 
@@ -74,8 +68,8 @@ export default function PressureHeatmapDOM() {
 }
 
 function color(index: number) {
-  if (index < 95) return '#22c55e';   // vert
-  if (index < 105) return '#eab308';  // jaune
-  if (index < 120) return '#f97316';  // orange
-  return '#ef4444';                   // rouge
+  if (index < 95) return '#22c55e'; // vert
+  if (index < 105) return '#eab308'; // jaune
+  if (index < 120) return '#f97316'; // orange
+  return '#ef4444'; // rouge
 }

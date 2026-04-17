@@ -42,12 +42,16 @@ describe('monitoring bootstrap — concern 1: early crash probes', () => {
   it('installRuntimeCrashProbe is statically imported in main.tsx', () => {
     const src = readSrc('main.tsx');
     // Must appear as a static (top-level) import, not a dynamic import()
-    expect(src).toMatch(/^import\s+\{[^}]*installRuntimeCrashProbe[^}]*\}\s+from\s+['"]\.\/monitoring\/runtimeCrashProbe['"]/m);
+    expect(src).toMatch(
+      /^import\s+\{[^}]*installRuntimeCrashProbe[^}]*\}\s+from\s+['"]\.\/monitoring\/runtimeCrashProbe['"]/m
+    );
   });
 
   it('initErrorTracker is statically imported in main.tsx', () => {
     const src = readSrc('main.tsx');
-    expect(src).toMatch(/^import\s+\{[^}]*initErrorTracker[^}]*\}\s+from\s+['"]\.\/monitoring\/errorTracker['"]/m);
+    expect(src).toMatch(
+      /^import\s+\{[^}]*initErrorTracker[^}]*\}\s+from\s+['"]\.\/monitoring\/errorTracker['"]/m
+    );
   });
 
   it('installRuntimeCrashProbe() is called at module level (before bootstrap)', () => {
@@ -121,7 +125,7 @@ describe('monitoring bootstrap — concern 3: a11y.css load chain', () => {
 
   it('SkipLinks.tsx imports a11y.css', () => {
     const src = readSrc('components/a11y/SkipLinks.tsx');
-    expect(src).toContain("a11y.css");
+    expect(src).toContain('a11y.css');
   });
 
   it('Layout.jsx imports SkipLinks synchronously (not lazily)', () => {
@@ -129,7 +133,9 @@ describe('monitoring bootstrap — concern 3: a11y.css load chain', () => {
     // Must be a static import, NOT `lazy(() => import('./a11y/SkipLinks'))`
     expect(src).toMatch(/^import\s+SkipLinks\s+from\s+['"]\.\/a11y\/SkipLinks['"]/m);
     // Confirm it is NOT wrapped in lazy()
-    expect(src).not.toMatch(/lazy\s*\(\s*\(\s*\)\s*=>\s*import\s*\(\s*['"]\.\/a11y\/SkipLinks['"]\s*\)/);
+    expect(src).not.toMatch(
+      /lazy\s*\(\s*\(\s*\)\s*=>\s*import\s*\(\s*['"]\.\/a11y\/SkipLinks['"]\s*\)/
+    );
   });
 
   it('SkipLinks is rendered inside Layout.jsx (not behind a condition)', () => {

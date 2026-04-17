@@ -1,5 +1,3 @@
- 
- 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import ProductSearch from '../ProductSearch';
@@ -11,7 +9,7 @@ describe('ProductSearch - Debounce Logic', () => {
     // Mock the global fetch
     mockFetch = vi.fn();
     global.fetch = mockFetch;
-    
+
     // Use fake timers for precise control over time-based operations
     vi.useFakeTimers();
   });
@@ -45,9 +43,7 @@ describe('ProductSearch - Debounce Logic', () => {
   });
 
   it('should trigger debounced request after 250ms of inactivity', async () => {
-    const mockProducts = [
-      { ean: '123', name: 'Riz Basmati', brand: 'Brand A', image: null },
-    ];
+    const mockProducts = [{ ean: '123', name: 'Riz Basmati', brand: 'Brand A', image: null }];
     mockFetch.mockResolvedValue({
       json: async () => mockProducts,
     });
@@ -72,7 +68,7 @@ describe('ProductSearch - Debounce Logic', () => {
 
     // Wait for the fetch to be called
     await vi.runOnlyPendingTimersAsync();
-    
+
     expect(mockFetch).toHaveBeenCalledTimes(1);
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/products/search?q=riz&territory=Guadeloupe')
@@ -80,9 +76,7 @@ describe('ProductSearch - Debounce Logic', () => {
   });
 
   it('should cancel pending calls when new input arrives before 250ms', async () => {
-    const mockProducts = [
-      { ean: '456', name: 'Lait', brand: 'Brand B', image: null },
-    ];
+    const mockProducts = [{ ean: '456', name: 'Lait', brand: 'Brand B', image: null }];
     mockFetch.mockResolvedValue({
       json: async () => mockProducts,
     });
@@ -111,7 +105,7 @@ describe('ProductSearch - Debounce Logic', () => {
 
     // Only one fetch should be called with the complete query
     await vi.runOnlyPendingTimersAsync();
-    
+
     expect(mockFetch).toHaveBeenCalledTimes(1);
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/products/search?q=riz%20basmati&territory=Guadeloupe')
@@ -137,15 +131,13 @@ describe('ProductSearch - Debounce Logic', () => {
     // Type 3 characters again to verify debounce still works
     fireEvent.change(input, { target: { value: 'pât' } });
     vi.advanceTimersByTime(250);
-    
+
     // This time fetch should be called since we have >= 3 characters
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });
 
   it('should handle rapid typing correctly with multiple debounce resets', async () => {
-    const mockProducts = [
-      { ean: '999', name: 'Final Product', brand: 'Final Brand', image: null },
-    ];
+    const mockProducts = [{ ean: '999', name: 'Final Product', brand: 'Final Brand', image: null }];
     mockFetch.mockResolvedValue({
       json: async () => mockProducts,
     });
@@ -158,18 +150,18 @@ describe('ProductSearch - Debounce Logic', () => {
     // Simulate rapid typing with pauses less than 250ms
     fireEvent.change(input, { target: { value: 'a' } });
     vi.advanceTimersByTime(50);
-    
+
     fireEvent.change(input, { target: { value: 'ab' } });
     vi.advanceTimersByTime(50);
-    
+
     fireEvent.change(input, { target: { value: 'abc' } });
     vi.advanceTimersByTime(50);
-    
+
     fireEvent.change(input, { target: { value: 'abcd' } });
     vi.advanceTimersByTime(50);
-    
+
     fireEvent.change(input, { target: { value: 'abcde' } });
-    
+
     // No fetch should have been made yet
     expect(mockFetch).not.toHaveBeenCalled();
 
@@ -178,7 +170,7 @@ describe('ProductSearch - Debounce Logic', () => {
 
     // Should have made exactly one fetch with the complete query
     await vi.runOnlyPendingTimersAsync();
-    
+
     expect(mockFetch).toHaveBeenCalledTimes(1);
     expect(mockFetch).toHaveBeenCalledWith(
       expect.stringContaining('/api/products/search?q=abcde&territory=Martinique')
@@ -201,26 +193,22 @@ describe('ProductSearch - Debounce Logic', () => {
     vi.advanceTimersByTime(250);
 
     await vi.runOnlyPendingTimersAsync();
-    
+
     expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('territory=Guyane')
-    );
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('territory=Guyane'));
 
     mockFetch.mockClear();
 
     // Change territory and type again
     rerender(<ProductSearch territory="Réunion" onPickEAN={onPickEAN} />);
-    
+
     fireEvent.change(input, { target: { value: 'prod' } });
     vi.advanceTimersByTime(250);
 
     await vi.runOnlyPendingTimersAsync();
-    
+
     expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch).toHaveBeenCalledWith(
-      expect.stringContaining('territory=R%C3%A9union')
-    );
+    expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('territory=R%C3%A9union'));
   });
 
   it('should handle fetch errors gracefully', () => {
@@ -234,12 +222,12 @@ describe('ProductSearch - Debounce Logic', () => {
 
     fireEvent.change(input, { target: { value: 'error test' } });
     vi.advanceTimersByTime(250);
-    
+
     expect(mockFetch).toHaveBeenCalledTimes(1);
 
     // The error is logged asynchronously, but we just verify the fetch was called
     // In a real scenario with proper error handling, this would show an error message
-    
+
     consoleErrorSpy.mockRestore();
   });
 
@@ -254,13 +242,13 @@ describe('ProductSearch - Debounce Logic', () => {
     const input = screen.getByPlaceholderText(/Rechercher un produit/i);
 
     fireEvent.change(input, { target: { value: 'loading' } });
-    
+
     // Before debounce timer, no loading indicator
     expect(screen.queryByText('Chargement…')).not.toBeInTheDocument();
-    
+
     // Advance timers to trigger the fetch
     vi.advanceTimersByTime(250);
-    
+
     // Fetch should be called
     expect(mockFetch).toHaveBeenCalledTimes(1);
   });

@@ -1,6 +1,17 @@
 import type { AlertSeverity, SanitaryAlert, TerritoryCode } from '../types/alerts';
 
-const RISK_CRITICAL = ['listeria', 'salmonella', 'corps etranger', 'corps étranger', 'etouffement', 'étouffement', 'allergene', 'allergène', 'escherichia coli', 'e. coli'];
+const RISK_CRITICAL = [
+  'listeria',
+  'salmonella',
+  'corps etranger',
+  'corps étranger',
+  'etouffement',
+  'étouffement',
+  'allergene',
+  'allergène',
+  'escherichia coli',
+  'e. coli',
+];
 
 const CATEGORY_MAP: Array<{ match: RegExp; value: string }> = [
   { match: /(lait|infantile|bebe|bébé|nourrisson)/i, value: 'bébé' },
@@ -23,11 +34,8 @@ const TERRITORY_ALIASES: Record<string, TerritoryCode> = {
   'saint-martin': 'mf',
 };
 
-const normalizeText = (value: string) => value
-  .normalize('NFD')
-  .replace(/[̀-ͯ]/g, '')
-  .toLowerCase()
-  .trim();
+const normalizeText = (value: string) =>
+  value.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
 const inferCategory = (rawCategory: string, title: string, productName: string): string => {
   const raw = `${rawCategory} ${title} ${productName}`;
@@ -58,8 +66,12 @@ export function normalizeRappelConsoAlert(raw: RawRappelConsoAlert): SanitaryAle
   const productName = String(raw.noms_des_modeles_ou_references ?? raw.product_name ?? '').trim();
   const reason = String(raw.motif_du_rappel ?? raw.reason ?? '').trim();
   const risk = String(raw.risques_encourus_par_le_consommateur ?? raw.risk ?? '').trim();
-  const procedures = String(raw.preconisations_sanitaires ?? raw.conduites_a_tenir_par_le_consommateur ?? '').trim();
-  const territories = toTerritories(raw.zones_geographiques_de_vente ?? raw.territories ?? raw.zone);
+  const procedures = String(
+    raw.preconisations_sanitaires ?? raw.conduites_a_tenir_par_le_consommateur ?? ''
+  ).trim();
+  const territories = toTerritories(
+    raw.zones_geographiques_de_vente ?? raw.territories ?? raw.zone
+  );
   const severity = inferSeverity(`${reason} ${risk}`, title);
 
   return {
@@ -68,11 +80,17 @@ export function normalizeRappelConsoAlert(raw: RawRappelConsoAlert): SanitaryAle
     territories,
     severity,
     riskLevel: severity,
-    status: String(raw.date_de_fin_de_la_procedure_de_rappel ?? raw.status ?? '').trim() ? 'resolved' : 'active',
+    status: String(raw.date_de_fin_de_la_procedure_de_rappel ?? raw.status ?? '').trim()
+      ? 'resolved'
+      : 'active',
     title,
     brand: brand || undefined,
     productName: productName || undefined,
-    category: inferCategory(String(raw.categorie_de_produit ?? raw.category ?? ''), title, productName),
+    category: inferCategory(
+      String(raw.categorie_de_produit ?? raw.category ?? ''),
+      title,
+      productName
+    ),
     lot: String(raw.identification_des_produits ?? raw.lot ?? '').trim() || undefined,
     publishedAt: String(raw.date_de_publication ?? raw.publishedAt ?? '').trim() || undefined,
     updatedAt: String(raw.date_de_derniere_mise_a_jour ?? raw.updatedAt ?? '').trim() || undefined,
@@ -80,6 +98,8 @@ export function normalizeRappelConsoAlert(raw: RawRappelConsoAlert): SanitaryAle
     risk: risk || undefined,
     instructions: procedures || undefined,
     sourceName: 'RappelConso',
-    sourceUrl: String(raw.lien_vers_la_fiche_rappel ?? raw.sourceUrl ?? 'https://rappel.conso.gouv.fr').trim(),
+    sourceUrl: String(
+      raw.lien_vers_la_fiche_rappel ?? raw.sourceUrl ?? 'https://rappel.conso.gouv.fr'
+    ).trim(),
   };
 }

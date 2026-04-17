@@ -18,12 +18,12 @@ export interface ConfidenceScore {
 
 /**
  * Calcule le score de confiance sur 100
- * 
+ *
  * Répartition :
  * - Observations : max 50 points (5 points par observation, cap à 10)
  * - Magasins : max 25 points (5 points par magasin, cap à 5)
  * - Fraîcheur : max 25 points (pénalité de 2 points par jour au-delà de 0)
- * 
+ *
  * @param metrics - Métriques des données
  * @returns Score détaillé sur 100
  */
@@ -50,19 +50,18 @@ export function calculateConfidenceScore(metrics: DataMetrics): ConfidenceScore 
     total: Math.min(100, total),
     obsScore: Math.round(obsScore),
     storeScore: Math.round(storeScore),
-    recencyScore: Math.round(recencyScore)
+    recencyScore: Math.round(recencyScore),
   };
 }
 
 /**
  * Catégorise le niveau de confiance
  */
-export function getConfidenceLevel(score: number): 
-  "excellent" | "good" | "acceptable" | "limited" {
-  if (score >= 80) return "excellent";
-  if (score >= 60) return "good";
-  if (score >= 40) return "acceptable";
-  return "limited";
+export function getConfidenceLevel(score: number): 'excellent' | 'good' | 'acceptable' | 'limited' {
+  if (score >= 80) return 'excellent';
+  if (score >= 60) return 'good';
+  if (score >= 40) return 'acceptable';
+  return 'limited';
 }
 
 /**
@@ -72,14 +71,14 @@ export function getConfidenceMessage(score: ConfidenceScore): string {
   const level = getConfidenceLevel(score.total);
 
   switch (level) {
-    case "excellent":
-      return "Données très fiables avec une excellente couverture et fraîcheur.";
-    case "good":
-      return "Données fiables permettant une bonne comparaison.";
-    case "acceptable":
+    case 'excellent':
+      return 'Données très fiables avec une excellente couverture et fraîcheur.';
+    case 'good':
+      return 'Données fiables permettant une bonne comparaison.';
+    case 'acceptable':
       return "Données suffisantes mais pourrait bénéficier de plus d'observations.";
-    case "limited":
-      return "Données limitées. Les comparaisons peuvent être moins précises.";
+    case 'limited':
+      return 'Données limitées. Les comparaisons peuvent être moins précises.';
   }
 }
 
@@ -94,11 +93,11 @@ export function getImprovementSuggestions(score: ConfidenceScore): string[] {
   }
 
   if (score.storeScore < 15) {
-    suggestions.push("Données de magasins supplémentaires seraient utiles");
+    suggestions.push('Données de magasins supplémentaires seraient utiles');
   }
 
   if (score.recencyScore < 15) {
-    suggestions.push("Les données gagneraient à être actualisées");
+    suggestions.push('Les données gagneraient à être actualisées');
   }
 
   return suggestions;

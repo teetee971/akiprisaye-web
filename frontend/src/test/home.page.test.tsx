@@ -143,16 +143,15 @@ describe('Home page', () => {
         observe() {}
         disconnect() {}
         unobserve() {}
-      },
+      }
     );
   });
-
 
   it('renders the homepage with search bar and value proposition', async () => {
     render(
       <MemoryRouter>
         <Home />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     // Search bar is visible
@@ -163,14 +162,16 @@ describe('Home page', () => {
     expect(screen.getByRole('button', { name: /comparer les prix/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /scanner un code-barres/i })).toBeInTheDocument();
     // Toggle is gone
-    expect(screen.queryByRole('button', { name: /voir toute la page d'accueil/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /voir toute la page d'accueil/i })
+    ).not.toBeInTheDocument();
   });
 
   it('extended homepage content is always visible without any toggle', async () => {
     render(
       <MemoryRouter>
         <Home />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     expect(await screen.findByText(/mock proof stats/i)).toBeInTheDocument();
@@ -181,7 +182,7 @@ describe('Home page', () => {
     render(
       <MemoryRouter>
         <Home />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     const searchInput = screen.getByRole('textbox', { name: /rechercher un produit/i });

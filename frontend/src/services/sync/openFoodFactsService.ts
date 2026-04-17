@@ -58,11 +58,11 @@ let lastRequestTime = 0;
 async function rateLimit(): Promise<void> {
   const now = Date.now();
   const timeSinceLastRequest = now - lastRequestTime;
-  
+
   if (timeSinceLastRequest < RATE_LIMIT_DELAY) {
-    await new Promise(resolve => setTimeout(resolve, RATE_LIMIT_DELAY - timeSinceLastRequest));
+    await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY - timeSinceLastRequest));
   }
-  
+
   lastRequestTime = Date.now();
 }
 
@@ -100,12 +100,12 @@ export function mapCategory(categoriesTags: string[] | undefined): string {
   }
 
   const categoryMap: Record<string, string> = {
-    'beverages': 'Boissons',
-    'dairies': 'Produits laitiers',
-    'meats': 'Viandes',
+    beverages: 'Boissons',
+    dairies: 'Produits laitiers',
+    meats: 'Viandes',
     'plant-based-foods': 'Fruits et légumes',
-    'snacks': 'Snacks',
-    'groceries': 'Épicerie',
+    snacks: 'Snacks',
+    groceries: 'Épicerie',
     'frozen-foods': 'Surgelés',
   };
 
@@ -153,14 +153,14 @@ export async function getProductByBarcode(ean: string): Promise<OFFProduct | nul
     await rateLimit();
 
     const response = await fetch(`${OFF_API_V2_BASE}/product/${ean}`);
-    
+
     if (!response.ok) {
       console.warn(`OpenFoodFacts: Product ${ean} not found`);
       return null;
     }
 
     const data = await response.json();
-    
+
     if (data.status !== 1 || !data.product) {
       return null;
     }
@@ -194,13 +194,13 @@ export async function searchProducts(
     }
 
     const response = await fetch(`${OFF_SEARCH_BASE}/search.pl?${params}`);
-    
+
     if (!response.ok) {
       throw new Error('Failed to search products');
     }
 
     const data: OFFSearchResponse = await response.json();
-    
+
     return data.products || [];
   } catch (error) {
     console.error('Error searching products on OpenFoodFacts:', error);
@@ -211,9 +211,7 @@ export async function searchProducts(
 /**
  * Recherche avancée de produits (API v2)
  */
-export async function advancedSearch(
-  options: OFFSearchOptions = {}
-): Promise<OFFSearchResponse> {
+export async function advancedSearch(options: OFFSearchOptions = {}): Promise<OFFSearchResponse> {
   try {
     await rateLimit();
 
@@ -235,13 +233,13 @@ export async function advancedSearch(
     }
 
     const response = await fetch(`${OFF_API_V2_BASE}/search?${params}`);
-    
+
     if (!response.ok) {
       throw new Error('Failed to perform advanced search');
     }
 
     const data: OFFSearchResponse = await response.json();
-    
+
     return data;
   } catch (error) {
     console.error('Error in advanced search on OpenFoodFacts:', error);
@@ -275,7 +273,7 @@ export async function syncProduct(ean: string): Promise<SyncResult> {
 
   try {
     const offProduct = await getProductByBarcode(ean);
-    
+
     if (!offProduct) {
       result.errors.push(`Product with EAN ${ean} not found on OpenFoodFacts`);
       result.itemsSkipped = 1;
@@ -334,7 +332,7 @@ export async function bulkSync(eans: string[]): Promise<BulkSyncResult> {
 
     for (const ean of batchEans) {
       const syncResult = await syncProduct(ean);
-      
+
       result.itemsProcessed += syncResult.itemsProcessed;
       result.itemsAdded += syncResult.itemsAdded;
       result.itemsUpdated += syncResult.itemsUpdated;
@@ -348,7 +346,7 @@ export async function bulkSync(eans: string[]): Promise<BulkSyncResult> {
 
     // Pause entre les batches pour respecter le rate limit
     if (i < batches - 1) {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
     }
   }
 
@@ -363,12 +361,9 @@ export async function bulkSync(eans: string[]): Promise<BulkSyncResult> {
  * Note: OpenFoodFacts n'a pas d'API native pour filtrer par date de création
  * Cette fonction est un placeholder pour une implémentation future
  */
-export async function getNewProductsSince(
-  date: Date,
-  country?: string
-): Promise<OFFProduct[]> {
+export async function getNewProductsSince(date: Date, country?: string): Promise<OFFProduct[]> {
   console.warn('getNewProductsSince is not fully implemented - OpenFoodFacts API limitation');
-  
+
   // Pour l'instant, on retourne les produits récents via une recherche générale
   // avec tri par date (si disponible)
   try {

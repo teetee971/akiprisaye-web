@@ -14,7 +14,9 @@ export async function loadLeaflet(): Promise<typeof import('leaflet') | null> {
       import('leaflet'),
       // CSS import resolved by Vite bundler at build time
       import('leaflet/dist/leaflet.css') as Promise<unknown>,
-    ]).then(([leafletModule]) => (leafletModule.default ?? leafletModule) as typeof import('leaflet'));
+    ]).then(
+      ([leafletModule]) => (leafletModule.default ?? leafletModule) as typeof import('leaflet')
+    );
   }
 
   return leafletPromise;

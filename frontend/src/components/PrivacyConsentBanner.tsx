@@ -40,9 +40,9 @@ export default function PrivacyConsentBanner() {
               🍪 Vos préférences de confidentialité
             </h2>
             <p id="consent-banner-desc" className="text-sm text-slate-300 leading-relaxed">
-              Nous utilisons uniquement le stockage local de votre navigateur pour l'historique
-              de vos recherches et scans (aucun suivi sans consentement). Vous pouvez accepter,
-              refuser ou gérer vos choix à tout moment.{' '}
+              Nous utilisons uniquement le stockage local de votre navigateur pour l'historique de
+              vos recherches et scans (aucun suivi sans consentement). Vous pouvez accepter, refuser
+              ou gérer vos choix à tout moment.{' '}
               <Link
                 to="/mentions-legales"
                 className="underline text-emerald-400 hover:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 rounded"

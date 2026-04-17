@@ -22,11 +22,8 @@ export interface AuthorityAction {
   reason: string;
 }
 
-export function computeAuthorityScore(
-  asset: Omit<LinkableAsset, 'authorityScore'>,
-): number {
-  const raw =
-    asset.pageViews * 0.3 + asset.backlinksCount * 20 + asset.internalLinks * 5;
+export function computeAuthorityScore(asset: Omit<LinkableAsset, 'authorityScore'>): number {
+  const raw = asset.pageViews * 0.3 + asset.backlinksCount * 20 + asset.internalLinks * 5;
   return Math.min(Math.round(raw), 100);
 }
 
@@ -41,10 +38,7 @@ export function analyzeAuthority(assets: LinkableAsset[]): AuthorityAction[] {
         priority: 'high',
         reason: `${a.pageViews} vues mais seulement ${a.backlinksCount} backlinks — lancer l'outreach`,
       });
-    } else if (
-      (a.pageType === 'pillar' || a.pageType === 'comparison') &&
-      a.authorityScore > 60
-    ) {
+    } else if ((a.pageType === 'pillar' || a.pageType === 'comparison') && a.authorityScore > 60) {
       actions.push({
         type: 'PROMOTE_PAGE',
         url: a.url,

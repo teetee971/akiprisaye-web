@@ -1,6 +1,6 @@
 /**
  * Common Types for All Comparators
- * 
+ *
  * This file defines shared types used across all citizen comparators
  * to ensure consistency and reusability.
  */
@@ -10,17 +10,17 @@ import type { ReactNode } from 'react';
 /**
  * Territory codes for French overseas territories
  */
-export type Territory = 
-  | 'GP'  // Guadeloupe
-  | 'MQ'  // Martinique
-  | 'GF'  // Guyane (ISO code)
-  | 'RE'  // La Réunion
-  | 'YT'  // Mayotte
-  | 'MF'  // Saint-Martin
-  | 'BL'  // Saint-Barthélemy
-  | 'PM'  // Saint-Pierre-et-Miquelon
-  | 'WF'  // Wallis-et-Futuna
-  | 'PF'  // Polynésie française
+export type Territory =
+  | 'GP' // Guadeloupe
+  | 'MQ' // Martinique
+  | 'GF' // Guyane (ISO code)
+  | 'RE' // La Réunion
+  | 'YT' // Mayotte
+  | 'MF' // Saint-Martin
+  | 'BL' // Saint-Barthélemy
+  | 'PM' // Saint-Pierre-et-Miquelon
+  | 'WF' // Wallis-et-Futuna
+  | 'PF' // Polynésie française
   | 'NC'; // Nouvelle-Calédonie
 
 /**
@@ -203,13 +203,13 @@ export interface ReceiptParsed {
 /**
  * Solidary badge types
  */
-export type SolidaryBadgeType = 
-  | 'local'       // Produit local
-  | 'fair_trade'  // Commerce équitable
-  | 'social'      // Économie sociale et solidaire
-  | 'public'      // Service public
-  | 'free'        // Gratuit
-  | 'eco';        // Écologique
+export type SolidaryBadgeType =
+  | 'local' // Produit local
+  | 'fair_trade' // Commerce équitable
+  | 'social' // Économie sociale et solidaire
+  | 'public' // Service public
+  | 'free' // Gratuit
+  | 'eco'; // Écologique
 
 /**
  * Price comparison result (generic)

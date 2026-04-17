@@ -1,11 +1,10 @@
- 
 /**
  * Product Insight Service - v1.5.0
- * 
+ *
  * Complete product analysis system from photo labels
  * Provides ingredient analysis, nutritional interpretation,
  * and territorial variation detection
- * 
+ *
  * @module productInsightService
  */
 
@@ -43,7 +42,7 @@ export async function analyzeProduct(
   request: ProductAnalysisRequest
 ): Promise<ProductAnalysisResponse> {
   const startTime = Date.now();
-  
+
   try {
     // Check cache first if not forcing refresh
     if (!request.forceRefresh && request.ean) {
@@ -60,30 +59,27 @@ export async function analyzeProduct(
         };
       }
     }
-    
+
     // Step 1: OCR extraction from photos
     const ocrResults = await extractTextFromPhotos(request.photos);
-    
+
     // Step 2: Structure and analyze ingredients
     const ingredients = await analyzeIngredients(ocrResults.ingredientsText || '');
-    
+
     // Step 3: Identify and analyze additives
     const additives = await analyzeAdditives(ocrResults.ingredientsText || '');
-    
+
     // Step 4: Extract and interpret nutrition
-    const nutrition = await analyzeNutrition(
-      ocrResults.nutritionText || '',
-      request.ean
-    );
-    
+    const nutrition = await analyzeNutrition(ocrResults.nutritionText || '', request.ean);
+
     // Step 5: Formulation analysis
     const formulationAnalysis = analyzeFormulation(ingredients, additives);
-    
+
     // Step 6: Detect territorial variations (if EAN available)
     const territoryVariants = request.ean
       ? await detectTerritorialVariations(request.ean, request.territory)
       : [];
-    
+
     // Step 7: Build sources list
     const sources: SourceReference[] = [
       {
@@ -93,16 +89,16 @@ export async function analyzeProduct(
         confidence: ocrResults.confidence,
       },
     ];
-    
+
     // Step 8: Calculate confidence metrics
     const confidence: ConfidenceMetrics = {
       ocrConfidence: ocrResults.confidence,
-      sourceReliability: ocrResults.confidence > 0.8 ? 'high' : 
-                        ocrResults.confidence > 0.5 ? 'medium' : 'low',
+      sourceReliability:
+        ocrResults.confidence > 0.8 ? 'high' : ocrResults.confidence > 0.5 ? 'medium' : 'low',
       crossVerification: false, // Would be true if we verify against external DB
       dataCompleteness: calculateDataCompleteness(ingredients, nutrition),
     };
-    
+
     // Build complete insight
     const insight: ProductInsight = {
       ean: request.ean || 'unknown',
@@ -124,12 +120,12 @@ export async function analyzeProduct(
         mentionsText: ocrResults.mentionsText,
       },
     };
-    
+
     // Cache the result
     if (request.ean) {
       await cacheInsight(request.ean, request.territory, insight);
     }
-    
+
     return {
       success: true,
       data: insight,
@@ -139,7 +135,6 @@ export async function analyzeProduct(
         dataVersion: '1.5.0',
       },
     };
-    
   } catch (error) {
     return {
       success: false,
@@ -156,20 +151,17 @@ export async function analyzeProduct(
 /**
  * Extract text from photos using OCR
  */
-async function extractTextFromPhotos(
-  photos: ProductPhotoInput[]
-): Promise<OCRExtractionResult> {
+async function extractTextFromPhotos(photos: ProductPhotoInput[]): Promise<OCRExtractionResult> {
   const startTime = Date.now();
   const result: OCRExtractionResult = {
     confidence: 0,
     processingTime: 0,
   };
-  
+
   try {
     // Check if Tesseract is available
-    const hasTesseract = typeof window !== 'undefined' && 
-                        (window as any).Tesseract !== undefined;
-    
+    const hasTesseract = typeof window !== 'undefined' && (window as any).Tesseract !== undefined;
+
     if (!hasTesseract) {
       // Fallback: return empty result
       result.processingTime = Date.now() - startTime;
@@ -177,16 +169,17 @@ async function extractTextFromPhotos(
       result.errors = ['OCR engine not available'];
       return result;
     }
-    
+
     const Tesseract = (window as any).Tesseract;
-    
+
     // Process each photo type
     for (const photo of photos) {
       try {
-        const imageData = typeof photo.imageData === 'string' 
-          ? photo.imageData 
-          : URL.createObjectURL(photo.imageData);
-        
+        const imageData =
+          typeof photo.imageData === 'string'
+            ? photo.imageData
+            : URL.createObjectURL(photo.imageData);
+
         const { data } = await Tesseract.recognize(imageData, 'fra', {
           logger: (m: any) => {
             if (import.meta.env.DEV) {
@@ -194,7 +187,7 @@ async function extractTextFromPhotos(
             }
           },
         });
-        
+
         // Store text by type
         if (photo.type === 'ingredients') {
           result.ingredientsText = data.text;
@@ -203,19 +196,17 @@ async function extractTextFromPhotos(
         } else if (photo.type === 'front') {
           result.mentionsText = data.text;
         }
-        
+
         // Update confidence (average)
         result.confidence = (result.confidence + data.confidence) / 2;
-        
       } catch (error) {
         if (!result.errors) result.errors = [];
         result.errors.push(`Failed to process ${photo.type}: ${error}`);
       }
     }
-    
+
     result.processingTime = Date.now() - startTime;
     return result;
-    
   } catch (error) {
     result.processingTime = Date.now() - startTime;
     result.errors = [error instanceof Error ? error.message : 'OCR failed'];
@@ -226,27 +217,25 @@ async function extractTextFromPhotos(
 /**
  * Analyze and structure ingredients from OCR text
  */
-async function analyzeIngredients(
-  ingredientsText: string
-): Promise<IngredientInsight[]> {
+async function analyzeIngredients(ingredientsText: string): Promise<IngredientInsight[]> {
   if (!ingredientsText || ingredientsText.trim().length === 0) {
     return [];
   }
-  
+
   // Parse ingredient list (simplified version)
   // Real implementation would use more sophisticated parsing
   const ingredientNames = parseIngredientList(ingredientsText);
-  
+
   // Analyze each ingredient
   const insights: IngredientInsight[] = [];
-  
+
   for (const name of ingredientNames) {
     const insight = await getIngredientInsight(name);
     if (insight) {
       insights.push(insight);
     }
   }
-  
+
   return insights;
 }
 
@@ -258,16 +247,17 @@ function parseIngredientList(text: string): string[] {
   // Real implementation would handle percentages, sub-ingredients, etc.
   const ingredients = text
     .split(/,|\n/)
-    .map(s => s.trim())
-    .filter(s => s.length > 2)
-    .map(s => {
+    .map((s) => s.trim())
+    .filter((s) => s.length > 2)
+    .map((s) => {
       // Remove percentages and parentheses content
-      return s.replace(/\([^)]*\)/g, '')
-             .replace(/\d+\.?\d*%?/g, '')
-             .trim();
+      return s
+        .replace(/\([^)]*\)/g, '')
+        .replace(/\d+\.?\d*%?/g, '')
+        .trim();
     })
-    .filter(s => s.length > 0);
-  
+    .filter((s) => s.length > 0);
+
   return ingredients;
 }
 
@@ -275,20 +265,19 @@ function parseIngredientList(text: string): string[] {
  * Get insight for a specific ingredient
  * In production, this would query a comprehensive database
  */
-async function getIngredientInsight(
-  name: string
-): Promise<IngredientInsight | null> {
+async function getIngredientInsight(name: string): Promise<IngredientInsight | null> {
   // Normalize name
   const normalized = name.toLowerCase().trim();
-  
+
   // Check against known ingredients database (simplified)
   const knownIngredients = getKnownIngredientsDatabase();
-  
-  const found = knownIngredients.find(ing => 
-    ing.name.toLowerCase() === normalized ||
-    ing.aliases?.some(alias => alias.toLowerCase() === normalized)
+
+  const found = knownIngredients.find(
+    (ing) =>
+      ing.name.toLowerCase() === normalized ||
+      ing.aliases?.some((alias) => alias.toLowerCase() === normalized)
   );
-  
+
   if (found) {
     return {
       name: found.name,
@@ -302,7 +291,7 @@ async function getIngredientInsight(
       knownEffects: found.knownEffects,
     };
   }
-  
+
   // Unknown ingredient - return basic info
   return {
     name,
@@ -319,26 +308,24 @@ async function getIngredientInsight(
 /**
  * Analyze additives from ingredient text
  */
-async function analyzeAdditives(
-  ingredientsText: string
-): Promise<AdditiveInsight[]> {
+async function analyzeAdditives(ingredientsText: string): Promise<AdditiveInsight[]> {
   if (!ingredientsText) return [];
-  
+
   const additives: AdditiveInsight[] = [];
-  
+
   // Find E-numbers (E### pattern)
   const eNumberPattern = /E\s?(\d{3,4}[a-z]?)/gi;
   const matchArray = [...ingredientsText.matchAll(eNumberPattern)];
-  
+
   for (const match of matchArray) {
     const code = match[0].replace(/\s/g, '').toUpperCase();
     const additiveInfo = getAdditiveInfo(code);
-    
+
     if (additiveInfo) {
       additives.push(additiveInfo);
     }
   }
-  
+
   return additives;
 }
 
@@ -348,7 +335,7 @@ async function analyzeAdditives(
 function getAdditiveInfo(code: string): AdditiveInsight | null {
   // Simplified database - real implementation would be comprehensive
   const additiveDb = getKnownAdditivesDatabase();
-  
+
   const info = additiveDb[code];
   if (!info) {
     return {
@@ -360,29 +347,26 @@ function getAdditiveInfo(code: string): AdditiveInsight | null {
       },
     };
   }
-  
+
   return info;
 }
 
 /**
  * Analyze nutrition from OCR text
  */
-async function analyzeNutrition(
-  nutritionText: string,
-  ean?: string
-): Promise<NutritionInsight> {
+async function analyzeNutrition(nutritionText: string, ean?: string): Promise<NutritionInsight> {
   // Parse nutrition table
   const nutritionData = parseNutritionTable(nutritionText);
-  
+
   // Interpret values
   const interpretation = interpretNutrition(nutritionData);
-  
+
   // Get category comparison if EAN available
   let categoryComparison = undefined;
   if (ean) {
     categoryComparison = await getCategoryComparison(ean, nutritionData);
   }
-  
+
   return {
     per100g: nutritionData,
     interpretation,
@@ -402,9 +386,9 @@ function parseNutritionTable(text: string): NutritionPer100g {
     sugars: 0,
     salt: 0,
   };
-  
+
   if (!text) return defaults;
-  
+
   // Extract values using regex patterns
   const extractValue = (pattern: RegExp): number => {
     const match = text.match(pattern);
@@ -414,7 +398,7 @@ function parseNutritionTable(text: string): NutritionPer100g {
     }
     return 0;
   };
-  
+
   return {
     energyKcal: extractValue(/(\d+[.,]?\d*)\s*kcal/i),
     energyKj: extractValue(/(\d+[.,]?\d*)\s*kj/i),
@@ -431,9 +415,7 @@ function parseNutritionTable(text: string): NutritionPer100g {
 /**
  * Interpret nutrition values (no scoring, just explanatory levels)
  */
-function interpretNutrition(
-  nutrition: NutritionPer100g
-): NutritionInterpretation {
+function interpretNutrition(nutrition: NutritionPer100g): NutritionInterpretation {
   return {
     sugarDensity: classifySugarDensity(nutrition.sugars),
     saltDensity: classifySaltDensity(nutrition.salt),
@@ -508,7 +490,7 @@ function analyzeFormulation(
       if (ing.origin === 'animal') categories.add('animal');
     }
   }
-  
+
   // Determine processing level
   let processingLevel: FormulationInsight['processingLevel'] = 'minimal';
   if (additives.length > 0) {
@@ -517,7 +499,7 @@ function analyzeFormulation(
   if (additives.length > 5 || ingredients.length > 15) {
     processingLevel = 'ultra_processed';
   }
-  
+
   return {
     mainCategories: Array.from(categories),
     processingLevel,
@@ -540,7 +522,7 @@ async function detectTerritorialVariations(
   // 2. Compare ingredient lists
   // 3. Compare nutritional values
   // 4. Document differences with sources
-  
+
   return [];
 }
 
@@ -565,13 +547,13 @@ function calculateDataCompleteness(
 ): number {
   let score = 0;
   let maxScore = 0;
-  
+
   // Ingredients present (40%)
   maxScore += 40;
   if (ingredients.length > 0) {
     score += 40;
   }
-  
+
   // Nutrition present (40%)
   maxScore += 40;
   if (nutrition.per100g.energyKcal > 0) {
@@ -583,16 +565,16 @@ function calculateDataCompleteness(
   if (nutrition.per100g.salt >= 0) {
     score += 10;
   }
-  
+
   // Additional data (20%)
   maxScore += 20;
-  if (ingredients.some(ing => ing.knownEffects && ing.knownEffects.length > 0)) {
+  if (ingredients.some((ing) => ing.knownEffects && ing.knownEffects.length > 0)) {
     score += 10;
   }
   if (nutrition.comparisonToCategory) {
     score += 10;
   }
-  
+
   return maxScore > 0 ? score / maxScore : 0;
 }
 
@@ -606,15 +588,15 @@ async function getCachedInsight(
   try {
     const key = `product_insight_${ean}_${territory}`;
     const cached = safeLocalStorage.getItem(key);
-    
+
     if (cached) {
       const data = JSON.parse(cached);
-      
+
       // Check if cache is still valid (24 hours)
       const generatedAt = new Date(data.generatedAt);
       const now = new Date();
       const hoursSinceGeneration = (now.getTime() - generatedAt.getTime()) / (1000 * 60 * 60);
-      
+
       if (hoursSinceGeneration < 24) {
         return data as ProductInsight;
       }
@@ -624,7 +606,7 @@ async function getCachedInsight(
       console.warn('Failed to read cache:', error);
     }
   }
-  
+
   return null;
 }
 
@@ -683,31 +665,31 @@ function getKnownIngredientsDatabase() {
  */
 function getKnownAdditivesDatabase(): Record<string, AdditiveInsight> {
   return {
-    'E100': {
+    E100: {
       code: 'E100',
       name: 'Curcumine',
       function: 'Colorant jaune',
-      regulatoryNotes: 'Autorisé dans l\'UE',
+      regulatoryNotes: "Autorisé dans l'UE",
       countriesStatus: {
         EU: 'allowed',
         FR: 'allowed',
       },
     },
-    'E200': {
+    E200: {
       code: 'E200',
       name: 'Acide sorbique',
       function: 'Conservateur',
-      regulatoryNotes: 'Autorisé dans l\'UE',
+      regulatoryNotes: "Autorisé dans l'UE",
       countriesStatus: {
         EU: 'allowed',
         FR: 'allowed',
       },
     },
-    'E330': {
+    E330: {
       code: 'E330',
       name: 'Acide citrique',
       function: 'Acidifiant',
-      regulatoryNotes: 'Autorisé dans l\'UE',
+      regulatoryNotes: "Autorisé dans l'UE",
       countriesStatus: {
         EU: 'allowed',
         FR: 'allowed',

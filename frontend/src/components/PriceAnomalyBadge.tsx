@@ -33,13 +33,11 @@ export function PriceAnomalyBadge({ threshold = 1.5, className = '' }: PriceAnom
 
     (async () => {
       const territories = TERRITORIES.filter((t) =>
-        (BADGE_TERRITORIES as readonly string[]).includes(t.code),
+        (BADGE_TERRITORIES as readonly string[]).includes(t.code)
       );
 
       const allSnaps = (
-        await Promise.all(
-          territories.map((t) => loadObservatoireData(t.labelFull).catch(() => [])),
-        )
+        await Promise.all(territories.map((t) => loadObservatoireData(t.labelFull).catch(() => [])))
       ).flat();
 
       if (cancelled || allSnaps.length === 0) return;
@@ -49,7 +47,9 @@ export function PriceAnomalyBadge({ threshold = 1.5, className = '' }: PriceAnom
       if (!cancelled) setCount(anomalies.length);
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [threshold]);
 
   if (count === null || count === 0) return null;

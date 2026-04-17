@@ -52,7 +52,9 @@ export function TerritoryCard({
       )}
 
       {/* Gradient overlay */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} ${imgFailed ? 'opacity-100' : 'opacity-75'}`} />
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${gradient} ${imgFailed ? 'opacity-100' : 'opacity-75'}`}
+      />
 
       {/* Content */}
       <div className="relative z-10 p-4">

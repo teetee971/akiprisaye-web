@@ -13,7 +13,9 @@ const DEFAULT_SMS_UPDATE_PREFERENCES: SmsUpdatePreferences = {
 };
 
 export function normalizeSmsPhoneNumber(phoneNumber: string): string {
-  const compact = String(phoneNumber ?? '').trim().replace(/[^\d+]/g, '');
+  const compact = String(phoneNumber ?? '')
+    .trim()
+    .replace(/[^\d+]/g, '');
   return compact.startsWith('00') ? `+${compact.slice(2)}` : compact;
 }
 

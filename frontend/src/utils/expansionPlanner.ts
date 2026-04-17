@@ -33,7 +33,7 @@ const TERRITORY_SLUGS: Record<string, string> = {
 };
 
 export function generateExpansionSuggestions(
-  candidates: ExpansionCandidate[],
+  candidates: ExpansionCandidate[]
 ): ExpansionSuggestion[] {
   const suggestions: ExpansionSuggestion[] = [];
   const seen = new Set<string>();

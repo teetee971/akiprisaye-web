@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plane, Info, TrendingUp, ExternalLink } from 'lucide-react';
 import {
@@ -12,7 +11,7 @@ import {
 
 /**
  * Module de comparaison des prix de billets d'avion
- * 
+ *
  * UX Mobile-first (Samsung S24+ prioritaire)
  * Page unique, lisible à une main
  * Aucun pop-up, aucun scroll horizontal
@@ -77,7 +76,12 @@ export default function Avions() {
           </div>
           <div className="flex flex-wrap gap-2 mt-1">
             <span className="text-xs text-green-400 bg-green-500/10 border border-green-500/30 px-2 py-1 rounded-full">
-              🔄 Données observées le {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+              🔄 Données observées le{' '}
+              {new Date().toLocaleDateString('fr-FR', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })}
             </span>
             <span className="text-xs text-blue-400 bg-blue-500/10 border border-blue-500/30 px-2 py-1 rounded-full">
               ✈️ Cliquez « Voir l'offre » pour vérifier le prix en temps réel
@@ -180,21 +184,30 @@ export default function Avions() {
                   {/* Results Table */}
                   <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                     <h2 className="text-lg font-semibold text-gray-100 mb-4">
-                      Résultats — {results.length} compagnie{results.length > 1 ? 's' : ''} observée{results.length > 1 ? 's' : ''}
+                      Résultats — {results.length} compagnie{results.length > 1 ? 's' : ''} observée
+                      {results.length > 1 ? 's' : ''}
                     </h2>
                     <div className="overflow-x-auto -mx-5 px-5">
                       <table className="w-full text-sm min-w-[560px]">
                         <thead>
                           <tr className="border-b border-slate-700">
                             <th className="text-left py-3 px-2 text-gray-400 font-medium">#</th>
-                            <th className="text-left py-3 px-2 text-gray-400 font-medium">Compagnie</th>
+                            <th className="text-left py-3 px-2 text-gray-400 font-medium">
+                              Compagnie
+                            </th>
                             <th className="text-right py-3 px-2 text-gray-400 font-medium">Prix</th>
                             <th className="text-center py-3 px-2 text-gray-400 font-medium">🧳</th>
                             <th className="text-center py-3 px-2 text-gray-400 font-medium">🔄</th>
-                            <th className="text-right py-3 px-2 text-gray-400 font-medium">Durée</th>
+                            <th className="text-right py-3 px-2 text-gray-400 font-medium">
+                              Durée
+                            </th>
                             <th className="text-right py-3 px-2 text-gray-400 font-medium">Mois</th>
-                            <th className="text-right py-3 px-2 text-gray-400 font-medium">Observé</th>
-                            <th className="text-center py-3 px-2 text-gray-400 font-medium">Action</th>
+                            <th className="text-right py-3 px-2 text-gray-400 font-medium">
+                              Observé
+                            </th>
+                            <th className="text-center py-3 px-2 text-gray-400 font-medium">
+                              Action
+                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -207,20 +220,32 @@ export default function Avions() {
                                 className={`border-b border-slate-800 hover:bg-slate-800/30 transition-colors ${index === 0 ? 'bg-green-500/5' : ''}`}
                               >
                                 <td className="py-3 px-2 font-bold text-gray-300">
-                                  {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                                  {index === 0
+                                    ? '🥇'
+                                    : index === 1
+                                      ? '🥈'
+                                      : index === 2
+                                        ? '🥉'
+                                        : `#${index + 1}`}
                                 </td>
                                 <td className="py-3 px-2">
-                                  <div className={`font-semibold ${index === 0 ? 'text-green-300' : 'text-gray-200'}`}>
+                                  <div
+                                    className={`font-semibold ${index === 0 ? 'text-green-300' : 'text-gray-200'}`}
+                                  >
                                     {flight.compagnie}
                                   </div>
                                   <div className="text-xs text-gray-500">{flight.source}</div>
                                 </td>
                                 <td className="py-3 px-2 text-right">
-                                  <div className={`text-lg font-bold ${index === 0 ? 'text-green-400' : 'text-blue-400'}`}>
+                                  <div
+                                    className={`text-lg font-bold ${index === 0 ? 'text-green-400' : 'text-blue-400'}`}
+                                  >
                                     {formatPrice(flight.prix)}
                                   </div>
                                   {diffAbs > 0 && (
-                                    <div className="text-xs text-orange-400">+{formatPrice(diffAbs)}</div>
+                                    <div className="text-xs text-orange-400">
+                                      +{formatPrice(diffAbs)}
+                                    </div>
                                   )}
                                   {index === 0 && (
                                     <div className="text-xs text-green-400">Le moins cher</div>
@@ -281,7 +306,9 @@ export default function Avions() {
                     {/* Badge "Prix observé" */}
                     <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                       <p className="text-xs text-blue-200">
-                        <strong>Prix observé</strong> — Ce ne sont PAS des prix garantis. Cliquez sur « Voir » pour vérifier le tarif actuel sur le site de la compagnie. A KI PRI SA YÉ ne perçoit aucune commission.
+                        <strong>Prix observé</strong> — Ce ne sont PAS des prix garantis. Cliquez
+                        sur « Voir » pour vérifier le tarif actuel sur le site de la compagnie. A KI
+                        PRI SA YÉ ne perçoit aucune commission.
                       </p>
                     </div>
                   </section>
@@ -293,7 +320,7 @@ export default function Avions() {
                         <TrendingUp className="w-5 h-5" />
                         Évolution des prix par mois
                       </h2>
-                      
+
                       <div className="space-y-3">
                         {chartData.map((data) => (
                           <div key={data.mois} className="space-y-1">
@@ -307,7 +334,7 @@ export default function Avions() {
                               <div
                                 className="absolute h-full bg-blue-500/30 rounded"
                                 style={{
-                                  width: `${(data.prixMoyen / Math.max(...chartData.map(d => d.prixMax))) * 100}%`,
+                                  width: `${(data.prixMoyen / Math.max(...chartData.map((d) => d.prixMax))) * 100}%`,
                                 }}
                               />
                               <div className="absolute inset-0 flex items-center px-3">
@@ -349,25 +376,29 @@ export default function Avions() {
             <div className="flex gap-3">
               <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-blue-300">
-                  Méthodologie & Transparence
-                </h3>
-                
+                <h3 className="text-sm font-semibold text-blue-300">Méthodologie & Transparence</h3>
+
                 <div className="space-y-2 text-xs text-gray-300">
                   <p>
-                    <strong>Données publiques</strong> — Les prix affichés proviennent d'observations citoyennes publiques. Aucune garantie de disponibilité ou d'exactitude.
+                    <strong>Données publiques</strong> — Les prix affichés proviennent
+                    d'observations citoyennes publiques. Aucune garantie de disponibilité ou
+                    d'exactitude.
                   </p>
-                  
+
                   <p>
-                    <strong>Aucun tracking</strong> — Aucune donnée utilisateur n'est collectée. Votre recherche reste privée.
+                    <strong>Aucun tracking</strong> — Aucune donnée utilisateur n'est collectée.
+                    Votre recherche reste privée.
                   </p>
-                  
+
                   <p>
-                    <strong>Aucune affiliation</strong> — A KI PRI SA YÉ ne reçoit aucune commission des compagnies aériennes. Comparaison neutre et indépendante.
+                    <strong>Aucune affiliation</strong> — A KI PRI SA YÉ ne reçoit aucune commission
+                    des compagnies aériennes. Comparaison neutre et indépendante.
                   </p>
-                  
+
                   <p>
-                    <strong>Usage informatif</strong> — Cet outil est destiné à l'information et à la comparaison. Il ne remplace pas une recherche approfondie auprès des compagnies.
+                    <strong>Usage informatif</strong> — Cet outil est destiné à l'information et à
+                    la comparaison. Il ne remplace pas une recherche approfondie auprès des
+                    compagnies.
                   </p>
                 </div>
               </div>

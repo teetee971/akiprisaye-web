@@ -9,7 +9,17 @@
  */
 
 import { Link } from 'react-router-dom';
-import { Check, ArrowRight, Sparkles, TrendingUp, Bell, Download, Globe, BarChart2, Lock } from 'lucide-react';
+import {
+  Check,
+  ArrowRight,
+  Sparkles,
+  TrendingUp,
+  Bell,
+  Download,
+  Globe,
+  BarChart2,
+  Lock,
+} from 'lucide-react';
 import { useEntitlements } from '../billing/useEntitlements';
 import type { PlanId } from '../billing/plans';
 import { PLAN_DEFINITIONS } from '../billing/plans';
@@ -121,24 +131,28 @@ const NEXT_PLAN: Partial<Record<PlanId, PlanId>> = {
   BUSINESS: 'INSTITUTION',
 };
 
-const UPGRADE_BENEFITS: Partial<Record<PlanId, { icon: React.ReactNode; title: string; description: string }[]>> = {
+const UPGRADE_BENEFITS: Partial<
+  Record<PlanId, { icon: React.ReactNode; title: string; description: string }[]>
+> = {
   CITIZEN_PREMIUM: [
     {
       icon: <Bell className="w-5 h-5 text-blue-500" />,
       title: 'Alertes prix automatiques',
-      description: 'Recevez une notification dès qu\'un produit passe sous votre seuil cible.',
+      description: "Recevez une notification dès qu'un produit passe sous votre seuil cible.",
     },
     {
       icon: <TrendingUp className="w-5 h-5 text-blue-500" />,
       title: 'Historique 12 mois',
-      description: 'Analysez l\'évolution réelle des prix et anticipez les meilleures périodes d\'achat.',
+      description:
+        "Analysez l'évolution réelle des prix et anticipez les meilleures périodes d'achat.",
     },
   ],
   PRO: [
     {
       icon: <Globe className="w-5 h-5 text-violet-500" />,
       title: 'Multi-territoires',
-      description: 'Comparez les prix entre Guadeloupe, Martinique, Guyane et Réunion en un coup d\'œil.',
+      description:
+        "Comparez les prix entre Guadeloupe, Martinique, Guyane et Réunion en un coup d'œil.",
     },
     {
       icon: <Download className="w-5 h-5 text-violet-500" />,
@@ -174,7 +188,14 @@ export default function UpgradePage() {
   const isTopPlan = !nextPlanId;
 
   // Plans supérieurs au plan actuel
-  const planOrder: PlanId[] = ['FREE', 'FREEMIUM', 'CITIZEN_PREMIUM', 'PRO', 'BUSINESS', 'INSTITUTION'];
+  const planOrder: PlanId[] = [
+    'FREE',
+    'FREEMIUM',
+    'CITIZEN_PREMIUM',
+    'PRO',
+    'BUSINESS',
+    'INSTITUTION',
+  ];
   const currentIndex = planOrder.indexOf(plan);
   const higherPlans = planOrder.slice(currentIndex + 1);
 
@@ -186,9 +207,17 @@ export default function UpgradePage() {
           name="description"
           content="Débloquez l'historique avancé, les alertes prix, le multi-territoires et plus encore."
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/upgrade" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/upgrade" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/upgrade" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/upgrade" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/upgrade"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/upgrade"
+        />
       </Helmet>
 
       <HeroImage
@@ -197,13 +226,16 @@ export default function UpgradePage() {
         gradient="from-slate-950 to-amber-900"
         height="h-40 sm:h-52"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>⭐ Passer à Premium</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Débloquez toutes les fonctionnalités avancées</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          ⭐ Passer à Premium
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Débloquez toutes les fonctionnalités avancées
+        </p>
       </HeroImage>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-6">
         <div className="max-w-3xl mx-auto px-4 space-y-5">
-
           {/* ---- Plan actuel ---- */}
           <section>
             <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
@@ -352,7 +384,8 @@ export default function UpgradePage() {
                               </h3>
                             </div>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                              {def.quotas.maxItems} articles · {def.quotas.maxTerritories} territoires
+                              {def.quotas.maxItems} articles · {def.quotas.maxTerritories}{' '}
+                              territoires
                             </p>
                           </div>
                           <div className="flex items-center gap-3 flex-shrink-0">
@@ -386,11 +419,13 @@ export default function UpgradePage() {
 
           {/* ---- Lien retour ---- */}
           <div className="text-center">
-            <Link to="/pricing" className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+            <Link
+              to="/pricing"
+              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+            >
               Voir la comparaison complète des plans →
             </Link>
           </div>
-
         </div>
       </div>
     </>

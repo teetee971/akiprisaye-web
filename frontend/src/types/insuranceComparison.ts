@@ -1,7 +1,6 @@
- 
 /**
  * Insurance Comparison Types v1.0.0
- * 
+ *
  * Principles:
  * - Observer, not sell: Transparent price observation without affiliate links
  * - Read-only comparison (no data modification)

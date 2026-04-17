@@ -140,7 +140,7 @@ interface ProductCardProps {
 function ProductCard({ product, territory, categorySlug }: ProductCardProps) {
   const slug = generateProductSlug(product.name, territory);
   const fallback = getFallbackIcon(categorySlug as ProductCategoryType);
-  
+
   return (
     <Link
       to={`/produit/${product.id}?territory=${territory}`}
@@ -159,7 +159,7 @@ function ProductCard({ product, territory, categorySlug }: ProductCardProps) {
           <span className="text-4xl">{fallback.icon}</span>
         )}
       </div>
-      
+
       {/* Product info */}
       <div>
         {product.brand && (
@@ -170,7 +170,7 @@ function ProductCard({ product, territory, categorySlug }: ProductCardProps) {
         <h3 className="text-sm font-semibold text-white group-hover:text-emerald-300 transition-colors">
           {product.name}
         </h3>
-        
+
         {/* Price range */}
         {product.minPrice != null && (
           <div className="mt-2 flex items-baseline gap-1.5">
@@ -178,13 +178,11 @@ function ProductCard({ product, territory, categorySlug }: ProductCardProps) {
               {formatEur(product.minPrice)}
             </span>
             {product.maxPrice != null && product.maxPrice !== product.minPrice && (
-              <span className="text-xs text-zinc-500">
-                — {formatEur(product.maxPrice)}
-              </span>
+              <span className="text-xs text-zinc-500">— {formatEur(product.maxPrice)}</span>
             )}
           </div>
         )}
-        
+
         {/* Store count */}
         <div className="mt-1 text-xs text-zinc-500">
           {product.storeCount} enseigne{product.storeCount > 1 ? 's' : ''}
@@ -202,7 +200,7 @@ interface TerritorySelectorProps {
 
 function TerritorySelector({ value, onChange }: TerritorySelectorProps) {
   const territories = ['GP', 'MQ', 'GF', 'RE', 'YT'];
-  
+
   return (
     <div className="flex flex-wrap gap-2">
       {territories.map((code) => (
@@ -210,9 +208,10 @@ function TerritorySelector({ value, onChange }: TerritorySelectorProps) {
           key={code}
           onClick={() => onChange(code)}
           className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all
-            ${value === code
-              ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300'
-              : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'
+            ${
+              value === code
+                ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300'
+                : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'
             }`}
         >
           {getTerritoryName(code)}
@@ -230,7 +229,7 @@ interface CategoryNavProps {
 
 function CategoryNav({ currentSlug, territory }: CategoryNavProps) {
   const categories = Object.values(CATEGORY_MAP);
-  
+
   return (
     <nav className="mb-6 overflow-x-auto scrollbar-hide">
       <div className="flex gap-2 pb-2">
@@ -239,9 +238,10 @@ function CategoryNav({ currentSlug, territory }: CategoryNavProps) {
             key={cat.slug}
             to={`/categorie/${cat.slug}?territory=${territory}`}
             className={`flex-shrink-0 rounded-xl border px-3 py-2 text-sm transition-all
-              ${currentSlug === cat.slug
-                ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300'
-                : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'
+              ${
+                currentSlug === cat.slug
+                  ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300'
+                  : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'
               }`}
           >
             <span className="mr-1.5">{cat.icon}</span>
@@ -264,13 +264,21 @@ function Breadcrumbs({ categoryName, territory }: BreadcrumbsProps) {
     <nav aria-label="Fil d'Ariane" className="mb-4 text-xs text-zinc-500">
       <ol className="flex flex-wrap items-center gap-1.5">
         <li>
-          <Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link>
+          <Link to="/" className="hover:text-emerald-400 transition-colors">
+            Accueil
+          </Link>
         </li>
-        <li aria-hidden="true" className="text-zinc-700">›</li>
+        <li aria-hidden="true" className="text-zinc-700">
+          ›
+        </li>
         <li>
-          <Link to="/comparateur" className="hover:text-emerald-400 transition-colors">Comparateur</Link>
+          <Link to="/comparateur" className="hover:text-emerald-400 transition-colors">
+            Comparateur
+          </Link>
         </li>
-        <li aria-hidden="true" className="text-zinc-700">›</li>
+        <li aria-hidden="true" className="text-zinc-700">
+          ›
+        </li>
         <li className="text-zinc-300">{categoryName}</li>
       </ol>
     </nav>
@@ -282,12 +290,12 @@ export default function SEOCategoryPage() {
   const { slug = '' } = useParams<{ slug: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
   const territory = searchParams.get('territory') ?? 'GP';
-  
+
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<CategoryProduct[]>([]);
-  
+
   const categoryInfo = CATEGORY_MAP[slug];
-  
+
   // Load products when category or territory changes
   useEffect(() => {
     setLoading(true);
@@ -308,7 +316,7 @@ export default function SEOCategoryPage() {
           {
             incidentReason: 'category_products_api_unavailable',
             timeoutMs: 10000,
-          },
+          }
         );
         if (!cancelled) {
           setProducts(Array.isArray(payload?.products) ? payload.products : []);
@@ -325,38 +333,37 @@ export default function SEOCategoryPage() {
       cancelled = true;
     };
   }, [slug, territory]);
-  
+
   // Handle territory change
   const handleTerritoryChange = (newTerritory: string) => {
     setSearchParams({ territory: newTerritory });
   };
-  
+
   // Generate SEO data
   const seoTitle = categoryInfo
     ? generateCategoryTitle(categoryInfo.name, territory)
     : 'Catégorie non trouvée';
-  
+
   const seoDescription = categoryInfo
     ? generateCategoryMetaDescription(categoryInfo.name, territory, products.length)
     : undefined;
-  
-  const seoCanonical = categoryInfo
-    ? generateCategoryCanonical(slug, territory)
-    : undefined;
-  
-  const categoryJsonLd = categoryInfo && products.length > 0
-    ? buildCategoryJsonLd(
-        categoryInfo.name,
-        slug,
-        products.map((p) => ({
-          name: p.name,
-          slug: generateProductSlug(p.name, territory),
-          price: p.minPrice,
-        })),
-        territory,
-      )
-    : null;
-  
+
+  const seoCanonical = categoryInfo ? generateCategoryCanonical(slug, territory) : undefined;
+
+  const categoryJsonLd =
+    categoryInfo && products.length > 0
+      ? buildCategoryJsonLd(
+          categoryInfo.name,
+          slug,
+          products.map((p) => ({
+            name: p.name,
+            slug: generateProductSlug(p.name, territory),
+            price: p.minPrice,
+          })),
+          territory
+        )
+      : null;
+
   // Category not found
   if (!categoryInfo) {
     return (
@@ -375,7 +382,7 @@ export default function SEOCategoryPage() {
           >
             ← Retour au comparateur
           </Link>
-          
+
           {/* Show available categories */}
           <div className="mt-8">
             <h2 className="text-lg font-semibold text-white mb-4">Catégories disponibles</h2>
@@ -385,7 +392,7 @@ export default function SEOCategoryPage() {
       </div>
     );
   }
-  
+
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8">
       <SEOHead
@@ -394,11 +401,11 @@ export default function SEOCategoryPage() {
         canonical={seoCanonical}
         jsonLd={categoryJsonLd}
       />
-      
+
       <div className="mx-auto max-w-4xl">
         {/* Breadcrumbs */}
         <Breadcrumbs categoryName={categoryInfo.name} territory={territory} />
-        
+
         {/* Category header */}
         <header className="mb-6">
           <div className="flex items-center gap-3 mb-2">
@@ -411,7 +418,7 @@ export default function SEOCategoryPage() {
             </div>
           </div>
         </header>
-        
+
         {/* Territory selector */}
         <div className="mb-6">
           <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
@@ -419,10 +426,10 @@ export default function SEOCategoryPage() {
           </div>
           <TerritorySelector value={territory} onChange={handleTerritoryChange} />
         </div>
-        
+
         {/* Category navigation */}
         <CategoryNav currentSlug={slug} territory={territory} />
-        
+
         {/* Products grid */}
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -439,7 +446,8 @@ export default function SEOCategoryPage() {
         ) : (
           <>
             <div className="mb-4 text-sm text-zinc-500">
-              {products.length} produit{products.length > 1 ? 's' : ''} trouvé{products.length > 1 ? 's' : ''}
+              {products.length} produit{products.length > 1 ? 's' : ''} trouvé
+              {products.length > 1 ? 's' : ''}
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {products.map((product) => (
@@ -453,7 +461,7 @@ export default function SEOCategoryPage() {
             </div>
           </>
         )}
-        
+
         {/* SEO content block */}
         <section className="mt-8 rounded-xl border border-white/5 bg-white/[0.01] p-4">
           <h2 className="text-sm font-bold text-zinc-400 mb-2">
@@ -461,12 +469,12 @@ export default function SEOCategoryPage() {
           </h2>
           <p className="text-xs text-zinc-500 leading-relaxed">
             Retrouvez les meilleurs prix pour vos achats de {categoryInfo.name.toLowerCase()} en{' '}
-            {getTerritoryName(territory)}. Notre comparateur analyse les prix dans les principales enseignes{' '}
-            locales (Carrefour, E.Leclerc, Super U, Leader Price…) pour vous aider à économiser sur vos courses.{' '}
-            Les données sont actualisées quotidiennement.
+            {getTerritoryName(territory)}. Notre comparateur analyse les prix dans les principales
+            enseignes locales (Carrefour, E.Leclerc, Super U, Leader Price…) pour vous aider à
+            économiser sur vos courses. Les données sont actualisées quotidiennement.
           </p>
         </section>
-        
+
         {/* Related categories */}
         <section className="mt-8">
           <h2 className="text-sm font-bold text-zinc-400 mb-3">Autres catégories</h2>

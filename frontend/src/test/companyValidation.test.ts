@@ -1,4 +1,3 @@
- 
 /**
  * Tests for Company validation utilities
  */
@@ -232,7 +231,11 @@ describe('Company Validation Utilities', () => {
     });
 
     it('should require cessation date for CEASED status', () => {
-      const company = { ...validCompany, activityStatus: 'CEASED' as const, cessationDate: undefined };
+      const company = {
+        ...validCompany,
+        activityStatus: 'CEASED' as const,
+        cessationDate: undefined,
+      };
       const result = validateCompany(company);
       expect(result.valid).toBe(false);
       expect(result.errors).toContain('Cessation date is required for CEASED companies');

@@ -25,7 +25,7 @@ export async function getProductByEan(ean) {
   try {
     const docRef = doc(db, 'products', ean);
     const docSnap = await getDoc(docRef);
-    
+
     if (docSnap.exists()) {
       return { ean, ...docSnap.data() };
     }
@@ -47,28 +47,28 @@ export async function getPricesByEan(ean, options = {}) {
   try {
     const pricesRef = collection(db, 'prices');
     const q = query(pricesRef, where('ean', '==', ean));
-    
+
     const snapshot = await getDocs(q);
     const now = Date.now();
-    
+
     const prices = [];
     snapshot.forEach((doc) => {
       const data = doc.data();
-      
+
       // Filter out expired prices
       if (data.expiresAt && data.expiresAt.toMillis() < now) {
         return;
       }
-      
+
       // Calculate age in hours
       const capturedAt = data.capturedAt?.toMillis() || data.createdAt?.toMillis() || now;
       const ageHours = Math.floor((now - capturedAt) / (1000 * 60 * 60));
-      
+
       // Apply max age filter if specified
       if (options.maxAgeHours && ageHours > options.maxAgeHours) {
         return;
       }
-      
+
       prices.push({
         id: doc.id,
         ...data,
@@ -77,7 +77,7 @@ export async function getPricesByEan(ean, options = {}) {
         expiresAt: data.expiresAt?.toMillis(),
       });
     });
-    
+
     return prices;
   } catch (error) {
     console.error('Error getting prices:', error);
@@ -95,11 +95,11 @@ export async function getStoreById(storeId) {
     // Try to get from Firestore first
     const docRef = doc(db, 'stores', storeId);
     const docSnap = await getDoc(docRef);
-    
+
     if (docSnap.exists()) {
       return { id: storeId, ...docSnap.data() };
     }
-    
+
     // Fallback to seed data
     const seedStore = getSeedStoreById(storeId);
     return seedStore;
@@ -125,7 +125,7 @@ export async function createReceipt(receiptData) {
       ...receiptData,
       uploadedAt: serverTimestamp(),
     });
-    
+
     return docRef.id;
   } catch (error) {
     console.error('Error creating receipt:', error);
@@ -153,7 +153,7 @@ export async function addPrice(priceData) {
       ...priceData,
       createdAt: serverTimestamp(),
     });
-    
+
     return docRef.id;
   } catch (error) {
     console.error('Error adding price:', error);
@@ -173,12 +173,14 @@ export async function addPrice(priceData) {
  */
 export function calculateDistance(lat1, lng1, lat2, lng2) {
   const R = 6371; // Radius of Earth in kilometers
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }

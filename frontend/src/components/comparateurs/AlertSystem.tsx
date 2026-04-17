@@ -1,10 +1,8 @@
- 
- 
 /**
  * Alert System Component
- * 
+ *
  * User interface for managing price and availability alerts.
- * 
+ *
  * Features:
  * - Create new alerts
  * - Toggle alerts on/off
@@ -106,7 +104,7 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
         label: '',
       });
     } catch {
-      setFormError('Erreur lors de la création de l\'alerte. Veuillez réessayer.');
+      setFormError("Erreur lors de la création de l'alerte. Veuillez réessayer.");
     } finally {
       setSaving(false);
     }
@@ -119,12 +117,27 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
     availableAlertTypes.length > 0
       ? availableAlertTypes
       : [
-          { id: 'price_threshold', name: 'Seuil de prix', description: 'Alerte quand le prix passe sous ou au-dessus d\'un seuil' },
-          { id: 'availability', name: 'Disponibilité', description: 'Alerte quand un produit devient disponible' },
-          { id: 'significant_change', name: 'Variation significative', description: 'Alerte quand le prix change brusquement' },
-          { id: 'new_item', name: 'Nouvel élément', description: 'Alerte quand un nouvel élément est ajouté' },
+          {
+            id: 'price_threshold',
+            name: 'Seuil de prix',
+            description: "Alerte quand le prix passe sous ou au-dessus d'un seuil",
+          },
+          {
+            id: 'availability',
+            name: 'Disponibilité',
+            description: 'Alerte quand un produit devient disponible',
+          },
+          {
+            id: 'significant_change',
+            name: 'Variation significative',
+            description: 'Alerte quand le prix change brusquement',
+          },
+          {
+            id: 'new_item',
+            name: 'Nouvel élément',
+            description: 'Alerte quand un nouvel élément est ajouté',
+          },
         ];
-
 
   const handleToggle = async (alertId: string, currentState: boolean) => {
     try {
@@ -354,7 +367,7 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
                 ) : (
                   <Plus className="w-4 h-4" />
                 )}
-                {saving ? 'Enregistrement…' : 'Créer l\'alerte'}
+                {saving ? 'Enregistrement…' : "Créer l'alerte"}
               </button>
               <button
                 type="button"
@@ -383,9 +396,7 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
         {!loading && comparatorAlerts.length === 0 && (
           <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-8 text-center">
             <Bell className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-            <p className="text-gray-400">
-              Aucune alerte configurée pour ce comparateur
-            </p>
+            <p className="text-gray-400">Aucune alerte configurée pour ce comparateur</p>
           </div>
         )}
 
@@ -431,9 +442,13 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
                     </p>
                     {alert.triggeredCount > 0 && (
                       <p>
-                        <span className="font-medium">Déclenchée :</span> {alert.triggeredCount} fois
+                        <span className="font-medium">Déclenchée :</span> {alert.triggeredCount}{' '}
+                        fois
                         {alert.lastTriggered && (
-                          <> (dernière : {new Date(alert.lastTriggered).toLocaleDateString('fr-FR')})</>
+                          <>
+                            {' '}
+                            (dernière : {new Date(alert.lastTriggered).toLocaleDateString('fr-FR')})
+                          </>
                         )}
                       </p>
                     )}
@@ -448,11 +463,7 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
                     aria-label={alert.active ? 'Désactiver' : 'Activer'}
                     title={alert.active ? 'Désactiver' : 'Activer'}
                   >
-                    {alert.active ? (
-                      <BellOff className="w-5 h-5" />
-                    ) : (
-                      <Bell className="w-5 h-5" />
-                    )}
+                    {alert.active ? <BellOff className="w-5 h-5" /> : <Bell className="w-5 h-5" />}
                   </button>
                   <button
                     onClick={() => handleDelete(alert.id)}
@@ -471,8 +482,8 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({
       {/* Info Box */}
       <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
         <p className="text-xs text-blue-200">
-          💡 Les alertes vous notifient par email ou notification push lorsque les conditions sont remplies.
-          Vous pouvez les activer/désactiver à tout moment.
+          💡 Les alertes vous notifient par email ou notification push lorsque les conditions sont
+          remplies. Vous pouvez les activer/désactiver à tout moment.
         </p>
       </div>
     </div>

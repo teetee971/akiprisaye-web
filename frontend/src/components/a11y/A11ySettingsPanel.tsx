@@ -1,4 +1,3 @@
- 
 import React, { useState } from 'react';
 import { X, Accessibility } from 'lucide-react';
 import FontSizeControl from './FontSizeControl';
@@ -121,7 +120,8 @@ export default function A11ySettingsPanel() {
             {/* Footer informatif */}
             <div className="mt-6 p-3 bg-blue-900/30 rounded-lg border border-blue-800/50">
               <p className="text-xs text-blue-200">
-                <strong>Note :</strong> Les paramètres d'accessibilité sont enregistrés localement et persistent entre les sessions.
+                <strong>Note :</strong> Les paramètres d'accessibilité sont enregistrés localement
+                et persistent entre les sessions.
               </p>
             </div>
           </div>

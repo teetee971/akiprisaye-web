@@ -9,9 +9,15 @@ const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
     getItem: (key: string) => store[key] ?? null,
-    setItem: (key: string, value: string) => { store[key] = value; },
-    removeItem: (key: string) => { delete store[key]; },
-    clear: () => { store = {}; },
+    setItem: (key: string, value: string) => {
+      store[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
   };
 })();
 
@@ -93,7 +99,11 @@ describe('useSearchHistory', () => {
     const { result } = renderHook(() => useSearchHistory());
 
     act(() => {
-      result.current.addEntry({ label: 'EAN 3017620422003', type: 'barcode', barcode: '3017620422003' });
+      result.current.addEntry({
+        label: 'EAN 3017620422003',
+        type: 'barcode',
+        barcode: '3017620422003',
+      });
     });
 
     expect(result.current.history).toHaveLength(1);

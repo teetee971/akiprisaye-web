@@ -1,4 +1,3 @@
- 
 /**
  * Gamification System Types
  * TypeScript definitions for the gamification system
@@ -143,7 +142,7 @@ export interface DashboardData {
   leaderboardPosition: UserRank;
 }
 
-export type XPGainSource = 
+export type XPGainSource =
   | 'scan'
   | 'comparison'
   | 'contribution'
@@ -180,5 +179,5 @@ export const LEVELS: Level[] = [
   { level: 25, name: 'Vétéran', minXP: 10000, maxXP: 19999, icon: '🏅', color: '#8b5cf6' },
   { level: 30, name: 'Maître', minXP: 20000, maxXP: 29999, icon: '🏆', color: '#a855f7' },
   { level: 40, name: 'Champion', minXP: 30000, maxXP: 49999, icon: '🌟', color: '#ec4899' },
-  { level: 50, name: 'Légende', minXP: 50000, maxXP: Infinity, icon: '👑', color: '#f43f5e' }
+  { level: 50, name: 'Légende', minXP: 50000, maxXP: Infinity, icon: '👑', color: '#f43f5e' },
 ];

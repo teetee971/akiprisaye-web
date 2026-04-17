@@ -17,7 +17,11 @@ export interface VitalEntry {
   timestamp: string;
 }
 
-function record(metric: { name: string; value: number; rating: 'good' | 'needs-improvement' | 'poor' }): void {
+function record(metric: {
+  name: string;
+  value: number;
+  rating: 'good' | 'needs-improvement' | 'poor';
+}): void {
   const entry: VitalEntry = {
     category: 'web_vital',
     name: metric.name,
@@ -27,7 +31,8 @@ function record(metric: { name: string; value: number; rating: 'good' | 'needs-i
   };
   monitoringBuffer.addItem(entry);
   if (import.meta.env.DEV) {
-    const icon = metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
+    const icon =
+      metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
     console.info(`[webVitals] ${icon} ${metric.name} = ${entry.value} (${metric.rating})`);
   }
 }
@@ -50,8 +55,10 @@ export function initWebVitals(): void {
 
 /** Return all buffered vitals */
 export function getVitals(): VitalEntry[] {
-  return monitoringBuffer.getItems().filter(
-    (item): item is VitalEntry =>
-      typeof item === 'object' && item !== null && (item as VitalEntry).category === 'web_vital',
-  );
+  return monitoringBuffer
+    .getItems()
+    .filter(
+      (item): item is VitalEntry =>
+        typeof item === 'object' && item !== null && (item as VitalEntry).category === 'web_vital'
+    );
 }

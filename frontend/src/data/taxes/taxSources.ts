@@ -5,13 +5,13 @@
  */
 
 export interface TaxSource {
-  id: string
-  name: string
-  type: 'official' | 'institutional' | 'estimated'
-  url: string
-  description: string
-  reliability: 'high' | 'medium' | 'low'
-  lastVerified: string // ISO date format
+  id: string;
+  name: string;
+  type: 'official' | 'institutional' | 'estimated';
+  url: string;
+  description: string;
+  reliability: 'high' | 'medium' | 'low';
+  lastVerified: string; // ISO date format
 }
 
 /**
@@ -78,22 +78,22 @@ export const TAX_SOURCES: Record<string, TaxSource> = {
     name: 'Commission Européenne - DG TAXUD',
     type: 'official',
     url: 'https://taxation-customs.ec.europa.eu',
-    description: 'Direction générale de la fiscalité et de l\'union douanière',
+    description: "Direction générale de la fiscalité et de l'union douanière",
     reliability: 'high',
     lastVerified: '2025-01-01',
   },
-}
+};
 
 /**
  * Get source by ID
  */
 export function getTaxSource(sourceId: string): TaxSource | undefined {
-  return TAX_SOURCES[sourceId]
+  return TAX_SOURCES[sourceId];
 }
 
 /**
  * Get all sources
  */
 export function getAllTaxSources(): TaxSource[] {
-  return Object.values(TAX_SOURCES)
+  return Object.values(TAX_SOURCES);
 }

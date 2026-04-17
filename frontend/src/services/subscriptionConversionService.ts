@@ -148,7 +148,8 @@ export function getAffiliateRef(ref: string): AffiliateRef | null {
  * Generate a shareable affiliate link.
  */
 export function generateAffiliateLink(plan: string, ref: string): string {
-  const base = typeof window !== 'undefined' ? window.location.origin : 'https://akiprisaye-web.pages.dev';
+  const base =
+    typeof window !== 'undefined' ? window.location.origin : 'https://akiprisaye-web.pages.dev';
   const basePath = import.meta.env.BASE_URL ?? '/';
   return `${base}${basePath}subscribe?plan=${plan}&ref=${encodeURIComponent(ref)}`;
 }

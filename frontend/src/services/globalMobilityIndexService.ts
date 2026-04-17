@@ -1,7 +1,6 @@
- 
 /**
  * Global Mobility Cost Index Service v3.0.0
- * 
+ *
  * Implements global mobility cost index with:
  * - Descriptive index ONLY (not prescriptive)
  * - Aggregates v2.2 (transport) + v2.3 (land mobility)
@@ -33,9 +32,9 @@ import type { Territory } from '../types/priceAlerts';
  * Configuration constants
  */
 const MOBILITY_INDEX_CONFIG = {
-  MIN_COVERAGE_PERCENT: 30,        // Lower threshold for island territories
-  STABLE_VARIATION_THRESHOLD: 5,   // ±5% considered stable
-  DEFAULT_TRANSPORT_WEIGHT: 0.6,   // 60% weight for transport
+  MIN_COVERAGE_PERCENT: 30, // Lower threshold for island territories
+  STABLE_VARIATION_THRESHOLD: 5, // ±5% considered stable
+  DEFAULT_TRANSPORT_WEIGHT: 0.6, // 60% weight for transport
   DEFAULT_LAND_MOBILITY_WEIGHT: 0.4, // 40% weight for land mobility
 } as const;
 
@@ -63,7 +62,7 @@ export function calculateGlobalMobilityIndex(
   const landMobilityWeight = MOBILITY_INDEX_CONFIG.DEFAULT_LAND_MOBILITY_WEIGHT;
 
   // Calculate index value
-  const indexValue = (transportCost * transportWeight) + (landMobilityCost * landMobilityWeight);
+  const indexValue = transportCost * transportWeight + landMobilityCost * landMobilityWeight;
 
   // Generate metadata
   const metadata = generateMobilityIndexMetadata(
@@ -102,9 +101,22 @@ function buildTerritoryProfile(
   landMobilityComponents: MobilityCostComponent[]
 ): TerritoryMobilityProfile {
   // Determine territory classification
-  const islandTerritories: Territory[] = ['MQ', 'GP', 'GF', 'RE', 'YT', 'PF', 'NC', 'WF', 'PM', 'BL', 'MF', 'TF'];
+  const islandTerritories: Territory[] = [
+    'MQ',
+    'GP',
+    'GF',
+    'RE',
+    'YT',
+    'PF',
+    'NC',
+    'WF',
+    'PM',
+    'BL',
+    'MF',
+    'TF',
+  ];
   const continentalTerritories: string[] = ['FR'];
-  
+
   let classification: 'ISLAND' | 'CONTINENTAL' | 'ARCHIPELAGO';
   if (islandTerritories.includes(territory)) {
     classification = territory === 'PF' || territory === 'NC' ? 'ARCHIPELAGO' : 'ISLAND';
@@ -113,20 +125,24 @@ function buildTerritoryProfile(
   }
 
   // Analyze available components
-  const hasAirTransport = transportComponents.some(c => c.mode === 'plane');
-  const hasMaritimeTransport = transportComponents.some(c => c.mode === 'boat' || c.mode === 'inter_island');
-  const hasPublicTransit = landMobilityComponents.some(c => c.mode === 'BUS');
-  const hasTaxiVTC = landMobilityComponents.some(c => c.mode === 'TAXI');
+  const hasAirTransport = transportComponents.some((c) => c.mode === 'plane');
+  const hasMaritimeTransport = transportComponents.some(
+    (c) => c.mode === 'boat' || c.mode === 'inter_island'
+  );
+  const hasPublicTransit = landMobilityComponents.some((c) => c.mode === 'BUS');
+  const hasTaxiVTC = landMobilityComponents.some((c) => c.mode === 'TAXI');
   const isIsolated = classification !== 'CONTINENTAL' && !hasMaritimeTransport;
 
   // Get date range
   const allComponents = [...transportComponents, ...landMobilityComponents];
-  const allDates = allComponents.flatMap(c => 
-    c.sources.map(s => new Date(s.observedAt).getTime())
+  const allDates = allComponents.flatMap((c) =>
+    c.sources.map((s) => new Date(s.observedAt).getTime())
   );
-  
-  const oldestDate = allDates.length > 0 ? new Date(Math.min(...allDates)).toISOString() : new Date().toISOString();
-  const newestDate = allDates.length > 0 ? new Date(Math.max(...allDates)).toISOString() : new Date().toISOString();
+
+  const oldestDate =
+    allDates.length > 0 ? new Date(Math.min(...allDates)).toISOString() : new Date().toISOString();
+  const newestDate =
+    allDates.length > 0 ? new Date(Math.max(...allDates)).toISOString() : new Date().toISOString();
 
   return {
     territory,
@@ -160,7 +176,7 @@ function calculateWeightedAverage(components: MobilityCostComponent[]): number {
     return 0;
   }
 
-  const weightedSum = components.reduce((sum, c) => sum + (c.averageCost * c.weight), 0);
+  const weightedSum = components.reduce((sum, c) => sum + c.averageCost * c.weight, 0);
   return weightedSum / totalWeight;
 }
 
@@ -174,10 +190,13 @@ function generateMobilityIndexMetadata(
   landMobilityWeight: number
 ): GlobalMobilityIndexMetadata {
   const allComponents = [...transportComponents, ...landMobilityComponents];
-  
+
   // Calculate data quality
   const transportDataPoints = transportComponents.reduce((sum, c) => sum + c.observationCount, 0);
-  const landMobilityDataPoints = landMobilityComponents.reduce((sum, c) => sum + c.observationCount, 0);
+  const landMobilityDataPoints = landMobilityComponents.reduce(
+    (sum, c) => sum + c.observationCount,
+    0
+  );
   const totalDataPoints = transportDataPoints + landMobilityDataPoints;
 
   // Expected data points (simplified - would be more sophisticated in production)
@@ -185,21 +204,23 @@ function generateMobilityIndexMetadata(
   const coveragePercentage = Math.min(100, (totalDataPoints / expectedDataPoints) * 100);
 
   // Get date range
-  const allDates = allComponents.flatMap(c => 
-    c.sources.map(s => new Date(s.observedAt).getTime())
+  const allDates = allComponents.flatMap((c) =>
+    c.sources.map((s) => new Date(s.observedAt).getTime())
   );
-  const oldestDate = allDates.length > 0 ? new Date(Math.min(...allDates)).toISOString() : new Date().toISOString();
-  const newestDate = allDates.length > 0 ? new Date(Math.max(...allDates)).toISOString() : new Date().toISOString();
+  const oldestDate =
+    allDates.length > 0 ? new Date(Math.min(...allDates)).toISOString() : new Date().toISOString();
+  const newestDate =
+    allDates.length > 0 ? new Date(Math.max(...allDates)).toISOString() : new Date().toISOString();
 
   // Source summary
   const sourceCounts = new Map<string, { count: number; type: 'TRANSPORT' | 'LAND_MOBILITY' }>();
-  allComponents.forEach(component => {
-    component.sources.forEach(source => {
+  allComponents.forEach((component) => {
+    component.sources.forEach((source) => {
       const sourceType = source.type;
       if (!sourceCounts.has(sourceType)) {
-        sourceCounts.set(sourceType, { 
-          count: 0, 
-          type: component.type 
+        sourceCounts.set(sourceType, {
+          count: 0,
+          type: component.type,
         });
       }
       sourceCounts.get(sourceType)!.count++;
@@ -246,7 +267,8 @@ function generateMobilityIndexMetadata(
         rationale: 'Daily mobility for local and intra-territory movement',
       },
     ],
-    calculationFormula: 'Index = (TransportCost × TransportWeight) + (LandMobilityCost × LandMobilityWeight)',
+    calculationFormula:
+      'Index = (TransportCost × TransportWeight) + (LandMobilityCost × LandMobilityWeight)',
     normalizationMethod: 'Weighted average of component costs',
     assumptions: [
       'Weights reflect average usage patterns, not individual circumstances',
@@ -299,9 +321,7 @@ export function compareMobilityIndexPeriods(
   const last = periods[periods.length - 1];
 
   const absoluteChange = last.indexValue - first.indexValue;
-  const percentageChange = first.indexValue > 0
-    ? (absoluteChange / first.indexValue) * 100
-    : 0;
+  const percentageChange = first.indexValue > 0 ? (absoluteChange / first.indexValue) * 100 : 0;
 
   let direction: 'increase' | 'decrease' | 'stable';
   if (Math.abs(percentageChange) < MOBILITY_INDEX_CONFIG.STABLE_VARIATION_THRESHOLD) {
@@ -318,20 +338,34 @@ export function compareMobilityIndexPeriods(
     {
       component: 'Transport',
       absoluteChange: Math.round(transportChange * 100) / 100,
-      percentageChange: first.transportCost > 0 
-        ? Math.round((transportChange / first.transportCost) * 100 * 100) / 100
-        : 0,
-      direction: Math.abs(transportChange) < 5 ? 'stable' : transportChange > 0 ? 'increase' : 'decrease',
-      significance: Math.abs(transportChange) > 50 ? 'high' : Math.abs(transportChange) > 20 ? 'medium' : 'low',
+      percentageChange:
+        first.transportCost > 0
+          ? Math.round((transportChange / first.transportCost) * 100 * 100) / 100
+          : 0,
+      direction:
+        Math.abs(transportChange) < 5 ? 'stable' : transportChange > 0 ? 'increase' : 'decrease',
+      significance:
+        Math.abs(transportChange) > 50 ? 'high' : Math.abs(transportChange) > 20 ? 'medium' : 'low',
     },
     {
       component: 'Land Mobility',
       absoluteChange: Math.round(landMobilityChange * 100) / 100,
-      percentageChange: first.landMobilityCost > 0
-        ? Math.round((landMobilityChange / first.landMobilityCost) * 100 * 100) / 100
-        : 0,
-      direction: Math.abs(landMobilityChange) < 1 ? 'stable' : landMobilityChange > 0 ? 'increase' : 'decrease',
-      significance: Math.abs(landMobilityChange) > 10 ? 'high' : Math.abs(landMobilityChange) > 5 ? 'medium' : 'low',
+      percentageChange:
+        first.landMobilityCost > 0
+          ? Math.round((landMobilityChange / first.landMobilityCost) * 100 * 100) / 100
+          : 0,
+      direction:
+        Math.abs(landMobilityChange) < 1
+          ? 'stable'
+          : landMobilityChange > 0
+            ? 'increase'
+            : 'decrease',
+      significance:
+        Math.abs(landMobilityChange) > 10
+          ? 'high'
+          : Math.abs(landMobilityChange) > 5
+            ? 'medium'
+            : 'low',
     },
   ];
 
@@ -354,11 +388,11 @@ export function compareTerritoriesMobilityIndex(
   territories: GlobalMobilityIndex[],
   baseTerritory?: Territory
 ): MultiTerritoryMobilityComparison {
-  const baseIndex = baseTerritory 
-    ? territories.find(t => t.territory === baseTerritory)
+  const baseIndex = baseTerritory
+    ? territories.find((t) => t.territory === baseTerritory)
     : undefined;
 
-  const comparisons: TerritoryMobilityIndexComparison[] = territories.map(t => {
+  const comparisons: TerritoryMobilityIndexComparison[] = territories.map((t) => {
     const comparison: TerritoryMobilityIndexComparison = {
       territory: t.territory,
       indexValue: t.indexValue,
@@ -374,11 +408,17 @@ export function compareTerritoriesMobilityIndex(
     if (baseIndex && t.territory !== baseTerritory) {
       comparison.differenceFromBase = {
         absoluteIndex: Math.round((t.indexValue - baseIndex.indexValue) * 100) / 100,
-        percentageIndex: baseIndex.indexValue > 0
-          ? Math.round(((t.indexValue - baseIndex.indexValue) / baseIndex.indexValue) * 100 * 100) / 100
-          : 0,
-        absoluteTransport: Math.round((t.breakdown.transportCost - baseIndex.breakdown.transportCost) * 100) / 100,
-        absoluteLandMobility: Math.round((t.breakdown.landMobilityCost - baseIndex.breakdown.landMobilityCost) * 100) / 100,
+        percentageIndex:
+          baseIndex.indexValue > 0
+            ? Math.round(
+                ((t.indexValue - baseIndex.indexValue) / baseIndex.indexValue) * 100 * 100
+              ) / 100
+            : 0,
+        absoluteTransport:
+          Math.round((t.breakdown.transportCost - baseIndex.breakdown.transportCost) * 100) / 100,
+        absoluteLandMobility:
+          Math.round((t.breakdown.landMobilityCost - baseIndex.breakdown.landMobilityCost) * 100) /
+          100,
       };
     }
 
@@ -389,7 +429,7 @@ export function compareTerritoriesMobilityIndex(
     territories: comparisons,
     baseTerritory,
     comparisonDate: new Date().toISOString(),
-    methodology: territories[0]?.metadata.methodology || {} as GlobalMobilityIndexMethodology,
+    methodology: territories[0]?.metadata.methodology || ({} as GlobalMobilityIndexMethodology),
   };
 }
 
@@ -403,22 +443,22 @@ export function applyMobilityIndexFilters(
   let filtered = indices;
 
   if (filter.territory) {
-    filtered = filtered.filter(i => i.territory === filter.territory);
+    filtered = filtered.filter((i) => i.territory === filter.territory);
   }
 
   if (filter.classification) {
-    filtered = filtered.filter(i => i.profile.classification === filter.classification);
+    filtered = filtered.filter((i) => i.profile.classification === filter.classification);
   }
 
   if (filter.minCoveragePercent !== undefined) {
-    filtered = filtered.filter(i => 
-      i.metadata.dataQuality.coveragePercentage >= filter.minCoveragePercent!
+    filtered = filtered.filter(
+      (i) => i.metadata.dataQuality.coveragePercentage >= filter.minCoveragePercent!
     );
   }
 
   if (!filter.includePartialData) {
-    filtered = filtered.filter(i =>
-      i.metadata.dataQuality.coveragePercentage >= MOBILITY_INDEX_CONFIG.MIN_COVERAGE_PERCENT
+    filtered = filtered.filter(
+      (i) => i.metadata.dataQuality.coveragePercentage >= MOBILITY_INDEX_CONFIG.MIN_COVERAGE_PERCENT
     );
   }
 

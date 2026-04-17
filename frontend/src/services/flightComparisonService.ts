@@ -1,7 +1,6 @@
- 
 /**
  * Flight Comparison Service v1.0.0
- * 
+ *
  * Implements citizen flight price comparison with:
  * - Read-only data access
  * - Route-based flight matching
@@ -112,7 +111,7 @@ export function calculateFlightRouteAggregation(
   const minPrice = Math.min(...priceValues);
   const maxPrice = Math.max(...priceValues);
   const averagePrice = priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length;
-  
+
   // Calculate median
   const sortedPrices = [...priceValues].sort((a, b) => a - b);
   const medianPrice =
@@ -121,7 +120,8 @@ export function calculateFlightRouteAggregation(
       : sortedPrices[Math.floor(sortedPrices.length / 2)];
 
   // Calculate standard deviation
-  const variance = priceValues.reduce((sum, p) => sum + Math.pow(p - averagePrice, 2), 0) / priceValues.length;
+  const variance =
+    priceValues.reduce((sum, p) => sum + Math.pow(p - averagePrice, 2), 0) / priceValues.length;
   const standardDeviation = Math.sqrt(variance);
 
   const priceRange = maxPrice - minPrice;
@@ -138,8 +138,10 @@ export function calculateFlightRouteAggregation(
 
   let seasonalVariation;
   if (highSeasonPrices.length > 0 && lowSeasonPrices.length > 0) {
-    const highSeasonAverage = highSeasonPrices.reduce((sum, p) => sum + p, 0) / highSeasonPrices.length;
-    const lowSeasonAverage = lowSeasonPrices.reduce((sum, p) => sum + p, 0) / lowSeasonPrices.length;
+    const highSeasonAverage =
+      highSeasonPrices.reduce((sum, p) => sum + p, 0) / highSeasonPrices.length;
+    const lowSeasonAverage =
+      lowSeasonPrices.reduce((sum, p) => sum + p, 0) / lowSeasonPrices.length;
     const seasonalDifference = highSeasonAverage - lowSeasonAverage;
     const seasonalDifferencePercentage = (seasonalDifference / lowSeasonAverage) * 100;
 
@@ -202,7 +204,8 @@ export function rankFlightPrices(
     } else if (index === sortedPrices.length - 1) {
       priceCategory = 'most_expensive';
     } else if (
-      Math.abs(percentageDifferenceFromAverage) <= FLIGHT_COMPARISON_CONFIG.AVERAGE_PRICE_TOLERANCE_PERCENT
+      Math.abs(percentageDifferenceFromAverage) <=
+      FLIGHT_COMPARISON_CONFIG.AVERAGE_PRICE_TOLERANCE_PERCENT
     ) {
       priceCategory = 'average';
     } else if (price.price < averagePrice) {
@@ -246,7 +249,8 @@ export function analyzePurchaseTiming(
 
   const timingBuckets = buckets.map((bucket) => {
     const bucketPrices = prices.filter(
-      (p) => p.timing.daysBeforeDeparture >= bucket.min && p.timing.daysBeforeDeparture <= bucket.max
+      (p) =>
+        p.timing.daysBeforeDeparture >= bucket.min && p.timing.daysBeforeDeparture <= bucket.max
     );
 
     if (bucketPrices.length === 0) {
@@ -264,7 +268,8 @@ export function analyzePurchaseTiming(
     return {
       label: bucket.label,
       daysBeforeDeparture: { min: bucket.min, max: bucket.max },
-      averagePrice: Math.round((priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length) * 100) / 100,
+      averagePrice:
+        Math.round((priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length) * 100) / 100,
       minPrice: Math.round(Math.min(...priceValues) * 100) / 100,
       maxPrice: Math.round(Math.max(...priceValues) * 100) / 100,
       observationCount: bucketPrices.length,
@@ -315,26 +320,31 @@ export function analyzeSeasonalPrices(
   }
 
   const seasonTypes = ['high', 'low', 'shoulder'] as const;
-  const seasons = seasonTypes.map((type) => {
-    const seasonPrices = prices.filter((p) => p.timing.season === type);
-    
-    if (seasonPrices.length === 0) {
-      return null;
-    }
+  const seasons = seasonTypes
+    .map((type) => {
+      const seasonPrices = prices.filter((p) => p.timing.season === type);
 
-    const priceValues = seasonPrices.map((p) => p.price);
-    // Extract months from travel dates
-    const months = Array.from(new Set(seasonPrices.map((p) => new Date(p.timing.travelDate).getMonth() + 1)));
+      if (seasonPrices.length === 0) {
+        return null;
+      }
 
-    return {
-      type,
-      months,
-      averagePrice: Math.round((priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length) * 100) / 100,
-      minPrice: Math.round(Math.min(...priceValues) * 100) / 100,
-      maxPrice: Math.round(Math.max(...priceValues) * 100) / 100,
-      observationCount: seasonPrices.length,
-    };
-  }).filter((s) => s !== null);
+      const priceValues = seasonPrices.map((p) => p.price);
+      // Extract months from travel dates
+      const months = Array.from(
+        new Set(seasonPrices.map((p) => new Date(p.timing.travelDate).getMonth() + 1))
+      );
+
+      return {
+        type,
+        months,
+        averagePrice:
+          Math.round((priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length) * 100) / 100,
+        minPrice: Math.round(Math.min(...priceValues) * 100) / 100,
+        maxPrice: Math.round(Math.max(...priceValues) * 100) / 100,
+        observationCount: seasonPrices.length,
+      };
+    })
+    .filter((s) => s !== null);
 
   if (seasons.length === 0) {
     return undefined;
@@ -394,12 +404,14 @@ export function generateFlightMetadata(prices: FlightPricePoint[]): FlightCompar
     sourceBucket.airlines.add(price.airline);
   });
 
-  const sourceSummaries: FlightSourceSummary[] = Array.from(sources.entries()).map(([source, data]) => ({
-    source: source as any,
-    observationCount: data.count,
-    airlineCount: data.airlines.size,
-    percentage: Math.round((data.count / prices.length) * 100 * 100) / 100,
-  }));
+  const sourceSummaries: FlightSourceSummary[] = Array.from(sources.entries()).map(
+    ([source, data]) => ({
+      source: source as any,
+      observationCount: data.count,
+      airlineCount: data.airlines.size,
+      percentage: Math.round((data.count / prices.length) * 100 * 100) / 100,
+    })
+  );
 
   const observationDates = prices.map((p) => new Date(p.timing.purchaseDate).getTime());
   const oldestObservation = new Date(Math.min(...observationDates)).toISOString();
@@ -424,7 +436,9 @@ export function generateFlightMetadata(prices: FlightPricePoint[]): FlightCompar
   const oldestAgeMs = now - Math.min(...observationDates);
   const oldestAgeDays = oldestAgeMs / (1000 * 60 * 60 * 24);
   if (oldestAgeDays > FLIGHT_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS) {
-    warnings.push(`Certaines données datent de plus de ${FLIGHT_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS} jours`);
+    warnings.push(
+      `Certaines données datent de plus de ${FLIGHT_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS} jours`
+    );
   }
 
   return {
@@ -441,7 +455,7 @@ export function generateFlightMetadata(prices: FlightPricePoint[]): FlightCompar
     warnings: warnings.length > 0 ? warnings : undefined,
     limitations,
     disclaimer:
-      'A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts, pas d\'affiliation opaque.',
+      "A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts, pas d'affiliation opaque.",
   };
 }
 
@@ -463,11 +477,15 @@ export function filterFlightPrices(
   }
 
   if (filter.destinationTerritory) {
-    filtered = filtered.filter((p) => p.route.destination.territory === filter.destinationTerritory);
+    filtered = filtered.filter(
+      (p) => p.route.destination.territory === filter.destinationTerritory
+    );
   }
 
   if (filter.airline) {
-    filtered = filtered.filter((p) => p.airline.toLowerCase().includes(filter.airline!.toLowerCase()));
+    filtered = filtered.filter((p) =>
+      p.airline.toLowerCase().includes(filter.airline!.toLowerCase())
+    );
   }
 
   if (filter.priceType) {

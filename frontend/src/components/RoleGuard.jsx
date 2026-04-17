@@ -20,10 +20,12 @@ export default function RoleGuard({ children, requiredRoles = [], fallback = nul
 
   // Not authenticated
   if (!user) {
-    return fallback || (
-      <div className="p-4 bg-slate-900 border border-slate-700 rounded-lg text-center">
-        <p className="text-slate-300">Veuillez vous connecter pour accéder à cette section.</p>
-      </div>
+    return (
+      fallback || (
+        <div className="p-4 bg-slate-900 border border-slate-700 rounded-lg text-center">
+          <p className="text-slate-300">Veuillez vous connecter pour accéder à cette section.</p>
+        </div>
+      )
     );
   }
 
@@ -31,10 +33,14 @@ export default function RoleGuard({ children, requiredRoles = [], fallback = nul
   const hasAccess = requiredRoles.some((role) => roles[role] === true);
 
   if (!hasAccess) {
-    return fallback || (
-      <div className="p-4 bg-red-900/20 border border-red-700 rounded-lg text-center">
-        <p className="text-red-300">Accès restreint. Vous n'avez pas les permissions nécessaires.</p>
-      </div>
+    return (
+      fallback || (
+        <div className="p-4 bg-red-900/20 border border-red-700 rounded-lg text-center">
+          <p className="text-red-300">
+            Accès restreint. Vous n'avez pas les permissions nécessaires.
+          </p>
+        </div>
+      )
     );
   }
 

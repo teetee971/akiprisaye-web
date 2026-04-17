@@ -1,7 +1,6 @@
- 
 /**
  * useStoreOpenStatus Hook
- * 
+ *
  * Custom hook for real-time store open status tracking
  * Automatically updates status every minute
  */
@@ -12,7 +11,7 @@ import { isStoreOpen, StoreHours, StoreStatusInfo } from '../utils/storeHoursUti
 /**
  * Hook to get and track store open status
  * Updates automatically every minute
- * 
+ *
  * @param storeHours - Store hours configuration
  * @returns Store status information that updates in real-time
  */
@@ -64,7 +63,7 @@ export function useStoreOpenStatus(storeHours: StoreHours | null | undefined): S
 
 /**
  * Hook to filter stores by open status
- * 
+ *
  * @param stores - Array of stores with hours
  * @param openOnly - If true, only return stores that are currently open
  * @returns Filtered array of stores
@@ -83,7 +82,7 @@ export function useFilterStoresByOpenStatus<T extends { hours?: StoreHours }>(
         return;
       }
 
-      const filtered = stores.filter(store => {
+      const filtered = stores.filter((store) => {
         if (!store.hours) return false;
         const status = isStoreOpen(store.hours);
         return status.status === 'open' || status.status === 'closing_soon';

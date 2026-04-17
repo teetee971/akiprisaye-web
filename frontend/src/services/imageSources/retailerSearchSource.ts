@@ -29,7 +29,11 @@
  * }
  */
 
-import type { ImageCandidate, ImageSourceAdapter, ProductDescriptor } from '../../types/product-image';
+import type {
+  ImageCandidate,
+  ImageSourceAdapter,
+  ProductDescriptor,
+} from '../../types/product-image';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Proxy base URL — same origin in production, empty string uses relative URL
@@ -75,7 +79,7 @@ type RetailerSearchResult = {
 
 async function fetchFromProxy(
   retailer: string,
-  product: ProductDescriptor,
+  product: ProductDescriptor
 ): Promise<ImageCandidate[]> {
   const query = product.barcode ?? product.normalizedLabel ?? '';
   if (!query) return [];
@@ -100,22 +104,24 @@ async function fetchFromProxy(
 
     return payload.results
       .filter((r) => r.title)
-      .map((r): ImageCandidate => ({
-        imageUrl: r.imageUrl ?? '',
-        pageUrl: r.pageUrl,
-        title: r.title,
-        source: retailer,
-        sourceType: 'retailer',
-        brand: r.brand,
-        sizeText: r.sizeText,
-        matchedQuery: query,
-        confidenceScore: r.imageUrl ? 60 : 30,
-        confidenceHints: [
-          ...(r.imageUrl ? ['packshot'] : []),
-          ...(r.brand ? ['brand_match'] : []),
-        ],
-        notes: r.imageUrl ? 'packshot' : undefined,
-      }))
+      .map(
+        (r): ImageCandidate => ({
+          imageUrl: r.imageUrl ?? '',
+          pageUrl: r.pageUrl,
+          title: r.title,
+          source: retailer,
+          sourceType: 'retailer',
+          brand: r.brand,
+          sizeText: r.sizeText,
+          matchedQuery: query,
+          confidenceScore: r.imageUrl ? 60 : 30,
+          confidenceHints: [
+            ...(r.imageUrl ? ['packshot'] : []),
+            ...(r.brand ? ['brand_match'] : []),
+          ],
+          notes: r.imageUrl ? 'packshot' : undefined,
+        })
+      )
       .filter((c) => c.imageUrl && /^https?:\/\//i.test(c.imageUrl));
   } catch {
     return [];
@@ -274,4 +280,3 @@ export function getRetailerConnectorStatus(): Array<{
 }> {
   return RETAILER_CONNECTORS.map(({ name, domain, active }) => ({ name, domain, active }));
 }
-

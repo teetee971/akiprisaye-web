@@ -27,11 +27,11 @@ interface BasketEntry {
   territory: string;
   flag: string;
   code: TerritoryCode;
-  basketPrice: number;      // €
-  minutesOfWork: number;    // at SMIC net hourly rate
-  vsHexagone: number;       // extra minutes vs hexagone baseline
-  deltaPercent: number;     // % more expensive than hexagone (unrounded for threshold logic)
-  highlight?: boolean;      // highlight most expensive
+  basketPrice: number; // €
+  minutesOfWork: number; // at SMIC net hourly rate
+  vsHexagone: number; // extra minutes vs hexagone baseline
+  deltaPercent: number; // % more expensive than hexagone (unrounded for threshold logic)
+  highlight?: boolean; // highlight most expensive
 }
 
 // SMIC net hourly rate (INSEE 2025): 1383€ / 151.67h = 9.12€/h
@@ -105,7 +105,11 @@ function computeBasket(donnees: ObsEntry[]): number | null {
   return Math.round(total * 100) / 100;
 }
 
-function PanierVitalCard({ entry, isHex, barWidth }: {
+function PanierVitalCard({
+  entry,
+  isHex,
+  barWidth,
+}: {
   entry: BasketEntry;
   isHex: boolean;
   barWidth: number;
@@ -134,7 +138,9 @@ function PanierVitalCard({ entry, isHex, barWidth }: {
         )}
         <div className="pvc-photo-overlay" aria-hidden="true" />
         <div className="pvc-header">
-          <span className="pvc-flag" aria-hidden="true">{entry.flag}</span>
+          <span className="pvc-flag" aria-hidden="true">
+            {entry.flag}
+          </span>
           <span className="pvc-territory">{entry.territory}</span>
           {isHex && <span className="pvc-badge pvc-badge--ref">Référence</span>}
           {entry.highlight && <span className="pvc-badge pvc-badge--alert">Le + cher</span>}
@@ -245,16 +251,16 @@ export default function PanierVitalWidget() {
     }
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (loading) {
     return (
       <section className="panier-vital-section section-reveal" aria-label="Indice panier vital">
         <div className="panier-vital-header">
-          <h2 className="section-title slide-up">
-            ⏱️ Indice panier vital
-          </h2>
+          <h2 className="section-title slide-up">⏱️ Indice panier vital</h2>
         </div>
         <div className="panier-vital-skeleton" aria-busy="true" />
       </section>
@@ -272,10 +278,12 @@ export default function PanierVitalWidget() {
           ⏱️ Indice panier vital
         </h2>
         <p className="panier-vital-subtitle slide-up">
-          Combien de <strong>minutes de SMIC net</strong> pour remplir un panier de 6 produits essentiels (lait, riz, eau, pâtes, sucre, huile)&nbsp;?
+          Combien de <strong>minutes de SMIC net</strong> pour remplir un panier de 6 produits
+          essentiels (lait, riz, eau, pâtes, sucre, huile)&nbsp;?
         </p>
         <p className="panier-vital-detail fade-in">
-          Un indicateur citoyen d'accès à l'alimentation — plus il est élevé, plus la vie est chère vs les revenus locaux
+          Un indicateur citoyen d'accès à l'alimentation — plus il est élevé, plus la vie est chère
+          vs les revenus locaux
         </p>
         {hexEntry && (
           <p className="panier-vital-ref fade-in">
@@ -289,7 +297,10 @@ export default function PanierVitalWidget() {
         {entries.map((entry) => {
           const isHex = entry.code === HEX_CODE;
           const barWidth = hexEntry
-            ? Math.min(100, Math.round((entry.minutesOfWork / (hexEntry.minutesOfWork * 1.8)) * 100))
+            ? Math.min(
+                100,
+                Math.round((entry.minutesOfWork / (hexEntry.minutesOfWork * 1.8)) * 100)
+              )
             : 50;
           return (
             <PanierVitalCard key={entry.code} entry={entry} isHex={isHex} barWidth={barWidth} />
@@ -298,8 +309,9 @@ export default function PanierVitalWidget() {
       </div>
 
       <p className="panier-vital-source">
-        Sources&nbsp;: Observatoire citoyen A KI PRI SA YÉ (mars 2026) — SMIC net&nbsp;1&nbsp;383&nbsp;€/mois
-        (INSEE 2025) — Panier&nbsp;: lait, riz, eau, pâtes, sucre, huile
+        Sources&nbsp;: Observatoire citoyen A KI PRI SA YÉ (mars 2026) — SMIC
+        net&nbsp;1&nbsp;383&nbsp;€/mois (INSEE 2025) — Panier&nbsp;: lait, riz, eau, pâtes, sucre,
+        huile
       </p>
     </section>
   );

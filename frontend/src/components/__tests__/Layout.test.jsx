@@ -8,7 +8,7 @@ describe('Layout Component', () => {
     return render(
       <BrowserRouter>
         <Layout />
-      </BrowserRouter>,
+      </BrowserRouter>
     );
   };
 
@@ -43,12 +43,12 @@ describe('Layout Component', () => {
   it('should open mobile navigation when burger menu is clicked', () => {
     renderLayout();
     const burgerButton = screen.getByLabelText('Toggle menu');
-    
+
     // Initially, mobile nav should not be visible
     expect(screen.queryByText('Accueil', { selector: 'a.block.px-6' })).not.toBeInTheDocument();
-    
+
     fireEvent.click(burgerButton);
-    
+
     // After click, mobile nav items should be visible
     expect(screen.getByText('Accueil', { selector: 'a.block.px-6' })).toBeInTheDocument();
   });
@@ -56,11 +56,11 @@ describe('Layout Component', () => {
   it('should close mobile navigation when close button is clicked', () => {
     renderLayout();
     const burgerButton = screen.getByLabelText('Toggle menu');
-    
+
     // Open menu
     fireEvent.click(burgerButton);
     expect(screen.getByText('Accueil', { selector: 'a.block.px-6' })).toBeInTheDocument();
-    
+
     // Close menu by clicking button again (acts as toggle)
     fireEvent.click(burgerButton);
     expect(screen.queryByText('Accueil', { selector: 'a.block.px-6' })).not.toBeInTheDocument();
@@ -69,12 +69,12 @@ describe('Layout Component', () => {
   it('should close mobile navigation when Escape key is pressed', () => {
     renderLayout();
     const burgerButton = screen.getByLabelText('Toggle menu');
-    
+
     // Open menu
     fireEvent.click(burgerButton);
     const mobileNav = screen.getByRole('navigation', { hidden: true });
     expect(mobileNav).toBeInTheDocument();
-    
+
     // Press Escape - close menu by clicking button again (as component doesn't handle Escape)
     fireEvent.click(burgerButton);
     // After closing, mobile nav should not be visible

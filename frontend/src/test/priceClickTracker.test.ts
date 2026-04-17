@@ -23,10 +23,16 @@ import { trackClickToFirestore } from '../utils/firestoreClickTracker';
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
   return {
-    getItem:    vi.fn((key: string) => store[key] ?? null),
-    setItem:    vi.fn((key: string, value: string) => { store[key] = value; }),
-    removeItem: vi.fn((key: string) => { delete store[key]; }),
-    clear:      vi.fn(() => { store = {}; }),
+    getItem: vi.fn((key: string) => store[key] ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
   };
 })();
 Object.defineProperty(window, 'localStorage', { value: localStorageMock, writable: true });
@@ -101,13 +107,13 @@ describe('trackRetailerClick + getRecentRetailerClicks', () => {
 
   it('sorts by clickedAt descending', () => {
     trackRetailerClick('B', 'Leader Price', 'GP', 2.89);
-    trackRetailerClick('A', 'Carrefour',    'GP', 3.49);
+    trackRetailerClick('A', 'Carrefour', 'GP', 3.49);
     const clicks = getRecentRetailerClicks();
     // Both clicks happened in the same ms; verify both are recorded
     expect(clicks).toHaveLength(2);
     // The most-recent is Carrefour (appended last), so it should be ≥ Leader Price timestamp
     const carrefourClick = clicks.find((c) => c.retailer === 'Carrefour');
-    const leaderClick    = clicks.find((c) => c.retailer === 'Leader Price');
+    const leaderClick = clicks.find((c) => c.retailer === 'Leader Price');
     expect(carrefourClick).toBeDefined();
     expect(leaderClick).toBeDefined();
     expect(carrefourClick!.clickedAt).toBeGreaterThanOrEqual(leaderClick!.clickedAt);

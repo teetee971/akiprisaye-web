@@ -1,15 +1,15 @@
 /**
  * antiCrisisRules.ts — Anti-Crisis Price Detection Configuration
- * 
+ *
  * Purpose: Centralized configuration for Anti-Crisis price detection thresholds
  * Used by: Anti-Crisis score calculations, badges, and analysis components
- * 
+ *
  * Anti-Crisis Definition:
  * A price that protects purchasing power during inflation by meeting at least 2 of 3 criteria:
  * 1. Price below territorial median (better than most)
  * 2. Stable or decreasing trend (no recent significant increase)
  * 3. Low volatility (reliable, predictable price)
- * 
+ *
  * @module antiCrisisRules
  */
 
@@ -62,16 +62,16 @@ export type AntiCrisisScore = 0 | 1 | 2 | 3;
 /**
  * Anti-Crisis status labels
  */
-export type AntiCrisisLabel = 
-  | 'Anti-Crise Fort'      // Score 3: All criteria met
-  | 'Anti-Crise'           // Score 2: Two criteria met
-  | 'Neutre'               // Score 1: One criterion met
-  | 'À risque'             // Score 0: No criteria met
+export type AntiCrisisLabel =
+  | 'Anti-Crise Fort' // Score 3: All criteria met
+  | 'Anti-Crise' // Score 2: Two criteria met
+  | 'Neutre' // Score 1: One criterion met
+  | 'À risque' // Score 0: No criteria met
   | 'Données insuffisantes'; // Not enough history
 
 /**
  * Get human-readable label for Anti-Crisis score
- * 
+ *
  * @param score - Anti-Crisis score (0-3)
  * @returns Localized label
  */
@@ -92,7 +92,7 @@ export function getAntiCrisisLabel(score: AntiCrisisScore): AntiCrisisLabel {
 
 /**
  * Get emoji indicator for Anti-Crisis score
- * 
+ *
  * @param score - Anti-Crisis score (0-3)
  * @returns Emoji string
  */
@@ -113,13 +113,13 @@ export function getAntiCrisisEmoji(score: AntiCrisisScore): string {
 
 /**
  * Get CSS color class for Anti-Crisis badge
- * 
+ *
  * @param score - Anti-Crisis score (0-3)
  * @returns Tailwind CSS class names
  */
 export function getAntiCrisisBadgeClasses(score: AntiCrisisScore): string {
   const baseClasses = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium';
-  
+
   switch (score) {
     case 3:
       return `${baseClasses} bg-green-100 text-green-800 border border-green-300`;
@@ -140,7 +140,7 @@ export function getAntiCrisisBadgeClasses(score: AntiCrisisScore): string {
  */
 export function validateAntiCrisisRules(): boolean {
   const rules = ANTI_CRISIS_RULES;
-  
+
   return (
     rules.trendPeriodDays > 0 &&
     rules.stableThresholdPercent > 0 &&

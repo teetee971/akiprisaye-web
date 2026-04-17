@@ -13,7 +13,7 @@ export default function SavingsGoal({
   goalAmount,
   progress,
   onUpdateGoal,
-  className = ''
+  className = '',
 }: SavingsGoalProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [newGoal, setNewGoal] = useState(goalAmount.toString());
@@ -31,13 +31,14 @@ export default function SavingsGoal({
     setIsEditing(false);
   };
 
-  const progressColor = progress >= 100 
-    ? 'bg-green-600' 
-    : progress >= 75 
-    ? 'bg-blue-600' 
-    : progress >= 50 
-    ? 'bg-yellow-500' 
-    : 'bg-gray-400';
+  const progressColor =
+    progress >= 100
+      ? 'bg-green-600'
+      : progress >= 75
+        ? 'bg-blue-600'
+        : progress >= 50
+          ? 'bg-yellow-500'
+          : 'bg-gray-400';
 
   return (
     <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 ${className}`}>
@@ -65,7 +66,10 @@ export default function SavingsGoal({
       {isEditing ? (
         <div className="space-y-3">
           <div>
-            <label htmlFor="savings-goal-amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label
+              htmlFor="savings-goal-amount"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+            >
               Nouvel objectif (€)
             </label>
             <input
@@ -100,9 +104,7 @@ export default function SavingsGoal({
               <span className="text-gray-600 dark:text-gray-400">
                 {currentAmount.toFixed(2)}€ / {goalAmount.toFixed(2)}€
               </span>
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {progress}%
-              </span>
+              <span className="font-semibold text-gray-900 dark:text-white">{progress}%</span>
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
               <div

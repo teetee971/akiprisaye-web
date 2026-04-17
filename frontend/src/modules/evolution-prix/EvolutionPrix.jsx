@@ -1,4 +1,3 @@
- 
 import { useState, useEffect } from 'react';
 import ToggleAnalyseCiblee from './ToggleAnalyseCiblee.jsx';
 import { SelectMagasin } from './SelectMagasin.jsx';
@@ -15,7 +14,7 @@ export default function EvolutionPrix({ territory: _territory = 'guadeloupe' }) 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Analysis mode state
   const [analysisEnabled, setAnalysisEnabled] = useState(false);
   const [selectedStore, setSelectedStore] = useState(null);
@@ -25,9 +24,11 @@ export default function EvolutionPrix({ territory: _territory = 'guadeloupe' }) 
     const loadData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${import.meta.env.BASE_URL}data/evolution-prix-analysable.json`);
+        const response = await fetch(
+          `${import.meta.env.BASE_URL}data/evolution-prix-analysable.json`
+        );
         if (!response.ok) {
-          throw new Error('Impossible de charger les données d\'évolution');
+          throw new Error("Impossible de charger les données d'évolution");
         }
         const jsonData = await response.json();
         setData(jsonData);
@@ -83,42 +84,34 @@ export default function EvolutionPrix({ territory: _territory = 'guadeloupe' }) 
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          📈 Évolution des Prix
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">📈 Évolution des Prix</h2>
         <p className="text-sm text-gray-600">
           Analyse des variations de prix avec mode exploratoire optionnel
         </p>
       </div>
 
       {/* Toggle for Targeted Analysis */}
-      <ToggleAnalyseCiblee 
-        enabled={analysisEnabled} 
-        onToggle={setAnalysisEnabled} 
-      />
+      <ToggleAnalyseCiblee enabled={analysisEnabled} onToggle={setAnalysisEnabled} />
 
       {/* Main Aggregated View - Always Visible */}
       <div className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           📊 Vue Agrégée (Données Principales)
         </h3>
-        
+
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-8 text-center">
           <div className="text-6xl mb-4">📉</div>
-          <p className="text-gray-700 text-lg font-medium mb-2">
-            Graphique des prix agrégés
-          </p>
+          <p className="text-gray-700 text-lg font-medium mb-2">Graphique des prix agrégés</p>
           <p className="text-sm text-gray-600 max-w-lg mx-auto">
-            Cette vue présente les données consolidées de l'ensemble des observations,
-            sans ciblage spécifique d'enseigne ou de produit.
-            Compatible usage institutionnel et presse.
+            Cette vue présente les données consolidées de l'ensemble des observations, sans ciblage
+            spécifique d'enseigne ou de produit. Compatible usage institutionnel et presse.
           </p>
         </div>
 
         <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3">
           <p className="text-xs text-green-800">
-            <strong>✓ Vue principale :</strong> Les données agrégées restent la référence.
-            Le mode analyse ciblée est une couche exploratoire complémentaire.
+            <strong>✓ Vue principale :</strong> Les données agrégées restent la référence. Le mode
+            analyse ciblée est une couche exploratoire complémentaire.
           </p>
         </div>
       </div>
@@ -151,14 +144,12 @@ export default function EvolutionPrix({ territory: _territory = 'guadeloupe' }) 
 
       {/* Footer Legal Protection */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-900 font-medium mb-2">
-          ℹ️ Méthodologie et Protection
-        </p>
+        <p className="text-sm text-blue-900 font-medium mb-2">ℹ️ Méthodologie et Protection</p>
         <p className="text-sm text-blue-800">
-          Toutes les données présentées proviennent d'observations citoyennes validées.
-          Le mode agrégé (vue par défaut) est recommandé pour un usage institutionnel.
-          Le mode analyse ciblée est destiné à un usage exploratoire et informatif uniquement.
-          Aucun classement ou comparaison accusatoire n'est effectué.
+          Toutes les données présentées proviennent d'observations citoyennes validées. Le mode
+          agrégé (vue par défaut) est recommandé pour un usage institutionnel. Le mode analyse
+          ciblée est destiné à un usage exploratoire et informatif uniquement. Aucun classement ou
+          comparaison accusatoire n'est effectué.
         </p>
       </div>
     </div>

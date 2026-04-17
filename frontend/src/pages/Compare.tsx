@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { GlassCard } from "../components/ui/glass-card";
+import { useEffect, useState } from 'react';
+import { GlassCard } from '../components/ui/glass-card';
 
 interface Result {
   store: string;
@@ -13,8 +13,8 @@ export default function Compare() {
   useEffect(() => {
     // données issues API publique / backend
     setResults([
-      { store: "Carrefour", price: 1.95, distanceKm: 1.2 },
-      { store: "Super U", price: 2.05, distanceKm: 0.8 }
+      { store: 'Carrefour', price: 1.95, distanceKm: 1.2 },
+      { store: 'Super U', price: 2.05, distanceKm: 0.8 },
     ]);
   }, []);
 
@@ -26,9 +26,7 @@ export default function Compare() {
             <strong>{r.store}</strong>
             <span>{r.price.toFixed(2)} €</span>
           </div>
-          <p className="text-xs text-gray-400">
-            Distance : {r.distanceKm} km
-          </p>
+          <p className="text-xs text-gray-400">Distance : {r.distanceKm} km</p>
         </GlassCard>
       ))}
     </div>

@@ -1,8 +1,7 @@
- 
 /**
  * EAN Product Service with Strict Validation and Traceability
  * Handles EAN-based product lookup with fallback for unknown products
- * 
+ *
  * Rules (PR #1 Foundation):
  * - No silent product creation
  * - All data must be sourced and traced
@@ -19,7 +18,7 @@ import type {
   EanStatus,
   ProductTraceability,
   Territoire,
-  DataSource
+  DataSource,
 } from '../types/ean';
 
 /**
@@ -64,7 +63,7 @@ export interface ProductLookupOptions {
 /**
  * Look up product by EAN with strict validation
  * Returns fallback for valid but unknown EANs
- * 
+ *
  * @param ean - EAN code to look up
  * @param options - Lookup options (territoire required)
  * @returns Product lookup result with validation status
@@ -83,8 +82,8 @@ export async function lookupProductByEan(
       validation: {
         eanValid: false,
         format: validation.format,
-        checksumValid: validation.checksum
-      }
+        checksumValid: validation.checksum,
+      },
     };
   }
 
@@ -93,7 +92,7 @@ export async function lookupProductByEan(
     source: options.source || 'observation_citoyenne',
     dateObservation: new Date().toISOString(),
     territoire: options.territoire,
-    magasin: options.magasin
+    magasin: options.magasin,
   };
 
   // Step 3: Try to fetch product from database
@@ -108,11 +107,11 @@ export async function lookupProductByEan(
           product.imageUrl = images.imageUrl;
         }
       }
-      
+
       // Product found - return with confirmed or partial status
       const result = {
         ...product,
-        traceability
+        traceability,
       } as ProductResult;
 
       return {
@@ -121,8 +120,8 @@ export async function lookupProductByEan(
         validation: {
           eanValid: true,
           format: validation.format,
-          checksumValid: true
-        }
+          checksumValid: true,
+        },
       };
     }
   } catch (error) {
@@ -144,18 +143,18 @@ export async function lookupProductByEan(
         imageUrl: images.imageUrl || undefined,
         traceability: {
           ...traceability,
-          source: 'open_food_facts'
-        }
+          source: 'open_food_facts',
+        },
       };
-      
+
       return {
         success: true,
         product: offProduct,
         validation: {
           eanValid: true,
           format: validation.format,
-          checksumValid: true
-        }
+          checksumValid: true,
+        },
       };
     }
   } catch (error) {
@@ -168,7 +167,7 @@ export async function lookupProductByEan(
     ean: validation.ean,
     status: 'non_référencé',
     nom: 'Produit non référencé',
-    traceability
+    traceability,
   };
 
   return {
@@ -177,15 +176,15 @@ export async function lookupProductByEan(
     validation: {
       eanValid: true,
       format: validation.format,
-      checksumValid: true
-    }
+      checksumValid: true,
+    },
   };
 }
 
 /**
  * Enrich product with images from Open Food Facts
  * Fetches product images from Open Food Facts API
- * 
+ *
  * @param ean - Product EAN code
  * @returns Product images or null values if not found
  */
@@ -194,18 +193,17 @@ async function enrichProductWithImages(ean: string): Promise<ProductImages> {
   if (cached) return cached;
 
   try {
-    const response = await fetch(
-      `https://world.openfoodfacts.org/api/v0/product/${ean}.json`,
-      {
-        headers: {
-          'User-Agent': 'AKiPriSaYe/2.1.0 (Contact: app@akiprisaye.fr)'
-        }
-      }
-    );
+    const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${ean}.json`, {
+      headers: {
+        'User-Agent': 'AKiPriSaYe/2.1.0 (Contact: app@akiprisaye.fr)',
+      },
+    });
 
     if (!response.ok) {
       if (response.status === 429) {
-        console.warn(`[IMAGES] Open Food Facts rate limit reached for EAN ${ean}. Please retry later.`);
+        console.warn(
+          `[IMAGES] Open Food Facts rate limit reached for EAN ${ean}. Please retry later.`
+        );
       } else {
         console.warn(`[IMAGES] Open Food Facts API error for EAN ${ean}: ${response.status}`);
       }
@@ -243,23 +241,23 @@ async function enrichProductWithImages(ean: string): Promise<ProductImages> {
 /**
  * Fetch product from local database
  * This is a placeholder that should be replaced with actual database logic
- * 
+ *
  * @param ean - Validated EAN code
  * @returns Product data or null if not found
  */
 async function fetchProductFromDatabase(ean: string): Promise<ProductResult | null> {
   try {
     // Try to fetch from public data file
-    const response = await fetch(`${import.meta.env.BASE_URL}data/prices.json`, { cache: 'no-store' });
-    
+    const response = await fetch(`${import.meta.env.BASE_URL}data/prices.json`, {
+      cache: 'no-store',
+    });
+
     if (!response.ok) {
       return null;
     }
 
     const data = await response.json();
-    const found = Array.isArray(data) 
-      ? data.filter((p: any) => p.ean === ean)[0]
-      : null;
+    const found = Array.isArray(data) ? data.filter((p: any) => p.ean === ean)[0] : null;
 
     if (found) {
       // Determine status based on data completeness
@@ -271,9 +269,9 @@ async function fetchProductFromDatabase(ean: string): Promise<ProductResult | nu
         const tempTraceability: ProductTraceability = {
           source: 'base_officielle' as DataSource,
           dateObservation: new Date().toISOString(),
-          territoire: 'martinique' as Territoire
+          territoire: 'martinique' as Territoire,
         };
-        
+
         return {
           ean: found.ean,
           status: 'confirmé',
@@ -281,27 +279,34 @@ async function fetchProductFromDatabase(ean: string): Promise<ProductResult | nu
           marque: found.marque || found.brand,
           categorie: found.categorie || found.category,
           contenance: found.contenance || found.size || undefined,
-          prix: found.prix || found.price ? parseFloat(String(found.prix || found.price).replace(/[^\d.,]/g, '').replace(',', '.')) : undefined,
+          prix:
+            found.prix || found.price
+              ? parseFloat(
+                  String(found.prix || found.price)
+                    .replace(/[^\d.,]/g, '')
+                    .replace(',', '.')
+                )
+              : undefined,
           devise: '€',
           imageUrl: found.imageUrl || found.image || undefined,
           description: found.description || undefined,
-          traceability: tempTraceability
+          traceability: tempTraceability,
         } as Product;
       } else if (found.nom || found.name) {
         // Create a temporary traceability - will be replaced by caller
         const tempTraceability: ProductTraceability = {
           source: 'base_officielle' as DataSource,
           dateObservation: new Date().toISOString(),
-          territoire: 'martinique' as Territoire
+          territoire: 'martinique' as Territoire,
         };
-        
+
         return {
           ean: found.ean,
           status: 'partiel',
           nom: found.name || found.nom,
           marque: found.marque || found.brand || undefined,
           categorie: found.categorie || found.category || undefined,
-          traceability: tempTraceability
+          traceability: tempTraceability,
         } as PartialProduct;
       }
     }
@@ -359,14 +364,15 @@ export function formatProductForDisplay(product: ProductResult) {
     nom: product.nom || 'Produit inconnu',
     marque: isConfirmedProduct(product) ? product.marque : 'Non spécifiée',
     categorie: isConfirmedProduct(product) ? product.categorie : 'Non spécifiée',
-    prix: isConfirmedProduct(product) && product.prix 
-      ? `${product.prix.toFixed(2)} ${product.devise || '€'}`
-      : 'Prix non disponible',
+    prix:
+      isConfirmedProduct(product) && product.prix
+        ? `${product.prix.toFixed(2)} ${product.devise || '€'}`
+        : 'Prix non disponible',
     status: product.status,
     statusMessage: getProductStatusMessage(product.status),
     source: product.traceability.source,
     territoire: product.traceability.territoire,
     magasin: product.traceability.magasin || 'Non spécifié',
-    dateObservation: new Date(product.traceability.dateObservation).toLocaleDateString('fr-FR')
+    dateObservation: new Date(product.traceability.dateObservation).toLocaleDateString('fr-FR'),
   };
 }

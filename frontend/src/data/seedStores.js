@@ -83,8 +83,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial',
     postalCode: '97190',
     coordinates: {
-      lat: 16.2280,
-      lon: -61.5100,
+      lat: 16.228,
+      lon: -61.51,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 8h-19h30',
@@ -100,8 +100,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial',
     postalCode: '97122',
     coordinates: {
-      lat: 16.2650,
-      lon: -61.5280,
+      lat: 16.265,
+      lon: -61.528,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h, Dim 8h-13h',
@@ -117,8 +117,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale Bas du Fort',
     postalCode: '97190',
     coordinates: {
-      lat: 16.2250,
-      lon: -61.5050,
+      lat: 16.225,
+      lon: -61.505,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h30, Dim 8h-13h',
@@ -134,8 +134,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97110',
     coordinates: {
-      lat: 16.2400,
-      lon: -61.5350,
+      lat: 16.24,
+      lon: -61.535,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 7h-20h',
@@ -151,8 +151,8 @@ export const SEED_STORES = [
     address: 'Zone de Jarry',
     postalCode: '97139',
     coordinates: {
-      lat: 16.2700,
-      lon: -61.5850,
+      lat: 16.27,
+      lon: -61.585,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 7h-20h',
@@ -168,8 +168,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97118',
     coordinates: {
-      lat: 16.2550,
-      lon: -61.2750,
+      lat: 16.255,
+      lon: -61.275,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Dim 8h-20h',
@@ -185,8 +185,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97115',
     coordinates: {
-      lat: 16.3300,
-      lon: -61.7000,
+      lat: 16.33,
+      lon: -61.7,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 7h-20h, Dim 8h-13h',
@@ -202,8 +202,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale',
     postalCode: '97115',
     coordinates: {
-      lat: 16.3320,
-      lon: -61.6980,
+      lat: 16.332,
+      lon: -61.698,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h, Dim 8h-13h',
@@ -220,8 +220,8 @@ export const SEED_STORES = [
     address: 'Zone de Jarry',
     postalCode: '97139',
     coordinates: {
-      lat: 16.2720,
-      lon: -61.5900,
+      lat: 16.272,
+      lon: -61.59,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 7h30-19h',
@@ -237,8 +237,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale',
     postalCode: '97122',
     coordinates: {
-      lat: 16.2690,
-      lon: -61.5240,
+      lat: 16.269,
+      lon: -61.524,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 7h-19h',
@@ -255,8 +255,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial Destreland',
     postalCode: '97122',
     coordinates: {
-      lat: 16.2670,
-      lon: -61.5260,
+      lat: 16.267,
+      lon: -61.526,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 9h-19h30',
@@ -272,8 +272,8 @@ export const SEED_STORES = [
     address: 'Zone de Jarry',
     postalCode: '97139',
     coordinates: {
-      lat: 16.2710,
-      lon: -61.5880,
+      lat: 16.271,
+      lon: -61.588,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 9h-19h',
@@ -290,8 +290,8 @@ export const SEED_STORES = [
     address: 'Zone de Jarry',
     postalCode: '97139',
     coordinates: {
-      lat: 16.2730,
-      lon: -61.5870,
+      lat: 16.273,
+      lon: -61.587,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 9h-20h, Dim 9h-13h',
@@ -360,8 +360,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale',
     postalCode: '97224',
     coordinates: {
-      lat: 14.5950,
-      lon: -61.0050,
+      lat: 14.595,
+      lon: -61.005,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h',
@@ -377,8 +377,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial La Galleria',
     postalCode: '97232',
     coordinates: {
-      lat: 14.6100,
-      lon: -61.0000,
+      lat: 14.61,
+      lon: -61.0,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h30, Dim 8h-13h',
@@ -394,8 +394,8 @@ export const SEED_STORES = [
     address: 'La Batelière',
     postalCode: '97233',
     coordinates: {
-      lat: 14.6140,
-      lon: -61.0900,
+      lat: 14.614,
+      lon: -61.09,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 8h-21h, Dim 8h-13h',
@@ -403,16 +403,16 @@ export const SEED_STORES = [
   },
   {
     id: 'leclerc_place_armes',
-    name: 'E.Leclerc Place d\'Armes',
+    name: "E.Leclerc Place d'Armes",
     chain: 'E.Leclerc',
     companyId: 'company-leclerc',
     territory: 'Martinique',
     city: 'Le Lamentin',
-    address: 'Place d\'Armes',
+    address: "Place d'Armes",
     postalCode: '97232',
     coordinates: {
-      lat: 14.6120,
-      lon: -61.0010,
+      lat: 14.612,
+      lon: -61.001,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h, Dim 8h-13h',
@@ -428,8 +428,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97240',
     coordinates: {
-      lat: 14.6180,
-      lon: -60.9050,
+      lat: 14.618,
+      lon: -60.905,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 7h30-20h, Dim 8h-13h',
@@ -445,8 +445,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97220',
     coordinates: {
-      lat: 14.7380,
-      lon: -60.9680,
+      lat: 14.738,
+      lon: -60.968,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 7h-20h',
@@ -462,8 +462,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97215',
     coordinates: {
-      lat: 14.5300,
-      lon: -60.9700,
+      lat: 14.53,
+      lon: -60.97,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 7h-20h',
@@ -480,8 +480,8 @@ export const SEED_STORES = [
     address: 'Zone Industrielle',
     postalCode: '97232',
     coordinates: {
-      lat: 14.6150,
-      lon: -61.0020,
+      lat: 14.615,
+      lon: -61.002,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 7h30-19h',
@@ -498,8 +498,8 @@ export const SEED_STORES = [
     address: 'ZI Acajou Californie',
     postalCode: '97232',
     coordinates: {
-      lat: 14.6130,
-      lon: -61.0050,
+      lat: 14.613,
+      lon: -61.005,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 9h-19h',
@@ -515,8 +515,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial Cluny',
     postalCode: '97200',
     coordinates: {
-      lat: 14.6050,
-      lon: -61.0700,
+      lat: 14.605,
+      lon: -61.07,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 9h-19h30',
@@ -533,8 +533,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale',
     postalCode: '97232',
     coordinates: {
-      lat: 14.6140,
-      lon: -61.0030,
+      lat: 14.614,
+      lon: -61.003,
     },
     phone: '+596 596 XX XX XX',
     openingHours: 'Lun-Sam 9h-20h, Dim 9h-13h',
@@ -552,8 +552,8 @@ export const SEED_STORES = [
     address: 'Avenue Léopold Héder',
     postalCode: '97300',
     coordinates: {
-      lat: 4.9380,
-      lon: -52.3300,
+      lat: 4.938,
+      lon: -52.33,
     },
     phone: '+594 594 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h, Dim 8h-13h',
@@ -569,8 +569,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial',
     postalCode: '97300',
     coordinates: {
-      lat: 4.9220,
-      lon: -52.3130,
+      lat: 4.922,
+      lon: -52.313,
     },
     phone: '+594 594 XX XX XX',
     openingHours: 'Lun-Sam 8h30-20h',
@@ -603,8 +603,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial',
     postalCode: '97300',
     coordinates: {
-      lat: 4.9250,
-      lon: -52.3150,
+      lat: 4.925,
+      lon: -52.315,
     },
     phone: '+594 594 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h, Dim 8h-13h',
@@ -620,8 +620,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97320',
     coordinates: {
-      lat: 5.4980,
-      lon: -54.0300,
+      lat: 5.498,
+      lon: -54.03,
     },
     phone: '+594 594 XX XX XX',
     openingHours: 'Lun-Sam 7h30-20h',
@@ -639,8 +639,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial Chaudron',
     postalCode: '97490',
     coordinates: {
-      lat: -20.8950,
-      lon: 55.4850,
+      lat: -20.895,
+      lon: 55.485,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h, Dim 8h-13h',
@@ -673,8 +673,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale Savanna',
     postalCode: '97460',
     coordinates: {
-      lat: -21.0100,
-      lon: 55.2700,
+      lat: -21.01,
+      lon: 55.27,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h',
@@ -691,7 +691,7 @@ export const SEED_STORES = [
     postalCode: '97440',
     coordinates: {
       lat: -20.9606,
-      lon: 55.6500,
+      lon: 55.65,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 8h-19h30',
@@ -707,8 +707,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97400',
     coordinates: {
-      lat: -20.8800,
-      lon: 55.4500,
+      lat: -20.88,
+      lon: 55.45,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h',
@@ -724,8 +724,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97410',
     coordinates: {
-      lat: -21.3400,
-      lon: 55.4800,
+      lat: -21.34,
+      lon: 55.48,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 7h-20h',
@@ -741,8 +741,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial',
     postalCode: '97440',
     coordinates: {
-      lat: -20.9620,
-      lon: 55.6480,
+      lat: -20.962,
+      lon: 55.648,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h, Dim 8h-13h',
@@ -759,8 +759,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale',
     postalCode: '97410',
     coordinates: {
-      lat: -21.3400,
-      lon: 55.4820,
+      lat: -21.34,
+      lon: 55.482,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 8h-19h',
@@ -777,8 +777,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial Chaudron',
     postalCode: '97490',
     coordinates: {
-      lat: -20.8960,
-      lon: 55.4860,
+      lat: -20.896,
+      lon: 55.486,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 9h-19h30',
@@ -794,8 +794,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale',
     postalCode: '97410',
     coordinates: {
-      lat: -21.3380,
-      lon: 55.4800,
+      lat: -21.338,
+      lon: 55.48,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 9h-19h',
@@ -812,8 +812,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial',
     postalCode: '97400',
     coordinates: {
-      lat: -20.8920,
-      lon: 55.4520,
+      lat: -20.892,
+      lon: 55.452,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 9h-20h, Dim 9h-13h',
@@ -829,8 +829,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial Savanna',
     postalCode: '97460',
     coordinates: {
-      lat: -21.0110,
-      lon: 55.2710,
+      lat: -21.011,
+      lon: 55.271,
     },
     phone: '+262 262 XX XX XX',
     openingHours: 'Lun-Sam 9h-19h30',
@@ -865,8 +865,8 @@ export const SEED_STORES = [
     address: 'Centre-ville',
     postalCode: '97600',
     coordinates: {
-      lat: -12.7830,
-      lon: 45.2300,
+      lat: -12.783,
+      lon: 45.23,
     },
     phone: '+269 269 XX XX XX',
     openingHours: 'Lun-Sam 7h-20h',
@@ -939,8 +939,8 @@ export const SEED_STORES = [
     address: 'Route de Sandy Ground',
     postalCode: '97150',
     coordinates: {
-      lat: 18.0570,
-      lon: -63.0900,
+      lat: 18.057,
+      lon: -63.09,
     },
     phone: '+590 590 XX XX XX',
     openingHours: 'Lun-Sam 8h30-20h',
@@ -977,8 +977,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial Moana Nui',
     postalCode: '98713',
     coordinates: {
-      lat: -17.5350,
-      lon: -149.5690,
+      lat: -17.535,
+      lon: -149.569,
     },
     phone: '+689 40 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h',
@@ -994,8 +994,8 @@ export const SEED_STORES = [
     address: 'Centre Commercial',
     postalCode: '98717',
     coordinates: {
-      lat: -17.6300,
-      lon: -149.6000,
+      lat: -17.63,
+      lon: -149.6,
     },
     phone: '+689 40 XX XX XX',
     openingHours: 'Lun-Sam 8h-19h30',
@@ -1014,7 +1014,7 @@ export const SEED_STORES = [
     postalCode: '98800',
     coordinates: {
       lat: -22.2758,
-      lon: 166.4580,
+      lon: 166.458,
     },
     phone: '+687 687 XX XX XX',
     openingHours: 'Lun-Sam 8h-20h',
@@ -1030,8 +1030,8 @@ export const SEED_STORES = [
     address: 'Zone Commerciale',
     postalCode: '98835',
     coordinates: {
-      lat: -22.1500,
-      lon: 166.4500,
+      lat: -22.15,
+      lon: 166.45,
     },
     phone: '+687 687 XX XX XX',
     openingHours: 'Lun-Sam 8h-19h30',
@@ -1045,7 +1045,7 @@ export const SEED_STORES = [
  * @returns {Object|null} Magasin trouvé ou null
  */
 export function getStoreById(storeId) {
-  return SEED_STORES.find(store => store.id === storeId) || null;
+  return SEED_STORES.find((store) => store.id === storeId) || null;
 }
 
 /**
@@ -1057,9 +1057,7 @@ export function getStoresByTerritory(territory) {
   if (!territory || territory === 'all') {
     return SEED_STORES;
   }
-  return SEED_STORES.filter(store => 
-    store.territory.toLowerCase() === territory.toLowerCase(),
-  );
+  return SEED_STORES.filter((store) => store.territory.toLowerCase() === territory.toLowerCase());
 }
 
 /**
@@ -1068,7 +1066,7 @@ export function getStoresByTerritory(territory) {
  */
 export function getAvailableTerritories() {
   const territories = new Set();
-  SEED_STORES.forEach(store => {
+  SEED_STORES.forEach((store) => {
     territories.add(store.territory);
   });
   return Array.from(territories).sort();
@@ -1089,12 +1087,13 @@ export function getAllStores() {
  */
 export function searchStores(query) {
   if (!query || query.length < 2) return [];
-  
+
   const lowerQuery = query.toLowerCase();
-  return SEED_STORES.filter(store => 
-    store.name.toLowerCase().includes(lowerQuery) ||
-    store.city.toLowerCase().includes(lowerQuery) ||
-    store.chain.toLowerCase().includes(lowerQuery),
+  return SEED_STORES.filter(
+    (store) =>
+      store.name.toLowerCase().includes(lowerQuery) ||
+      store.city.toLowerCase().includes(lowerQuery) ||
+      store.chain.toLowerCase().includes(lowerQuery)
   );
 }
 
@@ -1104,9 +1103,7 @@ export function searchStores(query) {
  * @returns {Array} Liste des magasins de la chaîne
  */
 export function getStoresByChain(chain) {
-  return SEED_STORES.filter(store => 
-    store.chain.toLowerCase() === chain.toLowerCase(),
-  );
+  return SEED_STORES.filter((store) => store.chain.toLowerCase() === chain.toLowerCase());
 }
 
 /**
@@ -1116,18 +1113,18 @@ export function getStoresByChain(chain) {
  */
 export function getTerritoryNameFromCode(territoryCode) {
   const mapping = {
-    'guadeloupe': 'Guadeloupe',
-    'martinique': 'Martinique',
-    'guyane': 'Guyane',
-    'reunion': 'La Réunion',
-    'mayotte': 'Mayotte',
-    'spm': 'Saint-Pierre-et-Miquelon',
-    'stbarth': 'Saint-Barthélemy',
-    'stmartin': 'Saint-Martin',
-    'wallis': 'Wallis-et-Futuna',
-    'polynesie': 'Polynésie française',
-    'noumea': 'Nouvelle-Calédonie',
-    'taaf': 'Terres australes et antarctiques françaises',
+    guadeloupe: 'Guadeloupe',
+    martinique: 'Martinique',
+    guyane: 'Guyane',
+    reunion: 'La Réunion',
+    mayotte: 'Mayotte',
+    spm: 'Saint-Pierre-et-Miquelon',
+    stbarth: 'Saint-Barthélemy',
+    stmartin: 'Saint-Martin',
+    wallis: 'Wallis-et-Futuna',
+    polynesie: 'Polynésie française',
+    noumea: 'Nouvelle-Calédonie',
+    taaf: 'Terres australes et antarctiques françaises',
   };
   return mapping[territoryCode] || territoryCode;
 }

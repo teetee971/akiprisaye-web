@@ -33,7 +33,7 @@ describe('leclercCatalogProvider', () => {
 
     const result = await leclercCatalogProvider.search(
       { barcode: '3560070123456' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.source).toBe('leclerc_catalog');
@@ -67,12 +67,12 @@ describe('leclercCatalogProvider', () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => mockResponse,
-      }),
+      })
     );
 
     const result = await leclercCatalogProvider.search(
       { barcode: '3560070123456', territory: 'gp' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.source).toBe('leclerc_catalog');
@@ -92,12 +92,12 @@ describe('leclercCatalogProvider', () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({ status: 'NO_DATA', observations: [] }),
-      }),
+      })
     );
 
     const result = await leclercCatalogProvider.search(
       { query: 'produit inexistant' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.status).toBe('NO_DATA');
@@ -121,12 +121,12 @@ describe('leclercCatalogProvider', () => {
             { productName: 'Produit zéro', price: 0, currency: 'EUR', unit: 'unit' },
           ],
         }),
-      }),
+      })
     );
 
     const result = await leclercCatalogProvider.search(
       { query: 'produit' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.status).toBe('OK');

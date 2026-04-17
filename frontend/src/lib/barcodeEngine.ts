@@ -84,8 +84,19 @@ function normalizeFormat(raw: string | undefined): BarcodeFormatType {
   if (!raw) return 'unknown';
   const lower = raw.toLowerCase().replace(/[-\s]/g, '_');
   const known: BarcodeFormatType[] = [
-    'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'code_93',
-    'codabar', 'itf', 'qr_code', 'data_matrix', 'pdf417', 'aztec',
+    'ean_13',
+    'ean_8',
+    'upc_a',
+    'upc_e',
+    'code_128',
+    'code_39',
+    'code_93',
+    'codabar',
+    'itf',
+    'qr_code',
+    'data_matrix',
+    'pdf417',
+    'aztec',
   ];
   return (known as string[]).includes(lower) ? (lower as BarcodeFormatType) : 'unknown';
 }
@@ -94,7 +105,7 @@ export async function startScan(
   videoEl: HTMLVideoElement,
   onResult: (code: string) => void,
   onDebug?: (debug: ScanDebugPayload) => void,
-  onScanResult?: (result: BarcodeResult) => void,
+  onScanResult?: (result: BarcodeResult) => void
 ): Promise<ScanController> {
   /** Per-code last-seen timestamp for deduplication */
   const lastSeenAt = new Map<string, number>();

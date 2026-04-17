@@ -6,15 +6,15 @@
 /**
  * EAN Status - tracks product verification level
  */
-export type EanStatus = 
-  | 'confirmé'      // Product confirmed in database with full data
-  | 'partiel'       // Product found but incomplete data
+export type EanStatus =
+  | 'confirmé' // Product confirmed in database with full data
+  | 'partiel' // Product found but incomplete data
   | 'non_référencé'; // Valid EAN but product not in database
 
 /**
  * Territory codes for DOM-TOM regions
  */
-export type Territoire = 
+export type Territoire =
   | 'guadeloupe'
   | 'martinique'
   | 'guyane'
@@ -30,13 +30,13 @@ export type Territoire =
 /**
  * Data source types for traceability
  */
-export type DataSource = 
-  | 'observation_citoyenne'   // User-submitted observation
-  | 'base_officielle'         // Official government data
-  | 'partenaire_enseigne'     // Retail partner data
-  | 'open_food_facts'         // Open Food Facts API
-  | 'manuel'                 // Manual entry
-  | 'scan_utilisateur';      // User barcode scan session
+export type DataSource =
+  | 'observation_citoyenne' // User-submitted observation
+  | 'base_officielle' // Official government data
+  | 'partenaire_enseigne' // Retail partner data
+  | 'open_food_facts' // Open Food Facts API
+  | 'manuel' // Manual entry
+  | 'scan_utilisateur'; // User barcode scan session
 
 /**
  * EAN Validation Result

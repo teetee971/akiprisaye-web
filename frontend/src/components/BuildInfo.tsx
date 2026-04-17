@@ -12,12 +12,12 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 interface VersionInfo {
-  commit:      string;
+  commit: string;
   shortCommit: string;
-  branch:      string;
-  runId:       string;
-  builtAt:     string;
-  buildUrl:    string | null;
+  branch: string;
+  runId: string;
+  builtAt: string;
+  buildUrl: string | null;
 }
 
 export function BuildInfo() {

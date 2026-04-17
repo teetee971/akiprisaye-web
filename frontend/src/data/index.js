@@ -1,6 +1,6 @@
 /**
  * Index central des données officielles
- * 
+ *
  * Ce fichier exporte toutes les sources de données utilisées par A KI PRI SA YÉ.
  * Toutes les données DOIVENT provenir de sources officielles.
  */

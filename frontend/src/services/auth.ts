@@ -15,13 +15,13 @@ import {
   type ActionCodeSettings,
   type User,
   type UserCredential,
-} from "firebase/auth";
+} from 'firebase/auth';
 
-import { auth } from "@/lib/firebase";
+import { auth } from '@/lib/firebase';
 
-const googleProvider   = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
-const appleProvider    = new OAuthProvider('apple.com');
+const appleProvider = new OAuthProvider('apple.com');
 
 // Request extra scopes for better profile info
 googleProvider.addScope('profile');
@@ -43,7 +43,10 @@ export async function ensureSessionPersistence(): Promise<void> {
   await setPersistence(authInstance, browserLocalPersistence);
 }
 
-export async function signUpEmailPassword(email: string, password: string): Promise<UserCredential> {
+export async function signUpEmailPassword(
+  email: string,
+  password: string
+): Promise<UserCredential> {
   const authInstance = ensureAuth();
   await ensureSessionPersistence();
   const credential = await createUserWithEmailAndPassword(authInstance, email, password);
@@ -52,12 +55,15 @@ export async function signUpEmailPassword(email: string, password: string): Prom
     const actionCodeSettings: ActionCodeSettings = { url: continueUrl };
     await sendEmailVerification(credential.user, actionCodeSettings);
   } catch {
-    console.warn("sendEmailVerification failed — account created but verification email not sent.");
+    console.warn('sendEmailVerification failed — account created but verification email not sent.');
   }
   return credential;
 }
 
-export async function signInEmailPassword(email: string, password: string): Promise<UserCredential> {
+export async function signInEmailPassword(
+  email: string,
+  password: string
+): Promise<UserCredential> {
   const authInstance = ensureAuth();
   await ensureSessionPersistence();
   return signInWithEmailAndPassword(authInstance, email, password);

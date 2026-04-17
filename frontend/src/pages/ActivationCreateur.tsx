@@ -14,7 +14,16 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, Navigate } from 'react-router-dom';
-import { Crown, Terminal, Smartphone, Github, ExternalLink, Copy, CheckCircle, Lock } from 'lucide-react';
+import {
+  Crown,
+  Terminal,
+  Smartphone,
+  Github,
+  ExternalLink,
+  Copy,
+  CheckCircle,
+  Lock,
+} from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 /* ── Copy-to-clipboard helper ─────────────────────────────────────────── */
@@ -28,14 +37,20 @@ function CopyBlock({ code }: { code: string }) {
   };
   return (
     <div className="relative mt-2 rounded-lg bg-slate-950 border border-slate-700 overflow-hidden">
-      <pre className="p-3 text-xs text-emerald-300 overflow-x-auto whitespace-pre-wrap break-all">{code}</pre>
+      <pre className="p-3 text-xs text-emerald-300 overflow-x-auto whitespace-pre-wrap break-all">
+        {code}
+      </pre>
       <button
         type="button"
         onClick={handleCopy}
         className="absolute top-2 right-2 p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
         aria-label="Copier"
       >
-        {copied ? <CheckCircle className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+        {copied ? (
+          <CheckCircle className="w-4 h-4 text-emerald-400" />
+        ) : (
+          <Copy className="w-4 h-4" />
+        )}
       </button>
     </div>
   );
@@ -65,7 +80,6 @@ export default function ActivationCreateur() {
 
       <div className="min-h-screen bg-slate-950 text-white px-4 py-10">
         <div className="max-w-2xl mx-auto space-y-8">
-
           {/* ── Header ─────────────────────────────────────────────── */}
           <div className="text-center space-y-3">
             <div className="inline-flex p-4 rounded-2xl bg-amber-400/10 border border-amber-500/30">
@@ -73,8 +87,8 @@ export default function ActivationCreateur() {
             </div>
             <h1 className="text-2xl font-bold text-white">Activation du rôle Créateur</h1>
             <p className="text-slate-400 text-sm max-w-md mx-auto">
-              Cette page explique comment vous attribuer l'accès total au logiciel
-              en tant que propriétaire du projet.
+              Cette page explique comment vous attribuer l'accès total au logiciel en tant que
+              propriétaire du projet.
             </p>
             {user && (
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 text-xs text-slate-300">
@@ -87,8 +101,10 @@ export default function ActivationCreateur() {
           {/* ── Étape préalable ────────────────────────────────────── */}
           <div className="p-4 rounded-xl bg-blue-900/20 border border-blue-700/40 text-sm text-blue-200">
             <p className="font-semibold mb-1">✅ Étape préalable terminée</p>
-            <p>Vous êtes connecté avec <strong className="text-white">{user?.email}</strong>.
-              Votre compte Firebase existe — vous pouvez maintenant activer le rôle Créateur.</p>
+            <p>
+              Vous êtes connecté avec <strong className="text-white">{user?.email}</strong>. Votre
+              compte Firebase existe — vous pouvez maintenant activer le rôle Créateur.
+            </p>
           </div>
 
           {/* ── Méthode 1 — GitHub Actions (recommandée, sans PC) ──── */}
@@ -97,16 +113,21 @@ export default function ActivationCreateur() {
               <Github className="w-5 h-5 text-white flex-shrink-0" />
               <div>
                 <p className="font-semibold text-white">Méthode 1 — GitHub Actions</p>
-                <p className="text-xs text-slate-400">Recommandée · Sans PC · Fonctionne depuis un téléphone</p>
+                <p className="text-xs text-slate-400">
+                  Recommandée · Sans PC · Fonctionne depuis un téléphone
+                </p>
               </div>
             </div>
             <ol className="divide-y divide-slate-800 text-sm">
               <li className="px-5 py-4 space-y-1">
                 <p className="font-medium text-white">1. Téléchargez la clé Admin Firebase</p>
                 <p className="text-slate-400">
-                  Ouvrez la Console Firebase → Paramètres ⚙️ → Comptes de service →
-                  compte <code className="text-amber-300 text-xs">firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com</code> →
-                  cliquez <strong>"Générer une nouvelle clé privée"</strong> → téléchargez le JSON.
+                  Ouvrez la Console Firebase → Paramètres ⚙️ → Comptes de service → compte{' '}
+                  <code className="text-amber-300 text-xs">
+                    firebase-adminsdk-fbsvc@a-ki-pri-sa-ye.iam.gserviceaccount.com
+                  </code>{' '}
+                  → cliquez <strong>"Générer une nouvelle clé privée"</strong> → téléchargez le
+                  JSON.
                 </p>
                 <a
                   href="https://console.firebase.google.com/project/a-ki-pri-sa-ye/settings/serviceaccounts/adminsdk"
@@ -121,8 +142,13 @@ export default function ActivationCreateur() {
               <li className="px-5 py-4 space-y-1">
                 <p className="font-medium text-white">2. Ajoutez un secret GitHub</p>
                 <p className="text-slate-400">
-                  Dépôt GitHub → <strong>Settings → Secrets and variables → Actions → New repository secret</strong><br />
-                  Nom : <code className="text-amber-300 text-xs">FIREBASE_SERVICE_ACCOUNT_KEY</code><br />
+                  Dépôt GitHub →{' '}
+                  <strong>
+                    Settings → Secrets and variables → Actions → New repository secret
+                  </strong>
+                  <br />
+                  Nom : <code className="text-amber-300 text-xs">FIREBASE_SERVICE_ACCOUNT_KEY</code>
+                  <br />
                   Valeur : copiez-collez le contenu JSON du fichier téléchargé.
                 </p>
                 <a
@@ -139,8 +165,10 @@ export default function ActivationCreateur() {
                 <p className="font-medium text-white">3. Déclenchez le workflow</p>
                 <p className="text-slate-400">
                   GitHub → onglet <strong>Actions</strong> → workflow
-                  <strong> "✨ Attribuer le rôle Créateur"</strong> →
-                  bouton <strong>"Run workflow"</strong> → entrez <code className="text-amber-300 text-xs">{user?.email ?? 'votre@email.com'}</code> → confirmez.
+                  <strong> "✨ Attribuer le rôle Créateur"</strong> → bouton{' '}
+                  <strong>"Run workflow"</strong> → entrez{' '}
+                  <code className="text-amber-300 text-xs">{user?.email ?? 'votre@email.com'}</code>{' '}
+                  → confirmez.
                 </p>
                 <a
                   href="https://github.com/teetee971/akiprisaye-web/actions/workflows/set-creator-role.yml"
@@ -155,8 +183,8 @@ export default function ActivationCreateur() {
               <li className="px-5 py-4 space-y-1">
                 <p className="font-medium text-white">4. Reconnectez-vous</p>
                 <p className="text-slate-400">
-                  Une fois le workflow terminé (icône ✅ verte), déconnectez-vous et reconnectez-vous.
-                  Votre rôle Créateur est actif immédiatement.
+                  Une fois le workflow terminé (icône ✅ verte), déconnectez-vous et
+                  reconnectez-vous. Votre rôle Créateur est actif immédiatement.
                 </p>
                 <Link
                   to="/connexion"
@@ -178,10 +206,16 @@ export default function ActivationCreateur() {
               </div>
             </div>
             <div className="px-5 py-4 space-y-3 text-sm text-slate-300">
-              <p>Placez <code className="text-amber-300 text-xs">serviceAccountKey.json</code> à la racine du dépôt, puis :</p>
-              <CopyBlock code={`npm install\nnode scripts/set-creator-role.mjs ${user?.email ?? 'votre@email.com'}`} />
+              <p>
+                Placez <code className="text-amber-300 text-xs">serviceAccountKey.json</code> à la
+                racine du dépôt, puis :
+              </p>
+              <CopyBlock
+                code={`npm install\nnode scripts/set-creator-role.mjs ${user?.email ?? 'votre@email.com'}`}
+              />
               <p className="text-xs text-slate-500">
-                ⚠️ Ne commitez jamais <code>serviceAccountKey.json</code> — il est dans <code>.gitignore</code>.
+                ⚠️ Ne commitez jamais <code>serviceAccountKey.json</code> — il est dans{' '}
+                <code>.gitignore</code>.
               </p>
             </div>
           </section>
@@ -196,8 +230,13 @@ export default function ActivationCreateur() {
               </div>
             </div>
             <div className="px-5 py-4 space-y-3 text-sm text-slate-300">
-              <p>Placez <code className="text-amber-300 text-xs">serviceAccountKey.json</code> dans <code className="text-xs">~/downloads/</code>, puis dans Termux :</p>
-              <CopyBlock code={`cd ~/downloads\ncurl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/main/scripts/set-creator-role.mjs -o set-creator-role.mjs\nnpm install firebase-admin && node set-creator-role.mjs ${user?.email ?? 'votre@email.com'}`} />
+              <p>
+                Placez <code className="text-amber-300 text-xs">serviceAccountKey.json</code> dans{' '}
+                <code className="text-xs">~/downloads/</code>, puis dans Termux :
+              </p>
+              <CopyBlock
+                code={`cd ~/downloads\ncurl -fsSL https://raw.githubusercontent.com/teetee971/akiprisaye-web/main/scripts/set-creator-role.mjs -o set-creator-role.mjs\nnpm install firebase-admin && node set-creator-role.mjs ${user?.email ?? 'votre@email.com'}`}
+              />
             </div>
           </section>
 
@@ -207,9 +246,13 @@ export default function ActivationCreateur() {
               <Lock className="w-4 h-4 flex-shrink-0" />
               Connexion Google — action manuelle requise
             </p>
-            <p>Pour que la connexion Google fonctionne depuis GitHub Pages, le domaine
-              <code className="mx-1 text-white text-xs bg-slate-800 px-1 py-0.5 rounded">teetee971.github.io</code>
-              doit être ajouté dans Firebase Console :</p>
+            <p>
+              Pour que la connexion Google fonctionne depuis GitHub Pages, le domaine
+              <code className="mx-1 text-white text-xs bg-slate-800 px-1 py-0.5 rounded">
+                teetee971.github.io
+              </code>
+              doit être ajouté dans Firebase Console :
+            </p>
             <p className="text-xs">
               Firebase Console → Authentication → Settings → <strong>Authorized domains</strong> →
               "Add domain" → <code className="text-white">teetee971.github.io</code>
@@ -231,13 +274,20 @@ export default function ActivationCreateur() {
           {/* ── Footer links ───────────────────────────────────────── */}
           <div className="text-center space-y-2 pt-2">
             <p className="text-xs text-slate-500">
-              Guide complet : <a href="/docs/OWNER_QUICKSTART.md" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">docs/OWNER_QUICKSTART.md</a>
+              Guide complet :{' '}
+              <a
+                href="/docs/OWNER_QUICKSTART.md"
+                className="text-blue-400 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                docs/OWNER_QUICKSTART.md
+              </a>
             </p>
             <Link to="/" className="text-xs text-slate-600 hover:text-slate-400 hover:underline">
               ← Retour à l'accueil
             </Link>
           </div>
-
         </div>
       </div>
     </>

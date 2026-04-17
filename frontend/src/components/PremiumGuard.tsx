@@ -1,8 +1,8 @@
 /**
  * Premium Feature Guard Component
- * 
+ *
  * Wraps premium features and shows upgrade prompt if not subscribed
- * 
+ *
  * Usage:
  * ```tsx
  * <PremiumGuard feature="advancedHistory">
@@ -25,7 +25,7 @@ interface PremiumGuardProps {
 
 /**
  * Premium Feature Guard
- * 
+ *
  * Shows children if user has access to the feature,
  * otherwise shows an upgrade prompt
  */
@@ -97,7 +97,7 @@ export function PremiumBadge() {
 /**
  * Premium feature lock indicator
  */
-export function PremiumLock({ className = "" }: { className?: string }) {
+export function PremiumLock({ className = '' }: { className?: string }) {
   return (
     <div className={`inline-flex items-center gap-1 ${className}`}>
       <Lock className="w-4 h-4 text-blue-600 dark:text-blue-400" />

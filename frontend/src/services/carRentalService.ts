@@ -23,13 +23,11 @@ import type { Territory } from '../types/priceAlerts';
 export function compareCarRentals(
   territory: Territory,
   category: CarCategory,
-  prices: CarRentalPricePoint[],
+  prices: CarRentalPricePoint[]
 ): CarRentalComparisonResult | null {
   if (!prices || prices.length === 0) return null;
 
-  const filtered = prices.filter(
-    (p) => p.territory === territory && p.category === category,
-  );
+  const filtered = prices.filter((p) => p.territory === territory && p.category === category);
   if (filtered.length === 0) return null;
 
   const aggregation = calculateAggregation(filtered, territory, category);
@@ -49,13 +47,14 @@ export function compareCarRentals(
 /** Filtre les prix selon les critères fournis */
 export function filterCarRentals(
   prices: CarRentalPricePoint[],
-  filter: CarRentalFilter,
+  filter: CarRentalFilter
 ): CarRentalPricePoint[] {
   let result = [...prices];
   if (filter.territory) result = result.filter((p) => p.territory === filter.territory);
   if (filter.category) result = result.filter((p) => p.category === filter.category);
   if (filter.transmission) result = result.filter((p) => p.transmission === filter.transmission);
-  if (filter.maxDailyRate != null) result = result.filter((p) => p.pricing.dailyRate <= filter.maxDailyRate!);
+  if (filter.maxDailyRate != null)
+    result = result.filter((p) => p.pricing.dailyRate <= filter.maxDailyRate!);
   if (filter.unlimitedMileageOnly) result = result.filter((p) => p.inclusions.unlimitedMileage);
   if (filter.localAgencyOnly) result = result.filter((p) => p.isLocalAgency);
   if (filter.verifiedOnly) result = result.filter((p) => p.verified);
@@ -67,7 +66,7 @@ export function filterCarRentals(
 function calculateAggregation(
   prices: CarRentalPricePoint[],
   territory: Territory,
-  category: CarCategory,
+  category: CarCategory
 ): CarRentalAggregation {
   const rates = prices.map((p) => p.pricing.dailyRate).sort((a, b) => a - b);
   const min = rates[0];
@@ -102,10 +101,7 @@ function calculateAggregation(
   };
 }
 
-function rankAgencies(
-  prices: CarRentalPricePoint[],
-  average: number,
-): CarRentalRanking[] {
+function rankAgencies(prices: CarRentalPricePoint[], average: number): CarRentalRanking[] {
   const sorted = [...prices].sort((a, b) => a.pricing.dailyRate - b.pricing.dailyRate);
   const cheapest = sorted[0]?.pricing.dailyRate ?? 0;
 
@@ -154,12 +150,12 @@ function buildMetadata(prices: CarRentalPricePoint[]): CarRentalMetadata {
     },
     limitations: [
       'Prix indicatifs — peuvent varier selon la disponibilité et la saison',
-      'Vérifiez toujours le prix final sur le site de l\'agence',
+      "Vérifiez toujours le prix final sur le site de l'agence",
       'Les options (siège enfant, GPS, assurance complémentaire) peuvent modifier le tarif',
     ],
     disclaimer:
       'Observer, pas vendre : Ces données sont fournies à titre informatif et citoyen. ' +
-      'Aucun lien d\'affiliation. Comparez les prix officiels directement auprès des agences.',
+      "Aucun lien d'affiliation. Comparez les prix officiels directement auprès des agences.",
   };
 }
 

@@ -1,9 +1,9 @@
 /**
  * periods.ts — Centralized time periods and durations
- * 
+ *
  * Purpose: Single source of truth for all time-related constants
  * Used by: Data freshness checks, time filters, caching, shopping lists
- * 
+ *
  * @module periods
  */
 
@@ -13,16 +13,16 @@
 export const TIME_PERIODS = {
   /** 1 day = 24 hours */
   ONE_DAY: 24,
-  
+
   /** 1 week = 7 days = 168 hours */
   ONE_WEEK: 168,
-  
+
   /** 2 weeks = 14 days = 336 hours */
   TWO_WEEKS: 336,
-  
+
   /** 1 month (30 days) = 720 hours */
   ONE_MONTH: 720,
-  
+
   /** 3 months (90 days) = 2160 hours */
   THREE_MONTHS: 2160,
 } as const;
@@ -33,13 +33,13 @@ export const TIME_PERIODS = {
 export const DAY_PERIODS = {
   /** 7 days */
   ONE_WEEK: 7,
-  
+
   /** 14 days */
   TWO_WEEKS: 14,
-  
+
   /** 30 days */
   ONE_MONTH: 30,
-  
+
   /** 90 days */
   THREE_MONTHS: 90,
 } as const;
@@ -47,12 +47,7 @@ export const DAY_PERIODS = {
 /**
  * Shopping time slots (delivery/pickup windows)
  */
-export const TIME_SLOTS = [
-  '16h-18h',
-  '17h-19h',
-  '17h30-19h30',
-  '18h-20h',
-] as const;
+export const TIME_SLOTS = ['16h-18h', '17h-19h', '17h30-19h30', '18h-20h'] as const;
 
 /**
  * Default time slot option (empty = all slots)
@@ -65,10 +60,10 @@ export const ALL_TIME_SLOTS = '';
 export const DATA_FRESHNESS = {
   /** Price data is considered fresh for 30 days (720 hours) */
   PRICE_DATA_MAX_AGE_HOURS: TIME_PERIODS.ONE_MONTH,
-  
+
   /** Store data is considered fresh for 90 days (2160 hours) */
   STORE_DATA_MAX_AGE_HOURS: TIME_PERIODS.THREE_MONTHS,
-  
+
   /** Promotion data is considered fresh for 7 days (168 hours) */
   PROMO_DATA_MAX_AGE_HOURS: TIME_PERIODS.ONE_WEEK,
 } as const;

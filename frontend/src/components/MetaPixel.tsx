@@ -33,7 +33,7 @@ const PIXEL_ID = (import.meta.env.VITE_META_PIXEL_ID ?? '').trim();
 
 // Script URL — typed as const so TS doesn't widen to string for CSP reasons
 const FB_SDK_URL = 'https://connect.facebook.net/en_US/fbevents.js' as const;
-const SCRIPT_ID  = 'meta-pixel-sdk';
+const SCRIPT_ID = 'meta-pixel-sdk';
 
 function loadPixel(pixelId: string) {
   if (document.getElementById(SCRIPT_ID)) return; // already loaded
@@ -42,10 +42,10 @@ function loadPixel(pixelId: string) {
   type FbqFn = (...args: unknown[]) => void;
   interface FbqQueue extends FbqFn {
     callMethod?: (...args: unknown[]) => void;
-    queue:       unknown[][];
-    push:        FbqFn;
-    loaded:      boolean;
-    version:     string;
+    queue: unknown[][];
+    push: FbqFn;
+    loaded: boolean;
+    version: string;
   }
 
   if (!window.fbq) {
@@ -56,18 +56,18 @@ function loadPixel(pixelId: string) {
         fbq.queue.push(args);
       }
     } as FbqQueue;
-    fbq.push    = fbq;
-    fbq.loaded  = true;
+    fbq.push = fbq;
+    fbq.loaded = true;
     fbq.version = '2.0';
-    fbq.queue   = [];
-    window.fbq  = fbq;
+    fbq.queue = [];
+    window.fbq = fbq;
     (window as { _fbq?: unknown })._fbq = fbq;
   }
 
   const script = document.createElement('script');
-  script.id    = SCRIPT_ID;
+  script.id = SCRIPT_ID;
   script.async = true;
-  script.src   = FB_SDK_URL;
+  script.src = FB_SDK_URL;
 
   const first = document.getElementsByTagName('script')[0];
   first.parentNode?.insertBefore(script, first);

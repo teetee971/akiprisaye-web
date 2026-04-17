@@ -1,10 +1,9 @@
- 
 /**
  * Fuel Price API Client
  * Client for prix-carburants.gouv.fr API
- * 
+ *
  * Documentation: https://www.prix-carburants.gouv.fr/
- * 
+ *
  * This is the official French government API for fuel prices.
  * Note: In production, may require CORS handling or a backend proxy.
  * Rate limiting: To be determined based on API documentation.
@@ -55,11 +54,11 @@ export async function fetchOfficialFuelPrices(
     // In production, this would call the real API
     // For now, return empty array and rely on JSON data
     console.log(`Would fetch fuel prices for department ${department}, fuelType: ${fuelType}`);
-    
+
     // Real implementation would be:
     // const response = await fetch(`${API_BASE_URL}/api/stations/${department}`);
     // return await response.json();
-    
+
     return [];
   } catch (error) {
     console.error('Error fetching fuel prices from API:', error);
@@ -70,10 +69,7 @@ export async function fetchOfficialFuelPrices(
 /**
  * Parse API response to FuelPricePoint format
  */
-export function parseAPIResponse(
-  response: any[],
-  territory: Territory
-): FuelPricePoint[] {
+export function parseAPIResponse(response: any[], territory: Territory): FuelPricePoint[] {
   const prices: FuelPricePoint[] = [];
 
   for (const stationData of response) {
@@ -139,7 +135,7 @@ function mapAPIFuelType(apiFuelName: string): FuelType | null {
     E10: 'E10',
     SP98: 'SP98',
     Gazole: 'DIESEL',
-    'E85': 'E85',
+    E85: 'E85',
     GPLc: 'GPL',
   };
 
@@ -156,21 +152,13 @@ export function getDepartmentFromTerritory(territory: Territory): string | null 
 /**
  * Calculate distance between two coordinates (Haversine formula)
  */
-export function calculateDistance(
-  lat1: number,
-  lng1: number,
-  lat2: number,
-  lng2: number
-): number {
+export function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371; // Earth's radius in km
   const dLat = toRadians(lat2 - lat1);
   const dLng = toRadians(lng2 - lng1);
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRadians(lat1)) *
-      Math.cos(toRadians(lat2)) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }

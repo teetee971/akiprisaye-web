@@ -10,11 +10,7 @@ export interface RevenueMetric {
   bestPrice?: number;
 }
 
-export type RevenueActionType =
-  | 'BOOST_CTA'
-  | 'BOOST_RETAILER'
-  | 'TEST_VARIANT'
-  | 'PRIORITIZE_PAGE';
+export type RevenueActionType = 'BOOST_CTA' | 'BOOST_RETAILER' | 'TEST_VARIANT' | 'PRIORITIZE_PAGE';
 
 export interface RevenueAction {
   type: RevenueActionType;

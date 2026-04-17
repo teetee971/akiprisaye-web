@@ -1,6 +1,13 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronDown, ChevronUp, ExternalLink, ShoppingCart, TrendingDown, TrendingUp } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  ShoppingCart,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
 import { GlassCard } from './ui/glass-card';
 import { CatalogueItemRaw } from '../services/catalogueService';
 import { computeComparison } from '../services/comparisonService';
@@ -37,10 +44,10 @@ async function fetchNutriInfo(ean: string): Promise<NutriInfo> {
   try {
     const res = await fetch(
       `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(ean)}.json?fields=nutriscore_grade,nova_group,ingredients_text_fr,ingredients_text`,
-      { headers: { Accept: 'application/json' } },
+      { headers: { Accept: 'application/json' } }
     );
     if (!res.ok) return { loaded: true };
-    const data = await res.json() as {
+    const data = (await res.json()) as {
       status?: number;
       product?: {
         nutriscore_grade?: string;
@@ -90,7 +97,10 @@ export default function CatalogueItem({ item, metrics }: Props) {
   const allObsWithStore = useMemo(() => {
     const observations = (item['observations'] ?? []) as Array<Record<string, unknown>>;
     return observations
-      .map((o: Record<string, unknown>) => ({ ...o, store: o['store'] ?? item['store'] ?? 'Inconnu' }))
+      .map((o: Record<string, unknown>) => ({
+        ...o,
+        store: o['store'] ?? item['store'] ?? 'Inconnu',
+      }))
       .filter((o: Record<string, unknown>) => Boolean(o['store']));
   }, [item]);
 
@@ -102,9 +112,20 @@ export default function CatalogueItem({ item, metrics }: Props) {
     addItem({
       id: `${item.id}:${item.store ?? ''}:${item.territory ?? ''}`,
       quantity: 1,
-      meta: { name: item.name, price: metrics.latestPrice ?? '', store: item.store, territory: item.territory },
+      meta: {
+        name: item.name,
+        price: metrics.latestPrice ?? '',
+        store: item.store,
+        territory: item.territory,
+      },
     });
-    recordHistory({ id: item.id, name: item.name, price: metrics.latestPrice ?? '', store: item.store, territory: item.territory });
+    recordHistory({
+      id: item.id,
+      name: item.name,
+      price: metrics.latestPrice ?? '',
+      store: item.store,
+      territory: item.territory,
+    });
   };
 
   const handleToggle = useCallback(() => {
@@ -125,7 +146,9 @@ export default function CatalogueItem({ item, metrics }: Props) {
   /* Retailer URL: may live on the item itself or first observation */
   const retailerUrl: string | undefined =
     (item as any).url ||
-    ((item['observations'] as Array<Record<string, unknown>> | undefined)?.[0]?.['url'] as string | undefined);
+    ((item['observations'] as Array<Record<string, unknown>> | undefined)?.[0]?.['url'] as
+      | string
+      | undefined);
 
   return (
     <GlassCard className="relative p-0 overflow-hidden">
@@ -139,7 +162,9 @@ export default function CatalogueItem({ item, metrics }: Props) {
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold truncate">{item.name}</h3>
-            <div className="text-sm text-gray-400 truncate">{item.store} — {item.territory}</div>
+            <div className="text-sm text-gray-400 truncate">
+              {item.store} — {item.territory}
+            </div>
           </div>
 
           <div className="flex items-center gap-1 flex-shrink-0">
@@ -149,13 +174,12 @@ export default function CatalogueItem({ item, metrics }: Props) {
                 : '—'}
             </span>
 
-            {percent !== null && (
-              percent < -1 ? (
+            {percent !== null &&
+              (percent < -1 ? (
                 <TrendingDown className="w-4 h-4 text-green-400" aria-label="Prix en baisse" />
               ) : percent > 1 ? (
                 <TrendingUp className="w-4 h-4 text-red-400" aria-label="Prix en hausse" />
-              ) : null
-            )}
+              ) : null)}
 
             {prediction.label !== 'Données insuffisantes' && (
               <span
@@ -174,9 +198,11 @@ export default function CatalogueItem({ item, metrics }: Props) {
               />
             )}
 
-            {expanded
-              ? <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0" />
-              : <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />}
+            {expanded ? (
+              <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            ) : (
+              <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+            )}
           </div>
         </div>
       </button>
@@ -184,7 +210,6 @@ export default function CatalogueItem({ item, metrics }: Props) {
       {/* ---- Expanded panel ---- */}
       {expanded && (
         <div className="border-t border-white/10 px-4 pb-4 pt-3 space-y-3">
-
           {/* Nutri-Score + NOVA */}
           {nutriLoading && (
             <div className="text-xs text-gray-400">Chargement infos nutritionnelles…</div>
@@ -209,7 +234,9 @@ export default function CatalogueItem({ item, metrics }: Props) {
                   </span>
                 ) : null}
                 {!nutri.nutriScore && nutri.novaGroup == null && (
-                  <span className="text-xs text-gray-500">Nutri-Score non disponible pour ce produit</span>
+                  <span className="text-xs text-gray-500">
+                    Nutri-Score non disponible pour ce produit
+                  </span>
                 )}
               </div>
 
@@ -226,12 +253,16 @@ export default function CatalogueItem({ item, metrics }: Props) {
 
           {/* Last observation + trend */}
           <div className="text-xs text-gray-400">
-            Dernière obs. : {metrics.lastObservationDate
+            Dernière obs. :{' '}
+            {metrics.lastObservationDate
               ? new Date(metrics.lastObservationDate).toLocaleDateString('fr-FR')
               : '—'}
             {percent !== null && (
-              <span className={`ml-2 font-medium ${percent < 0 ? 'text-green-300' : 'text-red-300'}`}>
-                {percent < 0 ? '' : '+'}{percent.toFixed(1)}% vs moy. 30j
+              <span
+                className={`ml-2 font-medium ${percent < 0 ? 'text-green-300' : 'text-red-300'}`}
+              >
+                {percent < 0 ? '' : '+'}
+                {percent.toFixed(1)}% vs moy. 30j
               </span>
             )}
           </div>
@@ -244,11 +275,21 @@ export default function CatalogueItem({ item, metrics }: Props) {
               </div>
               <ul className="space-y-1">
                 {comparison.list.map((row) => (
-                  <li key={row.store} className="flex justify-between items-center text-xs text-gray-200">
-                    <span className={`font-medium ${comparison.best?.store === row.store ? 'text-green-400' : ''}`}>
-                      {comparison.best?.store === row.store ? '✓ ' : ''}{row.store}
+                  <li
+                    key={row.store}
+                    className="flex justify-between items-center text-xs text-gray-200"
+                  >
+                    <span
+                      className={`font-medium ${comparison.best?.store === row.store ? 'text-green-400' : ''}`}
+                    >
+                      {comparison.best?.store === row.store ? '✓ ' : ''}
+                      {row.store}
                     </span>
-                    <span className={comparison.best?.store === row.store ? 'text-green-400 font-bold' : ''}>
+                    <span
+                      className={
+                        comparison.best?.store === row.store ? 'text-green-400 font-bold' : ''
+                      }
+                    >
                       {row.price.toFixed(2)} {(item as any).currency ?? '€'}
                     </span>
                   </li>

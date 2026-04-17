@@ -115,15 +115,16 @@ function haversineDistanceKm(a: UserPosition, b: UserPosition): number {
 }
 
 function normalizePriority(priority: unknown): RecommendationPriority {
-  const v = String(priority ?? '').trim().toLowerCase();
+  const v = String(priority ?? '')
+    .trim()
+    .toLowerCase();
   if (v === 'high' || v === 'medium' || v === 'low') return v as RecommendationPriority;
   return 'medium';
 }
 
 function finalizeBasketPricingResult(result: BasketPricingResult): BasketPricingResult {
-  const normalizedRecommendations = (Array.isArray(result.recommendations)
-    ? result.recommendations
-    : []
+  const normalizedRecommendations = (
+    Array.isArray(result.recommendations) ? result.recommendations : []
   )
     .map((recommendation, index) => ({
       ...recommendation,
@@ -191,8 +192,7 @@ export function calculateBasketPrices(
   basket: BasketItem[],
   territory: TerritoryCode
 ): StoreBasketResult[] {
-  return SEED_STORES
-    .filter((store) => store.territory === territory)
+  return SEED_STORES.filter((store) => store.territory === territory)
     .map((store) => {
       const lines: BasketPriceLine[] = basket
         .map((item): BasketPriceLine | null => {
@@ -255,29 +255,30 @@ export function analyzeBasketPricing(
     });
   }
 
-  const fullBasketStoreTotals = SEED_STORES
-    .map((store) => {
-      const prices = validBasketItems.map((item) => {
-        const product = findProductByBasketId(item.id);
-        const price = product?.prices.find((entry: { storeId: string; price: number }) => entry.storeId === store.id);
-        return price ? price.price * item.quantity : null;
-      });
+  const fullBasketStoreTotals = SEED_STORES.map((store) => {
+    const prices = validBasketItems.map((item) => {
+      const product = findProductByBasketId(item.id);
+      const price = product?.prices.find(
+        (entry: { storeId: string; price: number }) => entry.storeId === store.id
+      );
+      return price ? price.price * item.quantity : null;
+    });
 
-      if (prices.some((price) => price === null)) {
-        return null;
-      }
+    if (prices.some((price) => price === null)) {
+      return null;
+    }
 
-      const totalPrice = sum(prices as number[]);
-      const distance = userPosition
-        ? haversineDistanceKm(userPosition, store.coordinates)
-        : undefined;
+    const totalPrice = sum(prices as number[]);
+    const distance = userPosition
+      ? haversineDistanceKm(userPosition, store.coordinates)
+      : undefined;
 
-      return {
-        store,
-        totalPrice,
-        distance,
-      };
-    })
+    return {
+      store,
+      totalPrice,
+      distance,
+    };
+  })
     .filter((entry): entry is NonNullable<typeof entry> => entry !== null)
     .sort((a, b) => a.totalPrice - b.totalPrice);
 
@@ -295,8 +296,7 @@ export function analyzeBasketPricing(
   const lowestPrice = fullBasketStoreTotals[0].totalPrice;
   const highestPrice = fullBasketStoreTotals[fullBasketStoreTotals.length - 1].totalPrice;
   const averagePrice =
-    sum(fullBasketStoreTotals.map((entry) => entry.totalPrice)) /
-    fullBasketStoreTotals.length;
+    sum(fullBasketStoreTotals.map((entry) => entry.totalPrice)) / fullBasketStoreTotals.length;
 
   const perItemBest = validBasketItems
     .map((item) => {
@@ -341,7 +341,8 @@ export function analyzeBasketPricing(
       type: 'price',
       priority: 'high',
       title: 'Économies possibles',
-      description: 'Vous pouvez réduire le coût de votre panier en choisissant un magasin moins cher.',
+      description:
+        'Vous pouvez réduire le coût de votre panier en choisissant un magasin moins cher.',
       savings: highestPrice - lowestPrice,
     });
   }
@@ -361,7 +362,7 @@ export function analyzeBasketPricing(
       type: 'distance',
       priority: 'low',
       title: 'Impact trajet',
-      description: 'L\'option multi-magasin implique un trajet supplémentaire.',
+      description: "L'option multi-magasin implique un trajet supplémentaire.",
       extraDistance: multiStoreExtraDistance,
     });
   }
@@ -389,7 +390,10 @@ export function analyzeBasketPricing(
       totalPrice: multiStoreTotal,
       savings: multiStoreSavings,
       worthwhile: multiStoreSavings > 0,
-      reason: multiStoreSavings > 0 ? 'Réduction du coût total du panier' : 'Aucun gain sur le coût total',
+      reason:
+        multiStoreSavings > 0
+          ? 'Réduction du coût total du panier'
+          : 'Aucun gain sur le coût total',
       extraDistance: multiStoreExtraDistance,
     },
     recommendations,
@@ -437,8 +441,10 @@ export function analyzeBasketPriceTrends(basketItems: AnalyzeBasketItem[]) {
 
       const trend = changePercent > 0.2 ? 'up' : changePercent < -0.2 ? 'down' : 'stable';
 
-      const d2 = new Date(); d2.setDate(d2.getDate() - 14);
-      const d1 = new Date(); d1.setDate(d1.getDate() - 7);
+      const d2 = new Date();
+      d2.setDate(d2.getDate() - 14);
+      const d1 = new Date();
+      d1.setDate(d1.getDate() - 7);
       const d0 = new Date();
 
       const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -469,4 +475,3 @@ export function analyzeBasketPriceTrends(basketItems: AnalyzeBasketItem[]) {
     })
     .filter((x): x is NonNullable<typeof x> => x !== null);
 }
-

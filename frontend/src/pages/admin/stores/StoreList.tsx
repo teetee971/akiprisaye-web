@@ -70,9 +70,7 @@ export default function StoreList() {
             <ArrowUpDown className="h-4 w-4" />
           </button>
         ),
-        cell: ({ row }) => (
-          <div className="font-medium text-white/90">{row.original.name}</div>
-        ),
+        cell: ({ row }) => <div className="font-medium text-white/90">{row.original.name}</div>,
       },
       {
         accessorKey: 'territory',
@@ -99,9 +97,7 @@ export default function StoreList() {
             <span className={row.original.isActive ? 'text-green-400' : 'text-red-400'}>
               {row.original.isActive ? '🟢' : '🔴'}
             </span>
-            <span className="text-white/80">
-              {row.original.isActive ? 'Actif' : 'Inactif'}
-            </span>
+            <span className="text-white/80">{row.original.isActive ? 'Actif' : 'Inactif'}</span>
           </div>
         ),
       },
@@ -168,7 +164,7 @@ export default function StoreList() {
             (s) =>
               s.name.toLowerCase().includes(q) ||
               s.city.toLowerCase().includes(q) ||
-              s.address.toLowerCase().includes(q),
+              s.address.toLowerCase().includes(q)
           );
         }
         if (statusFilter === 'active') {
@@ -184,7 +180,8 @@ export default function StoreList() {
       const filters: StoreSearchFilters = {
         search: searchTerm || undefined,
         territory: territoryFilter || undefined,
-        isActive: statusFilter === 'active' ? true : statusFilter === 'inactive' ? false : undefined,
+        isActive:
+          statusFilter === 'active' ? true : statusFilter === 'inactive' ? false : undefined,
       };
 
       const response = await getStores(filters, currentPage, 20);
@@ -286,9 +283,7 @@ export default function StoreList() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/80"></div>
           </div>
         ) : stores.length === 0 ? (
-          <div className="text-center py-12 text-white/60">
-            Aucune enseigne trouvée
-          </div>
+          <div className="text-center py-12 text-white/60">Aucune enseigne trouvée</div>
         ) : (
           <>
             {/* Table Content */}
@@ -304,10 +299,7 @@ export default function StoreList() {
                         >
                           {header.isPlaceholder
                             ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                            : flexRender(header.column.columnDef.header, header.getContext())}
                         </th>
                       ))
                     )}
@@ -321,10 +313,7 @@ export default function StoreList() {
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-4 py-3 text-sm">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
                     </tr>

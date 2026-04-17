@@ -1,4 +1,3 @@
- 
 import { useState, useEffect } from 'react';
 import TimelinePrix from './TimelinePrix.jsx';
 
@@ -10,10 +9,10 @@ import TimelinePrix from './TimelinePrix.jsx';
  * @param {string} territory - Territory code (guadeloupe, martinique, guyane, reunion)
  * @param {string} store - Store name filter (optional)
  */
-export default function HistoriqueVariations({ 
-  productId = null, 
+export default function HistoriqueVariations({
+  productId = null,
   territory = 'guadeloupe',
-  store = null 
+  store = null,
 }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +26,7 @@ export default function HistoriqueVariations({
         setLoading(true);
         const response = await fetch(`${import.meta.env.BASE_URL}data/historique-prix.json`);
         if (!response.ok) {
-          throw new Error('Impossible de charger l\'historique des prix');
+          throw new Error("Impossible de charger l'historique des prix");
         }
         const jsonData = await response.json();
         setData(jsonData);
@@ -83,7 +82,7 @@ export default function HistoriqueVariations({
   const availableProducts = Object.keys(data.products || {});
   const activeProduct = selectedProduct || availableProducts[0];
   const productData = data.products[activeProduct];
-  
+
   if (!productData || !productData.history[territory]) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800">
@@ -101,23 +100,17 @@ export default function HistoriqueVariations({
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Historique des Variations de Prix
-        </h2>
-        <p className="text-sm text-gray-600">
-          Évolution chronologique observée
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Historique des Variations de Prix</h2>
+        <p className="text-sm text-gray-600">Évolution chronologique observée</p>
       </div>
 
       {/* Legal Disclaimer */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-900 font-medium mb-2">
-          ℹ️ Information importante
-        </p>
+        <p className="text-sm text-blue-900 font-medium mb-2">ℹ️ Information importante</p>
         <p className="text-sm text-blue-800">
-          Les variations affichées correspondent à des <strong>évolutions de prix observées</strong> à différentes dates.
-          Elles ne constituent ni une analyse économique ni une qualification juridique.
-          Ces données sont fournies à titre informatif uniquement.
+          Les variations affichées correspondent à des <strong>évolutions de prix observées</strong>{' '}
+          à différentes dates. Elles ne constituent ni une analyse économique ni une qualification
+          juridique. Ces données sont fournies à titre informatif uniquement.
         </p>
       </div>
 
@@ -125,7 +118,10 @@ export default function HistoriqueVariations({
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="historique-produit" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="historique-produit"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Produit
             </label>
             <select
@@ -146,7 +142,10 @@ export default function HistoriqueVariations({
           </div>
 
           <div>
-            <label htmlFor="historique-enseigne" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="historique-enseigne"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Enseigne
             </label>
             <select
@@ -181,8 +180,8 @@ export default function HistoriqueVariations({
       </div>
 
       {/* Timeline Display */}
-      <TimelinePrix 
-        history={storeHistory} 
+      <TimelinePrix
+        history={storeHistory}
         productLabel={productData.label}
         storeName={activeStore}
         currency={data.currency}

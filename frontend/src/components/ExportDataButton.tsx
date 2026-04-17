@@ -2,79 +2,80 @@
 // PR-04: Data Export Component
 // Factual data export with format selection
 
-import React, { useState } from 'react'
-import type { PriceObservation } from '../types/PriceObservation'
-import { exportToCSV, exportToJSON, exportToText, getSanitizedFilename } from '../utils/exportData'
-import { useToast } from '../hooks/useToast'
+import React, { useState } from 'react';
+import type { PriceObservation } from '../types/PriceObservation';
+import { exportToCSV, exportToJSON, exportToText, getSanitizedFilename } from '../utils/exportData';
+import { useToast } from '../hooks/useToast';
 
-type ExportFormat = 'csv' | 'json' | 'txt'
+type ExportFormat = 'csv' | 'json' | 'txt';
 
 type ExportDataButtonProps = {
-  observations: PriceObservation[]
-  disabled?: boolean
-  label?: string
-}
+  observations: PriceObservation[];
+  disabled?: boolean;
+  label?: string;
+};
 
-export default function ExportDataButton({ observations, disabled = false, label = 'Exporter les données' }: ExportDataButtonProps) {
-  const [showMenu, setShowMenu] = useState(false)
-  const [exporting, setExporting] = useState(false)
-  const toast = useToast()
+export default function ExportDataButton({
+  observations,
+  disabled = false,
+  label = 'Exporter les données',
+}: ExportDataButtonProps) {
+  const [showMenu, setShowMenu] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const toast = useToast();
 
   // Feature flag check
-  const isFeatureEnabled = import.meta.env.VITE_FEATURE_DATA_EXPORT === 'true'
+  const isFeatureEnabled = import.meta.env.VITE_FEATURE_DATA_EXPORT === 'true';
 
   if (!isFeatureEnabled) {
-    return null
+    return null;
   }
 
   const handleExport = async (format: ExportFormat) => {
     if (observations.length === 0) {
-      toast.warning('Aucune donnée à exporter')
-      return
+      toast.warning('Aucune donnée à exporter');
+      return;
     }
 
-    setExporting(true)
-    setShowMenu(false)
+    setExporting(true);
+    setShowMenu(false);
 
     const exportPromise = new Promise<void>((resolve, reject) => {
       try {
-        const filename = getSanitizedFilename('observations-prix', format)
+        const filename = getSanitizedFilename('observations-prix', format);
 
         switch (format) {
           case 'csv':
-            exportToCSV(observations, filename)
-            break
+            exportToCSV(observations, filename);
+            break;
           case 'json':
-            exportToJSON(observations, filename)
-            break
+            exportToJSON(observations, filename);
+            break;
           case 'txt':
-            exportToText(observations, filename)
-            break
+            exportToText(observations, filename);
+            break;
         }
 
         // Small delay to show feedback
-        setTimeout(() => resolve(), 500)
+        setTimeout(() => resolve(), 500);
       } catch (error) {
-        console.error('Export error:', error)
-        reject(error)
+        console.error('Export error:', error);
+        reject(error);
       }
-    })
+    });
 
-    toast.promise(
-      exportPromise,
-      {
-        loading: `Export ${format.toUpperCase()} en cours...`,
-        success: `✅ Export ${format.toUpperCase()} réussi!`,
-        error: `❌ Erreur lors de l'export`,
-      }
-    )
+    toast.promise(exportPromise, {
+      loading: `Export ${format.toUpperCase()} en cours...`,
+      success: `✅ Export ${format.toUpperCase()} réussi!`,
+      error: `❌ Erreur lors de l'export`,
+    });
 
     try {
-      await exportPromise
+      await exportPromise;
     } finally {
-      setExporting(false)
+      setExporting(false);
     }
-  }
+  };
 
   return (
     <div className="relative inline-block">
@@ -109,7 +110,7 @@ export default function ExportDataButton({ observations, disabled = false, label
               <span>📊</span>
               <span>CSV (Excel)</span>
             </button>
-            
+
             <button
               onClick={() => handleExport('json')}
               className="w-full px-4 py-2 text-left text-white hover:bg-white/[0.1] transition-colors flex items-center gap-2"
@@ -118,7 +119,7 @@ export default function ExportDataButton({ observations, disabled = false, label
               <span>📄</span>
               <span>JSON</span>
             </button>
-            
+
             <button
               onClick={() => handleExport('txt')}
               className="w-full px-4 py-2 text-left text-white hover:bg-white/[0.1] transition-colors flex items-center gap-2"
@@ -148,5 +149,5 @@ export default function ExportDataButton({ observations, disabled = false, label
         />
       )}
     </div>
-  )
+  );
 }

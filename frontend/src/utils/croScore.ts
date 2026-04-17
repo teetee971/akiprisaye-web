@@ -20,10 +20,10 @@ import type { SeoMetric, RevenueMetric } from './croAnalyzer';
 
 // ── Score weights ─────────────────────────────────────────────────────────────
 
-const W_SEO        = 0.25;
+const W_SEO = 0.25;
 const W_ENGAGEMENT = 0.25;
-const W_CONVERSION = 0.30;
-const W_REVENUE    = 0.20;
+const W_CONVERSION = 0.3;
+const W_REVENUE = 0.2;
 
 // ── Normalisation helpers ─────────────────────────────────────────────────────
 
@@ -41,8 +41,8 @@ function clamp(value: number, min = 0, max = 100): number {
  */
 function computeEngagementScore(m: UserBehaviorMetric): number {
   const scrollScore = clamp(m.avgScrollDepth);
-  const timeScore   = clamp((m.avgTimeOnPage / 180) * 100);
-  const viewsScore  = clamp(Math.log1p(m.pageViews) * 20);   // log1p(5)≈37, log1p(50)≈80
+  const timeScore = clamp((m.avgTimeOnPage / 180) * 100);
+  const viewsScore = clamp(Math.log1p(m.pageViews) * 20); // log1p(5)≈37, log1p(50)≈80
   return clamp(scrollScore * 0.5 + timeScore * 0.3 + viewsScore * 0.2);
 }
 
@@ -53,9 +53,9 @@ function computeEngagementScore(m: UserBehaviorMetric): number {
  */
 function computeConversionScore(m: UserBehaviorMetric): number {
   if (m.pageViews === 0) return 0;
-  const ctaRatio      = m.ctaClicks / m.pageViews;
+  const ctaRatio = m.ctaClicks / m.pageViews;
   const retailerRatio = m.retailerClicks / m.pageViews;
-  const ctaScore      = clamp((ctaRatio / 0.3) * 100);
+  const ctaScore = clamp((ctaRatio / 0.3) * 100);
   const retailerScore = clamp((retailerRatio / 0.3) * 100);
   return clamp(ctaScore * 0.6 + retailerScore * 0.4);
 }
@@ -67,16 +67,11 @@ function computeConversionScore(m: UserBehaviorMetric): number {
  * and estimatedRevenue against €50 (→ 100 pts).
  * Falls back to 0 when no revenue data is available.
  */
-function computeRevenueScore(
-  m: UserBehaviorMetric,
-  rev: RevenueMetric | undefined,
-): number {
+function computeRevenueScore(m: UserBehaviorMetric, rev: RevenueMetric | undefined): number {
   if (!rev) return 0;
   const affiliateClicks = rev.affiliateClicks ?? 0;
   const estimatedRevenue = rev.estimatedRevenue ?? 0;
-  const ctrScore = m.pageViews > 0
-    ? clamp((affiliateClicks / m.pageViews / 0.15) * 100)
-    : 0;
+  const ctrScore = m.pageViews > 0 ? clamp((affiliateClicks / m.pageViews / 0.15) * 100) : 0;
   const revenueScore = clamp((estimatedRevenue / 50) * 100);
   return clamp(ctrScore * 0.5 + revenueScore * 0.5);
 }
@@ -90,11 +85,7 @@ function computeRevenueScore(
  */
 function computeSeoScore(seo: SeoMetric | undefined): number {
   if (!seo) return 50; // neutral fallback
-  const ctr = seo.ctr ?? (
-    seo.impressions && seo.clicks
-      ? seo.clicks / seo.impressions
-      : 0
-  );
+  const ctr = seo.ctr ?? (seo.impressions && seo.clicks ? seo.clicks / seo.impressions : 0);
   return clamp((ctr / 0.1) * 100);
 }
 
@@ -106,27 +97,27 @@ function computeSeoScore(seo: SeoMetric | undefined): number {
 export function computeCroScore(
   m: UserBehaviorMetric,
   seo?: SeoMetric,
-  rev?: RevenueMetric,
+  rev?: RevenueMetric
 ): CroScore {
-  const seoScore        = computeSeoScore(seo);
+  const seoScore = computeSeoScore(seo);
   const engagementScore = computeEngagementScore(m);
   const conversionScore = computeConversionScore(m);
-  const revenueScore    = computeRevenueScore(m, rev);
+  const revenueScore = computeRevenueScore(m, rev);
 
   const globalScore = clamp(
-    seoScore        * W_SEO
-    + engagementScore * W_ENGAGEMENT
-    + conversionScore * W_CONVERSION
-    + revenueScore    * W_REVENUE,
+    seoScore * W_SEO +
+      engagementScore * W_ENGAGEMENT +
+      conversionScore * W_CONVERSION +
+      revenueScore * W_REVENUE
   );
 
   return {
     url: m.url,
-    seoScore:        Math.round(seoScore),
+    seoScore: Math.round(seoScore),
     engagementScore: Math.round(engagementScore),
     conversionScore: Math.round(conversionScore),
-    revenueScore:    Math.round(revenueScore),
-    globalScore:     Math.round(globalScore),
+    revenueScore: Math.round(revenueScore),
+    globalScore: Math.round(globalScore),
   };
 }
 
@@ -137,16 +128,12 @@ export function computeCroScore(
 export function computeAllCroScores(
   metrics: UserBehaviorMetric[],
   seoMetrics?: SeoMetric[],
-  revenueMetrics?: RevenueMetric[],
+  revenueMetrics?: RevenueMetric[]
 ): CroScore[] {
   if (!Array.isArray(metrics) || metrics.length === 0) return [];
 
-  const seoMap = new Map<string, SeoMetric>(
-    (seoMetrics ?? []).map((s) => [s.url, s]),
-  );
-  const revMap = new Map<string, RevenueMetric>(
-    (revenueMetrics ?? []).map((r) => [r.url, r]),
-  );
+  const seoMap = new Map<string, SeoMetric>((seoMetrics ?? []).map((s) => [s.url, s]));
+  const revMap = new Map<string, RevenueMetric>((revenueMetrics ?? []).map((r) => [r.url, r]));
 
   return metrics
     .map((m) => computeCroScore(m, seoMap.get(m.url), revMap.get(m.url)))

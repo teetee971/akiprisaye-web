@@ -70,18 +70,22 @@ const ShareButton: React.FC<ShareButtonProps> = ({
         // User cancelled or browser blocked
       }
     } else if (platform === 'whatsapp') {
-      window.open(buildWhatsAppUrl(`${title} — ${description}`, shareUrl), '_blank', 'noopener,noreferrer');
+      window.open(
+        buildWhatsAppUrl(`${title} — ${description}`, shareUrl),
+        '_blank',
+        'noopener,noreferrer'
+      );
     } else if (platform === 'twitter') {
       window.open(
         `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(shareUrl)}`,
         '_blank',
-        'noopener,noreferrer',
+        'noopener,noreferrer'
       );
     } else if (platform === 'facebook') {
       window.open(
         `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
         '_blank',
-        'noopener,noreferrer',
+        'noopener,noreferrer'
       );
     }
 

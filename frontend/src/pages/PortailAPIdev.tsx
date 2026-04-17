@@ -67,15 +67,39 @@ const MOCK_RESPONSES: Record<string, unknown> = {
     limit: 10,
     total: 1842,
     items: [
-      { ean: '3017624010701', name: 'Nutella 400g', price: 4.89, store: 'Carrefour Destrellan', updated_at: '2026-04-10T08:00:00Z' },
-      { ean: '7613035352681', name: 'Kit Kat 4 doigts', price: 1.59, store: 'E.Leclerc Bas du Fort', updated_at: '2026-04-10T07:45:00Z' },
+      {
+        ean: '3017624010701',
+        name: 'Nutella 400g',
+        price: 4.89,
+        store: 'Carrefour Destrellan',
+        updated_at: '2026-04-10T08:00:00Z',
+      },
+      {
+        ean: '7613035352681',
+        name: 'Kit Kat 4 doigts',
+        price: 1.59,
+        store: 'E.Leclerc Bas du Fort',
+        updated_at: '2026-04-10T07:45:00Z',
+      },
     ],
   },
   '/api/v1/products': {
     total: 12450,
     items: [
-      { ean: '3017624010701', name: 'Nutella 400g', brand: 'Ferrero', category: 'Pâtes à tartiner', image_url: null },
-      { ean: '7613035352681', name: 'Kit Kat 4 doigts', brand: 'Nestlé', category: 'Confiserie', image_url: null },
+      {
+        ean: '3017624010701',
+        name: 'Nutella 400g',
+        brand: 'Ferrero',
+        category: 'Pâtes à tartiner',
+        image_url: null,
+      },
+      {
+        ean: '7613035352681',
+        name: 'Kit Kat 4 doigts',
+        brand: 'Nestlé',
+        category: 'Confiserie',
+        image_url: null,
+      },
     ],
   },
   '/api/v1/territories': {
@@ -95,19 +119,34 @@ const MOCK_RESPONSES: Record<string, unknown> = {
   },
 };
 
-const ENDPOINT_DOCS: Array<{ path: string; method: string; desc: string; params: string[]; example: string }> = [
+const ENDPOINT_DOCS: Array<{
+  path: string;
+  method: string;
+  desc: string;
+  params: string[];
+  example: string;
+}> = [
   {
     path: '/api/v1/prices',
     method: 'GET',
     desc: 'Récupère les prix des produits par territoire et enseigne.',
-    params: ['territory (string) — Code territoire (gp, mq, re…)', 'limit (number) — Résultats par page (max 100)', 'page (number) — Numéro de page', 'ean (string) — Filtre par code EAN'],
+    params: [
+      'territory (string) — Code territoire (gp, mq, re…)',
+      'limit (number) — Résultats par page (max 100)',
+      'page (number) — Numéro de page',
+      'ean (string) — Filtre par code EAN',
+    ],
     example: 'GET /api/v1/prices?territory=gp&limit=10',
   },
   {
     path: '/api/v1/products',
     method: 'GET',
     desc: 'Catalogue produits avec EAN, nom, marque et catégorie.',
-    params: ['q (string) — Recherche textuelle', 'category (string) — Filtrer par catégorie', 'limit (number) — Résultats par page'],
+    params: [
+      'q (string) — Recherche textuelle',
+      'category (string) — Filtrer par catégorie',
+      'limit (number) — Résultats par page',
+    ],
     example: 'GET /api/v1/products?q=nutella&limit=20',
   },
   {
@@ -120,7 +159,7 @@ const ENDPOINT_DOCS: Array<{ path: string; method: string; desc: string; params:
   {
     path: '/api/v1/health',
     method: 'GET',
-    desc: 'Vérifie l\'état de santé de l\'API (uptime, version).',
+    desc: "Vérifie l'état de santé de l'API (uptime, version).",
     params: ['(aucun paramètre requis)'],
     example: 'GET /api/v1/health',
   },
@@ -343,7 +382,8 @@ export default function PortailAPIdev() {
             </div>
             <h1 className="text-3xl font-black text-white">🔑 API Dev Portal</h1>
             <p className="text-slate-400 mt-2 text-sm">
-              Clés API, sandbox interactif et SDK open-source pour intégrer les données A KI PRI SA YÉ
+              Clés API, sandbox interactif et SDK open-source pour intégrer les données A KI PRI SA
+              YÉ
             </p>
           </div>
         </div>
@@ -368,7 +408,9 @@ export default function PortailAPIdev() {
               <div className="bg-emerald-900/30 border border-emerald-600/50 rounded-xl p-4 mb-4">
                 <div className="flex items-center gap-2 mb-2">
                   <CheckCircle className="w-5 h-5 text-emerald-400" />
-                  <p className="font-semibold text-emerald-300">Clé générée — copiez-la maintenant !</p>
+                  <p className="font-semibold text-emerald-300">
+                    Clé générée — copiez-la maintenant !
+                  </p>
                 </div>
                 <p className="text-xs text-slate-400 mb-3">
                   ⚠️ Cette clé ne sera plus affichée après fermeture de ce message.
@@ -434,20 +476,23 @@ export default function PortailAPIdev() {
 
             {/* Rate limits info */}
             <div className="mt-4 grid grid-cols-2 gap-3">
-              {([['free', '🆓 Gratuit', '1 000 req/jour'] as const, ['pro', '⚡ Pro', '50 000 req/jour'] as const]).map(
-                ([plan, label, rate]) => (
-                  <div key={plan} className="bg-slate-800/50 border border-slate-700 rounded-lg p-3">
-                    <p className="font-semibold text-white text-sm">{label}</p>
-                    <p className="text-xs text-slate-400 mt-1">{rate}</p>
-                    <div className="flex items-center gap-1 mt-2">
-                      <Shield className="w-3 h-3 text-slate-400" />
-                      <span className="text-xs text-slate-400">
-                        {plan === 'pro' ? 'Historique 12 mois + support' : 'Endpoints publics seulement'}
-                      </span>
-                    </div>
+              {[
+                ['free', '🆓 Gratuit', '1 000 req/jour'] as const,
+                ['pro', '⚡ Pro', '50 000 req/jour'] as const,
+              ].map(([plan, label, rate]) => (
+                <div key={plan} className="bg-slate-800/50 border border-slate-700 rounded-lg p-3">
+                  <p className="font-semibold text-white text-sm">{label}</p>
+                  <p className="text-xs text-slate-400 mt-1">{rate}</p>
+                  <div className="flex items-center gap-1 mt-2">
+                    <Shield className="w-3 h-3 text-slate-400" />
+                    <span className="text-xs text-slate-400">
+                      {plan === 'pro'
+                        ? 'Historique 12 mois + support'
+                        : 'Endpoints publics seulement'}
+                    </span>
                   </div>
-                )
-              )}
+                </div>
+              ))}
             </div>
           </section>
 
@@ -459,7 +504,12 @@ export default function PortailAPIdev() {
             <div className="bg-slate-800 rounded-xl border border-slate-700 p-5 space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="sandbox-endpoint" className="block text-xs font-semibold text-slate-400 mb-1">Endpoint</label>
+                  <label
+                    htmlFor="sandbox-endpoint"
+                    className="block text-xs font-semibold text-slate-400 mb-1"
+                  >
+                    Endpoint
+                  </label>
                   <select
                     id="sandbox-endpoint"
                     value={endpoint}
@@ -474,7 +524,12 @@ export default function PortailAPIdev() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="sandbox-territory" className="block text-xs font-semibold text-slate-400 mb-1">Territoire</label>
+                  <label
+                    htmlFor="sandbox-territory"
+                    className="block text-xs font-semibold text-slate-400 mb-1"
+                  >
+                    Territoire
+                  </label>
                   <select
                     id="sandbox-territory"
                     value={territory}
@@ -489,7 +544,12 @@ export default function PortailAPIdev() {
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="sandbox-limit" className="block text-xs font-semibold text-slate-400 mb-1">Limite</label>
+                  <label
+                    htmlFor="sandbox-limit"
+                    className="block text-xs font-semibold text-slate-400 mb-1"
+                  >
+                    Limite
+                  </label>
                   <input
                     id="sandbox-limit"
                     type="number"
@@ -501,7 +561,12 @@ export default function PortailAPIdev() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="sandbox-apikey" className="block text-xs font-semibold text-slate-400 mb-1">Clé API</label>
+                  <label
+                    htmlFor="sandbox-apikey"
+                    className="block text-xs font-semibold text-slate-400 mb-1"
+                  >
+                    Clé API
+                  </label>
                   <input
                     id="sandbox-apikey"
                     type="text"
@@ -541,12 +606,15 @@ export default function PortailAPIdev() {
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-xs font-semibold text-slate-400">
                       Réponse{' '}
-                      <span className="text-emerald-400 font-mono">{sandboxResponse.status}</span>{' '}
-                      — {sandboxResponse.duration} ms
+                      <span className="text-emerald-400 font-mono">{sandboxResponse.status}</span> —{' '}
+                      {sandboxResponse.duration} ms
                     </p>
                     <button
                       onClick={() =>
-                        copyToClipboard(JSON.stringify(sandboxResponse.body, null, 2), 'Réponse copiée !')
+                        copyToClipboard(
+                          JSON.stringify(sandboxResponse.body, null, 2),
+                          'Réponse copiée !'
+                        )
                       }
                       className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 transition-colors"
                     >

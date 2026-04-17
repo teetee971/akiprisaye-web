@@ -1,4 +1,3 @@
- 
 import 'react';
 import 'react-dom';
 
@@ -13,6 +12,31 @@ declare global {
 }
 
 // Correction des codes territoires pour être inclusifs
-export type TerritoryCode = 'GP' | 'MQ' | 'GF' | 'RE' | 'YT' | 'BL' | 'MF' | 'PM' | 'WF' | 'PF' | 'NC' | 'TF' | 'FRA' | 'GLP' | 'MTQ' | 'GUF' | 'REU' | 'MYT';
+export type TerritoryCode =
+  | 'GP'
+  | 'MQ'
+  | 'GF'
+  | 'RE'
+  | 'YT'
+  | 'BL'
+  | 'MF'
+  | 'PM'
+  | 'WF'
+  | 'PF'
+  | 'NC'
+  | 'TF'
+  | 'FRA'
+  | 'GLP'
+  | 'MTQ'
+  | 'GUF'
+  | 'REU'
+  | 'MYT';
 
-export type DataSource = 'open_data' | 'agent_public' | 'ticket_scan' | 'user_contrib' | 'scan_photo' | 'estimation' | 'historical';
+export type DataSource =
+  | 'open_data'
+  | 'agent_public'
+  | 'ticket_scan'
+  | 'user_contrib'
+  | 'scan_photo'
+  | 'estimation'
+  | 'historical';

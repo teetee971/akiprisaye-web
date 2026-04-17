@@ -12,7 +12,18 @@
 
 import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, Sparkles, TrendingUp, Bell, Download, Globe, Users, BarChart2, FileText, Code2 } from 'lucide-react';
+import {
+  Lock,
+  Sparkles,
+  TrendingUp,
+  Bell,
+  Download,
+  Globe,
+  Users,
+  BarChart2,
+  FileText,
+  Code2,
+} from 'lucide-react';
 import { useEntitlements } from '../../billing/useEntitlements';
 import type { FeatureId, PlanId } from '../../billing/plans';
 
@@ -34,14 +45,15 @@ const FEATURE_META: Partial<Record<FeatureId, FeatureMeta>> = {
     description: 'Évolution des prix sur 12 mois avec courbes multi-enseignes.',
     icon: <TrendingUp className="w-5 h-5" />,
     requiredPlan: 'CITIZEN_PREMIUM',
-    benefit: 'Suivez les tendances de prix sur 12 mois pour mieux choisir votre moment d\'achat.',
+    benefit: "Suivez les tendances de prix sur 12 mois pour mieux choisir votre moment d'achat.",
   },
   PRICE_ALERTS: {
     label: 'Alertes prix',
     description: 'Notifiez-vous quand un produit passe sous votre seuil.',
     icon: <Bell className="w-5 h-5" />,
     requiredPlan: 'CITIZEN_PREMIUM',
-    benefit: 'Soyez le premier informé des baisses de prix. Ne ratez plus jamais une bonne affaire.',
+    benefit:
+      'Soyez le premier informé des baisses de prix. Ne ratez plus jamais une bonne affaire.',
   },
   EXPORT_ADVANCED: {
     label: 'Export avancé',
@@ -83,7 +95,7 @@ const FEATURE_META: Partial<Record<FeatureId, FeatureMeta>> = {
     description: 'Intégrez les données de prix dans vos propres outils.',
     icon: <Code2 className="w-5 h-5" />,
     requiredPlan: 'INSTITUTION',
-    benefit: 'Intégrez les données dans vos systèmes d\'information ou tableaux de bord.',
+    benefit: "Intégrez les données dans vos systèmes d'information ou tableaux de bord.",
   },
 };
 

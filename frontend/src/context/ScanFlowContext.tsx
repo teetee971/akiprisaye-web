@@ -1,6 +1,6 @@
 /**
  * Scan Flow Context - v1.0.0
- * 
+ *
  * Context React pour le flux unifié de scan et comparaison
  * Permet de partager l'état du scan entre les composants
  * Conforme aux principes institutionnels (pas de stockage serveur, lecture seule)
@@ -169,13 +169,8 @@ export function ScanFlowProvider({ children }: ScanFlowProviderProps) {
     setProcessing,
   };
 
-  return (
-    <ScanFlowContext.Provider value={value}>
-      {children}
-    </ScanFlowContext.Provider>
-  );
+  return <ScanFlowContext.Provider value={value}>{children}</ScanFlowContext.Provider>;
 }
-
 
 export function useOptionalScanFlow(): ScanFlowContextType | null {
   const context = useContext(ScanFlowContext);

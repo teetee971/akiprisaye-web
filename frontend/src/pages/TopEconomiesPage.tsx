@@ -14,10 +14,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { SEOHead } from '../components/ui/SEOHead';
 import { Skeleton } from '../components/ui/Skeleton';
 import { formatEur } from '../utils/currency';
-import {
-  getTerritoryName,
-  SITE_URL,
-} from '../utils/seoHelpers';
+import { getTerritoryName, SITE_URL } from '../utils/seoHelpers';
 
 // ── Savings product type ─────────────────────────────────────────────────────
 interface SavingsProduct {
@@ -89,22 +86,24 @@ interface SavingsCardProps {
 
 function SavingsCard({ product, territory, rank }: SavingsCardProps) {
   const savingsPercent = ((product.savings / product.maxPrice) * 100).toFixed(0);
-  
+
   return (
     <Link
-      to={product.ean.startsWith('/') ? product.ean : `/produit/${product.ean}?territory=${territory}`}
+      to={
+        product.ean.startsWith('/') ? product.ean : `/produit/${product.ean}?territory=${territory}`
+      }
       className="group relative rounded-xl border border-white/10 bg-white/[0.03] p-4 transition-all hover:border-emerald-400/30 hover:bg-white/[0.05]"
     >
       {/* Rank badge */}
       <div className="absolute -top-2 -left-2 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-400 text-sm font-bold text-black">
         {rank}
       </div>
-      
+
       {/* Savings badge */}
       <div className="absolute -top-2 -right-2 rounded-full bg-rose-500 px-2 py-0.5 text-xs font-bold text-white">
         -{savingsPercent}%
       </div>
-      
+
       <div className="mt-2">
         {product.brand && (
           <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-0.5">
@@ -115,17 +114,13 @@ function SavingsCard({ product, territory, rank }: SavingsCardProps) {
           {product.name}
         </h3>
         <div className="text-xs text-zinc-500">{product.category}</div>
-        
+
         {/* Price comparison */}
         <div className="mt-3 flex items-center gap-2">
-          <span className="text-xl font-bold text-emerald-400">
-            {formatEur(product.minPrice)}
-          </span>
-          <span className="text-sm text-zinc-500 line-through">
-            {formatEur(product.maxPrice)}
-          </span>
+          <span className="text-xl font-bold text-emerald-400">{formatEur(product.minPrice)}</span>
+          <span className="text-sm text-zinc-500 line-through">{formatEur(product.maxPrice)}</span>
         </div>
-        
+
         {/* Savings highlight */}
         <div className="mt-2 rounded-lg bg-emerald-400/10 px-3 py-2">
           <div className="text-sm font-bold text-emerald-400">
@@ -135,7 +130,7 @@ function SavingsCard({ product, territory, rank }: SavingsCardProps) {
             Meilleur prix chez {product.bestRetailer}
           </div>
         </div>
-        
+
         <div className="mt-2 text-xs text-zinc-500">
           Comparé dans {product.storeCount} enseignes
         </div>
@@ -152,7 +147,7 @@ interface TerritorySelectorProps {
 
 function TerritorySelector({ value, onChange }: TerritorySelectorProps) {
   const territories = ['GP', 'MQ', 'GF', 'RE', 'YT'];
-  
+
   return (
     <div className="flex flex-wrap gap-2">
       {territories.map((code) => (
@@ -160,9 +155,10 @@ function TerritorySelector({ value, onChange }: TerritorySelectorProps) {
           key={code}
           onClick={() => onChange(code)}
           className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-all
-            ${value === code
-              ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300'
-              : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'
+            ${
+              value === code
+                ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300'
+                : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'
             }`}
         >
           {getTerritoryName(code)}
@@ -176,10 +172,10 @@ function TerritorySelector({ value, onChange }: TerritorySelectorProps) {
 export default function TopEconomiesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const territory = searchParams.get('territory') ?? 'GP';
-  
+
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<SavingsProduct[]>([]);
-  
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -189,16 +185,18 @@ export default function TopEconomiesPage() {
         setLoading(false);
       }
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [territory]);
-  
+
   const handleTerritoryChange = (newTerritory: string) => {
     setSearchParams({ territory: newTerritory });
   };
-  
+
   const territoryName = getTerritoryName(territory);
   const totalSavings = products.reduce((sum, p) => sum + p.savings, 0);
-  
+
   // SEO structured data
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -214,7 +212,7 @@ export default function TopEconomiesPage() {
       url: `${SITE_URL}/produit/${p.ean}?territory=${territory}`,
     })),
   };
-  
+
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8">
       <SEOHead
@@ -223,34 +221,37 @@ export default function TopEconomiesPage() {
         canonical={`${SITE_URL}/top-economies?territory=${territory}`}
         jsonLd={jsonLd}
       />
-      
+
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <header className="mb-6">
           <nav className="text-xs text-zinc-500 mb-4">
-            <Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link>
+            <Link to="/" className="hover:text-emerald-400 transition-colors">
+              Accueil
+            </Link>
             <span className="mx-2">›</span>
             <span className="text-zinc-300">Top économies</span>
           </nav>
-          
+
           <h1 className="text-2xl font-bold text-white sm:text-3xl mb-2">
             💰 Top économies en {territoryName}
           </h1>
           <p className="text-sm text-zinc-400">
             Les produits avec les plus grosses différences de prix entre enseignes
           </p>
-          
+
           {/* Total savings potential */}
           {!loading && products.length > 0 && (
             <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2">
               <span className="text-emerald-400">🏦</span>
               <span className="text-sm text-emerald-300">
-                Économie totale possible : <span className="font-bold text-lg">{formatEur(totalSavings)}</span>
+                Économie totale possible :{' '}
+                <span className="font-bold text-lg">{formatEur(totalSavings)}</span>
               </span>
             </div>
           )}
         </header>
-        
+
         {/* Territory selector */}
         <div className="mb-6">
           <div className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
@@ -258,7 +259,7 @@ export default function TopEconomiesPage() {
           </div>
           <TerritorySelector value={territory} onChange={handleTerritoryChange} />
         </div>
-        
+
         {/* Products grid */}
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -284,7 +285,7 @@ export default function TopEconomiesPage() {
             ))}
           </div>
         )}
-        
+
         {/* SEO content */}
         <section className="mt-8 rounded-xl border border-white/5 bg-white/[0.01] p-4">
           <h2 className="text-sm font-bold text-zinc-400 mb-2">
@@ -292,18 +293,18 @@ export default function TopEconomiesPage() {
           </h2>
           <div className="text-xs text-zinc-500 leading-relaxed space-y-2">
             <p>
-              La vie chère en Outre-mer rend la comparaison des prix essentielle. Notre comparateur analyse 
-              quotidiennement les prix dans les principales enseignes de {territoryName} pour vous aider à 
-              réaliser des économies significatives.
+              La vie chère en Outre-mer rend la comparaison des prix essentielle. Notre comparateur
+              analyse quotidiennement les prix dans les principales enseignes de {territoryName}{' '}
+              pour vous aider à réaliser des économies significatives.
             </p>
             <p>
-              Les produits affichés sur cette page présentent les plus grandes différences de prix entre 
-              magasins. En choisissant l'enseigne la moins chère pour chaque produit, vous pouvez économiser 
-              jusqu'à 30% sur votre panier de courses.
+              Les produits affichés sur cette page présentent les plus grandes différences de prix
+              entre magasins. En choisissant l'enseigne la moins chère pour chaque produit, vous
+              pouvez économiser jusqu'à 30% sur votre panier de courses.
             </p>
           </div>
         </section>
-        
+
         {/* Related links */}
         <div className="mt-6 flex flex-wrap gap-3">
           <Link

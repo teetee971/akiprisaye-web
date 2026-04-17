@@ -48,10 +48,7 @@ describe('leaderPriceProvider', () => {
   it('returns UNAVAILABLE on HTTP error', async () => {
     vi.stubEnv(LEADER_PRICE_FLAG, 'true');
     vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: false, status: 503 }),
-    );
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }));
 
     const result = await leaderPriceProvider.search({ query: 'lait' }, makeController().signal);
     expect(result.status).toBe('UNAVAILABLE');
@@ -78,12 +75,12 @@ describe('leaderPriceProvider', () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({ status: 'OK', observations }),
-      }),
+      })
     );
 
     const result = await leaderPriceProvider.search(
       { query: 'lait', territory: 'gp' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.status).toBe('OK');
@@ -102,7 +99,7 @@ describe('leaderPriceProvider', () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({ status: 'NO_DATA', observations: [] }),
-      }),
+      })
     );
 
     const result = await leaderPriceProvider.search({ query: 'xyz' }, makeController().signal);
@@ -116,7 +113,7 @@ describe('leaderPriceProvider', () => {
     vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
 
     const observations = [
-      { productName: 'Produit valide', price: 2.50, currency: 'EUR', unit: 'unit' },
+      { productName: 'Produit valide', price: 2.5, currency: 'EUR', unit: 'unit' },
       { productName: 'Produit invalide', price: -1, currency: 'EUR', unit: 'unit' },
       { productName: 'Produit manquant prix', price: null, currency: 'EUR', unit: 'unit' },
     ];
@@ -126,7 +123,7 @@ describe('leaderPriceProvider', () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({ status: 'OK', observations }),
-      }),
+      })
     );
 
     const result = await leaderPriceProvider.search({ query: 'produit' }, makeController().signal);

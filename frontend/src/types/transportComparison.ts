@@ -1,6 +1,6 @@
 /**
  * Type definitions for Transport Comparison Feature v2.2.0
- * 
+ *
  * Principles:
  * - Read-only comparison (no data modification)
  * - Route-based transport matching (plane, boat, inter-island)
@@ -23,22 +23,22 @@ export type TransportMode = 'plane' | 'boat' | 'inter_island';
  * Route identifier for transport comparison
  */
 export interface TransportRouteIdentifier {
-  origin: string;              // Origin location/airport/port code
-  destination: string;         // Destination location/airport/port code
-  originTerritory: Territory;  // Territory of origin
+  origin: string; // Origin location/airport/port code
+  destination: string; // Destination location/airport/port code
+  originTerritory: Territory; // Territory of origin
   destinationTerritory: Territory; // Territory of destination
-  mode: TransportMode;         // Transport mode
-  routeName?: string;          // Human-readable route name
+  mode: TransportMode; // Transport mode
+  routeName?: string; // Human-readable route name
 }
 
 /**
  * Mandatory source reference for transparency
  */
 export interface SourceReference {
-  type: DataSource;            // Source type
-  url?: string;                // Source URL if available
-  observedAt: string;          // ISO 8601 observation timestamp
-  observedBy?: string;         // Observer identifier (optional)
+  type: DataSource; // Source type
+  url?: string; // Source URL if available
+  observedAt: string; // ISO 8601 observation timestamp
+  observedBy?: string; // Observer identifier (optional)
   verificationMethod: 'automated' | 'manual' | 'official';
   reliability: 'high' | 'medium' | 'low';
 }
@@ -47,19 +47,20 @@ export interface SourceReference {
  * Transport price data point for a specific route and operator
  */
 export interface TransportPricePoint {
-  operatorId: string;          // Operator identifier
-  operatorName: string;        // Operator display name
+  operatorId: string; // Operator identifier
+  operatorName: string; // Operator display name
   route: TransportRouteIdentifier;
-  price: number;               // Price in euros
-  currency: string;            // Currency code (default: EUR)
+  price: number; // Price in euros
+  currency: string; // Currency code (default: EUR)
   priceType: 'base' | 'promotional' | 'dynamic'; // Price type
-  conditions?: string;         // Price conditions (e.g., "non-refundable")
-  observationDate: string;     // ISO 8601 date of price observation
-  source: SourceReference;     // Mandatory source reference
-  volume: number;              // Number of observations used
+  conditions?: string; // Price conditions (e.g., "non-refundable")
+  observationDate: string; // ISO 8601 date of price observation
+  source: SourceReference; // Mandatory source reference
+  volume: number; // Number of observations used
   confidence: 'high' | 'medium' | 'low'; // Confidence level
-  verified: boolean;           // Has been verified by multiple sources
-  additionalFees?: {           // Optional breakdown of fees
+  verified: boolean; // Has been verified by multiple sources
+  additionalFees?: {
+    // Optional breakdown of fees
     baggage?: number;
     seat?: number;
     booking?: number;
@@ -71,12 +72,12 @@ export interface TransportPricePoint {
  * Transport price with ranking and differences
  */
 export interface TransportPriceRanking {
-  rank: number;                     // 1 = cheapest
+  rank: number; // 1 = cheapest
   transportPrice: TransportPricePoint;
-  absoluteDifferenceFromCheapest: number;   // Difference in euros
+  absoluteDifferenceFromCheapest: number; // Difference in euros
   percentageDifferenceFromCheapest: number; // Difference in percentage
-  absoluteDifferenceFromAverage: number;    // Difference from average
-  percentageDifferenceFromAverage: number;  // Percentage from average
+  absoluteDifferenceFromAverage: number; // Difference from average
+  percentageDifferenceFromAverage: number; // Percentage from average
   priceCategory: 'cheapest' | 'below_average' | 'average' | 'above_average' | 'most_expensive';
 }
 
@@ -85,18 +86,18 @@ export interface TransportPriceRanking {
  */
 export interface RouteAggregation {
   route: TransportRouteIdentifier;
-  operatorCount: number;           // Number of operators on route
-  averagePrice: number;            // Average price across operators
-  minPrice: number;                // Minimum price found
-  maxPrice: number;                // Maximum price found
-  priceRange: number;              // Difference between min and max
-  priceRangePercentage: number;    // Range as percentage of min
+  operatorCount: number; // Number of operators on route
+  averagePrice: number; // Average price across operators
+  minPrice: number; // Minimum price found
+  maxPrice: number; // Maximum price found
+  priceRange: number; // Difference between min and max
+  priceRangePercentage: number; // Range as percentage of min
   observationPeriod: {
-    from: string;                  // ISO 8601 start date
-    to: string;                    // ISO 8601 end date
+    from: string; // ISO 8601 start date
+    to: string; // ISO 8601 end date
   };
-  totalObservations: number;       // Total number of price observations
-  lastUpdate: string;              // ISO 8601 last update timestamp
+  totalObservations: number; // Total number of price observations
+  lastUpdate: string; // ISO 8601 last update timestamp
 }
 
 /**
@@ -106,7 +107,7 @@ export interface TransportComparisonResult {
   route: TransportRouteIdentifier;
   operatorPrices: TransportPriceRanking[];
   aggregation: RouteAggregation;
-  comparisonDate: string;          // ISO 8601 comparison timestamp
+  comparisonDate: string; // ISO 8601 comparison timestamp
   metadata: TransportComparisonMetadata;
 }
 
@@ -114,18 +115,18 @@ export interface TransportComparisonResult {
  * Metadata for transport comparison transparency
  */
 export interface TransportComparisonMetadata {
-  methodology: string;             // Methodology version (e.g., "v2.2.0")
+  methodology: string; // Methodology version (e.g., "v2.2.0")
   aggregationMethod: 'mean' | 'median' | 'weighted';
   dataQuality: {
     totalOperators: number;
     operatorsWithData: number;
     coveragePercentage: number;
-    oldestObservation: string;     // ISO 8601
-    newestObservation: string;     // ISO 8601
+    oldestObservation: string; // ISO 8601
+    newestObservation: string; // ISO 8601
   };
   sources: SourceSummary[];
-  warnings?: string[];             // Any data quality warnings
-  limitations: string[];           // Explicit limitations of the data
+  warnings?: string[]; // Any data quality warnings
+  limitations: string[]; // Explicit limitations of the data
 }
 
 /**
@@ -135,20 +136,20 @@ export interface SourceSummary {
   source: DataSource;
   observationCount: number;
   operatorCount: number;
-  percentage: number;              // Percentage of total data
+  percentage: number; // Percentage of total data
 }
 
 /**
  * Filter options for transport comparison queries
  */
 export interface TransportComparisonFilter {
-  mode?: TransportMode;            // Filter by transport mode
-  originTerritory?: Territory;     // Filter by origin territory
+  mode?: TransportMode; // Filter by transport mode
+  originTerritory?: Territory; // Filter by origin territory
   destinationTerritory?: Territory; // Filter by destination territory
-  operatorName?: string;           // Filter by operator
-  maxPriceAge?: number;            // Max age in days
+  operatorName?: string; // Filter by operator
+  maxPriceAge?: number; // Max age in days
   minConfidence?: 'low' | 'medium' | 'high';
-  verifiedOnly?: boolean;          // Only verified prices
+  verifiedOnly?: boolean; // Only verified prices
   includeAdditionalFees?: boolean; // Include additional fees in price
 }
 
@@ -156,20 +157,20 @@ export interface TransportComparisonFilter {
  * Transport comparison configuration
  */
 export interface TransportComparisonConfig {
-  enabled: boolean;                // Feature flag
-  maxPriceAgeDays: number;         // Maximum age for price data
+  enabled: boolean; // Feature flag
+  maxPriceAgeDays: number; // Maximum age for price data
   minObservationsPerOperator: number; // Minimum observations required
-  defaultMode: TransportMode;      // Default transport mode
-  cacheTimeout: number;            // Cache timeout in seconds
+  defaultMode: TransportMode; // Default transport mode
+  cacheTimeout: number; // Cache timeout in seconds
 }
 
 /**
  * Transport price history point for time series (v2.2.1)
  */
 export interface TransportPriceHistoryPoint {
-  date: string;                    // ISO 8601 date
+  date: string; // ISO 8601 date
   route: TransportRouteIdentifier;
-  operatorId?: string;             // Optional: specific operator
+  operatorId?: string; // Optional: specific operator
   averagePrice: number;
   minPrice: number;
   maxPrice: number;
@@ -185,17 +186,17 @@ export interface TransportSeasonalityIndicator {
   period: 'month' | 'quarter' | 'year';
   seasonalityDetected: boolean;
   patterns?: {
-    highSeasonMonths: number[];    // Months (1-12) with higher prices
-    lowSeasonMonths: number[];     // Months (1-12) with lower prices
+    highSeasonMonths: number[]; // Months (1-12) with higher prices
+    lowSeasonMonths: number[]; // Months (1-12) with lower prices
     averagePriceVariation: number; // Percentage variation
   };
   observations: {
-    periodStart: string;           // ISO 8601
-    periodEnd: string;             // ISO 8601
+    periodStart: string; // ISO 8601
+    periodEnd: string; // ISO 8601
     dataPoints: number;
   };
   confidence: 'high' | 'medium' | 'low';
-  methodology: string;             // Methodology used for detection
+  methodology: string; // Methodology used for detection
 }
 
 /**
@@ -205,36 +206,37 @@ export interface TransportTerritoryAggregation {
   territory: Territory;
   mode: TransportMode;
   indicators: TransportCostIndicator[];
-  routeCount: number;              // Number of routes analyzed
-  operatorCount: number;           // Number of operators serving territory
-  averageRoutePrice: number;       // Average price across all routes
+  routeCount: number; // Number of routes analyzed
+  operatorCount: number; // Number of operators serving territory
+  averageRoutePrice: number; // Average price across all routes
   priceDispersion: {
     standardDeviation: number;
     coefficientOfVariation: number;
     interquartileRange: number;
   };
   accessibility: {
-    internalRoutes: number;        // Routes within territory
-    externalRoutes: number;        // Routes to other territories
-    isolationIndex: number;        // Higher = more isolated
+    internalRoutes: number; // Routes within territory
+    externalRoutes: number; // Routes to other territories
+    isolationIndex: number; // Higher = more isolated
   };
   observationPeriod: {
-    from: string;                  // ISO 8601
-    to: string;                    // ISO 8601
+    from: string; // ISO 8601
+    to: string; // ISO 8601
   };
-  lastUpdate: string;              // ISO 8601
+  lastUpdate: string; // ISO 8601
 }
 
 /**
  * Cost indicator for transport analysis (v2.2.2)
  */
 export interface TransportCostIndicator {
-  name: string;                    // Indicator name
-  value: number;                   // Indicator value
-  unit: string;                    // Unit of measurement
-  description: string;             // Human-readable description
-  sources: SourceReference[];      // Data sources
-  comparisonToNational?: {         // Comparison to national average
+  name: string; // Indicator name
+  value: number; // Indicator value
+  unit: string; // Unit of measurement
+  description: string; // Human-readable description
+  sources: SourceReference[]; // Data sources
+  comparisonToNational?: {
+    // Comparison to national average
     nationalValue: number;
     difference: number;
     percentageDifference: number;
@@ -247,8 +249,8 @@ export interface TransportCostIndicator {
 export interface MultiTerritoryTransportComparison {
   route: TransportRouteIdentifier;
   territoryComparisons: TerritoryTransportComparison[];
-  baseTerritory?: Territory;       // Reference territory for comparison
-  comparisonDate: string;          // ISO 8601
+  baseTerritory?: Territory; // Reference territory for comparison
+  comparisonDate: string; // ISO 8601
 }
 
 /**

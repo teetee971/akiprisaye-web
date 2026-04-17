@@ -2,10 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ConversionProduct } from '../../engine/conversionEngine';
 import { getBadges } from '../../engine/conversionEngine';
-import {
-  trackConversionEvent,
-  getVariantForPage,
-} from '../../utils/conversionTracker';
+import { trackConversionEvent, getVariantForPage } from '../../utils/conversionTracker';
 import { safeRetailerUrl, buildRetailerUrl } from '../../utils/retailerLinks';
 import { logEvent, getCTAVariant, CTA_LABELS } from '../../engine/analytics';
 
@@ -16,10 +13,10 @@ interface StickyBestPriceCTAProps {
 }
 
 export function StickyBestPriceCTA({ product, onAfterClick }: StickyBestPriceCTAProps) {
-  const badges   = getBadges(product);
+  const badges = getBadges(product);
   const abVariant = getCTAVariant();
-  const ctaLabel  = CTA_LABELS[abVariant];
-  const navigate  = useNavigate();
+  const ctaLabel = CTA_LABELS[abVariant];
+  const navigate = useNavigate();
 
   function handleClick() {
     const pageUrl = typeof window !== 'undefined' ? window.location.href : '/';
@@ -78,7 +75,9 @@ export function StickyBestPriceCTA({ product, onAfterClick }: StickyBestPriceCTA
             {badges.length > 0 && (
               <div className="flex gap-1 flex-wrap mt-1">
                 {badges.map((b) => (
-                  <span key={b} className="text-xs bg-black/30 text-white rounded-full px-2 py-0.5">{b}</span>
+                  <span key={b} className="text-xs bg-black/30 text-white rounded-full px-2 py-0.5">
+                    {b}
+                  </span>
                 ))}
               </div>
             )}

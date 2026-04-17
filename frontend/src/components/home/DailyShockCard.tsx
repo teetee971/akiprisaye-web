@@ -3,8 +3,8 @@
  * Affiche les hausses récentes les plus impactantes
  */
 
-import { GlassCard } from "../ui/glass-card";
-import { useDailyPriceShock, type PriceShock } from "../../hooks/useDailyPriceShock";
+import { GlassCard } from '../ui/glass-card';
+import { useDailyPriceShock, type PriceShock } from '../../hooks/useDailyPriceShock';
 
 interface DailyShockCardProps {
   territory?: string;
@@ -55,19 +55,19 @@ export function DailyShockCard({ territory = 'GP', className = '' }: DailyShockC
         <div className="text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="text-3xl">🔥</span>
-            <h3 className="text-xl font-bold text-red-300">
-              Hausses de la semaine
-            </h3>
+            <h3 className="text-xl font-bold text-red-300">Hausses de la semaine</h3>
           </div>
-          <p className="text-sm text-gray-400">
-            Ce qui a vraiment augmenté ces 7 derniers jours
-          </p>
+          <p className="text-sm text-gray-400">Ce qui a vraiment augmenté ces 7 derniers jours</p>
         </div>
 
         {/* Liste des hausses */}
         <div className="space-y-3">
           {data.shocks.map((shock, index) => (
-            <ShockItem key={`${shock.productName}-${shock.territory}`} shock={shock} rank={index + 1} />
+            <ShockItem
+              key={`${shock.productName}-${shock.territory}`}
+              shock={shock}
+              rank={index + 1}
+            />
           ))}
         </div>
 
@@ -97,18 +97,14 @@ function ShockItem({ shock, rank }: { shock: PriceShock; rank: number }) {
     <div className="p-4 bg-slate-800/50 rounded-lg hover:bg-slate-800/70 transition-all">
       <div className="flex items-start gap-3">
         {/* Rank */}
-        <div className="flex-shrink-0 text-2xl">
-          {getRankEmoji(rank)}
-        </div>
+        <div className="flex-shrink-0 text-2xl">{getRankEmoji(rank)}</div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
-            <h4 className="font-semibold text-white truncate">
-              {shock.productName}
-            </h4>
+            <h4 className="font-semibold text-white truncate">{shock.productName}</h4>
             {shock.isConfirmed && (
-              <span 
+              <span
                 className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 bg-blue-900/30 border border-blue-500/40 rounded text-xs text-blue-300"
                 title="Fiabilité >= 80% (3+ observations, 2+ magasins)"
               >
@@ -120,9 +116,7 @@ function ShockItem({ shock, rank }: { shock: PriceShock; rank: number }) {
 
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
             {/* Hausse en € */}
-            <span className="font-bold text-red-400">
-              +{shock.priceIncrease.toFixed(2)} €
-            </span>
+            <span className="font-bold text-red-400">+{shock.priceIncrease.toFixed(2)} €</span>
 
             {/* Hausse en % */}
             <span className="font-semibold text-red-300">
@@ -138,9 +132,7 @@ function ShockItem({ shock, rank }: { shock: PriceShock; rank: number }) {
           {/* Catégorie */}
           {shock.category && (
             <div className="mt-1">
-              <span className="text-xs text-gray-500">
-                {shock.category}
-              </span>
+              <span className="text-xs text-gray-500">{shock.category}</span>
             </div>
           )}
         </div>

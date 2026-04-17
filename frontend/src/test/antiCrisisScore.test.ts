@@ -1,4 +1,3 @@
- 
 /**
  * Tests for Anti-Crisis Score Calculation
  */
@@ -11,10 +10,7 @@ import {
   getDetailedExplanations,
   type AntiCrisisResult,
 } from '../utils/antiCrisisScore';
-import {
-  saveBasketSnapshot,
-  clearPriceHistory,
-} from '../utils/priceHistory';
+import { saveBasketSnapshot, clearPriceHistory } from '../utils/priceHistory';
 
 describe('Anti-Crisis Score Calculation', () => {
   const testTerritoryId = 'TEST_TERRITORY';
@@ -57,7 +53,7 @@ describe('Anti-Crisis Score Calculation', () => {
       // Create stable prices below median over 14 days
       // Using tighter range for low volatility and stable trend
       const prices = [45.0, 45.1, 44.9, 45.0, 44.95, 45.05, 44.98, 45.02];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -70,13 +66,13 @@ describe('Anti-Crisis Score Calculation', () => {
       // Score should be 2 or 3 (at least Anti-Crisis)
       expect(result.score).toBeGreaterThanOrEqual(2);
       expect(result.label).toMatch(/Anti-Crise/);
-      expect(result.reasons.filter(r => r.met).length).toBeGreaterThanOrEqual(2);
+      expect(result.reasons.filter((r) => r.met).length).toBeGreaterThanOrEqual(2);
     });
 
     it('should calculate score when some criteria met', () => {
       // Prices with low volatility and stable trend (at least 2 criteria likely)
       const prices = [45.0, 45.5, 45.2, 45.8, 45.3, 45.6, 45.4, 45.7];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -95,7 +91,7 @@ describe('Anti-Crisis Score Calculation', () => {
     it('should calculate score 0 (À risque) when no criteria met', () => {
       // High prices with increasing trend and high volatility
       const prices = [55.0, 60.0, 58.0, 65.0, 62.0, 70.0, 68.0, 75.0];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -114,10 +110,10 @@ describe('Anti-Crisis Score Calculation', () => {
       const prices = [
         basePrice,
         basePrice * 1.005, // +0.5%
-        basePrice * 1.010, // +1.0%
+        basePrice * 1.01, // +1.0%
         basePrice * 1.008, // +0.8%
         basePrice * 1.012, // +1.2%
-        basePrice * 1.010, // +1.0%
+        basePrice * 1.01, // +1.0%
       ];
 
       prices.forEach((price, i) => {
@@ -129,14 +125,14 @@ describe('Anti-Crisis Score Calculation', () => {
       const result = computeAntiCrisisScore(testTerritoryId, testBasketId);
 
       expect(result.hasEnoughData).toBe(true);
-      const trendReason = result.reasons.find(r => r.criterion === 'Tendance');
+      const trendReason = result.reasons.find((r) => r.criterion === 'Tendance');
       expect(trendReason?.met).toBe(true);
     });
 
     it('should detect low volatility correctly', () => {
       // Prices with very small range (< 5% volatility)
       const prices = [45.0, 45.5, 45.2, 45.8, 45.3, 45.6, 45.4, 45.7];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -146,7 +142,7 @@ describe('Anti-Crisis Score Calculation', () => {
       const result = computeAntiCrisisScore(testTerritoryId, testBasketId);
 
       expect(result.hasEnoughData).toBe(true);
-      const volatilityReason = result.reasons.find(r => r.criterion === 'Volatilité');
+      const volatilityReason = result.reasons.find((r) => r.criterion === 'Volatilité');
       expect(volatilityReason?.met).toBe(true);
       expect(result.volatilityPercent).toBeLessThan(5);
     });
@@ -154,7 +150,7 @@ describe('Anti-Crisis Score Calculation', () => {
     it('should detect price below median correctly', () => {
       // Create price distribution where last price is below median
       const prices = [50.0, 55.0, 60.0, 45.0, 50.0, 52.0, 48.0, 46.0];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -164,8 +160,8 @@ describe('Anti-Crisis Score Calculation', () => {
       const result = computeAntiCrisisScore(testTerritoryId, testBasketId);
 
       expect(result.hasEnoughData).toBe(true);
-      const medianReason = result.reasons.find(r => r.criterion === 'Prix vs Médiane');
-      
+      const medianReason = result.reasons.find((r) => r.criterion === 'Prix vs Médiane');
+
       // Current price should be compared to median
       expect(result.currentPrice).toBeDefined();
       expect(result.medianPrice).toBeDefined();
@@ -173,7 +169,7 @@ describe('Anti-Crisis Score Calculation', () => {
 
     it('should include all three criteria in reasons', () => {
       const prices = [45.0, 46.0, 45.5, 46.2, 45.8, 46.5];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -183,14 +179,14 @@ describe('Anti-Crisis Score Calculation', () => {
       const result = computeAntiCrisisScore(testTerritoryId, testBasketId);
 
       expect(result.reasons).toHaveLength(3);
-      expect(result.reasons.map(r => r.criterion)).toContain('Prix vs Médiane');
-      expect(result.reasons.map(r => r.criterion)).toContain('Tendance');
-      expect(result.reasons.map(r => r.criterion)).toContain('Volatilité');
+      expect(result.reasons.map((r) => r.criterion)).toContain('Prix vs Médiane');
+      expect(result.reasons.map((r) => r.criterion)).toContain('Tendance');
+      expect(result.reasons.map((r) => r.criterion)).toContain('Volatilité');
     });
 
     it('should calculate metrics correctly', () => {
       const prices = [40.0, 42.0, 41.0, 43.0, 42.5, 44.0];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -216,7 +212,7 @@ describe('Anti-Crisis Score Calculation', () => {
     it('should return true when score >= 2', () => {
       // Create optimal Anti-Crisis conditions
       const prices = [45.0, 45.1, 44.9, 45.2, 44.8, 45.0, 44.7, 45.3];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -230,7 +226,7 @@ describe('Anti-Crisis Score Calculation', () => {
     it('should return false when score < 2', () => {
       // Create conditions that don't meet Anti-Crisis criteria
       const prices = [50.0, 55.0, 60.0, 65.0, 70.0, 75.0];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -252,7 +248,7 @@ describe('Anti-Crisis Score Calculation', () => {
 
     it('should return Anti-Crisis message when score >= 2', () => {
       const prices = [45.0, 45.1, 44.9, 45.2, 44.8, 45.0, 44.7, 45.3];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -316,7 +312,7 @@ describe('Anti-Crisis Score Calculation', () => {
   describe('getDetailedExplanations', () => {
     it('should return formatted explanations for each criterion', () => {
       const prices = [45.0, 46.0, 45.5, 46.2, 45.8, 46.5];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - (prices.length - i - 1));
@@ -327,7 +323,7 @@ describe('Anti-Crisis Score Calculation', () => {
       const explanations = getDetailedExplanations(result);
 
       expect(explanations).toHaveLength(3);
-      explanations.forEach(exp => {
+      explanations.forEach((exp) => {
         expect(exp).toMatch(/^[✓✗]/); // Should start with check or cross
         expect(exp.length).toBeGreaterThan(10); // Should have meaningful content
       });
@@ -364,7 +360,7 @@ describe('Anti-Crisis Score Calculation', () => {
       const now = new Date();
       const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
       const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
-      
+
       saveBasketSnapshot('basket-1', testTerritoryId, 45.0, twoDaysAgo);
       saveBasketSnapshot('basket-2', testTerritoryId, 50.0, twoDaysAgo);
       saveBasketSnapshot('basket-1', testTerritoryId, 46.0, yesterday);
@@ -374,14 +370,14 @@ describe('Anti-Crisis Score Calculation', () => {
 
       // Query without basket ID should consider all baskets
       const result = computeAntiCrisisScore(testTerritoryId);
-      
+
       // Should have multiple data points (may dedupe same-day entries)
       expect(result.dataPoints).toBeGreaterThanOrEqual(2);
     });
 
     it('should handle zero prices gracefully', () => {
       const prices = [0, 0, 0, 0, 0, 0];
-      
+
       prices.forEach((price, i) => {
         const date = new Date();
         date.setDate(date.getDate() - i);
@@ -389,7 +385,7 @@ describe('Anti-Crisis Score Calculation', () => {
       });
 
       const result = computeAntiCrisisScore(testTerritoryId, testBasketId);
-      
+
       // Should not crash, should handle gracefully
       expect(result).toBeDefined();
       expect(result.currentPrice).toBe(0);
@@ -399,7 +395,7 @@ describe('Anti-Crisis Score Calculation', () => {
       saveBasketSnapshot(testBasketId, testTerritoryId, 45.0);
 
       const result = computeAntiCrisisScore(testTerritoryId, testBasketId);
-      
+
       // Should return insufficient data
       expect(result.hasEnoughData).toBe(false);
     });

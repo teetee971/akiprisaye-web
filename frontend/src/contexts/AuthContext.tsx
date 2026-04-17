@@ -1,17 +1,10 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
-import { doc, getDoc } from "firebase/firestore";
-import type { User } from "firebase/auth";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import type { User } from 'firebase/auth';
 
-import { roleFromClaims } from "@/auth/rbac";
+import { roleFromClaims } from '@/auth/rbac';
 
-import { db, firebaseError } from "@/lib/firebase";
+import { db, firebaseError } from '@/lib/firebase';
 import {
   signInEmailPassword,
   signInGooglePopup,
@@ -25,47 +18,47 @@ import {
   subscribeToAuthState,
   getAuthRedirectResult,
   ensureSessionPersistence,
-} from "@/services/auth";
-import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
-import { logDebug, logError } from "@/utils/logger";
-import { authLog } from "@/utils/authLogger";
-import { writeUserPresence, clearUserPresence } from "@/services/userPresence";
+} from '@/services/auth';
+import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from '@/lib/authMessages';
+import { logDebug, logError } from '@/utils/logger';
+import { authLog } from '@/utils/authLogger';
+import { writeUserPresence, clearUserPresence } from '@/services/userPresence';
 
-import { nextAuthFlowState, type AuthFlowState } from "@/auth/authStateMachine";
-import type { AuthIncidentCode } from "@/auth/authIncidents";
+import { nextAuthFlowState, type AuthFlowState } from '@/auth/authStateMachine';
+import type { AuthIncidentCode } from '@/auth/authIncidents';
 import {
   getRedirectPendingFlag,
   clearRedirectPendingFlag,
   clearAuthTransientStorage,
-} from "@/auth/authStorage";
+} from '@/auth/authStorage';
 
 // Lightweight shared context + useAuth hook (no Firebase runtime code).
 // Components that only need the hook import from there directly to avoid
 // pulling the full Firebase SDK into their chunk.
-import { AuthContext, type AuthContextValue } from "@/context/authHook";
-export { useAuth } from "@/context/authHook";
+import { AuthContext, type AuthContextValue } from '@/context/authHook';
+export { useAuth } from '@/context/authHook';
 
 /* ── Types ──────────────────────────────────────────────────────────────── */
 
-type UserRole = "guest" | "citoyen" | "observateur" | "admin" | "creator";
-const MASTER_KEY_PARAM = "master_key";
-const MASTER_KEY_VALUE = "V3_ULTRA_THIERRY";
-const CREATOR_DEBUG_SESSION_KEY = "akp_creator_debug_session";
+type UserRole = 'guest' | 'citoyen' | 'observateur' | 'admin' | 'creator';
+const MASTER_KEY_PARAM = 'master_key';
+const MASTER_KEY_VALUE = 'V3_ULTRA_THIERRY';
+const CREATOR_DEBUG_SESSION_KEY = 'akp_creator_debug_session';
 
 function hasCreatorDebugSession(): boolean {
-  if (typeof window === "undefined") return false;
+  if (typeof window === 'undefined') return false;
   return Boolean(localStorage.getItem(CREATOR_DEBUG_SESSION_KEY));
 }
 
 function buildCreatorSpacePath(): string {
-  const base = import.meta.env.BASE_URL || "/";
-  return `${base.replace(/\/+$/, "")}/espace-createur`;
+  const base = import.meta.env.BASE_URL || '/';
+  return `${base.replace(/\/+$/, '')}/espace-createur`;
 }
 
 /* ── Role resolver: custom claims → Firestore fallback ───────────────────── */
 
 async function resolveUserRole(user: User | null): Promise<UserRole> {
-  if (!user) return "guest";
+  if (!user) return 'guest';
 
   // 1. Try custom claims from Firebase ID token (fast path, no network round-trip)
   try {
@@ -80,40 +73,37 @@ async function resolveUserRole(user: User | null): Promise<UserRole> {
   }
 
   // 2. Fallback: Firestore users/{uid}.role
-  if (!db) return "citoyen";
+  if (!db) return 'citoyen';
 
   try {
     const roleTimeout = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("timeout")), 5000),
+      setTimeout(() => reject(new Error('timeout')), 5000)
     );
-    const userDoc = await Promise.race([
-      getDoc(doc(db, "users", user.uid)),
-      roleTimeout,
-    ]);
-    if (!userDoc.exists()) return "citoyen";
+    const userDoc = await Promise.race([getDoc(doc(db, 'users', user.uid)), roleTimeout]);
+    if (!userDoc.exists()) return 'citoyen';
 
     const role = userDoc.data()?.role;
-    if (role === "creator" || role === "admin" || role === "observateur" || role === "citoyen") {
+    if (role === 'creator' || role === 'admin' || role === 'observateur' || role === 'citoyen') {
       return role;
     }
-    return "citoyen";
+    return 'citoyen';
   } catch {
-    return "citoyen";
+    return 'citoyen';
   }
 }
 
 /* ── Provider ────────────────────────────────────────────────────────────── */
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user,          setUser]         = useState<User | null>(null);
-  const [userRole,      setUserRole]     = useState<UserRole>("guest");
-  const [loading,       setLoading]      = useState(true);
-  const [error,         setError]        = useState<string | null>(
-    firebaseError ? FIREBASE_UNAVAILABLE_MESSAGE : null,
+  const [user, setUser] = useState<User | null>(null);
+  const [userRole, setUserRole] = useState<UserRole>('guest');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(
+    firebaseError ? FIREBASE_UNAVAILABLE_MESSAGE : null
   );
-  const [authResolved,  setAuthResolved] = useState(false);
+  const [authResolved, setAuthResolved] = useState(false);
   const [authFlowState, setAuthFlowState] = useState<AuthFlowState>('resolving');
-  const [lastIncident,  setLastIncident] = useState<AuthIncidentCode | null>(null);
+  const [lastIncident, setLastIncident] = useState<AuthIncidentCode | null>(null);
 
   // Ensure bootstrap runs at most once even under React StrictMode double-invoke.
   const bootstrappedRef = useRef(false);
@@ -124,7 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /* ── Debug owner shortcut (Magic Link Admin) ───────────────────────── */
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
     const masterKey = params.get(MASTER_KEY_PARAM);
     if (masterKey !== MASTER_KEY_VALUE) return;
@@ -132,16 +122,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(
       CREATOR_DEBUG_SESSION_KEY,
       JSON.stringify({
-        role: "creator",
+        role: 'creator',
         enabledAt: Date.now(),
-      }),
+      })
     );
-    setUserRole("creator");
+    setUserRole('creator');
     setLoading(false);
     setAuthResolved(true);
-    setAuthFlowState("authenticated");
+    setAuthFlowState('authenticated');
     setLastIncident(null);
-    authLog("AUTH_FLOW_MODE_SELECTED", { source: "creator_debug_magic_link" });
+    authLog('AUTH_FLOW_MODE_SELECTED', { source: 'creator_debug_magic_link' });
   }, []);
 
   /* ── Bootstrap ─────────────────────────────────────────────────────── */
@@ -159,7 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let active = true;
     let unsubscribeAuth: (() => void) | undefined;
 
-    logDebug("[AUTH] bootstrap start");
+    logDebug('[AUTH] bootstrap start');
 
     async function bootstrap() {
       try {
@@ -168,8 +158,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // No-op: auth flow continues even if persistence cannot be configured.
       }
 
-      const pendingFlag  = getRedirectPendingFlag();
-      const hadPending   = Boolean(pendingFlag);
+      const pendingFlag = getRedirectPendingFlag();
+      const hadPending = Boolean(pendingFlag);
 
       // ── 1. Settle any in-flight OAuth redirect BEFORE onAuthStateChanged ──
       try {
@@ -177,25 +167,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!active) return;
 
         if (result?.user) {
-          logDebug("[AUTH] getRedirectResult success");
+          logDebug('[AUTH] getRedirectResult success');
           authLog('AUTH_REDIRECT_RESULT_RESOLVED', { hasUser: true, hasPendingFlag: hadPending });
         } else {
-          logDebug("[AUTH] getRedirectResult: no pending redirect");
+          logDebug('[AUTH] getRedirectResult: no pending redirect');
           authLog('AUTH_REDIRECT_RESULT_RESOLVED', { hasUser: false, hasPendingFlag: hadPending });
         }
       } catch (err: unknown) {
         if (!active) return;
         const code =
-          typeof err === "object" && err && "code" in err
+          typeof err === 'object' && err && 'code' in err
             ? String((err as { code: string }).code)
-            : "";
-        if (code && code !== "auth/no-redirect-pending" && code !== "auth/popup-closed-by-user") {
-          logError("[AUTH] getRedirectResult error", code);
+            : '';
+        if (code && code !== 'auth/no-redirect-pending' && code !== 'auth/popup-closed-by-user') {
+          logError('[AUTH] getRedirectResult error', code);
           setError(getAuthErrorMessage(err));
           clearRedirectPendingFlag();
           authLog('AUTH_FINAL_FAILURE', { errorCode: code });
         } else {
-          logDebug("[AUTH] getRedirectResult: no pending redirect");
+          logDebug('[AUTH] getRedirectResult: no pending redirect');
         }
       }
 
@@ -205,7 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       unsubscribeAuth = subscribeToAuthState(async (currentUser) => {
         if (!active) return;
 
-        logDebug("[AUTH] onAuthStateChanged", currentUser ? "user" : "null");
+        logDebug('[AUTH] onAuthStateChanged', currentUser ? 'user' : 'null');
 
         if (currentUser) {
           authLog('AUTH_STATE_USER_PRESENT', { uid: currentUser.uid });
@@ -219,28 +209,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setAuthResolved(true);
           setAuthFlowState('authenticated');
           clearAuthTransientStorage();
-          logDebug("[AUTH] authenticated", currentUser.email);
+          logDebug('[AUTH] authenticated', currentUser.email);
         } else {
           if (hasCreatorDebugSession()) {
             setUser(null);
-            setUserRole("creator");
+            setUserRole('creator');
             setLoading(false);
             setAuthResolved(true);
             setAuthFlowState('authenticated');
             setLastIncident(null);
-            logDebug("[AUTH] creator debug session active (firebase user absent)");
+            logDebug('[AUTH] creator debug session active (firebase user absent)');
             return;
           }
           authLog('AUTH_STATE_NO_USER');
           setUser(null);
-          setUserRole("guest");
+          setUserRole('guest');
           setLoading(false);
           setAuthResolved(true);
           setAuthFlowState(hadPending ? 'failed' : 'idle');
           if (hadPending) {
             setLastIncident('AUTH_REDIRECT_RESULT_EMPTY');
           }
-          logDebug("[AUTH] no user");
+          logDebug('[AUTH] no user');
         }
       });
     }
@@ -264,9 +254,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   /* ── Auto-login creator owner shortcut ─────────────────────────────── */
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     if (loading || !authResolved) return;
-    if (userRole !== "creator" && userRole !== "admin") return;
+    if (userRole !== 'creator' && userRole !== 'admin') return;
 
     const targetPath = buildCreatorSpacePath();
     const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -310,84 +300,87 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
   /* ── Context value ─────────────────────────────────────────────────── */
-  const value = useMemo<AuthContextValue>(() => ({
-    user,
-    userRole,
-    loading,
-    error,
-    authResolved,
-    authFlowState,
-    lastIncident,
-    isAuthenticated: Boolean(user),
-    displayName:     user?.displayName ?? null,
-    email:           user?.email ?? null,
-    isGuest:         !user,
-    isCitoyen:       userRole === "citoyen",
-    isObservateur:   userRole === "observateur",
-    // isAdmin: only the "admin" role. Use isCreator to gate creator-space access.
-    isAdmin:         userRole === "admin",
-    // isCreator: both "creator" and "admin" can access the creator space,
-    // matching rbac.ts isCreator() and RequireCreator guard behaviour.
-    isCreator:       userRole === "creator" || userRole === "admin",
-    clearError:         () => setError(null),
-    clearAuthIncident:  () => setLastIncident(null),
-    refreshClaims: async () => {
-      if (!user) return;
-      try {
-        await user.getIdTokenResult(true); // force-refresh the token
-        const role = await resolveUserRole(user);
-        setUserRole(role);
-        logDebug("[AUTH] refreshClaims — new role:", role);
-      } catch {
-        logDebug("[AUTH] refreshClaims — failed, role unchanged");
-      }
-    },
-    signUpEmailPassword: async (em, pw) => {
-      setError(null);
-      await signUpEmailPassword(em, pw);
-    },
-    signInEmailPassword: async (em, pw) => {
-      setError(null);
-      await signInEmailPassword(em, pw);
-    },
-    signInGooglePopup: async () => {
-      setError(null);
-      authLog('AUTH_CLICK_GOOGLE', { mode: 'popup' });
-      transition('starting');
-      await signInGooglePopup();
-    },
-    signInGoogleRedirect: async () => {
-      setError(null);
-      authLog('AUTH_REDIRECT_START', { provider: 'google', mode: 'redirect' });
-      transition('redirecting');
-      await signInGoogleRedirect();
-    },
-    signInFacebookPopup: async () => {
-      setError(null);
-      await signInFacebookPopup();
-    },
-    signInFacebookRedirect: async () => {
-      setError(null);
-      await signInFacebookRedirect();
-    },
-    signInApplePopup: async () => {
-      setError(null);
-      await signInApplePopup();
-    },
-    signInAppleRedirect: async () => {
-      setError(null);
-      await signInAppleRedirect();
-    },
-    signOutUser: async () => {
-      setError(null);
-      if (user) clearUserPresence(user.uid).catch(() => {});
-      await signOutUser();
-      clearAuthTransientStorage();
-      setAuthFlowState('idle');
-      setLastIncident(null);
-      setAuthResolved(true);
-    },
-  }), [user, userRole, loading, error, authResolved, authFlowState, lastIncident, transition]);
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      user,
+      userRole,
+      loading,
+      error,
+      authResolved,
+      authFlowState,
+      lastIncident,
+      isAuthenticated: Boolean(user),
+      displayName: user?.displayName ?? null,
+      email: user?.email ?? null,
+      isGuest: !user,
+      isCitoyen: userRole === 'citoyen',
+      isObservateur: userRole === 'observateur',
+      // isAdmin: only the "admin" role. Use isCreator to gate creator-space access.
+      isAdmin: userRole === 'admin',
+      // isCreator: both "creator" and "admin" can access the creator space,
+      // matching rbac.ts isCreator() and RequireCreator guard behaviour.
+      isCreator: userRole === 'creator' || userRole === 'admin',
+      clearError: () => setError(null),
+      clearAuthIncident: () => setLastIncident(null),
+      refreshClaims: async () => {
+        if (!user) return;
+        try {
+          await user.getIdTokenResult(true); // force-refresh the token
+          const role = await resolveUserRole(user);
+          setUserRole(role);
+          logDebug('[AUTH] refreshClaims — new role:', role);
+        } catch {
+          logDebug('[AUTH] refreshClaims — failed, role unchanged');
+        }
+      },
+      signUpEmailPassword: async (em, pw) => {
+        setError(null);
+        await signUpEmailPassword(em, pw);
+      },
+      signInEmailPassword: async (em, pw) => {
+        setError(null);
+        await signInEmailPassword(em, pw);
+      },
+      signInGooglePopup: async () => {
+        setError(null);
+        authLog('AUTH_CLICK_GOOGLE', { mode: 'popup' });
+        transition('starting');
+        await signInGooglePopup();
+      },
+      signInGoogleRedirect: async () => {
+        setError(null);
+        authLog('AUTH_REDIRECT_START', { provider: 'google', mode: 'redirect' });
+        transition('redirecting');
+        await signInGoogleRedirect();
+      },
+      signInFacebookPopup: async () => {
+        setError(null);
+        await signInFacebookPopup();
+      },
+      signInFacebookRedirect: async () => {
+        setError(null);
+        await signInFacebookRedirect();
+      },
+      signInApplePopup: async () => {
+        setError(null);
+        await signInApplePopup();
+      },
+      signInAppleRedirect: async () => {
+        setError(null);
+        await signInAppleRedirect();
+      },
+      signOutUser: async () => {
+        setError(null);
+        if (user) clearUserPresence(user.uid).catch(() => {});
+        await signOutUser();
+        clearAuthTransientStorage();
+        setAuthFlowState('idle');
+        setLastIncident(null);
+        setAuthResolved(true);
+      },
+    }),
+    [user, userRole, loading, error, authResolved, authFlowState, lastIncident, transition]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

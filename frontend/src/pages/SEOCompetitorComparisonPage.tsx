@@ -99,7 +99,15 @@ function round2(value: number): number {
 function computeLiveComparison(
   r1Display: string,
   r2Display: string,
-  rows: Array<{ category: string; avg1: number | null; avg2: number | null; min1: number | null; min2: number | null; count1: number; count2: number }>,
+  rows: Array<{
+    category: string;
+    avg1: number | null;
+    avg2: number | null;
+    min1: number | null;
+    min2: number | null;
+    count1: number;
+    count2: number;
+  }>
 ): LiveComparison | null {
   const validRows = rows.filter((r) => r.avg1 != null && r.avg2 != null);
 
@@ -108,7 +116,8 @@ function computeLiveComparison(
   }
 
   const categoryWinners = rows.map((r) => {
-    if (r.avg1 == null || r.avg2 == null) return { category: r.category, winner: 'Données insuffisantes' };
+    if (r.avg1 == null || r.avg2 == null)
+      return { category: r.category, winner: 'Données insuffisantes' };
     return { category: r.category, winner: r.avg1 <= r.avg2 ? r1Display : r2Display };
   });
 
@@ -123,17 +132,25 @@ function computeLiveComparison(
   const min1 = min1Candidates.length > 0 ? round2(Math.min(...min1Candidates)) : 0;
   const min2 = min2Candidates.length > 0 ? round2(Math.min(...min2Candidates)) : 0;
 
-  const topCategory1 = validRows.reduce((best, row) => {
-    const diff = (row.avg2 ?? 0) - (row.avg1 ?? 0);
-    if (!best || diff > best.diff) return { category: row.category, diff };
-    return best;
-  }, null as null | { category: string; diff: number })?.category ?? 'N/A';
+  const topCategory1 =
+    validRows.reduce(
+      (best, row) => {
+        const diff = (row.avg2 ?? 0) - (row.avg1 ?? 0);
+        if (!best || diff > best.diff) return { category: row.category, diff };
+        return best;
+      },
+      null as null | { category: string; diff: number }
+    )?.category ?? 'N/A';
 
-  const topCategory2 = validRows.reduce((best, row) => {
-    const diff = (row.avg1 ?? 0) - (row.avg2 ?? 0);
-    if (!best || diff > best.diff) return { category: row.category, diff };
-    return best;
-  }, null as null | { category: string; diff: number })?.category ?? 'N/A';
+  const topCategory2 =
+    validRows.reduce(
+      (best, row) => {
+        const diff = (row.avg1 ?? 0) - (row.avg2 ?? 0);
+        if (!best || diff > best.diff) return { category: row.category, diff };
+        return best;
+      },
+      null as null | { category: string; diff: number }
+    )?.category ?? 'N/A';
 
   const isWinner1 = avg1 <= avg2;
   const winner = isWinner1 ? r1Display : r2Display;
@@ -160,7 +177,7 @@ function buildJsonLd(
   r2: string,
   territory: string,
   slug: string,
-  faqItems: FAQItem[],
+  faqItems: FAQItem[]
 ): Record<string, unknown> {
   const SITE_URL = 'https://teetee971.github.io/akiprisaye-web';
   const pageUrl = `${SITE_URL}/vs/${slug}`;
@@ -199,7 +216,10 @@ export default function SEOCompetitorComparisonPage() {
   const r1Display = RETAILER_DISPLAY[retailer1Slug] ?? retailer1Slug;
   const r2Display = RETAILER_DISPLAY[retailer2Slug] ?? retailer2Slug;
 
-  const [state, setState] = useState<{ status: 'loading' | 'success' | 'error'; comparison: LiveComparison | null }>({
+  const [state, setState] = useState<{
+    status: 'loading' | 'success' | 'error';
+    comparison: LiveComparison | null;
+  }>({
     status: 'loading',
     comparison: null,
   });
@@ -226,7 +246,7 @@ export default function SEOCompetitorComparisonPage() {
               count1: r1.summary.count,
               count2: r2.summary.count,
             };
-          }),
+          })
         );
 
         if (cancelled) return;
@@ -289,11 +309,17 @@ export default function SEOCompetitorComparisonPage() {
       <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-4xl space-y-8">
           <nav className="flex items-center gap-2 text-xs text-zinc-600">
-            <Link to="/" className="hover:text-zinc-400">Accueil</Link>
+            <Link to="/" className="hover:text-zinc-400">
+              Accueil
+            </Link>
             <span>/</span>
-            <Link to="/comparer/carrefour-vs-leclerc-guadeloupe" className="hover:text-zinc-400">Comparateurs</Link>
+            <Link to="/comparer/carrefour-vs-leclerc-guadeloupe" className="hover:text-zinc-400">
+              Comparateurs
+            </Link>
             <span>/</span>
-            <span className="text-zinc-400">{r1Display} vs {r2Display}</span>
+            <span className="text-zinc-400">
+              {r1Display} vs {r2Display}
+            </span>
           </nav>
 
           <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-zinc-400">
@@ -357,11 +383,13 @@ export default function SEOCompetitorComparisonPage() {
                       <tr key={category} className="border-b border-white/5 last:border-0">
                         <td className="px-5 py-3 text-zinc-300">{category}</td>
                         <td className="px-5 py-3">
-                          <span className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold ${
-                            catWinner === live.winner
-                              ? 'bg-emerald-400/15 text-emerald-300'
-                              : 'bg-zinc-400/10 text-zinc-400'
-                          }`}>
+                          <span
+                            className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-bold ${
+                              catWinner === live.winner
+                                ? 'bg-emerald-400/15 text-emerald-300'
+                                : 'bg-zinc-400/10 text-zinc-400'
+                            }`}
+                          >
                             {catWinner === live.winner && '🏆 '}
                             {catWinner}
                           </span>
@@ -380,7 +408,9 @@ export default function SEOCompetitorComparisonPage() {
               <details key={i} className="group rounded-xl border border-white/10 bg-white/[0.03]">
                 <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-sm font-semibold text-zinc-200">
                   {item.question}
-                  <span className="ml-3 shrink-0 text-zinc-500 transition group-open:rotate-180">▾</span>
+                  <span className="ml-3 shrink-0 text-zinc-500 transition group-open:rotate-180">
+                    ▾
+                  </span>
                 </summary>
                 <p className="px-5 pb-4 text-sm text-zinc-400">{item.answer}</p>
               </details>

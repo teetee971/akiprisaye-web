@@ -22,9 +22,7 @@ export function PriceDropAlertBanner({
     >
       <span className="text-xl shrink-0">📉</span>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-white truncate">
-          Baisse de prix détectée !
-        </p>
+        <p className="text-sm font-semibold text-white truncate">Baisse de prix détectée !</p>
         <p className="text-xs text-red-300 mt-0.5 truncate">
           {productName} — <strong>-{pct}%</strong>
           {currentPrice != null && ` → ${currentPrice.toFixed(2)} €`}

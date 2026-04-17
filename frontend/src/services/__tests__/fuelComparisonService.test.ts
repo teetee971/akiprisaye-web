@@ -41,7 +41,7 @@ const mockPrices: FuelPricePoint[] = [
     id: 'fp2',
     station: makeStation('s2', 'Baie-Mahault', 'Shell'),
     fuelType: 'SP95',
-    pricePerLiter: 1.70,
+    pricePerLiter: 1.7,
     currency: 'EUR',
     observationDate: '2026-01-11T10:00:00Z',
     source: makeSource(),
@@ -146,7 +146,7 @@ describe('calculateFuelAggregation', () => {
     const gpPrices = mockPrices.filter((p) => p.territory === 'GP');
     const agg = calculateFuelAggregation(gpPrices);
     // fp2 has isPriceCapPlafonne = true, price = 1.70
-    expect(agg.priceCapOfficiel).toBe(1.70);
+    expect(agg.priceCapOfficiel).toBe(1.7);
   });
 
   it('handles single price', () => {
@@ -199,8 +199,8 @@ describe('filterFuelPrices', () => {
   });
 
   it('combines multiple filters', () => {
-    const filtered = filterFuelPrices(mockPrices, { territory: 'GP', maxPrice: 1.70 });
+    const filtered = filterFuelPrices(mockPrices, { territory: 'GP', maxPrice: 1.7 });
     expect(filtered.length).toBeGreaterThan(0);
-    expect(filtered.every((p) => p.territory === 'GP' && p.pricePerLiter <= 1.70)).toBe(true);
+    expect(filtered.every((p) => p.territory === 'GP' && p.pricePerLiter <= 1.7)).toBe(true);
   });
 });

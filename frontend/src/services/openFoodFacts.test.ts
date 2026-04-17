@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchOffProductByBarcode, fetchOffProductDetails, validateBarcode, __offInternals } from './openFoodFacts';
+import {
+  fetchOffProductByBarcode,
+  fetchOffProductDetails,
+  validateBarcode,
+  __offInternals,
+} from './openFoodFacts';
 import { getCachedWithTTL, setCachedJson } from './localStore';
 
 describe('openFoodFacts barcode validation', () => {
@@ -37,7 +42,10 @@ describe('localStore TTL cache', () => {
     setCachedJson('off:product:12345678', { value: 'ok' });
 
     vi.setSystemTime(new Date('2026-01-09T00:00:01Z'));
-    const stale = getCachedWithTTL<{ value: string }>('off:product:12345678', __offInternals.OFF_PRODUCT_CACHE_TTL_MS);
+    const stale = getCachedWithTTL<{ value: string }>(
+      'off:product:12345678',
+      __offInternals.OFF_PRODUCT_CACHE_TTL_MS
+    );
     expect(stale).toBeNull();
   });
 });
@@ -51,21 +59,22 @@ describe('openFoodFacts response mapping', () => {
   it('maps OFF product success response to normalized result', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () =>
-        ({
-          ok: true,
-          status: 200,
-          json: async () => ({
-            status: 1,
-            product: {
-              product_name: 'Jus d’orange',
-              brands: 'AKI',
-              image_url: 'https://img.test/product.jpg',
-              quantity: '1 L',
-              categories_tags: ['en:beverages', 'fr:jus'],
-            },
-          }),
-        } as unknown as globalThis.Response)
+      vi.fn(
+        async () =>
+          ({
+            ok: true,
+            status: 200,
+            json: async () => ({
+              status: 1,
+              product: {
+                product_name: 'Jus d’orange',
+                brands: 'AKI',
+                image_url: 'https://img.test/product.jpg',
+                quantity: '1 L',
+                categories_tags: ['en:beverages', 'fr:jus'],
+              },
+            }),
+          }) as unknown as globalThis.Response
       )
     );
 
@@ -81,18 +90,31 @@ describe('openFoodFacts response mapping', () => {
   it('maps OFF not-found response', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ status: 0 }) } as unknown as globalThis.Response))
+      vi.fn(
+        async () =>
+          ({
+            ok: true,
+            status: 200,
+            json: async () => ({ status: 0 }),
+          }) as unknown as globalThis.Response
+      )
     );
 
     const result = await fetchOffProductByBarcode('12345678');
     expect(result.status).toBe('NOT_FOUND');
   });
 
-
   it('uses local override when OFF returns empty for seeded barcode', async () => {
     vi.stubGlobal(
       'fetch',
-      vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ status: 0 }) } as unknown as globalThis.Response))
+      vi.fn(
+        async () =>
+          ({
+            ok: true,
+            status: 200,
+            json: async () => ({ status: 0 }),
+          }) as unknown as globalThis.Response
+      )
     );
 
     const result = await fetchOffProductDetails('3179142767304');

@@ -1,7 +1,6 @@
- 
 /**
  * Land Mobility Price Service v2.3.0
- * 
+ *
  * Implements citizen land mobility price comparison with:
  * - Read-only data access (no data modification)
  * - Category-based matching (bus, taxi/VTC, fuel)
@@ -35,7 +34,7 @@ import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
 const LAND_MOBILITY_CONFIG = {
   AVERAGE_PRICE_TOLERANCE_PERCENT: 5,
   MIN_COVERAGE_WARNING_PERCENT: 50,
-  MAX_PRICE_AGE_WARNING_DAYS: 7,  // Shorter for more volatile prices
+  MAX_PRICE_AGE_WARNING_DAYS: 7, // Shorter for more volatile prices
 } as const;
 
 /**
@@ -53,8 +52,7 @@ export function compareLandMobilityPrices(
 
   // Filter prices by category and territory
   const filteredPrices = prices.filter(
-    (p) => p.category === category && 
-    getCategoryTerritory(p) === territory
+    (p) => p.category === category && getCategoryTerritory(p) === territory
   );
 
   if (filteredPrices.length === 0) {
@@ -83,9 +81,7 @@ export function compareLandMobilityPrices(
 /**
  * Get territory from different price point types
  */
-function getCategoryTerritory(
-  price: BusPricePoint | TaxiPricePoint | FuelPricePoint
-): Territory {
+function getCategoryTerritory(price: BusPricePoint | TaxiPricePoint | FuelPricePoint): Territory {
   if (price.category === 'BUS') {
     return (price as BusPricePoint).line.territory;
   } else if (price.category === 'TAXI') {
@@ -115,9 +111,13 @@ export function applyLandMobilityFilters(
   if (filter.operator) {
     filtered = filtered.filter((p) => {
       if (p.category === 'BUS') {
-        return (p as BusPricePoint).line.operator.toLowerCase().includes(filter.operator!.toLowerCase());
+        return (p as BusPricePoint).line.operator
+          .toLowerCase()
+          .includes(filter.operator!.toLowerCase());
       } else if (p.category === 'TAXI') {
-        return (p as TaxiPricePoint).operator.toLowerCase().includes(filter.operator!.toLowerCase());
+        return (p as TaxiPricePoint).operator
+          .toLowerCase()
+          .includes(filter.operator!.toLowerCase());
       }
       return true;
     });
@@ -293,7 +293,7 @@ export function generateLandMobilityMetadata(
     if (!sourceType) {
       logRuntimeIssueOnce(
         'land-mobility-metadata-missing-source',
-        'Missing source type while aggregating land mobility metadata. Entry ignored.',
+        'Missing source type while aggregating land mobility metadata. Entry ignored.'
       );
       return;
     }
@@ -308,20 +308,20 @@ export function generateLandMobilityMetadata(
       sourceData.providers.add((price as TaxiPricePoint).operator);
     } else if (price.category === 'FUEL') {
       const station = (price as FuelPricePoint).station;
-      sourceData.providers.add(station.stationId || station.stationName || station.brand || 'unknown');
+      sourceData.providers.add(
+        station.stationId || station.stationName || station.brand || 'unknown'
+      );
     }
 
     sourceCounts.set(sourceType, sourceData);
   });
 
-  const sources: SourceSummary[] = Array.from(sourceCounts.entries()).map(
-    ([source, data]) => ({
-      source,
-      observationCount: data.count,
-      providerCount: data.providers.size,
-      percentage: Math.round((data.count / prices.length) * 100 * 100) / 100,
-    })
-  );
+  const sources: SourceSummary[] = Array.from(sourceCounts.entries()).map(([source, data]) => ({
+    source,
+    observationCount: data.count,
+    providerCount: data.providers.size,
+    percentage: Math.round((data.count / prices.length) * 100 * 100) / 100,
+  }));
 
   // Generate warnings
   const warnings: string[] = [];
@@ -332,9 +332,7 @@ export function generateLandMobilityMetadata(
 
   const now = Date.now();
   const maxAgeMs = LAND_MOBILITY_CONFIG.MAX_PRICE_AGE_WARNING_DAYS * 24 * 60 * 60 * 1000;
-  const hasOldData = prices.some(
-    (p) => now - new Date(p.observationDate).getTime() > maxAgeMs
-  );
+  const hasOldData = prices.some((p) => now - new Date(p.observationDate).getTime() > maxAgeMs);
   if (hasOldData) {
     warnings.push(
       `Some prices are older than ${LAND_MOBILITY_CONFIG.MAX_PRICE_AGE_WARNING_DAYS} days`
@@ -366,9 +364,7 @@ export function generateLandMobilityMetadata(
 /**
  * Get cheapest option
  */
-export function getCheapestOption(
-  prices: LandMobilityPricePoint[]
-): LandMobilityPricePoint | null {
+export function getCheapestOption(prices: LandMobilityPricePoint[]): LandMobilityPricePoint | null {
   if (prices.length === 0) {
     return null;
   }
@@ -394,10 +390,7 @@ export function getMostExpensiveOption(
 /**
  * Calculate percentage difference
  */
-export function calculatePercentageDifference(
-  price1: number,
-  price2: number
-): number {
+export function calculatePercentageDifference(price1: number, price2: number): number {
   if (price2 === 0) {
     return 0;
   }
@@ -444,22 +437,14 @@ export function groupPricesByTerritory(
 /**
  * Filter bus prices by operator
  */
-export function filterBusByOperator(
-  prices: BusPricePoint[],
-  operator: string
-): BusPricePoint[] {
-  return prices.filter((p) =>
-    p.line.operator.toLowerCase().includes(operator.toLowerCase())
-  );
+export function filterBusByOperator(prices: BusPricePoint[], operator: string): BusPricePoint[] {
+  return prices.filter((p) => p.line.operator.toLowerCase().includes(operator.toLowerCase()));
 }
 
 /**
  * Filter fuel prices by type
  */
-export function filterFuelByType(
-  prices: FuelPricePoint[],
-  fuelType: string
-): FuelPricePoint[] {
+export function filterFuelByType(prices: FuelPricePoint[], fuelType: string): FuelPricePoint[] {
   return prices.filter((p) => p.fuelType === fuelType);
 }
 

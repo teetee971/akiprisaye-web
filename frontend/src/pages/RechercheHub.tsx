@@ -6,11 +6,7 @@ import { HeroImage } from '../components/ui/HeroImage';
 import OptimizedImage from '../components/OptimizedImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
-const suggestedQueries = [
-  'Produit du quotidien',
-  'Enseigne locale',
-  'Comparateur thématique',
-];
+const suggestedQueries = ['Produit du quotidien', 'Enseigne locale', 'Comparateur thématique'];
 
 const destinations = [
   {
@@ -45,7 +41,7 @@ export default function RechercheHub() {
         currency: 'EUR',
         maximumFractionDigits: 2,
       }),
-    [],
+    []
   );
 
   const formatSuggestedPrice = (index: number) => currencyFormatter.format(1.8 + index * 0.7);
@@ -61,7 +57,7 @@ export default function RechercheHub() {
           observer.disconnect();
         }
       },
-      { rootMargin: '200px' },
+      { rootMargin: '200px' }
     );
 
     observer.observe(node);
@@ -88,11 +84,19 @@ export default function RechercheHub() {
         heightPx={624}
         sizes="100vw"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>Recherche unifiée</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Point d’entrée unique pour rechercher un produit, un prix ou un magasin.</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          Recherche unifiée
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Point d’entrée unique pour rechercher un produit, un prix ou un magasin.
+        </p>
       </HeroImage>
 
-      <section ref={visualRef} className={styles.searchSection} aria-label="Habillage visuel professionnel">
+      <section
+        ref={visualRef}
+        className={styles.searchSection}
+        aria-label="Habillage visuel professionnel"
+      >
         <h2 className={styles.cardTitle}>Visualisation professionnelle 2D / 3D</h2>
         {showVisual ? (
           <OptimizedImage
@@ -113,12 +117,15 @@ export default function RechercheHub() {
 
       <section className={styles.searchSection} aria-label="Recherche">
         <p className={styles.label}>
-          Utilisez la recherche globale depuis l’en-tête (Ctrl/Cmd + K) pour éviter les saisies redondantes.
+          Utilisez la recherche globale depuis l’en-tête (Ctrl/Cmd + K) pour éviter les saisies
+          redondantes.
         </p>
         <Link to="/" className={styles.card}>
           <div>
             <h2 className={styles.cardTitle}>Ouvrir la recherche globale</h2>
-            <p className={styles.cardDescription}>Retournez à l’accueil puis activez la recherche centrale.</p>
+            <p className={styles.cardDescription}>
+              Retournez à l’accueil puis activez la recherche centrale.
+            </p>
           </div>
           <span className={styles.cardAction}>Accéder</span>
         </Link>
@@ -137,7 +144,8 @@ export default function RechercheHub() {
           aria-label="Résultats de recherche"
         >
           <p className={styles.resultMessage}>
-            La recherche centrale agrège pages, produits, enseignes et territoires dans une seule interface.
+            La recherche centrale agrège pages, produits, enseignes et territoires dans une seule
+            interface.
           </p>
         </div>
       </section>
@@ -160,8 +168,8 @@ export default function RechercheHub() {
 
       <section className={styles.note} aria-label="Transparence">
         <p>
-          Cette page propose une recherche unifiée avec des données publiques externes,
-          sans collecte de données personnelles ni appel direct depuis l’interface.
+          Cette page propose une recherche unifiée avec des données publiques externes, sans
+          collecte de données personnelles ni appel direct depuis l’interface.
         </p>
       </section>
     </main>

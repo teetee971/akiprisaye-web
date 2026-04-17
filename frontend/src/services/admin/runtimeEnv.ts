@@ -5,5 +5,5 @@ export function isStaticPreviewEnv(): boolean {
 
 export function getAdminDegradedModeReason(): string {
   if (!isStaticPreviewEnv()) return '';
-  return "Mode dégradé preview statique: les appels API admin sont désactivés sur cet environnement.";
+  return 'Mode dégradé preview statique: les appels API admin sont désactivés sur cet environnement.';
 }

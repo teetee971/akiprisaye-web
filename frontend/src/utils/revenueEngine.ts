@@ -100,7 +100,7 @@ export function computeProductScores(): ProductScore[] {
       const marginScore = Math.min(data.retailers.size * 10, 100);
 
       // recency: linear decay over RECENCY_WINDOW_MS — 100 if clicked now, 0 if older
-      const ageMs        = now - data.lastClickAt;
+      const ageMs = now - data.lastClickAt;
       const recencyScore = Math.max(0, Math.round((1 - ageMs / RECENCY_WINDOW_MS) * 100));
 
       // Base weighted composite — 40% clicks + 40% margin + 20% recency
@@ -139,21 +139,21 @@ export function getTopProducts(n = 5): ProductScore[] {
 export function getKPISummary(): KPISummary {
   const events = getRevenueEvents();
 
-  const products  = new Set<string>();
+  const products = new Set<string>();
   const retailers = new Set<string>();
-  let   lastClickAt: number | null = null;
+  let lastClickAt: number | null = null;
 
   for (const e of events) {
-    if (e.product)  products.add(e.product);
+    if (e.product) products.add(e.product);
     if (e.retailer) retailers.add(e.retailer);
     if (lastClickAt === null || e.clickedAt > lastClickAt) lastClickAt = e.clickedAt;
   }
 
   return {
     revenueEvents: events.length,
-    clicks:        events.length,
-    products:      products.size,
-    retailers:     retailers.size,
+    clicks: events.length,
+    products: products.size,
+    retailers: retailers.size,
     lastClickAt,
   };
 }

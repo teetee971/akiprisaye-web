@@ -1,6 +1,6 @@
 /**
  * Scan Types Tests - v1.0.0
- * 
+ *
  * Tests for scan state management and transitions
  */
 
@@ -91,7 +91,7 @@ describe('Scan Types', () => {
 
     it('should accept all notFoundBehavior values', () => {
       const behaviors = ['manual_search', 'local_save', 'show_empty'] as const;
-      
+
       behaviors.forEach((behavior) => {
         const settings: ScanSettings = {
           ...DEFAULT_SCAN_SETTINGS,

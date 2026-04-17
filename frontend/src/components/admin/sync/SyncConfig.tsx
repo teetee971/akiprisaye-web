@@ -1,4 +1,3 @@
- 
 /**
  * Composant de configuration de la synchronisation
  */
@@ -17,7 +16,7 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
   const [saved, setSaved] = useState(false);
 
   const handleChange = (field: keyof SyncSchedulerConfig, value: any) => {
-    setConfig(prev => ({
+    setConfig((prev) => ({
       ...prev,
       [field]: value,
     }));
@@ -28,7 +27,7 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
     syncSchedulerService.setSchedulerConfig(config);
     setSaved(true);
     onSave();
-    
+
     setTimeout(() => setSaved(false), 3000);
   };
 
@@ -38,7 +37,7 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
     syncSchedulerService.setSchedulerConfig(defaultConfig);
     setSaved(true);
     onSave();
-    
+
     setTimeout(() => setSaved(false), 3000);
   };
 
@@ -55,7 +54,10 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
         {/* Cron Schedules */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="sync-products-interval" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="sync-products-interval"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Interval sync produits (cron)
             </label>
             <input
@@ -72,7 +74,10 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
           </div>
 
           <div>
-            <label htmlFor="sync-prices-interval" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="sync-prices-interval"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Interval sync prix (cron)
             </label>
             <input
@@ -92,7 +97,10 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
         {/* Limits */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="sync-max-products" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="sync-max-products"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Max produits par sync
             </label>
             <input
@@ -107,7 +115,10 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
           </div>
 
           <div>
-            <label htmlFor="sync-max-prices" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="sync-max-prices"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Max prix par sync
             </label>
             <input
@@ -125,7 +136,10 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
         {/* Retry */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="sync-max-retries" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="sync-max-retries"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Tentatives max
             </label>
             <input
@@ -140,7 +154,10 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
           </div>
 
           <div>
-            <label htmlFor="sync-retry-delay" className="block text-sm font-medium text-gray-700 mb-2">
+            <label
+              htmlFor="sync-retry-delay"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
               Délai entre tentatives (ms)
             </label>
             <input
@@ -165,9 +182,7 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
               onChange={(e) => handleChange('notifyOnError', e.target.checked)}
               className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">
-              Notifier en cas d'erreur
-            </span>
+            <span className="ml-2 text-sm text-gray-700">Notifier en cas d'erreur</span>
           </label>
 
           <label className="flex items-center">
@@ -177,9 +192,7 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
               onChange={(e) => handleChange('notifyOnComplete', e.target.checked)}
               className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">
-              Notifier à la fin de chaque sync
-            </span>
+            <span className="ml-2 text-sm text-gray-700">Notifier à la fin de chaque sync</span>
           </label>
         </div>
 
@@ -197,9 +210,7 @@ export default function SyncConfig({ onSave }: SyncConfigProps) {
           >
             Réinitialiser
           </button>
-          {saved && (
-            <span className="text-green-600 text-sm">✓ Configuration sauvegardée</span>
-          )}
+          {saved && <span className="text-green-600 text-sm">✓ Configuration sauvegardée</span>}
         </div>
       </div>
     </div>

@@ -3,8 +3,8 @@
  * Permet aux utilisateurs de définir des alertes prix sans créer de compte
  */
 
-import { useState } from "react";
-import { GlassCard } from "../ui/glass-card";
+import { useState } from 'react';
+import { GlassCard } from '../ui/glass-card';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 
 interface PriceAlert {
@@ -27,36 +27,36 @@ export function PriceAlertButton({
   productId,
   productName,
   currentPrice,
-  territory = "GP"
+  territory = 'GP',
 }: PriceAlertButtonProps) {
   const [showModal, setShowModal] = useState(false);
-  const [alertType, setAlertType] = useState<"price" | "percent">("price");
+  const [alertType, setAlertType] = useState<'price' | 'percent'>('price');
   const [targetPrice, setTargetPrice] = useState(currentPrice * 0.9);
   const [targetPercent, setTargetPercent] = useState(10);
 
   const handleSaveAlert = () => {
     const alerts = safeLocalStorage.getJSON<PriceAlert[]>('priceAlerts:v1', []);
-    
+
     const newAlert: PriceAlert = {
       productId,
       territory,
-      targetPrice: alertType === "price" ? targetPrice : null,
-      targetPercentDrop: alertType === "percent" ? targetPercent : null,
+      targetPrice: alertType === 'price' ? targetPrice : null,
+      targetPercentDrop: alertType === 'percent' ? targetPercent : null,
       createdAt: Date.now(),
-      lastNotifiedAt: null
+      lastNotifiedAt: null,
     };
 
     alerts.push(newAlert);
     safeLocalStorage.setJSON('priceAlerts:v1', alerts);
-    
+
     setShowModal(false);
-    
+
     // Show success toast
     const event = new CustomEvent('show-toast', {
       detail: {
         message: '✅ Alerte créée ! Vous serez notifié lors de votre prochaine visite.',
-        type: 'success'
-      }
+        type: 'success',
+      },
     });
     window.dispatchEvent(event);
   };
@@ -73,9 +73,7 @@ export function PriceAlertButton({
       </button>
 
       {showModal && (
-        <div 
-          className="fixed inset-0 z-modal flex items-center justify-center p-4 animate-fade-in"
-        >
+        <div className="fixed inset-0 z-modal flex items-center justify-center p-4 animate-fade-in">
           <button
             type="button"
             className="absolute inset-0 bg-black/70 cursor-default"
@@ -83,9 +81,7 @@ export function PriceAlertButton({
             tabIndex={-1}
             aria-label="Fermer"
           />
-          <GlassCard 
-            className="relative z-10 max-w-md w-full animate-scale-in"
-          >
+          <GlassCard className="relative z-10 max-w-md w-full animate-scale-in">
             <div className="space-y-4">
               <div className="flex items-start justify-between">
                 <div>
@@ -93,7 +89,9 @@ export function PriceAlertButton({
                     🔔 Alerte baisse de prix
                   </h3>
                   <p className="text-sm text-gray-400">{productName}</p>
-                  <p className="text-xs text-gray-500 mt-1">Prix actuel : {currentPrice.toFixed(2)} €</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Prix actuel : {currentPrice.toFixed(2)} €
+                  </p>
                 </div>
                 <button
                   onClick={() => setShowModal(false)}
@@ -109,21 +107,21 @@ export function PriceAlertButton({
                 <p className="text-sm font-semibold text-gray-300">Type d'alerte</p>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setAlertType("price")}
+                    onClick={() => setAlertType('price')}
                     className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
-                      alertType === "price"
-                        ? "bg-yellow-600 text-white"
-                        : "bg-slate-800/50 text-gray-400 hover:bg-slate-800/70"
+                      alertType === 'price'
+                        ? 'bg-yellow-600 text-white'
+                        : 'bg-slate-800/50 text-gray-400 hover:bg-slate-800/70'
                     }`}
                   >
                     Prix cible
                   </button>
                   <button
-                    onClick={() => setAlertType("percent")}
+                    onClick={() => setAlertType('percent')}
                     className={`flex-1 px-4 py-2 rounded-lg font-medium transition-all ${
-                      alertType === "percent"
-                        ? "bg-yellow-600 text-white"
-                        : "bg-slate-800/50 text-gray-400 hover:bg-slate-800/70"
+                      alertType === 'percent'
+                        ? 'bg-yellow-600 text-white'
+                        : 'bg-slate-800/50 text-gray-400 hover:bg-slate-800/70'
                     }`}
                   >
                     Baisse %
@@ -132,7 +130,7 @@ export function PriceAlertButton({
               </div>
 
               {/* Seuil */}
-              {alertType === "price" ? (
+              {alertType === 'price' ? (
                 <div className="space-y-2">
                   <label htmlFor="targetPrice" className="text-sm font-semibold text-gray-300">
                     Me prévenir si le prix descend à :
@@ -180,9 +178,9 @@ export function PriceAlertButton({
               {/* Info */}
               <div className="p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
                 <p className="text-xs text-blue-300">
-                  <span className="font-semibold">ℹ️ Comment ça marche ?</span><br />
-                  À votre prochaine visite, si le prix a atteint votre seuil, vous verrez une notification.
-                  Aucun compte requis, les alertes sont stockées localement.
+                  <span className="font-semibold">ℹ️ Comment ça marche ?</span>
+                  <br />À votre prochaine visite, si le prix a atteint votre seuil, vous verrez une
+                  notification. Aucun compte requis, les alertes sont stockées localement.
                 </p>
               </div>
 

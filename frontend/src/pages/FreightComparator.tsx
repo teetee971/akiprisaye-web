@@ -1,10 +1,9 @@
- 
 /**
  * Freight Comparator - Comparateur Fret Maritime & Colis
- * 
+ *
  * Premier comparateur fret maritime & colis pour Outre-mer
  * Répond à la problématique #1 de la vie chère (Rapport Sénat 2024-2025)
- * 
+ *
  * Features:
  * - Simulation d'envoi avec calcul octroi de mer
  * - Comparaison multi-transporteurs
@@ -41,10 +40,7 @@ import type {
   FreightQuoteRanking,
 } from '../types/freightComparison';
 import type { Territory } from '../types/priceAlerts';
-import {
-  simulateFreightQuote,
-  calculateOctroiDeMer,
-} from '../services/freightComparisonService';
+import { simulateFreightQuote, calculateOctroiDeMer } from '../services/freightComparisonService';
 import {
   exportFreightComparisonToCSV,
   exportFreightComparisonToText,
@@ -65,7 +61,9 @@ const FreightComparator: React.FC = () => {
   const [length, setLength] = useState(30);
   const [width, setWidth] = useState(20);
   const [height, setHeight] = useState(15);
-  const [packageType, setPackageType] = useState<'standard' | 'fragile' | 'valeur_declaree'>('standard');
+  const [packageType, setPackageType] = useState<'standard' | 'fragile' | 'valeur_declaree'>(
+    'standard'
+  );
   const [declaredValue, setDeclaredValue] = useState<number | undefined>(undefined);
   const [urgency, setUrgency] = useState<UrgencyLevel>('standard');
 
@@ -202,9 +200,17 @@ const FreightComparator: React.FC = () => {
           name="description"
           content="Comparez les prix des transporteurs pour vos envois vers l'Outre-mer. Transparence totale sur l'octroi de mer et les frais cachés."
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-fret" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-fret" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-fret" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-fret" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/comparateur-fret"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/comparateur-fret"
+        />
       </Helmet>
 
       <div className="min-h-screen bg-slate-950">
@@ -261,12 +267,15 @@ const FreightComparator: React.FC = () => {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Origin */}
                 <div>
-                  <label htmlFor="fret-origine" className="block text-sm font-medium text-gray-300 mb-2">
-                      Origine
-                    </label>
+                  <label
+                    htmlFor="fret-origine"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Origine
+                  </label>
                   <select
-                      id="fret-origine"
-                      value={origin}
+                    id="fret-origine"
+                    value={origin}
                     onChange={(e) => setOrigin(e.target.value)}
                     className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
@@ -280,12 +289,15 @@ const FreightComparator: React.FC = () => {
 
                 {/* Destination */}
                 <div>
-                  <label htmlFor="fret-destination" className="block text-sm font-medium text-gray-300 mb-2">
-                      Destination
-                    </label>
+                  <label
+                    htmlFor="fret-destination"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Destination
+                  </label>
                   <select
-                      id="fret-destination"
-                      value={destination}
+                    id="fret-destination"
+                    value={destination}
                     onChange={(e) => setDestination(e.target.value as Territory)}
                     className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
@@ -299,12 +311,15 @@ const FreightComparator: React.FC = () => {
 
                 {/* Weight */}
                 <div>
-                  <label htmlFor="fret-poids" className="block text-sm font-medium text-gray-300 mb-2">
-                      Poids (kg)
-                    </label>
+                  <label
+                    htmlFor="fret-poids"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Poids (kg)
+                  </label>
                   <input
-                      id="fret-poids"
-                      type="number"
+                    id="fret-poids"
+                    type="number"
                     min="0.1"
                     step="0.1"
                     value={weight}
@@ -315,12 +330,15 @@ const FreightComparator: React.FC = () => {
 
                 {/* Dimensions */}
                 <div>
-                  <label htmlFor="fret-longueur" className="block text-sm font-medium text-gray-300 mb-2">
-                      Longueur (cm)
-                    </label>
+                  <label
+                    htmlFor="fret-longueur"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Longueur (cm)
+                  </label>
                   <input
-                      id="fret-longueur"
-                      type="number"
+                    id="fret-longueur"
+                    type="number"
                     min="1"
                     value={length}
                     onChange={(e) => setLength(parseInt(e.target.value) || 0)}
@@ -329,12 +347,15 @@ const FreightComparator: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="fret-largeur" className="block text-sm font-medium text-gray-300 mb-2">
-                      Largeur (cm)
-                    </label>
+                  <label
+                    htmlFor="fret-largeur"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Largeur (cm)
+                  </label>
                   <input
-                      id="fret-largeur"
-                      type="number"
+                    id="fret-largeur"
+                    type="number"
                     min="1"
                     value={width}
                     onChange={(e) => setWidth(parseInt(e.target.value) || 0)}
@@ -343,12 +364,15 @@ const FreightComparator: React.FC = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="fret-hauteur" className="block text-sm font-medium text-gray-300 mb-2">
-                      Hauteur (cm)
-                    </label>
+                  <label
+                    htmlFor="fret-hauteur"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Hauteur (cm)
+                  </label>
                   <input
-                      id="fret-hauteur"
-                      type="number"
+                    id="fret-hauteur"
+                    type="number"
                     min="1"
                     value={height}
                     onChange={(e) => setHeight(parseInt(e.target.value) || 0)}
@@ -358,12 +382,15 @@ const FreightComparator: React.FC = () => {
 
                 {/* Package Type */}
                 <div>
-                  <label htmlFor="fret-type-colis" className="block text-sm font-medium text-gray-300 mb-2">
-                      Type de colis
-                    </label>
+                  <label
+                    htmlFor="fret-type-colis"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Type de colis
+                  </label>
                   <select
-                      id="fret-type-colis"
-                      value={packageType}
+                    id="fret-type-colis"
+                    value={packageType}
                     onChange={(e) =>
                       setPackageType(e.target.value as 'standard' | 'fragile' | 'valeur_declaree')
                     }
@@ -378,7 +405,10 @@ const FreightComparator: React.FC = () => {
                 {/* Declared Value (if applicable) */}
                 {packageType === 'valeur_declaree' && (
                   <div>
-                    <label htmlFor="fret-valeur-declaree" className="block text-sm font-medium text-gray-300 mb-2">
+                    <label
+                      htmlFor="fret-valeur-declaree"
+                      className="block text-sm font-medium text-gray-300 mb-2"
+                    >
                       Valeur déclarée (€)
                     </label>
                     <input
@@ -395,12 +425,15 @@ const FreightComparator: React.FC = () => {
 
                 {/* Urgency */}
                 <div>
-                  <label htmlFor="fret-urgence" className="block text-sm font-medium text-gray-300 mb-2">
-                      Urgence
-                    </label>
+                  <label
+                    htmlFor="fret-urgence"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
+                    Urgence
+                  </label>
                   <select
-                      id="fret-urgence"
-                      value={urgency}
+                    id="fret-urgence"
+                    value={urgency}
                     onChange={(e) => setUrgency(e.target.value as UrgencyLevel)}
                     className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
@@ -496,10 +529,12 @@ const FreightComparator: React.FC = () => {
                         <FileText className="w-4 h-4" />
                         <span>TXT</span>
                       </button>
-                      
+
                       {/* Sort Control */}
                       <div className="flex items-center gap-2 ml-2 pl-2 border-l border-slate-600">
-                        <label htmlFor="fret-trier-par" className="text-sm text-gray-400">Trier par:</label>
+                        <label htmlFor="fret-trier-par" className="text-sm text-gray-400">
+                          Trier par:
+                        </label>
                         <select
                           id="fret-trier-par"
                           value={sortBy}

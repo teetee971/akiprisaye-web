@@ -19,19 +19,14 @@ import { useState, useCallback, useRef } from 'react';
 export type NFCSupport =
   | 'checking'
   | 'supported'
-  | 'not-supported'   // Browser doesn't support Web NFC
+  | 'not-supported' // Browser doesn't support Web NFC
   | 'permission-denied'
   | 'error';
 
-export type NFCScanState =
-  | 'idle'
-  | 'scanning'
-  | 'reading'
-  | 'success'
-  | 'error';
+export type NFCScanState = 'idle' | 'scanning' | 'reading' | 'success' | 'error';
 
 export interface NFCRecord {
-  recordType: string;  // 'text' | 'url' | 'mime' | 'smart-poster' | 'absolute-url' | 'unknown'
+  recordType: string; // 'text' | 'url' | 'mime' | 'smart-poster' | 'absolute-url' | 'unknown'
   mediaType?: string;
   data: string;
 }
@@ -99,7 +94,9 @@ const EAN_REGEX = /\b(\d{8}|\d{13})\b/;
 /** Patterns prix : 1,49 / 1.49 / EUR 1.49 / 1,49 € */
 const PRICE_REGEX = /(?:€|EUR|price[=:]?)?\s*(\d{1,4})[.,](\d{2})\s*(?:€|EUR)?/i;
 
-function extractESLData(records: NFCRecord[]): Pick<NFCESLResult, 'ean' | 'price' | 'productName' | 'eslBrand'> {
+function extractESLData(
+  records: NFCRecord[]
+): Pick<NFCESLResult, 'ean' | 'price' | 'productName' | 'eslBrand'> {
   let ean: string | null = null;
   let price: number | null = null;
   let productName: string | null = null;
@@ -111,7 +108,8 @@ function extractESLData(records: NFCRecord[]): Pick<NFCESLResult, 'ean' | 'price
   if (allText.includes('ses-imagotag') || allText.includes('vusion')) eslBrand = 'SES-imagotag';
   else if (allText.includes('hanshow')) eslBrand = 'Hanshow';
   else if (allText.includes('pricer')) eslBrand = 'Pricer';
-  else if (allText.includes('displaydata') || allText.includes('zkong')) eslBrand = 'ZKong/DisplayData';
+  else if (allText.includes('displaydata') || allText.includes('zkong'))
+    eslBrand = 'ZKong/DisplayData';
 
   // Extract EAN
   const eanMatch = EAN_REGEX.exec(allText);
@@ -195,7 +193,12 @@ export function useNFCReader() {
   const startScan = useCallback(async () => {
     const support = checkSupport();
     if (support === 'not-supported') {
-      setState((s) => ({ ...s, support: 'not-supported', scanState: 'error', error: 'Web NFC non supporté sur ce navigateur. Utilisez Chrome Android 89+.' }));
+      setState((s) => ({
+        ...s,
+        support: 'not-supported',
+        scanState: 'error',
+        error: 'Web NFC non supporté sur ce navigateur. Utilisez Chrome Android 89+.',
+      }));
       return;
     }
 
@@ -231,7 +234,7 @@ export function useNFCReader() {
         setState((s) => ({
           ...s,
           scanState: 'error',
-          error: 'Erreur de lecture NFC. Repositionnez votre téléphone sur l\'étiquette.',
+          error: "Erreur de lecture NFC. Repositionnez votre téléphone sur l'étiquette.",
         }));
       };
 
@@ -243,8 +246,12 @@ export function useNFCReader() {
       let errorText = 'Erreur NFC inconnue.';
       let support: NFCSupport = 'error';
 
-      if (errMsg.includes('permission') || errMsg.includes('denied') || errMsg.includes('NotAllowedError')) {
-        errorText = 'Permission NFC refusée. Autorisez l\'accès NFC dans les paramètres.';
+      if (
+        errMsg.includes('permission') ||
+        errMsg.includes('denied') ||
+        errMsg.includes('NotAllowedError')
+      ) {
+        errorText = "Permission NFC refusée. Autorisez l'accès NFC dans les paramètres.";
         support = 'permission-denied';
       } else if (errMsg.includes('not supported') || errMsg.includes('NotSupportedError')) {
         errorText = 'NFC non disponible sur cet appareil.';

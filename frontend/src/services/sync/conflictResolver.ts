@@ -2,12 +2,7 @@
  * Service de résolution de conflits et déduplication
  */
 
-import type {
-  Product,
-  ConflictResolution,
-  ConflictStrategy,
-  OFFProduct,
-} from './types';
+import type { Product, ConflictResolution, ConflictStrategy, OFFProduct } from './types';
 import { mapOFFToProduct } from './openFoodFactsService';
 
 /**
@@ -39,7 +34,7 @@ function stringSimilarity(str1: string, str2: string): number {
  */
 function levenshteinDistance(str1: string, str2: string): number {
   const matrix: number[][] = Array.from({ length: str2.length + 1 }, () =>
-    Array.from({ length: str1.length + 1 }, () => 0),
+    Array.from({ length: str1.length + 1 }, () => 0)
   );
 
   for (let i = 0; i <= str2.length; i++) {
@@ -57,8 +52,8 @@ function levenshteinDistance(str1: string, str2: string): number {
       } else {
         matrix[i][j] = Math.min(
           matrix[i - 1][j - 1] + 1, // substitution
-          matrix[i][j - 1] + 1,     // insertion
-          matrix[i - 1][j] + 1      // deletion
+          matrix[i][j - 1] + 1, // insertion
+          matrix[i - 1][j] + 1 // deletion
         );
       }
     }
@@ -90,7 +85,7 @@ export function calculateSimilarity(
       const max = Math.max(Math.abs(value1), Math.abs(value2));
       if (max > 0) {
         const diff = Math.abs(value1 - value2);
-        totalScore += 1 - (diff / max);
+        totalScore += 1 - diff / max;
         fieldCount++;
       }
     }
@@ -126,7 +121,7 @@ export function resolveConflict(
   strategy: ConflictStrategy = 'newest_wins'
 ): Product {
   // Convertir remote en Product si c'est un OFFProduct
-  const remoteProduct = 'code' in remote ? mapOFFToProduct(remote) as Product : remote;
+  const remoteProduct = 'code' in remote ? (mapOFFToProduct(remote) as Product) : remote;
 
   // Si le produit local a été modifié manuellement, priorité locale
   if (local.metadata?.manuallyEdited) {
@@ -155,7 +150,9 @@ export function resolveConflict(
 
     case 'newest_wins': {
       const localDate = local.metadata?.lastSync ? new Date(local.metadata.lastSync) : new Date(0);
-      const remoteDate = remoteProduct.metadata?.lastSync ? new Date(remoteProduct.metadata.lastSync) : new Date();
+      const remoteDate = remoteProduct.metadata?.lastSync
+        ? new Date(remoteProduct.metadata.lastSync)
+        : new Date();
 
       if (remoteDate > localDate) {
         return {
@@ -261,9 +258,7 @@ export function resolveAllConflicts(
   conflicts: Array<{ local: Product; remote: Product; similarity: number }>,
   strategy: ConflictStrategy = 'newest_wins'
 ): Product[] {
-  return conflicts.map(conflict => 
-    resolveConflict(conflict.local, conflict.remote, strategy)
-  );
+  return conflicts.map((conflict) => resolveConflict(conflict.local, conflict.remote, strategy));
 }
 
 /**

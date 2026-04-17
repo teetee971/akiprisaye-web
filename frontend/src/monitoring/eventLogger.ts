@@ -52,8 +52,10 @@ export function logEvent(name: EventName, payload?: Record<string, unknown>): vo
 
 /** Return all buffered events */
 export function getEvents(): AppEvent[] {
-  return monitoringBuffer.getItems().filter(
-    (item): item is AppEvent =>
-      typeof item === 'object' && item !== null && (item as AppEvent).category === 'event',
-  );
+  return monitoringBuffer
+    .getItems()
+    .filter(
+      (item): item is AppEvent =>
+        typeof item === 'object' && item !== null && (item as AppEvent).category === 'event'
+    );
 }

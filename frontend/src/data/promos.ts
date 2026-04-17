@@ -4,7 +4,7 @@ export const promosDataset: Promo[] = [
   {
     id: 'gp-bas-du-fort-bebe-lingettes',
     title: 'Lingettes bébé douceur x3',
-    brand: 'Mots d\'Enfants',
+    brand: "Mots d'Enfants",
     category: 'bebe',
     price: 4.79,
     oldPrice: 6.49,
@@ -22,7 +22,7 @@ export const promosDataset: Promo[] = [
     brand: 'Dop',
     category: 'hygiene',
     price: 3.95,
-    oldPrice: 5.20,
+    oldPrice: 5.2,
     discountPct: 24,
     validFrom: '2026-02-12',
     validTo: '2026-02-18',
@@ -34,7 +34,7 @@ export const promosDataset: Promo[] = [
   {
     id: 'gp-bas-du-fort-epicerie-riz',
     title: 'Riz long grain 5kg',
-    brand: 'Uncle Ben\'s',
+    brand: "Uncle Ben's",
     category: 'epicerie',
     price: 9.99,
     oldPrice: 12.8,

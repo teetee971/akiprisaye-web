@@ -65,6 +65,11 @@ const CONFIG = {
     'https://www.franceinfo.fr/france/outre-mer.rss',
     'https://la1ere.franceinfo.fr/actu/rss',
     'https://imazpress.com/feed',
+    'https://www.rci.fm/guadeloupe/rss.xml',
+    'https://www.rci.fm/martinique/rss.xml',
+    'https://la1ere.franceinfo.fr/economie/rss?r=polynesie',
+    'https://la1ere.franceinfo.fr/economie/rss?r=nouvellecaledonie',
+    'https://la1ere.franceinfo.fr/economie/rss?r=saintpierreetmiquelon',
   ],
   /** GitHub repo */
   repo: process.env.GITHUB_REPOSITORY ?? 'teetee971/akiprisaye-web',

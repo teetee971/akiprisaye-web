@@ -30,9 +30,7 @@ export function SkeletonImage({ className = '' }) {
 }
 
 export function SkeletonButton() {
-  return (
-    <div className="h-10 w-32 bg-slate-700 dark:bg-slate-600 animate-pulse rounded-lg"></div>
-  );
+  return <div className="h-10 w-32 bg-slate-700 dark:bg-slate-600 animate-pulse rounded-lg"></div>;
 }
 
 export function SkeletonTable({ rows = 5, columns = 4 }) {
@@ -50,7 +48,7 @@ export function SkeletonTable({ rows = 5, columns = 4 }) {
               key={`row-${rowIndex}-col-${colIndex}`}
               className="h-6 bg-slate-800 dark:bg-slate-700 rounded"
             ></div>
-          )),
+          ))
         )}
       </div>
     </div>

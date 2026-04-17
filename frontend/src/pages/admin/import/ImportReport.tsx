@@ -1,4 +1,3 @@
- 
 /**
  * ImportReport Component
  * Display import results and statistics
@@ -21,7 +20,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
   const downloadErrorReport = () => {
     if (result.errors.length === 0) return;
 
-    const errorData = result.errors.map(error => ({
+    const errorData = result.errors.map((error) => ({
       ligne: error.row,
       champ: error.field || '',
       valeur: error.value || '',
@@ -67,7 +66,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
           <div className="mb-1 text-3xl font-bold text-slate-900">{result.total}</div>
           <div className="text-sm text-slate-600">Total de lignes</div>
         </div>
-        
+
         <div className="p-4 bg-green-500/10 backdrop-blur-sm border border-green-500/30 rounded-lg text-center">
           <div className="flex items-center justify-center space-x-2 mb-1">
             <CheckCircle className="w-5 h-5 text-green-400" />
@@ -75,7 +74,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
           </div>
           <div className="text-sm text-slate-600">Importés</div>
         </div>
-        
+
         <div className="p-4 bg-red-500/10 backdrop-blur-sm border border-red-500/30 rounded-lg text-center">
           <div className="flex items-center justify-center space-x-2 mb-1">
             <XCircle className="w-5 h-5 text-red-400" />
@@ -89,12 +88,16 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="text-slate-700">Taux de réussite</span>
-          <span className={cn(
-            'font-semibold',
-            successRate === 100 ? 'text-green-400' :
-            successRate >= 80 ? 'text-yellow-400' :
-            'text-red-400'
-          )}>
+          <span
+            className={cn(
+              'font-semibold',
+              successRate === 100
+                ? 'text-green-400'
+                : successRate >= 80
+                  ? 'text-yellow-400'
+                  : 'text-red-400'
+            )}
+          >
             {successRate.toFixed(1)}%
           </span>
         </div>
@@ -102,9 +105,11 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
           <div
             className={cn(
               'h-full transition-all duration-500 rounded-full',
-              successRate === 100 ? 'bg-green-500' :
-              successRate >= 80 ? 'bg-yellow-500' :
-              'bg-red-500'
+              successRate === 100
+                ? 'bg-green-500'
+                : successRate >= 80
+                  ? 'bg-yellow-500'
+                  : 'bg-red-500'
             )}
             style={{ width: `${successRate}%` }}
           />
@@ -169,9 +174,7 @@ export function ImportReport({ result, onReset, entityType }: ImportReportProps)
           <div className="flex items-start space-x-3">
             <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-green-400 mb-1">
-                Import terminé avec succès
-              </p>
+              <p className="text-sm font-medium text-green-400 mb-1">Import terminé avec succès</p>
               <p className="text-xs text-slate-700">
                 {result.successful} {entityType} ont été importés dans la base de données.
               </p>

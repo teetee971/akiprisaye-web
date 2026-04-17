@@ -14,7 +14,9 @@ export default function ObservatorySection() {
         <span className="observatory-icon">🏛️</span>
         <h3 className="observatory-title">Observatoire citoyen indépendant</h3>
         <div className="observatory-badge">🏛️ Données certifiées Etalab 2.0</div>
-        <p className="observatory-desc">Toutes nos données sont ouvertes, vérifiables et mises à jour en continu.</p>
+        <p className="observatory-desc">
+          Toutes nos données sont ouvertes, vérifiables et mises à jour en continu.
+        </p>
 
         <div className="observatory-stats">
           {OBSERVATORY_STATS.map((stat) => (

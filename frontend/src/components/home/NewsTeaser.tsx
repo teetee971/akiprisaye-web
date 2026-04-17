@@ -13,23 +13,23 @@ const REFRESH_INTERVAL_MS = 60 * 60 * 1000; // 1 h
 const ARTICLES_TO_SHOW = 3;
 
 const CATEGORY_COLORS: Record<string, string> = {
-  économie:       'bg-blue-500/20 text-blue-300',
-  logistique:     'bg-amber-500/20 text-amber-300',
-  politique:      'bg-purple-500/20 text-purple-300',
-  solidarité:     'bg-emerald-500/20 text-emerald-300',
+  économie: 'bg-blue-500/20 text-blue-300',
+  logistique: 'bg-amber-500/20 text-amber-300',
+  politique: 'bg-purple-500/20 text-purple-300',
+  solidarité: 'bg-emerald-500/20 text-emerald-300',
   réglementation: 'bg-indigo-500/20 text-indigo-300',
-  distribution:   'bg-sky-500/20 text-sky-300',
-  sécurité:       'bg-red-500/20 text-red-300',
-  'bon plan':     'bg-green-500/20 text-green-300',
-  énergie:        'bg-yellow-500/20 text-yellow-300',
-  agriculture:    'bg-lime-500/20 text-lime-300',
-  étude:          'bg-slate-500/20 text-slate-300',
+  distribution: 'bg-sky-500/20 text-sky-300',
+  sécurité: 'bg-red-500/20 text-red-300',
+  'bon plan': 'bg-green-500/20 text-green-300',
+  énergie: 'bg-yellow-500/20 text-yellow-300',
+  agriculture: 'bg-lime-500/20 text-lime-300',
+  étude: 'bg-slate-500/20 text-slate-300',
 };
 
 const IMPACT_COLORS: Record<string, string> = {
-  fort:  'text-red-400',
+  fort: 'text-red-400',
   moyen: 'text-amber-400',
-  info:  'text-blue-400',
+  info: 'text-blue-400',
 };
 
 interface NewsArticle {
@@ -50,7 +50,9 @@ interface ActualitesData {
 
 function formatShortDate(iso: string): string {
   try {
-    return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(new Date(iso));
+    return new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(
+      new Date(iso)
+    );
   } catch {
     return iso.slice(0, 10);
   }
@@ -98,7 +100,9 @@ export default function NewsTeaser() {
     return (
       <div className="px-6 mb-6" aria-busy="true" aria-label="Chargement des actualités">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">Actualités</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+            Actualités
+          </span>
         </div>
         <div className="flex gap-3 overflow-x-auto pb-1">
           {[0, 1, 2].map((i) => (
@@ -115,7 +119,10 @@ export default function NewsTeaser() {
     <section className="px-6 mb-6" aria-labelledby="news-teaser-heading">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h2 id="news-teaser-heading" className="text-xs font-bold uppercase tracking-widest text-slate-400">
+        <h2
+          id="news-teaser-heading"
+          className="text-xs font-bold uppercase tracking-widest text-slate-400"
+        >
           📰 Actualités
         </h2>
         <Link
@@ -159,7 +166,9 @@ export default function NewsTeaser() {
                   </span>
                 )}
                 {article.verified && !article.isSponsored && (
-                  <span className="text-[10px] text-emerald-400" title="Source vérifiée">✓</span>
+                  <span className="text-[10px] text-emerald-400" title="Source vérifiée">
+                    ✓
+                  </span>
                 )}
               </div>
 
@@ -169,9 +178,7 @@ export default function NewsTeaser() {
               </p>
 
               {/* Date */}
-              <p className="text-[10px] text-slate-400 mt-auto">
-                {formatShortDate(article.date)}
-              </p>
+              <p className="text-[10px] text-slate-400 mt-auto">{formatShortDate(article.date)}</p>
             </Link>
           </li>
         ))}
@@ -183,7 +190,9 @@ export default function NewsTeaser() {
             className="rounded-xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 transition-all p-3 flex flex-col items-center justify-center gap-2 text-center h-full"
             aria-label="Voir toutes les actualités"
           >
-            <span className="text-2xl" role="img" aria-hidden="true">📰</span>
+            <span className="text-2xl" role="img" aria-hidden="true">
+              📰
+            </span>
             <span className="text-xs font-bold text-blue-300">Toutes les actus</span>
             <span className="text-[10px] text-blue-400">→</span>
           </Link>

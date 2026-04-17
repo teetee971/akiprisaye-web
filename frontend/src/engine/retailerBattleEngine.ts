@@ -43,28 +43,34 @@ export interface BattleStats {
 
 /** Market share proxy by territory (higher = more strategic) */
 const RETAILER_WEIGHT: Record<string, number> = {
-  'carrefour':     90,
-  'leclerc':       85,
-  'super-u':       70,
-  'leader-price':  60,
-  'intermarch':    55,
-  'geant-casino':  50,
+  carrefour: 90,
+  leclerc: 85,
+  'super-u': 70,
+  'leader-price': 60,
+  intermarch: 55,
+  'geant-casino': 50,
 };
 
 const TERRITORY_SCORE: Record<string, number> = {
-  gp: 80, mq: 75, re: 90, gf: 65, yt: 55,
+  gp: 80,
+  mq: 75,
+  re: 90,
+  gf: 65,
+  yt: 55,
 };
 
-const DEFAULT_RETAILERS = [
-  'carrefour', 'leclerc', 'super-u', 'leader-price', 'intermarch',
-];
+const DEFAULT_RETAILERS = ['carrefour', 'leclerc', 'super-u', 'leader-price', 'intermarch'];
 
 const DEFAULT_TERRITORIES = ['gp', 'mq', 're', 'gf'];
 
 // ── Slug helper ───────────────────────────────────────────────────────────────
 
 const TERRITORY_SLUGS: Record<string, string> = {
-  gp: 'guadeloupe', mq: 'martinique', re: 'la-reunion', gf: 'guyane', yt: 'mayotte',
+  gp: 'guadeloupe',
+  mq: 'martinique',
+  re: 'la-reunion',
+  gf: 'guyane',
+  yt: 'mayotte',
 };
 
 function battleSlug(r1: string, r2: string, territory: string): string {
@@ -87,21 +93,22 @@ export function scoreBattle(
   r1: string,
   r2: string,
   territory: string,
-  stats: BattleStats = {},
+  stats: BattleStats = {}
 ): number {
   const w1 = RETAILER_WEIGHT[r1] ?? 50;
   const w2 = RETAILER_WEIGHT[r2] ?? 50;
   const combinedTraffic = stats.combinedTrafficShare ?? Math.round((w1 + w2) / 2);
-  const priceGapScore   = Math.min(100, ((stats.avgPriceGap ?? 0.30) / 2) * 100);
-  const pageGap         = stats.hasExistingPage ? 0 : 100;
-  const terrScore       = stats.territoryScore ?? (TERRITORY_SCORE[territory] ?? 60);
+  const priceGapScore = Math.min(100, ((stats.avgPriceGap ?? 0.3) / 2) * 100);
+  const pageGap = stats.hasExistingPage ? 0 : 100;
+  const terrScore = stats.territoryScore ?? TERRITORY_SCORE[territory] ?? 60;
 
-  return Math.min(100, Math.max(0, Math.round(
-    combinedTraffic * 0.35 +
-    priceGapScore   * 0.30 +
-    pageGap         * 0.20 +
-    terrScore       * 0.15,
-  )));
+  return Math.min(
+    100,
+    Math.max(
+      0,
+      Math.round(combinedTraffic * 0.35 + priceGapScore * 0.3 + pageGap * 0.2 + terrScore * 0.15)
+    )
+  );
 }
 
 function classifyBattlePriority(score: number): RetailerBattle['priority'] {
@@ -125,21 +132,21 @@ export function generateRetailerBattles(
   retailers: string[] = DEFAULT_RETAILERS,
   territories: string[] = DEFAULT_TERRITORIES,
   statsMap: Map<string, BattleStats> = new Map(),
-  existingSlugs: Set<string> = new Set(),
+  existingSlugs: Set<string> = new Set()
 ): RetailerBattle[] {
   const battles: RetailerBattle[] = [];
 
   for (const territory of territories) {
     for (let i = 0; i < retailers.length; i++) {
       for (let j = i + 1; j < retailers.length; j++) {
-        const r1   = retailers[i];
-        const r2   = retailers[j];
+        const r1 = retailers[i];
+        const r2 = retailers[j];
         const slug = battleSlug(r1, r2, territory);
-        const key  = `${r1}|${r2}|${territory}`;
+        const key = `${r1}|${r2}|${territory}`;
 
-        const stats   = statsMap.get(key) ?? {};
+        const stats = statsMap.get(key) ?? {};
         const hasPage = existingSlugs.has(slug);
-        const score   = scoreBattle(r1, r2, territory, { ...stats, hasExistingPage: hasPage });
+        const score = scoreBattle(r1, r2, territory, { ...stats, hasExistingPage: hasPage });
 
         battles.push({
           retailer1: r1,
@@ -155,9 +162,7 @@ export function generateRetailerBattles(
   }
 
   // Sort by score desc, then deterministically by slug
-  return battles.sort((a, b) =>
-    b.score - a.score || a.slug.localeCompare(b.slug),
-  );
+  return battles.sort((a, b) => b.score - a.score || a.slug.localeCompare(b.slug));
 }
 
 /**

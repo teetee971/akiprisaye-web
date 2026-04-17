@@ -1,14 +1,13 @@
- 
 /**
  * useContribution Hook
- * 
+ *
  * Custom hook for managing citizen contributions.
  * Provides functions to submit and retrieve contributions.
  */
 
 import { useState } from 'react';
-import { 
-  submitPhotoContribution, 
+import {
+  submitPhotoContribution,
   submitPriceObservation,
   submitMissingProduct,
   type PriceObservation,
@@ -30,7 +29,7 @@ interface UseContributionReturn {
 
 /**
  * Hook for managing contributions
- * 
+ *
  * @param comparatorType - Type of comparator (for generic contributions)
  * @returns Contribution management functions and state
  */
@@ -41,7 +40,7 @@ export function useContribution(comparatorType?: string): UseContributionReturn 
 
   /**
    * Submit a generic contribution
-   * 
+   *
    * @deprecated This is a placeholder for future unified contribution API.
    * For now, use the specific methods: submitPhoto, submitPrice, submitMissing
    */
@@ -53,10 +52,12 @@ export function useContribution(comparatorType?: string): UseContributionReturn 
     try {
       // For now, route to appropriate service based on data structure
       // In the future, we might have a unified contribution API
-      
-      // This is a placeholder - actual implementation would depend on 
+
+      // This is a placeholder - actual implementation would depend on
       // how generic contributions are stored
-      throw new Error('Generic contribution submission not yet implemented. Use submitPhoto, submitPrice, or submitMissing.');
+      throw new Error(
+        'Generic contribution submission not yet implemented. Use submitPhoto, submitPrice, or submitMissing.'
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Erreur lors de la soumission';
       setError(message);
@@ -69,10 +70,7 @@ export function useContribution(comparatorType?: string): UseContributionReturn 
   /**
    * Submit a photo contribution
    */
-  const submitPhoto = async (
-    contribution: PhotoContribution,
-    userId?: string
-  ): Promise<string> => {
+  const submitPhoto = async (contribution: PhotoContribution, userId?: string): Promise<string> => {
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -93,10 +91,7 @@ export function useContribution(comparatorType?: string): UseContributionReturn 
   /**
    * Submit a price observation
    */
-  const submitPrice = async (
-    observation: PriceObservation,
-    userId?: string
-  ): Promise<string> => {
+  const submitPrice = async (observation: PriceObservation, userId?: string): Promise<string> => {
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -117,10 +112,7 @@ export function useContribution(comparatorType?: string): UseContributionReturn 
   /**
    * Submit a missing product report
    */
-  const submitMissing = async (
-    report: MissingProductReport,
-    userId?: string
-  ): Promise<string> => {
+  const submitMissing = async (report: MissingProductReport, userId?: string): Promise<string> => {
     setLoading(true);
     setError(null);
     setSuccess(false);

@@ -22,7 +22,10 @@ function shouldPrefetch(): boolean {
     return false;
   }
 
-  const connection = (navigator as any).connection ?? (navigator as any).mozConnection ?? (navigator as any).webkitConnection;
+  const connection =
+    (navigator as any).connection ??
+    (navigator as any).mozConnection ??
+    (navigator as any).webkitConnection;
   if (connection?.saveData) return false;
   if (connection?.effectiveType && ['2g', 'slow-2g'].includes(connection.effectiveType as string)) {
     return false;

@@ -1,4 +1,3 @@
- 
 import { useMemo } from 'react';
 import { IndiceMarge } from './IndiceMarge.jsx';
 
@@ -35,9 +34,7 @@ export function ComparatifEnseignes({ stores = [], referencePrice = 0, currency 
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Comparaison par enseigne
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Comparaison par enseigne</h3>
 
       <div className="space-y-3">
         {sortedStores.map((store, index) => (
@@ -94,7 +91,8 @@ export function ComparatifEnseignes({ stores = [], referencePrice = 0, currency 
           <div>
             <p className="text-sm text-gray-600">Écart observé</p>
             <p className="text-lg font-semibold text-gray-900">
-              {(sortedStores[sortedStores.length - 1].price - sortedStores[0].price).toFixed(2)} {currency}
+              {(sortedStores[sortedStores.length - 1].price - sortedStores[0].price).toFixed(2)}{' '}
+              {currency}
             </p>
           </div>
         </div>
@@ -102,8 +100,8 @@ export function ComparatifEnseignes({ stores = [], referencePrice = 0, currency 
 
       <div className="mt-4 bg-blue-50 rounded-lg p-3">
         <p className="text-xs text-blue-800">
-          <strong>Note :</strong> Les données présentées sont des observations factuelles 
-          à un instant donné et ne constituent pas une analyse de rentabilité ou de gestion commerciale.
+          <strong>Note :</strong> Les données présentées sont des observations factuelles à un
+          instant donné et ne constituent pas une analyse de rentabilité ou de gestion commerciale.
         </p>
       </div>
     </div>

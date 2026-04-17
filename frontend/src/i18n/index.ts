@@ -20,26 +20,26 @@ i18n
   .init({
     fallbackLng: 'fr',
     supportedLngs: SUPPORTED_LANGUAGES,
-    
+
     // Namespaces pour organiser les traductions
     ns: [
-      'common',        // Éléments communs (boutons, navigation)
-      'home',          // Page d'accueil
-      'search',        // Recherche
-      'store',         // Magasins
-      'product',       // Produits
-      'cart',          // Liste de courses
-      'profile',       // Profil utilisateur
-      'gamification',  // Gamification
-      'alerts',        // Alertes et notifications
-      'map',           // Carte
-      'inflation',     // Tableau de bord inflation
-      'reviews',       // Avis et commentaires
-      'errors',        // Messages d'erreur
-      'validation',    // Validation de formulaires
+      'common', // Éléments communs (boutons, navigation)
+      'home', // Page d'accueil
+      'search', // Recherche
+      'store', // Magasins
+      'product', // Produits
+      'cart', // Liste de courses
+      'profile', // Profil utilisateur
+      'gamification', // Gamification
+      'alerts', // Alertes et notifications
+      'map', // Carte
+      'inflation', // Tableau de bord inflation
+      'reviews', // Avis et commentaires
+      'errors', // Messages d'erreur
+      'validation', // Validation de formulaires
     ],
     defaultNS: 'common',
-    
+
     // Détection de langue
     detection: {
       order: ['localStorage', 'querystring', 'navigator', 'htmlTag'],
@@ -47,7 +47,7 @@ i18n
       lookupLocalStorage: 'akiprisaye-language',
       caches: ['localStorage'],
     },
-    
+
     // Chargement des traductions
     backend: {
       loadPath: `${import.meta.env.BASE_URL}locales/{{lng}}/{{ns}}.json`,
@@ -63,13 +63,13 @@ i18n
         }
       },
     },
-    
+
     // Partitioning - load namespaces on-demand instead of all at once
     partialBundledLanguages: true,
-    
+
     // Load only when needed, not all at initialization
     load: 'languageOnly',
-    
+
     // Interpolation et formatage
     interpolation: {
       escapeValue: false,
@@ -111,7 +111,7 @@ i18n
         return value;
       },
     },
-    
+
     react: {
       useSuspense: false, // Disable suspense to prevent blocking render
       bindI18n: 'languageChanged',

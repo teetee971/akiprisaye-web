@@ -1,7 +1,6 @@
- 
 /**
  * Food Basket Observatory Service v2.5.0
- * 
+ *
  * Implements citizen food basket observation with:
  * - Read-only data access (no data modification)
  * - Type basket analysis (basic, family, local)
@@ -36,10 +35,10 @@ import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
  */
 const FOOD_BASKET_CONFIG = {
   MEDIAN_TOLERANCE_PERCENT: 10,
-  MIN_COMPLETENESS_PERCENT: 70,    // Minimum basket completeness
+  MIN_COMPLETENESS_PERCENT: 70, // Minimum basket completeness
   MAX_PRICE_AGE_WARNING_DAYS: 7,
-  STABLE_VARIATION_THRESHOLD: 3,   // ±3% considered stable
-  SIGNIFICANT_ITEM_VARIATION: 10,  // ±10% for item-level significance
+  STABLE_VARIATION_THRESHOLD: 3, // ±3% considered stable
+  SIGNIFICANT_ITEM_VARIATION: 10, // ±10% for item-level significance
 } as const;
 
 /**
@@ -55,7 +54,7 @@ export function compareFoodBasketCosts(
   }
 
   // Filter by territory
-  const territoryObservations = observations.filter(o => o.territory === territory);
+  const territoryObservations = observations.filter((o) => o.territory === territory);
 
   if (territoryObservations.length === 0) {
     return null;
@@ -93,8 +92,8 @@ export function calculateFoodBasketAggregation(
     throw new Error('Cannot calculate aggregation for empty observations');
   }
 
-  const costs = observations.map(o => o.totalCost);
-  const completeness = observations.map(o => o.completeness);
+  const costs = observations.map((o) => o.totalCost);
+  const completeness = observations.map((o) => o.completeness);
 
   // Calculate statistics
   const averageCost = costs.reduce((sum, c) => sum + c, 0) / costs.length;
@@ -114,12 +113,12 @@ export function calculateFoodBasketAggregation(
   const itemBreakdown = calculateItemBreakdown(basket, observations);
 
   // Date range
-  const dates = observations.map(o => new Date(o.observationDate).getTime());
+  const dates = observations.map((o) => new Date(o.observationDate).getTime());
   const oldestDate = new Date(Math.min(...dates)).toISOString();
   const newestDate = new Date(Math.max(...dates)).toISOString();
 
   // Count unique stores
-  const uniqueStores = new Set(observations.map(o => o.storeName).filter(Boolean));
+  const uniqueStores = new Set(observations.map((o) => o.storeName).filter(Boolean));
 
   return {
     basket,
@@ -154,13 +153,13 @@ function calculateItemBreakdown(
   basket: FoodBasket,
   observations: FoodBasketObservation[]
 ): FoodBasketItemBreakdown[] {
-  return basket.items.map(item => {
+  return basket.items.map((item) => {
     // Find all prices for this item across observations
     const itemPrices: number[] = [];
     let availableCount = 0;
 
-    observations.forEach(obs => {
-      const itemPrice = obs.itemPrices.find(ip => ip.item.name === item.name);
+    observations.forEach((obs) => {
+      const itemPrice = obs.itemPrices.find((ip) => ip.item.name === item.name);
       if (itemPrice) {
         itemPrices.push(itemPrice.price);
         availableCount++;
@@ -216,14 +215,12 @@ export function rankFoodBasketStores(
 
   return sorted.map((obs, index) => {
     const absoluteDiffFromCheapest = obs.totalCost - cheapestCost;
-    const percentageDiffFromCheapest = cheapestCost > 0
-      ? (absoluteDiffFromCheapest / cheapestCost) * 100
-      : 0;
+    const percentageDiffFromCheapest =
+      cheapestCost > 0 ? (absoluteDiffFromCheapest / cheapestCost) * 100 : 0;
 
     const absoluteDiffFromMedian = obs.totalCost - medianCost;
-    const percentageDiffFromMedian = medianCost > 0
-      ? (absoluteDiffFromMedian / medianCost) * 100
-      : 0;
+    const percentageDiffFromMedian =
+      medianCost > 0 ? (absoluteDiffFromMedian / medianCost) * 100 : 0;
 
     // Categorize
     let category: FoodBasketStoreRanking['priceCategory'];
@@ -260,24 +257,25 @@ export function generateFoodBasketMetadata(
 ): FoodBasketMetadata {
   const totalObservations = observations.length;
   const completeObservations = observations.filter(
-    o => o.completeness >= FOOD_BASKET_CONFIG.MIN_COMPLETENESS_PERCENT
+    (o) => o.completeness >= FOOD_BASKET_CONFIG.MIN_COMPLETENESS_PERCENT
   ).length;
-  const avgCompleteness = observations.reduce((sum, o) => sum + o.completeness, 0) / totalObservations;
+  const avgCompleteness =
+    observations.reduce((sum, o) => sum + o.completeness, 0) / totalObservations;
 
   // Date range
-  const dates = observations.map(o => new Date(o.observationDate).getTime());
+  const dates = observations.map((o) => new Date(o.observationDate).getTime());
   const oldestDate = new Date(Math.min(...dates)).toISOString();
   const newestDate = new Date(Math.max(...dates)).toISOString();
 
   // Source summary
   const sourceCounts = new Map<string, { count: number; stores: Set<string> }>();
-  observations.forEach(obs => {
-    obs.sources.forEach(source => {
+  observations.forEach((obs) => {
+    obs.sources.forEach((source) => {
       const sourceType = source?.type;
       if (!sourceType) {
         logRuntimeIssueOnce(
           'food-basket-metadata-missing-source',
-          'Missing source type while aggregating food basket metadata. Entry ignored.',
+          'Missing source type while aggregating food basket metadata. Entry ignored.'
         );
         return;
       }
@@ -311,7 +309,7 @@ export function generateFoodBasketMetadata(
   const now = Date.now();
   const maxAgeMs = FOOD_BASKET_CONFIG.MAX_PRICE_AGE_WARNING_DAYS * 24 * 60 * 60 * 1000;
   const hasOldData = observations.some(
-    o => now - new Date(o.observationDate).getTime() > maxAgeMs
+    (o) => now - new Date(o.observationDate).getTime() > maxAgeMs
   );
   if (hasOldData) {
     warnings.push(
@@ -353,39 +351,35 @@ export function applyFoodBasketFilters(
   let filtered = observations;
 
   if (filter.basketType) {
-    filtered = filtered.filter(o => o.basket.type === filter.basketType);
+    filtered = filtered.filter((o) => o.basket.type === filter.basketType);
   }
 
   if (filter.territory) {
-    filtered = filtered.filter(o => o.territory === filter.territory);
+    filtered = filtered.filter((o) => o.territory === filter.territory);
   }
 
   if (filter.storeChain) {
-    filtered = filtered.filter(o =>
+    filtered = filtered.filter((o) =>
       o.storeName?.toLowerCase().includes(filter.storeChain!.toLowerCase())
     );
   }
 
   if (filter.minCompleteness !== undefined) {
-    filtered = filtered.filter(o => o.completeness >= filter.minCompleteness!);
+    filtered = filtered.filter((o) => o.completeness >= filter.minCompleteness!);
   }
 
   if (filter.maxPriceAge) {
     const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() - filter.maxPriceAge);
-    filtered = filtered.filter(o => new Date(o.observationDate) >= maxDate);
+    filtered = filtered.filter((o) => new Date(o.observationDate) >= maxDate);
   }
 
   if (filter.includeLocalOnly) {
-    filtered = filtered.filter(o =>
-      o.itemPrices.some(ip => ip.item.localProduct)
-    );
+    filtered = filtered.filter((o) => o.itemPrices.some((ip) => ip.item.localProduct));
   }
 
   if (filter.verifiedOnly) {
-    filtered = filtered.filter(o =>
-      o.itemPrices.every(ip => ip.verified)
-    );
+    filtered = filtered.filter((o) => o.itemPrices.every((ip) => ip.verified));
   }
 
   return filtered;
@@ -404,11 +398,11 @@ export function buildFoodBasketHistory(
   }
 
   // Filter by territory
-  const filtered = observations.filter(o => o.territory === territory);
+  const filtered = observations.filter((o) => o.territory === territory);
 
   // Group by week
   const weeklyGroups = new Map<string, FoodBasketObservation[]>();
-  filtered.forEach(obs => {
+  filtered.forEach((obs) => {
     const date = new Date(obs.observationDate);
     const weekKey = getWeekKey(date);
     if (!weeklyGroups.has(weekKey)) {
@@ -420,9 +414,9 @@ export function buildFoodBasketHistory(
   // Build history points
   const history: FoodBasketHistoryPoint[] = [];
   weeklyGroups.forEach((weekObs, weekKey) => {
-    const costs = weekObs.map(o => o.totalCost);
-    const completeness = weekObs.map(o => o.completeness);
-    const allSources = weekObs.flatMap(o => o.sources);
+    const costs = weekObs.map((o) => o.totalCost);
+    const completeness = weekObs.map((o) => o.completeness);
+    const allSources = weekObs.flatMap((o) => o.sources);
 
     history.push({
       date: weekKey,
@@ -433,7 +427,8 @@ export function buildFoodBasketHistory(
       minCost: Math.round(Math.min(...costs) * 100) / 100,
       maxCost: Math.round(Math.max(...costs) * 100) / 100,
       observationCount: weekObs.length,
-      averageCompleteness: Math.round((completeness.reduce((sum, c) => sum + c, 0) / completeness.length) * 100) / 100,
+      averageCompleteness:
+        Math.round((completeness.reduce((sum, c) => sum + c, 0) / completeness.length) * 100) / 100,
       sources: allSources,
     });
   });
@@ -460,7 +455,7 @@ function getISOWeek(date: Date): number {
   const firstThursday = target.valueOf();
   target.setMonth(0, 1);
   if (target.getDay() !== 4) {
-    target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+    target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7));
   }
   return 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
 }
@@ -479,9 +474,7 @@ export function calculateFoodBasketVariation(
   const last = history[history.length - 1];
 
   const absoluteChange = last.medianCost - first.medianCost;
-  const percentageChange = first.medianCost > 0
-    ? (absoluteChange / first.medianCost) * 100
-    : 0;
+  const percentageChange = first.medianCost > 0 ? (absoluteChange / first.medianCost) * 100 : 0;
 
   let direction: 'increase' | 'decrease' | 'stable';
   if (Math.abs(percentageChange) < FOOD_BASKET_CONFIG.STABLE_VARIATION_THRESHOLD) {
@@ -520,14 +513,12 @@ function calculateMedian(values: number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0
-    ? (sorted[mid - 1] + sorted[mid]) / 2
-    : sorted[mid];
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 }
 
 function calculateStandardDeviation(values: number[], mean: number): number {
   if (values.length === 0) return 0;
-  const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+  const squaredDiffs = values.map((v) => Math.pow(v - mean, 2));
   const variance = squaredDiffs.reduce((sum, d) => sum + d, 0) / values.length;
   return Math.sqrt(variance);
 }

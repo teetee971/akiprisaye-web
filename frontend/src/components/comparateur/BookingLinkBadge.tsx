@@ -14,10 +14,7 @@ interface BookingLinkBadgeProps {
  * - Lien direct (vert)
  * - Lien partenaire (jaune)
  */
-const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
-  showTooltip = true,
-  size = 'sm',
-}) => {
+const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({ showTooltip = true, size = 'sm' }) => {
   const [open, setOpen] = useState(false);
   const status = getCommissionStatus();
 
@@ -25,8 +22,8 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
     status.color === 'green'
       ? 'bg-green-500/10 border-green-500/30 text-green-400'
       : status.color === 'yellow'
-      ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
-      : 'bg-red-500/10 border-red-500/30 text-red-400';
+        ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
+        : 'bg-red-500/10 border-red-500/30 text-red-400';
 
   const iconSize = size === 'sm' ? 'w-3 h-3' : 'w-4 h-4';
   const textSize = size === 'sm' ? 'text-xs' : 'text-sm';
@@ -64,7 +61,8 @@ const BookingLinkBadge: React.FC<BookingLinkBadgeProps> = ({
           <p>{status.detail}</p>
           <p className="mt-2 text-gray-400 flex items-center gap-1">
             <ExternalLink className="w-3 h-3 flex-shrink-0" />
-            Les liens « Voir l'offre » ouvrent le site officiel de l'opérateur dans un nouvel onglet.
+            Les liens « Voir l'offre » ouvrent le site officiel de l'opérateur dans un nouvel
+            onglet.
           </p>
           <button
             type="button"

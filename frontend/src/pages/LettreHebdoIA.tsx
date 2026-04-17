@@ -22,7 +22,10 @@ import {
 function formatDate(iso: string): string {
   try {
     return new Date(iso).toLocaleDateString('fr-FR', {
-      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
     });
   } catch {
     return iso;
@@ -38,9 +41,14 @@ function SourceLink({ title, url }: { title: string; url: string }) {
       target="_blank"
       rel="noopener noreferrer"
       style={{
-        display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
-        color: '#60a5fa', fontSize: '0.72rem', textDecoration: 'none',
-        wordBreak: 'break-word', lineHeight: 1.4,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '0.25rem',
+        color: '#60a5fa',
+        fontSize: '0.72rem',
+        textDecoration: 'none',
+        wordBreak: 'break-word',
+        lineHeight: 1.4,
       }}
     >
       🔗 {title || url}
@@ -56,34 +64,97 @@ function LettreView({ lettre }: { lettre: LettreHebdo }) {
   return (
     <article style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header */}
-      <div style={{
-        padding: '1.5rem 1.5rem 1.2rem',
-        background: 'rgba(99,102,241,0.07)',
-        border: '1px solid rgba(99,102,241,0.25)',
-        borderRadius: 16,
-      }}>
-        <div style={{ fontSize: '0.7rem', color: '#6366f1', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>
+      <div
+        style={{
+          padding: '1.5rem 1.5rem 1.2rem',
+          background: 'rgba(99,102,241,0.07)',
+          border: '1px solid rgba(99,102,241,0.25)',
+          borderRadius: 16,
+        }}
+      >
+        <div
+          style={{
+            fontSize: '0.7rem',
+            color: '#6366f1',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            marginBottom: '0.5rem',
+          }}
+        >
           🗞️ {lettre.periode} · Semaine {lettre.weekId}
         </div>
-        <h1 style={{ margin: '0 0 0.75rem', fontSize: '1.4rem', fontWeight: 900, color: '#f1f5f9', lineHeight: 1.25 }}>
+        <h1
+          style={{
+            margin: '0 0 0.75rem',
+            fontSize: '1.4rem',
+            fontWeight: 900,
+            color: '#f1f5f9',
+            lineHeight: 1.25,
+          }}
+        >
           {lettre.titre}
         </h1>
-        <p style={{ margin: '0 0 1rem', fontSize: '0.95rem', color: '#cbd5e1', lineHeight: 1.75, fontStyle: 'italic' }}>
+        <p
+          style={{
+            margin: '0 0 1rem',
+            fontSize: '0.95rem',
+            color: '#cbd5e1',
+            lineHeight: 1.75,
+            fontStyle: 'italic',
+          }}
+        >
           {lettre.chapeau}
         </p>
 
         {/* Indicateurs */}
         {lettre.indicateurs.length > 0 && (
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', paddingTop: '0.75rem', borderTop: '1px solid rgba(99,102,241,0.2)' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '0.75rem',
+              flexWrap: 'wrap',
+              paddingTop: '0.75rem',
+              borderTop: '1px solid rgba(99,102,241,0.2)',
+            }}
+          >
             {lettre.indicateurs.map((ind, i) => (
-              <div key={i} style={{
-                padding: '0.6rem 0.9rem', borderRadius: 10,
-                background: 'rgba(15,23,42,0.6)', border: '1px solid rgba(99,102,241,0.2)',
-                flex: '1 1 130px', textAlign: 'center',
-              }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#a5b4fc', lineHeight: 1 }}>{ind.valeur}</div>
-                <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '0.2rem', lineHeight: 1.35 }}>{ind.label}</div>
-                <div style={{ fontSize: '0.62rem', color: '#6366f1', marginTop: '0.1rem', fontWeight: 600 }}>{ind.territoire}</div>
+              <div
+                key={i}
+                style={{
+                  padding: '0.6rem 0.9rem',
+                  borderRadius: 10,
+                  background: 'rgba(15,23,42,0.6)',
+                  border: '1px solid rgba(99,102,241,0.2)',
+                  flex: '1 1 130px',
+                  textAlign: 'center',
+                }}
+              >
+                <div
+                  style={{ fontSize: '1.2rem', fontWeight: 900, color: '#a5b4fc', lineHeight: 1 }}
+                >
+                  {ind.valeur}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.7rem',
+                    color: '#94a3b8',
+                    marginTop: '0.2rem',
+                    lineHeight: 1.35,
+                  }}
+                >
+                  {ind.label}
+                </div>
+                <div
+                  style={{
+                    fontSize: '0.62rem',
+                    color: '#6366f1',
+                    marginTop: '0.1rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  {ind.territoire}
+                </div>
               </div>
             ))}
           </div>
@@ -92,33 +163,73 @@ function LettreView({ lettre }: { lettre: LettreHebdo }) {
 
       {/* Sections */}
       {lettre.sections.map((s, i) => (
-        <div key={i} style={{
-          padding: '1.2rem 1.4rem',
-          background: 'rgba(15,23,42,0.75)',
-          border: '1px solid rgba(148,163,184,0.1)',
-          borderLeft: '3px solid rgba(99,102,241,0.5)',
-          borderRadius: 14,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
-            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#e2e8f0' }}>{s.titre}</h2>
-            <span style={{
-              fontSize: '0.67rem', color: '#6366f1', fontWeight: 700,
-              background: 'rgba(99,102,241,0.1)', padding: '2px 9px',
-              borderRadius: 20, border: '1px solid rgba(99,102,241,0.25)', whiteSpace: 'nowrap',
-            }}>
+        <div
+          key={i}
+          style={{
+            padding: '1.2rem 1.4rem',
+            background: 'rgba(15,23,42,0.75)',
+            border: '1px solid rgba(148,163,184,0.1)',
+            borderLeft: '3px solid rgba(99,102,241,0.5)',
+            borderRadius: 14,
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.6rem',
+              marginBottom: '0.6rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            <h2 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#e2e8f0' }}>
+              {s.titre}
+            </h2>
+            <span
+              style={{
+                fontSize: '0.67rem',
+                color: '#6366f1',
+                fontWeight: 700,
+                background: 'rgba(99,102,241,0.1)',
+                padding: '2px 9px',
+                borderRadius: 20,
+                border: '1px solid rgba(99,102,241,0.25)',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {s.territoire}
             </span>
           </div>
-          <p style={{ margin: '0 0 0.6rem', fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.75, whiteSpace: 'pre-line' }}>
+          <p
+            style={{
+              margin: '0 0 0.6rem',
+              fontSize: '0.88rem',
+              color: '#94a3b8',
+              lineHeight: 1.75,
+              whiteSpace: 'pre-line',
+            }}
+          >
             {s.contenu}
           </p>
           {s.sources.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(148,163,184,0.08)' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.2rem',
+                paddingTop: '0.5rem',
+                borderTop: '1px solid rgba(148,163,184,0.08)',
+              }}
+            >
               {s.sources.map((src, si) => {
                 const isUrl = src.startsWith('http');
-                return isUrl
-                  ? <SourceLink key={si} title={src} url={src} />
-                  : <span key={si} style={{ fontSize: '0.72rem', color: '#475569' }}>📎 {src}</span>;
+                return isUrl ? (
+                  <SourceLink key={si} title={src} url={src} />
+                ) : (
+                  <span key={si} style={{ fontSize: '0.72rem', color: '#475569' }}>
+                    📎 {src}
+                  </span>
+                );
               })}
             </div>
           )}
@@ -129,7 +240,17 @@ function LettreView({ lettre }: { lettre: LettreHebdo }) {
       {lettre.tags.length > 0 && (
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
           {lettre.tags.map((tag) => (
-            <span key={tag} style={{ fontSize: '0.68rem', color: '#64748b', padding: '3px 9px', borderRadius: 20, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(148,163,184,0.12)' }}>
+            <span
+              key={tag}
+              style={{
+                fontSize: '0.68rem',
+                color: '#64748b',
+                padding: '3px 9px',
+                borderRadius: 20,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(148,163,184,0.12)',
+              }}
+            >
               #{tag}
             </span>
           ))}
@@ -138,21 +259,64 @@ function LettreView({ lettre }: { lettre: LettreHebdo }) {
 
       {/* Sources articles (collapsible) */}
       {lettre.sourcesArticles.length > 0 && (
-        <div style={{ padding: '0.9rem 1.1rem', borderRadius: 12, background: 'rgba(15,23,42,0.5)', border: '1px solid rgba(148,163,184,0.08)' }}>
+        <div
+          style={{
+            padding: '0.9rem 1.1rem',
+            borderRadius: 12,
+            background: 'rgba(15,23,42,0.5)',
+            border: '1px solid rgba(148,163,184,0.08)',
+          }}
+        >
           <button
             onClick={() => setShowSources((v) => !v)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b', fontSize: '0.78rem', fontWeight: 600, padding: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#64748b',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+            }}
           >
             📰 {lettre.sourcesArticles.length} articles sources consultés {showSources ? '▲' : '▼'}
           </button>
           {showSources && (
-            <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+            <div
+              style={{
+                marginTop: '0.75rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.4rem',
+              }}
+            >
               {lettre.sourcesArticles.map((a, i) => (
                 <div key={i} style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: '0.65rem', color: '#475569', minWidth: 90, flexShrink: 0, marginTop: 1 }}>
+                  <span
+                    style={{
+                      fontSize: '0.65rem',
+                      color: '#475569',
+                      minWidth: 90,
+                      flexShrink: 0,
+                      marginTop: 1,
+                    }}
+                  >
                     [{a.source}]
                   </span>
-                  <a href={a.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.72rem', color: '#60a5fa', textDecoration: 'none', lineHeight: 1.45 }}>
+                  <a
+                    href={a.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: '0.72rem',
+                      color: '#60a5fa',
+                      textDecoration: 'none',
+                      lineHeight: 1.45,
+                    }}
+                  >
                     {a.title}
                   </a>
                 </div>
@@ -163,8 +327,24 @@ function LettreView({ lettre }: { lettre: LettreHebdo }) {
       )}
 
       {/* Footer */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', padding: '0.75rem 0', borderTop: '1px solid rgba(148,163,184,0.1)', fontSize: '0.68rem', color: '#475569' }}>
-        <span>🤖 Généré par IA ({lettre.model}) · {lettre.tokensUsed ? `~${lettre.tokensUsed} tokens · ` : ''}{formatDate(lettre.generatedAt)}</span>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+          padding: '0.75rem 0',
+          borderTop: '1px solid rgba(148,163,184,0.1)',
+          fontSize: '0.68rem',
+          color: '#475569',
+        }}
+      >
+        <span>
+          🤖 Généré par IA ({lettre.model}) ·{' '}
+          {lettre.tokensUsed ? `~${lettre.tokensUsed} tokens · ` : ''}
+          {formatDate(lettre.generatedAt)}
+        </span>
         <span style={{ color: '#334155' }}>A KI PRI SA YÉ — Observatoire citoyen des prix</span>
       </div>
     </article>
@@ -180,13 +360,38 @@ function EmptyState() {
       <h2 style={{ margin: '0 0 0.6rem', fontSize: '1.2rem', color: '#e2e8f0', fontWeight: 800 }}>
         Première lettre en préparation
       </h2>
-      <p style={{ margin: '0 0 1.5rem', fontSize: '0.88rem', color: '#64748b', lineHeight: 1.7, maxWidth: 420, marginLeft: 'auto', marginRight: 'auto' }}>
-        L'intelligence artificielle génère automatiquement une lettre chaque <strong style={{ color: '#e2e8f0' }}>lundi matin</strong>{' '}
-        à partir des actualités des territoires ultramarins (La1ère, Outremers360°, etc.).
-        Revenez lundi prochain pour lire le premier numéro !
+      <p
+        style={{
+          margin: '0 0 1.5rem',
+          fontSize: '0.88rem',
+          color: '#64748b',
+          lineHeight: 1.7,
+          maxWidth: 420,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
+        L'intelligence artificielle génère automatiquement une lettre chaque{' '}
+        <strong style={{ color: '#e2e8f0' }}>lundi matin</strong> à partir des actualités des
+        territoires ultramarins (La1ère, Outremers360°, etc.). Revenez lundi prochain pour lire le
+        premier numéro !
       </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'center', fontSize: '0.82rem', color: '#475569' }}>
-        {['📡 Collecte automatique des actualités DOM/COM', '🧠 Analyse et rédaction par GPT-4o-mini', '💾 Publication dans Firestore chaque lundi à 7h UTC', '📱 Accessible sur cette page et sur l\'accueil'].map((s) => (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.5rem',
+          alignItems: 'center',
+          fontSize: '0.82rem',
+          color: '#475569',
+        }}
+      >
+        {[
+          '📡 Collecte automatique des actualités DOM/COM',
+          '🧠 Analyse et rédaction par GPT-4o-mini',
+          '💾 Publication dans Firestore chaque lundi à 7h UTC',
+          "📱 Accessible sur cette page et sur l'accueil",
+        ].map((s) => (
           <span key={s}>{s}</span>
         ))}
       </div>
@@ -222,16 +427,27 @@ export default function LettreHebdoIA() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-      padding: '1.5rem 1rem 3rem',
-    }}>
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+        padding: '1.5rem 1rem 3rem',
+      }}
+    >
       <div style={{ maxWidth: 820, margin: '0 auto' }}>
-
         {/* Back */}
         <div style={{ marginBottom: '1rem' }}>
-          <Link to="/" style={{ fontSize: '0.8rem', color: '#64748b', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+          <Link
+            to="/"
+            style={{
+              fontSize: '0.8rem',
+              color: '#64748b',
+              textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.3rem',
+            }}
+          >
             ← Retour à l'accueil
           </Link>
         </div>
@@ -246,23 +462,36 @@ export default function LettreHebdoIA() {
           <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
             📰 Lettre hebdo IA
           </h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
             L'actualité des prix dans les DOM, générée chaque lundi par l'IA
           </p>
         </HeroImage>
 
-        <div style={{ display: 'grid', gridTemplateColumns: archive.length > 1 ? '1fr 200px' : '1fr', gap: '1.5rem', alignItems: 'start' }}>
-
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: archive.length > 1 ? '1fr 200px' : '1fr',
+            gap: '1.5rem',
+            alignItems: 'start',
+          }}
+        >
           {/* Main content */}
           <div>
             {loading ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {[200, 150, 250, 180].map((h, i) => (
-                  <div key={i} style={{ height: h, borderRadius: 14, background: 'rgba(255,255,255,0.04)' }} />
+                  <div
+                    key={i}
+                    style={{ height: h, borderRadius: 14, background: 'rgba(255,255,255,0.04)' }}
+                  />
                 ))}
               </div>
             ) : loadingArchive ? (
-              <div style={{ textAlign: 'center', padding: '3rem', color: '#475569' }}>Chargement…</div>
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#475569' }}>
+                Chargement…
+              </div>
             ) : current ? (
               <LettreView lettre={current} />
             ) : (
@@ -272,13 +501,26 @@ export default function LettreHebdoIA() {
 
           {/* Archive sidebar */}
           {archive.length > 1 && (
-            <aside style={{
-              position: 'sticky', top: '1rem',
-              background: 'rgba(15,23,42,0.75)',
-              border: '1px solid rgba(148,163,184,0.1)',
-              borderRadius: 14, padding: '1rem',
-            }}>
-              <p style={{ margin: '0 0 0.7rem', fontSize: '0.72rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+            <aside
+              style={{
+                position: 'sticky',
+                top: '1rem',
+                background: 'rgba(15,23,42,0.75)',
+                border: '1px solid rgba(148,163,184,0.1)',
+                borderRadius: 14,
+                padding: '1rem',
+              }}
+            >
+              <p
+                style={{
+                  margin: '0 0 0.7rem',
+                  fontSize: '0.72rem',
+                  color: '#64748b',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.07em',
+                }}
+              >
                 📚 Archive
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
@@ -287,15 +529,29 @@ export default function LettreHebdoIA() {
                     key={l.weekId}
                     onClick={() => selectWeek(l.weekId)}
                     style={{
-                      background: (current?.weekId === l.weekId) ? 'rgba(99,102,241,0.15)' : 'transparent',
-                      border: `1px solid ${(current?.weekId === l.weekId) ? 'rgba(99,102,241,0.4)' : 'rgba(148,163,184,0.1)'}`,
-                      borderRadius: 8, padding: '0.5rem 0.6rem',
-                      cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s ease',
+                      background:
+                        current?.weekId === l.weekId ? 'rgba(99,102,241,0.15)' : 'transparent',
+                      border: `1px solid ${current?.weekId === l.weekId ? 'rgba(99,102,241,0.4)' : 'rgba(148,163,184,0.1)'}`,
+                      borderRadius: 8,
+                      padding: '0.5rem 0.6rem',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.2s ease',
                     }}
                   >
-                    <div style={{ fontSize: '0.65rem', color: '#6366f1', fontWeight: 700 }}>{l.weekId}</div>
-                    <div style={{ fontSize: '0.72rem', color: (current?.weekId === l.weekId) ? '#e2e8f0' : '#94a3b8', lineHeight: 1.3, marginTop: '0.15rem' }}>
-                      {l.titre.slice(0, 55)}{l.titre.length > 55 ? '…' : ''}
+                    <div style={{ fontSize: '0.65rem', color: '#6366f1', fontWeight: 700 }}>
+                      {l.weekId}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: '0.72rem',
+                        color: current?.weekId === l.weekId ? '#e2e8f0' : '#94a3b8',
+                        lineHeight: 1.3,
+                        marginTop: '0.15rem',
+                      }}
+                    >
+                      {l.titre.slice(0, 55)}
+                      {l.titre.length > 55 ? '…' : ''}
                     </div>
                   </button>
                 ))}
@@ -303,7 +559,6 @@ export default function LettreHebdoIA() {
             </aside>
           )}
         </div>
-
       </div>
     </div>
   );

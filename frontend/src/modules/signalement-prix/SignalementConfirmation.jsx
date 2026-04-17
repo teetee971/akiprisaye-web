@@ -7,19 +7,13 @@
  * @param {boolean} hasAccepted - User acceptance state
  * @param {Function} onAcceptChange - Toggle acceptance
  */
-export function SignalementConfirmation({ 
-  data, 
-  onBack, 
-  onConfirm, 
-  hasAccepted, 
-  onAcceptChange 
-}) {
+export function SignalementConfirmation({ data, onBack, onConfirm, hasAccepted, onAcceptChange }) {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -47,25 +41,28 @@ export function SignalementConfirmation({
 
       {/* Legal Reminder - Prominent */}
       <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-5">
-        <p className="text-sm text-yellow-900 font-bold mb-3">
-          ⚠️ Rappel Important
-        </p>
+        <p className="text-sm text-yellow-900 font-bold mb-3">⚠️ Rappel Important</p>
         <p className="text-sm text-yellow-800 mb-3">
-          Ce signalement correspond à une <strong>observation ponctuelle</strong> effectuée par un citoyen.
+          Ce signalement correspond à une <strong>observation ponctuelle</strong> effectuée par un
+          citoyen.
         </p>
         <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside">
-          <li>Il ne constitue <strong>ni une accusation</strong> ni une preuve juridique</li>
-          <li>Il ne sera <strong>pas publié automatiquement</strong></li>
+          <li>
+            Il ne constitue <strong>ni une accusation</strong> ni une preuve juridique
+          </li>
+          <li>
+            Il ne sera <strong>pas publié automatiquement</strong>
+          </li>
           <li>Il fera l'objet d'une vérification avant toute utilisation</li>
-          <li>Il ne constitue <strong>pas une analyse économique</strong></li>
+          <li>
+            Il ne constitue <strong>pas une analyse économique</strong>
+          </li>
         </ul>
       </div>
 
       {/* Summary */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Résumé de votre observation
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Résumé de votre observation</h3>
 
         <div className="space-y-4">
           {/* Territory */}
@@ -99,9 +96,7 @@ export function SignalementConfirmation({
           {/* Date */}
           <div className="flex justify-between py-3 border-b border-gray-200">
             <span className="text-sm font-medium text-gray-600">Date d'observation</span>
-            <span className="text-sm font-semibold text-gray-900">
-              {formatDate(data.date)}
-            </span>
+            <span className="text-sm font-semibold text-gray-900">{formatDate(data.date)}</span>
           </div>
 
           {/* Proof */}
@@ -151,7 +146,10 @@ export function SignalementConfirmation({
 
       {/* Final Acceptance */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <label aria-label="Je confirme l'exactitude de ces informations" className="flex items-start space-x-3 cursor-pointer">
+        <label
+          aria-label="Je confirme l'exactitude de ces informations"
+          className="flex items-start space-x-3 cursor-pointer"
+        >
           <input
             type="checkbox"
             checked={hasAccepted}
@@ -159,13 +157,11 @@ export function SignalementConfirmation({
             className="mt-1 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
           />
           <div className="text-sm text-gray-700">
-            <p className="font-bold mb-2">
-              ☑ Je confirme l'exactitude de ces informations
-            </p>
+            <p className="font-bold mb-2">☑ Je confirme l'exactitude de ces informations</p>
             <p className="text-xs text-gray-600">
-              En cochant cette case, je confirme que ces informations correspondent à une observation 
-              personnelle et réelle, et que je comprends qu'elles seront stockées localement et ne seront 
-              pas publiées automatiquement.
+              En cochant cette case, je confirme que ces informations correspondent à une
+              observation personnelle et réelle, et que je comprends qu'elles seront stockées
+              localement et ne seront pas publiées automatiquement.
             </p>
           </div>
         </label>
@@ -197,9 +193,9 @@ export function SignalementConfirmation({
       {/* Storage Info */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
         <p className="text-xs text-gray-700">
-          <strong>💾 Stockage local :</strong> Vos données seront enregistrées localement sur votre appareil
-          et ne seront envoyées à aucun serveur. Elles pourront être consultées et gérées ultérieurement
-          par les administrateurs de la plateforme après modération.
+          <strong>💾 Stockage local :</strong> Vos données seront enregistrées localement sur votre
+          appareil et ne seront envoyées à aucun serveur. Elles pourront être consultées et gérées
+          ultérieurement par les administrateurs de la plateforme après modération.
         </p>
       </div>
     </div>

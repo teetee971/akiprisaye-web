@@ -1,4 +1,3 @@
- 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import {
   loadSavingsData,
@@ -16,7 +15,7 @@ import {
   SavingsEntry,
   MonthlySavings,
   Badge,
-  SavingsStats
+  SavingsStats,
 } from '../services/savingsService';
 
 interface SavingsContextValue {
@@ -80,14 +79,10 @@ export function SavingsProvider({ children }: SavingsProviderProps) {
     goalProgress,
     addSaving,
     updateMonthlyGoal,
-    refreshData
+    refreshData,
   };
 
-  return (
-    <SavingsContext.Provider value={value}>
-      {children}
-    </SavingsContext.Provider>
-  );
+  return <SavingsContext.Provider value={value}>{children}</SavingsContext.Provider>;
 }
 
 export function useSavings() {

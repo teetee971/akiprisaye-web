@@ -12,7 +12,8 @@ export const ruleTerritoryHeuristics: TipRule = {
     return [
       {
         id: 'tip.domHeuristic',
-        message: 'En DOM-TOM, les arrivages influencent fortement les prix : surveillez les variations hebdomadaires.',
+        message:
+          'En DOM-TOM, les arrivages influencent fortement les prix : surveillez les variations hebdomadaires.',
         severity: 'info',
         confidence: 0.75,
         tags: ['domtom', 'arrivages'],

@@ -1,4 +1,3 @@
- 
 /**
  * Price History Chart Component
  * Displays price trends over time
@@ -20,11 +19,7 @@ interface PriceDataPoint {
   maxPrice?: number;
 }
 
-const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
-  productId,
-  storeId,
-  period,
-}) => {
+const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({ productId, storeId, period }) => {
   const [data, setData] = useState<PriceDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,13 +40,15 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
         }
 
         const result = await response.json();
-        
+
         if (storeId) {
           // Single store history - reverse to show oldest to newest
-          const formattedData = result.history.map((h: any) => ({
-            date: new Date(h.observedAt).toLocaleDateString('fr-FR'),
-            price: h.price,
-          })).reverse();
+          const formattedData = result.history
+            .map((h: any) => ({
+              date: new Date(h.observedAt).toLocaleDateString('fr-FR'),
+              price: h.price,
+            }))
+            .reverse();
           setData(formattedData);
         } else {
           // Aggregated history
@@ -114,9 +111,7 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
     const singlePoint = data[0];
     return (
       <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Historique des prix
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Historique des prix</h3>
 
         <div className="mb-4">
           <svg
@@ -125,12 +120,7 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
             preserveAspectRatio="none"
           >
             {/* Single data point */}
-            <circle
-              cx={chartWidth / 2}
-              cy={chartHeight / 2}
-              r="6"
-              fill="#3b82f6"
-            >
+            <circle cx={chartWidth / 2} cy={chartHeight / 2} r="6" fill="#3b82f6">
               <title>
                 {singlePoint.date}: {singlePoint.price.toFixed(2)}€
               </title>
@@ -160,9 +150,7 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
-        Historique des prix
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Historique des prix</h3>
 
       <div className="mb-4">
         <svg
@@ -181,13 +169,7 @@ const PriceHistoryChart: React.FC<PriceHistoryChartProps> = ({
           />
 
           {/* Price line */}
-          <path
-            d={pathData}
-            fill="none"
-            stroke="#3b82f6"
-            strokeWidth="2"
-            strokeLinejoin="round"
-          />
+          <path d={pathData} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinejoin="round" />
 
           {/* Data points */}
           {data.map((d, i) => (

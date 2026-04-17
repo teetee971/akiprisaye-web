@@ -20,7 +20,7 @@ function median(values: number[]) {
 export function decideForItem(
   item: Pick<ShoppingListItem, 'id'>,
   priceHistory: PriceObservation[],
-  settings: Partial<DecisionSettings> = {},
+  settings: Partial<DecisionSettings> = {}
 ): Recommendation {
   const cfg = { ...DEFAULT_SETTINGS, ...settings };
   const prices = priceHistory.map((p) => p.price).filter((p) => Number.isFinite(p));

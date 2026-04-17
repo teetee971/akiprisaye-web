@@ -1,7 +1,6 @@
- 
 /**
  * Fuel Comparison Service v1.0.0
- * 
+ *
  * Implements citizen fuel price comparison with:
  * - Read-only data access
  * - Territory-based fuel station matching
@@ -156,9 +155,7 @@ export function compareFuelPricesByTerritory(
 /**
  * Calculate fuel aggregation statistics
  */
-export function calculateFuelAggregation(
-  prices: FuelPricePoint[]
-): FuelAggregation {
+export function calculateFuelAggregation(prices: FuelPricePoint[]): FuelAggregation {
   const priceValues = prices.map((p) => p.pricePerLiter).sort((a, b) => a - b);
 
   const min = Math.min(...priceValues);
@@ -169,15 +166,12 @@ export function calculateFuelAggregation(
   // Calculate median
   const median =
     priceValues.length % 2 === 0
-      ? (priceValues[priceValues.length / 2 - 1] +
-          priceValues[priceValues.length / 2]) /
-        2
+      ? (priceValues[priceValues.length / 2 - 1] + priceValues[priceValues.length / 2]) / 2
       : priceValues[Math.floor(priceValues.length / 2)];
 
   // Calculate standard deviation
   const variance =
-    priceValues.reduce((acc, price) => acc + Math.pow(price - average, 2), 0) /
-    priceValues.length;
+    priceValues.reduce((acc, price) => acc + Math.pow(price - average, 2), 0) / priceValues.length;
   const standardDeviation = Math.sqrt(variance);
 
   const priceRange = max - min;
@@ -186,9 +180,7 @@ export function calculateFuelAggregation(
   // Find price cap if any
   const priceCapPrices = prices.filter((p) => p.isPriceCapPlafonne);
   const priceCapOfficiel =
-    priceCapPrices.length > 0
-      ? Math.min(...priceCapPrices.map((p) => p.pricePerLiter))
-      : undefined;
+    priceCapPrices.length > 0 ? Math.min(...priceCapPrices.map((p) => p.pricePerLiter)) : undefined;
 
   return {
     minPrice: Math.round(min * 1000) / 1000,
@@ -211,9 +203,7 @@ function rankFuelPrices(
   prices: FuelPricePoint[],
   aggregation: FuelAggregation
 ): FuelPriceRanking[] {
-  const sortedPrices = [...prices].sort(
-    (a, b) => a.pricePerLiter - b.pricePerLiter
-  );
+  const sortedPrices = [...prices].sort((a, b) => a.pricePerLiter - b.pricePerLiter);
 
   const cheapestPrice = aggregation.minPrice;
   const averagePrice = aggregation.averagePrice;
@@ -245,14 +235,10 @@ function rankFuelPrices(
     return {
       rank: index + 1,
       fuelPrice: price,
-      absoluteDifferenceFromCheapest:
-        Math.round(differenceFromCheapest * 1000) / 1000,
-      percentageDifferenceFromCheapest:
-        Math.round(percentageFromCheapest * 100) / 100,
-      absoluteDifferenceFromAverage:
-        Math.round(differenceFromAverage * 1000) / 1000,
-      percentageDifferenceFromAverage:
-        Math.round(percentageFromAverage * 100) / 100,
+      absoluteDifferenceFromCheapest: Math.round(differenceFromCheapest * 1000) / 1000,
+      percentageDifferenceFromCheapest: Math.round(percentageFromCheapest * 100) / 100,
+      absoluteDifferenceFromAverage: Math.round(differenceFromAverage * 1000) / 1000,
+      percentageDifferenceFromAverage: Math.round(percentageFromAverage * 100) / 100,
       priceCategory: category,
     };
   });
@@ -285,17 +271,13 @@ export function filterFuelPrices(
 
   if (filter.brand) {
     filtered = filtered.filter(
-      (p) =>
-        p.station.brand &&
-        p.station.brand.toLowerCase().includes(filter.brand!.toLowerCase())
+      (p) => p.station.brand && p.station.brand.toLowerCase().includes(filter.brand!.toLowerCase())
     );
   }
 
   if (filter.city) {
     filtered = filtered.filter(
-      (p) =>
-        p.station.city &&
-        p.station.city.toLowerCase().includes(filter.city!.toLowerCase())
+      (p) => p.station.city && p.station.city.toLowerCase().includes(filter.city!.toLowerCase())
     );
   }
 
@@ -320,9 +302,7 @@ export function filterFuelPrices(
  */
 function generateMetadata(prices: FuelPricePoint[]) {
   const uniqueStations = new Set(prices.map((p) => p.station.id));
-  const dates = prices
-    .map((p) => new Date(p.observationDate).getTime())
-    .filter((d) => !isNaN(d));
+  const dates = prices.map((p) => new Date(p.observationDate).getTime()).filter((d) => !isNaN(d));
 
   const oldestObservation =
     dates.length > 0 ? new Date(Math.min(...dates)).toISOString() : undefined;
@@ -335,12 +315,9 @@ function generateMetadata(prices: FuelPricePoint[]) {
   // Check data age
   if (newestObservation) {
     const daysSinceUpdate =
-      (Date.now() - new Date(newestObservation).getTime()) /
-      (1000 * 60 * 60 * 24);
+      (Date.now() - new Date(newestObservation).getTime()) / (1000 * 60 * 60 * 24);
     if (daysSinceUpdate > FUEL_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS) {
-      warnings.push(
-        `Les données les plus récentes datent de ${Math.floor(daysSinceUpdate)} jours`
-      );
+      warnings.push(`Les données les plus récentes datent de ${Math.floor(daysSinceUpdate)} jours`);
     }
   }
 
@@ -367,9 +344,7 @@ export function getFuelPriceHistory(
   territory: Territory,
   fuelType: FuelType
 ): FuelPriceHistory | null {
-  const filteredPrices = prices.filter(
-    (p) => p.territory === territory && p.fuelType === fuelType
-  );
+  const filteredPrices = prices.filter((p) => p.territory === territory && p.fuelType === fuelType);
 
   if (filteredPrices.length === 0) {
     return null;
@@ -386,17 +361,13 @@ export function getFuelPriceHistory(
   }
 
   // Create time series
-  const timeSeries: FuelHistoricalDataPoint[] = Array.from(
-    groupedByDate.entries()
-  )
+  const timeSeries: FuelHistoricalDataPoint[] = Array.from(groupedByDate.entries())
     .map(([date, datePrices]) => {
       const priceValues = datePrices.map((p) => p.pricePerLiter);
       return {
         date: date,
         averagePrice:
-          Math.round(
-            (priceValues.reduce((a, b) => a + b, 0) / priceValues.length) * 1000
-          ) / 1000,
+          Math.round((priceValues.reduce((a, b) => a + b, 0) / priceValues.length) * 1000) / 1000,
         minPrice: Math.round(Math.min(...priceValues) * 1000) / 1000,
         maxPrice: Math.round(Math.max(...priceValues) * 1000) / 1000,
         observationCount: datePrices.length,
@@ -410,8 +381,7 @@ export function getFuelPriceHistory(
     timeSeries,
     period: {
       startDate: timeSeries[0]?.date || new Date().toISOString(),
-      endDate:
-        timeSeries[timeSeries.length - 1]?.date || new Date().toISOString(),
+      endDate: timeSeries[timeSeries.length - 1]?.date || new Date().toISOString(),
     },
   };
 }

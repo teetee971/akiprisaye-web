@@ -36,28 +36,25 @@ export function useSearchHistory() {
     setHistory(readHistory());
   }, []);
 
-  const addEntry = useCallback(
-    (entry: Omit<SearchHistoryEntry, 'id' | 'createdAt'>) => {
-      setHistory((prev) => {
-        const dedupeKey = buildDedupKey(entry);
-        const lastEntry = prev[0];
-        if (lastEntry && buildDedupKey(lastEntry) === dedupeKey) {
-          return prev;
-        }
-        const nextEntry: SearchHistoryEntry = {
-          ...entry,
-          id: `search-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          createdAt: new Date().toISOString(),
-        };
-        const next = [nextEntry, ...prev].slice(0, MAX_ENTRIES);
-        if (typeof window !== 'undefined' && safeLocalStorage) {
-          safeLocalStorage.setJSON(STORAGE_KEY, next);
-        }
-        return next;
-      });
-    },
-    []
-  );
+  const addEntry = useCallback((entry: Omit<SearchHistoryEntry, 'id' | 'createdAt'>) => {
+    setHistory((prev) => {
+      const dedupeKey = buildDedupKey(entry);
+      const lastEntry = prev[0];
+      if (lastEntry && buildDedupKey(lastEntry) === dedupeKey) {
+        return prev;
+      }
+      const nextEntry: SearchHistoryEntry = {
+        ...entry,
+        id: `search-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        createdAt: new Date().toISOString(),
+      };
+      const next = [nextEntry, ...prev].slice(0, MAX_ENTRIES);
+      if (typeof window !== 'undefined' && safeLocalStorage) {
+        safeLocalStorage.setJSON(STORAGE_KEY, next);
+      }
+      return next;
+    });
+  }, []);
 
   const removeEntry = useCallback((id: string) => {
     setHistory((prev) => {

@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getBadges, type ConversionProduct } from '../../engine/conversionEngine';
-import {
-  trackConversionEvent,
-  getVariantForPage,
-} from '../../utils/conversionTracker';
+import { trackConversionEvent, getVariantForPage } from '../../utils/conversionTracker';
 import { safeRetailerUrl, buildRetailerUrl } from '../../utils/retailerLinks';
 import { logEvent, getCTAVariant, CTA_LABELS } from '../../engine/analytics';
 import { trackRetailerClick } from '../../utils/priceClickTracker';
@@ -20,14 +17,14 @@ interface DominantProductCardProps {
 
 const URGENCY_MAP: Record<string, UrgencyVariant> = {
   '🔥 Prix en baisse': 'price-drop',
-  '⭐ Top deal':        'best-today',
-  '📈 Populaire':       'trending',
+  '⭐ Top deal': 'best-today',
+  '📈 Populaire': 'trending',
 };
 
 export function DominantProductCard({ product, hero = false }: DominantProductCardProps) {
   const [confirmed, setConfirmed] = useState(false);
   const navigate = useNavigate();
-  const badges  = getBadges(product);
+  const badges = getBadges(product);
   const variant = getCTAVariant();
   const ctaLabel = CTA_LABELS[variant];
 
@@ -64,7 +61,7 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
       product.id,
       product.retailer ?? 'inconnu',
       product.territory ?? 'gp',
-      product.price ?? 0,
+      product.price ?? 0
     );
 
     // Redirect
@@ -84,31 +81,26 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
   return (
     <>
       {confirmed && (
-        <PostClickConfirmation
-          productName={product.name}
-          onDismiss={() => setConfirmed(false)}
-        />
+        <PostClickConfirmation productName={product.name} onDismiss={() => setConfirmed(false)} />
       )}
 
       <div
         className={`rounded-2xl border bg-gradient-to-br from-gray-900 to-gray-800 ${
-          hero
-            ? 'border-green-700 p-5 shadow-2xl'
-            : 'border-gray-700 p-4'
+          hero ? 'border-green-700 p-5 shadow-2xl' : 'border-gray-700 p-4'
         }`}
       >
         {/* Header: name + favorite */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="min-w-0 flex-1">
-            {hero && <p className="text-xs font-semibold text-green-400 mb-0.5">🏆 Meilleur prix du moment</p>}
-            <h3
-              className={`font-semibold text-white truncate ${hero ? 'text-lg' : 'text-base'}`}
-            >
+            {hero && (
+              <p className="text-xs font-semibold text-green-400 mb-0.5">
+                🏆 Meilleur prix du moment
+              </p>
+            )}
+            <h3 className={`font-semibold text-white truncate ${hero ? 'text-lg' : 'text-base'}`}>
               {product.name}
             </h3>
-            {product.category && (
-              <p className="text-xs text-gray-400 mt-0.5">{product.category}</p>
-            )}
+            {product.category && <p className="text-xs text-gray-400 mt-0.5">{product.category}</p>}
           </div>
           <FavoriteButton productId={product.id} className="shrink-0 mt-0.5" />
         </div>
@@ -121,9 +113,7 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
             </span>
           )}
           {oldPrice != null && (
-            <span className="text-sm text-gray-500 line-through">
-              {oldPrice.toFixed(2)} €
-            </span>
+            <span className="text-sm text-gray-500 line-through">{oldPrice.toFixed(2)} €</span>
           )}
           {(product.priceDrop ?? 0) > 0 && (
             <span className="text-xs font-bold text-red-400">
@@ -132,9 +122,7 @@ export function DominantProductCard({ product, hero = false }: DominantProductCa
           )}
         </div>
 
-        {product.retailer && (
-          <p className="text-xs text-gray-500 mb-2">{product.retailer}</p>
-        )}
+        {product.retailer && <p className="text-xs text-gray-500 mb-2">{product.retailer}</p>}
 
         {/* Badges */}
         {badges.length > 0 && (

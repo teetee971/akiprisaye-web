@@ -1,7 +1,6 @@
- 
 /**
  * Freight Comparison Service v1.0.0
- * 
+ *
  * Service de comparaison fret maritime & colis
  * Transparence totale sur formation des prix
  */
@@ -28,10 +27,7 @@ import { getContributionsByRoute } from './freightContributionService';
 /**
  * Calcule l'octroi de mer pour un territoire
  */
-export function calculateOctroiDeMer(
-  basePrice: number,
-  territory: Territory
-): number {
+export function calculateOctroiDeMer(basePrice: number, territory: Territory): number {
   const rate = OCTROI_DE_MER_RATES[territory];
   if (rate === undefined) {
     console.warn(`Unknown territory for octroi de mer calculation: ${territory}`);
@@ -51,21 +47,21 @@ export function calculateTotalCost(
 ): FreightPricing {
   // Frais de manutention
   const handlingFee = basePrice * HANDLING_FEE_RATE;
-  
+
   // Assurance (si valeur déclarée)
-  const insurance = packageDetails.declaredValue 
+  const insurance = packageDetails.declaredValue
     ? packageDetails.declaredValue * INSURANCE_RATE
     : 0;
-  
+
   // Octroi de mer
   const octroi = calculateOctroiDeMer(basePrice, territory);
-  
+
   // Supplément urgence
   const urgencySurcharge = basePrice * URGENCY_SURCHARGE[urgency];
-  
+
   // Total TTC
   const totalTTC = basePrice + handlingFee + insurance + octroi + urgencySurcharge;
-  
+
   return {
     basePrice,
     handlingFee,
@@ -93,14 +89,14 @@ export async function simulateFreightQuote(
   try {
     // Charger les données des transporteurs
     const quotes = await getCarrierQuotes(route, packageDetails, urgency);
-    
+
     if (quotes.length === 0) {
       return null;
     }
-    
+
     // Classer les devis
     const rankedQuotes = rankQuotes(quotes);
-    
+
     // Calculer l'agrégation
     const aggregation = calculateRouteAggregation(route, quotes);
 
@@ -125,7 +121,7 @@ export async function simulateFreightQuote(
         contributionsCount,
         dataSource: 'Données officielles transporteurs + contributions citoyennes',
         methodology: 'v1.0.0',
-        disclaimer: 'Observer, pas vendre. Aucun lien d\'affiliation. Données transparentes.',
+        disclaimer: "Observer, pas vendre. Aucun lien d'affiliation. Données transparentes.",
       },
     };
   } catch (error) {
@@ -148,40 +144,33 @@ export async function getCarrierQuotes(
     if (!response.ok) {
       throw new Error('Impossible de charger les données des transporteurs');
     }
-    
+
     const data = await response.json();
     const carriers = data.carriers || [];
     const routes = data.routes || [];
-    
+
     // Trouver la route correspondante
     const matchingRoute = routes.find(
-      (r: any) =>
-        r.origin === route.origin &&
-        r.destination === route.destination
+      (r: any) => r.origin === route.origin && r.destination === route.destination
     );
-    
+
     if (!matchingRoute || !matchingRoute.quotes) {
       return [];
     }
-    
+
     // Construire les devis
     const quotes: FreightQuote[] = matchingRoute.quotes.map((quoteData: any) => {
       const carrier = carriers.find((c: any) => c.code === quoteData.carrier);
-      
+
       // Calculer le prix en fonction du poids et de l'urgence
       const basePrice = calculateBasePriceForWeight(
         quoteData.basePrice,
         quoteData.packageWeight || 5,
         packageDetails.weight
       );
-      
-      const pricing = calculateTotalCost(
-        basePrice,
-        packageDetails,
-        route.destination,
-        urgency
-      );
-      
+
+      const pricing = calculateTotalCost(basePrice, packageDetails, route.destination, urgency);
+
       return {
         id: `${quoteData.carrier}-${Date.now()}`,
         carrier: carrier?.name || quoteData.carrier,
@@ -213,7 +202,7 @@ export async function getCarrierQuotes(
         website: carrier?.website,
       };
     });
-    
+
     return quotes;
   } catch (error) {
     console.error('Error loading carrier quotes:', error);
@@ -238,20 +227,20 @@ function calculateBasePriceForWeight(
  */
 export function rankQuotes(quotes: FreightQuote[]): FreightQuoteRanking[] {
   if (quotes.length === 0) return [];
-  
+
   // Trier par prix
   const sorted = [...quotes].sort((a, b) => a.pricing.totalTTC - b.pricing.totalTTC);
-  
+
   // Calculer la moyenne
   const averagePrice = sorted.reduce((sum, q) => sum + q.pricing.totalTTC, 0) / sorted.length;
   const cheapestPrice = sorted[0].pricing.totalTTC;
-  
+
   // Classer
   return sorted.map((quote, index) => {
     const rank = index + 1;
     const savingsVsCheapest = quote.pricing.totalTTC - cheapestPrice;
     const savingsVsAverage = quote.pricing.totalTTC - averagePrice;
-    
+
     let priceCategory: FreightQuoteRanking['priceCategory'];
     if (rank === 1) {
       priceCategory = 'cheapest';
@@ -264,12 +253,12 @@ export function rankQuotes(quotes: FreightQuote[]): FreightQuoteRanking[] {
     } else {
       priceCategory = 'above_average';
     }
-    
+
     // Badge "Meilleur rapport qualité/prix"
     const isBestValue =
       priceCategory === 'cheapest' ||
       (priceCategory === 'below_average' && quote.reliability.score >= 4.0);
-    
+
     return {
       rank,
       quote,
@@ -292,17 +281,17 @@ export function calculateRouteAggregation(
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
   const averagePrice = prices.reduce((sum, p) => sum + p, 0) / prices.length;
-  
+
   // Médiane
   const sortedPrices = [...prices].sort((a, b) => a - b);
   const medianPrice =
     sortedPrices.length % 2 === 0
       ? (sortedPrices[sortedPrices.length / 2 - 1] + sortedPrices[sortedPrices.length / 2]) / 2
       : sortedPrices[Math.floor(sortedPrices.length / 2)];
-  
+
   const priceRange = maxPrice - minPrice;
   const priceRangePercentage = (priceRange / minPrice) * 100;
-  
+
   return {
     route,
     carrierCount: quotes.length,

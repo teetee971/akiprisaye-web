@@ -1,9 +1,9 @@
 /**
  * Freight Price Service
- * 
+ *
  * Service de comparaison des coûts de fret / transport de conteneurs
  * Données simulées structurées pour démonstration
- * 
+ *
  * IMPORTANT:
  * - Données publiques/professionnelles uniquement
  * - Sources: Ports, autorités maritimes, rapports logistiques, opérateurs publics
@@ -15,12 +15,12 @@
 
 export interface FreightPrice {
   operateurLogistique: string;
-  typeTransport: string;       // "Maritime", "Roulier", "Conteneur"
-  typeConteneur: string;        // "20 pieds", "40 pieds", "Palette", "Vrac"
+  typeTransport: string; // "Maritime", "Roulier", "Conteneur"
+  typeConteneur: string; // "20 pieds", "40 pieds", "Palette", "Vrac"
   portDepart: string;
   portArrivee: string;
-  prixEstime: number;           // Prix en €
-  devise: string;               // "EUR"
+  prixEstime: number; // Prix en €
+  devise: string; // "EUR"
   source: string;
   dateReleve: string;
 }
@@ -81,7 +81,7 @@ const SIMULATED_DATA: FreightPrice[] = [
     source: 'Observation publique',
     dateReleve: '2026-01-04',
   },
-  
+
   // Métropole → Martinique
   {
     operateurLogistique: 'CMA CGM',
@@ -127,7 +127,7 @@ const SIMULATED_DATA: FreightPrice[] = [
     source: 'Observation publique',
     dateReleve: '2026-01-04',
   },
-  
+
   // Métropole → Guyane
   {
     operateurLogistique: 'CMA CGM',
@@ -162,7 +162,7 @@ const SIMULATED_DATA: FreightPrice[] = [
     source: 'Observation publique',
     dateReleve: '2026-01-04',
   },
-  
+
   // Métropole → Réunion
   {
     operateurLogistique: 'CMA CGM',
@@ -208,7 +208,7 @@ const SIMULATED_DATA: FreightPrice[] = [
     source: 'Observation publique',
     dateReleve: '2026-01-05',
   },
-  
+
   // Inter-DOM: Guadeloupe ↔ Martinique
   {
     operateurLogistique: 'CMA CGM Antilles',
@@ -251,9 +251,7 @@ const SIMULATED_DATA: FreightPrice[] = [
  */
 export function searchFreightPrices(params: FreightPriceSearchParams): FreightPrice[] {
   let results = SIMULATED_DATA.filter(
-    (price) => 
-      price.portDepart === params.portDepart && 
-      price.portArrivee === params.portArrivee
+    (price) => price.portDepart === params.portDepart && price.portArrivee === params.portArrivee
   );
 
   // Filtrer par type de transport si spécifié
@@ -278,12 +276,12 @@ export function searchFreightPrices(params: FreightPriceSearchParams): FreightPr
 export function getPorts(): { departure: string[]; arrival: string[] } {
   const departurePorts = new Set<string>();
   const arrivalPorts = new Set<string>();
-  
+
   SIMULATED_DATA.forEach((price) => {
     departurePorts.add(price.portDepart);
     arrivalPorts.add(price.portArrivee);
   });
-  
+
   return {
     departure: Array.from(departurePorts).sort(),
     arrival: Array.from(arrivalPorts).sort(),

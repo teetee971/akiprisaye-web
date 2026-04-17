@@ -1,8 +1,7 @@
- 
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 /**
  * OCR History Service
- * 
+ *
  * Local storage service for OCR scan history
  * - Opt-in only (requires explicit user consent)
  * - LocalStorage based (simple, no IndexedDB complexity for MVP)
@@ -81,7 +80,7 @@ export function addHistoryEntry(entry: Omit<OCRHistoryEntry, 'id' | 'timestamp'>
 
   try {
     const history = getHistory();
-    
+
     const newEntry: OCRHistoryEntry = {
       ...entry,
       id: crypto.randomUUID(),
@@ -106,7 +105,7 @@ export function addHistoryEntry(entry: Omit<OCRHistoryEntry, 'id' | 'timestamp'>
 export function deleteHistoryEntry(id: string): void {
   try {
     const history = getHistory();
-    const filtered = history.filter(entry => entry.id !== id);
+    const filtered = history.filter((entry) => entry.id !== id);
     safeLocalStorage.setItem(HISTORY_KEY, JSON.stringify(filtered));
   } catch (error) {
     console.error('Failed to delete history entry:', error);
@@ -137,7 +136,7 @@ export function exportHistoryToJSON(): string {
  */
 export function getHistoryStats() {
   const history = getHistory();
-  
+
   if (history.length === 0) {
     return {
       totalScans: 0,
@@ -147,10 +146,13 @@ export function getHistoryStats() {
   }
 
   const totalConfidence = history.reduce((sum, entry) => sum + entry.confidence, 0);
-  const byType = history.reduce((acc, entry) => {
-    acc[entry.type] = (acc[entry.type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const byType = history.reduce(
+    (acc, entry) => {
+      acc[entry.type] = (acc[entry.type] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return {
     totalScans: history.length,

@@ -10,14 +10,14 @@ import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const KEY     = 'akp:events:v1';
-const AB_KEY  = 'akp:ab:cta:v1';
-const MAX     = 1000;
+const KEY = 'akp:events:v1';
+const AB_KEY = 'akp:ab:cta:v1';
+const MAX = 1000;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface AnalyticsEvent {
-  t: number;           // Unix timestamp ms
+  t: number; // Unix timestamp ms
   type: string;
   [key: string]: unknown;
 }
@@ -25,7 +25,7 @@ export interface AnalyticsEvent {
 export interface AnalyticsKpis {
   totalViews: number;
   totalClicks: number;
-  ctr: number;              // 0–1
+  ctr: number; // 0–1
   favoritesAdded: number;
   topProducts: { id: string; clicks: number }[];
   ctaVariantWinner: 'A' | 'B' | null;
@@ -110,8 +110,8 @@ export const CTA_LABELS: Record<'A' | 'B', string> = {
 export function computeKpis(): AnalyticsKpis {
   const events = readEvents();
 
-  const views     = events.filter((e) => e.type === 'view_product').length;
-  const clicks    = events.filter((e) => e.type === 'cta_click').length;
+  const views = events.filter((e) => e.type === 'view_product').length;
+  const clicks = events.filter((e) => e.type === 'cta_click').length;
   const favorites = events.filter((e) => e.type === 'add_favorite' && e.action !== 'remove').length;
 
   // Top products by click count

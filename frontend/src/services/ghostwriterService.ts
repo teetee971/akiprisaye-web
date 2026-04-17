@@ -40,9 +40,18 @@ function toNamedPctArray(value: unknown): Array<{ name: string; changePct: numbe
  */
 export function generateDailyPost(data: GhostwriterDailyPostData): string {
   const payload = (data ?? {}) as GhostwriterDailyPostData & Record<string, unknown>;
-  const territory = typeof payload.territory === 'string' && payload.territory.trim().length > 0 ? payload.territory : 'Guadeloupe';
-  const topCategory = typeof payload.topCategory === 'string' && payload.topCategory.trim().length > 0 ? payload.topCategory : 'produits du quotidien';
-  const topProduct = typeof payload.topProduct === 'string' && payload.topProduct.trim().length > 0 ? payload.topProduct : 'un produit essentiel';
+  const territory =
+    typeof payload.territory === 'string' && payload.territory.trim().length > 0
+      ? payload.territory
+      : 'Guadeloupe';
+  const topCategory =
+    typeof payload.topCategory === 'string' && payload.topCategory.trim().length > 0
+      ? payload.topCategory
+      : 'produits du quotidien';
+  const topProduct =
+    typeof payload.topProduct === 'string' && payload.topProduct.trim().length > 0
+      ? payload.topProduct
+      : 'un produit essentiel';
   const delta = toSafeNumber(payload.averagePriceChangePct, 0);
   const trend = delta < 0 ? 'en baisse' : delta > 0 ? 'en hausse' : 'stable';
   const absDelta = Math.abs(delta).toFixed(1);

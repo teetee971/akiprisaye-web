@@ -10,11 +10,7 @@ import { normalizeTerritoryCode } from './priceSearch/normalizeTerritoryCode';
 
 const ENABLE_PARTNER_APIS = false;
 
-const ALLOWED_SOURCE_TYPES: PriceObservation['sourceType'][] = [
-  'citizen',
-  'open_data',
-  'partner',
-];
+const ALLOWED_SOURCE_TYPES: PriceObservation['sourceType'][] = ['citizen', 'open_data', 'partner'];
 
 /* ============================================================================
  * Types internes (données brutes)
@@ -60,18 +56,12 @@ const normalizeText = (value: string): string =>
     .replace(/\s+/g, ' ')
     .trim();
 
-const computeConfidenceScore = (
-  observationsCount: number,
-  observedAt: string
-): number => {
+const computeConfidenceScore = (observationsCount: number, observedAt: string): number => {
   const countScore = Math.min(observationsCount, 10) * 5;
 
-  const daysAgo = Math.floor(
-    (Date.now() - new Date(observedAt).getTime()) / (1000 * 60 * 60 * 24)
-  );
+  const daysAgo = Math.floor((Date.now() - new Date(observedAt).getTime()) / (1000 * 60 * 60 * 24));
 
-  const recencyScore =
-    daysAgo <= 7 ? 50 : daysAgo <= 30 ? 35 : daysAgo <= 90 ? 20 : 10;
+  const recencyScore = daysAgo <= 7 ? 50 : daysAgo <= 30 ? 35 : daysAgo <= 90 ? 20 : 10;
 
   return Math.min(100, countScore + recencyScore);
 };
@@ -91,9 +81,7 @@ const assertSourceType = (sourceType: PriceObservation['sourceType']) => {
 
 const buildCitizenObservations = (): PriceObservation[] => {
   return (rawObservations as RawObservation[]).flatMap((observation) => {
-    const observedAt = new Date(
-      `${observation.date}T${observation.heure}`
-    ).toISOString();
+    const observedAt = new Date(`${observation.date}T${observation.heure}`).toISOString();
 
     const territory = normalizeTerritoryCode(observation.territoire).toUpperCase() as TerritoryCode;
 
@@ -111,10 +99,7 @@ const buildCitizenObservations = (): PriceObservation[] => {
         observedAt,
         sourceType: 'citizen',
         observationsCount,
-        confidenceScore: computeConfidenceScore(
-          observationsCount,
-          observedAt
-        ),
+        confidenceScore: computeConfidenceScore(observationsCount, observedAt),
       };
     });
   });
@@ -142,17 +127,11 @@ const buildObservationPool = (): PriceObservation[] => {
  * Agrégation (moyenne + dernière observation)
  * ========================================================================== */
 
-const aggregateObservations = (
-  observations: PriceObservation[]
-): PriceObservation[] => {
+const aggregateObservations = (observations: PriceObservation[]): PriceObservation[] => {
   const grouped = new Map<string, PriceObservation[]>();
 
   observations.forEach((obs) => {
-    const key = [
-      obs.productLabel,
-      obs.territory,
-      obs.storeLabel ?? '',
-    ]
+    const key = [obs.productLabel, obs.territory, obs.storeLabel ?? '']
       .map(normalizeText)
       .join('|');
 
@@ -169,19 +148,13 @@ const aggregateObservations = (
       new Date(b.observedAt) > new Date(a.observedAt) ? b : a
     );
 
-    const observationsCount = entries.reduce(
-      (sum, e) => sum + (e.observationsCount ?? 1),
-      0
-    );
+    const observationsCount = entries.reduce((sum, e) => sum + (e.observationsCount ?? 1), 0);
 
     return {
       ...latest,
       price: Number(averagePrice.toFixed(2)),
       observationsCount,
-      confidenceScore: computeConfidenceScore(
-        observationsCount,
-        latest.observedAt
-      ),
+      confidenceScore: computeConfidenceScore(observationsCount, latest.observedAt),
     };
   });
 };
@@ -200,43 +173,28 @@ export const priceObservationService = {
 
     const observations = aggregateObservations(
       buildObservationPool().filter((obs) => {
-        const matchesQuery =
-          query.length === 0 ||
-          normalizeText(obs.productLabel).includes(query);
+        const matchesQuery = query.length === 0 || normalizeText(obs.productLabel).includes(query);
 
         const matchesTerritory =
           filters.territory === 'all' ||
           obs.territory.toLowerCase() === filters.territory.toLowerCase();
 
-        const matchesStore =
-          filters.store === 'all' ||
-          obs.storeLabel === filters.store;
+        const matchesStore = filters.store === 'all' || obs.storeLabel === filters.store;
 
-        const matchesSource =
-          filters.source === 'all' ||
-          obs.sourceType === filters.source;
+        const matchesSource = filters.source === 'all' || obs.sourceType === filters.source;
 
         const matchesPeriod =
           filters.periodDays === 'all'
             ? true
-            : Date.now() -
-                new Date(obs.observedAt).getTime() <=
+            : Date.now() - new Date(obs.observedAt).getTime() <=
               filters.periodDays * 24 * 60 * 60 * 1000;
 
-        return (
-          matchesQuery &&
-          matchesTerritory &&
-          matchesStore &&
-          matchesSource &&
-          matchesPeriod
-        );
+        return matchesQuery && matchesTerritory && matchesStore && matchesSource && matchesPeriod;
       })
     );
 
     return observations.sort(
-      (a, b) =>
-        new Date(b.observedAt).getTime() -
-        new Date(a.observedAt).getTime()
+      (a, b) => new Date(b.observedAt).getTime() - new Date(a.observedAt).getTime()
     );
   },
 };

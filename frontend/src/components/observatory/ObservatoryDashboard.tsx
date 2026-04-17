@@ -1,7 +1,6 @@
- 
 /**
  * Observatory Dashboard Component
- * 
+ *
  * Tableau de bord public de l'observatoire des prix
  * Affiche les indicateurs prioritaires de manière transparente
  */
@@ -9,10 +8,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ObservatoryDashboard.css';
-import type {
-  IndicatorSnapshot,
-  ObservatoryGlobalStats,
-} from '../../types/observatoryIndicators';
+import type { IndicatorSnapshot, ObservatoryGlobalStats } from '../../types/observatoryIndicators';
 import type { TerritoryCode } from '../../types/PriceObservation';
 import { loadSnapshotLocally, isSnapshotStale } from '../../services/snapshotGenerationService';
 
@@ -57,7 +53,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         periode_couverte: loaded.metadata?.periode_couverte ?? { debut: '', fin: '' },
         sources: loaded.metadata?.sources ?? [],
         qualite_moyenne: loaded.metadata?.qualite_moyenne ?? 0,
-      }
+      },
     };
   }, []);
 
@@ -72,18 +68,20 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
 
     try {
       let loaded = loadSnapshotLocally('observatory_snapshot');
-      
+
       // Fallback to bundled snapshot if local storage is empty or broken
       if (!loaded) {
-        const res = await fetch(`${import.meta.env.BASE_URL}data/observatory_snapshot.json`, { cache: 'no-store' });
+        const res = await fetch(`${import.meta.env.BASE_URL}data/observatory_snapshot.json`, {
+          cache: 'no-store',
+        });
         if (!res.ok) {
           throw new Error(`Impossible de charger les données (${res.status})`);
         }
-        loaded = await res.json() as IndicatorSnapshot;
+        loaded = (await res.json()) as IndicatorSnapshot;
       }
-      
+
       const safeSnapshot = normalizeSnapshot(loaded);
-      
+
       if (!safeSnapshot) {
         setError('Aucune donnée disponible. Veuillez générer un snapshot.');
         setLoading(false);
@@ -114,10 +112,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         <h3>Observatoire public en cours de déploiement</h3>
         <p>Les premières données seront publiées prochainement.</p>
         {message && <p className="mt-2">{message}</p>}
-        <button
-          type="button"
-          onClick={() => navigate('/observatoire/methodologie')}
-        >
+        <button type="button" onClick={() => navigate('/observatoire/methodologie')}>
           Comprendre le projet
         </button>
       </div>
@@ -218,8 +213,8 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
                     {ivc.indice_global > 100
                       ? `+${(ivc.indice_global - 100).toFixed(1)}%`
                       : ivc.indice_global < 100
-                      ? `${(ivc.indice_global - 100).toFixed(1)}%`
-                      : 'Équivalent'}
+                        ? `${(ivc.indice_global - 100).toFixed(1)}%`
+                        : 'Équivalent'}
                   </span>
                 </div>
                 <div className="categories-mini">
@@ -241,7 +236,9 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
         <section className="indicator-section">
           <h2>Prix Moyens par Produit</h2>
           <p className="section-description">
-            Calculés à partir de {indicateurs.prix_moyens.reduce((sum, p) => sum + p.nombre_observations, 0)} observations
+            Calculés à partir de{' '}
+            {indicateurs.prix_moyens.reduce((sum, p) => sum + p.nombre_observations, 0)}{' '}
+            observations
           </p>
           <div className="table-container">
             <table className="price-table">
@@ -311,9 +308,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
       {indicateurs.evolutions_temporelles.length > 0 && (
         <section className="indicator-section">
           <h2>Évolutions Temporelles</h2>
-          <p className="section-description">
-            Variation des prix sur différentes périodes
-          </p>
+          <p className="section-description">Variation des prix sur différentes périodes</p>
           <div className="evolution-grid">
             {indicateurs.evolutions_temporelles.slice(0, 10).map((evolution, idx) => (
               <div key={idx} className="evolution-card">
@@ -325,7 +320,9 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
                   {evolution.evolutions.map((ev) => (
                     <div key={ev.periode} className="evolution-item">
                       <span className="period">{ev.periode}</span>
-                      <span className={`variation ${ev.variation_pourcentage >= 0 ? 'up' : 'down'}`}>
+                      <span
+                        className={`variation ${ev.variation_pourcentage >= 0 ? 'up' : 'down'}`}
+                      >
                         {ev.variation_pourcentage > 0 ? '+' : ''}
                         {ev.variation_pourcentage.toFixed(1)}%
                       </span>
@@ -345,9 +342,7 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
       {indicateurs.dispersions_enseignes.length > 0 && (
         <section className="indicator-section">
           <h2>Dispersion par Enseigne</h2>
-          <p className="section-description">
-            Comparaison factuelle sans classement punitif
-          </p>
+          <p className="section-description">Comparaison factuelle sans classement punitif</p>
           <div className="dispersion-grid">
             {indicateurs.dispersions_enseignes.slice(0, 6).map((dispersion, idx) => (
               <div key={idx} className="dispersion-card">
@@ -359,16 +354,16 @@ export const ObservatoryDashboard: React.FC<ObservatoryDashboardProps> = ({ terr
                   </div>
                   <div className="stat">
                     <span className="label">Médiane</span>
-                    <span className="value">{dispersion.statistiques.prix_median.toFixed(2)} €</span>
+                    <span className="value">
+                      {dispersion.statistiques.prix_median.toFixed(2)} €
+                    </span>
                   </div>
                   <div className="stat">
                     <span className="label">Max</span>
                     <span className="value">{dispersion.statistiques.prix_max.toFixed(2)} €</span>
                   </div>
                 </div>
-                <div className="store-count">
-                  {dispersion.nombre_enseignes} enseignes comparées
-                </div>
+                <div className="store-count">{dispersion.nombre_enseignes} enseignes comparées</div>
               </div>
             ))}
           </div>

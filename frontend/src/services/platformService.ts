@@ -1,9 +1,9 @@
 /**
  * Platform Detection Service
- * 
+ *
  * Detects whether the app is running on web or Android platform
  * and provides utilities for platform-specific features
- * 
+ *
  * CONTEXT:
  * - Web version: 100% FREE (CITOYEN mode)
  * - Android version: FREE (CITOYEN) + optional PREMIUM features via Google Play Billing

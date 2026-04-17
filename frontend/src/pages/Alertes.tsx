@@ -13,14 +13,28 @@ import { useStoreSelection } from '../context/StoreSelectionContext';
 import { getAlerts } from '../services/alertsService';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
-import type { SanitaryAlert, SanitaryAlertsMetadata, TerritoryCode, AlertSeverity } from '../types/alerts';
+import type {
+  SanitaryAlert,
+  SanitaryAlertsMetadata,
+  TerritoryCode,
+  AlertSeverity,
+} from '../types/alerts';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 /** Convert an array of alert objects to a RFC-4180 CSV string. */
 function alertsToCSV(alerts: SanitaryAlert[]): string {
   const headers: (keyof SanitaryAlert)[] = [
-    'id', 'title', 'severity', 'status', 'category', 'brand', 'ean', 'lot', 'publishedAt', 'reason',
+    'id',
+    'title',
+    'severity',
+    'status',
+    'category',
+    'brand',
+    'ean',
+    'lot',
+    'publishedAt',
+    'reason',
   ];
   const escape = (val: unknown): string => {
     if (val == null) return '';
@@ -44,7 +58,10 @@ function downloadCSV(csv: string, filename: string): void {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-interface SelectOption { value: string; label: string }
+interface SelectOption {
+  value: string;
+  label: string;
+}
 
 const severityOptions: SelectOption[] = [
   { value: '', label: 'Toutes sévérités' },
@@ -75,19 +92,17 @@ export default function Alertes() {
   const [alerts, setAlerts] = useState<SanitaryAlert[]>([]);
   const [metadata, setMetadata] = useState<SanitaryAlertsMetadata | null>(null);
 
-  const syncQueryString = useCallback((next: {
-    onlyActive: boolean;
-    category: string;
-    severity: string;
-    q: string;
-  }) => {
-    const params = new URLSearchParams();
-    if (next.onlyActive) params.set('active', '1');
-    if (next.category) params.set('category', next.category);
-    if (next.severity) params.set('severity', next.severity);
-    if (next.q) params.set('q', next.q);
-    setSearchParams(params, { replace: true });
-  }, [setSearchParams]);
+  const syncQueryString = useCallback(
+    (next: { onlyActive: boolean; category: string; severity: string; q: string }) => {
+      const params = new URLSearchParams();
+      if (next.onlyActive) params.set('active', '1');
+      if (next.category) params.set('category', next.category);
+      if (next.severity) params.set('severity', next.severity);
+      if (next.q) params.set('q', next.q);
+      setSearchParams(params, { replace: true });
+    },
+    [setSearchParams]
+  );
 
   const handleExportCSV = useCallback(() => {
     const csv = alertsToCSV(alerts);
@@ -178,7 +193,9 @@ export default function Alertes() {
             }}
           >
             {categoryOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
             ))}
           </select>
 
@@ -193,7 +210,9 @@ export default function Alertes() {
             }}
           >
             {severityOptions.map((option) => (
-              <option key={option.value} value={option.value}>{option.label}</option>
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
             ))}
           </select>
 

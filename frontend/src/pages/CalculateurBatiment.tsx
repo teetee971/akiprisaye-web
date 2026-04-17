@@ -26,13 +26,44 @@ import { useState, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  HardHat, Home, TreePine, Wrench, Lock, Unlock,
-  ChevronLeft, AlertTriangle, Star, Clock, Calculator,
-  RotateCcw, Info, ShoppingCart, MapPin, Phone, ExternalLink,
-  ChevronDown, ChevronUp, Copy, Check, Navigation,
-  Package, Tag, Clock3, CheckCircle2, XCircle,
-  BookOpen, ChevronRight, Shield, Hammer, Layers, Zap,
-  MessageSquarePlus, Send, Lightbulb, Droplet, Ruler,
+  HardHat,
+  Home,
+  TreePine,
+  Wrench,
+  Lock,
+  Unlock,
+  ChevronLeft,
+  AlertTriangle,
+  Star,
+  Clock,
+  Calculator,
+  RotateCcw,
+  Info,
+  ShoppingCart,
+  MapPin,
+  Phone,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Copy,
+  Check,
+  Navigation,
+  Package,
+  Tag,
+  Clock3,
+  CheckCircle2,
+  XCircle,
+  BookOpen,
+  ChevronRight,
+  Shield,
+  Hammer,
+  Layers,
+  Zap,
+  MessageSquarePlus,
+  Send,
+  Lightbulb,
+  Droplet,
+  Ruler,
 } from 'lucide-react';
 import {
   getBatimentTrialState,
@@ -55,15 +86,39 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type CategoryId = 'gros-oeuvre' | 'finitions' | 'exterieur' | 'outils' | 'electricite-plomberie' | 'second-oeuvre'
-  | 'plomberie-cvc' | 'carrelage-revetements' | 'menuiserie-cloisons' | 'maconnerie-specialisee';
+type CategoryId =
+  | 'gros-oeuvre'
+  | 'finitions'
+  | 'exterieur'
+  | 'outils'
+  | 'electricite-plomberie'
+  | 'second-oeuvre'
+  | 'plomberie-cvc'
+  | 'carrelage-revetements'
+  | 'menuiserie-cloisons'
+  | 'maconnerie-specialisee';
 type CalculatorId =
-  | 'parpaing' | 'dalle-beton' | 'fondations' | 'chape'
-  | 'carrelage' | 'peinture' | 'enduit'
-  | 'toles' | 'terrassement' | 'cloture' | 'piscine'
-  | 'beton-courant' | 'escalier'
-  | 'electricite' | 'plomberie' | 'isolation' | 'charpente'
-  | 'platrerie' | 'parquet' | 'gouttiere' | 'menuiserie';
+  | 'parpaing'
+  | 'dalle-beton'
+  | 'fondations'
+  | 'chape'
+  | 'carrelage'
+  | 'peinture'
+  | 'enduit'
+  | 'toles'
+  | 'terrassement'
+  | 'cloture'
+  | 'piscine'
+  | 'beton-courant'
+  | 'escalier'
+  | 'electricite'
+  | 'plomberie'
+  | 'isolation'
+  | 'charpente'
+  | 'platrerie'
+  | 'parquet'
+  | 'gouttiere'
+  | 'menuiserie';
 
 /** Shared props for all calculator sub-components. */
 type CalcProps = {
@@ -75,11 +130,11 @@ type CalcProps = {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const TERRITORY_OPTIONS: { code: TerritoryCode; label: string; flag: string }[] = [
-  { code: 'GP', label: 'Guadeloupe',  flag: '🇬🇵' },
-  { code: 'MQ', label: 'Martinique',  flag: '🇲🇶' },
-  { code: 'RE', label: 'La Réunion',  flag: '🇷🇪' },
-  { code: 'GF', label: 'Guyane',      flag: '🇬🇫' },
-  { code: 'YT', label: 'Mayotte',     flag: '🇾🇹' },
+  { code: 'GP', label: 'Guadeloupe', flag: '🇬🇵' },
+  { code: 'MQ', label: 'Martinique', flag: '🇲🇶' },
+  { code: 'RE', label: 'La Réunion', flag: '🇷🇪' },
+  { code: 'GF', label: 'Guyane', flag: '🇬🇫' },
+  { code: 'YT', label: 'Mayotte', flag: '🇾🇹' },
 ];
 
 const CATEGORIES = [
@@ -186,34 +241,142 @@ const CATEGORIES = [
   },
 ];
 
-const CALC_META: Record<CalculatorId, { label: string; emoji: string; description: string; image: string }> = {
+const CALC_META: Record<
+  CalculatorId,
+  { label: string; emoji: string; description: string; image: string }
+> = {
   // ── Gros œuvre ──
-  parpaing:               { label: 'Parpaing ou Bloc US',          emoji: '🧱', description: 'Blocs, mortier, ciment, sable',                image: 'photo-1581094794329-c8112a89af12' },
-  'dalle-beton':          { label: 'Dalle béton',                   emoji: '🏗️', description: 'Volume, ciment, gravier, treillis',             image: 'photo-1590856029826-c7a73142bbf1' },
-  fondations:             { label: 'Fondations (semelles filantes)', emoji: '⚓', description: 'Volume béton, acier HA, coffrage',              image: 'photo-1573500883905-4b6e3dfc30c4' },
-  chape:                  { label: 'Chape de sol',                  emoji: '🪵', description: 'Mortier chape, ciment, sable',                  image: 'photo-1600566753190-17f0baa2a6c3' },
+  parpaing: {
+    label: 'Parpaing ou Bloc US',
+    emoji: '🧱',
+    description: 'Blocs, mortier, ciment, sable',
+    image: 'photo-1581094794329-c8112a89af12',
+  },
+  'dalle-beton': {
+    label: 'Dalle béton',
+    emoji: '🏗️',
+    description: 'Volume, ciment, gravier, treillis',
+    image: 'photo-1590856029826-c7a73142bbf1',
+  },
+  fondations: {
+    label: 'Fondations (semelles filantes)',
+    emoji: '⚓',
+    description: 'Volume béton, acier HA, coffrage',
+    image: 'photo-1573500883905-4b6e3dfc30c4',
+  },
+  chape: {
+    label: 'Chape de sol',
+    emoji: '🪵',
+    description: 'Mortier chape, ciment, sable',
+    image: 'photo-1600566753190-17f0baa2a6c3',
+  },
   // ── Finitions ──
-  carrelage:              { label: 'Carrelage',                     emoji: '🟫', description: 'Carreaux, colle, joint de carrelage',           image: 'photo-1542621334-a254cf47733d' },
-  peinture:               { label: 'Calcul quantité de peinture',   emoji: '🎨', description: 'Litres, murs & plafond, ouvertures',            image: 'photo-1562259949-e8e7689d7828' },
-  enduit:                 { label: 'Enduit / Crépissage',           emoji: '🪣', description: 'Enduit façade, mortier, ciment',                image: 'photo-1589939705384-5185137a7f0f' },
+  carrelage: {
+    label: 'Carrelage',
+    emoji: '🟫',
+    description: 'Carreaux, colle, joint de carrelage',
+    image: 'photo-1542621334-a254cf47733d',
+  },
+  peinture: {
+    label: 'Calcul quantité de peinture',
+    emoji: '🎨',
+    description: 'Litres, murs & plafond, ouvertures',
+    image: 'photo-1562259949-e8e7689d7828',
+  },
+  enduit: {
+    label: 'Enduit / Crépissage',
+    emoji: '🪣',
+    description: 'Enduit façade, mortier, ciment',
+    image: 'photo-1589939705384-5185137a7f0f',
+  },
   // ── Extérieur ──
-  toles:                  { label: 'Tôles de couverture',           emoji: '🏠', description: 'Tôles ondulées, fixations, faîtière',           image: 'photo-1517581177682-a085bb7ffb38' },
-  terrassement:           { label: 'Terrassement',                  emoji: '⛏️', description: 'Volume de déblai / remblai, camions',           image: 'photo-1547149831-bd9c63d1da4e' },
-  cloture:                { label: 'Clôture',                       emoji: '🚧', description: 'Grillage, poteaux, béton de scellement',        image: 'photo-1558618666-fcd25c85cd64' },
-  piscine:                { label: 'Piscine / Bassin',              emoji: '🏊', description: 'Volume d’eau, béton radier, étanchéité',        image: 'photo-1507525428034-b723cf961d3e' },
+  toles: {
+    label: 'Tôles de couverture',
+    emoji: '🏠',
+    description: 'Tôles ondulées, fixations, faîtière',
+    image: 'photo-1517581177682-a085bb7ffb38',
+  },
+  terrassement: {
+    label: 'Terrassement',
+    emoji: '⛏️',
+    description: 'Volume de déblai / remblai, camions',
+    image: 'photo-1547149831-bd9c63d1da4e',
+  },
+  cloture: {
+    label: 'Clôture',
+    emoji: '🚧',
+    description: 'Grillage, poteaux, béton de scellement',
+    image: 'photo-1558618666-fcd25c85cd64',
+  },
+  piscine: {
+    label: 'Piscine / Bassin',
+    emoji: '🏊',
+    description: 'Volume d’eau, béton radier, étanchéité',
+    image: 'photo-1507525428034-b723cf961d3e',
+  },
   // ── Outils ──
-  'beton-courant':        { label: 'Béton courant',                 emoji: '🪣', description: 'Dosage ciment, sable, gravier pour béton',     image: 'photo-1582268611958-ebfd161ef9cf' },
-  escalier:               { label: 'Escalier',                      emoji: '🪜', description: 'Marches, hauteur, giron, longueur totale',      image: 'photo-1568689285228-f0d18c553ee4' },
+  'beton-courant': {
+    label: 'Béton courant',
+    emoji: '🪣',
+    description: 'Dosage ciment, sable, gravier pour béton',
+    image: 'photo-1582268611958-ebfd161ef9cf',
+  },
+  escalier: {
+    label: 'Escalier',
+    emoji: '🪜',
+    description: 'Marches, hauteur, giron, longueur totale',
+    image: 'photo-1568689285228-f0d18c553ee4',
+  },
   // ── Électricité & Plomberie ──
-  electricite:            { label: 'Section de câble électrique',   emoji: '⚡', description: 'Intensité, section mm², disjoncteur',           image: 'photo-1621905252507-b35492cc74b4' },
-  plomberie:              { label: 'Tuyauterie / Plomberie',        emoji: '🚰', description: 'Longueur tuyaux, raccords, diamètre',           image: 'photo-1585771724684-38269d6639fd' },
-  isolation:              { label: 'Isolation thermique',           emoji: '🌡️', description: 'Surface, épaisseur, résistance thermique R',    image: 'photo-1584622781564-1d987f7333c1' },
-  charpente:              { label: 'Charpente bois',                emoji: '🪵', description: 'Chevrons, pannes, longueur de pente, volume',   image: 'photo-1504148455328-c376907d081c' },
+  electricite: {
+    label: 'Section de câble électrique',
+    emoji: '⚡',
+    description: 'Intensité, section mm², disjoncteur',
+    image: 'photo-1621905252507-b35492cc74b4',
+  },
+  plomberie: {
+    label: 'Tuyauterie / Plomberie',
+    emoji: '🚰',
+    description: 'Longueur tuyaux, raccords, diamètre',
+    image: 'photo-1585771724684-38269d6639fd',
+  },
+  isolation: {
+    label: 'Isolation thermique',
+    emoji: '🌡️',
+    description: 'Surface, épaisseur, résistance thermique R',
+    image: 'photo-1584622781564-1d987f7333c1',
+  },
+  charpente: {
+    label: 'Charpente bois',
+    emoji: '🪵',
+    description: 'Chevrons, pannes, longueur de pente, volume',
+    image: 'photo-1504148455328-c376907d081c',
+  },
   // ── Second œuvre ──
-  platrerie:              { label: 'Plâtrerie / Plaques BA13',      emoji: '🏗️', description: 'Plaques, rails, vis, bandes de joints',        image: 'photo-1532550907401-a500c9a57435' },
-  parquet:                { label: 'Parquet & Sols stratifiés',     emoji: '🪵', description: 'Lames, paquets, colle ou sous-couche',          image: 'photo-1533090368676-1fd25485db88' },
-  gouttiere:              { label: 'Gouttières & Descentes EP',     emoji: '🌧️', description: 'Zinguerie, crochets, colliers, jonctions',      image: 'photo-1505409628601-edc9af17fda6' },
-  menuiserie:             { label: 'Menuiserie extérieure',         emoji: '🪟', description: 'Fenêtres, portes, surface vitrée, seuils',      image: 'photo-1527515545081-5db817172677' },
+  platrerie: {
+    label: 'Plâtrerie / Plaques BA13',
+    emoji: '🏗️',
+    description: 'Plaques, rails, vis, bandes de joints',
+    image: 'photo-1532550907401-a500c9a57435',
+  },
+  parquet: {
+    label: 'Parquet & Sols stratifiés',
+    emoji: '🪵',
+    description: 'Lames, paquets, colle ou sous-couche',
+    image: 'photo-1533090368676-1fd25485db88',
+  },
+  gouttiere: {
+    label: 'Gouttières & Descentes EP',
+    emoji: '🌧️',
+    description: 'Zinguerie, crochets, colliers, jonctions',
+    image: 'photo-1505409628601-edc9af17fda6',
+  },
+  menuiserie: {
+    label: 'Menuiserie extérieure',
+    emoji: '🪟',
+    description: 'Fenêtres, portes, surface vitrée, seuils',
+    image: 'photo-1527515545081-5db817172677',
+  },
 };
 
 const CIMENT_TYPES = [
@@ -222,26 +385,39 @@ const CIMENT_TYPES = [
 ];
 
 const PARPAING_TYPES = [
-  { label: 'Parpaing 7×20×50',       h: 0.20, l: 0.50, productId: 'parpaing_7' },
-  { label: 'Parpaing 10×20×50',      h: 0.20, l: 0.50, productId: 'parpaing_15' },
-  { label: 'Parpaing 15×20×50',      h: 0.20, l: 0.50, productId: 'parpaing_15' },
-  { label: 'Parpaing 20×20×50',      h: 0.20, l: 0.50, productId: 'parpaing_20' },
-  { label: 'Parpaing Mega 15×25×50', h: 0.25, l: 0.50, productId: 'parpaing_15' },
-  { label: 'Parpaing Mega 20×25×50', h: 0.25, l: 0.50, productId: 'parpaing_20' },
-  { label: 'Bloc US 9×19×39',        h: 0.19, l: 0.39, productId: 'parpaing_7' },
-  { label: 'Bloc US 14×19×39',       h: 0.19, l: 0.39, productId: 'bloc_us_14' },
-  { label: 'Bloc US 19×19×39',       h: 0.19, l: 0.39, productId: 'parpaing_20' },
+  { label: 'Parpaing 7×20×50', h: 0.2, l: 0.5, productId: 'parpaing_7' },
+  { label: 'Parpaing 10×20×50', h: 0.2, l: 0.5, productId: 'parpaing_15' },
+  { label: 'Parpaing 15×20×50', h: 0.2, l: 0.5, productId: 'parpaing_15' },
+  { label: 'Parpaing 20×20×50', h: 0.2, l: 0.5, productId: 'parpaing_20' },
+  { label: 'Parpaing Mega 15×25×50', h: 0.25, l: 0.5, productId: 'parpaing_15' },
+  { label: 'Parpaing Mega 20×25×50', h: 0.25, l: 0.5, productId: 'parpaing_20' },
+  { label: 'Bloc US 9×19×39', h: 0.19, l: 0.39, productId: 'parpaing_7' },
+  { label: 'Bloc US 14×19×39', h: 0.19, l: 0.39, productId: 'bloc_us_14' },
+  { label: 'Bloc US 19×19×39', h: 0.19, l: 0.39, productId: 'parpaing_20' },
 ];
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-function NumInput({ label, value, onChange, placeholder = '0.00', unit }: {
-  label: string; value: string; onChange: (v: string) => void; placeholder?: string; unit?: string;
+function NumInput({
+  label,
+  value,
+  onChange,
+  placeholder = '0.00',
+  unit,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  unit?: string;
 }) {
   const id = `num-input-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}`;
   return (
     <div>
-      <label htmlFor={id} className="block text-sm text-slate-400 mb-1">{label}{unit && <span className="text-slate-500 ml-1">({unit})</span>}</label>
+      <label htmlFor={id} className="block text-sm text-slate-400 mb-1">
+        {label}
+        {unit && <span className="text-slate-500 ml-1">({unit})</span>}
+      </label>
       <input
         id={id}
         type="number"
@@ -256,9 +432,19 @@ function NumInput({ label, value, onChange, placeholder = '0.00', unit }: {
   );
 }
 
-function ResultRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function ResultRow({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
   return (
-    <div className={`rounded-xl p-3 ${highlight ? 'bg-orange-900/30 border border-orange-500/30' : 'bg-slate-800/60'}`}>
+    <div
+      className={`rounded-xl p-3 ${highlight ? 'bg-orange-900/30 border border-orange-500/30' : 'bg-slate-800/60'}`}
+    >
       <p className="text-xs text-slate-400 mb-0.5">{label}</p>
       <p className={`font-bold text-sm ${highlight ? 'text-orange-300' : 'text-white'}`}>{value}</p>
     </div>
@@ -279,16 +465,24 @@ function BlockedBanner() {
     <div className="rounded-xl bg-red-900/30 border border-red-500/40 p-4 text-center">
       <Lock className="w-5 h-5 mx-auto mb-1 text-red-400" />
       <p className="text-sm text-red-300 font-medium">Quota journalier atteint</p>
-      <Link to="/pricing" className="text-xs text-indigo-400 underline hover:text-indigo-300">Passer en Premium pour continuer →</Link>
+      <Link to="/pricing" className="text-xs text-indigo-400 underline hover:text-indigo-300">
+        Passer en Premium pour continuer →
+      </Link>
     </div>
   );
 }
 
 // ─── Store Locator Panel ──────────────────────────────────────────────────────
 
-function StoreLocatorPanel({ needs, territory }: { needs: MaterialNeed[]; territory: TerritoryCode | null }) {
-  const [open, setOpen]         = useState(true);
-  const [copied, setCopied]     = useState(false);
+function StoreLocatorPanel({
+  needs,
+  territory,
+}: {
+  needs: MaterialNeed[];
+  territory: TerritoryCode | null;
+}) {
+  const [open, setOpen] = useState(true);
+  const [copied, setCopied] = useState(false);
   const [expandedStore, setExpandedStore] = useState<string | null>('all');
 
   if (!territory || needs.length === 0) return null;
@@ -329,11 +523,21 @@ function StoreLocatorPanel({ needs, territory }: { needs: MaterialNeed[]; territ
         <div className="flex items-center gap-2">
           <ShoppingCart className="w-5 h-5 text-orange-400" />
           <div className="text-left">
-            <p className="font-semibold text-white text-sm">🏪 Où acheter ? Comparer les magasins</p>
-            <p className="text-xs text-slate-400">{quotes.length} magasin{quotes.length > 1 ? 's' : ''} trouvé{quotes.length > 1 ? 's' : ''} en {TERRITORY_OPTIONS.find((t) => t.code === territory)?.label}</p>
+            <p className="font-semibold text-white text-sm">
+              🏪 Où acheter ? Comparer les magasins
+            </p>
+            <p className="text-xs text-slate-400">
+              {quotes.length} magasin{quotes.length > 1 ? 's' : ''} trouvé
+              {quotes.length > 1 ? 's' : ''} en{' '}
+              {TERRITORY_OPTIONS.find((t) => t.code === territory)?.label}
+            </p>
           </div>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-slate-400" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-slate-400" />
+        )}
       </button>
 
       {open && (
@@ -391,7 +595,12 @@ function StoreLocatorPanel({ needs, territory }: { needs: MaterialNeed[]; territ
   );
 }
 
-function StoreCard({ quote, isBest, isExpanded, onToggle }: {
+function StoreCard({
+  quote,
+  isBest,
+  isExpanded,
+  onToggle,
+}: {
   quote: StoreQuote;
   isBest: boolean;
   isExpanded: boolean;
@@ -401,13 +610,17 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
   const savings = isBest ? null : null; // future: vs cheapest
 
   return (
-    <div className={`rounded-2xl border overflow-hidden ${isBest ? 'border-orange-500/60 bg-orange-900/10' : 'border-slate-700 bg-slate-800/50'}`}>
+    <div
+      className={`rounded-2xl border overflow-hidden ${isBest ? 'border-orange-500/60 bg-orange-900/10' : 'border-slate-700 bg-slate-800/50'}`}
+    >
       {/* Store header */}
       <div className="p-4">
         {/* Top row */}
         <div className="flex items-start justify-between gap-2 mb-3">
           <div className="flex items-center gap-2 min-w-0">
-            <div className={`w-10 h-10 rounded-xl ${store.brandColor} flex items-center justify-center text-white font-bold text-sm shrink-0 shadow`}>
+            <div
+              className={`w-10 h-10 rounded-xl ${store.brandColor} flex items-center justify-center text-white font-bold text-sm shrink-0 shadow`}
+            >
               {store.brand.slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0">
@@ -419,12 +632,19 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-400">{store.city} • {store.type === 'negociant_pro' ? 'Négoce pro' : 'Grande surface'}</p>
+              <p className="text-xs text-slate-400">
+                {store.city} • {store.type === 'negociant_pro' ? 'Négoce pro' : 'Grande surface'}
+              </p>
             </div>
           </div>
           <div className="text-right shrink-0">
             <p className="text-2xl font-black text-orange-300">{grandTotal.toFixed(2)} €</p>
-            {missingCount > 0 && <p className="text-xs text-yellow-500">{missingCount} produit{missingCount > 1 ? 's' : ''} manquant{missingCount > 1 ? 's' : ''}</p>}
+            {missingCount > 0 && (
+              <p className="text-xs text-yellow-500">
+                {missingCount} produit{missingCount > 1 ? 's' : ''} manquant
+                {missingCount > 1 ? 's' : ''}
+              </p>
+            )}
           </div>
         </div>
 
@@ -448,11 +668,16 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
         {!isExpanded && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {lines.slice(0, 4).map((l) => (
-              <span key={l.product.id} className="text-xs bg-slate-700 text-slate-300 rounded-full px-2 py-0.5">
+              <span
+                key={l.product.id}
+                className="text-xs bg-slate-700 text-slate-300 rounded-full px-2 py-0.5"
+              >
                 {l.product.label.split(' ').slice(0, 3).join(' ')} — {l.unitPrice.toFixed(2)} €
               </span>
             ))}
-            {lines.length > 4 && <span className="text-xs text-slate-500">+{lines.length - 4} autres</span>}
+            {lines.length > 4 && (
+              <span className="text-xs text-slate-500">+{lines.length - 4} autres</span>
+            )}
           </div>
         )}
 
@@ -460,20 +685,33 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
         {isExpanded && (
           <div className="mb-3 space-y-1.5">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 flex items-center gap-1">
-              <Package className="w-3.5 h-3.5" />Détail des matériaux
+              <Package className="w-3.5 h-3.5" />
+              Détail des matériaux
             </p>
             {lines.map((l) => (
-              <div key={l.product.id} className="flex items-center justify-between gap-2 bg-slate-900/50 rounded-lg px-3 py-2 text-sm">
+              <div
+                key={l.product.id}
+                className="flex items-center justify-between gap-2 bg-slate-900/50 rounded-lg px-3 py-2 text-sm"
+              >
                 <div className="flex items-center gap-2 min-w-0">
-                  {l.inStock
-                    ? <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
-                    : <XCircle className="w-4 h-4 text-red-400 shrink-0" />
-                  }
+                  {l.inStock ? (
+                    <CheckCircle2 className="w-4 h-4 text-green-400 shrink-0" />
+                  ) : (
+                    <XCircle className="w-4 h-4 text-red-400 shrink-0" />
+                  )}
                   <div className="min-w-0">
-                    <p className="text-white truncate">{l.qty} × {l.product.label}</p>
+                    <p className="text-white truncate">
+                      {l.qty} × {l.product.label}
+                    </p>
                     <div className="flex gap-2 items-center flex-wrap">
-                      <p className="text-xs text-slate-500">{l.product.unit} • {l.unitPrice.toFixed(2)} €/unité</p>
-                      {l.promotion && <span className="text-xs bg-green-800/60 text-green-300 rounded-full px-2 py-0.5">{l.promotion}</span>}
+                      <p className="text-xs text-slate-500">
+                        {l.product.unit} • {l.unitPrice.toFixed(2)} €/unité
+                      </p>
+                      {l.promotion && (
+                        <span className="text-xs bg-green-800/60 text-green-300 rounded-full px-2 py-0.5">
+                          {l.promotion}
+                        </span>
+                      )}
                       {l.note && <span className="text-xs text-slate-500 italic">{l.note}</span>}
                       {!l.inStock && <span className="text-xs text-red-400">Sur commande</span>}
                     </div>
@@ -494,11 +732,18 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
           <div className="space-y-1.5 mb-3 text-xs text-slate-400">
             <div className="flex items-center gap-2">
               <MapPin className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-              <span>{store.address}, {store.postalCode} {store.city}</span>
+              <span>
+                {store.address}, {store.postalCode} {store.city}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Phone className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-              <a href={`tel:${store.phone.replace(/\s/g, '')}`} className="text-blue-400 hover:text-blue-300">{store.phone}</a>
+              <a
+                href={`tel:${store.phone.replace(/\s/g, '')}`}
+                className="text-blue-400 hover:text-blue-300"
+              >
+                {store.phone}
+              </a>
             </div>
             <div className="flex items-center gap-2">
               <Clock3 className="w-3.5 h-3.5 text-slate-500 shrink-0" />
@@ -513,7 +758,17 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
             onClick={onToggle}
             className="flex-1 flex items-center justify-center gap-1 rounded-xl border border-slate-600 py-2 text-xs text-slate-300 hover:border-orange-500/50 hover:text-white transition-all"
           >
-            {isExpanded ? <><ChevronUp className="w-3.5 h-3.5" />Réduire</> : <><ChevronDown className="w-3.5 h-3.5" />Voir le détail</>}
+            {isExpanded ? (
+              <>
+                <ChevronUp className="w-3.5 h-3.5" />
+                Réduire
+              </>
+            ) : (
+              <>
+                <ChevronDown className="w-3.5 h-3.5" />
+                Voir le détail
+              </>
+            )}
           </button>
           <a
             href={store.googleMapsUrl}
@@ -521,13 +776,15 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
             rel="noopener noreferrer"
             className="flex items-center gap-1 px-3 py-2 rounded-xl bg-blue-800/50 hover:bg-blue-700/60 text-xs text-blue-300 transition-colors"
           >
-            <Navigation className="w-3.5 h-3.5" />Itinéraire
+            <Navigation className="w-3.5 h-3.5" />
+            Itinéraire
           </a>
           <a
             href={`tel:${store.phone.replace(/\s/g, '')}`}
             className="flex items-center gap-1 px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-xs text-slate-300 transition-colors"
           >
-            <Phone className="w-3.5 h-3.5" />Appeler
+            <Phone className="w-3.5 h-3.5" />
+            Appeler
           </a>
         </div>
       </div>
@@ -539,30 +796,45 @@ function StoreCard({ quote, isBest, isExpanded, onToggle }: {
 
 function ParpaingCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [hauteur, setHauteur]   = useState('');
-  const [typeIdx, setTypeIdx]   = useState(2);
+  const [hauteur, setHauteur] = useState('');
+  const [typeIdx, setTypeIdx] = useState(2);
   const [cimentIdx, setCimentIdx] = useState(0);
-  const [result, setResult]     = useState<{ surface: number; nbBlocs: number; mortierM3: number; nbSacsCiment: number; sableKg: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [result, setResult] = useState<{
+    surface: number;
+    nbBlocs: number;
+    mortierM3: number;
+    nbSacsCiment: number;
+    sableKg: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const l = parseFloat(longueur.replace(',', '.'));
     const h = parseFloat(hauteur.replace(',', '.'));
     if (!l || !h || l <= 0 || h <= 0) return;
 
     const parpaing = PARPAING_TYPES[typeIdx];
-    const surface  = l * h;
+    const surface = l * h;
     const surfaceParBloc = (parpaing.l + 0.01) * (parpaing.h + 0.01);
     const nbBlocs = Math.ceil((surface / surfaceParBloc) * 1.05);
     const mortierM3 = Math.round(surface * 0.025 * 100) / 100;
-    const ciment   = CIMENT_TYPES[cimentIdx];
+    const ciment = CIMENT_TYPES[cimentIdx];
     const cimentKg = mortierM3 * 350;
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
-    const sableKg  = Math.round(cimentKg * 4.5);
+    const sableKg = Math.round(cimentKg * 4.5);
 
-    const res = { surface: Math.round(surface * 100) / 100, nbBlocs, mortierM3, nbSacsCiment, sableKg };
+    const res = {
+      surface: Math.round(surface * 100) / 100,
+      nbBlocs,
+      mortierM3,
+      nbSacsCiment,
+      sableKg,
+    };
     setResult(res);
     setBlocked(false);
 
@@ -574,10 +846,26 @@ function ParpaingCalc({ onCalc, territory, onSave }: CalcProps) {
       { productId: 'sable_25kg', qty: sacsSable },
     ];
     setMaterials(mats);
-    onSave({ calcType: 'parpaing', inputs: { longueur, hauteur, typeBloc: PARPAING_TYPES[typeIdx].label, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
+    onSave({
+      calcType: 'parpaing',
+      inputs: {
+        longueur,
+        hauteur,
+        typeBloc: PARPAING_TYPES[typeIdx].label,
+        formatCiment: CIMENT_TYPES[cimentIdx].label,
+      },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setLongueur(''); setHauteur(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setLongueur('');
+    setHauteur('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -587,40 +875,89 @@ function ParpaingCalc({ onCalc, territory, onSave }: CalcProps) {
         <NumInput label="Hauteur" value={hauteur} onChange={setHauteur} unit="m" />
       </div>
       {longueur && hauteur && (
-        <p className="text-sm text-center text-slate-400">Surface : <span className="text-white font-semibold">{(parseFloat(longueur.replace(',', '.')) * parseFloat(hauteur.replace(',', '.'))).toFixed(2)} m²</span></p>
+        <p className="text-sm text-center text-slate-400">
+          Surface :{' '}
+          <span className="text-white font-semibold">
+            {(
+              parseFloat(longueur.replace(',', '.')) * parseFloat(hauteur.replace(',', '.'))
+            ).toFixed(2)}{' '}
+            m²
+          </span>
+        </p>
       )}
       <div>
-        <label htmlFor="parpaing-type-bloc" className="block text-sm text-slate-400 mb-1">Type de bloc</label>
-        <select id="parpaing-type-bloc" value={typeIdx} onChange={(e) => setTypeIdx(Number(e.target.value))}
-          className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-          {PARPAING_TYPES.map((p, i) => <option key={i} value={i}>{p.label}</option>)}
+        <label htmlFor="parpaing-type-bloc" className="block text-sm text-slate-400 mb-1">
+          Type de bloc
+        </label>
+        <select
+          id="parpaing-type-bloc"
+          value={typeIdx}
+          onChange={(e) => setTypeIdx(Number(e.target.value))}
+          className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+        >
+          {PARPAING_TYPES.map((p, i) => (
+            <option key={i} value={i}>
+              {p.label}
+            </option>
+          ))}
         </select>
       </div>
       <div>
-        <label htmlFor="parpaing-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-        <select id="parpaing-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
-          className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-          {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
+        <label htmlFor="parpaing-format-ciment" className="block text-sm text-slate-400 mb-1">
+          Format sac ciment
+        </label>
+        <select
+          id="parpaing-format-ciment"
+          value={cimentIdx}
+          onChange={(e) => setCimentIdx(Number(e.target.value))}
+          className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+        >
+          {CIMENT_TYPES.map((c, i) => (
+            <option key={i} value={i}>
+              {c.label}
+            </option>
+          ))}
         </select>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <ResultRow label="Surface" value={`${result.surface} m²`} />
               <ResultRow label="Nombre de blocs" value={`${result.nbBlocs} blocs`} highlight />
               <ResultRow label="Quantité de mortier" value={`${result.mortierM3} m³`} highlight />
-              <ResultRow label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`} value={`${result.nbSacsCiment} sacs`} />
-              <ResultRow label="Sable 0/5 (sacs 25 kg)" value={`${Math.ceil(result.sableKg / 25)} sacs`} />
+              <ResultRow
+                label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`}
+                value={`${result.nbSacsCiment} sacs`}
+              />
+              <ResultRow
+                label="Sable 0/5 (sacs 25 kg)"
+                value={`${Math.ceil(result.sableKg / 25)} sacs`}
+              />
               <ResultRow label="Sable total" value={`${result.sableKg} kg`} />
             </div>
-            <p className="text-xs text-slate-500">Calculs pour ciment CPJ 32.5 • Mortier standard 350 kg/m³</p>
+            <p className="text-xs text-slate-500">
+              Calculs pour ciment CPJ 32.5 • Mortier standard 350 kg/m³
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -631,29 +968,43 @@ function ParpaingCalc({ onCalc, territory, onSave }: CalcProps) {
 
 function DalleBetonCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [largeur, setLargeur]   = useState('');
+  const [largeur, setLargeur] = useState('');
   const [epaisseur, setEpaisseur] = useState(10);
   const [cimentIdx, setCimentIdx] = useState(0);
-  const [result, setResult]     = useState<{ surface: number; volume: number; nbSacsCiment: number; sableKg: number; gravierKg: number; treillis: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [result, setResult] = useState<{
+    surface: number;
+    volume: number;
+    nbSacsCiment: number;
+    sableKg: number;
+    gravierKg: number;
+    treillis: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
-  const surface = longueur && largeur
-    ? Math.round(parseFloat(longueur.replace(',', '.')) * parseFloat(largeur.replace(',', '.')) * 100) / 100 : 0;
-  const volume  = surface > 0 ? Math.round(surface * (epaisseur / 100) * 1000) / 1000 : 0;
+  const surface =
+    longueur && largeur
+      ? Math.round(
+          parseFloat(longueur.replace(',', '.')) * parseFloat(largeur.replace(',', '.')) * 100
+        ) / 100
+      : 0;
+  const volume = surface > 0 ? Math.round(surface * (epaisseur / 100) * 1000) / 1000 : 0;
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const l = parseFloat(longueur.replace(',', '.'));
     const w = parseFloat(largeur.replace(',', '.'));
     if (!l || !w) return;
 
-    const ciment   = CIMENT_TYPES[cimentIdx];
+    const ciment = CIMENT_TYPES[cimentIdx];
     const cimentKg = volume * 350;
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
-    const sableKg  = Math.round(cimentKg * 2.5);
+    const sableKg = Math.round(cimentKg * 2.5);
     const gravierKg = Math.round(cimentKg * 4);
-    const treillis = Math.ceil((l * w) / 2.88 * 1.15);
+    const treillis = Math.ceil(((l * w) / 2.88) * 1.15);
 
     const res = { surface, volume, nbSacsCiment, sableKg, gravierKg, treillis };
     setResult(res);
@@ -661,15 +1012,31 @@ function DalleBetonCalc({ onCalc, territory, onSave }: CalcProps) {
 
     const mats: MaterialNeed[] = [
       { productId: ciment.productId, qty: nbSacsCiment },
-      { productId: 'sable_25kg',     qty: Math.ceil(sableKg / 25) },
-      { productId: 'gravier_25kg',   qty: Math.ceil(gravierKg / 25) },
-      { productId: 'treillis_1224',  qty: treillis },
+      { productId: 'sable_25kg', qty: Math.ceil(sableKg / 25) },
+      { productId: 'gravier_25kg', qty: Math.ceil(gravierKg / 25) },
+      { productId: 'treillis_1224', qty: treillis },
     ];
     setMaterials(mats);
-    onSave({ calcType: 'dalle-beton', inputs: { longueur, largeur, epaisseurCm: epaisseur, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
+    onSave({
+      calcType: 'dalle-beton',
+      inputs: {
+        longueur,
+        largeur,
+        epaisseurCm: epaisseur,
+        formatCiment: CIMENT_TYPES[cimentIdx].label,
+      },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setLongueur('');
+    setLargeur('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -685,17 +1052,33 @@ function DalleBetonCalc({ onCalc, territory, onSave }: CalcProps) {
       </div>
 
       <div>
-        <label htmlFor="dalle-epaisseur" className="block text-sm text-slate-400 mb-2">Épaisseur de la dalle : <span className="text-white font-bold">{epaisseur} cm</span></label>
+        <label htmlFor="dalle-epaisseur" className="block text-sm text-slate-400 mb-2">
+          Épaisseur de la dalle : <span className="text-white font-bold">{epaisseur} cm</span>
+        </label>
         <div className="rounded-xl bg-green-700/40 border border-green-600/30 px-4 py-2 text-center text-green-200 font-semibold mb-2">
           Épaisseur de la dalle : {epaisseur} cm
         </div>
-        <input id="dalle-epaisseur" type="range" min="7" max="20" step="1" value={epaisseur} onChange={(e) => setEpaisseur(Number(e.target.value))}
-          className="w-full accent-orange-500" />
-        <div className="flex justify-between text-xs text-slate-500 mt-0.5"><span>7 cm</span><span>20 cm</span></div>
+        <input
+          id="dalle-epaisseur"
+          type="range"
+          min="7"
+          max="20"
+          step="1"
+          value={epaisseur}
+          onChange={(e) => setEpaisseur(Number(e.target.value))}
+          className="w-full accent-orange-500"
+        />
+        <div className="flex justify-between text-xs text-slate-500 mt-0.5">
+          <span>7 cm</span>
+          <span>20 cm</span>
+        </div>
         <div className="flex gap-2 mt-2 flex-wrap">
           {[7, 10, 12, 15, 20].map((ep) => (
-            <button key={ep} onClick={() => setEpaisseur(ep)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${epaisseur === ep ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+            <button
+              key={ep}
+              onClick={() => setEpaisseur(ep)}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${epaisseur === ep ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+            >
               {ep} cm
             </button>
           ))}
@@ -707,31 +1090,66 @@ function DalleBetonCalc({ onCalc, territory, onSave }: CalcProps) {
       </div>
 
       <div>
-        <label htmlFor="dalle-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-        <select id="dalle-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
-          className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-          {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
+        <label htmlFor="dalle-format-ciment" className="block text-sm text-slate-400 mb-1">
+          Format sac ciment
+        </label>
+        <select
+          id="dalle-format-ciment"
+          value={cimentIdx}
+          onChange={(e) => setCimentIdx(Number(e.target.value))}
+          className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+        >
+          {CIMENT_TYPES.map((c, i) => (
+            <option key={i} value={i}>
+              {c.label}
+            </option>
+          ))}
         </select>
       </div>
 
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
-              <ResultRow label="Surface"          value={`${result.surface} m²`} />
-              <ResultRow label="Volume béton"     value={`${result.volume} m³`} highlight />
-              <ResultRow label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`} value={`${result.nbSacsCiment} sacs`} highlight />
-              <ResultRow label="Paveur 0/20 (sacs 25 kg)" value={`${Math.ceil(result.gravierKg / 25)} sacs`} />
-              <ResultRow label="Sable 0/5 (sacs 25 kg)"   value={`${Math.ceil(result.sableKg / 25)} sacs`} />
-              <ResultRow label="Treillis 1,2×2,4 m"        value={`${result.treillis} panneaux`} />
+              <ResultRow label="Surface" value={`${result.surface} m²`} />
+              <ResultRow label="Volume béton" value={`${result.volume} m³`} highlight />
+              <ResultRow
+                label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`}
+                value={`${result.nbSacsCiment} sacs`}
+                highlight
+              />
+              <ResultRow
+                label="Paveur 0/20 (sacs 25 kg)"
+                value={`${Math.ceil(result.gravierKg / 25)} sacs`}
+              />
+              <ResultRow
+                label="Sable 0/5 (sacs 25 kg)"
+                value={`${Math.ceil(result.sableKg / 25)} sacs`}
+              />
+              <ResultRow label="Treillis 1,2×2,4 m" value={`${result.treillis} panneaux`} />
             </div>
-            <p className="text-xs text-slate-500">Ciment CPJ 32.5 • Tous les calculs sont à titre indicatif</p>
+            <p className="text-xs text-slate-500">
+              Ciment CPJ 32.5 • Tous les calculs sont à titre indicatif
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -741,23 +1159,30 @@ function DalleBetonCalc({ onCalc, territory, onSave }: CalcProps) {
 }
 
 function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
-  const [mode, setMode]                   = useState<'mur' | 'plafond'>('mur');
-  const [largeur, setLargeur]             = useState('');
-  const [hauteur, setHauteur]             = useState('');
+  const [mode, setMode] = useState<'mur' | 'plafond'>('mur');
+  const [largeur, setLargeur] = useState('');
+  const [hauteur, setHauteur] = useState('');
   const [nbrOuvertures, setNbrOuvertures] = useState('0');
-  const [nbrCouches, setNbrCouches]       = useState('2');
-  const [rendement, setRendement]         = useState('10');
-  const [showRendHelp, setShowRendHelp]   = useState(false);
-  const [result, setResult]               = useState<{ surface: number; surfaceNette: number; litres: number } | null>(null);
-  const [blocked, setBlocked]             = useState(false);
-  const [materials, setMaterials]         = useState<MaterialNeed[]>([]);
+  const [nbrCouches, setNbrCouches] = useState('2');
+  const [rendement, setRendement] = useState('10');
+  const [showRendHelp, setShowRendHelp] = useState(false);
+  const [result, setResult] = useState<{
+    surface: number;
+    surfaceNette: number;
+    litres: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
+  const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
-    const l  = parseFloat(largeur.replace(',', '.'));
-    const h  = parseFloat(hauteur.replace(',', '.'));
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
+    const l = parseFloat(largeur.replace(',', '.'));
+    const h = parseFloat(hauteur.replace(',', '.'));
     const nb = parseInt(nbrOuvertures) || 0;
-    const nc = parseInt(nbrCouches)    || 1;
+    const nc = parseInt(nbrCouches) || 1;
     const rd = parseFloat(rendement.replace(',', '.'));
     if (!l || !h || !rd) return;
 
@@ -769,18 +1194,32 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
 
     // Suggest bidon 10L
     const bidons10 = Math.ceil(litres / 10);
-    const res = { surface: Math.round(surfaceBrute * 100) / 100, surfaceNette: Math.round(surfaceNette * 100) / 100, litres };
+    const res = {
+      surface: Math.round(surfaceBrute * 100) / 100,
+      surfaceNette: Math.round(surfaceNette * 100) / 100,
+      litres,
+    };
     setResult(res);
     setBlocked(false);
 
-    const mats: MaterialNeed[] = [
-      { productId: 'peinture_10L', qty: bidons10 },
-    ];
+    const mats: MaterialNeed[] = [{ productId: 'peinture_10L', qty: bidons10 }];
     setMaterials(mats);
-    onSave({ calcType: 'peinture', inputs: { mode, largeur, hauteur, nbrOuvertures, nbrCouches, rendementM2L: rendement }, results: res, materials: mats });
+    onSave({
+      calcType: 'peinture',
+      inputs: { mode, largeur, hauteur, nbrOuvertures, nbrCouches, rendementM2L: rendement },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setLargeur(''); setHauteur(''); setNbrOuvertures('0'); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setLargeur('');
+    setHauteur('');
+    setNbrOuvertures('0');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -789,7 +1228,11 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
         {(['mur', 'plafond'] as const).map((m) => (
           <button
             key={m}
-            onClick={() => { setMode(m); setResult(null); setMaterials([]); }}
+            onClick={() => {
+              setMode(m);
+              setResult(null);
+              setMaterials([]);
+            }}
             className={`py-2.5 font-semibold text-sm transition-colors ${mode === m ? 'bg-green-700 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
           >
             {m === 'mur' ? '🧱 Mur' : '🏠 Plafond'}
@@ -797,13 +1240,26 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
         ))}
       </div>
 
-      <WarnBanner text={mode === 'mur' ? 'Largeur = longueur du mur • Hauteur du sol au plafond' : 'Entrez la longueur et la largeur du plafond'} />
+      <WarnBanner
+        text={
+          mode === 'mur'
+            ? 'Largeur = longueur du mur • Hauteur du sol au plafond'
+            : 'Entrez la longueur et la largeur du plafond'
+        }
+      />
 
       {/* Input grid */}
       <div className="grid grid-cols-2 gap-3">
-        <NumInput label={mode === 'mur' ? 'Largeur du mur' : 'Longueur pièce'} value={largeur} onChange={setLargeur} unit="m" />
+        <NumInput
+          label={mode === 'mur' ? 'Largeur du mur' : 'Longueur pièce'}
+          value={largeur}
+          onChange={setLargeur}
+          unit="m"
+        />
         <div>
-          <label htmlFor="peinture-nbr-ouvertures" className="block text-sm text-slate-400 mb-1">Nbr d'ouverture</label>
+          <label htmlFor="peinture-nbr-ouvertures" className="block text-sm text-slate-400 mb-1">
+            Nbr d'ouverture
+          </label>
           <input
             id="peinture-nbr-ouvertures"
             type="number"
@@ -815,11 +1271,22 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
             className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white text-center text-lg focus:border-orange-500 focus:outline-none"
           />
         </div>
-        <NumInput label={mode === 'mur' ? 'Hauteur du mur' : 'Largeur pièce'} value={hauteur} onChange={setHauteur} unit="m" />
+        <NumInput
+          label={mode === 'mur' ? 'Hauteur du mur' : 'Largeur pièce'}
+          value={hauteur}
+          onChange={setHauteur}
+          unit="m"
+        />
         <div>
-          <label htmlFor="peinture-nbr-couches" className="block text-sm text-slate-400 mb-1">Nbr de couche</label>
-          <select id="peinture-nbr-couches" value={nbrCouches} onChange={(e) => setNbrCouches(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="peinture-nbr-couches" className="block text-sm text-slate-400 mb-1">
+            Nbr de couche
+          </label>
+          <select
+            id="peinture-nbr-couches"
+            value={nbrCouches}
+            onChange={(e) => setNbrCouches(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -827,8 +1294,15 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
         </div>
         <div className="col-span-2">
           <div className="flex items-center gap-2 mb-1">
-            <label htmlFor="peinture-rendement" className="block text-sm text-slate-400">Rendement de la peinture</label>
-            <button onClick={() => setShowRendHelp((v) => !v)} className="w-6 h-6 rounded-full bg-green-700 flex items-center justify-center text-white text-xs font-bold">?</button>
+            <label htmlFor="peinture-rendement" className="block text-sm text-slate-400">
+              Rendement de la peinture
+            </label>
+            <button
+              onClick={() => setShowRendHelp((v) => !v)}
+              className="w-6 h-6 rounded-full bg-green-700 flex items-center justify-center text-white text-xs font-bold"
+            >
+              ?
+            </button>
           </div>
           {showRendHelp && (
             <div className="mb-2 rounded-xl bg-slate-700 border border-slate-600 px-3 py-2 text-xs text-slate-300">
@@ -859,31 +1333,55 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="rounded-xl bg-orange-800/30 border border-orange-600/30 px-4 py-3 flex items-center justify-between">
         <span className="text-sm text-slate-300">Nbr de litre de peinture</span>
         <span className="font-black text-xl text-orange-300">
-          {largeur && hauteur && rendement ? `${Math.ceil((Math.max(0, parseFloat(largeur.replace(',', '.')) * parseFloat(hauteur.replace(',', '.')) - (parseInt(nbrOuvertures) || 0) * 1.75) * (parseInt(nbrCouches) || 1)) / parseFloat(rendement.replace(',', '.')))} L` : '—'}
+          {largeur && hauteur && rendement
+            ? `${Math.ceil((Math.max(0, parseFloat(largeur.replace(',', '.')) * parseFloat(hauteur.replace(',', '.')) - (parseInt(nbrOuvertures) || 0) * 1.75) * (parseInt(nbrCouches) || 1)) / parseFloat(rendement.replace(',', '.')))} L`
+            : '—'}
         </span>
       </div>
       <div className="rounded-xl bg-green-700/30 border border-green-600/30 px-4 py-3 text-center">
         <span className="text-green-200 font-semibold text-sm">
-          Surface à peindre : {largeur && hauteur ? `${Math.max(0, Math.round((parseFloat(largeur.replace(',', '.')) * parseFloat(hauteur.replace(',', '.')) - (parseInt(nbrOuvertures) || 0) * 1.75) * 100) / 100)} m²` : '—'}
+          Surface à peindre :{' '}
+          {largeur && hauteur
+            ? `${Math.max(0, Math.round((parseFloat(largeur.replace(',', '.')) * parseFloat(hauteur.replace(',', '.')) - (parseInt(nbrOuvertures) || 0) * 1.75) * 100) / 100)} m²`
+            : '—'}
         </span>
       </div>
 
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats {mode === 'mur' ? 'Mur' : 'Plafond'}</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats {mode === 'mur' ? 'Mur' : 'Plafond'}
+            </h3>
             <div className="grid grid-cols-2 gap-2">
-              <ResultRow label="Surface brute"   value={`${result.surface} m²`} />
+              <ResultRow label="Surface brute" value={`${result.surface} m²`} />
               <ResultRow label="Surface à peindre" value={`${result.surfaceNette} m²`} />
               <ResultRow label="Litres de peinture" value={`${result.litres} L`} highlight />
-              <ResultRow label="Bidons 10 L" value={`${Math.ceil(result.litres / 10)} bidons`} highlight />
+              <ResultRow
+                label="Bidons 10 L"
+                value={`${Math.ceil(result.litres / 10)} bidons`}
+                highlight
+              />
             </div>
-            <p className="text-xs text-slate-500">Ouvertures déduites (≈1.75 m²/unité) • Tous les calculs sont à titre indicatif</p>
+            <p className="text-xs text-slate-500">
+              Ouvertures déduites (≈1.75 m²/unité) • Tous les calculs sont à titre indicatif
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -894,40 +1392,64 @@ function PeintureCalc({ onCalc, territory, onSave }: CalcProps) {
 
 function CarrelageCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [largeur, setLargeur]   = useState('');
-  const [tileL, setTileL]       = useState('60');
-  const [tileW, setTileW]       = useState('60');
-  const [result, setResult]     = useState<{ surface: number; nbCarreaux: number; colle: number; joint: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [largeur, setLargeur] = useState('');
+  const [tileL, setTileL] = useState('60');
+  const [tileW, setTileW] = useState('60');
+  const [result, setResult] = useState<{
+    surface: number;
+    nbCarreaux: number;
+    colle: number;
+    joint: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
-    const l  = parseFloat(longueur.replace(',', '.'));
-    const w  = parseFloat(largeur.replace(',', '.'));
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
+    const l = parseFloat(longueur.replace(',', '.'));
+    const w = parseFloat(largeur.replace(',', '.'));
     const tl = parseFloat(tileL.replace(',', '.')) / 100;
     const tw = parseFloat(tileW.replace(',', '.')) / 100;
     if (!l || !w || !tl || !tw) return;
 
-    const surface    = l * w;
+    const surface = l * w;
     const nbCarreaux = Math.ceil((surface / (tl * tw)) * 1.1);
-    const colleKg    = Math.ceil(surface * 3.5);
-    const jointKg    = Math.ceil(surface * 0.4);
+    const colleKg = Math.ceil(surface * 3.5);
+    const jointKg = Math.ceil(surface * 0.4);
 
-    const res = { surface: Math.round(surface * 100) / 100, nbCarreaux, colle: colleKg, joint: jointKg };
+    const res = {
+      surface: Math.round(surface * 100) / 100,
+      nbCarreaux,
+      colle: colleKg,
+      joint: jointKg,
+    };
     setResult(res);
     setBlocked(false);
 
     const mats: MaterialNeed[] = [
-      { productId: 'carrelage_60',  qty: Math.ceil(surface) },
-      { productId: 'colle_25kg',    qty: Math.ceil(colleKg / 25) },
-      { productId: 'joint_5kg',     qty: Math.ceil(jointKg / 5) },
+      { productId: 'carrelage_60', qty: Math.ceil(surface) },
+      { productId: 'colle_25kg', qty: Math.ceil(colleKg / 25) },
+      { productId: 'joint_5kg', qty: Math.ceil(jointKg / 5) },
     ];
     setMaterials(mats);
-    onSave({ calcType: 'carrelage', inputs: { longueur, largeur, formatCarreauLcm: tileL, formatCarreauWcm: tileW }, results: res, materials: mats });
+    onSave({
+      calcType: 'carrelage',
+      inputs: { longueur, largeur, formatCarreauLcm: tileL, formatCarreauWcm: tileW },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setLongueur('');
+    setLargeur('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -935,23 +1457,58 @@ function CarrelageCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Longueur pièce" value={longueur} onChange={setLongueur} unit="m" />
         <NumInput label="Largeur pièce" value={largeur} onChange={setLargeur} unit="m" />
-        <NumInput label="Longueur carreau" value={tileL} onChange={setTileL} unit="cm" placeholder="60" />
-        <NumInput label="Largeur carreau" value={tileW} onChange={setTileW} unit="cm" placeholder="60" />
+        <NumInput
+          label="Longueur carreau"
+          value={tileL}
+          onChange={setTileL}
+          unit="cm"
+          placeholder="60"
+        />
+        <NumInput
+          label="Largeur carreau"
+          value={tileW}
+          onChange={setTileW}
+          unit="cm"
+          placeholder="60"
+        />
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <ResultRow label="Surface" value={`${result.surface} m²`} />
-              <ResultRow label="Carreaux (+ 10% chute)" value={`${result.nbCarreaux} pcs`} highlight />
-              <ResultRow label="Colle carrelage" value={`${result.colle} kg (${Math.ceil(result.colle / 25)} sac×25kg)`} />
-              <ResultRow label="Mortier joint" value={`${result.joint} kg (${Math.ceil(result.joint / 5)} sac×5kg)`} />
+              <ResultRow
+                label="Carreaux (+ 10% chute)"
+                value={`${result.nbCarreaux} pcs`}
+                highlight
+              />
+              <ResultRow
+                label="Colle carrelage"
+                value={`${result.colle} kg (${Math.ceil(result.colle / 25)} sac×25kg)`}
+              />
+              <ResultRow
+                label="Mortier joint"
+                value={`${result.joint} kg (${Math.ceil(result.joint / 5)} sac×5kg)`}
+              />
             </div>
             <p className="text-xs text-slate-500">Tous les calculs sont à titre indicatif</p>
           </div>
@@ -963,40 +1520,58 @@ function CarrelageCalc({ onCalc, territory, onSave }: CalcProps) {
 }
 
 function BetonCourantCalc({ onCalc, territory, onSave }: CalcProps) {
-  const [volume, setVolume]     = useState('');
+  const [volume, setVolume] = useState('');
   const [cimentIdx, setCimentIdx] = useState(0);
-  const [dosage, setDosage]     = useState('300');
-  const [result, setResult]     = useState<{ nbSacsCiment: number; sableKg: number; gravierKg: number; eau: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [dosage, setDosage] = useState('300');
+  const [result, setResult] = useState<{
+    nbSacsCiment: number;
+    sableKg: number;
+    gravierKg: number;
+    eau: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const v = parseFloat(volume.replace(',', '.'));
     const d = parseFloat(dosage);
     if (!v || !d) return;
 
-    const ciment   = CIMENT_TYPES[cimentIdx];
+    const ciment = CIMENT_TYPES[cimentIdx];
     const cimentKg = v * d;
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
-    const sableKg  = Math.round(cimentKg * 2.5);
+    const sableKg = Math.round(cimentKg * 2.5);
     const gravierKg = Math.round(cimentKg * 4);
-    const eau      = Math.round(v * 180);
+    const eau = Math.round(v * 180);
 
     const res = { nbSacsCiment, sableKg, gravierKg, eau };
     setResult(res);
     setBlocked(false);
 
     const mats: MaterialNeed[] = [
-      { productId: ciment.productId,  qty: nbSacsCiment },
-      { productId: 'sable_25kg',      qty: Math.ceil(sableKg / 25) },
-      { productId: 'gravier_25kg',    qty: Math.ceil(gravierKg / 25) },
+      { productId: ciment.productId, qty: nbSacsCiment },
+      { productId: 'sable_25kg', qty: Math.ceil(sableKg / 25) },
+      { productId: 'gravier_25kg', qty: Math.ceil(gravierKg / 25) },
     ];
     setMaterials(mats);
-    onSave({ calcType: 'beton-courant', inputs: { volumeM3: volume, dosageKgM3: dosage, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
+    onSave({
+      calcType: 'beton-courant',
+      inputs: { volumeM3: volume, dosageKgM3: dosage, formatCiment: CIMENT_TYPES[cimentIdx].label },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setVolume(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setVolume('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -1004,9 +1579,15 @@ function BetonCourantCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Volume béton" value={volume} onChange={setVolume} unit="m³" />
         <div>
-          <label htmlFor="beton-dosage" className="block text-sm text-slate-400 mb-1">Dosage (kg/m³)</label>
-          <select id="beton-dosage" value={dosage} onChange={(e) => setDosage(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="beton-dosage" className="block text-sm text-slate-400 mb-1">
+            Dosage (kg/m³)
+          </label>
+          <select
+            id="beton-dosage"
+            value={dosage}
+            onChange={(e) => setDosage(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="250">250 – béton maigre</option>
             <option value="300">300 – béton courant</option>
             <option value="350">350 – béton résistant</option>
@@ -1014,29 +1595,64 @@ function BetonCourantCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div className="col-span-2">
-          <label htmlFor="beton-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-          <select id="beton-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-            {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
+          <label htmlFor="beton-format-ciment" className="block text-sm text-slate-400 mb-1">
+            Format sac ciment
+          </label>
+          <select
+            id="beton-format-ciment"
+            value={cimentIdx}
+            onChange={(e) => setCimentIdx(Number(e.target.value))}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
+            {CIMENT_TYPES.map((c, i) => (
+              <option key={i} value={i}>
+                {c.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
-              <ResultRow label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`} value={`${result.nbSacsCiment} sacs`} highlight />
-              <ResultRow label="Sable 0/5 (sacs 25 kg)" value={`${Math.ceil(result.sableKg / 25)} sacs`} />
-              <ResultRow label="Gravier 0/20 (sacs 25 kg)" value={`${Math.ceil(result.gravierKg / 25)} sacs`} />
+              <ResultRow
+                label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`}
+                value={`${result.nbSacsCiment} sacs`}
+                highlight
+              />
+              <ResultRow
+                label="Sable 0/5 (sacs 25 kg)"
+                value={`${Math.ceil(result.sableKg / 25)} sacs`}
+              />
+              <ResultRow
+                label="Gravier 0/20 (sacs 25 kg)"
+                value={`${Math.ceil(result.gravierKg / 25)} sacs`}
+              />
               <ResultRow label="Eau" value={`${result.eau} L`} />
             </div>
-            <p className="text-xs text-slate-500">Ciment CPJ 32.5 • Tous les calculs sont à titre indicatif</p>
+            <p className="text-xs text-slate-500">
+              Ciment CPJ 32.5 • Tous les calculs sont à titre indicatif
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -1048,45 +1664,67 @@ function BetonCourantCalc({ onCalc, territory, onSave }: CalcProps) {
 // ─── Enduit / Crépissage Calculator ──────────────────────────────────────────
 
 function EnduitCalc({ onCalc, territory, onSave }: CalcProps) {
-  const [surface, setSurface]   = useState('');
+  const [surface, setSurface] = useState('');
   const [epaisseur, setEpaisseur] = useState('15'); // mm
   const [cimentIdx, setCimentIdx] = useState(0);
-  const [result, setResult]     = useState<{ enduitKg: number; nbSacsEnduit: number; nbSacsCiment: number; sableKg: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [result, setResult] = useState<{
+    enduitKg: number;
+    nbSacsEnduit: number;
+    nbSacsCiment: number;
+    sableKg: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
-    const s  = parseFloat(surface.replace(',', '.'));
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
+    const s = parseFloat(surface.replace(',', '.'));
     const ep = parseFloat(epaisseur) / 1000; // mm → m
     if (!s || !ep) return;
 
     // Consommation enduit : environ 1.6 kg/m²/mm d'épaisseur
-    const enduitKg    = Math.round(s * parseFloat(epaisseur) * 1.6);
+    const enduitKg = Math.round(s * parseFloat(epaisseur) * 1.6);
     const nbSacsEnduit = Math.ceil(enduitKg / 25);
 
     // Alternatively with ciment+sable
     const ciment = CIMENT_TYPES[cimentIdx];
     // Mortier maigre 1:5 → 250 kg ciment/m³ ; volume = surface × épaisseur
-    const volumeM3     = s * ep;
-    const cimentKg     = Math.round(volumeM3 * 250);
+    const volumeM3 = s * ep;
+    const cimentKg = Math.round(volumeM3 * 250);
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
-    const sableKg      = Math.round(cimentKg * 5);
+    const sableKg = Math.round(cimentKg * 5);
 
     const res = { enduitKg, nbSacsEnduit, nbSacsCiment, sableKg };
     setResult(res);
     setBlocked(false);
 
     const mats: MaterialNeed[] = [
-      { productId: 'enduit_25kg',  qty: nbSacsEnduit },
-      { productId: 'ciment_25kg',  qty: Math.ceil(cimentKg / 25) },
-      { productId: 'sable_25kg',   qty: Math.ceil(sableKg / 25) },
+      { productId: 'enduit_25kg', qty: nbSacsEnduit },
+      { productId: 'ciment_25kg', qty: Math.ceil(cimentKg / 25) },
+      { productId: 'sable_25kg', qty: Math.ceil(sableKg / 25) },
     ];
     setMaterials(mats);
-    onSave({ calcType: 'enduit', inputs: { surfaceM2: surface, epaisseurMm: epaisseur, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
+    onSave({
+      calcType: 'enduit',
+      inputs: {
+        surfaceM2: surface,
+        epaisseurMm: epaisseur,
+        formatCiment: CIMENT_TYPES[cimentIdx].label,
+      },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setSurface(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setSurface('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -1094,9 +1732,15 @@ function EnduitCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Surface" value={surface} onChange={setSurface} unit="m²" />
         <div>
-          <label htmlFor="enduit-epaisseur" className="block text-sm text-slate-400 mb-1">Épaisseur <span className="text-slate-500">(mm)</span></label>
-          <select id="enduit-epaisseur" value={epaisseur} onChange={(e) => setEpaisseur(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="enduit-epaisseur" className="block text-sm text-slate-400 mb-1">
+            Épaisseur <span className="text-slate-500">(mm)</span>
+          </label>
+          <select
+            id="enduit-epaisseur"
+            value={epaisseur}
+            onChange={(e) => setEpaisseur(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="10">10 mm – fin (rebouche)</option>
             <option value="15">15 mm – standard</option>
             <option value="20">20 mm – épais (façade)</option>
@@ -1104,29 +1748,64 @@ function EnduitCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div className="col-span-2">
-          <label htmlFor="enduit-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment (pour mortier maison)</label>
-          <select id="enduit-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-            {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
+          <label htmlFor="enduit-format-ciment" className="block text-sm text-slate-400 mb-1">
+            Format sac ciment (pour mortier maison)
+          </label>
+          <select
+            id="enduit-format-ciment"
+            value={cimentIdx}
+            onChange={(e) => setCimentIdx(Number(e.target.value))}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
+            {CIMENT_TYPES.map((c, i) => (
+              <option key={i} value={i}>
+                {c.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <ResultRow label="Enduit prêt à l'emploi" value={`${result.enduitKg} kg`} highlight />
-              <ResultRow label="Sacs enduit 25 kg" value={`${result.nbSacsEnduit} sacs`} highlight />
-              <ResultRow label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`} value={`${result.nbSacsCiment} sacs`} />
-              <ResultRow label="Sable 0/5 (sacs 25 kg)" value={`${Math.ceil(result.sableKg / 25)} sacs`} />
+              <ResultRow
+                label="Sacs enduit 25 kg"
+                value={`${result.nbSacsEnduit} sacs`}
+                highlight
+              />
+              <ResultRow
+                label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`}
+                value={`${result.nbSacsCiment} sacs`}
+              />
+              <ResultRow
+                label="Sable 0/5 (sacs 25 kg)"
+                value={`${Math.ceil(result.sableKg / 25)} sacs`}
+              />
             </div>
-            <p className="text-xs text-slate-500">Enduit façade ≈ 1.6 kg/m²/mm • Mortier 1:5 dosé 250 kg/m³</p>
+            <p className="text-xs text-slate-500">
+              Enduit façade ≈ 1.6 kg/m²/mm • Mortier 1:5 dosé 250 kg/m³
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -1139,15 +1818,24 @@ function EnduitCalc({ onCalc, territory, onSave }: CalcProps) {
 
 function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [largeur, setLargeur]   = useState('30'); // cm
+  const [largeur, setLargeur] = useState('30'); // cm
   const [profondeur, setProfondeur] = useState('50'); // cm
   const [cimentIdx, setCimentIdx] = useState(1); // 35kg default
-  const [result, setResult]     = useState<{ volume: number; nbSacsCiment: number; sableKg: number; gravierKg: number; acierKg: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [result, setResult] = useState<{
+    volume: number;
+    nbSacsCiment: number;
+    sableKg: number;
+    gravierKg: number;
+    acierKg: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const l = parseFloat(longueur.replace(',', '.'));
     const w = parseFloat(largeur.replace(',', '.')) / 100;
     const h = parseFloat(profondeur.replace(',', '.')) / 100;
@@ -1158,26 +1846,47 @@ function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
     // Béton armé dosé à 350 kg/m³
     const cimentKg = volume * 350;
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
-    const sableKg  = Math.round(cimentKg * 2.5);
+    const sableKg = Math.round(cimentKg * 2.5);
     const gravierKg = Math.round(cimentKg * 4);
     // Acier HA12 : environ 80 kg/m³ béton de fondation
     const acierKg = Math.round(volume * 80);
 
-    const res = { volume: Math.round(volume * 1000) / 1000, nbSacsCiment, sableKg, gravierKg, acierKg };
+    const res = {
+      volume: Math.round(volume * 1000) / 1000,
+      nbSacsCiment,
+      sableKg,
+      gravierKg,
+      acierKg,
+    };
     setResult(res);
     setBlocked(false);
 
     const mats: MaterialNeed[] = [
       { productId: ciment.productId, qty: nbSacsCiment },
-      { productId: 'sable_25kg',     qty: Math.ceil(sableKg / 25) },
-      { productId: 'gravier_25kg',   qty: Math.ceil(gravierKg / 25) },
-      { productId: 'acier_ha12_6m',  qty: Math.ceil(acierKg / 5.3) }, // barre 6m ≈ 5.3 kg
+      { productId: 'sable_25kg', qty: Math.ceil(sableKg / 25) },
+      { productId: 'gravier_25kg', qty: Math.ceil(gravierKg / 25) },
+      { productId: 'acier_ha12_6m', qty: Math.ceil(acierKg / 5.3) }, // barre 6m ≈ 5.3 kg
     ];
     setMaterials(mats);
-    onSave({ calcType: 'fondations', inputs: { longueurM: longueur, largeurCm: largeur, profondeurCm: profondeur, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
+    onSave({
+      calcType: 'fondations',
+      inputs: {
+        longueurM: longueur,
+        largeurCm: largeur,
+        profondeurCm: profondeur,
+        formatCiment: CIMENT_TYPES[cimentIdx].label,
+      },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setLongueur(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setLongueur('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -1185,9 +1894,15 @@ function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Longueur totale" value={longueur} onChange={setLongueur} unit="m" />
         <div>
-          <label htmlFor="fondations-largeur-semelle" className="block text-sm text-slate-400 mb-1">Largeur de semelle</label>
-          <select id="fondations-largeur-semelle" value={largeur} onChange={(e) => setLargeur(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="fondations-largeur-semelle" className="block text-sm text-slate-400 mb-1">
+            Largeur de semelle
+          </label>
+          <select
+            id="fondations-largeur-semelle"
+            value={largeur}
+            onChange={(e) => setLargeur(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="25">25 cm</option>
             <option value="30">30 cm (standard)</option>
             <option value="40">40 cm</option>
@@ -1196,9 +1911,15 @@ function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div>
-          <label htmlFor="fondations-profondeur" className="block text-sm text-slate-400 mb-1">Profondeur (hauteur)</label>
-          <select id="fondations-profondeur" value={profondeur} onChange={(e) => setProfondeur(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="fondations-profondeur" className="block text-sm text-slate-400 mb-1">
+            Profondeur (hauteur)
+          </label>
+          <select
+            id="fondations-profondeur"
+            value={profondeur}
+            onChange={(e) => setProfondeur(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="30">30 cm</option>
             <option value="40">40 cm</option>
             <option value="50">50 cm (standard)</option>
@@ -1207,30 +1928,68 @@ function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
           </select>
         </div>
         <div>
-          <label htmlFor="fondations-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-          <select id="fondations-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-            {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
+          <label htmlFor="fondations-format-ciment" className="block text-sm text-slate-400 mb-1">
+            Format sac ciment
+          </label>
+          <select
+            id="fondations-format-ciment"
+            value={cimentIdx}
+            onChange={(e) => setCimentIdx(Number(e.target.value))}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
+            {CIMENT_TYPES.map((c, i) => (
+              <option key={i} value={i}>
+                {c.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <ResultRow label="Volume béton" value={`${result.volume} m³`} highlight />
-              <ResultRow label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`} value={`${result.nbSacsCiment} sacs`} highlight />
-              <ResultRow label="Sable 0/5 (sacs 25 kg)" value={`${Math.ceil(result.sableKg / 25)} sacs`} />
-              <ResultRow label="Gravier 0/20 (sacs 25 kg)" value={`${Math.ceil(result.gravierKg / 25)} sacs`} />
-              <ResultRow label="Acier HA12 (barres 6m)" value={`${Math.ceil(result.acierKg / 5.3)} barres (~${result.acierKg} kg)`} />
+              <ResultRow
+                label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`}
+                value={`${result.nbSacsCiment} sacs`}
+                highlight
+              />
+              <ResultRow
+                label="Sable 0/5 (sacs 25 kg)"
+                value={`${Math.ceil(result.sableKg / 25)} sacs`}
+              />
+              <ResultRow
+                label="Gravier 0/20 (sacs 25 kg)"
+                value={`${Math.ceil(result.gravierKg / 25)} sacs`}
+              />
+              <ResultRow
+                label="Acier HA12 (barres 6m)"
+                value={`${Math.ceil(result.acierKg / 5.3)} barres (~${result.acierKg} kg)`}
+              />
             </div>
-            <p className="text-xs text-slate-500">Béton armé 350 kg/m³ • Ferraillage estimé 80 kg/m³</p>
+            <p className="text-xs text-slate-500">
+              Béton armé 350 kg/m³ • Ferraillage estimé 80 kg/m³
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -1243,23 +2002,31 @@ function FondationsCalc({ onCalc, territory, onSave }: CalcProps) {
 
 function ChapeCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [largeur, setLargeur]   = useState('');
+  const [largeur, setLargeur] = useState('');
   const [epaisseur, setEpaisseur] = useState('5'); // cm
   const [cimentIdx, setCimentIdx] = useState(0);
-  const [result, setResult]     = useState<{ surface: number; volume: number; nbSacsCiment: number; sableKg: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [result, setResult] = useState<{
+    surface: number;
+    volume: number;
+    nbSacsCiment: number;
+    sableKg: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const l = parseFloat(longueur.replace(',', '.'));
     const w = parseFloat(largeur.replace(',', '.'));
     const ep = parseFloat(epaisseur) / 100;
     if (!l || !w || !ep) return;
 
     const surface = l * w;
-    const volume  = Math.round(surface * ep * 1000) / 1000;
-    const ciment  = CIMENT_TYPES[cimentIdx];
+    const volume = Math.round(surface * ep * 1000) / 1000;
+    const ciment = CIMENT_TYPES[cimentIdx];
     // Chape dosée à 300 kg ciment/m³, ratio C:S = 1:3
     const cimentKg = volume * 300;
     const nbSacsCiment = Math.ceil(cimentKg / ciment.kg);
@@ -1271,13 +2038,29 @@ function ChapeCalc({ onCalc, territory, onSave }: CalcProps) {
 
     const mats: MaterialNeed[] = [
       { productId: ciment.productId, qty: nbSacsCiment },
-      { productId: 'sable_25kg',     qty: Math.ceil(sableKg / 25) },
+      { productId: 'sable_25kg', qty: Math.ceil(sableKg / 25) },
     ];
     setMaterials(mats);
-    onSave({ calcType: 'chape', inputs: { longueur, largeur, epaisseurCm: epaisseur, formatCiment: CIMENT_TYPES[cimentIdx].label }, results: res, materials: mats });
+    onSave({
+      calcType: 'chape',
+      inputs: {
+        longueur,
+        largeur,
+        epaisseurCm: epaisseur,
+        formatCiment: CIMENT_TYPES[cimentIdx].label,
+      },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setLongueur('');
+    setLargeur('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -1286,40 +2069,77 @@ function ChapeCalc({ onCalc, territory, onSave }: CalcProps) {
         <NumInput label="Longueur" value={longueur} onChange={setLongueur} unit="m" />
         <NumInput label="Largeur" value={largeur} onChange={setLargeur} unit="m" />
         <div className="col-span-2">
-          <span className="block text-sm text-slate-400 mb-2">Épaisseur : <span className="text-white font-bold">{epaisseur} cm</span></span>
+          <span className="block text-sm text-slate-400 mb-2">
+            Épaisseur : <span className="text-white font-bold">{epaisseur} cm</span>
+          </span>
           <div className="flex gap-2">
             {[3, 4, 5, 6, 8].map((ep) => (
-              <button key={ep} onClick={() => setEpaisseur(String(ep))}
-                className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors ${String(ep) === epaisseur ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+              <button
+                key={ep}
+                onClick={() => setEpaisseur(String(ep))}
+                className={`flex-1 py-2 rounded-xl text-sm font-semibold transition-colors ${String(ep) === epaisseur ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {ep} cm
               </button>
             ))}
           </div>
         </div>
         <div className="col-span-2">
-          <label htmlFor="chape-format-ciment" className="block text-sm text-slate-400 mb-1">Format sac ciment</label>
-          <select id="chape-format-ciment" value={cimentIdx} onChange={(e) => setCimentIdx(Number(e.target.value))}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-            {CIMENT_TYPES.map((c, i) => <option key={i} value={i}>{c.label}</option>)}
+          <label htmlFor="chape-format-ciment" className="block text-sm text-slate-400 mb-1">
+            Format sac ciment
+          </label>
+          <select
+            id="chape-format-ciment"
+            value={cimentIdx}
+            onChange={(e) => setCimentIdx(Number(e.target.value))}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
+            {CIMENT_TYPES.map((c, i) => (
+              <option key={i} value={i}>
+                {c.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <ResultRow label="Surface" value={`${result.surface} m²`} />
               <ResultRow label="Volume chape" value={`${result.volume} m³`} highlight />
-              <ResultRow label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`} value={`${result.nbSacsCiment} sacs`} highlight />
-              <ResultRow label="Sable 0/5 (sacs 25 kg)" value={`${Math.ceil(result.sableKg / 25)} sacs`} />
+              <ResultRow
+                label={`Sacs ${CIMENT_TYPES[cimentIdx].label}`}
+                value={`${result.nbSacsCiment} sacs`}
+                highlight
+              />
+              <ResultRow
+                label="Sable 0/5 (sacs 25 kg)"
+                value={`${Math.ceil(result.sableKg / 25)} sacs`}
+              />
             </div>
-            <p className="text-xs text-slate-500">Dosage 300 kg ciment/m³ • Rapport 1:3 (ciment:sable)</p>
+            <p className="text-xs text-slate-500">
+              Dosage 300 kg ciment/m³ • Rapport 1:3 (ciment:sable)
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -1332,26 +2152,34 @@ function ChapeCalc({ onCalc, territory, onSave }: CalcProps) {
 
 function TolesCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [largeur, setLargeur]   = useState('');
+  const [largeur, setLargeur] = useState('');
   const [longTole, setLongTole] = useState('3'); // m
-  const [result, setResult]     = useState<{ surface: number; nbToles: number; nbVis: number; lFaitage: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [result, setResult] = useState<{
+    surface: number;
+    nbToles: number;
+    nbVis: number;
+    lFaitage: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const l = parseFloat(longueur.replace(',', '.'));
     const w = parseFloat(largeur.replace(',', '.'));
     if (!l || !w) return;
 
     const surface = l * w;
     // Largeur utile tôle ondulée 0.80m (0.95m total avec recouvrement)
-    const largeurUtile = 0.80;
-    const nbRangs  = Math.ceil(w / largeurUtile);
-    const nbCols   = Math.ceil(l / parseFloat(longTole));
-    const nbToles  = Math.ceil(nbRangs * nbCols * 1.05); // +5% chute
+    const largeurUtile = 0.8;
+    const nbRangs = Math.ceil(w / largeurUtile);
+    const nbCols = Math.ceil(l / parseFloat(longTole));
+    const nbToles = Math.ceil(nbRangs * nbCols * 1.05); // +5% chute
     // Vis auto-perceuses : environ 8 vis par tôle
-    const nbVis    = nbToles * 8;
+    const nbVis = nbToles * 8;
     // Faîtière : longueur de faîte ≈ largeur de la toiture
     const lFaitage = Math.ceil(w * 1.1);
 
@@ -1364,10 +2192,21 @@ function TolesCalc({ onCalc, territory, onSave }: CalcProps) {
       { productId: 'vis_autoperceuse_100', qty: Math.ceil(nbVis / 100) },
     ];
     setMaterials(mats);
-    onSave({ calcType: 'toles', inputs: { longueurRampant: longueur, largeurRampant: largeur, longueurToleM: longTole }, results: res, materials: mats });
+    onSave({
+      calcType: 'toles',
+      inputs: { longueurRampant: longueur, largeurRampant: largeur, longueurToleM: longTole },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setLongueur('');
+    setLargeur('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -1379,8 +2218,11 @@ function TolesCalc({ onCalc, territory, onSave }: CalcProps) {
           <span className="block text-sm text-slate-400 mb-2">Longueur des tôles</span>
           <div className="grid grid-cols-3 gap-2">
             {['2', '3', '4'].map((l) => (
-              <button key={l} onClick={() => setLongTole(l)}
-                className={`py-2.5 rounded-xl text-sm font-semibold transition-colors ${longTole === l ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+              <button
+                key={l}
+                onClick={() => setLongTole(l)}
+                className={`py-2.5 rounded-xl text-sm font-semibold transition-colors ${longTole === l ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {l} m
               </button>
             ))}
@@ -1388,18 +2230,38 @@ function TolesCalc({ onCalc, territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <ResultRow label="Surface couverte" value={`${result.surface} m²`} />
-              <ResultRow label={`Tôles ondulées ${longTole}m`} value={`${result.nbToles} tôles`} highlight />
-              <ResultRow label="Vis auto-perceuses" value={`${result.nbVis} vis (~${Math.ceil(result.nbVis / 100)} bte 100)`} />
+              <ResultRow
+                label={`Tôles ondulées ${longTole}m`}
+                value={`${result.nbToles} tôles`}
+                highlight
+              />
+              <ResultRow
+                label="Vis auto-perceuses"
+                value={`${result.nbVis} vis (~${Math.ceil(result.nbVis / 100)} bte 100)`}
+              />
               <ResultRow label="Faîtière (longueur)" value={`${result.lFaitage} m`} />
             </div>
             <p className="text-xs text-slate-500">Largeur utile tôle 0.80m • +5% chute inclus</p>
@@ -1415,21 +2277,28 @@ function TolesCalc({ onCalc, territory, onSave }: CalcProps) {
 
 function TerrassementCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [largeur, setLargeur]   = useState('');
+  const [largeur, setLargeur] = useState('');
   const [profondeur, setProfondeur] = useState('');
   const [compactage, setCompactage] = useState('1.25'); // coefficient foisonnement
-  const [result, setResult]     = useState<{ volume: number; volumeFoisonne: number; nbCamions: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [result, setResult] = useState<{
+    volume: number;
+    volumeFoisonne: number;
+    nbCamions: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
-    const l  = parseFloat(longueur.replace(',', '.'));
-    const w  = parseFloat(largeur.replace(',', '.'));
-    const p  = parseFloat(profondeur.replace(',', '.'));
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
+    const l = parseFloat(longueur.replace(',', '.'));
+    const w = parseFloat(largeur.replace(',', '.'));
+    const p = parseFloat(profondeur.replace(',', '.'));
     const cf = parseFloat(compactage);
     if (!l || !w || !p) return;
 
-    const volume         = Math.round(l * w * p * 100) / 100;
+    const volume = Math.round(l * w * p * 100) / 100;
     const volumeFoisonne = Math.round(volume * cf * 100) / 100;
     // Camion 8×4 = 12 m³ environ
     const nbCamions = Math.ceil(volumeFoisonne / 12);
@@ -1437,10 +2306,21 @@ function TerrassementCalc({ onCalc, territory: _territory, onSave }: CalcProps) 
     const res = { volume, volumeFoisonne, nbCamions };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'terrassement', inputs: { longueur, largeur, profondeur, typeSol: compactage }, results: res, materials: [] });
+    onSave({
+      calcType: 'terrassement',
+      inputs: { longueur, largeur, profondeur, typeSol: compactage },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setLongueur(''); setLargeur(''); setProfondeur(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setLongueur('');
+    setLargeur('');
+    setProfondeur('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -1448,11 +2328,22 @@ function TerrassementCalc({ onCalc, territory: _territory, onSave }: CalcProps) 
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Longueur" value={longueur} onChange={setLongueur} unit="m" />
         <NumInput label="Largeur" value={largeur} onChange={setLargeur} unit="m" />
-        <NumInput label="Profondeur / Hauteur" value={profondeur} onChange={setProfondeur} unit="m" />
+        <NumInput
+          label="Profondeur / Hauteur"
+          value={profondeur}
+          onChange={setProfondeur}
+          unit="m"
+        />
         <div>
-          <label htmlFor="terrassement-type-sol" className="block text-sm text-slate-400 mb-1">Type de sol</label>
-          <select id="terrassement-type-sol" value={compactage} onChange={(e) => setCompactage(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="terrassement-type-sol" className="block text-sm text-slate-400 mb-1">
+            Type de sol
+          </label>
+          <select
+            id="terrassement-type-sol"
+            value={compactage}
+            onChange={(e) => setCompactage(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="1.10">Sable (×1.10)</option>
             <option value="1.20">Terre légère (×1.20)</option>
             <option value="1.25">Terre normale (×1.25)</option>
@@ -1462,19 +2353,42 @@ function TerrassementCalc({ onCalc, territory: _territory, onSave }: CalcProps) 
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+            <Calculator className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
             <ResultRow label="Volume en place" value={`${result.volume} m³`} />
-            <ResultRow label="Volume foisonné (à évacuer)" value={`${result.volumeFoisonne} m³`} highlight />
-            <ResultRow label="Camions 8×4 (≈12 m³)" value={`${result.nbCamions} camion${result.nbCamions > 1 ? 's' : ''}`} highlight />
+            <ResultRow
+              label="Volume foisonné (à évacuer)"
+              value={`${result.volumeFoisonne} m³`}
+              highlight
+            />
+            <ResultRow
+              label="Camions 8×4 (≈12 m³)"
+              value={`${result.nbCamions} camion${result.nbCamions > 1 ? 's' : ''}`}
+              highlight
+            />
           </div>
-          <p className="text-xs text-slate-500">Volume foisonné = volume en place × coefficient • Camion 8×4 ≈ 12 m³</p>
+          <p className="text-xs text-slate-500">
+            Volume foisonné = volume en place × coefficient • Camion 8×4 ≈ 12 m³
+          </p>
         </div>
       )}
     </div>
@@ -1485,41 +2399,59 @@ function TerrassementCalc({ onCalc, territory: _territory, onSave }: CalcProps) 
 
 function ClotureCalc({ onCalc, territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [hauteur, setHauteur]   = useState('1.5');
-  const [type, setType]         = useState<'grillage' | 'beton' | 'bois'>('grillage');
-  const [result, setResult]     = useState<{ nbPoteaux: number; grillageM: number; betonL: number; nbSacsCiment: number } | null>(null);
-  const [blocked, setBlocked]   = useState(false);
+  const [hauteur, setHauteur] = useState('1.5');
+  const [type, setType] = useState<'grillage' | 'beton' | 'bois'>('grillage');
+  const [result, setResult] = useState<{
+    nbPoteaux: number;
+    grillageM: number;
+    betonL: number;
+    nbSacsCiment: number;
+  } | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const l = parseFloat(longueur.replace(',', '.'));
     const h = parseFloat(hauteur.replace(',', '.'));
     if (!l || !h) return;
 
     // Poteaux tous les 2.5m
-    const nbPoteaux   = Math.ceil(l / 2.5) + 1;
-    const grillageM   = type === 'grillage' ? Math.ceil(l * 1.05) : 0;
+    const nbPoteaux = Math.ceil(l / 2.5) + 1;
+    const grillageM = type === 'grillage' ? Math.ceil(l * 1.05) : 0;
     // Béton de scellement : 0.015 m³ par poteau
-    const betonM3     = nbPoteaux * 0.015;
+    const betonM3 = nbPoteaux * 0.015;
     // Ciment dosé 300 kg/m³
-    const cimentKg    = betonM3 * 300;
+    const cimentKg = betonM3 * 300;
     const nbSacsCiment = Math.ceil(cimentKg / 25);
-    const betonL      = Math.round(betonM3 * 1000); // litres
+    const betonL = Math.round(betonM3 * 1000); // litres
 
     const res = { nbPoteaux, grillageM, betonL, nbSacsCiment };
     setResult(res);
     setBlocked(false);
 
     const mats: MaterialNeed[] = [
-      { productId: 'ciment_25kg',  qty: nbSacsCiment },
-      { productId: 'sable_25kg',   qty: Math.ceil((cimentKg * 3) / 25) },
+      { productId: 'ciment_25kg', qty: nbSacsCiment },
+      { productId: 'sable_25kg', qty: Math.ceil((cimentKg * 3) / 25) },
     ];
     setMaterials(mats);
-    onSave({ calcType: 'cloture', inputs: { longueurM: longueur, hauteurM: hauteur, typeCloture: type }, results: res, materials: mats });
+    onSave({
+      calcType: 'cloture',
+      inputs: { longueurM: longueur, hauteurM: hauteur, typeCloture: type },
+      results: res,
+      materials: mats,
+    });
   };
 
-  const reset = () => { setLongueur(''); setResult(null); setBlocked(false); setMaterials([]); };
+  const reset = () => {
+    setLongueur('');
+    setResult(null);
+    setBlocked(false);
+    setMaterials([]);
+  };
 
   return (
     <div className="space-y-4">
@@ -1527,9 +2459,15 @@ function ClotureCalc({ onCalc, territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Longueur totale" value={longueur} onChange={setLongueur} unit="m" />
         <div>
-          <label htmlFor="cloture-hauteur" className="block text-sm text-slate-400 mb-1">Hauteur</label>
-          <select id="cloture-hauteur" value={hauteur} onChange={(e) => setHauteur(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="cloture-hauteur" className="block text-sm text-slate-400 mb-1">
+            Hauteur
+          </label>
+          <select
+            id="cloture-hauteur"
+            value={hauteur}
+            onChange={(e) => setHauteur(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="1.0">1.0 m</option>
             <option value="1.2">1.2 m</option>
             <option value="1.5">1.5 m (standard)</option>
@@ -1540,9 +2478,18 @@ function ClotureCalc({ onCalc, territory, onSave }: CalcProps) {
         <div className="col-span-2">
           <span className="block text-sm text-slate-400 mb-2">Type de clôture</span>
           <div className="grid grid-cols-3 gap-2">
-            {([['grillage', '🥅 Grillage'], ['beton', '🧱 Maçonnée'], ['bois', '🪵 Palissade']] as const).map(([t, label]) => (
-              <button key={t} onClick={() => setType(t)}
-                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${type === t ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+            {(
+              [
+                ['grillage', '🥅 Grillage'],
+                ['beton', '🧱 Maçonnée'],
+                ['bois', '🪵 Palissade'],
+              ] as const
+            ).map(([t, label]) => (
+              <button
+                key={t}
+                onClick={() => setType(t)}
+                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${type === t ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {label}
               </button>
             ))}
@@ -1550,21 +2497,42 @@ function ClotureCalc({ onCalc, territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
-              <ResultRow label="Poteaux (tous 2.5 m)" value={`${result.nbPoteaux} poteaux`} highlight />
-              {type === 'grillage' && <ResultRow label="Grillage" value={`${result.grillageM} ml`} highlight />}
+              <ResultRow
+                label="Poteaux (tous 2.5 m)"
+                value={`${result.nbPoteaux} poteaux`}
+                highlight
+              />
+              {type === 'grillage' && (
+                <ResultRow label="Grillage" value={`${result.grillageM} ml`} highlight />
+              )}
               <ResultRow label="Béton de scellement" value={`${result.betonL} L`} />
               <ResultRow label="Sacs ciment 25 kg" value={`${result.nbSacsCiment} sacs`} />
             </div>
-            <p className="text-xs text-slate-500">Béton scellement 0.015 m³/poteau • Tous les calculs sont à titre indicatif</p>
+            <p className="text-xs text-slate-500">
+              Béton scellement 0.015 m³/poteau • Tous les calculs sont à titre indicatif
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -1589,7 +2557,10 @@ function PiscineCalc({ onCalc, territory, onSave }: CalcProps) {
   const [materials, setMaterials] = useState<MaterialNeed[]>([]);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const l = parseFloat(longueur.replace(',', '.'));
     const w = parseFloat(largeur.replace(',', '.'));
     const p = parseFloat(profondeur.replace(',', '.'));
@@ -1602,7 +2573,7 @@ function PiscineCalc({ onCalc, territory, onSave }: CalcProps) {
     const perimetre = 2 * (l + w);
     const betonRadierM3 = surface * radierEpaisseur;
     const betonParoisM3 = perimetre * p * paroiEpaisseur;
-    const linerM2 = (surface + (perimetre * p)) * 1.1; // +10% marges
+    const linerM2 = (surface + perimetre * p) * 1.1; // +10% marges
     const cimentKg = (betonRadierM3 + betonParoisM3) * 300;
     const nbSacsCiment = Math.ceil(cimentKg / 25);
 
@@ -1650,14 +2621,27 @@ function PiscineCalc({ onCalc, territory, onSave }: CalcProps) {
         <NumInput label="Profondeur moyenne" value={profondeur} onChange={setProfondeur} unit="m" />
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300 hover:border-slate-400"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <>
           <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-            <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+            <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+              <Calculator className="w-4 h-4" />
+              Résultats
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <ResultRow label="Surface bassin" value={`${result.surface} m²`} />
               <ResultRow label="Volume d’eau" value={`${result.volumeEau} m³`} highlight />
@@ -1666,7 +2650,10 @@ function PiscineCalc({ onCalc, territory, onSave }: CalcProps) {
               <ResultRow label="Étanchéité / liner (+10%)" value={`${result.linerM2} m²`} />
               <ResultRow label="Ciment (25 kg)" value={`${result.nbSacsCiment} sacs`} highlight />
             </div>
-            <p className="text-xs text-slate-500">Estimation indicative pour bassin rectangulaire • Vérifier dimensionnement structurel avec un pro</p>
+            <p className="text-xs text-slate-500">
+              Estimation indicative pour bassin rectangulaire • Vérifier dimensionnement structurel
+              avec un pro
+            </p>
           </div>
           <StoreLocatorPanel needs={materials} territory={territory} />
         </>
@@ -1679,14 +2666,21 @@ function PiscineCalc({ onCalc, territory, onSave }: CalcProps) {
 
 function EscalierCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
   const [hauteurTotale, setHauteurTotale] = useState('');
-  const [nbMarches, setNbMarches]         = useState('');
+  const [nbMarches, setNbMarches] = useState('');
   const [result, setResult] = useState<{
-    hauteurMarche: number; giron: number; longueurTotale: number; angleDeg: number; conformeNormes: boolean;
+    hauteurMarche: number;
+    giron: number;
+    longueurTotale: number;
+    angleDeg: number;
+    conformeNormes: boolean;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const ht = parseFloat(hauteurTotale.replace(',', '.'));
     const nb = parseInt(nbMarches);
     if (!ht || !nb || nb < 2) return;
@@ -1694,47 +2688,92 @@ function EscalierCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
     const hauteurMarche = Math.round((ht / nb) * 100) / 100;
     // Formule de Blondel : 2h + g = 63 cm (±1 cm)
     // g = 63 - 2h
-    const giron        = Math.round((0.63 - 2 * hauteurMarche) * 100);
+    const giron = Math.round((0.63 - 2 * hauteurMarche) * 100);
     const longueurTotale = Math.round(nb * (giron / 100) * 100) / 100;
-    const angleRad     = Math.atan(hauteurMarche / (giron / 100));
-    const angleDeg     = Math.round((angleRad * 180) / Math.PI);
+    const angleRad = Math.atan(hauteurMarche / (giron / 100));
+    const angleDeg = Math.round((angleRad * 180) / Math.PI);
     // Normes : h ∈ [17, 20 cm], g ∈ [24, 32 cm]
-    const conformeNormes = hauteurMarche >= 0.17 && hauteurMarche <= 0.20
-      && giron >= 24 && giron <= 32;
+    const conformeNormes =
+      hauteurMarche >= 0.17 && hauteurMarche <= 0.2 && giron >= 24 && giron <= 32;
 
     const res = { hauteurMarche, giron, longueurTotale, angleDeg, conformeNormes };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'escalier', inputs: { hauteurTotaleM: hauteurTotale, nbMarches }, results: res, materials: [] });
+    onSave({
+      calcType: 'escalier',
+      inputs: { hauteurTotaleM: hauteurTotale, nbMarches },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setHauteurTotale(''); setNbMarches(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setHauteurTotale('');
+    setNbMarches('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
       <WarnBanner text="Hauteur totale à franchir en mètres • Formule de Blondel : 2h + g = 63 cm" />
       <div className="grid grid-cols-2 gap-3">
-        <NumInput label="Hauteur totale à franchir" value={hauteurTotale} onChange={setHauteurTotale} unit="m" />
-        <NumInput label="Nombre de marches" value={nbMarches} onChange={setNbMarches} placeholder="13" unit="marches" />
+        <NumInput
+          label="Hauteur totale à franchir"
+          value={hauteurTotale}
+          onChange={setHauteurTotale}
+          unit="m"
+        />
+        <NumInput
+          label="Nombre de marches"
+          value={nbMarches}
+          onChange={setNbMarches}
+          placeholder="13"
+          unit="marches"
+        />
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+            <Calculator className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
-            <ResultRow label="Hauteur de marche (h)" value={`${Math.round(result.hauteurMarche * 100)} cm`} highlight />
+            <ResultRow
+              label="Hauteur de marche (h)"
+              value={`${Math.round(result.hauteurMarche * 100)} cm`}
+              highlight
+            />
             <ResultRow label="Giron (g)" value={`${result.giron} cm`} highlight />
             <ResultRow label="Longueur totale limon" value={`${result.longueurTotale} m`} />
             <ResultRow label="Angle inclinaison" value={`${result.angleDeg}°`} />
           </div>
-          <div className={`rounded-xl px-4 py-3 text-center text-sm font-semibold ${result.conformeNormes ? 'bg-green-900/40 text-green-300 border border-green-500/30' : 'bg-red-900/40 text-red-300 border border-red-500/30'}`}>
-            {result.conformeNormes ? '✅ Conforme aux normes NF P01-013 (h: 17–20 cm, g: 24–32 cm)' : '⚠️ Hors normes NF P01-013 — Ajustez le nombre de marches'}
+          <div
+            className={`rounded-xl px-4 py-3 text-center text-sm font-semibold ${result.conformeNormes ? 'bg-green-900/40 text-green-300 border border-green-500/30' : 'bg-red-900/40 text-red-300 border border-red-500/30'}`}
+          >
+            {result.conformeNormes
+              ? '✅ Conforme aux normes NF P01-013 (h: 17–20 cm, g: 24–32 cm)'
+              : '⚠️ Hors normes NF P01-013 — Ajustez le nombre de marches'}
           </div>
-          <p className="text-xs text-slate-500">Formule de Blondel : 2h + g = {Math.round(2 * result.hauteurMarche * 100 + result.giron)} cm (idéal 63 cm)</p>
+          <p className="text-xs text-slate-500">
+            Formule de Blondel : 2h + g ={' '}
+            {Math.round(2 * result.hauteurMarche * 100 + result.giron)} cm (idéal 63 cm)
+          </p>
         </div>
       )}
     </div>
@@ -1744,16 +2783,23 @@ function EscalierCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 // ─── Électricité Calculator ───────────────────────────────────────────────────
 
 function ElectriciteCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
-  const [puissance, setPuissance]   = useState('');
-  const [tension, setTension]       = useState<'230' | '400'>('230');
-  const [longueur, setLongueur]     = useState('');
+  const [puissance, setPuissance] = useState('');
+  const [tension, setTension] = useState<'230' | '400'>('230');
+  const [longueur, setLongueur] = useState('');
   const [result, setResult] = useState<{
-    intensite: number; section: string; sectionMm2: number; disjoncteur: number; chuteTension: number;
+    intensite: number;
+    section: string;
+    sectionMm2: number;
+    disjoncteur: number;
+    chuteTension: number;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const p = parseFloat(puissance.replace(',', '.'));
     const u = parseFloat(tension);
     const l = parseFloat(longueur.replace(',', '.'));
@@ -1761,25 +2807,41 @@ function ElectriciteCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 
     // Intensité : I = P / (U × cos φ) avec cos φ = 0.85
     const cosF = 0.85;
-    const I = tension === '230'
-      ? Math.round((p / (u * cosF)) * 10) / 10
-      : Math.round((p / (u * Math.sqrt(3) * cosF)) * 10) / 10;
+    const I =
+      tension === '230'
+        ? Math.round((p / (u * cosF)) * 10) / 10
+        : Math.round((p / (u * Math.sqrt(3) * cosF)) * 10) / 10;
 
     // Section minimale selon intensité (norme NF C 15-100)
     let sectionMm2 = 1.5;
     let disjoncteur = 10;
-    if (I > 63) { sectionMm2 = 16; disjoncteur = 80; }
-    else if (I > 50) { sectionMm2 = 10; disjoncteur = 63; }
-    else if (I > 32) { sectionMm2 = 6;  disjoncteur = 40; }
-    else if (I > 25) { sectionMm2 = 4;  disjoncteur = 32; }
-    else if (I > 16) { sectionMm2 = 2.5; disjoncteur = 20; }
-    else if (I > 10) { sectionMm2 = 1.5; disjoncteur = 16; }
-    else             { sectionMm2 = 1.5; disjoncteur = 10; }
+    if (I > 63) {
+      sectionMm2 = 16;
+      disjoncteur = 80;
+    } else if (I > 50) {
+      sectionMm2 = 10;
+      disjoncteur = 63;
+    } else if (I > 32) {
+      sectionMm2 = 6;
+      disjoncteur = 40;
+    } else if (I > 25) {
+      sectionMm2 = 4;
+      disjoncteur = 32;
+    } else if (I > 16) {
+      sectionMm2 = 2.5;
+      disjoncteur = 20;
+    } else if (I > 10) {
+      sectionMm2 = 1.5;
+      disjoncteur = 16;
+    } else {
+      sectionMm2 = 1.5;
+      disjoncteur = 10;
+    }
 
     // Vérification chute de tension (ρ Cu = 0.0178 Ω·mm²/m)
     const rho = 0.0178;
-    const R   = (rho * l * 2) / sectionMm2; // aller-retour
-    const dU  = Math.round((R * I / u) * 100 * 10) / 10; // % de chute tension
+    const R = (rho * l * 2) / sectionMm2; // aller-retour
+    const dU = Math.round(((R * I) / u) * 100 * 10) / 10; // % de chute tension
 
     // Si chute > 3%, augmenter la section
     if (dU > 3) {
@@ -1789,15 +2851,24 @@ function ElectriciteCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
       }
     }
 
-    const sectionLabel =
-      sectionMm2 >= 25 ? `${sectionMm2} mm²` : `${sectionMm2} mm²`;
+    const sectionLabel = sectionMm2 >= 25 ? `${sectionMm2} mm²` : `${sectionMm2} mm²`;
     const res = { intensite: I, section: sectionLabel, sectionMm2, disjoncteur, chuteTension: dU };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'electricite', inputs: { puissanceW: puissance, tensionV: tension, longueurM: longueur }, results: res, materials: [] });
+    onSave({
+      calcType: 'electricite',
+      inputs: { puissanceW: puissance, tensionV: tension, longueurM: longueur },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setPuissance(''); setLongueur(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setPuissance('');
+    setLongueur('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -1808,9 +2879,17 @@ function ElectriciteCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <div className="col-span-2">
           <span className="block text-sm text-slate-400 mb-2">Type d'alimentation</span>
           <div className="grid grid-cols-2 gap-2">
-            {([['230', '🔌 Monophasé 230 V'], ['400', '⚡ Triphasé 400 V']] as const).map(([v, label]) => (
-              <button key={v} onClick={() => setTension(v)}
-                className={`py-2.5 rounded-xl text-xs font-semibold transition-colors ${tension === v ? 'bg-yellow-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+            {(
+              [
+                ['230', '🔌 Monophasé 230 V'],
+                ['400', '⚡ Triphasé 400 V'],
+              ] as const
+            ).map(([v, label]) => (
+              <button
+                key={v}
+                onClick={() => setTension(v)}
+                className={`py-2.5 rounded-xl text-xs font-semibold transition-colors ${tension === v ? 'bg-yellow-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {label}
               </button>
             ))}
@@ -1818,13 +2897,26 @@ function ElectriciteCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-yellow-600 hover:bg-yellow-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-yellow-600 hover:bg-yellow-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-yellow-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-yellow-300 flex items-center gap-2"><Zap className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-yellow-300 flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
             <ResultRow label="Intensité" value={`${result.intensite} A`} highlight />
             <ResultRow label="Section recommandée" value={result.section} highlight />
@@ -1833,10 +2925,13 @@ function ElectriciteCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           </div>
           {result.chuteTension > 3 && (
             <div className="rounded-xl bg-red-900/30 border border-red-500/40 px-3 py-2 text-xs text-red-300">
-              ⚠️ Chute de tension &gt; 3% — Section augmentée automatiquement. Vérifiez avec un électricien.
+              ⚠️ Chute de tension &gt; 3% — Section augmentée automatiquement. Vérifiez avec un
+              électricien.
             </div>
           )}
-          <p className="text-xs text-slate-500">Câble cuivre — Norme NF C 15-100 • À titre indicatif, consultez un professionnel</p>
+          <p className="text-xs text-slate-500">
+            Câble cuivre — Norme NF C 15-100 • À titre indicatif, consultez un professionnel
+          </p>
         </div>
       )}
     </div>
@@ -1846,18 +2941,25 @@ function ElectriciteCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 // ─── Plomberie Calculator ─────────────────────────────────────────────────────
 
 function PlomberieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
-  const [longueur, setLongueur]     = useState('');
-  const [nbCoudes, setNbCoudes]     = useState('');
-  const [nbTees, setNbTees]         = useState('');
-  const [usage, setUsage]           = useState<'froide' | 'chaude' | 'evacuation'>('froide');
+  const [longueur, setLongueur] = useState('');
+  const [nbCoudes, setNbCoudes] = useState('');
+  const [nbTees, setNbTees] = useState('');
+  const [usage, setUsage] = useState<'froide' | 'chaude' | 'evacuation'>('froide');
   const [result, setResult] = useState<{
-    longueurTotale: number; diametre: string; nbCoudes: number; nbTees: number; nbRobinets: number;
+    longueurTotale: number;
+    diametre: string;
+    nbCoudes: number;
+    nbTees: number;
+    nbRobinets: number;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
-    const l  = parseFloat(longueur.replace(',', '.'));
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
+    const l = parseFloat(longueur.replace(',', '.'));
     const nc = parseInt(nbCoudes) || 0;
     const nt = parseInt(nbTees) || 0;
     if (!l) return;
@@ -1879,10 +2981,21 @@ function PlomberieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
     const res = { longueurTotale, diametre, nbCoudes: nc, nbTees: nt, nbRobinets };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'plomberie', inputs: { longueurM: longueur, nbCoudes, nbTees, usage }, results: res, materials: [] });
+    onSave({
+      calcType: 'plomberie',
+      inputs: { longueurM: longueur, nbCoudes, nbTees, usage },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setLongueur(''); setNbCoudes(''); setNbTees(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setLongueur('');
+    setNbCoudes('');
+    setNbTees('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -1890,14 +3003,35 @@ function PlomberieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Longueur linéaire" value={longueur} onChange={setLongueur} unit="m" />
         <div className="col-span-1" />
-        <NumInput label="Nombre de coudes" value={nbCoudes} onChange={setNbCoudes} placeholder="0" unit="pcs" />
-        <NumInput label="Nombre de Tés" value={nbTees} onChange={setNbTees} placeholder="0" unit="pcs" />
+        <NumInput
+          label="Nombre de coudes"
+          value={nbCoudes}
+          onChange={setNbCoudes}
+          placeholder="0"
+          unit="pcs"
+        />
+        <NumInput
+          label="Nombre de Tés"
+          value={nbTees}
+          onChange={setNbTees}
+          placeholder="0"
+          unit="pcs"
+        />
         <div className="col-span-2">
           <span className="block text-sm text-slate-400 mb-2">Type de réseau</span>
           <div className="grid grid-cols-3 gap-2">
-            {([['froide', '🔵 Eau froide'], ['chaude', '🔴 Eau chaude'], ['evacuation', '⬇️ Évacuation']] as const).map(([u, label]) => (
-              <button key={u} onClick={() => setUsage(u)}
-                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${usage === u ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+            {(
+              [
+                ['froide', '🔵 Eau froide'],
+                ['chaude', '🔴 Eau chaude'],
+                ['evacuation', '⬇️ Évacuation'],
+              ] as const
+            ).map(([u, label]) => (
+              <button
+                key={u}
+                onClick={() => setUsage(u)}
+                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${usage === u ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {label}
               </button>
             ))}
@@ -1905,21 +3039,40 @@ function PlomberieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-blue-600 hover:bg-blue-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-blue-600 hover:bg-blue-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-blue-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-blue-300 flex items-center gap-2"><Droplet className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-blue-300 flex items-center gap-2">
+            <Droplet className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
-            <ResultRow label="Longueur totale (+15%)" value={`${result.longueurTotale} m`} highlight />
+            <ResultRow
+              label="Longueur totale (+15%)"
+              value={`${result.longueurTotale} m`}
+              highlight
+            />
             <ResultRow label="Diamètre recommandé" value={result.diametre} highlight />
             <ResultRow label="Coudes 90°" value={`${result.nbCoudes} pcs`} />
             <ResultRow label="Tés de dérivation" value={`${result.nbTees} pcs`} />
             <ResultRow label="Robinets d'arrêt" value={`${result.nbRobinets} pcs`} />
           </div>
-          <p className="text-xs text-slate-500">Tuyau PER/cuivre — Longueur équivalente intègre pertes de charge • À titre indicatif</p>
+          <p className="text-xs text-slate-500">
+            Tuyau PER/cuivre — Longueur équivalente intègre pertes de charge • À titre indicatif
+          </p>
         </div>
       )}
     </div>
@@ -1929,41 +3082,71 @@ function PlomberieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 // ─── Isolation Calculator ─────────────────────────────────────────────────────
 
 const ISOLATION_TYPES = [
-  { label: 'Laine de verre',     lambda: 0.035, unit: 'rouleaux', surfaceRouleau: 6.0,  emoji: '🟡' },
-  { label: 'Laine de roche',     lambda: 0.037, unit: 'rouleaux', surfaceRouleau: 5.76, emoji: '⬛' },
-  { label: 'Polyuréthane (PU)',  lambda: 0.022, unit: 'panneaux', surfaceRouleau: 2.88, emoji: '🟦' },
-  { label: 'Polystyrène (PSE)',  lambda: 0.030, unit: 'panneaux', surfaceRouleau: 2.88, emoji: '⬜' },
-  { label: 'Ouate de cellulose', lambda: 0.040, unit: 'sacs',     surfaceRouleau: 4.0,  emoji: '🟫' },
+  { label: 'Laine de verre', lambda: 0.035, unit: 'rouleaux', surfaceRouleau: 6.0, emoji: '🟡' },
+  { label: 'Laine de roche', lambda: 0.037, unit: 'rouleaux', surfaceRouleau: 5.76, emoji: '⬛' },
+  {
+    label: 'Polyuréthane (PU)',
+    lambda: 0.022,
+    unit: 'panneaux',
+    surfaceRouleau: 2.88,
+    emoji: '🟦',
+  },
+  { label: 'Polystyrène (PSE)', lambda: 0.03, unit: 'panneaux', surfaceRouleau: 2.88, emoji: '⬜' },
+  { label: 'Ouate de cellulose', lambda: 0.04, unit: 'sacs', surfaceRouleau: 4.0, emoji: '🟫' },
 ];
 
 function IsolationCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
-  const [surface, setSurface]   = useState('');
+  const [surface, setSurface] = useState('');
   const [epaisseur, setEpaisseur] = useState('100');
-  const [typeIdx, setTypeIdx]   = useState(0);
+  const [typeIdx, setTypeIdx] = useState(0);
   const [result, setResult] = useState<{
-    surface: number; epaisseurMm: number; R: number; nbUnites: number; volumeM3: number; typeLabel: string;
+    surface: number;
+    epaisseurMm: number;
+    R: number;
+    nbUnites: number;
+    volumeM3: number;
+    typeLabel: string;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
-    const s  = parseFloat(surface.replace(',', '.'));
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
+    const s = parseFloat(surface.replace(',', '.'));
     const ep = parseFloat(epaisseur) / 1000; // mm → m
     if (!s || !ep) return;
 
     const mat = ISOLATION_TYPES[typeIdx];
-    const R       = Math.round((ep / mat.lambda) * 100) / 100;
+    const R = Math.round((ep / mat.lambda) * 100) / 100;
     const volumeM3 = Math.round(s * ep * 100) / 100;
     // +10% de chute
     const nbUnites = Math.ceil((s * 1.1) / mat.surfaceRouleau);
 
-    const res = { surface: s, epaisseurMm: parseFloat(epaisseur), R, nbUnites, volumeM3, typeLabel: mat.label };
+    const res = {
+      surface: s,
+      epaisseurMm: parseFloat(epaisseur),
+      R,
+      nbUnites,
+      volumeM3,
+      typeLabel: mat.label,
+    };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'isolation', inputs: { surfaceM2: surface, epaisseurMm: epaisseur, typeIsolant: mat.label }, results: res, materials: [] });
+    onSave({
+      calcType: 'isolation',
+      inputs: { surfaceM2: surface, epaisseurMm: epaisseur, typeIsolant: mat.label },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setSurface(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setSurface('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   const mat = ISOLATION_TYPES[typeIdx];
 
@@ -1973,9 +3156,15 @@ function IsolationCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Surface à isoler" value={surface} onChange={setSurface} unit="m²" />
         <div>
-          <label htmlFor="isolation-epaisseur" className="block text-sm text-slate-400 mb-1">Épaisseur</label>
-          <select id="isolation-epaisseur" value={epaisseur} onChange={(e) => setEpaisseur(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="isolation-epaisseur" className="block text-sm text-slate-400 mb-1">
+            Épaisseur
+          </label>
+          <select
+            id="isolation-epaisseur"
+            value={epaisseur}
+            onChange={(e) => setEpaisseur(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="40">40 mm (R ≈ 1,1)</option>
             <option value="60">60 mm (R ≈ 1,7)</option>
             <option value="80">80 mm (R ≈ 2,3)</option>
@@ -1989,8 +3178,11 @@ function IsolationCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           <span className="block text-sm text-slate-400 mb-2">Type d'isolant</span>
           <div className="grid grid-cols-1 gap-1.5">
             {ISOLATION_TYPES.map((t, i) => (
-              <button key={i} onClick={() => setTypeIdx(i)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${typeIdx === i ? 'bg-teal-700/50 border border-teal-500/60 text-white' : 'bg-slate-700/60 border border-slate-700 text-slate-400 hover:border-slate-600'}`}>
+              <button
+                key={i}
+                onClick={() => setTypeIdx(i)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-colors ${typeIdx === i ? 'bg-teal-700/50 border border-teal-500/60 text-white' : 'bg-slate-700/60 border border-slate-700 text-slate-400 hover:border-slate-600'}`}
+              >
                 <span>{t.emoji}</span>
                 <span>{t.label}</span>
                 <span className="ml-auto text-slate-500">λ = {t.lambda} W/m·K</span>
@@ -2000,23 +3192,48 @@ function IsolationCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-teal-600 hover:bg-teal-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-teal-600 hover:bg-teal-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-teal-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-teal-300 flex items-center gap-2"><Layers className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-teal-300 flex items-center gap-2">
+            <Layers className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
             <ResultRow label="Résistance thermique R" value={`${result.R} m²·K/W`} highlight />
-            <ResultRow label={`Nb ${mat.unit} (+10%)`} value={`${result.nbUnites} ${mat.unit}`} highlight />
+            <ResultRow
+              label={`Nb ${mat.unit} (+10%)`}
+              value={`${result.nbUnites} ${mat.unit}`}
+              highlight
+            />
             <ResultRow label="Volume total" value={`${result.volumeM3} m³`} />
             <ResultRow label="Surface réelle" value={`${result.surface} m²`} />
           </div>
-          <div className={`rounded-xl px-3 py-2 text-xs font-semibold text-center ${result.R >= 3.7 ? 'bg-green-900/30 text-green-300 border border-green-500/30' : result.R >= 2.5 ? 'bg-yellow-900/30 text-yellow-300 border border-yellow-500/30' : 'bg-red-900/30 text-red-300 border border-red-500/30'}`}>
-            {result.R >= 3.7 ? '✅ Excellent — Conforme RT2020' : result.R >= 2.5 ? '✔️ Correct — Amélioration possible' : '⚠️ Insuffisant — Augmentez l\'épaisseur (objectif R ≥ 3,7)'}
+          <div
+            className={`rounded-xl px-3 py-2 text-xs font-semibold text-center ${result.R >= 3.7 ? 'bg-green-900/30 text-green-300 border border-green-500/30' : result.R >= 2.5 ? 'bg-yellow-900/30 text-yellow-300 border border-yellow-500/30' : 'bg-red-900/30 text-red-300 border border-red-500/30'}`}
+          >
+            {result.R >= 3.7
+              ? '✅ Excellent — Conforme RT2020'
+              : result.R >= 2.5
+                ? '✔️ Correct — Amélioration possible'
+                : "⚠️ Insuffisant — Augmentez l'épaisseur (objectif R ≥ 3,7)"}
           </div>
-          <p className="text-xs text-slate-500">{mat.label} — λ = {mat.lambda} W/m·K • Format {mat.unit} ≈ {mat.surfaceRouleau} m²</p>
+          <p className="text-xs text-slate-500">
+            {mat.label} — λ = {mat.lambda} W/m·K • Format {mat.unit} ≈ {mat.surfaceRouleau} m²
+          </p>
         </div>
       )}
     </div>
@@ -2027,49 +3244,72 @@ function IsolationCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 
 function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
   const [longueur, setLongueur] = useState('');
-  const [largeur, setLargeur]   = useState('');
-  const [pente, setPente]       = useState('30');
+  const [largeur, setLargeur] = useState('');
+  const [pente, setPente] = useState('30');
   const [espacement, setEspacement] = useState('60');
-  const [section, setSection]   = useState<'60x80' | '60x120' | '80x120' | '100x150'>('60x120');
+  const [section, setSection] = useState<'60x80' | '60x120' | '80x120' | '100x150'>('60x120');
   const [result, setResult] = useState<{
-    longueurChevron: number; nbChevrons: number; nbPannes: number; volumeBoisM3: number; longueurFaitage: number;
+    longueurChevron: number;
+    nbChevrons: number;
+    nbPannes: number;
+    volumeBoisM3: number;
+    longueurFaitage: number;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
-    const l  = parseFloat(longueur.replace(',', '.'));
-    const w  = parseFloat(largeur.replace(',', '.'));
-    const p  = parseFloat(pente);
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
+    const l = parseFloat(longueur.replace(',', '.'));
+    const w = parseFloat(largeur.replace(',', '.'));
+    const p = parseFloat(pente);
     const esp = parseFloat(espacement) / 100;
     if (!l || !w || !p || !esp) return;
 
     // Longueur du chevron = (largeur/2) / cos(angle)
-    const angleDeg  = Math.atan(p / 100) * 180 / Math.PI;
-    const angleRad  = angleDeg * Math.PI / 180;
-    const longueurChevron = Math.round(((w / 2) / Math.cos(angleRad)) * 100) / 100;
+    const angleDeg = (Math.atan(p / 100) * 180) / Math.PI;
+    const angleRad = (angleDeg * Math.PI) / 180;
+    const longueurChevron = Math.round((w / 2 / Math.cos(angleRad)) * 100) / 100;
 
     // Nombre de chevrons (chaque versant) — arrondi supérieur + 1 pour extremités
     const nbParVersant = Math.ceil(l / esp) + 1;
-    const nbChevrons   = nbParVersant * 2; // 2 versants
+    const nbChevrons = nbParVersant * 2; // 2 versants
 
     // Pannes : une tous les 1,2 m de longueur de chevron
-    const nbPannes = Math.ceil((longueurChevron / 1.2)) * 2 + 1; // +1 pour le faîtage
+    const nbPannes = Math.ceil(longueurChevron / 1.2) * 2 + 1; // +1 pour le faîtage
 
     // Volume de bois (m³) avec 10% de perte
     const [h, b] = section.split('x').map(Number);
     const volumeChevrons = nbChevrons * longueurChevron * (h / 1000) * (b / 1000);
-    const longueurPanne  = l + 0.5; // dépassement
-    const volumePannes   = nbPannes * longueurPanne * (h / 1000) * (b / 1000);
-    const volumeBoisM3   = Math.round((volumeChevrons + volumePannes) * 1.1 * 100) / 100;
+    const longueurPanne = l + 0.5; // dépassement
+    const volumePannes = nbPannes * longueurPanne * (h / 1000) * (b / 1000);
+    const volumeBoisM3 = Math.round((volumeChevrons + volumePannes) * 1.1 * 100) / 100;
 
     const res = { longueurChevron, nbChevrons, nbPannes, volumeBoisM3, longueurFaitage: l };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'charpente', inputs: { longueurM: longueur, largeurM: largeur, pentePct: pente, espacementCm: espacement, section }, results: res, materials: [] });
+    onSave({
+      calcType: 'charpente',
+      inputs: {
+        longueurM: longueur,
+        largeurM: largeur,
+        pentePct: pente,
+        espacementCm: espacement,
+        section,
+      },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setLongueur(''); setLargeur(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setLongueur('');
+    setLargeur('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -2078,9 +3318,15 @@ function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <NumInput label="Longueur bâtiment" value={longueur} onChange={setLongueur} unit="m" />
         <NumInput label="Largeur bâtiment" value={largeur} onChange={setLargeur} unit="m" />
         <div>
-          <label htmlFor="charpente-pente" className="block text-sm text-slate-400 mb-1">Pente de toit</label>
-          <select id="charpente-pente" value={pente} onChange={(e) => setPente(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="charpente-pente" className="block text-sm text-slate-400 mb-1">
+            Pente de toit
+          </label>
+          <select
+            id="charpente-pente"
+            value={pente}
+            onChange={(e) => setPente(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="15">15% — très faible</option>
             <option value="20">20% — faible</option>
             <option value="30">30% — standard</option>
@@ -2090,9 +3336,15 @@ function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           </select>
         </div>
         <div>
-          <label htmlFor="charpente-espacement" className="block text-sm text-slate-400 mb-1">Espacement chevrons</label>
-          <select id="charpente-espacement" value={espacement} onChange={(e) => setEspacement(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="charpente-espacement" className="block text-sm text-slate-400 mb-1">
+            Espacement chevrons
+          </label>
+          <select
+            id="charpente-espacement"
+            value={espacement}
+            onChange={(e) => setEspacement(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="40">40 cm</option>
             <option value="50">50 cm</option>
             <option value="60">60 cm (standard)</option>
@@ -2103,8 +3355,11 @@ function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           <span className="block text-sm text-slate-400 mb-2">Section des chevrons</span>
           <div className="grid grid-cols-2 gap-2">
             {(['60x80', '60x120', '80x120', '100x150'] as const).map((s) => (
-              <button key={s} onClick={() => setSection(s)}
-                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${section === s ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+              <button
+                key={s}
+                onClick={() => setSection(s)}
+                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${section === s ? 'bg-orange-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {s} mm
               </button>
             ))}
@@ -2112,20 +3367,35 @@ function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-orange-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-orange-300 flex items-center gap-2"><Hammer className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-orange-300 flex items-center gap-2">
+            <Hammer className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
             <ResultRow label="Longueur chevron" value={`${result.longueurChevron} m`} highlight />
             <ResultRow label="Nb chevrons total" value={`${result.nbChevrons} pcs`} highlight />
             <ResultRow label="Nb pannes + faîtage" value={`${result.nbPannes} pcs`} />
             <ResultRow label="Volume bois (+ 10%)" value={`${result.volumeBoisM3} m³`} />
           </div>
-          <p className="text-xs text-slate-500">Section {section} mm • 2 versants • Pente {pente}% • Espacement {espacement} cm</p>
+          <p className="text-xs text-slate-500">
+            Section {section} mm • 2 versants • Pente {pente}% • Espacement {espacement} cm
+          </p>
         </div>
       )}
     </div>
@@ -2135,43 +3405,59 @@ function CharpentCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 // ─── Plâtrerie Calculator ─────────────────────────────────────────────────────
 
 function PlatrierieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
-  const [surface, setSurface]   = useState('');
-  const [hauteur, setHauteur]   = useState('2.5');
-  const [type, setType]         = useState<'ba13' | 'ba15' | 'ba18'>('ba13');
+  const [surface, setSurface] = useState('');
+  const [hauteur, setHauteur] = useState('2.5');
+  const [type, setType] = useState<'ba13' | 'ba15' | 'ba18'>('ba13');
   const [result, setResult] = useState<{
-    nbPlaques: number; longueurRails: number; longueurMontants: number; nbVis: number; longueurBandes: number;
+    nbPlaques: number;
+    longueurRails: number;
+    longueurMontants: number;
+    nbVis: number;
+    longueurBandes: number;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const s = parseFloat(surface.replace(',', '.'));
     const h = parseFloat(hauteur);
     if (!s || !h) return;
 
     // Format plaque standard 1.2 × 2.5 m = 3 m² (ou 1.2 × h)
     const surfacePlaque = 1.2 * h;
-    const nbPlaques     = Math.ceil((s / surfacePlaque) * 1.10); // +10%
+    const nbPlaques = Math.ceil((s / surfacePlaque) * 1.1); // +10%
 
     // Rails au sol et plafond + montants tous les 60 cm
-    const perimetre         = Math.sqrt(s) * 4; // approximation périmètre si carré
-    const longueurRails     = Math.round(perimetre * 2 * 1.1 * 10) / 10; // sol + plafond + 10%
-    const longueurMontants  = Math.round((s / 0.6) * h * 1.1 * 10) / 10;  // montants tous 60cm
+    const perimetre = Math.sqrt(s) * 4; // approximation périmètre si carré
+    const longueurRails = Math.round(perimetre * 2 * 1.1 * 10) / 10; // sol + plafond + 10%
+    const longueurMontants = Math.round((s / 0.6) * h * 1.1 * 10) / 10; // montants tous 60cm
 
     // Vis : ~25 vis/m²
     const nbVis = Math.ceil(s * 25);
 
     // Bandes de jointoiement : linéaire joints = nb joints verticaux × h + joints horizontaux
     const nbJointsV = Math.ceil(s / (1.2 * h));
-    const longueurBandes = Math.round((nbJointsV * h + (s / h)) * 1.1 * 10) / 10;
+    const longueurBandes = Math.round((nbJointsV * h + s / h) * 1.1 * 10) / 10;
 
     const res = { nbPlaques, longueurRails, longueurMontants, nbVis, longueurBandes };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'platrerie', inputs: { surfaceM2: surface, hauteurM: hauteur, typePlaque: type }, results: res, materials: [] });
+    onSave({
+      calcType: 'platrerie',
+      inputs: { surfaceM2: surface, hauteurM: hauteur, typePlaque: type },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setSurface(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setSurface('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -2179,9 +3465,15 @@ function PlatrierieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Surface cloison" value={surface} onChange={setSurface} unit="m²" />
         <div>
-          <label htmlFor="platrerie-hauteur" className="block text-sm text-slate-400 mb-1">Hauteur sous plafond</label>
-          <select id="platrerie-hauteur" value={hauteur} onChange={(e) => setHauteur(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
+          <label htmlFor="platrerie-hauteur" className="block text-sm text-slate-400 mb-1">
+            Hauteur sous plafond
+          </label>
+          <select
+            id="platrerie-hauteur"
+            value={hauteur}
+            onChange={(e) => setHauteur(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
             <option value="2.3">2,30 m</option>
             <option value="2.5">2,50 m (standard)</option>
             <option value="2.7">2,70 m</option>
@@ -2191,9 +3483,18 @@ function PlatrierieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <div className="col-span-2">
           <span className="block text-sm text-slate-400 mb-2">Type de plaque</span>
           <div className="grid grid-cols-3 gap-2">
-            {([['ba13', '🟦 BA13 Standard'], ['ba15', '🔵 BA15 Humide'], ['ba18', '🔴 BA18 Feu']] as const).map(([t, label]) => (
-              <button key={t} onClick={() => setType(t)}
-                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${type === t ? 'bg-slate-500 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+            {(
+              [
+                ['ba13', '🟦 BA13 Standard'],
+                ['ba15', '🔵 BA15 Humide'],
+                ['ba18', '🔴 BA18 Feu'],
+              ] as const
+            ).map(([t, label]) => (
+              <button
+                key={t}
+                onClick={() => setType(t)}
+                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${type === t ? 'bg-slate-500 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {label}
               </button>
             ))}
@@ -2201,21 +3502,40 @@ function PlatrierieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-slate-500 hover:bg-slate-400 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-slate-500 hover:bg-slate-400 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-slate-500/40 p-4 space-y-3">
-          <h3 className="font-semibold text-slate-300 flex items-center gap-2"><Layers className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-slate-300 flex items-center gap-2">
+            <Layers className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
-            <ResultRow label={`Plaques ${type.toUpperCase()} (+10%)`} value={`${result.nbPlaques} plaques`} highlight />
+            <ResultRow
+              label={`Plaques ${type.toUpperCase()} (+10%)`}
+              value={`${result.nbPlaques} plaques`}
+              highlight
+            />
             <ResultRow label="Vis" value={`${result.nbVis} vis`} highlight />
             <ResultRow label="Rails (sol + plafond)" value={`${result.longueurRails} ml`} />
             <ResultRow label="Montants (tous 60 cm)" value={`${result.longueurMontants} ml`} />
             <ResultRow label="Bandes de jointoiement" value={`${result.longueurBandes} ml`} />
           </div>
-          <p className="text-xs text-slate-500">Ossature acier 48/70 mm • Entraxe 60 cm • Prise en compte +10% de chutes</p>
+          <p className="text-xs text-slate-500">
+            Ossature acier 48/70 mm • Entraxe 60 cm • Prise en compte +10% de chutes
+          </p>
         </div>
       )}
     </div>
@@ -2225,21 +3545,28 @@ function PlatrierieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 // ─── Parquet Calculator ───────────────────────────────────────────────────────
 
 function ParquetCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
-  const [surface, setSurface]     = useState('');
-  const [type, setType]           = useState<'flottant' | 'colle' | 'massif'>('flottant');
-  const [pose, setPose]           = useState<'droit' | 'biais' | 'chevron'>('droit');
+  const [surface, setSurface] = useState('');
+  const [type, setType] = useState<'flottant' | 'colle' | 'massif'>('flottant');
+  const [pose, setPose] = useState<'droit' | 'biais' | 'chevron'>('droit');
   const [result, setResult] = useState<{
-    surfaceAcheter: number; nbPaquets: number; sousCouch: number; colle: number; plinthed: number;
+    surfaceAcheter: number;
+    nbPaquets: number;
+    sousCouch: number;
+    colle: number;
+    plinthed: number;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const s = parseFloat(surface.replace(',', '.'));
     if (!s) return;
 
     // Chute selon type de pose
-    const chutePct = pose === 'biais' ? 0.15 : pose === 'chevron' ? 0.20 : 0.10;
+    const chutePct = pose === 'biais' ? 0.15 : pose === 'chevron' ? 0.2 : 0.1;
     const surfaceAcheter = Math.round(s * (1 + chutePct) * 100) / 100;
 
     // Paquets : format standard 2,2 m² par paquet
@@ -2249,18 +3576,27 @@ function ParquetCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
     const sousCouch = type === 'flottant' ? Math.round(surfaceAcheter * 10) / 10 : 0;
 
     // Colle (collé et massif) : 1 kg/m²
-    const colle = (type === 'colle' || type === 'massif') ? Math.ceil(surfaceAcheter) : 0;
+    const colle = type === 'colle' || type === 'massif' ? Math.ceil(surfaceAcheter) : 0;
 
     // Plinthes : périmètre approximé (√surface × 4) avec 10% de marge
-    const plinthed = Math.round(Math.sqrt(s) * 4 * 1.10 * 10) / 10;
+    const plinthed = Math.round(Math.sqrt(s) * 4 * 1.1 * 10) / 10;
 
     const res = { surfaceAcheter, nbPaquets, sousCouch, colle, plinthed };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'parquet', inputs: { surfaceM2: surface, type, pose }, results: res, materials: [] });
+    onSave({
+      calcType: 'parquet',
+      inputs: { surfaceM2: surface, type, pose },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setSurface(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setSurface('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -2271,9 +3607,18 @@ function ParquetCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <div className="col-span-2">
           <span className="block text-sm text-slate-400 mb-2">Type de parquet</span>
           <div className="grid grid-cols-3 gap-2">
-            {([['flottant', '🪵 Flottant'], ['colle', '🪵 Collé'], ['massif', '🌲 Massif']] as const).map(([t, label]) => (
-              <button key={t} onClick={() => setType(t)}
-                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${type === t ? 'bg-amber-700 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+            {(
+              [
+                ['flottant', '🪵 Flottant'],
+                ['colle', '🪵 Collé'],
+                ['massif', '🌲 Massif'],
+              ] as const
+            ).map(([t, label]) => (
+              <button
+                key={t}
+                onClick={() => setType(t)}
+                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${type === t ? 'bg-amber-700 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {label}
               </button>
             ))}
@@ -2282,9 +3627,18 @@ function ParquetCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         <div className="col-span-2">
           <span className="block text-sm text-slate-400 mb-2">Mode de pose</span>
           <div className="grid grid-cols-3 gap-2">
-            {([['droit', '↔️ Droit (+10%)'], ['biais', '↗️ Biais (+15%)'], ['chevron', '🔀 Chevron (+20%)']] as const).map(([p, label]) => (
-              <button key={p} onClick={() => setPose(p)}
-                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${pose === p ? 'bg-amber-700 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+            {(
+              [
+                ['droit', '↔️ Droit (+10%)'],
+                ['biais', '↗️ Biais (+15%)'],
+                ['chevron', '🔀 Chevron (+20%)'],
+              ] as const
+            ).map(([p, label]) => (
+              <button
+                key={p}
+                onClick={() => setPose(p)}
+                className={`py-2 rounded-xl text-xs font-semibold transition-colors ${pose === p ? 'bg-amber-700 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {label}
               </button>
             ))}
@@ -2292,21 +3646,39 @@ function ParquetCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-amber-700 hover:bg-amber-600 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-amber-700 hover:bg-amber-600 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-amber-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-amber-300 flex items-center gap-2"><Calculator className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-amber-300 flex items-center gap-2">
+            <Calculator className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
             <ResultRow label="Surface à acheter" value={`${result.surfaceAcheter} m²`} highlight />
             <ResultRow label="Paquets (≈ 2,2 m²)" value={`${result.nbPaquets} paquets`} highlight />
-            {result.sousCouch > 0 && <ResultRow label="Sous-couche" value={`${result.sousCouch} m²`} />}
-            {result.colle > 0    && <ResultRow label="Colle parquet" value={`${result.colle} kg`} />}
+            {result.sousCouch > 0 && (
+              <ResultRow label="Sous-couche" value={`${result.sousCouch} m²`} />
+            )}
+            {result.colle > 0 && <ResultRow label="Colle parquet" value={`${result.colle} kg`} />}
             <ResultRow label="Plinthes (périmètre)" value={`${result.plinthed} ml`} />
           </div>
-          <p className="text-xs text-slate-500">Paquet standard ≈ 2,2 m² • Chute pose {pose === 'biais' ? '15' : pose === 'chevron' ? '20' : '10'}%</p>
+          <p className="text-xs text-slate-500">
+            Paquet standard ≈ 2,2 m² • Chute pose{' '}
+            {pose === 'biais' ? '15' : pose === 'chevron' ? '20' : '10'}%
+          </p>
         </div>
       )}
     </div>
@@ -2316,33 +3688,40 @@ function ParquetCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 // ─── Gouttière & Descentes EP Calculator ──────────────────────────────────────
 
 function GoutiereCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
-  const [longueur, setLongueur]   = useState('');
+  const [longueur, setLongueur] = useState('');
   const [nbDescentes, setNbDescentes] = useState('2');
   const [hauteurFacade, setHauteurFacade] = useState('3.5');
-  const [type, setType]           = useState<'pvc' | 'zinc' | 'alu'>('pvc');
+  const [type, setType] = useState<'pvc' | 'zinc' | 'alu'>('pvc');
   const [result, setResult] = useState<{
-    longueurGout: number; nbCrochets: number; nbJonctions: number; longueurDescentes: number; nbColliers: number;
+    longueurGout: number;
+    nbCrochets: number;
+    nbJonctions: number;
+    longueurDescentes: number;
+    nbColliers: number;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
-    const l  = parseFloat(longueur.replace(',', '.'));
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
+    const l = parseFloat(longueur.replace(',', '.'));
     const nd = parseInt(nbDescentes) || 0;
-    const h  = parseFloat(hauteurFacade);
+    const h = parseFloat(hauteurFacade);
     if (!l || !h) return;
 
     // Longueur de gouttière + 10% de sécurité
-    const longueurGout = Math.round(l * 1.10 * 10) / 10;
+    const longueurGout = Math.round(l * 1.1 * 10) / 10;
 
     // Crochets tous les 60 cm + 1 au départ
-    const nbCrochets = Math.ceil(l / 0.60) + 1;
+    const nbCrochets = Math.ceil(l / 0.6) + 1;
 
     // Jonctions de gouttière tous les 3 m
     const nbJonctions = Math.max(0, Math.ceil(l / 3) - 1);
 
     // Descentes EP
-    const longueurDescentes = Math.round(nd * h * 1.10 * 10) / 10;
+    const longueurDescentes = Math.round(nd * h * 1.1 * 10) / 10;
 
     // Colliers de descente tous les 1,5 m
     const nbColliers = Math.ceil((nd * h) / 1.5);
@@ -2350,30 +3729,63 @@ function GoutiereCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
     const res = { longueurGout, nbCrochets, nbJonctions, longueurDescentes, nbColliers };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'gouttiere', inputs: { longueurM: longueur, nbDescentes, hauteurFacadeM: hauteurFacade, type }, results: res, materials: [] });
+    onSave({
+      calcType: 'gouttiere',
+      inputs: { longueurM: longueur, nbDescentes, hauteurFacadeM: hauteurFacade, type },
+      results: res,
+      materials: [],
+    });
   };
 
-  const reset = () => { setLongueur(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setLongueur('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
       <WarnBanner text="Longueur de toiture en mètres • Gouttière semi-ronde ou carrée" />
       <div className="grid grid-cols-2 gap-3">
         <NumInput label="Longueur de gouttière" value={longueur} onChange={setLongueur} unit="m" />
-        <NumInput label="Hauteur façade" value={hauteurFacade} onChange={setHauteurFacade} unit="m" />
+        <NumInput
+          label="Hauteur façade"
+          value={hauteurFacade}
+          onChange={setHauteurFacade}
+          unit="m"
+        />
         <div>
-          <label htmlFor="goutiere-nb-descentes" className="block text-sm text-slate-400 mb-1">Nb de descentes</label>
-          <select id="goutiere-nb-descentes" value={nbDescentes} onChange={(e) => setNbDescentes(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-            {[1,2,3,4,5,6].map((n) => <option key={n} value={n}>{n} descente{n > 1 ? 's' : ''}</option>)}
+          <label htmlFor="goutiere-nb-descentes" className="block text-sm text-slate-400 mb-1">
+            Nb de descentes
+          </label>
+          <select
+            id="goutiere-nb-descentes"
+            value={nbDescentes}
+            onChange={(e) => setNbDescentes(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <option key={n} value={n}>
+                {n} descente{n > 1 ? 's' : ''}
+              </option>
+            ))}
           </select>
         </div>
         <div>
           <span className="block text-sm text-slate-400 mb-1">Matériau</span>
           <div className="grid grid-cols-1 gap-1.5">
-            {([['pvc', '⬜ PVC'], ['zinc', '⬛ Zinc'], ['alu', '🔘 Alu']] as const).map(([t, label]) => (
-              <button key={t} onClick={() => setType(t)}
-                className={`py-1.5 rounded-lg text-xs font-semibold transition-colors ${type === t ? 'bg-cyan-700 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}>
+            {(
+              [
+                ['pvc', '⬜ PVC'],
+                ['zinc', '⬛ Zinc'],
+                ['alu', '🔘 Alu'],
+              ] as const
+            ).map(([t, label]) => (
+              <button
+                key={t}
+                onClick={() => setType(t)}
+                className={`py-1.5 rounded-lg text-xs font-semibold transition-colors ${type === t ? 'bg-cyan-700 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}`}
+              >
                 {label}
               </button>
             ))}
@@ -2381,21 +3793,40 @@ function GoutiereCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
         </div>
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-cyan-700 hover:bg-cyan-600 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-cyan-700 hover:bg-cyan-600 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-cyan-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-cyan-300 flex items-center gap-2"><Droplet className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-cyan-300 flex items-center gap-2">
+            <Droplet className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
             <ResultRow label="Gouttière (+10%)" value={`${result.longueurGout} ml`} highlight />
             <ResultRow label="Crochets (tous 60 cm)" value={`${result.nbCrochets} pcs`} />
             <ResultRow label="Jonctions" value={`${result.nbJonctions} pcs`} />
-            <ResultRow label="Descentes EP (+10%)" value={`${result.longueurDescentes} ml`} highlight />
+            <ResultRow
+              label="Descentes EP (+10%)"
+              value={`${result.longueurDescentes} ml`}
+              highlight
+            />
             <ResultRow label="Colliers descente" value={`${result.nbColliers} pcs`} />
           </div>
-          <p className="text-xs text-slate-500">{type.toUpperCase()} • Crochets tous 60 cm • Descentes {nbDescentes} × {hauteurFacade} m</p>
+          <p className="text-xs text-slate-500">
+            {type.toUpperCase()} • Crochets tous 60 cm • Descentes {nbDescentes} × {hauteurFacade} m
+          </p>
         </div>
       )}
     </div>
@@ -2405,33 +3836,44 @@ function GoutiereCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 // ─── Menuiserie extérieure Calculator ────────────────────────────────────────
 
 const FENETRES_TYPES = [
-  { label: 'Petite 60×90 cm',   surface: 0.54, prixRef: 250  },
-  { label: 'Standard 100×120',  surface: 1.20, prixRef: 380  },
-  { label: 'Grande 120×140',    surface: 1.68, prixRef: 480  },
-  { label: 'Baie vitrée 200×220', surface: 4.40, prixRef: 900 },
+  { label: 'Petite 60×90 cm', surface: 0.54, prixRef: 250 },
+  { label: 'Standard 100×120', surface: 1.2, prixRef: 380 },
+  { label: 'Grande 120×140', surface: 1.68, prixRef: 480 },
+  { label: 'Baie vitrée 200×220', surface: 4.4, prixRef: 900 },
   { label: 'Porte-fenêtre 90×215', surface: 1.94, prixRef: 550 },
 ];
 
 function MenuiserieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
-  const [nbFenetres, setNbFenetres] = useState<number[]>(new Array(FENETRES_TYPES.length).fill(0).map(() => 0));
-  const [nbPortes, setNbPortes]     = useState('1');
+  const [nbFenetres, setNbFenetres] = useState<number[]>(
+    new Array(FENETRES_TYPES.length).fill(0).map(() => 0)
+  );
+  const [nbPortes, setNbPortes] = useState('1');
   const [surfaceMurs, setSurfaceMurs] = useState('');
   const [result, setResult] = useState<{
-    surfaceVitree: number; ratioVitrage: number | null; nbOuvertures: number; seuilML: number;
+    surfaceVitree: number;
+    ratioVitrage: number | null;
+    nbOuvertures: number;
+    seuilML: number;
   } | null>(null);
   const [blocked, setBlocked] = useState(false);
 
   const calculate = () => {
-    if (!onCalc()) { setBlocked(true); return; }
+    if (!onCalc()) {
+      setBlocked(true);
+      return;
+    }
     const nd = parseInt(nbPortes) || 0;
     const sm = parseFloat(surfaceMurs.replace(',', '.')) || null;
 
-    const surfaceFenetres = nbFenetres.reduce((sum, n, i) => sum + n * FENETRES_TYPES[i].surface, 0);
-    const surfacePortes   = nd * 1.89; // porte 90×210
-    const surfaceVitree   = Math.round((surfaceFenetres + surfacePortes) * 100) / 100;
+    const surfaceFenetres = nbFenetres.reduce(
+      (sum, n, i) => sum + n * FENETRES_TYPES[i].surface,
+      0
+    );
+    const surfacePortes = nd * 1.89; // porte 90×210
+    const surfaceVitree = Math.round((surfaceFenetres + surfacePortes) * 100) / 100;
 
-    const ratioVitrage    = sm ? Math.round((surfaceVitree / sm) * 100) : null;
-    const nbOuvertures    = nbFenetres.reduce((s, n) => s + n, 0) + nd;
+    const ratioVitrage = sm ? Math.round((surfaceVitree / sm) * 100) : null;
+    const nbOuvertures = nbFenetres.reduce((s, n) => s + n, 0) + nd;
 
     // Seuils de porte en ml
     const seuilML = nd * 0.95;
@@ -2439,15 +3881,30 @@ function MenuiserieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
     const res = { surfaceVitree, ratioVitrage, nbOuvertures, seuilML };
     setResult(res);
     setBlocked(false);
-    onSave({ calcType: 'menuiserie', inputs: { nbFenetresParType: nbFenetres, nbPortes, surfaceMursM2: surfaceMurs }, results: res, materials: [] });
+    onSave({
+      calcType: 'menuiserie',
+      inputs: { nbFenetresParType: nbFenetres, nbPortes, surfaceMursM2: surfaceMurs },
+      results: res,
+      materials: [],
+    });
   };
 
   const updateFenetre = (i: number, val: string) => {
     const v = Math.max(0, parseInt(val) || 0);
-    setNbFenetres((prev) => { const next = [...prev]; next[i] = v; return next; });
+    setNbFenetres((prev) => {
+      const next = [...prev];
+      next[i] = v;
+      return next;
+    });
   };
 
-  const reset = () => { setNbFenetres(new Array(FENETRES_TYPES.length).fill(0)); setNbPortes('1'); setSurfaceMurs(''); setResult(null); setBlocked(false); };
+  const reset = () => {
+    setNbFenetres(new Array(FENETRES_TYPES.length).fill(0));
+    setNbPortes('1');
+    setSurfaceMurs('');
+    setResult(null);
+    setBlocked(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -2458,44 +3915,91 @@ function MenuiserieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
           <div key={i} className="flex items-center gap-3">
             <span className="text-xs text-slate-300 flex-1">{f.label}</span>
             <span className="text-xs text-slate-500">{f.surface} m²</span>
-            <input type="number" min="0" value={nbFenetres[i]}
+            <input
+              type="number"
+              min="0"
+              value={nbFenetres[i]}
               onChange={(e) => updateFenetre(i, e.target.value)}
-              className="w-16 rounded-xl border border-slate-600 bg-slate-800 px-2 py-1.5 text-white text-center text-sm focus:border-orange-500 focus:outline-none" />
+              className="w-16 rounded-xl border border-slate-600 bg-slate-800 px-2 py-1.5 text-white text-center text-sm focus:border-orange-500 focus:outline-none"
+            />
           </div>
         ))}
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label htmlFor="menuiserie-nb-portes" className="block text-sm text-slate-400 mb-1">Nb de portes ext.</label>
-          <select id="menuiserie-nb-portes" value={nbPortes} onChange={(e) => setNbPortes(e.target.value)}
-            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none">
-            {[0,1,2,3,4].map((n) => <option key={n} value={n}>{n} porte{n > 1 ? 's' : ''}</option>)}
+          <label htmlFor="menuiserie-nb-portes" className="block text-sm text-slate-400 mb-1">
+            Nb de portes ext.
+          </label>
+          <select
+            id="menuiserie-nb-portes"
+            value={nbPortes}
+            onChange={(e) => setNbPortes(e.target.value)}
+            className="w-full rounded-xl border border-slate-600 bg-slate-800 px-4 py-3 text-white focus:border-orange-500 focus:outline-none"
+          >
+            {[0, 1, 2, 3, 4].map((n) => (
+              <option key={n} value={n}>
+                {n} porte{n > 1 ? 's' : ''}
+              </option>
+            ))}
           </select>
         </div>
-        <NumInput label="Surface murs (optionnel)" value={surfaceMurs} onChange={setSurfaceMurs} unit="m²" placeholder="0" />
+        <NumInput
+          label="Surface murs (optionnel)"
+          value={surfaceMurs}
+          onChange={setSurfaceMurs}
+          unit="m²"
+          placeholder="0"
+        />
       </div>
       <div className="flex gap-3">
-        <button onClick={calculate} className="flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 py-3 font-semibold text-white transition-colors">Calculer</button>
-        <button onClick={reset} className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"><RotateCcw className="w-4 h-4" /></button>
+        <button
+          onClick={calculate}
+          className="flex-1 rounded-xl bg-indigo-600 hover:bg-indigo-500 py-3 font-semibold text-white transition-colors"
+        >
+          Calculer
+        </button>
+        <button
+          onClick={reset}
+          className="rounded-xl border border-slate-600 px-4 py-3 text-slate-300"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
       {blocked && <BlockedBanner />}
       {result && !blocked && (
         <div className="rounded-2xl bg-slate-800 border border-indigo-500/30 p-4 space-y-3">
-          <h3 className="font-semibold text-indigo-300 flex items-center gap-2"><Ruler className="w-4 h-4" />Résultats</h3>
+          <h3 className="font-semibold text-indigo-300 flex items-center gap-2">
+            <Ruler className="w-4 h-4" />
+            Résultats
+          </h3>
           <div className="grid grid-cols-2 gap-2">
-            <ResultRow label="Surface vitrée totale" value={`${result.surfaceVitree} m²`} highlight />
-            <ResultRow label="Nb total d'ouvertures" value={`${result.nbOuvertures} pcs`} highlight />
-            {result.ratioVitrage !== null && <ResultRow label="Ratio vitrage/murs" value={`${result.ratioVitrage} %`} />}
+            <ResultRow
+              label="Surface vitrée totale"
+              value={`${result.surfaceVitree} m²`}
+              highlight
+            />
+            <ResultRow
+              label="Nb total d'ouvertures"
+              value={`${result.nbOuvertures} pcs`}
+              highlight
+            />
+            {result.ratioVitrage !== null && (
+              <ResultRow label="Ratio vitrage/murs" value={`${result.ratioVitrage} %`} />
+            )}
             <ResultRow label="Seuils de porte" value={`${result.seuilML} ml`} />
           </div>
           {result.ratioVitrage !== null && (
-            <div className={`rounded-xl px-3 py-2 text-xs font-semibold text-center ${result.ratioVitrage >= 10 && result.ratioVitrage <= 25 ? 'bg-green-900/30 text-green-300 border border-green-500/30' : 'bg-yellow-900/30 text-yellow-300 border border-yellow-500/30'}`}>
+            <div
+              className={`rounded-xl px-3 py-2 text-xs font-semibold text-center ${result.ratioVitrage >= 10 && result.ratioVitrage <= 25 ? 'bg-green-900/30 text-green-300 border border-green-500/30' : 'bg-yellow-900/30 text-yellow-300 border border-yellow-500/30'}`}
+            >
               {result.ratioVitrage >= 10 && result.ratioVitrage <= 25
                 ? `✅ Ratio ${result.ratioVitrage}% — Conforme RT2020 (10–25%)`
                 : `⚠️ Ratio ${result.ratioVitrage}% — Hors plage recommandée RT2020`}
             </div>
           )}
-          <p className="text-xs text-slate-500">Double vitrage 4/16/4 — RT2020 recommande ratio vitrage/murs entre 10 et 25%</p>
+          <p className="text-xs text-slate-500">
+            Double vitrage 4/16/4 — RT2020 recommande ratio vitrage/murs entre 10 et 25%
+          </p>
         </div>
       )}
     </div>
@@ -2504,20 +4008,34 @@ function MenuiserieCalc({ onCalc, territory: _territory, onSave }: CalcProps) {
 
 // ─── Paywall Modal ────────────────────────────────────────────────────────────
 
-function PaywallModal({ onStartTrial, onClose, isExpired }: { onStartTrial: () => void; onClose: () => void; isExpired: boolean }) {
+function PaywallModal({
+  onStartTrial,
+  onClose,
+  isExpired,
+}: {
+  onStartTrial: () => void;
+  onClose: () => void;
+  isExpired: boolean;
+}) {
   const navigate = useNavigate();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
       <div className="max-w-sm w-full bg-slate-900 rounded-2xl border border-orange-500/40 p-6 shadow-2xl">
         <div className="text-center mb-4">
           <div className="w-16 h-16 mx-auto rounded-full bg-orange-900/40 border-2 border-orange-500/50 flex items-center justify-center mb-3">
-            {isExpired ? <Lock className="w-8 h-8 text-orange-400" /> : <HardHat className="w-8 h-8 text-orange-400" />}
+            {isExpired ? (
+              <Lock className="w-8 h-8 text-orange-400" />
+            ) : (
+              <HardHat className="w-8 h-8 text-orange-400" />
+            )}
           </div>
           <h2 className="text-xl font-black text-white mb-1">
-            {isExpired ? 'Période d\'essai terminée' : '🏗️ Calculateur du Bâtiment'}
+            {isExpired ? "Période d'essai terminée" : '🏗️ Calculateur du Bâtiment'}
           </h2>
           <p className="text-sm text-slate-400">
-            {isExpired ? 'Abonnez-vous pour continuer à utiliser les calculateurs.' : 'Essayez gratuitement pendant 7 jours avec quota dégressive.'}
+            {isExpired
+              ? 'Abonnez-vous pour continuer à utiliser les calculateurs.'
+              : 'Essayez gratuitement pendant 7 jours avec quota dégressive.'}
           </p>
         </div>
 
@@ -2526,11 +4044,16 @@ function PaywallModal({ onStartTrial, onClose, isExpired }: { onStartTrial: () =
             {[
               { days: 'Jours 1–2', quota: '20 calculs/jour', color: 'text-green-400', dot: '🟢' },
               { days: 'Jours 3–4', quota: '15 calculs/jour', color: 'text-yellow-400', dot: '🟡' },
-              { days: 'Jours 5–6', quota: '8 calculs/jour',  color: 'text-orange-400', dot: '🟠' },
-              { days: 'Jour 7',    quota: '3 calculs/jour',  color: 'text-red-400',    dot: '🔴' },
+              { days: 'Jours 5–6', quota: '8 calculs/jour', color: 'text-orange-400', dot: '🟠' },
+              { days: 'Jour 7', quota: '3 calculs/jour', color: 'text-red-400', dot: '🔴' },
             ].map((row, i) => (
-              <div key={i} className={`flex justify-between items-center px-4 py-2.5 text-sm ${i % 2 === 0 ? 'bg-slate-800' : 'bg-slate-800/50'}`}>
-                <span className="text-slate-300">{row.dot} {row.days}</span>
+              <div
+                key={i}
+                className={`flex justify-between items-center px-4 py-2.5 text-sm ${i % 2 === 0 ? 'bg-slate-800' : 'bg-slate-800/50'}`}
+              >
+                <span className="text-slate-300">
+                  {row.dot} {row.days}
+                </span>
                 <span className={`font-semibold ${row.color}`}>{row.quota}</span>
               </div>
             ))}
@@ -2539,22 +4062,33 @@ function PaywallModal({ onStartTrial, onClose, isExpired }: { onStartTrial: () =
 
         <div className="space-y-2.5">
           {!isExpired && (
-            <button onClick={onStartTrial}
-              className="w-full rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-bold text-white transition-colors flex items-center justify-center gap-2">
-              <Unlock className="w-4 h-4" />Démarrer l'essai gratuit 7 jours
+            <button
+              onClick={onStartTrial}
+              className="w-full rounded-xl bg-orange-600 hover:bg-orange-500 py-3 font-bold text-white transition-colors flex items-center justify-center gap-2"
+            >
+              <Unlock className="w-4 h-4" />
+              Démarrer l'essai gratuit 7 jours
             </button>
           )}
-          <button onClick={() => navigate('/pricing')}
-            className="w-full rounded-xl bg-indigo-700 hover:bg-indigo-600 py-3 font-bold text-white transition-colors flex items-center justify-center gap-2">
-            <Star className="w-4 h-4" />S'abonner — accès illimité
+          <button
+            onClick={() => navigate('/pricing')}
+            className="w-full rounded-xl bg-indigo-700 hover:bg-indigo-600 py-3 font-bold text-white transition-colors flex items-center justify-center gap-2"
+          >
+            <Star className="w-4 h-4" />
+            S'abonner — accès illimité
           </button>
           {!isExpired && (
-            <button onClick={onClose} className="w-full rounded-xl border border-slate-700 py-2 text-sm text-slate-400 hover:text-slate-300 hover:border-slate-600 transition-colors">
+            <button
+              onClick={onClose}
+              className="w-full rounded-xl border border-slate-700 py-2 text-sm text-slate-400 hover:text-slate-300 hover:border-slate-600 transition-colors"
+            >
               Continuer sans essai
             </button>
           )}
         </div>
-        <p className="text-xs text-center text-slate-600 mt-3">Tous les calculs sont à titre indicatif</p>
+        <p className="text-xs text-center text-slate-600 mt-3">
+          Tous les calculs sont à titre indicatif
+        </p>
       </div>
     </div>
   );
@@ -2564,26 +4098,34 @@ function PaywallModal({ onStartTrial, onClose, isExpired }: { onStartTrial: () =
 
 function TrialBanner({ state }: { state: BatimentTrialState }) {
   if (!state.startedAt) return null;
-  const pct   = state.trialDay ? Math.max(0, Math.round(((8 - state.trialDay) / 7) * 100)) : 0;
+  const pct = state.trialDay ? Math.max(0, Math.round(((8 - state.trialDay) / 7) * 100)) : 0;
   const color = pct > 60 ? 'bg-green-500' : pct > 25 ? 'bg-yellow-500' : 'bg-red-500';
 
   return (
     <div className="rounded-xl bg-slate-800 border border-slate-700 p-3 mb-4">
       <div className="flex items-center justify-between text-sm mb-1.5">
         <span className="flex items-center gap-1.5 text-slate-300">
-          <Clock className="w-4 h-4 text-orange-400" />Essai gratuit — Jour {state.trialDay ?? '?'}/7
+          <Clock className="w-4 h-4 text-orange-400" />
+          Essai gratuit — Jour {state.trialDay ?? '?'}/7
         </span>
         <span className="text-slate-400 text-xs">
-          {state.remainingToday} calcul{state.remainingToday !== 1 ? 's' : ''} restant{state.remainingToday !== 1 ? 's' : ''}/jour
+          {state.remainingToday} calcul{state.remainingToday !== 1 ? 's' : ''} restant
+          {state.remainingToday !== 1 ? 's' : ''}/jour
         </span>
       </div>
       <div className="w-full h-1.5 bg-slate-700 rounded-full overflow-hidden">
-        <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
+        <div
+          className={`h-full rounded-full transition-all ${color}`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
       {state.daysLeft <= 2 && (
         <p className="text-xs text-orange-400 mt-1.5 flex items-center gap-1">
-          <Info className="w-3 h-3" />Plus que {state.daysLeft} jour{state.daysLeft !== 1 ? 's' : ''} d'essai —{' '}
-          <Link to="/pricing" className="underline hover:text-orange-300">S'abonner</Link>
+          <Info className="w-3 h-3" />
+          Plus que {state.daysLeft} jour{state.daysLeft !== 1 ? 's' : ''} d'essai —{' '}
+          <Link to="/pricing" className="underline hover:text-orange-300">
+            S'abonner
+          </Link>
         </p>
       )}
     </div>
@@ -2610,7 +4152,7 @@ interface Tutorial {
   difficulty: 'Débutant' | 'Intermédiaire' | 'Expert';
   duree: string;
   materiel: string[];
-  epi: string[];   // équipements de protection
+  epi: string[]; // équipements de protection
   steps: TutoStep[];
   bgFrom: string;
   bgTo: string;
@@ -2629,16 +4171,79 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🧱🧱🧱\n🪣🏗️🧤\n👷‍♂️🛠️📐',
     bgFrom: 'from-stone-700',
     bgTo: 'to-amber-600',
-    materiel: ['Parpaings', 'Ciment CPJ 32.5', 'Sable 0/5', 'Eau', 'Bétonnière ou auge', 'Truelle', 'Fil à plomb', 'Niveau à bulle', 'Règle de maçon', 'Maillet en caoutchouc'],
-    epi: ['🦺 Gilet de sécurité', '🥽 Lunettes de protection', '🧤 Gants anti-coupure', '👷 Casque (si hauteur > 1 m)', '👟 Chaussures de sécurité'],
+    materiel: [
+      'Parpaings',
+      'Ciment CPJ 32.5',
+      'Sable 0/5',
+      'Eau',
+      'Bétonnière ou auge',
+      'Truelle',
+      'Fil à plomb',
+      'Niveau à bulle',
+      'Règle de maçon',
+      'Maillet en caoutchouc',
+    ],
+    epi: [
+      '🦺 Gilet de sécurité',
+      '🥽 Lunettes de protection',
+      '🧤 Gants anti-coupure',
+      '👷 Casque (si hauteur > 1 m)',
+      '👟 Chaussures de sécurité',
+    ],
     steps: [
-      { num: 1, icons: '📐🧵', title: 'Tracer et préparer la fondation', desc: 'Vérifiez que la fondation est propre, plane et sèche. Tracez le tracé du mur au cordeau. La surface doit être débarrassée de toute poussière ou gravats.', tip: 'Utilisez un niveau laser ou un niveau à eau pour garantir une surface de pose parfaitement horizontale.' },
-      { num: 2, icons: '🪣🧱', title: 'Préparer le mortier de pose', desc: 'Mélangez 1 volume de ciment pour 4 volumes de sable sec (mortier standard). Ajoutez progressivement l\'eau jusqu\'à obtenir une consistance crémeuse qui tient sur la truelle sans couler.', tip: 'Un mortier trop liquide fera couler les blocs. Un mortier trop sec sera difficile à étaler. Visez la texture d\'une purée ferme.', warning: 'Ne préparez pas plus de mortier que vous ne pouvez utiliser en 1h30. Le mortier "prend" et durcit rapidement.' },
-      { num: 3, icons: '🔤🧱', title: 'Poser le premier rang (chaîne)', desc: 'Le premier rang est le plus important. Étalez une couche de mortier d\'environ 2 cm. Posez les parpaings en commençant par les angles. Vérifiez l\'horizontalité à chaque bloc avec le niveau.', tip: 'Le premier rang doit être rigoureusement horizontal. Une erreur ici se répercutera sur tout le mur.' },
-      { num: 4, icons: '⬆️🧱🔄', title: 'Monter les rangs supérieurs', desc: 'Les joints verticaux doivent être décalés d\'une demi-longueur de bloc (technique du quinconce). Étalez le mortier sur le rang précédent et sur les faces verticales des blocs. L\'épaisseur de joint doit être de 1 à 1,5 cm.', tip: 'Vérifiez l\'aplomb (verticalité) régulièrement avec le fil à plomb ou le niveau.' },
-      { num: 5, icons: '📏✅', title: 'Contrôler l\'aplomb et le niveau', desc: 'Tous les 3 rangs, vérifiez l\'aplomb (verticalité) et le niveau (horizontalité). Corrigez immédiatement : le mortier est encore frais pendant 30–45 minutes.', warning: 'Un mur non aplombé est dangereux. Au-delà de 3 mm de dévers par mètre, c\'est à reprendre.' },
-      { num: 6, icons: '🌊🧹', title: 'Finitions et nettoyage des joints', desc: 'Avant que le mortier soit complètement sec (environ 30 min après pose), ragréez les joints avec la truelle. Nettoyez les excès de mortier sur les parpaings avec une éponge humide.', tip: 'Pour un aspect propre, creusez légèrement les joints (jointoiement en creux) avec une tige métallique arrondie.' },
-      { num: 7, icons: '🌡️⏳', title: 'Cure et séchage', desc: 'Protégez le mur du soleil direct et du vent pendant 24h. En climat chaud (>30°C), humidifiez légèrement le mur 2 fois par jour pendant 3 jours pour éviter les fissures de retrait.', warning: 'Ne construisez pas par temps de pluie battante ou temperature < 5°C. Le gel détruit le mortier frais.' },
+      {
+        num: 1,
+        icons: '📐🧵',
+        title: 'Tracer et préparer la fondation',
+        desc: 'Vérifiez que la fondation est propre, plane et sèche. Tracez le tracé du mur au cordeau. La surface doit être débarrassée de toute poussière ou gravats.',
+        tip: 'Utilisez un niveau laser ou un niveau à eau pour garantir une surface de pose parfaitement horizontale.',
+      },
+      {
+        num: 2,
+        icons: '🪣🧱',
+        title: 'Préparer le mortier de pose',
+        desc: "Mélangez 1 volume de ciment pour 4 volumes de sable sec (mortier standard). Ajoutez progressivement l'eau jusqu'à obtenir une consistance crémeuse qui tient sur la truelle sans couler.",
+        tip: "Un mortier trop liquide fera couler les blocs. Un mortier trop sec sera difficile à étaler. Visez la texture d'une purée ferme.",
+        warning:
+          'Ne préparez pas plus de mortier que vous ne pouvez utiliser en 1h30. Le mortier "prend" et durcit rapidement.',
+      },
+      {
+        num: 3,
+        icons: '🔤🧱',
+        title: 'Poser le premier rang (chaîne)',
+        desc: "Le premier rang est le plus important. Étalez une couche de mortier d'environ 2 cm. Posez les parpaings en commençant par les angles. Vérifiez l'horizontalité à chaque bloc avec le niveau.",
+        tip: 'Le premier rang doit être rigoureusement horizontal. Une erreur ici se répercutera sur tout le mur.',
+      },
+      {
+        num: 4,
+        icons: '⬆️🧱🔄',
+        title: 'Monter les rangs supérieurs',
+        desc: "Les joints verticaux doivent être décalés d'une demi-longueur de bloc (technique du quinconce). Étalez le mortier sur le rang précédent et sur les faces verticales des blocs. L'épaisseur de joint doit être de 1 à 1,5 cm.",
+        tip: "Vérifiez l'aplomb (verticalité) régulièrement avec le fil à plomb ou le niveau.",
+      },
+      {
+        num: 5,
+        icons: '📏✅',
+        title: "Contrôler l'aplomb et le niveau",
+        desc: "Tous les 3 rangs, vérifiez l'aplomb (verticalité) et le niveau (horizontalité). Corrigez immédiatement : le mortier est encore frais pendant 30–45 minutes.",
+        warning:
+          "Un mur non aplombé est dangereux. Au-delà de 3 mm de dévers par mètre, c'est à reprendre.",
+      },
+      {
+        num: 6,
+        icons: '🌊🧹',
+        title: 'Finitions et nettoyage des joints',
+        desc: 'Avant que le mortier soit complètement sec (environ 30 min après pose), ragréez les joints avec la truelle. Nettoyez les excès de mortier sur les parpaings avec une éponge humide.',
+        tip: 'Pour un aspect propre, creusez légèrement les joints (jointoiement en creux) avec une tige métallique arrondie.',
+      },
+      {
+        num: 7,
+        icons: '🌡️⏳',
+        title: 'Cure et séchage',
+        desc: 'Protégez le mur du soleil direct et du vent pendant 24h. En climat chaud (>30°C), humidifiez légèrement le mur 2 fois par jour pendant 3 jours pour éviter les fissures de retrait.',
+        warning:
+          'Ne construisez pas par temps de pluie battante ou temperature < 5°C. Le gel détruit le mortier frais.',
+      },
     ],
   },
   {
@@ -2652,16 +4257,71 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🏗️🪣🧱\n⛏️📐🔩\n👷‍♀️🌊✅',
     bgFrom: 'from-slate-700',
     bgTo: 'to-slate-500',
-    materiel: ['Ciment CPJ 32.5', 'Sable 0/5', 'Gravier 0/20', 'Treillis soudé', 'Coffrage bois', 'Règle de tirage', 'Lisseuse ou platoir', 'Bétonnière', 'Brouettes', 'Cales plastiques (3–4 cm)'],
+    materiel: [
+      'Ciment CPJ 32.5',
+      'Sable 0/5',
+      'Gravier 0/20',
+      'Treillis soudé',
+      'Coffrage bois',
+      'Règle de tirage',
+      'Lisseuse ou platoir',
+      'Bétonnière',
+      'Brouettes',
+      'Cales plastiques (3–4 cm)',
+    ],
     epi: ['🥽 Lunettes', '🧤 Gants', '👟 Bottes de chantier', '💪 Protège-genoux pour finitions'],
     steps: [
-      { num: 1, icons: '⛏️🏜️', title: 'Préparer le sol (terrassement)', desc: 'Décaissez sur la profondeur totale souhaitée (dalle + forme). Compactez le fond avec un dame ou plaque vibrante. Le sol doit être stable, sans matières organiques.', tip: 'Pour une dalle extérieure, prévoyez une pente de 1–2% pour l\'écoulement des eaux.' },
-      { num: 2, icons: '🪨📦', title: 'Poser la forme granulaire', desc: 'Étalez une couche de grave 0/20 ou de cailloux propres sur 10–15 cm. Compactez en passes de 10 cm. Cette couche assure le drainage et réduit les remontées d\'humidité.', warning: 'Ne jamais couler du béton directement sur de la terre végétale.' },
-      { num: 3, icons: '🪵📐', title: 'Installer le coffrage', desc: 'Montez des planches de coffrage clouées sur des piquets ou des étais. Vérifiez l\'horizontalité et les dimensions. Huilez légèrement les planches pour faciliter le décoffrage.', tip: 'Prévoyez des joints de dilatation tous les 4–5 m pour les grandes surfaces.' },
-      { num: 4, icons: '🔩🦿', title: 'Placer le treillis soudé', desc: 'Posez les panneaux de treillis sur des cales plastiques (3–4 cm de dessous). Les panneaux se chevauchent d\'au moins 2 mailles. Le treillis doit être dans le tiers inférieur de la dalle.', warning: 'Ne jamais poser le treillis à plat sur le sol. Il doit être surélevé pour être noyé dans le béton.' },
-      { num: 5, icons: '🪣🌊', title: 'Couler le béton', desc: 'Dosage standard : 1 ciment / 2 sable / 3 gravier (350 kg ciment/m³). Remplissez par parties en damant avec une barre ou vibreur pour chasser les bulles d\'air. Étalez avec une règle de tirage.', tip: 'Par temps chaud, coulez tôt le matin. Le béton prend en 30–60 min par 30°C.' },
-      { num: 6, icons: '📏✨', title: 'Tirer et lisser la surface', desc: 'Tirez le béton avec la règle en va-et-vient horizontal. Une fois semi-pris (environ 2h), lissez avec un platoir ou une lisseuse pour obtenir une surface plane.', tip: 'Pour un sol poli, lisser plusieurs fois à intervalles réguliers de 30 min.' },
-      { num: 7, icons: '💧⏳', title: 'Cure humide pendant 7 jours', desc: 'Recouvrez d\'une bâche plastique ou arrosez légèrement 2x/jour pendant 7 jours. Résistance complète à 28 jours. Mettez en charge (meubles lourds) après 7 jours minimum.', warning: 'Ne jamais marcher sur une dalle avant 24h. Ne pas mettre en charge complète avant 7 jours.' },
+      {
+        num: 1,
+        icons: '⛏️🏜️',
+        title: 'Préparer le sol (terrassement)',
+        desc: 'Décaissez sur la profondeur totale souhaitée (dalle + forme). Compactez le fond avec un dame ou plaque vibrante. Le sol doit être stable, sans matières organiques.',
+        tip: "Pour une dalle extérieure, prévoyez une pente de 1–2% pour l'écoulement des eaux.",
+      },
+      {
+        num: 2,
+        icons: '🪨📦',
+        title: 'Poser la forme granulaire',
+        desc: "Étalez une couche de grave 0/20 ou de cailloux propres sur 10–15 cm. Compactez en passes de 10 cm. Cette couche assure le drainage et réduit les remontées d'humidité.",
+        warning: 'Ne jamais couler du béton directement sur de la terre végétale.',
+      },
+      {
+        num: 3,
+        icons: '🪵📐',
+        title: 'Installer le coffrage',
+        desc: "Montez des planches de coffrage clouées sur des piquets ou des étais. Vérifiez l'horizontalité et les dimensions. Huilez légèrement les planches pour faciliter le décoffrage.",
+        tip: 'Prévoyez des joints de dilatation tous les 4–5 m pour les grandes surfaces.',
+      },
+      {
+        num: 4,
+        icons: '🔩🦿',
+        title: 'Placer le treillis soudé',
+        desc: "Posez les panneaux de treillis sur des cales plastiques (3–4 cm de dessous). Les panneaux se chevauchent d'au moins 2 mailles. Le treillis doit être dans le tiers inférieur de la dalle.",
+        warning:
+          'Ne jamais poser le treillis à plat sur le sol. Il doit être surélevé pour être noyé dans le béton.',
+      },
+      {
+        num: 5,
+        icons: '🪣🌊',
+        title: 'Couler le béton',
+        desc: "Dosage standard : 1 ciment / 2 sable / 3 gravier (350 kg ciment/m³). Remplissez par parties en damant avec une barre ou vibreur pour chasser les bulles d'air. Étalez avec une règle de tirage.",
+        tip: 'Par temps chaud, coulez tôt le matin. Le béton prend en 30–60 min par 30°C.',
+      },
+      {
+        num: 6,
+        icons: '📏✨',
+        title: 'Tirer et lisser la surface',
+        desc: 'Tirez le béton avec la règle en va-et-vient horizontal. Une fois semi-pris (environ 2h), lissez avec un platoir ou une lisseuse pour obtenir une surface plane.',
+        tip: 'Pour un sol poli, lisser plusieurs fois à intervalles réguliers de 30 min.',
+      },
+      {
+        num: 7,
+        icons: '💧⏳',
+        title: 'Cure humide pendant 7 jours',
+        desc: "Recouvrez d'une bâche plastique ou arrosez légèrement 2x/jour pendant 7 jours. Résistance complète à 28 jours. Mettez en charge (meubles lourds) après 7 jours minimum.",
+        warning:
+          'Ne jamais marcher sur une dalle avant 24h. Ne pas mettre en charge complète avant 7 jours.',
+      },
     ],
   },
   {
@@ -2675,16 +4335,77 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '⚓🏗️📐\n⛏️🔩🪣\n👷‍♂️📏🌱',
     bgFrom: 'from-yellow-800',
     bgTo: 'to-yellow-600',
-    materiel: ['Ciment CPJ 32.5 ou 42.5', 'Sable 0/5', 'Gravier 0/20', 'Aciers HA12 ou HA14', 'Fil de ligature', 'Coffrages bois', 'Étriers HA8', 'Béton de propreté', 'Règle de maçon'],
-    epi: ['👷 Casque obligatoire', '🥽 Lunettes', '🧤 Gants', '👟 Bottes de sécurité', '🦺 Gilet fluo'],
+    materiel: [
+      'Ciment CPJ 32.5 ou 42.5',
+      'Sable 0/5',
+      'Gravier 0/20',
+      'Aciers HA12 ou HA14',
+      'Fil de ligature',
+      'Coffrages bois',
+      'Étriers HA8',
+      'Béton de propreté',
+      'Règle de maçon',
+    ],
+    epi: [
+      '👷 Casque obligatoire',
+      '🥽 Lunettes',
+      '🧤 Gants',
+      '👟 Bottes de sécurité',
+      '🦺 Gilet fluo',
+    ],
     steps: [
-      { num: 1, icons: '📐⛏️', title: 'Implantation et traçage', desc: 'Implantez les axes du mur au cordeau. Vérifiez les angles à 90° avec le théorème de Pythagore (3-4-5). Matérialisez les limites de fouille au spray ou à la chaux.', tip: 'Avant tout terrassement, contactez les services de détection de réseaux (gaz, eau, électricité). C\'est obligatoire.' },
-      { num: 2, icons: '⛏️🏜️', title: 'Fouille et terrassement', desc: 'Creusez à la profondeur hors-gel locale (60–80 cm en DOM-TOM tropical, variable selon le sol). Largeur minimum = largeur du mur + 10 cm de chaque côté. Fond de fouille bien nivelé.', warning: 'En terrain en pente, réalisez des fouilles en gradins. Ne jamais laisser une fouille ouverte sans sécurisation.' },
-      { num: 3, icons: '🪨🌊', title: 'Béton de propreté', desc: 'Coulez 5–10 cm de béton maigre (dosé à 150 kg/m³) sur le fond de fouille. Laissez sécher 24h. Ce béton évite la contamination du béton d\'armature par la terre.', tip: 'Ne jamais armer directement sur la terre.' },
-      { num: 4, icons: '🔩🦿', title: 'Ferraillage de la semelle', desc: 'Posez les barres longitudinales HA12 sur des cales de 3–4 cm. Liez avec les étriers HA8 espacés de 25–30 cm. Minimum 3 barres longitudinales. Couvrez les fers à 4 cm minimum.', warning: 'Le ferraillage doit être validé par un BE structure pour les fondations portantes d\'un bâtiment habitable.' },
-      { num: 5, icons: '🪵📐', title: 'Coffrage si sol instable', desc: 'Si les parois de fouille s\'éboulent, installez des coffrages bois. Sinon, le sol stable peut servir de coffrage naturel (coffrage perdu).', tip: 'En terrain stable et cohérent, pas besoin de coffrage. Gagnez du temps et de l\'argent.' },
-      { num: 6, icons: '🪣🏗️', title: 'Coulage du béton armé', desc: 'Béton dosé à 350 kg/m³ (C25/30). Coulez en une seule fois si possible. Vibrez soigneusement pour éliminer les vides. La surface doit être plane ± 5 mm/2 m.', warning: 'Ne jamais interrompre le coulage. Si vous manquez de béton, reprenez immédiatement avant la prise.' },
-      { num: 7, icons: '🌊⏳', title: 'Décoffrage et cure', desc: 'Décoffrez après 3–5 jours. Cure humide 7 jours. Attendez 28 jours pour charger la fondation. Remblayez latéralement prudemment, par couches compactées.', tip: 'Notez les positions des attentes de ferraillage (barres dépassant la fondation) pour l\'ancrage du mur.' },
+      {
+        num: 1,
+        icons: '📐⛏️',
+        title: 'Implantation et traçage',
+        desc: 'Implantez les axes du mur au cordeau. Vérifiez les angles à 90° avec le théorème de Pythagore (3-4-5). Matérialisez les limites de fouille au spray ou à la chaux.',
+        tip: "Avant tout terrassement, contactez les services de détection de réseaux (gaz, eau, électricité). C'est obligatoire.",
+      },
+      {
+        num: 2,
+        icons: '⛏️🏜️',
+        title: 'Fouille et terrassement',
+        desc: 'Creusez à la profondeur hors-gel locale (60–80 cm en DOM-TOM tropical, variable selon le sol). Largeur minimum = largeur du mur + 10 cm de chaque côté. Fond de fouille bien nivelé.',
+        warning:
+          'En terrain en pente, réalisez des fouilles en gradins. Ne jamais laisser une fouille ouverte sans sécurisation.',
+      },
+      {
+        num: 3,
+        icons: '🪨🌊',
+        title: 'Béton de propreté',
+        desc: "Coulez 5–10 cm de béton maigre (dosé à 150 kg/m³) sur le fond de fouille. Laissez sécher 24h. Ce béton évite la contamination du béton d'armature par la terre.",
+        tip: 'Ne jamais armer directement sur la terre.',
+      },
+      {
+        num: 4,
+        icons: '🔩🦿',
+        title: 'Ferraillage de la semelle',
+        desc: 'Posez les barres longitudinales HA12 sur des cales de 3–4 cm. Liez avec les étriers HA8 espacés de 25–30 cm. Minimum 3 barres longitudinales. Couvrez les fers à 4 cm minimum.',
+        warning:
+          "Le ferraillage doit être validé par un BE structure pour les fondations portantes d'un bâtiment habitable.",
+      },
+      {
+        num: 5,
+        icons: '🪵📐',
+        title: 'Coffrage si sol instable',
+        desc: "Si les parois de fouille s'éboulent, installez des coffrages bois. Sinon, le sol stable peut servir de coffrage naturel (coffrage perdu).",
+        tip: "En terrain stable et cohérent, pas besoin de coffrage. Gagnez du temps et de l'argent.",
+      },
+      {
+        num: 6,
+        icons: '🪣🏗️',
+        title: 'Coulage du béton armé',
+        desc: 'Béton dosé à 350 kg/m³ (C25/30). Coulez en une seule fois si possible. Vibrez soigneusement pour éliminer les vides. La surface doit être plane ± 5 mm/2 m.',
+        warning:
+          'Ne jamais interrompre le coulage. Si vous manquez de béton, reprenez immédiatement avant la prise.',
+      },
+      {
+        num: 7,
+        icons: '🌊⏳',
+        title: 'Décoffrage et cure',
+        desc: 'Décoffrez après 3–5 jours. Cure humide 7 jours. Attendez 28 jours pour charger la fondation. Remblayez latéralement prudemment, par couches compactées.',
+        tip: "Notez les positions des attentes de ferraillage (barres dépassant la fondation) pour l'ancrage du mur.",
+      },
     ],
   },
   {
@@ -2698,16 +4419,76 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🟫🟫🟫\n🪣📐✂️\n🧹✨🏠',
     bgFrom: 'from-amber-700',
     bgTo: 'to-amber-500',
-    materiel: ['Carrelage', 'Colle à carrelage C1 (25 kg)', 'Jointement sac 5 kg', 'Croisillons 3 mm', 'Spatule crantée', 'Carrelette ou meuleuse', 'Niveau laser', 'Rouleau de bâche', 'Seau + éponge'],
-    epi: ['💪 Protège-genoux', '🥽 Lunettes (découpe)', '🧤 Gants', '🎭 Masque poussière (découpe)'],
+    materiel: [
+      'Carrelage',
+      'Colle à carrelage C1 (25 kg)',
+      'Jointement sac 5 kg',
+      'Croisillons 3 mm',
+      'Spatule crantée',
+      'Carrelette ou meuleuse',
+      'Niveau laser',
+      'Rouleau de bâche',
+      'Seau + éponge',
+    ],
+    epi: [
+      '💪 Protège-genoux',
+      '🥽 Lunettes (découpe)',
+      '🧤 Gants',
+      '🎭 Masque poussière (découpe)',
+    ],
     steps: [
-      { num: 1, icons: '📐🔍', title: 'Vérifier et préparer le support', desc: 'Le support doit être plan (± 3 mm/2 m), sec, propre et résistant. Combler les trous avec du mortier de ragréage. Poncez les aspérités. Appliquez un primaire d\'accrochage si nécessaire.', warning: 'Ne jamais coller sur un support humide, friable, ou sur de l\'ancienne peinture non fixée.' },
-      { num: 2, icons: '📐🎯', title: 'Tracer le plan de pose', desc: 'Trouvez le centre de la pièce en traçant les diagonales. Simulez la pose à sec pour équilibrer les coupes sur les 4 bords. Commencez toujours par le fond de la pièce et avancez vers la porte.', tip: 'Des carreaux coupés de moins de 5 cm sont inesthétiques. Décalez le départ si nécessaire.' },
-      { num: 3, icons: '🪣📏', title: 'Préparer et étaler la colle', desc: 'Mélangez la colle (rapport eau/poudre sur l\'emballage). Étalez avec la spatule crantée à 45° en lignes parallèles. Couvrez 1 m² à la fois. Passez la spatule lisse sur le carrelage également (double encollage pour grand format).', tip: 'Attention au "sens de peignage" : toujours dans la même direction pour éviter les poches d\'air.' },
-      { num: 4, icons: '🟫📐✅', title: 'Poser les carreaux', desc: 'Posez en tournant légèrement, appuyez ferme. Insérez les croisillons (3 mm standard). Vérifiez le niveau à chaque rang. Tapotez avec un maillet et une cale pour ajuster.', warning: 'Vérifiez la planéité en permanence. Une fois la colle prise, une correction est impossible sans tout casser.' },
-      { num: 5, icons: '✂️🔧', title: 'Découper les carreaux de rive', desc: 'Utilisez une carrelette à roulette pour les coupes droites. Pour les formes complexes (contournement de tuyau), utilisez une meuleuse avec disque diamant ou une pince coupante.', warning: 'Portez IMPÉRATIVEMENT lunettes et masque lors des découpes. La poussière de carrelage est nocive.' },
-      { num: 6, icons: '⏳🌊', title: 'Séchage et jointoiement', desc: 'Laissez sécher 24h à 48h avant de marcher dessus. Enlevez les croisillons. Préparez le joint (consistance ferme). Appliquez en diagonale avec la raclette caoutchouc. Nettoyez immédiatement avec éponge humide.', tip: 'Le joint sec en surface mais pas nettoyé = traces blanches difficiles à enlever. Nettoyez en passant.' },
-      { num: 7, icons: '✨🏠', title: 'Protection et entretien', desc: 'Les carreaux poreux (pierre naturelle, grès) nécessitent un hydrofuge. Attendez 7 jours avant la mise en service complète (douche, cuisine).', tip: 'Pour les salles de bain, utilisez un joint souple (mastic silicone) dans les angles mur/sol.' },
+      {
+        num: 1,
+        icons: '📐🔍',
+        title: 'Vérifier et préparer le support',
+        desc: "Le support doit être plan (± 3 mm/2 m), sec, propre et résistant. Combler les trous avec du mortier de ragréage. Poncez les aspérités. Appliquez un primaire d'accrochage si nécessaire.",
+        warning:
+          "Ne jamais coller sur un support humide, friable, ou sur de l'ancienne peinture non fixée.",
+      },
+      {
+        num: 2,
+        icons: '📐🎯',
+        title: 'Tracer le plan de pose',
+        desc: 'Trouvez le centre de la pièce en traçant les diagonales. Simulez la pose à sec pour équilibrer les coupes sur les 4 bords. Commencez toujours par le fond de la pièce et avancez vers la porte.',
+        tip: 'Des carreaux coupés de moins de 5 cm sont inesthétiques. Décalez le départ si nécessaire.',
+      },
+      {
+        num: 3,
+        icons: '🪣📏',
+        title: 'Préparer et étaler la colle',
+        desc: "Mélangez la colle (rapport eau/poudre sur l'emballage). Étalez avec la spatule crantée à 45° en lignes parallèles. Couvrez 1 m² à la fois. Passez la spatule lisse sur le carrelage également (double encollage pour grand format).",
+        tip: 'Attention au "sens de peignage" : toujours dans la même direction pour éviter les poches d\'air.',
+      },
+      {
+        num: 4,
+        icons: '🟫📐✅',
+        title: 'Poser les carreaux',
+        desc: 'Posez en tournant légèrement, appuyez ferme. Insérez les croisillons (3 mm standard). Vérifiez le niveau à chaque rang. Tapotez avec un maillet et une cale pour ajuster.',
+        warning:
+          'Vérifiez la planéité en permanence. Une fois la colle prise, une correction est impossible sans tout casser.',
+      },
+      {
+        num: 5,
+        icons: '✂️🔧',
+        title: 'Découper les carreaux de rive',
+        desc: 'Utilisez une carrelette à roulette pour les coupes droites. Pour les formes complexes (contournement de tuyau), utilisez une meuleuse avec disque diamant ou une pince coupante.',
+        warning:
+          'Portez IMPÉRATIVEMENT lunettes et masque lors des découpes. La poussière de carrelage est nocive.',
+      },
+      {
+        num: 6,
+        icons: '⏳🌊',
+        title: 'Séchage et jointoiement',
+        desc: 'Laissez sécher 24h à 48h avant de marcher dessus. Enlevez les croisillons. Préparez le joint (consistance ferme). Appliquez en diagonale avec la raclette caoutchouc. Nettoyez immédiatement avec éponge humide.',
+        tip: 'Le joint sec en surface mais pas nettoyé = traces blanches difficiles à enlever. Nettoyez en passant.',
+      },
+      {
+        num: 7,
+        icons: '✨🏠',
+        title: 'Protection et entretien',
+        desc: 'Les carreaux poreux (pierre naturelle, grès) nécessitent un hydrofuge. Attendez 7 jours avant la mise en service complète (douche, cuisine).',
+        tip: 'Pour les salles de bain, utilisez un joint souple (mastic silicone) dans les angles mur/sol.',
+      },
     ],
   },
   {
@@ -2721,16 +4502,74 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🎨🖌️🪣\n🧹📝✅\n🛋️✨🏠',
     bgFrom: 'from-sky-700',
     bgTo: 'to-sky-500',
-    materiel: ['Peinture intérieure', 'Peinture impression (si mur poreux)', 'Rouleau 22 cm (poil 10 mm)', 'Pinceau queue de morue', 'Bâche de protection', 'Ruban de masquage', 'Enduit de rebouchage', 'Toile abrasive (grain 120)', 'Seau + grille d\'essorage'],
-    epi: ['🎭 Masque si ancienne peinture (plomb possible)', '🥽 Lunettes lors du ponçage', '🧤 Gants'],
+    materiel: [
+      'Peinture intérieure',
+      'Peinture impression (si mur poreux)',
+      'Rouleau 22 cm (poil 10 mm)',
+      'Pinceau queue de morue',
+      'Bâche de protection',
+      'Ruban de masquage',
+      'Enduit de rebouchage',
+      'Toile abrasive (grain 120)',
+      "Seau + grille d'essorage",
+    ],
+    epi: [
+      '🎭 Masque si ancienne peinture (plomb possible)',
+      '🥽 Lunettes lors du ponçage',
+      '🧤 Gants',
+    ],
     steps: [
-      { num: 1, icons: '🧹🔍', title: 'Préparer la pièce', desc: 'Videz la pièce ou repoussez les meubles au centre. Couvrez le sol et les meubles avec des bâches. Masquez les plinthes, vitres, interrupteurs et prises avec du ruban de masquage.', tip: 'Investissez dans du bon ruban de masquage (3M ou Tesa). Il se retire proprement sans arracher la peinture.' },
-      { num: 2, icons: '🔨🧱', title: 'Préparer les surfaces', desc: 'Rebouchez les trous et fissures avec de l\'enduit de rebouchage. Attendez le séchage (1–2h), poncez avec grain 120. Dépoussiérez avec un chiffon humide. Les murs doivent être propres, secs et dépoussiérés.', warning: 'Ne jamais peindre sur une fissure non traitée. Elle réapparaîtra dans les 6 mois.' },
-      { num: 3, icons: '🟫🪣', title: 'Appliquer l\'impression', desc: 'Sur un mur neuf, poreux ou coloré foncé : appliquez une couche de sous-couche/impression. Diluez à 10% pour une pénétration maximale. Séchage 2–4h. L\'impression fixe la surface et améliore l\'adhérence.', tip: 'Sur un mur blanc propre récemment repeint, l\'impression n\'est pas nécessaire.' },
-      { num: 4, icons: '🖌️📐', title: 'Peindre les angles et bords (pinceau)', desc: 'Commencez par les angles, bords de plafond, plinthes et contours des ouvertures avec un pinceau. Travaillez en bandes de 5–8 cm. Cette étape s\'appelle "couper au pinceau".', tip: 'Travaillez vite au pinceau : la peinture séchant, un raccord avec le rouleau sur peinture sèche laisse une trace.' },
-      { num: 5, icons: '🪣🔄', title: 'Peindre au rouleau (1ère couche)', desc: 'Chargez le rouleau uniformément (sans excès). Appliquez en "W" ou en "M" sur 50×50 cm, puis croisez sans appuyer pour égaliser. Travaillez du haut vers le bas. Première couche diluée à 5–10%.', tip: 'Ne surchargez pas le rouleau : les projections tachent et créent des coulures.' },
-      { num: 6, icons: '⏳🌬️', title: 'Séchage inter-couche', desc: 'Attendez le séchage "toucher" (1–2h selon la marque et le climat) avant la 2ème couche. En Guadeloupe/Martinique (humidité élevée), allongez à 3–4h. Aérez la pièce.', warning: 'Dans les DOM-TOM, l\'humidité tropicale allonge les temps de séchage de 50%. Prévoyez en conséquence.' },
-      { num: 7, icons: '✨🏠', title: '2ème couche et finitions', desc: 'Appliquez la 2ème couche non diluée dans le sens inverse de la 1ère. Retirez le ruban de masquage quand la peinture est encore légèrement humide (non sèche). Finitions des angles à la touche finale.', tip: 'Pour un blanc parfait sur un fond coloré foncé, 3 couches peuvent être nécessaires.' },
+      {
+        num: 1,
+        icons: '🧹🔍',
+        title: 'Préparer la pièce',
+        desc: 'Videz la pièce ou repoussez les meubles au centre. Couvrez le sol et les meubles avec des bâches. Masquez les plinthes, vitres, interrupteurs et prises avec du ruban de masquage.',
+        tip: 'Investissez dans du bon ruban de masquage (3M ou Tesa). Il se retire proprement sans arracher la peinture.',
+      },
+      {
+        num: 2,
+        icons: '🔨🧱',
+        title: 'Préparer les surfaces',
+        desc: "Rebouchez les trous et fissures avec de l'enduit de rebouchage. Attendez le séchage (1–2h), poncez avec grain 120. Dépoussiérez avec un chiffon humide. Les murs doivent être propres, secs et dépoussiérés.",
+        warning:
+          'Ne jamais peindre sur une fissure non traitée. Elle réapparaîtra dans les 6 mois.',
+      },
+      {
+        num: 3,
+        icons: '🟫🪣',
+        title: "Appliquer l'impression",
+        desc: "Sur un mur neuf, poreux ou coloré foncé : appliquez une couche de sous-couche/impression. Diluez à 10% pour une pénétration maximale. Séchage 2–4h. L'impression fixe la surface et améliore l'adhérence.",
+        tip: "Sur un mur blanc propre récemment repeint, l'impression n'est pas nécessaire.",
+      },
+      {
+        num: 4,
+        icons: '🖌️📐',
+        title: 'Peindre les angles et bords (pinceau)',
+        desc: 'Commencez par les angles, bords de plafond, plinthes et contours des ouvertures avec un pinceau. Travaillez en bandes de 5–8 cm. Cette étape s\'appelle "couper au pinceau".',
+        tip: 'Travaillez vite au pinceau : la peinture séchant, un raccord avec le rouleau sur peinture sèche laisse une trace.',
+      },
+      {
+        num: 5,
+        icons: '🪣🔄',
+        title: 'Peindre au rouleau (1ère couche)',
+        desc: 'Chargez le rouleau uniformément (sans excès). Appliquez en "W" ou en "M" sur 50×50 cm, puis croisez sans appuyer pour égaliser. Travaillez du haut vers le bas. Première couche diluée à 5–10%.',
+        tip: 'Ne surchargez pas le rouleau : les projections tachent et créent des coulures.',
+      },
+      {
+        num: 6,
+        icons: '⏳🌬️',
+        title: 'Séchage inter-couche',
+        desc: 'Attendez le séchage "toucher" (1–2h selon la marque et le climat) avant la 2ème couche. En Guadeloupe/Martinique (humidité élevée), allongez à 3–4h. Aérez la pièce.',
+        warning:
+          "Dans les DOM-TOM, l'humidité tropicale allonge les temps de séchage de 50%. Prévoyez en conséquence.",
+      },
+      {
+        num: 7,
+        icons: '✨🏠',
+        title: '2ème couche et finitions',
+        desc: 'Appliquez la 2ème couche non diluée dans le sens inverse de la 1ère. Retirez le ruban de masquage quand la peinture est encore légèrement humide (non sèche). Finitions des angles à la touche finale.',
+        tip: 'Pour un blanc parfait sur un fond coloré foncé, 3 couches peuvent être nécessaires.',
+      },
     ],
   },
   {
@@ -2744,16 +4583,73 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🏠🪣🧱\n⚒️📐🌧️\n👷‍♀️✨🎨',
     bgFrom: 'from-orange-700',
     bgTo: 'to-orange-500',
-    materiel: ['Enduit façade (sac 25 kg)', 'Ciment CPJ 32.5', 'Sable fin 0/2', 'Taloche', 'Règle de 2 m', 'Filet de renfort (façade neuve)', 'Primaire d\'accrochage', 'Bétonnière ou perceuse-malaxeur'],
-    epi: ['🥽 Lunettes (projections)', '🧤 Gants résistants', '👷 Casque si hauteur', '🦺 Harnais si échafaudage > 3 m'],
+    materiel: [
+      'Enduit façade (sac 25 kg)',
+      'Ciment CPJ 32.5',
+      'Sable fin 0/2',
+      'Taloche',
+      'Règle de 2 m',
+      'Filet de renfort (façade neuve)',
+      "Primaire d'accrochage",
+      'Bétonnière ou perceuse-malaxeur',
+    ],
+    epi: [
+      '🥽 Lunettes (projections)',
+      '🧤 Gants résistants',
+      '👷 Casque si hauteur',
+      '🦺 Harnais si échafaudage > 3 m',
+    ],
     steps: [
-      { num: 1, icons: '🔍🧹', title: 'Préparer le support', desc: 'Dépoussiérez et brossez la façade. Humidifiez légèrement (support absorbant). Traitez les fissures et les joints creux. Dépoussiérez les fenêtres et portes avec le ruban de masquage.', warning: 'Ne jamais enduire par temps de pluie, vent fort, gel ou chaleur extrême (>35°C).' },
-      { num: 2, icons: '🟡🔥', title: 'Appliquer le primaire gobetis', desc: 'Première couche très fine (5 mm) projetée ou talochée grossièrement. Cette couche "accroche" la façade. Laissez sécher 24h avant la couche de corps.', tip: 'Pour les façades très lisses (béton banché), appliquez un primaire d\'accrochage avant le gobetis.' },
-      { num: 3, icons: '📏🏠', title: 'Pose des repères (phares)', desc: 'Utilisez des règles aluminium ou des butées en enduit dur pour créer des repères de planéité. Vérifiez à la règle de 2 m. Espacés de 1,5 m maximum.', tip: 'Des repères bien posés garantissent un résultat plan. Ne sautez pas cette étape.' },
-      { num: 4, icons: '🪣⚒️', title: 'Corps d\'enduit (couche principale)', desc: 'Épaisseur 1–1,5 cm. Appliquez de bas en haut avec la taloche. Serrez contre les phares. Tirez la règle en mouvement de sciage horizontal. L\'enduit doit combler tous les creux.', warning: 'N\'appliquez jamais plus de 15 mm en une seule passe. Deux passes fines valent mieux qu\'une épaisse.' },
-      { num: 5, icons: '🕸️🔩', title: 'Filet de renfort (façade neuve)', desc: 'Sur les façades neuves ou les jonctions de matériaux différents, intégrez un filet de renfort dans la couche fraîche. Noyez-le dans l\'enduit et ragréez.', tip: 'Le filet de renfort évite les fissures de retrait aux angles de fenêtres et jonctions maçonnerie/béton.' },
-      { num: 6, icons: '✨🔄', title: 'Finition taloché ou grattée', desc: 'Après prise partielle (1–2h selon la chaleur), lissez avec la taloche humide en mouvements circulaires (finition taloché lisse) ou avec la taloche garnie de mousse (taloché fin). Pour un effet grené : gratter avec une brosse métallique.', tip: 'L\'humidité tropicale de la Guadeloupe et Martinique accélère la prise. Travaillez tôt le matin.' },
-      { num: 7, icons: '💧☀️', title: 'Protection et cure', desc: 'Protégez du soleil direct 48h (bâche non adhérente). Humidifiez légèrement le lendemain matin. Attendez 7 jours avant de peindre. Le séchage complet prend 28 jours.', tip: 'Vous pouvez appliquer une peinture hydrofuge ou anti-moisissure pour protéger la façade en milieu tropical humide.' },
+      {
+        num: 1,
+        icons: '🔍🧹',
+        title: 'Préparer le support',
+        desc: 'Dépoussiérez et brossez la façade. Humidifiez légèrement (support absorbant). Traitez les fissures et les joints creux. Dépoussiérez les fenêtres et portes avec le ruban de masquage.',
+        warning: 'Ne jamais enduire par temps de pluie, vent fort, gel ou chaleur extrême (>35°C).',
+      },
+      {
+        num: 2,
+        icons: '🟡🔥',
+        title: 'Appliquer le primaire gobetis',
+        desc: 'Première couche très fine (5 mm) projetée ou talochée grossièrement. Cette couche "accroche" la façade. Laissez sécher 24h avant la couche de corps.',
+        tip: "Pour les façades très lisses (béton banché), appliquez un primaire d'accrochage avant le gobetis.",
+      },
+      {
+        num: 3,
+        icons: '📏🏠',
+        title: 'Pose des repères (phares)',
+        desc: 'Utilisez des règles aluminium ou des butées en enduit dur pour créer des repères de planéité. Vérifiez à la règle de 2 m. Espacés de 1,5 m maximum.',
+        tip: 'Des repères bien posés garantissent un résultat plan. Ne sautez pas cette étape.',
+      },
+      {
+        num: 4,
+        icons: '🪣⚒️',
+        title: "Corps d'enduit (couche principale)",
+        desc: "Épaisseur 1–1,5 cm. Appliquez de bas en haut avec la taloche. Serrez contre les phares. Tirez la règle en mouvement de sciage horizontal. L'enduit doit combler tous les creux.",
+        warning:
+          "N'appliquez jamais plus de 15 mm en une seule passe. Deux passes fines valent mieux qu'une épaisse.",
+      },
+      {
+        num: 5,
+        icons: '🕸️🔩',
+        title: 'Filet de renfort (façade neuve)',
+        desc: "Sur les façades neuves ou les jonctions de matériaux différents, intégrez un filet de renfort dans la couche fraîche. Noyez-le dans l'enduit et ragréez.",
+        tip: 'Le filet de renfort évite les fissures de retrait aux angles de fenêtres et jonctions maçonnerie/béton.',
+      },
+      {
+        num: 6,
+        icons: '✨🔄',
+        title: 'Finition taloché ou grattée',
+        desc: 'Après prise partielle (1–2h selon la chaleur), lissez avec la taloche humide en mouvements circulaires (finition taloché lisse) ou avec la taloche garnie de mousse (taloché fin). Pour un effet grené : gratter avec une brosse métallique.',
+        tip: "L'humidité tropicale de la Guadeloupe et Martinique accélère la prise. Travaillez tôt le matin.",
+      },
+      {
+        num: 7,
+        icons: '💧☀️',
+        title: 'Protection et cure',
+        desc: 'Protégez du soleil direct 48h (bâche non adhérente). Humidifiez légèrement le lendemain matin. Attendez 7 jours avant de peindre. Le séchage complet prend 28 jours.',
+        tip: 'Vous pouvez appliquer une peinture hydrofuge ou anti-moisissure pour protéger la façade en milieu tropical humide.',
+      },
     ],
   },
   {
@@ -2767,16 +4663,78 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🏠⛅🌴\n🔩🪜🛠️\n👷‍♂️🏗️✅',
     bgFrom: 'from-zinc-700',
     bgTo: 'to-zinc-500',
-    materiel: ['Tôles ondulées acier galvanisé', 'Vis auto-perceuses 5,5×38 avec rondelle EPDM', 'Faîtières', 'Closoir (mousse ondulée)', 'Liteaux 40×60 mm', 'Bande de butée d\'égout', 'Perceuse-visseuse', 'Cisaille à tôle', 'Corde de sécurité'],
-    epi: ['👷 Casque OBLIGATOIRE en hauteur', '🦺 Harnais de sécurité si pente > 30°', '🧤 Gants anti-coupure (bords de tôles = danger)', '👟 Chaussures antidérapantes', '🥽 Lunettes'],
+    materiel: [
+      'Tôles ondulées acier galvanisé',
+      'Vis auto-perceuses 5,5×38 avec rondelle EPDM',
+      'Faîtières',
+      'Closoir (mousse ondulée)',
+      'Liteaux 40×60 mm',
+      "Bande de butée d'égout",
+      'Perceuse-visseuse',
+      'Cisaille à tôle',
+      'Corde de sécurité',
+    ],
+    epi: [
+      '👷 Casque OBLIGATOIRE en hauteur',
+      '🦺 Harnais de sécurité si pente > 30°',
+      '🧤 Gants anti-coupure (bords de tôles = danger)',
+      '👟 Chaussures antidérapantes',
+      '🥽 Lunettes',
+    ],
     steps: [
-      { num: 1, icons: '📐🪵', title: 'Préparer la charpente et les liteaux', desc: 'Vérifiez l\'état de la charpente. Posez les liteaux (40×60 mm) perpendiculairement aux chevrons, espacés selon la longueur des tôles : pour tôle 3m → liteux tous les 85 cm. Les liteaux doivent être sains et bien fixés.', warning: 'Ne montez jamais sur une charpente sans avoir vérifié sa solidité. Minimum 2 fixations par croisement.' },
-      { num: 2, icons: '🔢📏', title: 'Calculer le recouvrement', desc: 'Recouvrement latéral : 1,5 à 2 ondulations (selon l\'exposition au vent). Recouvrement longitudinal : 20 cm minimum (30 cm si pente < 15°). Commencez par le bas et le côté opposé au vent dominant.', tip: 'En DOM-TOM avec vents cycloniques, privilégiez un recouvrement de 2 ondulations et vissez tous les liteaux.' },
-      { num: 3, icons: '📏🔩', title: 'Poser la première tôle (bas-côté)', desc: 'Commencez par le bas (égout). Placez la tôle en alignant son bord inférieur avec la rive d\'égout. Vissez provisoirement pour ajuster. La première tôle donne le fil directeur de tout le rang.', warning: 'La première tôle mal posée faussera tout. Prenez le temps de la caler et vérifier perpendiculaire.' },
-      { num: 4, icons: '🔩✅', title: 'Fixer les tôles (vissage)', desc: 'Vis toutes les 2 ondulations sur chaque liteau (4 vis min par tôle par liteau). Vissez DANS le creux des ondulations (pas sur la crête). Serrez sans écraser la rondelle EPDM (1 mm d\'écrasement max).', warning: 'Trop serrer les vis : la rondelle EPDM écrasée ne sera plus étanche. Trop peu : infiltrations garanties.' },
-      { num: 5, icons: '🏠🔁', title: 'Progresser rang par rang', desc: 'Remontez vers le faîtage. Chaque rang recouvre le précédent d\'au moins 20 cm. Posez les tôles de recouvrement côté vent dominant par-dessus.', tip: 'Avant de monter avec une tôle, prépercez les trous de vis sur le sol. Plus sécurisé en hauteur.' },
-      { num: 6, icons: '🏔️🔩', title: 'Poser la faîtière', desc: 'Posez le closoir (mousse) contre les ondulations avant la faîtière. La faîtière chevauche au moins 20 cm de chaque côté du faîte. Vissez tous les 30 cm. La faîtière est étanche au vent.', tip: 'Le closoir (mousse) est essentiel pour éviter les entrées d\'insectes et de poussière sous la faîtière.' },
-      { num: 7, icons: '🌧️✅', title: 'Contrôle d\'étanchéité', desc: 'Testez avec un tuyau d\'arrosage simulant la pluie. Vérifiez l\'absence de fuites aux raccords, vis, faîtière et rives. En cas de doute sur une vis, ajoutez une rondelle EPDM supplémentaire.', warning: 'En zone cyclonique (DOM-TOM), faites valider l\'installation par un professionnel. Des normes de résistance aux vents s\'appliquent.' },
+      {
+        num: 1,
+        icons: '📐🪵',
+        title: 'Préparer la charpente et les liteaux',
+        desc: "Vérifiez l'état de la charpente. Posez les liteaux (40×60 mm) perpendiculairement aux chevrons, espacés selon la longueur des tôles : pour tôle 3m → liteux tous les 85 cm. Les liteaux doivent être sains et bien fixés.",
+        warning:
+          'Ne montez jamais sur une charpente sans avoir vérifié sa solidité. Minimum 2 fixations par croisement.',
+      },
+      {
+        num: 2,
+        icons: '🔢📏',
+        title: 'Calculer le recouvrement',
+        desc: "Recouvrement latéral : 1,5 à 2 ondulations (selon l'exposition au vent). Recouvrement longitudinal : 20 cm minimum (30 cm si pente < 15°). Commencez par le bas et le côté opposé au vent dominant.",
+        tip: 'En DOM-TOM avec vents cycloniques, privilégiez un recouvrement de 2 ondulations et vissez tous les liteaux.',
+      },
+      {
+        num: 3,
+        icons: '📏🔩',
+        title: 'Poser la première tôle (bas-côté)',
+        desc: "Commencez par le bas (égout). Placez la tôle en alignant son bord inférieur avec la rive d'égout. Vissez provisoirement pour ajuster. La première tôle donne le fil directeur de tout le rang.",
+        warning:
+          'La première tôle mal posée faussera tout. Prenez le temps de la caler et vérifier perpendiculaire.',
+      },
+      {
+        num: 4,
+        icons: '🔩✅',
+        title: 'Fixer les tôles (vissage)',
+        desc: "Vis toutes les 2 ondulations sur chaque liteau (4 vis min par tôle par liteau). Vissez DANS le creux des ondulations (pas sur la crête). Serrez sans écraser la rondelle EPDM (1 mm d'écrasement max).",
+        warning:
+          'Trop serrer les vis : la rondelle EPDM écrasée ne sera plus étanche. Trop peu : infiltrations garanties.',
+      },
+      {
+        num: 5,
+        icons: '🏠🔁',
+        title: 'Progresser rang par rang',
+        desc: "Remontez vers le faîtage. Chaque rang recouvre le précédent d'au moins 20 cm. Posez les tôles de recouvrement côté vent dominant par-dessus.",
+        tip: 'Avant de monter avec une tôle, prépercez les trous de vis sur le sol. Plus sécurisé en hauteur.',
+      },
+      {
+        num: 6,
+        icons: '🏔️🔩',
+        title: 'Poser la faîtière',
+        desc: 'Posez le closoir (mousse) contre les ondulations avant la faîtière. La faîtière chevauche au moins 20 cm de chaque côté du faîte. Vissez tous les 30 cm. La faîtière est étanche au vent.',
+        tip: "Le closoir (mousse) est essentiel pour éviter les entrées d'insectes et de poussière sous la faîtière.",
+      },
+      {
+        num: 7,
+        icons: '🌧️✅',
+        title: "Contrôle d'étanchéité",
+        desc: "Testez avec un tuyau d'arrosage simulant la pluie. Vérifiez l'absence de fuites aux raccords, vis, faîtière et rives. En cas de doute sur une vis, ajoutez une rondelle EPDM supplémentaire.",
+        warning:
+          "En zone cyclonique (DOM-TOM), faites valider l'installation par un professionnel. Des normes de résistance aux vents s'appliquent.",
+      },
     ],
   },
   {
@@ -2790,16 +4748,70 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🚧🌳🏡\n⛏️🔩🪣\n👷‍♀️📐✅',
     bgFrom: 'from-green-800',
     bgTo: 'to-green-600',
-    materiel: ['Poteaux acier galvanisé (Ø 60 mm)', 'Grillage soudé galvanisé', 'Béton de scellement', 'Fil de ligature', 'Tendeur/câble de tension', 'Masse de terrassement', 'Foreuse ou tarière', 'Fil à plomb', 'Niveau'],
+    materiel: [
+      'Poteaux acier galvanisé (Ø 60 mm)',
+      'Grillage soudé galvanisé',
+      'Béton de scellement',
+      'Fil de ligature',
+      'Tendeur/câble de tension',
+      'Masse de terrassement',
+      'Foreuse ou tarière',
+      'Fil à plomb',
+      'Niveau',
+    ],
     epi: ['🧤 Gants anti-coupure', '🥽 Lunettes', '👟 Chaussures de sécurité'],
     steps: [
-      { num: 1, icons: '📐🧵', title: 'Tracer et marquer les poteaux', desc: 'Tendez un cordeau pour aligner les poteaux. Marquez les emplacements au sol à l\'espacement choisi (2–2,5 m). Commencez par les angles et points extrêmes.', tip: 'L\'espacement standard de 2,5 m est un bon compromis solidité/économie. Réduisez à 2 m en terrain en pente.' },
-      { num: 2, icons: '⛏️🕳️', title: 'Forer les trous de scellement', desc: 'Profondeur minimum : 1/3 de la hauteur du poteau (ex: 50 cm de profondeur pour poteau 1,5 m). Diamètre : 2× le diamètre du poteau. Utilisez une tarière manuelle ou motorisée.', warning: 'En sol rocheux ou très dur, louez une tarière thermique. Ne risquez pas une blessure au dos.' },
-      { num: 3, icons: '📏✅', title: 'Sceller et aligner les poteaux', desc: 'Versez 5 cm de béton dans le trou. Introduisez le poteau. Vérifiez l\'aplomb à 90° avec le niveau et le fil à plomb dans 2 directions. Coulez le béton de scellement autour. Maintenez en place 48h.', tip: 'Formez une légère calotte en dôme au sommet du béton pour évacuer l\'eau de pluie autour du poteau.' },
-      { num: 4, icons: '🕸️📏', title: 'Fixer le grillage', desc: 'Déroulez le grillage en maintenant la tension. Agrafez ou ligaturez au premier poteau. Tendez manuellement en progressant et ligaturez tous les 30 cm. Utilisez un tendeur sur le fil terminal.', tip: 'Travaillez à 2 : l\'un tient le grillage tendu, l\'autre fixe. Seul, la tâche est presque impossible.' },
-      { num: 5, icons: '✂️🔧', title: 'Couper et ajuster', desc: 'Coupez le grillage avec une pince coupante ou cisaille. Pour les angles, faisez un coude progressif et fixez des deux côtés de l\'angle.', warning: 'Les bords de grillage coupé sont tranchants. Ne jamais toucher sans gants. Retourner les fils coupés vers l\'intérieur.' },
-      { num: 6, icons: '🚪🔩', title: 'Installer le portail (si prévu)', desc: 'Scellement des poteaux de portail à 70 cm de profondeur minimum. Respectez le jeu de 5 mm entre la porte et le poteau. Réglez les gonds pour une ouverture sans forcer.', tip: 'Un portail bien réglé au départ vous évitera des années de bricolage. Prenez le temps d\'ajuster.' },
-      { num: 7, icons: '🌿✅', title: 'Finitions et végétalisation', desc: 'Plantez une haie végétale (laurier, bougainvillier, hibiscus) en bas de clôture pour un aspect naturel. Vérifiez chaque poteau à 6 mois pour resserrer si nécessaire.', tip: 'Dans les zones tropicales, préférez des poteaux en acier galvanisé à chaud plutôt que simple galvanisé pour une durabilité accrue face à l\'humidité.' },
+      {
+        num: 1,
+        icons: '📐🧵',
+        title: 'Tracer et marquer les poteaux',
+        desc: "Tendez un cordeau pour aligner les poteaux. Marquez les emplacements au sol à l'espacement choisi (2–2,5 m). Commencez par les angles et points extrêmes.",
+        tip: "L'espacement standard de 2,5 m est un bon compromis solidité/économie. Réduisez à 2 m en terrain en pente.",
+      },
+      {
+        num: 2,
+        icons: '⛏️🕳️',
+        title: 'Forer les trous de scellement',
+        desc: 'Profondeur minimum : 1/3 de la hauteur du poteau (ex: 50 cm de profondeur pour poteau 1,5 m). Diamètre : 2× le diamètre du poteau. Utilisez une tarière manuelle ou motorisée.',
+        warning:
+          'En sol rocheux ou très dur, louez une tarière thermique. Ne risquez pas une blessure au dos.',
+      },
+      {
+        num: 3,
+        icons: '📏✅',
+        title: 'Sceller et aligner les poteaux',
+        desc: "Versez 5 cm de béton dans le trou. Introduisez le poteau. Vérifiez l'aplomb à 90° avec le niveau et le fil à plomb dans 2 directions. Coulez le béton de scellement autour. Maintenez en place 48h.",
+        tip: "Formez une légère calotte en dôme au sommet du béton pour évacuer l'eau de pluie autour du poteau.",
+      },
+      {
+        num: 4,
+        icons: '🕸️📏',
+        title: 'Fixer le grillage',
+        desc: 'Déroulez le grillage en maintenant la tension. Agrafez ou ligaturez au premier poteau. Tendez manuellement en progressant et ligaturez tous les 30 cm. Utilisez un tendeur sur le fil terminal.',
+        tip: "Travaillez à 2 : l'un tient le grillage tendu, l'autre fixe. Seul, la tâche est presque impossible.",
+      },
+      {
+        num: 5,
+        icons: '✂️🔧',
+        title: 'Couper et ajuster',
+        desc: "Coupez le grillage avec une pince coupante ou cisaille. Pour les angles, faisez un coude progressif et fixez des deux côtés de l'angle.",
+        warning:
+          "Les bords de grillage coupé sont tranchants. Ne jamais toucher sans gants. Retourner les fils coupés vers l'intérieur.",
+      },
+      {
+        num: 6,
+        icons: '🚪🔩',
+        title: 'Installer le portail (si prévu)',
+        desc: 'Scellement des poteaux de portail à 70 cm de profondeur minimum. Respectez le jeu de 5 mm entre la porte et le poteau. Réglez les gonds pour une ouverture sans forcer.',
+        tip: "Un portail bien réglé au départ vous évitera des années de bricolage. Prenez le temps d'ajuster.",
+      },
+      {
+        num: 7,
+        icons: '🌿✅',
+        title: 'Finitions et végétalisation',
+        desc: 'Plantez une haie végétale (laurier, bougainvillier, hibiscus) en bas de clôture pour un aspect naturel. Vérifiez chaque poteau à 6 mois pour resserrer si nécessaire.',
+        tip: "Dans les zones tropicales, préférez des poteaux en acier galvanisé à chaud plutôt que simple galvanisé pour une durabilité accrue face à l'humidité.",
+      },
     ],
   },
   {
@@ -2813,16 +4825,71 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🪵📐🏠\n🪣⚒️📏\n👷‍♀️✨🏠',
     bgFrom: 'from-amber-800',
     bgTo: 'to-yellow-600',
-    materiel: ['Ciment CPJ 32.5', 'Sable de chape 0/5', 'Eau', 'Bétonnière ou malaxeur', 'Règle de tirage (alu 3 m)', 'Phares métalliques ou bois', 'Lisseuse', 'Bande acoustique (mur/sol)', 'Film polyane'],
+    materiel: [
+      'Ciment CPJ 32.5',
+      'Sable de chape 0/5',
+      'Eau',
+      'Bétonnière ou malaxeur',
+      'Règle de tirage (alu 3 m)',
+      'Phares métalliques ou bois',
+      'Lisseuse',
+      'Bande acoustique (mur/sol)',
+      'Film polyane',
+    ],
     epi: ['💪 Protège-genoux', '🧤 Gants', '🥽 Lunettes', '👟 Bottes de chantier'],
     steps: [
-      { num: 1, icons: '🔍📐', title: 'Préparer le support', desc: 'Nettoyez le support (dalle béton ou plancher). Aspirez ou brossez toute poussière. Le support doit être plan ± 5 mm/2 m. Humidifiez légèrement (dalle trop sèche = décollement).', warning: 'Toute fissure dans le support doit être traitée avant la chape. Sinon, les fissures remontent dans la chape.' },
-      { num: 2, icons: '🎵🧱', title: 'Poser la bande acoustique', desc: 'Fixez la bande résiliente tout autour du pourtour de la pièce (10 cm de hauteur). Elle isole du bruit et absorbe la dilatation thermique de la chape.', tip: 'La bande acoustique est OBLIGATOIRE pour les chapes flottantes (sur isolant) et recommandée pour toutes les chapes.' },
-      { num: 3, icons: '📏🎯', title: 'Réglage des phares (niveaux)', desc: 'Utilisez un niveau laser ou un niveau à eau pour poser des phares en bois ou profilé alu à l\'épaisseur souhaitée (4–6 cm). Espacés de 1,5 m max. Ces repères guident le tirage de la règle.', tip: 'Prenez le temps de bien régler les phares. Une chape plane à ± 2 mm/2 m est un gage de qualité.' },
-      { num: 4, icons: '🪣🔄', title: 'Préparer le mortier de chape', desc: 'Dosage : 300–350 kg de ciment/m³. Rapport C:S = 1:3. Le mortier doit être semi-sec (on peut l\'agglomérer dans la main sans qu\'il coule). Préparez par petites quantités (30–40 kg).', tip: 'Test de la prise en main : serrez une poignée de mortier. Elle doit tenir sa forme sans égoutter. Si ça coule, trop d\'eau.' },
-      { num: 5, icons: '⚒️📏', title: 'Couler et tirer la chape', desc: 'Commencez par le fond de la pièce. Étalez le mortier en le tassant légèrement. Tirez la règle de 2 m en mouvement de sciage, en vous appuyant sur les phares. Remplissez les creux, repassez la règle.', warning: 'Progressez toujours depuis le fond vers la sortie. Si vous marchez dans la chape fraîche, vous la déformez.' },
-      { num: 6, icons: '✨🔄', title: 'Lisser la surface', desc: '30–60 min après le tirage, quand la chape a pris partiellement, lissez avec la lisseuse en mouvements circulaires. Surface finale lisse pour carrelage, légèrement rugueuse pour parquet flottant.', tip: 'Ne pas lisser trop tôt (eau encore en surface) ni trop tard (trop dur). Testez par pression : ça s\'imprime légèrement = bon moment.' },
-      { num: 7, icons: '💧⏳', title: 'Cure et séchage (28 jours)', desc: 'Recouvrez d\'une bâche 48h. Humidifiez légèrement le lendemain. Attendez 7 jours pour circulation piétonne légère. Carrelage possible à 28 jours. Parquet massif : 28 jours + test d\'humidité < 2,5%.', warning: 'En DOM-TOM, l\'humidité tropicale ralentit le séchage. Prévoyez toujours un test d\'humidité avant le revêtement de sol.' },
+      {
+        num: 1,
+        icons: '🔍📐',
+        title: 'Préparer le support',
+        desc: 'Nettoyez le support (dalle béton ou plancher). Aspirez ou brossez toute poussière. Le support doit être plan ± 5 mm/2 m. Humidifiez légèrement (dalle trop sèche = décollement).',
+        warning:
+          'Toute fissure dans le support doit être traitée avant la chape. Sinon, les fissures remontent dans la chape.',
+      },
+      {
+        num: 2,
+        icons: '🎵🧱',
+        title: 'Poser la bande acoustique',
+        desc: 'Fixez la bande résiliente tout autour du pourtour de la pièce (10 cm de hauteur). Elle isole du bruit et absorbe la dilatation thermique de la chape.',
+        tip: 'La bande acoustique est OBLIGATOIRE pour les chapes flottantes (sur isolant) et recommandée pour toutes les chapes.',
+      },
+      {
+        num: 3,
+        icons: '📏🎯',
+        title: 'Réglage des phares (niveaux)',
+        desc: "Utilisez un niveau laser ou un niveau à eau pour poser des phares en bois ou profilé alu à l'épaisseur souhaitée (4–6 cm). Espacés de 1,5 m max. Ces repères guident le tirage de la règle.",
+        tip: 'Prenez le temps de bien régler les phares. Une chape plane à ± 2 mm/2 m est un gage de qualité.',
+      },
+      {
+        num: 4,
+        icons: '🪣🔄',
+        title: 'Préparer le mortier de chape',
+        desc: "Dosage : 300–350 kg de ciment/m³. Rapport C:S = 1:3. Le mortier doit être semi-sec (on peut l'agglomérer dans la main sans qu'il coule). Préparez par petites quantités (30–40 kg).",
+        tip: "Test de la prise en main : serrez une poignée de mortier. Elle doit tenir sa forme sans égoutter. Si ça coule, trop d'eau.",
+      },
+      {
+        num: 5,
+        icons: '⚒️📏',
+        title: 'Couler et tirer la chape',
+        desc: 'Commencez par le fond de la pièce. Étalez le mortier en le tassant légèrement. Tirez la règle de 2 m en mouvement de sciage, en vous appuyant sur les phares. Remplissez les creux, repassez la règle.',
+        warning:
+          'Progressez toujours depuis le fond vers la sortie. Si vous marchez dans la chape fraîche, vous la déformez.',
+      },
+      {
+        num: 6,
+        icons: '✨🔄',
+        title: 'Lisser la surface',
+        desc: '30–60 min après le tirage, quand la chape a pris partiellement, lissez avec la lisseuse en mouvements circulaires. Surface finale lisse pour carrelage, légèrement rugueuse pour parquet flottant.',
+        tip: "Ne pas lisser trop tôt (eau encore en surface) ni trop tard (trop dur). Testez par pression : ça s'imprime légèrement = bon moment.",
+      },
+      {
+        num: 7,
+        icons: '💧⏳',
+        title: 'Cure et séchage (28 jours)',
+        desc: "Recouvrez d'une bâche 48h. Humidifiez légèrement le lendemain. Attendez 7 jours pour circulation piétonne légère. Carrelage possible à 28 jours. Parquet massif : 28 jours + test d'humidité < 2,5%.",
+        warning:
+          "En DOM-TOM, l'humidité tropicale ralentit le séchage. Prévoyez toujours un test d'humidité avant le revêtement de sol.",
+      },
     ],
   },
   {
@@ -2836,16 +4903,71 @@ const TUTORIALS: Tutorial[] = [
     coverArt: '🪜📐🏗️\n📏✏️🔢\n👷‍♂️✅🏠',
     bgFrom: 'from-indigo-800',
     bgTo: 'to-indigo-600',
-    materiel: ['Béton C25 ou bois massif', 'Ferraillage HA10 treillis', 'Coffrages bois', 'Équerre de menuisier', 'Règle de 2 m', 'Crayon charpentier', 'Fil à plomb', 'Niveau de précision'],
+    materiel: [
+      'Béton C25 ou bois massif',
+      'Ferraillage HA10 treillis',
+      'Coffrages bois',
+      'Équerre de menuisier',
+      'Règle de 2 m',
+      'Crayon charpentier',
+      'Fil à plomb',
+      'Niveau de précision',
+    ],
     epi: ['👷 Casque', '🥽 Lunettes', '🧤 Gants', '👟 Chaussures de sécurité'],
     steps: [
-      { num: 1, icons: '📏🔢', title: 'Mesurer la hauteur totale (H)', desc: 'Mesurez la hauteur exacte entre les deux niveaux finis (sol du bas au sol du haut, revêtements inclus). Cette mesure doit être précise au millimètre. C\'est la base de tout le calcul.', warning: 'Intégrez l\'épaisseur des revêtements de sol (carrelage, parquet) aux deux niveaux dans votre mesure.' },
-      { num: 2, icons: '🔢✏️', title: 'Déterminer le nombre de marches', desc: 'Divisez H par 17–20 cm (hauteur idéale de marche). Arrondissez pour obtenir un nombre entier n. Recalculez : h = H/n. Exemple : H=270 cm ÷ 15 marches = h=18 cm (conforme NF).', tip: 'Essayez différents nombres de marches pour trouver le meilleur compromis entre h (17–20 cm) et g (24–32 cm).' },
-      { num: 3, icons: '📐📏', title: 'Calculer le giron (formule de Blondel)', desc: 'Formule : 2h + g = 63 cm (±1 cm). g = 63 – (2 × h). Exemple : h=18 cm → g = 63 – 36 = 27 cm. Vérifiez : 2×18 + 27 = 63 ✅. Le giron doit être entre 24 et 32 cm (NF P01-013).', tip: 'La formule de Blondel assure un escalier confortable qui respecte la "foulée" humaine naturelle de 63 cm.' },
-      { num: 4, icons: '📏🏗️', title: 'Calculer la longueur et l\'angle', desc: 'Longueur horizontale = n × g. Angle = arctan(h/g). Exemple : 15 marches × 27 cm = 405 cm. Angle = arctan(18/27) = 33,7° (idéal : 25–35°). Vérifiez que vous avez la place !', warning: 'Un angle > 45° est un escalier "d\'échelle", dangereux et hors normes. Réduisez le nombre de marches.' },
-      { num: 5, icons: '🪵📐', title: 'Tracer le limon sur le coffrage', desc: 'Tracez les marches sur le limon avec l\'équerre. Vérifiez que toutes les contremarches sont identiques (tolérance ± 5 mm max entre deux marches consécutives selon NF). Incision au cutter avant découpe.', warning: 'La moindre irrégularité entre 2 marches provoque des trébuchements. La régularité est une exigence de sécurité.' },
-      { num: 6, icons: '🔩🏗️', title: 'Construction et coffrage béton', desc: 'Coffrez le dessous (paillasse). Ferraillez avec un treillis HA10 + barres longitudinales. Coulez le béton C25 par l\'arrière en le vibrochantant. Coffrages des contremarches par planches de 2 cm.', tip: 'Un escalier béton bien fait dure 80 ans. Soignez le ferraillage et le vibrage pour éviter les bulles d\'air.' },
-      { num: 7, icons: '⏳✅', title: 'Décoffrage et finitions', desc: 'Décoffrez après 5–7 jours. Rhabillage au mortier si nécessaire. Cure 14 jours. Pose du revêtement de marche (carrelage antidérapant R11 minimum) à 28 jours. Garde-corps obligatoire > 4 marches.', warning: 'Le garde-corps est OBLIGATOIRE dès 4 marches selon NF P01-012. Hauteur min 90 cm, espacements < 11 cm.' },
+      {
+        num: 1,
+        icons: '📏🔢',
+        title: 'Mesurer la hauteur totale (H)',
+        desc: "Mesurez la hauteur exacte entre les deux niveaux finis (sol du bas au sol du haut, revêtements inclus). Cette mesure doit être précise au millimètre. C'est la base de tout le calcul.",
+        warning:
+          "Intégrez l'épaisseur des revêtements de sol (carrelage, parquet) aux deux niveaux dans votre mesure.",
+      },
+      {
+        num: 2,
+        icons: '🔢✏️',
+        title: 'Déterminer le nombre de marches',
+        desc: 'Divisez H par 17–20 cm (hauteur idéale de marche). Arrondissez pour obtenir un nombre entier n. Recalculez : h = H/n. Exemple : H=270 cm ÷ 15 marches = h=18 cm (conforme NF).',
+        tip: 'Essayez différents nombres de marches pour trouver le meilleur compromis entre h (17–20 cm) et g (24–32 cm).',
+      },
+      {
+        num: 3,
+        icons: '📐📏',
+        title: 'Calculer le giron (formule de Blondel)',
+        desc: 'Formule : 2h + g = 63 cm (±1 cm). g = 63 – (2 × h). Exemple : h=18 cm → g = 63 – 36 = 27 cm. Vérifiez : 2×18 + 27 = 63 ✅. Le giron doit être entre 24 et 32 cm (NF P01-013).',
+        tip: 'La formule de Blondel assure un escalier confortable qui respecte la "foulée" humaine naturelle de 63 cm.',
+      },
+      {
+        num: 4,
+        icons: '📏🏗️',
+        title: "Calculer la longueur et l'angle",
+        desc: 'Longueur horizontale = n × g. Angle = arctan(h/g). Exemple : 15 marches × 27 cm = 405 cm. Angle = arctan(18/27) = 33,7° (idéal : 25–35°). Vérifiez que vous avez la place !',
+        warning:
+          'Un angle > 45° est un escalier "d\'échelle", dangereux et hors normes. Réduisez le nombre de marches.',
+      },
+      {
+        num: 5,
+        icons: '🪵📐',
+        title: 'Tracer le limon sur le coffrage',
+        desc: "Tracez les marches sur le limon avec l'équerre. Vérifiez que toutes les contremarches sont identiques (tolérance ± 5 mm max entre deux marches consécutives selon NF). Incision au cutter avant découpe.",
+        warning:
+          'La moindre irrégularité entre 2 marches provoque des trébuchements. La régularité est une exigence de sécurité.',
+      },
+      {
+        num: 6,
+        icons: '🔩🏗️',
+        title: 'Construction et coffrage béton',
+        desc: "Coffrez le dessous (paillasse). Ferraillez avec un treillis HA10 + barres longitudinales. Coulez le béton C25 par l'arrière en le vibrochantant. Coffrages des contremarches par planches de 2 cm.",
+        tip: "Un escalier béton bien fait dure 80 ans. Soignez le ferraillage et le vibrage pour éviter les bulles d'air.",
+      },
+      {
+        num: 7,
+        icons: '⏳✅',
+        title: 'Décoffrage et finitions',
+        desc: 'Décoffrez après 5–7 jours. Rhabillage au mortier si nécessaire. Cure 14 jours. Pose du revêtement de marche (carrelage antidérapant R11 minimum) à 28 jours. Garde-corps obligatoire > 4 marches.',
+        warning:
+          'Le garde-corps est OBLIGATOIRE dès 4 marches selon NF P01-012. Hauteur min 90 cm, espacements < 11 cm.',
+      },
     ],
   },
 ];
@@ -2853,9 +4975,13 @@ const TUTORIALS: Tutorial[] = [
 // ─── Tutorial Components ───────────────────────────────────────────────────────
 
 const DIFFICULTY_COLORS = {
-  'Débutant':     { bg: 'bg-green-500/20',  text: 'text-green-300',  border: 'border-green-500/30' },
-  'Intermédiaire':{ bg: 'bg-orange-500/20', text: 'text-orange-300', border: 'border-orange-500/30' },
-  'Expert':       { bg: 'bg-red-500/20',    text: 'text-red-300',    border: 'border-red-500/30' },
+  Débutant: { bg: 'bg-green-500/20', text: 'text-green-300', border: 'border-green-500/30' },
+  Intermédiaire: {
+    bg: 'bg-orange-500/20',
+    text: 'text-orange-300',
+    border: 'border-orange-500/30',
+  },
+  Expert: { bg: 'bg-red-500/20', text: 'text-red-300', border: 'border-red-500/30' },
 };
 
 function TutoCard({ tuto, onOpen }: { tuto: Tutorial; onOpen: (id: string) => void }) {
@@ -2866,7 +4992,9 @@ function TutoCard({ tuto, onOpen }: { tuto: Tutorial; onOpen: (id: string) => vo
       className="w-full text-left rounded-2xl overflow-hidden bg-slate-800 border border-slate-700 hover:border-orange-500/40 hover:scale-[1.02] transition-all active:scale-[0.99] shadow-lg"
     >
       {/* Cover Art */}
-      <div className={`bg-gradient-to-br ${tuto.bgFrom} ${tuto.bgTo} p-4 flex flex-col items-center justify-center min-h-[90px] relative`}>
+      <div
+        className={`bg-gradient-to-br ${tuto.bgFrom} ${tuto.bgTo} p-4 flex flex-col items-center justify-center min-h-[90px] relative`}
+      >
         <div className="text-3xl leading-tight text-center whitespace-pre font-mono tracking-wide opacity-90">
           {tuto.coverArt}
         </div>
@@ -2879,11 +5007,14 @@ function TutoCard({ tuto, onOpen }: { tuto: Tutorial; onOpen: (id: string) => vo
         </div>
         <p className="text-xs text-slate-400 mb-3 leading-relaxed">{tuto.subtitle}</p>
         <div className="flex flex-wrap gap-1.5">
-          <span className={`text-xs px-2 py-0.5 rounded-full border font-semibold ${diff.bg} ${diff.text} ${diff.border}`}>
+          <span
+            className={`text-xs px-2 py-0.5 rounded-full border font-semibold ${diff.bg} ${diff.text} ${diff.border}`}
+          >
             {tuto.difficulty}
           </span>
           <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-300 border border-slate-600 flex items-center gap-1">
-            <Clock className="w-3 h-3" />{tuto.duree}
+            <Clock className="w-3 h-3" />
+            {tuto.duree}
           </span>
         </div>
       </div>
@@ -2891,7 +5022,15 @@ function TutoCard({ tuto, onOpen }: { tuto: Tutorial; onOpen: (id: string) => vo
   );
 }
 
-function TutoDetail({ tuto, onBack, onCalc }: { tuto: Tutorial; onBack: () => void; onCalc: (id: CalculatorId) => void }) {
+function TutoDetail({
+  tuto,
+  onBack,
+  onCalc,
+}: {
+  tuto: Tutorial;
+  onBack: () => void;
+  onCalc: (id: CalculatorId) => void;
+}) {
   const [openStep, setOpenStep] = useState<number | null>(null);
   const diff = DIFFICULTY_COLORS[tuto.difficulty];
 
@@ -2904,11 +5043,14 @@ function TutoDetail({ tuto, onBack, onCalc }: { tuto: Tutorial; onBack: () => vo
           <h2 className="text-xl font-black text-white drop-shadow-md">{tuto.title}</h2>
           <p className="text-sm text-white/80 mt-1">{tuto.subtitle}</p>
           <div className="flex flex-wrap justify-center gap-2 mt-3">
-            <span className={`text-xs px-3 py-1 rounded-full border font-semibold ${diff.bg} ${diff.text} ${diff.border} bg-opacity-80 backdrop-blur`}>
+            <span
+              className={`text-xs px-3 py-1 rounded-full border font-semibold ${diff.bg} ${diff.text} ${diff.border} bg-opacity-80 backdrop-blur`}
+            >
               {tuto.difficulty}
             </span>
             <span className="text-xs px-3 py-1 rounded-full bg-black/30 text-white/90 flex items-center gap-1">
-              <Clock className="w-3 h-3" />{tuto.duree}
+              <Clock className="w-3 h-3" />
+              {tuto.duree}
             </span>
           </div>
         </div>
@@ -2921,7 +5063,12 @@ function TutoDetail({ tuto, onBack, onCalc }: { tuto: Tutorial; onBack: () => vo
         </h3>
         <div className="flex flex-wrap gap-2">
           {tuto.materiel.map((m) => (
-            <span key={m} className="text-xs bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-600">{m}</span>
+            <span
+              key={m}
+              className="text-xs bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-600"
+            >
+              {m}
+            </span>
           ))}
         </div>
       </div>
@@ -2933,7 +5080,12 @@ function TutoDetail({ tuto, onBack, onCalc }: { tuto: Tutorial; onBack: () => vo
         </h3>
         <div className="flex flex-wrap gap-2">
           {tuto.epi.map((e) => (
-            <span key={e} className="text-xs bg-red-900/30 text-red-200 px-3 py-1.5 rounded-xl border border-red-500/20">{e}</span>
+            <span
+              key={e}
+              className="text-xs bg-red-900/30 text-red-200 px-3 py-1.5 rounded-xl border border-red-500/20"
+            >
+              {e}
+            </span>
           ))}
         </div>
       </div>
@@ -2961,7 +5113,11 @@ function TutoDetail({ tuto, onBack, onCalc }: { tuto: Tutorial; onBack: () => vo
                   </div>
                 </div>
                 <span className="text-slate-400 shrink-0">
-                  {openStep === step.num ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  {openStep === step.num ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
                 </span>
               </button>
               {openStep === step.num && (
@@ -2970,13 +5126,19 @@ function TutoDetail({ tuto, onBack, onCalc }: { tuto: Tutorial; onBack: () => vo
                   {step.tip && (
                     <div className="flex gap-2 bg-indigo-900/30 border border-indigo-500/30 rounded-xl p-3">
                       <Zap className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-                      <p className="text-xs text-indigo-200 leading-relaxed"><span className="font-semibold">Astuce : </span>{step.tip}</p>
+                      <p className="text-xs text-indigo-200 leading-relaxed">
+                        <span className="font-semibold">Astuce : </span>
+                        {step.tip}
+                      </p>
                     </div>
                   )}
                   {step.warning && (
                     <div className="flex gap-2 bg-red-900/30 border border-red-500/30 rounded-xl p-3">
                       <AlertTriangle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
-                      <p className="text-xs text-red-200 leading-relaxed"><span className="font-semibold">Attention : </span>{step.warning}</p>
+                      <p className="text-xs text-red-200 leading-relaxed">
+                        <span className="font-semibold">Attention : </span>
+                        {step.warning}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -2997,7 +5159,10 @@ function TutoDetail({ tuto, onBack, onCalc }: { tuto: Tutorial; onBack: () => vo
       </button>
 
       {/* Disclaimer */}
-      <p className="text-center text-xs text-slate-500">Tutoriel à titre informatif. Consultez un professionnel pour tous travaux structurels ou réglementés.</p>
+      <p className="text-center text-xs text-slate-500">
+        Tutoriel à titre informatif. Consultez un professionnel pour tous travaux structurels ou
+        réglementés.
+      </p>
     </div>
   );
 }
@@ -3010,13 +5175,19 @@ function TutorielsSection({ onGoCalc }: { onGoCalc: (calcId: CalculatorId) => vo
   if (openTuto) {
     return (
       <div className="mt-6 space-y-4">
-        <button onClick={() => setOpenTutoId(null)} className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors">
+        <button
+          onClick={() => setOpenTutoId(null)}
+          className="flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+        >
           <ChevronLeft className="w-4 h-4" /> Retour aux tutoriels
         </button>
         <TutoDetail
           tuto={openTuto}
           onBack={() => setOpenTutoId(null)}
-          onCalc={(calcId) => { setOpenTutoId(null); onGoCalc(calcId); }}
+          onCalc={(calcId) => {
+            setOpenTutoId(null);
+            onGoCalc(calcId);
+          }}
         />
       </div>
     );
@@ -3027,9 +5198,13 @@ function TutorielsSection({ onGoCalc }: { onGoCalc: (calcId: CalculatorId) => vo
       <div className="flex items-center gap-2 mb-4">
         <BookOpen className="w-5 h-5 text-indigo-400" />
         <h2 className="text-lg font-black text-white">Tutoriels illustrés</h2>
-        <span className="text-xs bg-indigo-900/50 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">{TUTORIALS.length} guides</span>
+        <span className="text-xs bg-indigo-900/50 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">
+          {TUTORIALS.length} guides
+        </span>
       </div>
-      <p className="text-xs text-slate-400 mb-4">Guides pas à pas, illustrés, avec matériaux et conseils de sécurité.</p>
+      <p className="text-xs text-slate-400 mb-4">
+        Guides pas à pas, illustrés, avec matériaux et conseils de sécurité.
+      </p>
       <div className="grid grid-cols-2 gap-3">
         {TUTORIALS.map((tuto) => (
           <TutoCard key={tuto.id} tuto={tuto} onOpen={setOpenTutoId} />
@@ -3045,16 +5220,41 @@ function SuggestionsPanel() {
   return (
     <div className="mt-8 rounded-2xl bg-gradient-to-br from-indigo-900/40 to-slate-800 border border-indigo-500/30 p-5">
       <h2 className="font-black text-white mb-4 flex items-center gap-2">
-        <Star className="w-5 h-5 text-indigo-400" />💡 Nos suggestions pour améliorer votre projet
+        <Star className="w-5 h-5 text-indigo-400" />
+        💡 Nos suggestions pour améliorer votre projet
       </h2>
       <div className="space-y-3 text-sm">
         {[
-          { icon: '📋', title: 'Préparez votre liste avant d\'aller au magasin', text: 'Utilisez le bouton "Copier la liste" après chaque calcul pour ne rien oublier.' },
-          { icon: '📞', title: 'Appelez le magasin avant de vous déplacer', text: 'Les stocks peuvent varier. Un appel rapide vous évitera un déplacement inutile.' },
-          { icon: '🚚', title: 'Pensez à la livraison pour les gros chantiers', text: 'Point P et Leroy Merlin proposent la livraison sur chantier. Renseignez-vous au magasin.' },
-          { icon: '💼', title: 'Compte pro pour les professionnels', text: 'Point P et Batimat OI offrent des tarifs professionnels réduits avec carte client pro.' },
-          { icon: '📦', title: 'Achetez par palette pour économiser', text: 'Les parpaings et le ciment achetés en palette sont souvent moins chers. Vérifiez les offres vrac.' },
-          { icon: '🌡️', title: 'Attention aux conditions climatiques', text: 'Évitez de couler du béton ou poser du carrelage par temps de pluie ou chaleur extrême (>35°C).' },
+          {
+            icon: '📋',
+            title: "Préparez votre liste avant d'aller au magasin",
+            text: 'Utilisez le bouton "Copier la liste" après chaque calcul pour ne rien oublier.',
+          },
+          {
+            icon: '📞',
+            title: 'Appelez le magasin avant de vous déplacer',
+            text: 'Les stocks peuvent varier. Un appel rapide vous évitera un déplacement inutile.',
+          },
+          {
+            icon: '🚚',
+            title: 'Pensez à la livraison pour les gros chantiers',
+            text: 'Point P et Leroy Merlin proposent la livraison sur chantier. Renseignez-vous au magasin.',
+          },
+          {
+            icon: '💼',
+            title: 'Compte pro pour les professionnels',
+            text: 'Point P et Batimat OI offrent des tarifs professionnels réduits avec carte client pro.',
+          },
+          {
+            icon: '📦',
+            title: 'Achetez par palette pour économiser',
+            text: 'Les parpaings et le ciment achetés en palette sont souvent moins chers. Vérifiez les offres vrac.',
+          },
+          {
+            icon: '🌡️',
+            title: 'Attention aux conditions climatiques',
+            text: 'Évitez de couler du béton ou poser du carrelage par temps de pluie ou chaleur extrême (>35°C).',
+          },
         ].map((item) => (
           <div key={item.title} className="flex gap-3 bg-slate-900/40 rounded-xl p-3">
             <span className="text-2xl shrink-0">{item.icon}</span>
@@ -3071,17 +5271,24 @@ function SuggestionsPanel() {
 
 // ─── User Suggestion Form ─────────────────────────────────────────────────────
 
-function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCode | null; currentCalc: CalculatorId | null }) {
-  const [open, setOpen]         = useState(false);
+function UserSuggestionForm({
+  territory,
+  currentCalc,
+}: {
+  territory: TerritoryCode | null;
+  currentCalc: CalculatorId | null;
+}) {
+  const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<SuggestionCategory>('nouveau_calculateur');
-  const [message, setMessage]   = useState('');
-  const [status, setStatus]     = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
   // session id (stable per tab)
-  const sessionId = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-    ? crypto.randomUUID()
-    : `sess-${Date.now()}`;
+  const sessionId =
+    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : `sess-${Date.now()}`;
 
   const canSubmit = message.trim().length >= 10 && status !== 'sending';
 
@@ -3098,7 +5305,10 @@ function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCo
     if (result.success) {
       setStatus('success');
       setMessage('');
-      setTimeout(() => { setStatus('idle'); setOpen(false); }, 3000);
+      setTimeout(() => {
+        setStatus('idle');
+        setOpen(false);
+      }, 3000);
     } else {
       setStatus('error');
       setErrorMsg(result.error ?? 'Erreur inconnue');
@@ -3114,38 +5324,48 @@ function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCo
         <MessageSquarePlus className="w-5 h-5 text-indigo-400 shrink-0" />
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-white text-sm">💡 Proposer une suggestion</p>
-          <p className="text-xs text-slate-400 mt-0.5">Nouveau calculateur, matériau, magasin, amélioration…</p>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Nouveau calculateur, matériau, magasin, amélioration…
+          </p>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" /> : <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />}
+        {open ? (
+          <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
+        )}
       </button>
 
       {open && (
         <div className="px-4 pb-4 space-y-3 border-t border-indigo-500/20 pt-3">
-
           {/* Category selector */}
           <div>
             <p className="text-xs text-slate-400 mb-2">Catégorie de suggestion</p>
             <div className="grid grid-cols-1 gap-1.5">
-              {(Object.entries(SUGGESTION_CATEGORY_LABELS) as [SuggestionCategory, string][]).map(([key, label]) => (
-                <button
-                  key={key}
-                  onClick={() => setCategory(key)}
-                  className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
-                    category === key
-                      ? 'bg-indigo-700/40 border-indigo-500/60 text-white'
-                      : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:border-slate-600'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
+              {(Object.entries(SUGGESTION_CATEGORY_LABELS) as [SuggestionCategory, string][]).map(
+                ([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => setCategory(key)}
+                    className={`text-left px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
+                      category === key
+                        ? 'bg-indigo-700/40 border-indigo-500/60 text-white'
+                        : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:border-slate-600'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                )
+              )}
             </div>
           </div>
 
           {/* Message textarea */}
           <div>
             <label htmlFor="suggestion-message" className="block text-xs text-slate-400 mb-1.5">
-              Votre suggestion <span className="text-slate-500">({message.trim().length}/500 caractères, min 10)</span>
+              Votre suggestion{' '}
+              <span className="text-slate-500">
+                ({message.trim().length}/500 caractères, min 10)
+              </span>
             </label>
             <textarea
               id="suggestion-message"
@@ -3156,10 +5376,10 @@ function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCo
                 category === 'nouveau_calculateur'
                   ? 'Ex : Calculateur de toiture en bardeau, ou calculateur pour piscine…'
                   : category === 'materiau'
-                  ? 'Ex : Ajouter le parpaing 25×20×50 avec prix chez Point P Martinique…'
-                  : category === 'magasin'
-                  ? 'Ex : Ajouter Brico Maho à Guadeloupe, tél. 0590 XX XX XX…'
-                  : 'Décrivez votre suggestion en détail (minimum 10 caractères)…'
+                    ? 'Ex : Ajouter le parpaing 25×20×50 avec prix chez Point P Martinique…'
+                    : category === 'magasin'
+                      ? 'Ex : Ajouter Brico Maho à Guadeloupe, tél. 0590 XX XX XX…'
+                      : 'Décrivez votre suggestion en détail (minimum 10 caractères)…'
               }
               className="w-full rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none resize-none"
             />
@@ -3172,7 +5392,9 @@ function UserSuggestionForm({ territory, currentCalc }: { territory: TerritoryCo
               <span>
                 Contexte envoyé automatiquement :
                 {territory && <span className="text-slate-300 ml-1">territoire {territory}</span>}
-                {currentCalc && <span className="text-slate-300 ml-1">· calculateur {currentCalc}</span>}
+                {currentCalc && (
+                  <span className="text-slate-300 ml-1">· calculateur {currentCalc}</span>
+                )}
               </span>
             </div>
           )}
@@ -3218,14 +5440,18 @@ const TERRITORY_STORAGE_KEY = 'akp:batiment:territory';
 
 export default function CalculateurBatiment() {
   const navigate = useNavigate();
-  const [trialState, setTrialState]         = useState<BatimentTrialState>(() => getBatimentTrialState());
-  const [showPaywall, setShowPaywall]        = useState(false);
-  const [territory, setTerritory]           = useState<TerritoryCode | null>(() => {
-    try { return (localStorage.getItem(TERRITORY_STORAGE_KEY) as TerritoryCode) ?? null; } catch { return null; }
+  const [trialState, setTrialState] = useState<BatimentTrialState>(() => getBatimentTrialState());
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [territory, setTerritory] = useState<TerritoryCode | null>(() => {
+    try {
+      return (localStorage.getItem(TERRITORY_STORAGE_KEY) as TerritoryCode) ?? null;
+    } catch {
+      return null;
+    }
   });
   const [selectedCategory, setSelectedCategory] = useState<CategoryId | null>(null);
-  const [selectedCalc, setSelectedCalc]     = useState<CalculatorId | null>(null);
-  const [showTutos, setShowTutos]           = useState(false);
+  const [selectedCalc, setSelectedCalc] = useState<CalculatorId | null>(null);
+  const [showTutos, setShowTutos] = useState(false);
 
   useEffect(() => {
     const state = getBatimentTrialState();
@@ -3234,7 +5460,11 @@ export default function CalculateurBatiment() {
   }, []);
 
   useEffect(() => {
-    try { if (territory) localStorage.setItem(TERRITORY_STORAGE_KEY, territory); } catch { /* */ }
+    try {
+      if (territory) localStorage.setItem(TERRITORY_STORAGE_KEY, territory);
+    } catch {
+      /* */
+    }
   }, [territory]);
 
   const handleStartTrial = () => {
@@ -3253,31 +5483,48 @@ export default function CalculateurBatiment() {
     return allowed;
   }, []);
 
-  const handleSave = useCallback((data: BatimentSaveData): void => {
-    const state = getBatimentTrialState();
-    void saveBatimentCalculation({
-      ...data,
-      territory: territory ?? null,
-      trialDay: state.trialDay ?? null,
-    });
-  }, [territory]);
+  const handleSave = useCallback(
+    (data: BatimentSaveData): void => {
+      const state = getBatimentTrialState();
+      void saveBatimentCalculation({
+        ...data,
+        territory: territory ?? null,
+        trialDay: state.trialDay ?? null,
+      });
+    },
+    [territory]
+  );
 
   const goBack = () => {
     if (selectedCalc) setSelectedCalc(null);
     else setSelectedCategory(null);
   };
 
-  const category   = selectedCategory ? CATEGORIES.find((c) => c.id === selectedCategory) : null;
-  const calcMeta   = selectedCalc ? CALC_META[selectedCalc] : null;
+  const category = selectedCategory ? CATEGORIES.find((c) => c.id === selectedCategory) : null;
+  const calcMeta = selectedCalc ? CALC_META[selectedCalc] : null;
 
   return (
     <>
       <Helmet>
         <title>Calculateur du Bâtiment — A KI PRI SA YÉ</title>
-        <meta name="description" content="20 calculateurs BTP tous corps de métier : maçonnerie, électricité, plomberie, charpente, plâtrerie, parquet, menuiserie. Trouvez où acheter vos matériaux en DOM-TOM." />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment" />
+        <meta
+          name="description"
+          content="20 calculateurs BTP tous corps de métier : maçonnerie, électricité, plomberie, charpente, plâtrerie, parquet, menuiserie. Trouvez où acheter vos matériaux en DOM-TOM."
+        />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment"
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/calculateur-batiment"
+        />
       </Helmet>
 
       <div className="min-h-screen bg-slate-950 text-white">
@@ -3290,11 +5537,14 @@ export default function CalculateurBatiment() {
         )}
 
         <div className="max-w-2xl mx-auto px-4 pb-16 pt-6">
-
           {/* ── Header ── */}
           <div className="flex items-center gap-3 mb-5">
             {(selectedCategory || selectedCalc) && (
-              <button onClick={goBack} className="rounded-full p-2 bg-slate-800 hover:bg-slate-700 transition-colors shrink-0" aria-label="Retour">
+              <button
+                onClick={goBack}
+                className="rounded-full p-2 bg-slate-800 hover:bg-slate-700 transition-colors shrink-0"
+                aria-label="Retour"
+              >
                 <ChevronLeft className="w-5 h-5 text-slate-300" />
               </button>
             )}
@@ -3314,7 +5564,9 @@ export default function CalculateurBatiment() {
           {/* ── Territory Selector ── */}
           {!selectedCalc && (
             <div className="mb-4">
-              <p className="text-xs text-slate-400 mb-2">Votre territoire (pour les prix en magasin)</p>
+              <p className="text-xs text-slate-400 mb-2">
+                Votre territoire (pour les prix en magasin)
+              </p>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {TERRITORY_OPTIONS.map((t) => (
                   <button
@@ -3342,7 +5594,12 @@ export default function CalculateurBatiment() {
             <div className="rounded-xl bg-red-900/20 border border-red-500/40 p-4 mb-4 text-center">
               <Lock className="w-5 h-5 mx-auto mb-1 text-red-400" />
               <p className="text-sm text-red-300 font-semibold">Période d'essai terminée</p>
-              <Link to="/pricing" className="text-xs text-indigo-400 underline hover:text-indigo-300">S'abonner pour continuer →</Link>
+              <Link
+                to="/pricing"
+                className="text-xs text-indigo-400 underline hover:text-indigo-300"
+              >
+                S'abonner pour continuer →
+              </Link>
             </div>
           )}
 
@@ -3350,16 +5607,26 @@ export default function CalculateurBatiment() {
           {!selectedCategory && !selectedCalc && (
             <div className="space-y-4">
               {CATEGORIES.map((cat) => {
-                const Icon = cat.id === 'gros-oeuvre' ? HardHat
-                  : cat.id === 'finitions' ? Home
-                  : cat.id === 'exterieur' ? TreePine
-                  : cat.id === 'electricite-plomberie' ? Zap
-                  : cat.id === 'second-oeuvre' ? Hammer
-                  : cat.id === 'plomberie-cvc' ? Droplet
-                  : cat.id === 'carrelage-revetements' ? Layers
-                  : cat.id === 'menuiserie-cloisons' ? Ruler
-                  : cat.id === 'maconnerie-specialisee' ? HardHat
-                  : Wrench;
+                const Icon =
+                  cat.id === 'gros-oeuvre'
+                    ? HardHat
+                    : cat.id === 'finitions'
+                      ? Home
+                      : cat.id === 'exterieur'
+                        ? TreePine
+                        : cat.id === 'electricite-plomberie'
+                          ? Zap
+                          : cat.id === 'second-oeuvre'
+                            ? Hammer
+                            : cat.id === 'plomberie-cvc'
+                              ? Droplet
+                              : cat.id === 'carrelage-revetements'
+                                ? Layers
+                                : cat.id === 'menuiserie-cloisons'
+                                  ? Ruler
+                                  : cat.id === 'maconnerie-specialisee'
+                                    ? HardHat
+                                    : Wrench;
                 return (
                   <button
                     key={cat.id}
@@ -3374,21 +5641,34 @@ export default function CalculateurBatiment() {
                         alt=""
                         className="absolute inset-0 w-full h-full object-cover"
                         loading="lazy"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = 'none';
+                        }}
                       />
                       {/* Gradient overlay */}
-                      <div className={`absolute inset-0 bg-gradient-to-br ${cat.bgFrom} ${cat.bgTo} opacity-80`} />
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-br ${cat.bgFrom} ${cat.bgTo} opacity-80`}
+                      />
                       {/* Content */}
                       <div className="relative w-full p-5 flex items-end gap-4">
                         <div className="absolute top-4 right-4 flex gap-1 flex-wrap justify-end">
                           {cat.calcs.slice(0, 4).map((c) => (
-                            <span key={c} className="text-xs bg-black/30 text-white/90 rounded-full px-2 py-0.5 backdrop-blur-sm">{CALC_META[c].emoji}</span>
+                            <span
+                              key={c}
+                              className="text-xs bg-black/30 text-white/90 rounded-full px-2 py-0.5 backdrop-blur-sm"
+                            >
+                              {CALC_META[c].emoji}
+                            </span>
                           ))}
                         </div>
                         <Icon className="w-12 h-12 text-white/80 mb-1 shrink-0 drop-shadow-lg" />
                         <div>
-                          <span className="text-xl font-black text-white drop-shadow-md">{cat.label}</span>
-                          <p className="text-xs text-white/75 mt-0.5">{cat.calcs.length} calculateurs</p>
+                          <span className="text-xl font-black text-white drop-shadow-md">
+                            {cat.label}
+                          </span>
+                          <p className="text-xs text-white/75 mt-0.5">
+                            {cat.calcs.length} calculateurs
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -3406,9 +5686,15 @@ export default function CalculateurBatiment() {
                 <BookOpen className="w-6 h-6 text-indigo-400 shrink-0" />
                 <div className="flex-1 text-left">
                   <p className="font-bold text-white text-sm">📚 Tutoriels illustrés</p>
-                  <p className="text-xs text-slate-400 mt-0.5">{TUTORIALS.length} guides pas à pas — matériaux, EPI, astuces</p>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    {TUTORIALS.length} guides pas à pas — matériaux, EPI, astuces
+                  </p>
                 </div>
-                {showTutos ? <ChevronUp className="w-5 h-5 text-slate-400 shrink-0" /> : <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" />}
+                {showTutos ? (
+                  <ChevronUp className="w-5 h-5 text-slate-400 shrink-0" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" />
+                )}
               </button>
 
               {/* ── Tutoriels section ── */}
@@ -3417,7 +5703,10 @@ export default function CalculateurBatiment() {
                   onGoCalc={(calcId) => {
                     // Find which category contains this calcId
                     const cat = CATEGORIES.find((c) => c.calcs.includes(calcId));
-                    if (cat) { setSelectedCategory(cat.id); setSelectedCalc(calcId); }
+                    if (cat) {
+                      setSelectedCategory(cat.id);
+                      setSelectedCalc(calcId);
+                    }
                     setShowTutos(false);
                   }}
                 />
@@ -3431,17 +5720,24 @@ export default function CalculateurBatiment() {
               {category.calcs.map((calcId) => {
                 const meta = CALC_META[calcId];
                 return (
-                  <button key={calcId} onClick={() => setSelectedCalc(calcId)}
-                    className="w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-orange-500/40 p-4 text-left transition-all flex items-center gap-4">
+                  <button
+                    key={calcId}
+                    onClick={() => setSelectedCalc(calcId)}
+                    className="w-full rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-orange-500/40 p-4 text-left transition-all flex items-center gap-4"
+                  >
                     {/* Photo thumbnail with emoji fallback */}
                     <div className="w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-slate-700 relative flex items-center justify-center text-3xl">
-                      <span className="absolute inset-0 flex items-center justify-center select-none">{meta.emoji}</span>
+                      <span className="absolute inset-0 flex items-center justify-center select-none">
+                        {meta.emoji}
+                      </span>
                       <img
                         src={`https://images.unsplash.com/${meta.image}?auto=format&fm=webp&fit=crop&w=112&h=112&q=75`}
                         alt=""
                         className="absolute inset-0 w-full h-full object-cover"
                         loading="lazy"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = 'none';
+                        }}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -3450,7 +5746,8 @@ export default function CalculateurBatiment() {
                     </div>
                     {TUTORIALS.some((t) => t.calcId === calcId) && (
                       <span className="shrink-0 text-xs bg-indigo-900/50 text-indigo-300 border border-indigo-500/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                        <BookOpen className="w-3 h-3" />tuto
+                        <BookOpen className="w-3 h-3" />
+                        tuto
                       </span>
                     )}
                   </button>
@@ -3463,27 +5760,69 @@ export default function CalculateurBatiment() {
           {selectedCalc && (
             <>
               <div className="bg-slate-900 rounded-2xl border border-slate-700 p-4">
-                {selectedCalc === 'parpaing'        && <ParpaingCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'dalle-beton'     && <DalleBetonCalc    onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'fondations'      && <FondationsCalc    onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'chape'           && <ChapeCalc         onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'carrelage'       && <CarrelageCalc     onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'peinture'        && <PeintureCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'enduit'          && <EnduitCalc        onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'toles'           && <TolesCalc         onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'terrassement'    && <TerrassementCalc  onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'cloture'         && <ClotureCalc       onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'piscine'         && <PiscineCalc       onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'beton-courant'   && <BetonCourantCalc  onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'escalier'        && <EscalierCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'electricite'     && <ElectriciteCalc   onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'plomberie'       && <PlomberieCalc     onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'isolation'       && <IsolationCalc     onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'charpente'       && <CharpentCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'platrerie'       && <PlatrierieCalc    onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'parquet'         && <ParquetCalc       onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'gouttiere'       && <GoutiereCalc      onCalc={handleCalc} territory={territory} onSave={handleSave} />}
-                {selectedCalc === 'menuiserie'      && <MenuiserieCalc    onCalc={handleCalc} territory={territory} onSave={handleSave} />}
+                {selectedCalc === 'parpaing' && (
+                  <ParpaingCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'dalle-beton' && (
+                  <DalleBetonCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'fondations' && (
+                  <FondationsCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'chape' && (
+                  <ChapeCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'carrelage' && (
+                  <CarrelageCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'peinture' && (
+                  <PeintureCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'enduit' && (
+                  <EnduitCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'toles' && (
+                  <TolesCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'terrassement' && (
+                  <TerrassementCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'cloture' && (
+                  <ClotureCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'piscine' && (
+                  <PiscineCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'beton-courant' && (
+                  <BetonCourantCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'escalier' && (
+                  <EscalierCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'electricite' && (
+                  <ElectriciteCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'plomberie' && (
+                  <PlomberieCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'isolation' && (
+                  <IsolationCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'charpente' && (
+                  <CharpentCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'platrerie' && (
+                  <PlatrierieCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'parquet' && (
+                  <ParquetCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'gouttiere' && (
+                  <GoutiereCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
+                {selectedCalc === 'menuiserie' && (
+                  <MenuiserieCalc onCalc={handleCalc} territory={territory} onSave={handleSave} />
+                )}
               </div>
               {/* Disclaimer */}
               <p className="mt-3 text-center text-xs text-slate-600 bg-orange-900/15 border border-orange-900/30 rounded-xl px-4 py-2">
@@ -3492,7 +5831,11 @@ export default function CalculateurBatiment() {
               {/* Tuto shortcut for current calc */}
               {selectedCalc && TUTORIALS.find((t) => t.calcId === selectedCalc) && (
                 <button
-                  onClick={() => { setSelectedCalc(null); setSelectedCategory(null); setShowTutos(true); }}
+                  onClick={() => {
+                    setSelectedCalc(null);
+                    setSelectedCategory(null);
+                    setShowTutos(true);
+                  }}
                   className="mt-2 w-full rounded-xl border border-indigo-500/30 bg-indigo-900/10 hover:bg-indigo-900/20 px-4 py-3 flex items-center gap-2 text-sm text-indigo-300 transition-colors"
                 >
                   <BookOpen className="w-4 h-4 shrink-0" />

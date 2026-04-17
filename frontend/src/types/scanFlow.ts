@@ -1,6 +1,6 @@
 /**
  * Scan Flow Types - v1.0.0
- * 
+ *
  * Types pour le flux unifié de scan et comparaison
  * Conforme aux principes institutionnels du projet A KI PRI SA YÉ
  */

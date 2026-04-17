@@ -15,34 +15,54 @@ vi.mock('../utils/conversionTracker', () => ({
   getCROStats: vi.fn(() => ({
     totalClicks: 40,
     conversionRate: 0.08,
-    topPages:     [{ url: '/landing', clicks: 20 }, { url: '/comparateur', clicks: 20 }],
+    topPages: [
+      { url: '/landing', clicks: 20 },
+      { url: '/comparateur', clicks: 20 },
+    ],
     topRetailers: [
-      { retailer: 'Carrefour',         clicks: 15 },
-      { retailer: 'alerte-whatsapp',   clicks: 5  },
+      { retailer: 'Carrefour', clicks: 15 },
+      { retailer: 'alerte-whatsapp', clicks: 5 },
     ],
     byVariant: { A: 20, B: 12, C: 8 },
   })),
   trackConversionEvent: vi.fn(),
-  trackPageView:        vi.fn(),
-  getVariantForPage:    vi.fn(() => 'A'),
+  trackPageView: vi.fn(),
+  getVariantForPage: vi.fn(() => 'A'),
 }));
 
 vi.mock('../utils/priceClickTracker', () => ({
   getConversionStats: vi.fn(() => ({
-    totalViews:       600,
-    totalClicks:      42,
-    estimatedRevenue: 12.60,
-    ctr:              0.07,
-    topRetailers:     [{ retailer: 'Carrefour', clicks: 30 }, { retailer: 'E.Leclerc', clicks: 12 }],
-    topProducts:      [{ barcode: '5000112637922', name: 'Coca-Cola', views: 200, ctr: 0.10 }],
+    totalViews: 600,
+    totalClicks: 42,
+    estimatedRevenue: 12.6,
+    ctr: 0.07,
+    topRetailers: [
+      { retailer: 'Carrefour', clicks: 30 },
+      { retailer: 'E.Leclerc', clicks: 12 },
+    ],
+    topProducts: [{ barcode: '5000112637922', name: 'Coca-Cola', views: 200, ctr: 0.1 }],
   })),
   trackRetailerClick: vi.fn(),
 }));
 
 vi.mock('../utils/statsTracker', () => ({
   getSEOPageStats: vi.fn(() => [
-    { slug: 'coca-cola', pageType: 'product', territory: 'GP', views: 300, lastViewedAt: Date.now(), ctr: 0 },
-    { slug: 'lait',      pageType: 'product', territory: 'MQ', views: 150, lastViewedAt: Date.now(), ctr: 0 },
+    {
+      slug: 'coca-cola',
+      pageType: 'product',
+      territory: 'GP',
+      views: 300,
+      lastViewedAt: Date.now(),
+      ctr: 0,
+    },
+    {
+      slug: 'lait',
+      pageType: 'product',
+      territory: 'MQ',
+      views: 150,
+      lastViewedAt: Date.now(),
+      ctr: 0,
+    },
   ]),
 }));
 
@@ -86,7 +106,7 @@ describe('analyticsEngine — getAnalyticsSnapshot', () => {
 
   it('daily revenue is revenue / 30', () => {
     const snap = getAnalyticsSnapshot();
-    expect(snap.dailyRevenue).toBeCloseTo(12.60 / 30, 2);
+    expect(snap.dailyRevenue).toBeCloseTo(12.6 / 30, 2);
   });
 
   it('ctr = clicks / visits', () => {
@@ -141,7 +161,7 @@ describe('analyticsEngine — formatCtr', () => {
 
 describe('analyticsEngine — ctrStatus', () => {
   it('returns green for CTR >= 10%', () => {
-    expect(ctrStatus(0.10)).toBe('green');
+    expect(ctrStatus(0.1)).toBe('green');
     expect(ctrStatus(0.25)).toBe('green');
   });
   it('returns amber for 5% <= CTR < 10%', () => {

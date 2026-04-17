@@ -7,7 +7,17 @@
  */
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Zap, Key, Code2, Shield, CheckCircle, Copy, ChevronRight, ExternalLink, ShoppingBag } from 'lucide-react';
+import {
+  Zap,
+  Key,
+  Code2,
+  Shield,
+  CheckCircle,
+  Copy,
+  ChevronRight,
+  ExternalLink,
+  ShoppingBag,
+} from 'lucide-react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { HeroImage } from '../components/ui/HeroImage';
@@ -31,7 +41,13 @@ const API_TIERS = [
     dailyLimit: '10 000 req/jour',
     costPerRequest: '0,03€',
     badge: '⭐ Populaire',
-    features: ['Tous les endpoints', 'Historique 12 mois', 'Webhooks', 'Support prioritaire', 'Analytics avancés'],
+    features: [
+      'Tous les endpoints',
+      'Historique 12 mois',
+      'Webhooks',
+      'Support prioritaire',
+      'Analytics avancés',
+    ],
     highlighted: true,
   },
   {
@@ -41,7 +57,13 @@ const API_TIERS = [
     dailyLimit: 'Illimité',
     costPerRequest: '0,01€',
     badge: '',
-    features: ['SLA 99,9%', 'IP whitelist', 'Support dédié', 'Intégrations custom', 'Formation incluse'],
+    features: [
+      'SLA 99,9%',
+      'IP whitelist',
+      'Support dédié',
+      'Intégrations custom',
+      'Formation incluse',
+    ],
     highlighted: false,
   },
 ];
@@ -83,8 +105,18 @@ const ENDPOINTS = [
   { method: 'GET', path: '/v1/prices', desc: 'Prix par territoire et catégorie', cost: '0,05€' },
   { method: 'GET', path: '/v1/prices/{ean}', desc: "Prix d'un produit par EAN", cost: '0,05€' },
   { method: 'GET', path: '/v1/products/{ean}', desc: 'Fiche produit complète', cost: '0,05€' },
-  { method: 'GET', path: '/v1/territories', desc: 'Liste des territoires DOM-COM', cost: 'Gratuit' },
-  { method: 'POST', path: '/v1/observations', desc: 'Soumettre une observation citoyenne', cost: '0,02€' },
+  {
+    method: 'GET',
+    path: '/v1/territories',
+    desc: 'Liste des territoires DOM-COM',
+    cost: 'Gratuit',
+  },
+  {
+    method: 'POST',
+    path: '/v1/observations',
+    desc: 'Soumettre une observation citoyenne',
+    cost: '0,02€',
+  },
   { method: 'GET', path: '/v1/prices/predict', desc: 'Prédiction de prix (ML)', cost: '0,15€' },
 ];
 
@@ -138,7 +170,10 @@ export default function MarketplacePortal() {
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <Helmet>
         <title>API Marketplace — A KI PRI SA YÉ</title>
-        <meta name="description" content="Accédez à l'API de données de prix DOM-TOM. Tiers Starter, Pro, Enterprise." />
+        <meta
+          name="description"
+          content="Accédez à l'API de données de prix DOM-TOM. Tiers Starter, Pro, Enterprise."
+        />
       </Helmet>
 
       {/* Hero */}
@@ -165,7 +200,7 @@ export default function MarketplacePortal() {
       </div>
 
       {/* Pricing Tiers */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"> 
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {API_TIERS.map((t) => (
           <button
             key={t.tier}
@@ -174,7 +209,7 @@ export default function MarketplacePortal() {
               t.highlighted
                 ? 'bg-emerald-900/20 border-emerald-500/40'
                 : 'bg-white/5 border-white/10 hover:border-white/20'
-            } ${selectedTier === t.tier ? 'ring-2 ring-emerald-500' : ''}`} 
+            } ${selectedTier === t.tier ? 'ring-2 ring-emerald-500' : ''}`}
             onClick={() => setSelectedTier(t.tier)}
             aria-pressed={selectedTier === t.tier}
           >
@@ -185,7 +220,9 @@ export default function MarketplacePortal() {
             )}
             <span className="mb-1 block text-lg font-bold text-white">{t.label}</span>
             <span className="mb-1 block text-2xl font-bold text-emerald-400">{t.price}</span>
-            <span className="mb-4 block text-sm text-gray-400">{t.dailyLimit} · {t.costPerRequest}/req</span>
+            <span className="mb-4 block text-sm text-gray-400">
+              {t.dailyLimit} · {t.costPerRequest}/req
+            </span>
             <span className="block">
               {t.features.map((f) => (
                 <span key={f} className="flex items-center gap-2 text-sm text-gray-300">
@@ -208,7 +245,9 @@ export default function MarketplacePortal() {
           {!generatedKey ? (
             <form onSubmit={handleRequestKey} className="space-y-4">
               <div>
-                <label htmlFor="mp-email" className="block text-sm text-gray-400 mb-1">Email professionnel</label>
+                <label htmlFor="mp-email" className="block text-sm text-gray-400 mb-1">
+                  Email professionnel
+                </label>
                 <input
                   id="mp-email"
                   type="email"
@@ -220,7 +259,9 @@ export default function MarketplacePortal() {
                 />
               </div>
               <div>
-                <label htmlFor="mp-org" className="block text-sm text-gray-400 mb-1">Organisation (optionnel)</label>
+                <label htmlFor="mp-org" className="block text-sm text-gray-400 mb-1">
+                  Organisation (optionnel)
+                </label>
                 <input
                   id="mp-org"
                   type="text"
@@ -231,7 +272,9 @@ export default function MarketplacePortal() {
                 />
               </div>
               <div>
-                <label htmlFor="mp-tier" className="block text-sm text-gray-400 mb-1">Tier sélectionné</label>
+                <label htmlFor="mp-tier" className="block text-sm text-gray-400 mb-1">
+                  Tier sélectionné
+                </label>
                 <select
                   id="mp-tier"
                   value={selectedTier}
@@ -239,7 +282,9 @@ export default function MarketplacePortal() {
                   className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500"
                 >
                   {API_TIERS.map((t) => (
-                    <option key={t.tier} value={t.tier}>{t.label} — {t.price}</option>
+                    <option key={t.tier} value={t.tier}>
+                      {t.label} — {t.price}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -251,11 +296,15 @@ export default function MarketplacePortal() {
                 {keyRequestLoading ? (
                   <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                 ) : (
-                  <>Générer ma clé <ChevronRight className="w-4 h-4" /></>
+                  <>
+                    Générer ma clé <ChevronRight className="w-4 h-4" />
+                  </>
                 )}
               </button>
               {keyRequestError && (
-                <p className="text-sm text-red-400" role="alert">{keyRequestError}</p>
+                <p className="text-sm text-red-400" role="alert">
+                  {keyRequestError}
+                </p>
               )}
             </form>
           ) : (
@@ -298,7 +347,9 @@ export default function MarketplacePortal() {
                 key={lang}
                 onClick={() => setActiveLang(lang)}
                 className={`text-xs px-2.5 py-1 rounded ${
-                  activeLang === lang ? 'bg-emerald-500 text-white' : 'bg-white/5 text-gray-400 border border-white/10'
+                  activeLang === lang
+                    ? 'bg-emerald-500 text-white'
+                    : 'bg-white/5 text-gray-400 border border-white/10'
                 }`}
               >
                 {lang}
@@ -331,7 +382,11 @@ export default function MarketplacePortal() {
               {ENDPOINTS.map((ep) => (
                 <tr key={ep.path}>
                   <td className="py-2 pr-4">
-                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${ep.method === 'GET' ? 'bg-blue-500/20 text-blue-300' : 'bg-green-500/20 text-green-300'}`}>{ep.method}</span>
+                    <span
+                      className={`text-xs font-mono px-2 py-0.5 rounded ${ep.method === 'GET' ? 'bg-blue-500/20 text-blue-300' : 'bg-green-500/20 text-green-300'}`}
+                    >
+                      {ep.method}
+                    </span>
                   </td>
                   <td className="py-2 pr-4 font-mono text-xs text-gray-300">{ep.path}</td>
                   <td className="py-2 pr-4 text-gray-400">{ep.desc}</td>

@@ -5,15 +5,15 @@
  */
 
 // Core tax data
-export * from './taxDefinitions'
-export * from './taxRatesByTerritory'
-export * from './taxSources'
+export * from './taxDefinitions';
+export * from './taxRatesByTerritory';
+export * from './taxSources';
 
 // Extended features
-export * from './taxExemptions'
-export * from './taxHistory'
-export * from './taxComparisons'
-export * from './taxSimulations'
+export * from './taxExemptions';
+export * from './taxHistory';
+export * from './taxComparisons';
+export * from './taxSimulations';
 
 /**
  * Module metadata
@@ -47,7 +47,7 @@ export const TAXES_MODULE_INFO = {
     noInventedData: true,
     strictTypeScript: true,
   },
-}
+};
 
 /**
  * Quick reference guide
@@ -84,4 +84,4 @@ export const QUICK_START_GUIDE = {
       code: `const comparison = compareDOMWithRegion(8.5, 'vat', 'Caribbean')`,
     },
   ],
-}
+};

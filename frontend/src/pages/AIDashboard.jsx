@@ -22,7 +22,16 @@ import {
 } from '../services/aiDashboardService';
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 export default function AIDashboard() {
   const { user } = useAuth();
@@ -54,7 +63,7 @@ export default function AIDashboard() {
 
     const admin = await checkIsAdmin(user);
     setIsAdmin(admin);
-    
+
     if (!admin) {
       navigate('/');
     }
@@ -74,7 +83,11 @@ export default function AIDashboard() {
       const kpisData = computeKpis({ baskets: basketsData, forecast: forecastData });
       setKpis(kpisData);
 
-      const recs = generateRecommendations({ baskets: basketsData, forecast: forecastData, kpis: kpisData });
+      const recs = generateRecommendations({
+        baskets: basketsData,
+        forecast: forecastData,
+        kpis: kpisData,
+      });
       setRecommendations(recs);
 
       const chart = prepareChartData(forecastData);
@@ -171,7 +184,10 @@ export default function AIDashboard() {
 
         {/* Territory Filter */}
         <div className="mb-6">
-          <label htmlFor="filtrer-territoire" className="block text-sm font-medium text-slate-300 mb-2">
+          <label
+            htmlFor="filtrer-territoire"
+            className="block text-sm font-medium text-slate-300 mb-2"
+          >
             Filtrer par territoire
           </label>
           <select
@@ -221,7 +237,10 @@ export default function AIDashboard() {
           </div>
         ) : (
           <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6 mb-8 text-center text-slate-400">
-            <p>📊 Aucune donnée de prévision disponible. Les données seront générées automatiquement par l'IA.</p>
+            <p>
+              📊 Aucune donnée de prévision disponible. Les données seront générées automatiquement
+              par l'IA.
+            </p>
           </div>
         )}
 
@@ -231,7 +250,7 @@ export default function AIDashboard() {
             <span className="mr-2">🧠</span>
             Recommandations IA
           </h2>
-          
+
           {recommendations.length > 0 ? (
             <div className="space-y-3">
               {recommendations.map((rec) => (
@@ -254,17 +273,16 @@ export default function AIDashboard() {
               ))}
             </div>
           ) : (
-            <p className="text-slate-400 text-center py-4">
-              Aucune recommandation pour le moment.
-            </p>
+            <p className="text-slate-400 text-center py-4">Aucune recommandation pour le moment.</p>
           )}
         </div>
 
         {/* Info Footer */}
         <div className="mt-8 p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
           <p className="text-sm text-blue-300">
-            💡 <strong>Note:</strong> Les prévisions IA sont générées automatiquement toutes les 24h par analyse
-            des tendances historiques. Les données sont mises à jour en temps réel depuis Firestore.
+            💡 <strong>Note:</strong> Les prévisions IA sont générées automatiquement toutes les 24h
+            par analyse des tendances historiques. Les données sont mises à jour en temps réel
+            depuis Firestore.
           </p>
         </div>
       </div>

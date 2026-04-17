@@ -11,11 +11,11 @@ interface ComparisonData {
 
 /**
  * Component ⑲: Anonymous Social Comparison
- * 
+ *
  * Shows user's savings performance vs community average (anonymously)
  * Gamification through percentile ranking and badges
  * No personal data shared - pure anonymous aggregation
- * 
+ *
  * Psychological effect: Healthy competition + motivation
  * Retention impact: High (users want to improve their rank)
  */
@@ -27,7 +27,10 @@ export const AnonymousSocialComparison: React.FC = () => {
     // Calculate user's savings from safeLocalStorage
     const calculateUserSavings = (): ComparisonData => {
       // Get monthly savings from dashboard data
-      const savedData = safeLocalStorage.getJSON<{ currentMonth?: number }>('monthlySavings:v1', {});
+      const savedData = safeLocalStorage.getJSON<{ currentMonth?: number }>(
+        'monthlySavings:v1',
+        {}
+      );
       const userSavings = savedData.currentMonth || 0;
 
       // Simulated community average (would be from aggregated data in production)
@@ -37,7 +40,7 @@ export const AnonymousSocialComparison: React.FC = () => {
       // Calculate percentile
       const diff = userSavings - averageSavings;
       const percentDiff = averageSavings > 0 ? (diff / averageSavings) * 100 : 0;
-      
+
       // Percentile calculation (simplified)
       let percentile = 50;
       if (percentDiff > 40) percentile = 95;
@@ -52,7 +55,7 @@ export const AnonymousSocialComparison: React.FC = () => {
         userSavings,
         averageSavings,
         percentile,
-        totalUsers
+        totalUsers,
       };
     };
 
@@ -91,9 +94,7 @@ export const AnonymousSocialComparison: React.FC = () => {
           <Users className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-white">
-            💬 Comparaison Sociale Anonyme
-          </h3>
+          <h3 className="text-lg font-semibold text-white">💬 Comparaison Sociale Anonyme</h3>
           <p className="text-sm text-gray-400">
             Vous vs la moyenne ({data.totalUsers.toLocaleString()} utilisateurs)
           </p>
@@ -106,39 +107,36 @@ export const AnonymousSocialComparison: React.FC = () => {
         <div className="bg-white/5 rounded-lg p-4 border border-white/10">
           <div className="flex items-center justify-between mb-3">
             <span className="text-gray-300">Vos économies ce mois</span>
-            <span className="text-2xl font-bold text-white">
-              {data.userSavings.toFixed(2)} €
-            </span>
+            <span className="text-2xl font-bold text-white">{data.userSavings.toFixed(2)} €</span>
           </div>
-          
+
           <div className="flex items-center justify-between mb-3">
             <span className="text-gray-400 text-sm">Moyenne communauté</span>
-            <span className="text-lg text-gray-400">
-              {data.averageSavings.toFixed(2)} €
-            </span>
+            <span className="text-lg text-gray-400">{data.averageSavings.toFixed(2)} €</span>
           </div>
 
           {/* Difference Indicator */}
-          <div className={`flex items-center gap-2 p-3 rounded-lg ${
-            isAboveAverage 
-              ? 'bg-green-500/10 border border-green-500/20' 
-              : 'bg-orange-500/10 border border-orange-500/20'
-          }`}>
-            <TrendingUp className={`w-5 h-5 ${
-              isAboveAverage ? 'text-green-400' : 'text-orange-400'
-            }`} />
+          <div
+            className={`flex items-center gap-2 p-3 rounded-lg ${
+              isAboveAverage
+                ? 'bg-green-500/10 border border-green-500/20'
+                : 'bg-orange-500/10 border border-orange-500/20'
+            }`}
+          >
+            <TrendingUp
+              className={`w-5 h-5 ${isAboveAverage ? 'text-green-400' : 'text-orange-400'}`}
+            />
             <div>
-              <p className={`font-semibold ${
-                isAboveAverage ? 'text-green-400' : 'text-orange-400'
-              }`}>
-                {isAboveAverage ? '+' : ''}{percentDiff.toFixed(0)}% 
-                {isAboveAverage ? ' de plus' : ' de moins'} que la moyenne
+              <p
+                className={`font-semibold ${isAboveAverage ? 'text-green-400' : 'text-orange-400'}`}
+              >
+                {isAboveAverage ? '+' : ''}
+                {percentDiff.toFixed(0)}%{isAboveAverage ? ' de plus' : ' de moins'} que la moyenne
               </p>
               <p className="text-xs text-gray-400 mt-1">
-                {isAboveAverage 
+                {isAboveAverage
                   ? 'Excellent ! Vous économisez plus que la plupart des utilisateurs'
-                  : 'Il y a des opportunités d\'améliorer vos économies'
-                }
+                  : "Il y a des opportunités d'améliorer vos économies"}
               </p>
             </div>
           </div>
@@ -160,9 +158,8 @@ export const AnonymousSocialComparison: React.FC = () => {
         {/* Disclaimer */}
         <div className="text-xs text-gray-500 border-t border-white/5 pt-3">
           <p>
-            ℹ️ Comparaison 100% anonyme basée sur données agrégées • 
-            Aucune donnée personnelle partagée • 
-            Outil d'information
+            ℹ️ Comparaison 100% anonyme basée sur données agrégées • Aucune donnée personnelle
+            partagée • Outil d'information
           </p>
         </div>
       </div>

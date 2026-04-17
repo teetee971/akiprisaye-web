@@ -78,7 +78,9 @@ export function getStoreCheapestProducts(territory: Territory): CheapestProductR
     let cheapest: CheapestProductResult | null = null;
 
     for (const product of products) {
-      const priceEntry = product.prices.find((price) => price.storeId === store.id && price.territory === territory);
+      const priceEntry = product.prices.find(
+        (price) => price.storeId === store.id && price.territory === territory
+      );
       if (!priceEntry) continue;
 
       if (!cheapest || priceEntry.price < cheapest.price) {
@@ -137,9 +139,14 @@ export function getCheapestProductsCount(storeId: string): number {
 
 /** Returns CheapestByStore aggregation for the panel, or null if store not found */
 export function getCheapestProductsByStore(storeId: string): CheapestByStore | null {
-  const storeData = (SEED_STORES as (Store & { chain?: string; address?: string; postalCode?: string; city?: string })[]).find(
-    (s) => s.id === storeId,
-  );
+  const storeData = (
+    SEED_STORES as (Store & {
+      chain?: string;
+      address?: string;
+      postalCode?: string;
+      city?: string;
+    })[]
+  ).find((s) => s.id === storeId);
   if (!storeData) return null;
 
   const products = getCheapestProductsAtStore(storeId, 20);
@@ -166,7 +173,11 @@ export function getCheapestProductsByStore(storeId: string): CheapestByStore | n
 /** Formats an ISO observation date string into a human-readable date */
 export function formatObservationDate(dateStr: string): string {
   try {
-    return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+    return new Date(dateStr).toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
   } catch {
     return dateStr;
   }

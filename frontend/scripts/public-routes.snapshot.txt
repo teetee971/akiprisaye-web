@@ -192,12 +192,15 @@
 /parametres
 /perimetre
 /petits-commerces
+/plan
 /planificateur-repas
+/plans
 /populaires
 /portail-affilies
 /portail-api
 /portail-developpeurs
 /predictions
+/premium
 /presse
 /pricing
 /privacy

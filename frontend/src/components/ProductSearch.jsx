@@ -16,7 +16,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const toast = useToast();
-  
+
   const inputRef = useRef(null);
   const listboxRef = useRef(null);
   // ignoreBlurRef prevents blur from closing list when clicking an option
@@ -27,7 +27,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
   // Search products when query changes (debounced)
   useEffect(() => {
     const trimmedQuery = query.trim();
-    
+
     if (trimmedQuery.length < 3) {
       setResults([]);
       setIsOpen(false);
@@ -51,7 +51,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
         try {
           const res = await fetch(
             `/api/products/search?q=${encodeURIComponent(trimmedQuery)}&territory=${encodeURIComponent(territory)}`,
-            { signal: controller.signal },
+            { signal: controller.signal }
           );
           if (res.ok) {
             data = await res.json();
@@ -61,23 +61,23 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
             console.warn('API not available, using seed data');
           }
         }
-        
+
         // Fallback to seed data if API fails or returns empty
         if (!data || data.length === 0) {
           const seedResults = searchProductsByName(trimmedQuery);
-          data = seedResults.map(product => ({
+          data = seedResults.map((product) => ({
             ean: product.ean,
             name: product.name,
             brand: product.brand,
             image: null, // No images in seed data
           }));
         }
-        
+
         // Apply fuzzy re-ranking with Fuse.js if we have results
         let rankedResults = data;
         if (data && data.length > 0) {
           const normalizedQuery = normalizeText(trimmedQuery);
-          
+
           // Configure Fuse.js for fuzzy matching
           const fuse = new Fuse(data, {
             keys: [
@@ -93,15 +93,13 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
               return value ? normalizeText(value) : '';
             },
           });
-          
+
           const fuseResults = fuse.search(normalizedQuery);
-          
+
           // If fuzzy search returns results, use them; otherwise fallback to original order
-          rankedResults = fuseResults.length > 0
-            ? fuseResults.map(r => r.item)
-            : data;
+          rankedResults = fuseResults.length > 0 ? fuseResults.map((r) => r.item) : data;
         }
-        
+
         if (requestId !== requestIdRef.current) {
           return;
         }
@@ -109,7 +107,7 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
         setResults(rankedResults.slice(0, MAX_RESULTS));
         setIsOpen(rankedResults.length > 0);
         setActiveIndex(-1);
-        
+
         // Show toast if no results found
         if (rankedResults.length === 0 && trimmedQuery.length >= 3) {
           toast.info('Aucun résultat trouvé', {
@@ -223,9 +221,10 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
     <div className="relative w-full max-w-xl mx-auto">
       {/* Screen reader instructions */}
       <div className="sr-only" id="search-instructions">
-        Use up and down arrow keys to navigate search results. Press Enter to select. Press Escape to close.
+        Use up and down arrow keys to navigate search results. Press Enter to select. Press Escape
+        to close.
       </div>
-      
+
       <input
         ref={inputRef}
         type="text"
@@ -248,24 +247,22 @@ export default function ProductSearch({ territory = 'Guadeloupe', onPickEAN, onQ
         placeholder="🔍 Rechercher un produit (ex : riz basmati, lait, pâtes...)"
         className="w-full p-3 rounded-xl bg-slate-800 text-white outline-none placeholder-gray-400"
       />
-      
+
       {/* Loading indicator */}
-      {loading && (
-        <div className="absolute right-3 top-3 text-xs text-gray-400">
-          Chargement…
-        </div>
-      )}
-      
+      {loading && <div className="absolute right-3 top-3 text-xs text-gray-400">Chargement…</div>}
+
       {/* Live region for loading state */}
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {loading ? 'Recherche en cours...' : ''}
       </div>
-      
+
       {/* Live region for result count */}
       <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-        {!loading && isOpen && results.length > 0 ? `${results.length} résultat${results.length > 1 ? 's' : ''} disponible${results.length > 1 ? 's' : ''}` : ''}
+        {!loading && isOpen && results.length > 0
+          ? `${results.length} résultat${results.length > 1 ? 's' : ''} disponible${results.length > 1 ? 's' : ''}`
+          : ''}
       </div>
-      
+
       {/* Search Results */}
       {isOpen && results.length > 0 && (
         <ul

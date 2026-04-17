@@ -14,7 +14,7 @@ import { loadAlerts, type SavedAlert } from '../services/priceAlertsStorage';
 import {
   detectPriceDrop,
   detectPriceIncrease,
-  DEFAULT_ALERT_PREFERENCES
+  DEFAULT_ALERT_PREFERENCES,
 } from '../services/priceAlertService';
 import { addNotification } from '../utils/notificationStorage';
 import { getTerritoryLabel } from '../services/territoryNormalizationService';
@@ -103,44 +103,32 @@ export function usePriceAlertEvaluator(enabled = true): {
 
           // Find latest snapshot
           const latest = snapshots.sort((a, b) =>
-            b.date_snapshot.localeCompare(a.date_snapshot),
+            b.date_snapshot.localeCompare(a.date_snapshot)
           )[0];
 
           for (const alert of territAlerts) {
             // Look up product by EAN or name in the latest snapshot
             const matches = latest.donnees.filter((obs) => {
               if (alert.productEAN) return obs.ean === alert.productEAN;
-              return obs.produit.toLowerCase().includes(
-                alert.productName.toLowerCase(),
-              );
+              return obs.produit.toLowerCase().includes(alert.productName.toLowerCase());
             });
 
             if (matches.length === 0) continue;
 
-            const avgPrice =
-              matches.reduce((s, o) => s + o.prix, 0) / matches.length;
+            const avgPrice = matches.reduce((s, o) => s + o.prix, 0) / matches.length;
             const refKey = `${alert.productEAN || alert.productName}:${territory}`;
             const referencePrice = refPrices[refKey] ?? avgPrice;
 
             // Update reference price for next run
             refPrices[refKey] = avgPrice;
 
-            const dropResult = detectPriceDrop(
-              referencePrice,
-              avgPrice,
-              DEFAULT_ALERT_PREFERENCES
-            );
+            const dropResult = detectPriceDrop(referencePrice, avgPrice, DEFAULT_ALERT_PREFERENCES);
             const riseResult = !dropResult
-              ? detectPriceIncrease(
-                  referencePrice,
-                  avgPrice,
-                  DEFAULT_ALERT_PREFERENCES
-                )
+              ? detectPriceIncrease(referencePrice, avgPrice, DEFAULT_ALERT_PREFERENCES)
               : null;
 
             const territoryLabel =
-              getTerritoryLabel(territory.toLowerCase() as TerritoryCode) ||
-              territory;
+              getTerritoryLabel(territory.toLowerCase() as TerritoryCode) || territory;
 
             if (dropResult) {
               addNotification({
@@ -191,7 +179,7 @@ export function usePriceAlertEvaluator(enabled = true): {
               });
             }
           }
-        }),
+        })
       );
 
       saveRefPrices(refPrices);

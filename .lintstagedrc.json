@@ -1,4 +1,7 @@
 {
+  "frontend/src/App.tsx": [
+    "npm --prefix frontend run snapshot:routes"
+  ],
   "frontend/src/**/*.{ts,tsx,js,jsx}": [
     "npm --prefix frontend run lint"
   ]

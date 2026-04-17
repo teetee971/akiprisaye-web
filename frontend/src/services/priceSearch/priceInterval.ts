@@ -1,9 +1,7 @@
 import type { NormalizedPriceObservation, PriceInterval } from './price.types';
 import { computeMedian, normalizePriceValue } from './priceNormalizer';
 
-export function computePriceInterval(
-  observations: NormalizedPriceObservation[]
-): PriceInterval {
+export function computePriceInterval(observations: NormalizedPriceObservation[]): PriceInterval {
   const values = observations
     .map((observation) => observation.pricePerUnit ?? observation.price)
     .filter((value) => Number.isFinite(value));

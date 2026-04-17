@@ -80,7 +80,9 @@ export default function PricingConversionBanner({
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Left: offer label + discount */}
         <div className="flex items-center gap-3 min-w-0">
-          <span className="shrink-0 text-2xl" aria-hidden="true">🎁</span>
+          <span className="shrink-0 text-2xl" aria-hidden="true">
+            🎁
+          </span>
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-indigo-300 mb-0.5">
               Offre limitée
@@ -130,7 +132,8 @@ export default function PricingConversionBanner({
       <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-indigo-200">
         <span className="flex items-center gap-1">
           <TrendingDown className="w-3.5 h-3.5" aria-hidden="true" />
-          Économisez en moyenne <strong className="text-white ml-1">150 €/an</strong> sur votre alimentation
+          Économisez en moyenne <strong className="text-white ml-1">150 €/an</strong> sur votre
+          alimentation
         </span>
         <span>·</span>
         <span>✅ Essai 7 jours sans carte bancaire</span>

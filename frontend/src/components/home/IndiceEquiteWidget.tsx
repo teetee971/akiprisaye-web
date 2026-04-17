@@ -30,10 +30,10 @@ interface EquiteEntry {
   stem: string;
   flag: string;
   label: string;
-  overcostPct: number;       // mean (dom - hex) / hex * 100 across all shared products
-  productCount: number;      // number of products used in the average
-  equiteScore: number;       // overcostPct, capped display at 120 for bar width
-  bqpBreach: boolean;        // overcostPct > 30
+  overcostPct: number; // mean (dom - hex) / hex * 100 across all shared products
+  productCount: number; // number of products used in the average
+  equiteScore: number; // overcostPct, capped display at 120 for bar width
+  bqpBreach: boolean; // overcostPct > 30
   status: 'equitable' | 'tension' | 'iniquite' | 'critique';
 }
 
@@ -48,40 +48,48 @@ interface Snapshot {
 const SNAPSHOT_DATE = '2026-03';
 
 const DOM_TERRITORIES = [
-  { stem: 'guadeloupe',                 flag: '🇬🇵', label: 'Guadeloupe' },
-  { stem: 'martinique',                 flag: '🇲🇶', label: 'Martinique' },
-  { stem: 'la_réunion',                 flag: '🇷🇪', label: 'La Réunion' },
-  { stem: 'guyane',                     flag: '🇬🇫', label: 'Guyane' },
-  { stem: 'mayotte',                    flag: '🇾🇹', label: 'Mayotte' },
-  { stem: 'saint_barthelemy',           flag: '🇧🇱', label: 'Saint-Barthélemy' },
-  { stem: 'saint_martin',               flag: '🇲🇫', label: 'Saint-Martin' },
-  { stem: 'saint_pierre_et_miquelon',   flag: '🇵🇲', label: 'St-Pierre-et-Miq.' },
+  { stem: 'guadeloupe', flag: '🇬🇵', label: 'Guadeloupe' },
+  { stem: 'martinique', flag: '🇲🇶', label: 'Martinique' },
+  { stem: 'la_réunion', flag: '🇷🇪', label: 'La Réunion' },
+  { stem: 'guyane', flag: '🇬🇫', label: 'Guyane' },
+  { stem: 'mayotte', flag: '🇾🇹', label: 'Mayotte' },
+  { stem: 'saint_barthelemy', flag: '🇧🇱', label: 'Saint-Barthélemy' },
+  { stem: 'saint_martin', flag: '🇲🇫', label: 'Saint-Martin' },
+  { stem: 'saint_pierre_et_miquelon', flag: '🇵🇲', label: 'St-Pierre-et-Miq.' },
 ];
 
 const BQP_THRESHOLD = 30; // % — seuil réglementaire BQP
 
 function equiteStatus(overcost: number): EquiteEntry['status'] {
   if (overcost <= BQP_THRESHOLD) return 'equitable';
-  if (overcost <= 50)            return 'tension';
-  if (overcost <= 80)            return 'iniquite';
+  if (overcost <= 50) return 'tension';
+  if (overcost <= 80) return 'iniquite';
   return 'critique';
 }
 
 function statusColor(status: EquiteEntry['status']): string {
   switch (status) {
-    case 'equitable': return '#22c55e';
-    case 'tension':   return '#f59e0b';
-    case 'iniquite':  return '#f97316';
-    case 'critique':  return '#ef4444';
+    case 'equitable':
+      return '#22c55e';
+    case 'tension':
+      return '#f59e0b';
+    case 'iniquite':
+      return '#f97316';
+    case 'critique':
+      return '#ef4444';
   }
 }
 
 function statusLabel(status: EquiteEntry['status']): string {
   switch (status) {
-    case 'equitable': return '✅ Acceptable';
-    case 'tension':   return '⚠️ Sous tension';
-    case 'iniquite':  return '⛔ Inéquitable';
-    case 'critique':  return '🚨 Critique';
+    case 'equitable':
+      return '✅ Acceptable';
+    case 'tension':
+      return '⚠️ Sous tension';
+    case 'iniquite':
+      return '⛔ Inéquitable';
+    case 'critique':
+      return '🚨 Critique';
   }
 }
 
@@ -102,9 +110,14 @@ function buildProductAvg(donnees: ObsEntry[]): Record<string, number> {
 
 function stemToCode(stem: string): string {
   const map: Record<string, string> = {
-    guadeloupe: 'gp', martinique: 'mq', guyane: 'gf',
-    'la_réunion': 're', mayotte: 'yt', saint_barthelemy: 'bl',
-    saint_martin: 'mf', saint_pierre_et_miquelon: 'pm',
+    guadeloupe: 'gp',
+    martinique: 'mq',
+    guyane: 'gf',
+    la_réunion: 're',
+    mayotte: 'yt',
+    saint_barthelemy: 'bl',
+    saint_martin: 'mf',
+    saint_pierre_et_miquelon: 'pm',
   };
   return map[stem] ?? stem;
 }
@@ -138,7 +151,9 @@ function EquiteCard({ entry }: { entry: EquiteEntry }) {
         )}
         <div className="equite-card-photo-overlay" aria-hidden="true" />
         <div className="equite-card-header">
-          <span className="equite-flag" aria-hidden="true">{entry.flag}</span>
+          <span className="equite-flag" aria-hidden="true">
+            {entry.flag}
+          </span>
           <span className="equite-territory">{entry.label}</span>
           <span
             className="equite-status-badge"
@@ -165,11 +180,10 @@ function EquiteCard({ entry }: { entry: EquiteEntry }) {
 
         <div className="equite-score-row">
           <span className="equite-score" style={{ color }}>
-            {entry.overcostPct > 0 ? '+' : ''}{entry.overcostPct.toFixed(1)}&nbsp;%
+            {entry.overcostPct > 0 ? '+' : ''}
+            {entry.overcostPct.toFixed(1)}&nbsp;%
           </span>
-          <span className="equite-products">
-            {entry.productCount} produits
-          </span>
+          <span className="equite-products">{entry.productCount} produits</span>
         </div>
 
         {entry.bqpBreach && (
@@ -200,7 +214,9 @@ export default function IndiceEquiteWidget() {
           const snap: Snapshot = await resp.json();
           hexAvgs = buildProductAvg(snap.donnees);
         }
-      } catch { /* skip */ }
+      } catch {
+        /* skip */
+      }
 
       if (!Object.keys(hexAvgs).length || cancelled) return;
 
@@ -238,8 +254,10 @@ export default function IndiceEquiteWidget() {
               bqpBreach: rounded > BQP_THRESHOLD,
               status,
             });
-          } catch { /* skip territory */ }
-        }),
+          } catch {
+            /* skip territory */
+          }
+        })
       );
 
       if (cancelled) return;
@@ -253,7 +271,9 @@ export default function IndiceEquiteWidget() {
     }
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (loading) {
@@ -269,7 +289,9 @@ export default function IndiceEquiteWidget() {
 
   if (!entries.length) return null;
 
-  const criticalCount = entries.filter((e) => e.status === 'critique' || e.status === 'iniquite').length;
+  const criticalCount = entries.filter(
+    (e) => e.status === 'critique' || e.status === 'iniquite'
+  ).length;
 
   return (
     <section className="equite-section section-reveal" aria-labelledby="equite-heading">
@@ -285,21 +307,26 @@ export default function IndiceEquiteWidget() {
         />
         <div className="section-context-banner-overlay" aria-hidden="true" />
         <div className="section-context-banner-caption">
-          <span className="section-context-banner-title" aria-hidden="true">⚖️ Indice d'Équité Tarifaire</span>
+          <span className="section-context-banner-title" aria-hidden="true">
+            ⚖️ Indice d'Équité Tarifaire
+          </span>
           <span className="section-context-banner-badge">Décret BQP n°2012-848</span>
         </div>
       </div>
-      <h2 id="equite-heading" className="section-title slide-up">⚖️ Indice d'Équité Tarifaire</h2>
+      <h2 id="equite-heading" className="section-title slide-up">
+        ⚖️ Indice d'Équité Tarifaire
+      </h2>
 
       <div className="equite-header">
         <p className="equite-subtitle slide-up">
-          Surcoût moyen de la vie vs l'Hexagone — <strong>{hexProductCount} produits</strong> comparés par territoire
+          Surcoût moyen de la vie vs l'Hexagone — <strong>{hexProductCount} produits</strong>{' '}
+          comparés par territoire
         </p>
         <div className="equite-bqp-legend fade-in">
           <span className="equite-bqp-marker" aria-hidden="true" />
           <span>
-            Seuil BQP légal&nbsp;: <strong>+{BQP_THRESHOLD}&nbsp;%</strong>
-            {' '}(Bouclier Qualité Prix — décret Lutte contre la vie chère)
+            Seuil BQP légal&nbsp;: <strong>+{BQP_THRESHOLD}&nbsp;%</strong> (Bouclier Qualité Prix —
+            décret Lutte contre la vie chère)
           </span>
         </div>
       </div>
@@ -308,8 +335,10 @@ export default function IndiceEquiteWidget() {
         <div className="equite-alert fade-in" role="alert">
           <span aria-hidden="true">🚨</span>
           <span>
-            <strong>{criticalCount} territoire{criticalCount > 1 ? 's' : ''}</strong> dépassent
-            fortement le seuil BQP réglementaire (+{BQP_THRESHOLD}&nbsp;%).
+            <strong>
+              {criticalCount} territoire{criticalCount > 1 ? 's' : ''}
+            </strong>{' '}
+            dépassent fortement le seuil BQP réglementaire (+{BQP_THRESHOLD}&nbsp;%).
           </span>
         </div>
       )}
@@ -321,18 +350,20 @@ export default function IndiceEquiteWidget() {
       </div>
 
       <p className="equite-source">
-        Sources : Observatoire citoyen A KI PRI SA YÉ (mars 2026) —
-        BQP : décret n°2012-848 — Calcul : surcoût moyen multi-produits vs Hexagone
+        Sources : Observatoire citoyen A KI PRI SA YÉ (mars 2026) — BQP : décret n°2012-848 — Calcul
+        : surcoût moyen multi-produits vs Hexagone
       </p>
 
       {/* BQP legal context */}
       <div className="equite-legal-context fade-in">
-        <span className="equite-legal-icon" aria-hidden="true">📋</span>
+        <span className="equite-legal-icon" aria-hidden="true">
+          📋
+        </span>
         <p className="equite-legal-text">
           Le <strong>Bouclier Qualité Prix (BQP)</strong> est un dispositif légal instauré par le{' '}
           <strong>décret n°2012-848</strong> dans le cadre de la loi de lutte contre la vie chère en
-          outre-mer. Il impose un plafond de <strong>+30 %</strong> de surcoût vs métropole sur une liste
-          de produits de première nécessité négociée annuellement avec la grande distribution.
+          outre-mer. Il impose un plafond de <strong>+30 %</strong> de surcoût vs métropole sur une
+          liste de produits de première nécessité négociée annuellement avec la grande distribution.
           Tout dépassement constitue une inégalité tarifaire documentée sur laquelle les préfets
           peuvent intervenir. À ce jour, plusieurs territoires dépassent ce seuil pour la majorité
           des produits du panier de base.

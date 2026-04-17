@@ -1,13 +1,17 @@
 /**
  * LocationButton Component
- * 
+ *
  * Example React component demonstrating how to use the enhanced geolocation utility.
  * Shows user-friendly error messages and handles all error states gracefully.
  */
 
 import React, { useState } from 'react';
 import { Navigation, MapPin, AlertCircle, CheckCircle } from 'lucide-react';
-import { requestGeolocation, isGeolocationAvailable, type GeolocationResult } from '../utils/geolocationEnhanced';
+import {
+  requestGeolocation,
+  isGeolocationAvailable,
+  type GeolocationResult,
+} from '../utils/geolocationEnhanced';
 
 interface LocationButtonProps {
   onLocationReceived?: (lat: number, lon: number) => void;
@@ -15,10 +19,10 @@ interface LocationButtonProps {
   disabled?: boolean;
 }
 
-export default function LocationButton({ 
-  onLocationReceived, 
+export default function LocationButton({
+  onLocationReceived,
   className = '',
-  disabled = false 
+  disabled = false,
 }: LocationButtonProps) {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<{
@@ -27,7 +31,7 @@ export default function LocationButton({
     suggestions?: string[];
   }>({
     type: 'idle',
-    message: ''
+    message: '',
   });
   const [position, setPosition] = useState<{ lat: number; lon: number } | null>(null);
 
@@ -36,12 +40,12 @@ export default function LocationButton({
     // Split message into main text and suggestions
     const parts = message.split('\n\nSuggestions:\n');
     const mainMessage = parts[0];
-    const suggestions = parts[1] ? parts[1].split('\n').map(s => s.replace('• ', '')) : [];
-    
+    const suggestions = parts[1] ? parts[1].split('\n').map((s) => s.replace('• ', '')) : [];
+
     setStatus({
       type,
       message: mainMessage,
-      suggestions: suggestions.length > 0 ? suggestions : undefined
+      suggestions: suggestions.length > 0 ? suggestions : undefined,
     });
   };
 
@@ -55,7 +59,7 @@ export default function LocationButton({
     if (!availability.available) {
       setStatus({
         type: 'error',
-        message: availability.reason || 'La géolocalisation n\'est pas disponible',
+        message: availability.reason || "La géolocalisation n'est pas disponible",
       });
       setLoading(false);
       return;
@@ -63,15 +67,15 @@ export default function LocationButton({
 
     // Request geolocation
     const result: GeolocationResult = await requestGeolocation(showMessage);
-    
+
     setLoading(false);
 
     if (result.success && result.position) {
       setPosition({
         lat: result.position.latitude,
-        lon: result.position.longitude
+        lon: result.position.longitude,
       });
-      
+
       // Call parent callback if provided
       if (onLocationReceived) {
         onLocationReceived(result.position.latitude, result.position.longitude);
@@ -149,7 +153,7 @@ export default function LocationButton({
             {status.type === 'info' && <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />}
             <div className="flex-1">
               <p className="font-medium">{status.message.split('\n\n')[0]}</p>
-              
+
               {/* Suggestions */}
               {status.suggestions && status.suggestions.length > 0 && (
                 <ul className="mt-2 space-y-1 text-xs opacity-90">

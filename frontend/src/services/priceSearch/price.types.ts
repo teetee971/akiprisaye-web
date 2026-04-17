@@ -50,11 +50,7 @@ export type PriceSourceId =
   | 'intermarche'
   | 'leader_price';
 
-export type PriceSearchStatus =
-  | 'OK'
-  | 'NO_DATA'
-  | 'UNAVAILABLE'
-  | 'PARTIAL';
+export type PriceSearchStatus = 'OK' | 'NO_DATA' | 'UNAVAILABLE' | 'PARTIAL';
 
 /* -----------------------------
  * Core Models

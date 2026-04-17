@@ -53,7 +53,7 @@ interface PhotoBarcodeResult {
 
 interface PhotoBarcodeDetector {
   // Web standard: accepts any image source (img, canvas, video, blob…)
-   
+
   detect(source: any): Promise<PhotoBarcodeResult[]>;
 }
 
@@ -63,13 +63,20 @@ interface PhotoBarcodeDetectorCtor {
 
 function getNativeBarcodeDetector(): PhotoBarcodeDetectorCtor | undefined {
   if (typeof window === 'undefined') return undefined;
-   
+
   return (window as any).BarcodeDetector as PhotoBarcodeDetectorCtor | undefined;
 }
 
 const OPEN_PRICES_API = 'https://prices.openfoodfacts.org/api/v1';
 const OPEN_PRICES_TIMEOUT_MS = 8000;
-const BARCODE_FORMATS: PhotoBarcodeFormat[] = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'qr_code'];
+const BARCODE_FORMATS: PhotoBarcodeFormat[] = [
+  'ean_13',
+  'ean_8',
+  'upc_a',
+  'upc_e',
+  'code_128',
+  'qr_code',
+];
 
 // ─── Barcode extraction ───────────────────────────────────────────────────────
 
@@ -109,7 +116,7 @@ function loadImageElement(objectUrl: string): Promise<HTMLImageElement> {
  * Tries native BarcodeDetector first, then ZXing.
  */
 export async function extractBarcodeFromImage(
-  file: File,
+  file: File
 ): Promise<{ barcode: string | null; method: PhotoSearchResult['detectionMethod'] }> {
   const objectUrl = URL.createObjectURL(file);
   try {

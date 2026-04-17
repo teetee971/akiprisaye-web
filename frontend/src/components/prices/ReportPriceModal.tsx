@@ -11,7 +11,13 @@ interface ReportPriceModalProps {
 
 type UnitType = 'unit' | 'kg' | 'l';
 
-export default function ReportPriceModal({ isOpen, barcode, territory, onClose, onSaved }: ReportPriceModalProps) {
+export default function ReportPriceModal({
+  isOpen,
+  barcode,
+  territory,
+  onClose,
+  onSaved,
+}: ReportPriceModalProps) {
   const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
   const [price, setPrice] = useState('');
   const [unit, setUnit] = useState<UnitType>('unit');
@@ -62,18 +68,35 @@ export default function ReportPriceModal({ isOpen, barcode, territory, onClose, 
       <div className="max-w-lg mx-auto bg-slate-900 border border-slate-700 rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Signaler un prix</h2>
-          <button type="button" onClick={onClose} className="px-3 py-1 bg-slate-800 rounded-lg">Fermer</button>
+          <button type="button" onClick={onClose} className="px-3 py-1 bg-slate-800 rounded-lg">
+            Fermer
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3 text-sm">
           <label className="block space-y-1">
             <span>Prix (EUR)</span>
-            <input id="report-price" name="price" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={price} onChange={(event) => setPrice(event.target.value)} placeholder="Ex: 2.49" inputMode="decimal" required />
+            <input
+              id="report-price"
+              name="price"
+              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2"
+              value={price}
+              onChange={(event) => setPrice(event.target.value)}
+              placeholder="Ex: 2.49"
+              inputMode="decimal"
+              required
+            />
           </label>
 
           <label className="block space-y-1">
             <span>Unité</span>
-            <select id="report-unit" name="unit" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={unit} onChange={(event) => setUnit(event.target.value as UnitType)}>
+            <select
+              id="report-unit"
+              name="unit"
+              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2"
+              value={unit}
+              onChange={(event) => setUnit(event.target.value as UnitType)}
+            >
               <option value="unit">unité</option>
               <option value="kg">kg</option>
               <option value="l">l</option>
@@ -83,28 +106,58 @@ export default function ReportPriceModal({ isOpen, barcode, territory, onClose, 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label className="block space-y-1">
               <span>Magasin (optionnel)</span>
-              <input id="report-store" name="store" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={store} onChange={(event) => setStore(event.target.value)} />
+              <input
+                id="report-store"
+                name="store"
+                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2"
+                value={store}
+                onChange={(event) => setStore(event.target.value)}
+              />
             </label>
             <label className="block space-y-1">
               <span>Ville (optionnel)</span>
-              <input id="report-city" name="city" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={city} onChange={(event) => setCity(event.target.value)} />
+              <input
+                id="report-city"
+                name="city"
+                className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2"
+                value={city}
+                onChange={(event) => setCity(event.target.value)}
+              />
             </label>
           </div>
 
           <label className="block space-y-1">
             <span>Date observée</span>
-            <input id="report-date" name="observedAt" type="date" className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" value={observedAt} onChange={(event) => setObservedAt(event.target.value)} required />
+            <input
+              id="report-date"
+              name="observedAt"
+              type="date"
+              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2"
+              value={observedAt}
+              onChange={(event) => setObservedAt(event.target.value)}
+              required
+            />
           </label>
 
           <label className="block space-y-1">
             <span>Note (optionnel)</span>
-            <textarea className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2" rows={3} value={note} onChange={(event) => setNote(event.target.value)} />
+            <textarea
+              className="w-full rounded-lg bg-slate-950 border border-slate-700 px-3 py-2"
+              rows={3}
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+            />
           </label>
 
           {error && <p className="text-red-300">{error}</p>}
           {saved && <p className="text-emerald-300">Enregistré sur cet appareil.</p>}
 
-          <button type="submit" className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold">Enregistrer</button>
+          <button
+            type="submit"
+            className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold"
+          >
+            Enregistrer
+          </button>
         </form>
       </div>
     </div>

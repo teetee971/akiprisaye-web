@@ -13,11 +13,11 @@ import { supecoGuyaneProvider } from '../supecoGuyaneProvider';
 
 const makeController = () => new AbortController();
 
-const ECOLOGITE_FLAG    = 'VITE_PRICE_PROVIDER_ECOLOGITE_GUADELOUPE';
-const HUITAHUIT_FLAG    = 'VITE_PRICE_PROVIDER_HUIT_A_HUIT_GUADELOUPE';
-const SUPECO_FLAG       = 'VITE_PRICE_PROVIDER_SUPECO_GUYANE';
-const CARREFOUR_FLAG    = 'VITE_PRICE_PROVIDER_CARREFOUR_MILENIS_GUADELOUPE';
-const CONNEXION_FLAG    = 'VITE_PRICE_PROVIDER_CONNEXION_GUADELOUPE';
+const ECOLOGITE_FLAG = 'VITE_PRICE_PROVIDER_ECOLOGITE_GUADELOUPE';
+const HUITAHUIT_FLAG = 'VITE_PRICE_PROVIDER_HUIT_A_HUIT_GUADELOUPE';
+const SUPECO_FLAG = 'VITE_PRICE_PROVIDER_SUPECO_GUYANE';
+const CARREFOUR_FLAG = 'VITE_PRICE_PROVIDER_CARREFOUR_MILENIS_GUADELOUPE';
+const CONNEXION_FLAG = 'VITE_PRICE_PROVIDER_CONNEXION_GUADELOUPE';
 
 beforeEach(() => {
   vi.restoreAllMocks();
@@ -67,18 +67,22 @@ describe('ecologiteGuadeloupeProvider', () => {
               'Consulter le catalogue : https://www.calameo.com/books/005456123ba91a2661670',
           ],
         }),
-      }),
+      })
     );
 
     const result = await ecologiteGuadeloupeProvider.search(
       { query: 'isolant thermique' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.source).toBe('ecologite_guadeloupe');
     expect(result.status).toBe('NO_DATA');
     expect(result.observations).toHaveLength(0);
-    expect(result.warnings.some((w) => w.includes('calameo') || w.includes('catalogue') || w.includes('Ecologite'))).toBe(true);
+    expect(
+      result.warnings.some(
+        (w) => w.includes('calameo') || w.includes('catalogue') || w.includes('Ecologite')
+      )
+    ).toBe(true);
   });
 
   it('returns UNAVAILABLE when fetch fails', async () => {
@@ -88,7 +92,7 @@ describe('ecologiteGuadeloupeProvider', () => {
 
     const result = await ecologiteGuadeloupeProvider.search(
       { query: 'panneau' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.status).toBe('UNAVAILABLE');
@@ -102,7 +106,7 @@ describe('ecologiteGuadeloupeProvider', () => {
 
     const result = await ecologiteGuadeloupeProvider.search(
       { query: 'panneau' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.status).toBe('UNAVAILABLE');
@@ -121,7 +125,7 @@ describe('ecologiteGuadeloupeProvider', () => {
           ok: true,
           json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }),
         });
-      }),
+      })
     );
 
     await ecologiteGuadeloupeProvider.search({ query: 'isolant' }, makeController().signal);
@@ -172,7 +176,7 @@ describe('createCalameoCatalogProvider (factory)', () => {
           observations: [],
           warnings: ['Catalogue visuel : consultation manuelle requise.'],
         }),
-      }),
+      })
     );
 
     const provider = createCalameoCatalogProvider({
@@ -199,10 +203,16 @@ describe('huitAHuitGuadeloupeProvider', () => {
     vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
 
     let capturedUrl = '';
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
-      capturedUrl = url;
-      return Promise.resolve({ ok: true, json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }) });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url: string) => {
+        capturedUrl = url;
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }),
+        });
+      })
+    );
 
     await huitAHuitGuadeloupeProvider.search({ query: 'biscuits' }, makeController().signal);
     expect(capturedUrl).toContain('bkcode=00672206587e18c17d3bd');
@@ -223,7 +233,10 @@ describe('huitAHuitGuadeloupeProvider', () => {
     vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('timeout')));
 
-    const result = await huitAHuitGuadeloupeProvider.search({ query: 'rhum' }, makeController().signal);
+    const result = await huitAHuitGuadeloupeProvider.search(
+      { query: 'rhum' },
+      makeController().signal
+    );
     expect(result.status).toBe('UNAVAILABLE');
     expect(result.observations).toHaveLength(0);
   });
@@ -239,10 +252,16 @@ describe('supecoGuyaneProvider', () => {
     vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
 
     let capturedUrl = '';
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
-      capturedUrl = url;
-      return Promise.resolve({ ok: true, json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }) });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url: string) => {
+        capturedUrl = url;
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }),
+        });
+      })
+    );
 
     await supecoGuyaneProvider.search({ query: 'riz' }, makeController().signal);
     expect(capturedUrl).toContain('bkcode=0067220656cd5be3f9f3a');
@@ -279,12 +298,21 @@ describe('carrefourMilenisGuadeloupeProvider', () => {
     vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
 
     let capturedUrl = '';
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
-      capturedUrl = url;
-      return Promise.resolve({ ok: true, json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }) });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url: string) => {
+        capturedUrl = url;
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }),
+        });
+      })
+    );
 
-    await carrefourMilenisGuadeloupeProvider.search({ query: 'crème solaire' }, makeController().signal);
+    await carrefourMilenisGuadeloupeProvider.search(
+      { query: 'crème solaire' },
+      makeController().signal
+    );
     expect(capturedUrl).toContain('bkcode=0067220659b9adde1c784');
     expect(capturedUrl).toContain('source=carrefour_milenis_guadeloupe');
   });
@@ -305,7 +333,7 @@ describe('carrefourMilenisGuadeloupeProvider', () => {
 
     const result = await carrefourMilenisGuadeloupeProvider.search(
       { query: 'shampoing' },
-      makeController().signal,
+      makeController().signal
     );
     expect(result.status).toBe('UNAVAILABLE');
     expect(result.observations).toHaveLength(0);
@@ -327,19 +355,24 @@ describe('carrefourMilenisGuadeloupeProvider', () => {
               'Consulter le catalogue : https://www.calameo.com/books/0067220659b9adde1c784',
           ],
         }),
-      }),
+      })
     );
 
     const result = await carrefourMilenisGuadeloupeProvider.search(
       { query: 'rouge à lèvres' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.source).toBe('carrefour_milenis_guadeloupe');
     expect(result.status).toBe('NO_DATA');
     expect(result.observations).toHaveLength(0);
     expect(
-      result.warnings.some((w) => w.toLowerCase().includes('milenis') || w.toLowerCase().includes('beauté') || w.includes('calameo')),
+      result.warnings.some(
+        (w) =>
+          w.toLowerCase().includes('milenis') ||
+          w.toLowerCase().includes('beauté') ||
+          w.includes('calameo')
+      )
     ).toBe(true);
   });
 });
@@ -354,10 +387,16 @@ describe('connexionGuadeloupeProvider', () => {
     vi.stubEnv('VITE_PRICE_API_BASE', 'https://example.com');
 
     let capturedUrl = '';
-    vi.stubGlobal('fetch', vi.fn().mockImplementation((url: string) => {
-      capturedUrl = url;
-      return Promise.resolve({ ok: true, json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }) });
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation((url: string) => {
+        capturedUrl = url;
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ status: 'PARTIAL', observations: [], warnings: [] }),
+        });
+      })
+    );
 
     await connexionGuadeloupeProvider.search({ query: 'lave-linge' }, makeController().signal);
     expect(capturedUrl).toContain('bkcode=0077620289340a0cc1cc8');
@@ -380,7 +419,7 @@ describe('connexionGuadeloupeProvider', () => {
 
     const result = await connexionGuadeloupeProvider.search(
       { query: 'réfrigérateur' },
-      makeController().signal,
+      makeController().signal
     );
     expect(result.status).toBe('UNAVAILABLE');
     expect(result.observations).toHaveLength(0);
@@ -402,12 +441,12 @@ describe('connexionGuadeloupeProvider', () => {
               'Consulter le catalogue : https://www.calameo.com/books/0077620289340a0cc1cc8',
           ],
         }),
-      }),
+      })
     );
 
     const result = await connexionGuadeloupeProvider.search(
       { query: 'four micro-ondes' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.source).toBe('connexion_guadeloupe');
@@ -415,10 +454,8 @@ describe('connexionGuadeloupeProvider', () => {
     expect(result.observations).toHaveLength(0);
     expect(
       result.warnings.some(
-        (w) =>
-          w.toLowerCase().includes('connexion') ||
-          w.includes('0077620289340a0cc1cc8'),
-      ),
+        (w) => w.toLowerCase().includes('connexion') || w.includes('0077620289340a0cc1cc8')
+      )
     ).toBe(true);
   });
 });

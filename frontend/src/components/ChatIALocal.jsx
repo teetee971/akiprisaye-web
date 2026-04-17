@@ -10,7 +10,8 @@ const translations = {
       savon: 'Savon Dove ka koute 3,85€ a Jarry, men 2,10€ an Métropol. Ou vlé signalé sa ?',
       budget: 'Di mwen konbyen ou pé dépensé, é mwen ké chaché on panier pli bon pri pou vou.',
       entraide: 'Ou vlé afiché on ti mésaj an mode "Dépanne ton voisin" ? Moun pé wè i an anonim.',
-      octroi: 'L’octroi de mer sé on taks lokal ki aplike sou pwodui ki sòti an déor. I ka édé pwodiksyon péyi.',
+      octroi:
+        'L’octroi de mer sé on taks lokal ki aplike sou pwodui ki sòti an déor. I ka édé pwodiksyon péyi.',
       abus: 'Ou pé fè on signalman an 1 klik. Sé pa jist si sa tro chè !',
       default: 'Mwen pa tro sèten, ou pé réformilé ou kestyon ?',
     },
@@ -21,10 +22,12 @@ const translations = {
     placeholder: 'Écrivez votre question...',
     send: 'Envoyer',
     replies: {
-      savon: 'Le savon Dove est à 3,85€ à Jarry, mais 2,10€ en métropole. Voulez-vous le signaler ?',
+      savon:
+        'Le savon Dove est à 3,85€ à Jarry, mais 2,10€ en métropole. Voulez-vous le signaler ?',
       budget: 'Indiquez-moi votre budget et je vous compose un panier au meilleur prix.',
       entraide: 'Souhaitez-vous publier un message "Dépanne ton voisin" ? Il restera anonyme.',
-      octroi: 'L’octroi de mer est une taxe locale sur les produits importés pour soutenir la production locale.',
+      octroi:
+        'L’octroi de mer est une taxe locale sur les produits importés pour soutenir la production locale.',
       abus: 'Vous pouvez signaler un prix abusif en un clic. Ce n’est pas juste si c’est trop cher !',
       default: 'Je ne suis pas certain, pouvez-vous reformuler votre question ?',
     },
@@ -37,8 +40,10 @@ const translations = {
     replies: {
       savon: 'El jabón Dove cuesta 3,85€ en Jarry pero 2,10€ en la metrópoli. ¿Quieres reportarlo?',
       budget: 'Dime tu presupuesto y busco una cesta al mejor precio para ti.',
-      entraide: '¿Quieres publicar un mensaje tipo "Ayuda a tu vecino"? Se mostrará de forma anónima.',
-      octroi: 'El “octroi de mer” es un impuesto local a los productos importados para apoyar la producción local.',
+      entraide:
+        '¿Quieres publicar un mensaje tipo "Ayuda a tu vecino"? Se mostrará de forma anónima.',
+      octroi:
+        'El “octroi de mer” es un impuesto local a los productos importados para apoyar la producción local.',
       abus: 'Puedes reportar un precio abusivo en un clic. ¡No es justo si está demasiado caro!',
       default: 'No estoy seguro, ¿puedes reformular la pregunta?',
     },
@@ -51,9 +56,7 @@ const getLocale = (lang) => translations[lang] ?? translations.fr;
 export default function ChatIALocal() {
   const [lang, setLang] = useState('creole');
   const locale = useMemo(() => getLocale(lang), [lang]);
-  const [messages, setMessages] = useState([
-    { from: 'ia', text: getLocale('creole').welcome },
-  ]);
+  const [messages, setMessages] = useState([{ from: 'ia', text: getLocale('creole').welcome }]);
   const [input, setInput] = useState('');
 
   useEffect(() => {
@@ -73,7 +76,8 @@ export default function ChatIALocal() {
       return locale.replies.entraide;
     }
     if (msg.includes('octroi') || msg.includes('taxe')) return locale.replies.octroi;
-    if (msg.includes('prix abusif') || msg.includes('arnaque') || msg.includes('trop cher')) return locale.replies.abus;
+    if (msg.includes('prix abusif') || msg.includes('arnaque') || msg.includes('trop cher'))
+      return locale.replies.abus;
     return locale.replies.default;
   };
 

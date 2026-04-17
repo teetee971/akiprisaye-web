@@ -1,5 +1,3 @@
- 
- 
 /**
  * Test suite to verify BarcodeScanner handles missing navigator API correctly
  * This ensures CI builds don't fail when navigator is undefined (Node.js environment)
@@ -20,11 +18,11 @@ describe('BarcodeScanner - Navigator Guard', () => {
   it('should handle undefined navigator gracefully', () => {
     // Save original navigator
     const originalNavigator = global.navigator;
-    
+
     try {
       // Simulate missing navigator (SSR/Node environment)
       (global as any).navigator = undefined;
-      
+
       // Import should not throw
       expect(async () => {
         await import('../BarcodeScanner');
@@ -38,14 +36,14 @@ describe('BarcodeScanner - Navigator Guard', () => {
   it('should handle missing permissions API gracefully', () => {
     // Save original navigator
     const originalNavigator = global.navigator;
-    
+
     try {
       // Simulate navigator without permissions API (older browsers)
       (global as any).navigator = {
         userAgent: 'test',
         // permissions is missing
       };
-      
+
       // Import should not throw
       expect(async () => {
         await import('../BarcodeScanner');

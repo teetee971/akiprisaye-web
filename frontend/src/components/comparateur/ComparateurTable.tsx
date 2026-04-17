@@ -81,7 +81,10 @@ export default function ComparateurTable({ data, selectedProduct }: ComparateurT
           {communes.map((commune) => {
             const communeData = data.filter((item) => item.commune === commune);
             return (
-              <div key={commune} className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden">
+              <div
+                key={commune}
+                className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 overflow-hidden"
+              >
                 <div className="bg-slate-50 dark:bg-slate-800 px-6 py-3 border-b border-slate-200 dark:border-slate-700">
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                     <span>📍</span>
@@ -108,7 +111,10 @@ export default function ComparateurTable({ data, selectedProduct }: ComparateurT
                         const isMin = item.prix === minPrix;
                         const isMax = item.prix === maxPrix;
                         return (
-                          <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                          <tr
+                            key={idx}
+                            className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                          >
                             <td className="px-6 py-4">
                               <div className="flex items-center gap-3">
                                 <span className="text-2xl">🏪</span>
@@ -118,11 +124,15 @@ export default function ComparateurTable({ data, selectedProduct }: ComparateurT
                               </div>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <span className={`text-xl font-bold ${
-                                isMin ? 'text-green-600 dark:text-green-400' : 
-                                isMax ? 'text-red-600 dark:text-red-400' : 
-                                'text-slate-900 dark:text-white'
-                              }`}>
+                              <span
+                                className={`text-xl font-bold ${
+                                  isMin
+                                    ? 'text-green-600 dark:text-green-400'
+                                    : isMax
+                                      ? 'text-red-600 dark:text-red-400'
+                                      : 'text-slate-900 dark:text-white'
+                                }`}
+                              >
                                 {item.prix.toFixed(2)} €
                               </span>
                             </td>
@@ -173,7 +183,10 @@ export default function ComparateurTable({ data, selectedProduct }: ComparateurT
                   const isMin = item.prix === minPrix;
                   const isMax = item.prix === maxPrix;
                   return (
-                    <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <tr
+                      key={idx}
+                      className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <span className="text-2xl">🏪</span>
@@ -183,11 +196,15 @@ export default function ComparateurTable({ data, selectedProduct }: ComparateurT
                         </div>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className={`text-xl font-bold ${
-                          isMin ? 'text-green-600 dark:text-green-400' : 
-                          isMax ? 'text-red-600 dark:text-red-400' : 
-                          'text-slate-900 dark:text-white'
-                        }`}>
+                        <span
+                          className={`text-xl font-bold ${
+                            isMin
+                              ? 'text-green-600 dark:text-green-400'
+                              : isMax
+                                ? 'text-red-600 dark:text-red-400'
+                                : 'text-slate-900 dark:text-white'
+                          }`}
+                        >
                           {item.prix.toFixed(2)} €
                         </span>
                       </td>
@@ -219,94 +236,112 @@ export default function ComparateurTable({ data, selectedProduct }: ComparateurT
         <div className="text-sm font-semibold text-slate-600 dark:text-slate-400 px-2">
           Vue mobile optimisée :
         </div>
-        {groupByCommune ? (
-          communes.map((commune) => {
-            const communeData = data.filter((item) => item.commune === commune);
-            return (
-              <div key={commune} className="space-y-3">
-                <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg">
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <span>📍</span>
-                    <span>{commune}</span>
-                  </h4>
-                </div>
-                {communeData.map((item, idx) => {
-                  const isMin = item.prix === minPrix;
-                  const isMax = item.prix === maxPrix;
-                  return (
-                    <div
-                      key={idx}
-                      className={`bg-white dark:bg-slate-900 rounded-xl border-2 ${
-                        isMin ? 'border-green-500' : isMax ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'
-                      } p-4 shadow-md`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xl">🏪</span>
-                          <span className="font-medium text-slate-900 dark:text-white">
-                            {item.enseigne}
-                          </span>
-                        </div>
-                        {isMin && (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-                            <span>🟢</span>
-                          </span>
-                        )}
-                        {isMax && (
-                          <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                            <span>🔴</span>
-                          </span>
-                        )}
-                      </div>
-                      <div className={`text-2xl font-bold ${
-                        isMin ? 'text-green-600' : isMax ? 'text-red-600' : 'text-slate-900 dark:text-white'
-                      }`}>
-                        {item.prix.toFixed(2)} €
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })
-        ) : (
-          data.map((item, idx) => {
-            const isMin = item.prix === minPrix;
-            const isMax = item.prix === maxPrix;
-            return (
-              <div
-                key={idx}
-                className={`bg-white dark:bg-slate-900 rounded-xl border-2 ${
-                  isMin ? 'border-green-500' : isMax ? 'border-red-500' : 'border-slate-200 dark:border-slate-700'
-                } p-4 shadow-md`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl">🏪</span>
-                    <span className="font-medium text-slate-900 dark:text-white">
-                      {item.enseigne}
-                    </span>
+        {groupByCommune
+          ? communes.map((commune) => {
+              const communeData = data.filter((item) => item.commune === commune);
+              return (
+                <div key={commune} className="space-y-3">
+                  <div className="bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-lg">
+                    <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                      <span>📍</span>
+                      <span>{commune}</span>
+                    </h4>
                   </div>
-                  {isMin && (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-                      <span>🟢</span>
-                    </span>
-                  )}
-                  {isMax && (
-                    <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                      <span>🔴</span>
-                    </span>
-                  )}
+                  {communeData.map((item, idx) => {
+                    const isMin = item.prix === minPrix;
+                    const isMax = item.prix === maxPrix;
+                    return (
+                      <div
+                        key={idx}
+                        className={`bg-white dark:bg-slate-900 rounded-xl border-2 ${
+                          isMin
+                            ? 'border-green-500'
+                            : isMax
+                              ? 'border-red-500'
+                              : 'border-slate-200 dark:border-slate-700'
+                        } p-4 shadow-md`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xl">🏪</span>
+                            <span className="font-medium text-slate-900 dark:text-white">
+                              {item.enseigne}
+                            </span>
+                          </div>
+                          {isMin && (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                              <span>🟢</span>
+                            </span>
+                          )}
+                          {isMax && (
+                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                              <span>🔴</span>
+                            </span>
+                          )}
+                        </div>
+                        <div
+                          className={`text-2xl font-bold ${
+                            isMin
+                              ? 'text-green-600'
+                              : isMax
+                                ? 'text-red-600'
+                                : 'text-slate-900 dark:text-white'
+                          }`}
+                        >
+                          {item.prix.toFixed(2)} €
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className={`text-2xl font-bold ${
-                  isMin ? 'text-green-600' : isMax ? 'text-red-600' : 'text-slate-900 dark:text-white'
-                }`}>
-                  {item.prix.toFixed(2)} €
+              );
+            })
+          : data.map((item, idx) => {
+              const isMin = item.prix === minPrix;
+              const isMax = item.prix === maxPrix;
+              return (
+                <div
+                  key={idx}
+                  className={`bg-white dark:bg-slate-900 rounded-xl border-2 ${
+                    isMin
+                      ? 'border-green-500'
+                      : isMax
+                        ? 'border-red-500'
+                        : 'border-slate-200 dark:border-slate-700'
+                  } p-4 shadow-md`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">🏪</span>
+                      <span className="font-medium text-slate-900 dark:text-white">
+                        {item.enseigne}
+                      </span>
+                    </div>
+                    {isMin && (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+                        <span>🟢</span>
+                      </span>
+                    )}
+                    {isMax && (
+                      <span className="inline-flex items-center gap-1 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                        <span>🔴</span>
+                      </span>
+                    )}
+                  </div>
+                  <div
+                    className={`text-2xl font-bold ${
+                      isMin
+                        ? 'text-green-600'
+                        : isMax
+                          ? 'text-red-600'
+                          : 'text-slate-900 dark:text-white'
+                    }`}
+                  >
+                    {item.prix.toFixed(2)} €
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        )}
+              );
+            })}
       </div>
     </div>
   );

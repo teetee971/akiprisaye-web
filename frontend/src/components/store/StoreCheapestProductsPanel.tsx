@@ -1,9 +1,9 @@
 /**
  * Store Cheapest Products Detail Panel
- * 
+ *
  * Displays detailed view of the cheapest products observed at a store.
  * Shows product list, prices, observation dates, and store information.
- * 
+ *
  * Constraints:
  * - Descriptive data only - no commercial incentives
  * - No buy buttons or external links
@@ -21,9 +21,9 @@ interface StoreCheapestProductsPanelProps {
   onClose: () => void;
 }
 
-export default function StoreCheapestProductsPanel({ 
-  data, 
-  onClose 
+export default function StoreCheapestProductsPanel({
+  data,
+  onClose,
 }: StoreCheapestProductsPanelProps) {
   const { store, cheapestProducts, lastObservation } = data;
 
@@ -60,13 +60,13 @@ export default function StoreCheapestProductsPanel({
         <div className="bg-slate-800/50 border-b border-slate-700 p-4">
           <div className="flex items-center gap-2 text-gray-300 mb-2">
             <span className="text-gray-500">📍</span>
-            <span>{store.address}, {store.postalCode} {store.city}</span>
+            <span>
+              {store.address}, {store.postalCode} {store.city}
+            </span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <span>📅</span>
-            <span>
-              Dernière observation : {formatObservationDate(lastObservation)}
-            </span>
+            <span>Dernière observation : {formatObservationDate(lastObservation)}</span>
           </div>
         </div>
 
@@ -102,9 +102,7 @@ export default function StoreCheapestProductsPanel({
                         </div>
                       </td>
                       <td className="py-3">
-                        <div className="text-sm text-gray-300 capitalize">
-                          {product.category}
-                        </div>
+                        <div className="text-sm text-gray-300 capitalize">{product.category}</div>
                       </td>
                       <td className="py-3 text-right">
                         <div className="text-lg font-bold text-green-400">
@@ -129,12 +127,10 @@ export default function StoreCheapestProductsPanel({
           <div className="flex items-start gap-3">
             <span className="text-xl flex-shrink-0">ℹ️</span>
             <div className="text-sm">
-              <p className="text-blue-200 font-medium mb-1">
-                Transparence des données
-              </p>
+              <p className="text-blue-200 font-medium mb-1">Transparence des données</p>
               <p className="text-blue-100/80">
-                Données issues d'observations comparatives citoyennes.
-                Les prix peuvent varier selon la date et le point de vente.
+                Données issues d'observations comparatives citoyennes. Les prix peuvent varier selon
+                la date et le point de vente.
               </p>
             </div>
           </div>

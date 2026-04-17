@@ -1,8 +1,8 @@
 /**
  * Price Observatory Types - v1.3.0
- * 
+ *
  * Types for intelligent price monitoring and analysis
- * 
+ *
  * @module observatoryTypes
  */
 

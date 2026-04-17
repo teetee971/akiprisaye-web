@@ -1,9 +1,9 @@
 /**
  * optimizationModes.ts — Shopping list optimization mode configurations
- * 
+ *
  * Purpose: Define optimization strategies for smart shopping lists
  * Used by: SmartShoppingList component for route optimization
- * 
+ *
  * @module optimizationModes
  */
 
@@ -34,7 +34,7 @@ export const OPTIMIZATION_MODES: Record<string, OptimizationMode> = {
   BALANCED: {
     id: 'balanced',
     name: 'MODE C — Équilibré (RECOMMANDÉ)',
-    description: 'Score pondéré : Prix + Distance + Nombre d\'arrêts',
+    description: "Score pondéré : Prix + Distance + Nombre d'arrêts",
     icon: 'Clock',
   },
   SINGLE_STORE: {
@@ -54,14 +54,14 @@ export const DEFAULT_OPTIMIZATION_MODE = 'balanced';
  * Get optimization mode by ID
  */
 export function getOptimizationMode(id: string): OptimizationMode | undefined {
-  return Object.values(OPTIMIZATION_MODES).find(mode => mode.id === id);
+  return Object.values(OPTIMIZATION_MODES).find((mode) => mode.id === id);
 }
 
 /**
  * Get all optimization mode IDs
  */
 export function getAllOptimizationModeIds(): string[] {
-  return Object.values(OPTIMIZATION_MODES).map(mode => mode.id);
+  return Object.values(OPTIMIZATION_MODES).map((mode) => mode.id);
 }
 
 /**

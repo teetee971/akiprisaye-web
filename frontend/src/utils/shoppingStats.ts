@@ -40,9 +40,9 @@ export function loadStats(): ShoppingStats {
     co2Saved: 0,
     favoriteStores: [],
     mostBoughtProducts: [],
-    lastUpdated: Date.now()
+    lastUpdated: Date.now(),
   };
-  
+
   return safeLocalStorage.getJSON<ShoppingStats>(STORAGE_KEY, defaultStats);
 }
 
@@ -72,14 +72,14 @@ export function trackTrip(
   stats.co2Saved += co2Saved;
 
   // Update favorite stores
-  stores.forEach(store => {
+  stores.forEach((store) => {
     if (!stats.favoriteStores.includes(store)) {
       stats.favoriteStores.push(store);
     }
   });
 
   // Update most bought products
-  products.forEach(product => {
+  products.forEach((product) => {
     if (!stats.mostBoughtProducts.includes(product)) {
       stats.mostBoughtProducts.push(product);
     }
@@ -110,64 +110,64 @@ const BADGE_DEFINITIONS: Omit<Badge, 'unlocked' | 'progress'>[] = [
     name: 'Premier Pas',
     icon: '👶',
     description: 'Complétez votre première course optimisée',
-    target: 1
+    target: 1,
   },
   {
     id: 'eco_warrior',
     name: 'Guerrier Écolo',
     icon: '🌱',
     description: 'Économisez 100 kg de CO₂',
-    target: 100
+    target: 100,
   },
   {
     id: 'fuel_saver',
     name: 'Économe',
     icon: '⛽',
     description: 'Économisez 50 litres de carburant',
-    target: 50
+    target: 50,
   },
   {
     id: 'road_master',
     name: 'Maître des Routes',
     icon: '🗺️',
     description: 'Parcourez 500 km optimisés',
-    target: 500
+    target: 500,
   },
   {
     id: 'frequent_shopper',
     name: 'Habitué',
     icon: '🛒',
     description: 'Complétez 20 courses',
-    target: 20
+    target: 20,
   },
   {
     id: 'super_saver',
     name: 'Super Économe',
     icon: '💎',
     description: 'Économisez 200 litres de carburant',
-    target: 200
+    target: 200,
   },
   {
     id: 'planet_hero',
     name: 'Héros de la Planète',
     icon: '🌍',
     description: 'Économisez 500 kg de CO₂',
-    target: 500
+    target: 500,
   },
   {
     id: 'legend',
     name: 'Légende',
     icon: '🏆',
     description: 'Parcourez 1000 km optimisés',
-    target: 1000
-  }
+    target: 1000,
+  },
 ];
 
 /**
  * Get badges with unlock status
  */
 export function getBadges(stats: ShoppingStats): Badge[] {
-  return BADGE_DEFINITIONS.map(badge => {
+  return BADGE_DEFINITIONS.map((badge) => {
     let progress = 0;
     let unlocked = false;
 
@@ -209,7 +209,7 @@ export function getBadges(stats: ShoppingStats): Badge[] {
     return {
       ...badge,
       unlocked,
-      progress: Math.min(progress, badge.target || progress)
+      progress: Math.min(progress, badge.target || progress),
     };
   });
 }
@@ -220,12 +220,12 @@ export function getBadges(stats: ShoppingStats): Badge[] {
 export function getNewBadges(stats: ShoppingStats): Badge[] {
   const previouslyUnlocked = safeLocalStorage.getJSON<string[]>(BADGES_KEY, []);
   const currentBadges = getBadges(stats);
-  const currentlyUnlocked = currentBadges.filter(b => b.unlocked).map(b => b.id);
+  const currentlyUnlocked = currentBadges.filter((b) => b.unlocked).map((b) => b.id);
 
-  const newlyUnlocked = currentlyUnlocked.filter(id => !previouslyUnlocked.includes(id));
-  
+  const newlyUnlocked = currentlyUnlocked.filter((id) => !previouslyUnlocked.includes(id));
+
   // Update stored badges
   safeLocalStorage.setJSON(BADGES_KEY, currentlyUnlocked);
 
-  return currentBadges.filter(b => newlyUnlocked.includes(b.id));
+  return currentBadges.filter((b) => newlyUnlocked.includes(b.id));
 }

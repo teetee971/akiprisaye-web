@@ -23,9 +23,30 @@ import { useVisitorStats, type TerritoryStats, type InterestStats } from '../hoo
 // ── Medal styles ──────────────────────────────────────────────────────────────
 
 const MEDAL = [
-  { emoji: '🥇', ring: 'ring-yellow-400/60', bg: 'bg-yellow-400/10', text: 'text-yellow-300', label: '1er',  size: 'text-5xl' },
-  { emoji: '🥈', ring: 'ring-slate-400/60',  bg: 'bg-slate-400/10',  text: 'text-slate-300',  label: '2ème', size: 'text-4xl' },
-  { emoji: '🥉', ring: 'ring-amber-700/60',  bg: 'bg-amber-700/10',  text: 'text-amber-400',  label: '3ème', size: 'text-4xl' },
+  {
+    emoji: '🥇',
+    ring: 'ring-yellow-400/60',
+    bg: 'bg-yellow-400/10',
+    text: 'text-yellow-300',
+    label: '1er',
+    size: 'text-5xl',
+  },
+  {
+    emoji: '🥈',
+    ring: 'ring-slate-400/60',
+    bg: 'bg-slate-400/10',
+    text: 'text-slate-300',
+    label: '2ème',
+    size: 'text-4xl',
+  },
+  {
+    emoji: '🥉',
+    ring: 'ring-amber-700/60',
+    bg: 'bg-amber-700/10',
+    text: 'text-amber-400',
+    label: '3ème',
+    size: 'text-4xl',
+  },
 ];
 
 // ── Shared sub-components ─────────────────────────────────────────────────────
@@ -33,7 +54,9 @@ const MEDAL = [
 function PulseDot({ size = 'w-2.5 h-2.5' }: { size?: string }) {
   return (
     <span className="relative flex shrink-0" aria-hidden="true">
-      <span className={`animate-ping absolute inline-flex ${size} rounded-full bg-emerald-400 opacity-75`} />
+      <span
+        className={`animate-ping absolute inline-flex ${size} rounded-full bg-emerald-400 opacity-75`}
+      />
       <span className={`relative inline-flex rounded-full ${size} bg-emerald-500`} />
     </span>
   );
@@ -176,7 +199,9 @@ function TerritoryRankRow({
         {territory.online > 0 ? (
           <>
             <PulseDot size="w-2 h-2" />
-            <span className="text-emerald-300 font-bold text-sm tabular-nums">{territory.online}</span>
+            <span className="text-emerald-300 font-bold text-sm tabular-nums">
+              {territory.online}
+            </span>
           </>
         ) : (
           <span className="text-slate-600 text-sm">—</span>
@@ -241,7 +266,9 @@ function InterestRankRow({
         {interest.online > 0 ? (
           <>
             <PulseDot size="w-2 h-2" />
-            <span className="text-emerald-300 font-bold text-sm tabular-nums">{interest.online}</span>
+            <span className="text-emerald-300 font-bold text-sm tabular-nums">
+              {interest.online}
+            </span>
           </>
         ) : (
           <span className="text-slate-600 text-sm">—</span>
@@ -259,7 +286,8 @@ function InterestRankRow({
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AudiencePage() {
-  const { totalOnline, byTerritory, byInterest, loading, myTerritory, myInterest } = useVisitorStats();
+  const { totalOnline, byTerritory, byInterest, loading, myTerritory, myInterest } =
+    useVisitorStats();
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -267,19 +295,21 @@ export default function AudiencePage() {
   }, [totalOnline, byTerritory.length, byInterest.length, loading]);
 
   const territoryPodium = byTerritory.slice(0, 3);
-  const territoryRest   = byTerritory.slice(3);
+  const territoryRest = byTerritory.slice(3);
   const maxTerritoryOnline = byTerritory[0]?.online ?? 0;
 
   const interestPodium = byInterest.slice(0, 3);
-  const interestRest   = byInterest.slice(3);
+  const interestRest = byInterest.slice(3);
   const maxInterestOnline = byInterest[0]?.online ?? 0;
 
   const timeStr = lastUpdated.toLocaleTimeString('fr-FR', {
-    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
   });
 
   const hasTerritoriesData = !loading && byTerritory.length > 0;
-  const hasInterestData    = !loading && byInterest.length > 0;
+  const hasInterestData = !loading && byInterest.length > 0;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -290,12 +320,19 @@ export default function AudiencePage() {
           content="Podium des territoires ultramarins et des centres d'intérêt en temps réel sur A KI PRI SA YÉ. Rapport audience citoyenne."
         />
         <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/audience" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/audience" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/audience" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/audience"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/audience"
+        />
       </Helmet>
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-5 space-y-5">
-
         {/* ── Hero ── */}
         <HeroImage
           src={PAGE_HERO_IMAGES.audience}
@@ -322,7 +359,9 @@ export default function AudiencePage() {
               <span className="text-slate-400 text-sm animate-pulse">Connexion en cours…</span>
             ) : (
               <>
-                <span className="text-emerald-300 font-bold text-2xl tabular-nums">{totalOnline}</span>
+                <span className="text-emerald-300 font-bold text-2xl tabular-nums">
+                  {totalOnline}
+                </span>
                 <span className="text-slate-400 text-sm">
                   {totalOnline === 1 ? 'visiteur en ligne' : 'visiteurs en ligne'} maintenant
                 </span>
@@ -339,7 +378,10 @@ export default function AudiencePage() {
             SECTION 1 — Podium des territoires
         ══════════════════════════════════════════════════════════════════════ */}
         <section aria-labelledby="section-territories">
-          <h2 id="section-territories" className="text-lg font-semibold text-white mb-5 flex items-center gap-2">
+          <h2
+            id="section-territories"
+            className="text-lg font-semibold text-white mb-5 flex items-center gap-2"
+          >
             <Globe size={18} className="text-indigo-400" />
             Podium des territoires connectés
           </h2>
@@ -348,12 +390,28 @@ export default function AudiencePage() {
           {hasTerritoriesData && territoryPodium.length > 0 && (
             <div className="grid grid-cols-3 gap-3 items-end mb-6">
               {territoryPodium[1] ? (
-                <TerritoryPodiumCard rank={1} territory={territoryPodium[1]} isMe={territoryPodium[1].code === myTerritory} />
-              ) : <div />}
-              <TerritoryPodiumCard rank={0} territory={territoryPodium[0]} isMe={territoryPodium[0].code === myTerritory} />
+                <TerritoryPodiumCard
+                  rank={1}
+                  territory={territoryPodium[1]}
+                  isMe={territoryPodium[1].code === myTerritory}
+                />
+              ) : (
+                <div />
+              )}
+              <TerritoryPodiumCard
+                rank={0}
+                territory={territoryPodium[0]}
+                isMe={territoryPodium[0].code === myTerritory}
+              />
               {territoryPodium[2] ? (
-                <TerritoryPodiumCard rank={2} territory={territoryPodium[2]} isMe={territoryPodium[2].code === myTerritory} />
-              ) : <div />}
+                <TerritoryPodiumCard
+                  rank={2}
+                  territory={territoryPodium[2]}
+                  isMe={territoryPodium[2].code === myTerritory}
+                />
+              ) : (
+                <div />
+              )}
             </div>
           )}
 
@@ -382,7 +440,10 @@ export default function AudiencePage() {
           )}
 
           {!loading && byTerritory.length === 0 && (
-            <EmptyState icon={<Globe size={36} />} message="Aucun territoire actif pour le moment." />
+            <EmptyState
+              icon={<Globe size={36} />}
+              message="Aucun territoire actif pour le moment."
+            />
           )}
         </section>
 
@@ -390,7 +451,10 @@ export default function AudiencePage() {
             SECTION 2 — Podium des centres d'intérêt
         ══════════════════════════════════════════════════════════════════════ */}
         <section aria-labelledby="section-interests">
-          <h2 id="section-interests" className="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+          <h2
+            id="section-interests"
+            className="text-lg font-semibold text-white mb-2 flex items-center gap-2"
+          >
             <TrendingUp size={18} className="text-purple-400" />
             Podium des centres d'intérêt
           </h2>
@@ -402,12 +466,28 @@ export default function AudiencePage() {
           {hasInterestData && interestPodium.length > 0 && (
             <div className="grid grid-cols-3 gap-3 items-end mb-6">
               {interestPodium[1] ? (
-                <InterestPodiumCard rank={1} interest={interestPodium[1]} isMe={interestPodium[1].key === myInterest?.key} />
-              ) : <div />}
-              <InterestPodiumCard rank={0} interest={interestPodium[0]} isMe={interestPodium[0].key === myInterest?.key} />
+                <InterestPodiumCard
+                  rank={1}
+                  interest={interestPodium[1]}
+                  isMe={interestPodium[1].key === myInterest?.key}
+                />
+              ) : (
+                <div />
+              )}
+              <InterestPodiumCard
+                rank={0}
+                interest={interestPodium[0]}
+                isMe={interestPodium[0].key === myInterest?.key}
+              />
               {interestPodium[2] ? (
-                <InterestPodiumCard rank={2} interest={interestPodium[2]} isMe={interestPodium[2].key === myInterest?.key} />
-              ) : <div />}
+                <InterestPodiumCard
+                  rank={2}
+                  interest={interestPodium[2]}
+                  isMe={interestPodium[2].key === myInterest?.key}
+                />
+              ) : (
+                <div />
+              )}
             </div>
           )}
 
@@ -436,7 +516,10 @@ export default function AudiencePage() {
           )}
 
           {!loading && byInterest.length === 0 && (
-            <EmptyState icon={<BarChart3 size={36} />} message="Les intérêts apparaîtront dès que des visiteurs naviguent." />
+            <EmptyState
+              icon={<BarChart3 size={36} />}
+              message="Les intérêts apparaîtront dès que des visiteurs naviguent."
+            />
           )}
         </section>
 
@@ -458,29 +541,41 @@ export default function AudiencePage() {
           </h3>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <p className="text-slate-300 font-medium text-xs uppercase tracking-wider">🗺️ Territoire</p>
+              <p className="text-slate-300 font-medium text-xs uppercase tracking-wider">
+                🗺️ Territoire
+              </p>
               <p>
-                Détecté via le <strong className="text-slate-300">fuseau horaire</strong> du navigateur
-                (API <code className="font-mono text-xs bg-slate-800 px-1 rounded">Intl.DateTimeFormat</code>).
-                Aucune géolocalisation ni cookie tiers.
+                Détecté via le <strong className="text-slate-300">fuseau horaire</strong> du
+                navigateur (API{' '}
+                <code className="font-mono text-xs bg-slate-800 px-1 rounded">
+                  Intl.DateTimeFormat
+                </code>
+                ). Aucune géolocalisation ni cookie tiers.
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-slate-300 font-medium text-xs uppercase tracking-wider">📊 Centres d'intérêt</p>
+              <p className="text-slate-300 font-medium text-xs uppercase tracking-wider">
+                📊 Centres d'intérêt
+              </p>
               <p>
                 Basé sur la <strong className="text-slate-300">section visitée</strong> (URL).
                 Données anonymes — aucun identifiant personnel collecté.
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-slate-300 font-medium text-xs uppercase tracking-wider">🟢 En ligne</p>
+              <p className="text-slate-300 font-medium text-xs uppercase tracking-wider">
+                🟢 En ligne
+              </p>
               <p>
-                Visiteurs actifs dans les <strong className="text-slate-300">5 dernières minutes</strong>.
-                Mise à jour automatique toutes les 30 secondes.
+                Visiteurs actifs dans les{' '}
+                <strong className="text-slate-300">5 dernières minutes</strong>. Mise à jour
+                automatique toutes les 30 secondes.
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-slate-300 font-medium text-xs uppercase tracking-wider">📈 Total vues</p>
+              <p className="text-slate-300 font-medium text-xs uppercase tracking-wider">
+                📈 Total vues
+              </p>
               <p>
                 Compteur cumulatif de sessions uniques par section depuis l'activation du suivi.
               </p>
@@ -490,16 +585,23 @@ export default function AudiencePage() {
             <p className="text-indigo-300 border-t border-slate-800 pt-3">
               Votre territoire détecté : <strong>{myTerritory.toUpperCase()}</strong>
               {myInterest && (
-                <> · Section actuelle : <strong>{myInterest.emoji} {myInterest.name}</strong></>
+                <>
+                  {' '}
+                  · Section actuelle :{' '}
+                  <strong>
+                    {myInterest.emoji} {myInterest.name}
+                  </strong>
+                </>
               )}
             </p>
           )}
           <p className="text-xs text-slate-600 border-t border-slate-800 pt-3">
             Ces statistiques sont visibles publiquement dans un esprit de transparence citoyenne.{' '}
-            <Link to="/transparence" className="hover:text-slate-400 underline">En savoir plus →</Link>
+            <Link to="/transparence" className="hover:text-slate-400 underline">
+              En savoir plus →
+            </Link>
           </p>
         </section>
-
       </div>
     </div>
   );
@@ -515,4 +617,3 @@ function EmptyState({ icon, message }: { icon: React.ReactNode; message: string 
     </div>
   );
 }
-

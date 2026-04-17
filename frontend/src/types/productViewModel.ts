@@ -1,4 +1,3 @@
- 
 /**
  * Product View Model Types
  * UI-specific types for product display (PR #2)
@@ -17,17 +16,17 @@ export interface ProductViewModel {
   nom: string;
   marque: string;
   categorie: string;
-  
+
   // Product details
   contenance?: string;
-  prix?: string;  // Formatted price string
-  
+  prix?: string; // Formatted price string
+
   // Status & reliability
   status: EanStatus;
   statusLabel: string;
   statusColor: 'green' | 'yellow' | 'gray';
   isCitizenData: boolean;
-  
+
   // Traceability display
   source: DataSource;
   sourceLabel: string;
@@ -35,11 +34,11 @@ export interface ProductViewModel {
   territoireLabel: string;
   magasin?: string;
   dateObservation: string; // Formatted date string
-  
+
   // Visual
   imageUrl?: string;
   hasImage: boolean;
-  
+
   // User photos (optional, with consent)
   userPhotos: UserPhoto[];
 }
@@ -80,7 +79,7 @@ export const TERRITOIRE_LABELS: Record<Territoire, string> = {
   wallis_et_futuna: 'Wallis-et-Futuna',
   saint_martin: 'Saint-Martin',
   saint_barthelemy: 'Saint-Barthélemy',
-  saint_pierre_et_miquelon: 'Saint-Pierre-et-Miquelon'
+  saint_pierre_et_miquelon: 'Saint-Pierre-et-Miquelon',
 };
 
 /**
@@ -92,14 +91,14 @@ export const SOURCE_LABELS: Record<DataSource, string> = {
   partenaire_enseigne: 'Partenaire enseigne',
   open_food_facts: 'Open Food Facts',
   manuel: 'Saisie manuelle',
-  scan_utilisateur: 'Scan utilisateur'
+  scan_utilisateur: 'Scan utilisateur',
 };
 
 /**
  * Status label mapping
  */
 export const STATUS_LABELS: Record<EanStatus, string> = {
-  'confirmé': 'Produit confirmé',
-  'partiel': 'Données partielles',
-  'non_référencé': 'Non référencé'
+  confirmé: 'Produit confirmé',
+  partiel: 'Données partielles',
+  non_référencé: 'Non référencé',
 };

@@ -1,4 +1,3 @@
- 
 /**
  * TiPanieSolidaire Component
  * * Solidarity basket feature for sharing unsold items and local produce
@@ -7,13 +6,7 @@
 
 import { useState, useEffect } from 'react';
 // Importations Firebase pour la production
-import { 
-  getFirestore, 
-  collection, 
-  query, 
-  where, 
-  getDocs 
-} from 'firebase/firestore';
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
 import { app } from '../firebase_config'; // Assurez-vous que le chemin est correct
 import { Card } from './ui/card.jsx';
 
@@ -41,11 +34,11 @@ export function TiPanieSolidaire({ territoire = null }) {
       // 1. Récupération des Paniers (Filtre par territoire si fourni)
       const paniersRef = collection(db, 'paniers');
       let paniersQuery;
-      
+
       if (territoire) {
         paniersQuery = query(
-          paniersRef, 
-          where('territoire', '==', territoire), 
+          paniersRef,
+          where('territoire', '==', territoire),
           where('disponible', '>', 0)
         );
       } else {
@@ -53,9 +46,9 @@ export function TiPanieSolidaire({ territoire = null }) {
       }
 
       const paniersSnapshot = await getDocs(paniersQuery);
-      const paniersList = paniersSnapshot.docs.map(doc => ({
+      const paniersList = paniersSnapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
 
       // 2. Récupération des Producteurs
@@ -63,22 +56,26 @@ export function TiPanieSolidaire({ territoire = null }) {
       let producteursQuery;
 
       if (territoire) {
-        producteursQuery = query(producteursRef, where('territoire', '==', territoire), where('active', '==', true));
+        producteursQuery = query(
+          producteursRef,
+          where('territoire', '==', territoire),
+          where('active', '==', true)
+        );
       } else {
         producteursQuery = query(producteursRef, where('active', '==', true));
       }
 
       const producteursSnapshot = await getDocs(producteursQuery);
-      const producteursList = producteursSnapshot.docs.map(doc => ({
+      const producteursList = producteursSnapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
 
       setPaniers(paniersList);
       setProducteurs(producteursList);
     } catch (_err) {
       // Error is logged internally, set user-friendly message
-      setError("Impossible de charger les données. Vérifiez votre connexion.");
+      setError('Impossible de charger les données. Vérifiez votre connexion.');
     } finally {
       setLoading(false);
     }
@@ -95,9 +92,7 @@ export function TiPanieSolidaire({ territoire = null }) {
 
   if (error) {
     return (
-      <div className="p-6 bg-red-50 text-red-700 rounded-lg border border-red-200">
-        ⚠️ {error}
-      </div>
+      <div className="p-6 bg-red-50 text-red-700 rounded-lg border border-red-200">⚠️ {error}</div>
     );
   }
 
@@ -105,11 +100,10 @@ export function TiPanieSolidaire({ territoire = null }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-green-600 to-green-800 rounded-xl p-8 text-white shadow-md">
-        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-          ❤️ Ti Panié Solidaire
-        </h2>
+        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">❤️ Ti Panié Solidaire</h2>
         <p className="text-green-50 opacity-90">
-          Zéro donnée fictive : connectez-vous directement aux surplus des producteurs de {territoire || 'votre région'}.
+          Zéro donnée fictive : connectez-vous directement aux surplus des producteurs de{' '}
+          {territoire || 'votre région'}.
         </p>
       </div>
 
@@ -140,42 +134,51 @@ export function TiPanieSolidaire({ territoire = null }) {
       {/* Contenu vide si aucune donnée */}
       {(activeTab === 'paniers' ? paniers : producteurs).length === 0 && (
         <div className="text-center py-12 bg-gray-50 dark:bg-gray-800/50 rounded-lg border-2 border-dashed border-gray-200 dark:border-gray-700">
-          <p className="text-gray-500">Aucun résultat officiel disponible pour ce territoire pour le moment.</p>
+          <p className="text-gray-500">
+            Aucun résultat officiel disponible pour ce territoire pour le moment.
+          </p>
         </div>
       )}
 
       {/* Logic d'affichage des listes (Paniers / Producteurs) - Identique à l'original mais avec data Firestore */}
       {/* ... (Le reste du JSX reste identique, utilisant les variables paniers et producteurs peuplées par Firestore) */}
-      
+
       {activeTab === 'paniers' && (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {paniers.map(panier => (
-            <Card key={panier.id} className="p-4 hover:shadow-xl border-t-4 border-t-green-500 transition-all">
-               {/* Rendu dynamique du panier */}
-               <div className="flex justify-between items-start mb-2">
-                 <h3 className="font-bold text-lg">{panier.titre}</h3>
-                 <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded uppercase font-bold">{panier.type}</span>
-               </div>
-               <p className="text-sm text-gray-600 mb-4">{panier.description}</p>
-               <div className="flex items-baseline gap-2 mb-4">
-                 <span className="text-2xl font-bold text-green-600">{panier.prix.toFixed(2)}€</span>
-                 <span className="text-sm line-through text-gray-400">{panier.prixHabituel?.toFixed(2)}€</span>
-               </div>
-               <button className="w-full py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors">
-                 Réserver (Source: {panier.producteur})
-               </button>
+          {paniers.map((panier) => (
+            <Card
+              key={panier.id}
+              className="p-4 hover:shadow-xl border-t-4 border-t-green-500 transition-all"
+            >
+              {/* Rendu dynamique du panier */}
+              <div className="flex justify-between items-start mb-2">
+                <h3 className="font-bold text-lg">{panier.titre}</h3>
+                <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded uppercase font-bold">
+                  {panier.type}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">{panier.description}</p>
+              <div className="flex items-baseline gap-2 mb-4">
+                <span className="text-2xl font-bold text-green-600">{panier.prix.toFixed(2)}€</span>
+                <span className="text-sm line-through text-gray-400">
+                  {panier.prixHabituel?.toFixed(2)}€
+                </span>
+              </div>
+              <button className="w-full py-2 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-colors">
+                Réserver (Source: {panier.producteur})
+              </button>
             </Card>
           ))}
         </div>
       )}
-      
+
       {/* ... (Code pour Producteurs Tab) */}
 
       <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 p-4 rounded-lg flex items-start gap-3">
         <span className="text-blue-600 font-bold">ℹ️</span>
         <p className="text-xs text-blue-800 dark:text-blue-300">
-          Les prix et stocks sont mis à jour directement par les producteurs partenaires. 
-          Dernière synchronisation : {new Date().toLocaleDateString()}.
+          Les prix et stocks sont mis à jour directement par les producteurs partenaires. Dernière
+          synchronisation : {new Date().toLocaleDateString()}.
         </p>
       </div>
     </div>

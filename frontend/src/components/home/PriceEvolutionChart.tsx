@@ -199,10 +199,7 @@ export default function PriceEvolutionChart() {
   const chartData = buildChartData(activeProduct);
 
   return (
-    <section
-      className="price-evo-section section-reveal"
-      aria-labelledby="price-evo-heading"
-    >
+    <section className="price-evo-section section-reveal" aria-labelledby="price-evo-heading">
       <div className="price-evo-header">
         <h2 id="price-evo-heading" className="section-title slide-up">
           📈 Évolution des prix — nov. 2025 → mars 2026
@@ -228,15 +225,8 @@ export default function PriceEvolutionChart() {
 
       <div className="price-evo-wrap" role="tabpanel" aria-label={product.label}>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={chartData}
-            margin={{ top: 8, right: 16, left: 0, bottom: 8 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(148,163,184,0.15)"
-              vertical={false}
-            />
+          <LineChart data={chartData} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.15)" vertical={false} />
             <XAxis
               dataKey="month"
               tick={{ fill: '#94a3b8', fontSize: 11 }}
@@ -256,9 +246,7 @@ export default function PriceEvolutionChart() {
               cursor={{ stroke: 'rgba(148,163,184,0.25)', strokeWidth: 1 }}
             />
             <Legend
-              formatter={(value: string) =>
-                `${TERRITORY_FLAGS[value] ?? ''} ${value}`
-              }
+              formatter={(value: string) => `${TERRITORY_FLAGS[value] ?? ''} ${value}`}
               wrapperStyle={{ fontSize: 12, color: '#94a3b8' }}
             />
             {product.series.map((s) => (

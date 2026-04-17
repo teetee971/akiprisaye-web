@@ -20,7 +20,10 @@ function toNumber(value?: number): number | null {
   return value;
 }
 
-function toTargetUnitQuantity(quantityValue?: number, quantityUnit?: QuantityUnit): { normalizedUnit: NormalizedUnit; quantity: number } | null {
+function toTargetUnitQuantity(
+  quantityValue?: number,
+  quantityUnit?: QuantityUnit
+): { normalizedUnit: NormalizedUnit; quantity: number } | null {
   const value = toNumber(quantityValue);
   if (!value || !quantityUnit) return null;
 
@@ -38,7 +41,10 @@ export function normalizePrice(input: NormalizePriceInput): NormalizePriceOutput
   }
 
   const normalizedQuantity = toTargetUnitQuantity(input.quantityValue, input.quantityUnit);
-  const normalizedUnit = input.unit === 'kg' || input.unit === 'l' || input.unit === 'unit' ? input.unit : normalizedQuantity?.normalizedUnit;
+  const normalizedUnit =
+    input.unit === 'kg' || input.unit === 'l' || input.unit === 'unit'
+      ? input.unit
+      : normalizedQuantity?.normalizedUnit;
 
   if (!normalizedQuantity || !normalizedUnit || normalizedQuantity.quantity <= 0) {
     return {

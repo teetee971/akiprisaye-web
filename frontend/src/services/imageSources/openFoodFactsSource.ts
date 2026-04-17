@@ -22,7 +22,11 @@ import {
   extractSizeFromLabel,
   removeAccents,
 } from '../../utils/productLabelNormalizer';
-import type { ImageCandidate, ImageSourceAdapter, ProductDescriptor } from '../../types/product-image';
+import type {
+  ImageCandidate,
+  ImageSourceAdapter,
+  ProductDescriptor,
+} from '../../types/product-image';
 
 const OFF_SEARCH_URL = 'https://world.openfoodfacts.org/cgi/search.pl';
 const OFF_PRODUCT_URL = 'https://world.openfoodfacts.org/api/v2/product';
@@ -54,23 +58,24 @@ interface OFFSearchResponse {
 
 /** Normalise pour comparaison (sans accents, lowercase, alphanumérique uniquement) */
 function normCmp(s: string): string {
-  return removeAccents(s).toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  return removeAccents(s)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Évalue la compatibilité d'un résultat OFF avec le produit cherché */
-function computeOffConfidenceHints(
-  product: ProductDescriptor,
-  offProduct: OFFProduct,
-): string[] {
+function computeOffConfidenceHints(product: ProductDescriptor, offProduct: OFFProduct): string[] {
   const hints: string[] = [];
   const title = normCmp(
     [offProduct.product_name_fr ?? offProduct.product_name, offProduct.brands, offProduct.quantity]
       .filter(Boolean)
-      .join(' '),
+      .join(' ')
   );
 
   const detectedBrand = product.brand ?? extractBrandFromLabel(product.rawLabel);
-  const detectedSize  = product.sizeText ?? extractSizeFromLabel(product.rawLabel);
+  const detectedSize = product.sizeText ?? extractSizeFromLabel(product.rawLabel);
 
   if (detectedBrand && title.includes(normCmp(detectedBrand))) hints.push('brand_match');
   if (detectedSize) {
@@ -81,7 +86,9 @@ function computeOffConfidenceHints(
 
   if (offProduct.image_front_url) hints.push('packshot');
 
-  const coreWords = normCmp(product.normalizedLabel).split(' ').filter((w) => w.length >= 4);
+  const coreWords = normCmp(product.normalizedLabel)
+    .split(' ')
+    .filter((w) => w.length >= 4);
   const matches = coreWords.filter((w) => title.includes(w));
   if (matches.length >= 2) hints.push('keywords_match');
 
@@ -102,10 +109,16 @@ async function fetchOFFSearch(queryStr: string): Promise<OFFProduct[]> {
     json: '1',
     page_size: '5',
     fields: [
-      'code', 'product_name', 'product_name_fr',
-      'brands', 'quantity',
-      'image_url', 'image_front_url', 'image_front_small_url',
-      'categories_tags', 'labels_tags',
+      'code',
+      'product_name',
+      'product_name_fr',
+      'brands',
+      'quantity',
+      'image_url',
+      'image_front_url',
+      'image_front_small_url',
+      'categories_tags',
+      'labels_tags',
     ].join(','),
   });
 
@@ -145,7 +158,7 @@ async function fetchOFFByBarcode(barcode: string): Promise<OFFProduct | null> {
 function offProductToCandidate(
   offProduct: OFFProduct,
   product: ProductDescriptor,
-  matchedQuery: string,
+  matchedQuery: string
 ): ImageCandidate | null {
   const imageUrl = offProduct.image_front_url ?? offProduct.image_url;
   if (!imageUrl || !imageUrl.startsWith('https://')) return null;
@@ -162,16 +175,14 @@ function offProductToCandidate(
 
   return {
     imageUrl,
-    pageUrl: offProduct.code
-      ? `https://fr.openfoodfacts.org/produit/${offProduct.code}`
-      : null,
+    pageUrl: offProduct.code ? `https://fr.openfoodfacts.org/produit/${offProduct.code}` : null,
     title: title || undefined,
     source: 'openfoodfacts.org',
     sourceType: 'openfoodfacts',
     brand: offProduct.brands?.split(',')[0]?.trim(),
     sizeText: offProduct.quantity ?? undefined,
     matchedQuery,
-    confidenceScore: 0,   // Calculé par le scorer global
+    confidenceScore: 0, // Calculé par le scorer global
     confidenceHints: hints,
     notes: hints.includes('packshot') ? 'packshot' : undefined,
   };
@@ -205,7 +216,10 @@ export const openFoodFactsSource: ImageSourceAdapter = {
           const c = offProductToCandidate(offProduct, product, `ean:${product.barcode}`);
           if (c && !seenUrls.has(c.imageUrl)) {
             seenUrls.add(c.imageUrl);
-            candidates.push({ ...c, confidenceHints: [...(c.confidenceHints ?? []), 'barcode_exact'] });
+            candidates.push({
+              ...c,
+              confidenceHints: [...(c.confidenceHints ?? []), 'barcode_exact'],
+            });
           }
         }
       } catch {
@@ -219,7 +233,7 @@ export const openFoodFactsSource: ImageSourceAdapter = {
     const queries = generateSearchQueryVariants(
       product.normalizedLabel,
       product.brand ?? undefined,
-      product.sizeText ?? undefined,
+      product.sizeText ?? undefined
     ).slice(0, 3);
 
     for (const q of queries) {

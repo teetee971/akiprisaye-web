@@ -15,9 +15,10 @@ const normalizePath = (rawPath: string) => {
 const appRoutes = Array.from(
   new Set([
     '/',
-    ...[...appSource.matchAll(/<Route path="([^"]+)"/g)]
-      .map(([, routePath]) => normalizePath(`/${routePath}`)),
-  ]),
+    ...[...appSource.matchAll(/<Route path="([^"]+)"/g)].map(([, routePath]) =>
+      normalizePath(`/${routePath}`)
+    ),
+  ])
 ).sort();
 
 /**
@@ -28,7 +29,7 @@ const appRoutes = Array.from(
 function routePatternToRegex(pattern: string): RegExp {
   const escaped = pattern
     .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // escape regex special chars
-    .replace(/:[^/]+/g, '[^/]+');            // replace :param with wildcard
+    .replace(/:[^/]+/g, '[^/]+'); // replace :param with wildcard
   return new RegExp(`^${escaped}$`);
 }
 
@@ -43,9 +44,12 @@ function isRouted(sitemapPath: string): boolean {
 const sitemapPaths = Array.from(
   new Set(
     [...sitemapSource.matchAll(/<loc>([^<]+)<\/loc>/g)]
-      .map(([, absoluteUrl]) => new URL(absoluteUrl).pathname.replace(/^\/akiprisaye-web(?=\/|$)/, '') || '/')
-      .map(normalizePath),
-  ),
+      .map(
+        ([, absoluteUrl]) =>
+          new URL(absoluteUrl).pathname.replace(/^\/akiprisaye-web(?=\/|$)/, '') || '/'
+      )
+      .map(normalizePath)
+  )
 ).sort();
 
 describe('public sitemap route coverage', () => {
@@ -56,11 +60,6 @@ describe('public sitemap route coverage', () => {
   });
 
   it('still indexes the current public routes for the Ultra release', () => {
-    expect(sitemapPaths).toEqual(
-      expect.arrayContaining([
-        '/',
-        '/comparateur',
-      ]),
-    );
+    expect(sitemapPaths).toEqual(expect.arrayContaining(['/', '/comparateur']));
   });
 });

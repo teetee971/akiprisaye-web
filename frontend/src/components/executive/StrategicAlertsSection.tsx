@@ -38,7 +38,9 @@ export function StrategicAlertsSection({ risks = [] }: StrategicAlertsSectionPro
 
   return (
     <section className="rounded-xl bg-gray-900 border border-gray-700 p-4">
-      <h2 className="text-lg font-semibold text-white mb-3">⚠️ Alertes stratégiques ({risks.length})</h2>
+      <h2 className="text-lg font-semibold text-white mb-3">
+        ⚠️ Alertes stratégiques ({risks.length})
+      </h2>
       <ul className="space-y-2">
         {risks.map((risk) => (
           <li key={risk.id} className={`border rounded-lg p-3 ${severityStyles[risk.severity]}`}>

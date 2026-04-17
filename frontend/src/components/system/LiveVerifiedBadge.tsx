@@ -106,12 +106,8 @@ export default function LiveVerifiedBadge() {
     <div className="inline-flex items-center gap-2 rounded-full bg-emerald-950 border border-emerald-700 px-3 py-1.5 text-xs text-emerald-300">
       <CheckCircle className="w-3.5 h-3.5 shrink-0 text-emerald-400" />
       <span className="font-semibold tracking-wide">LIVE = VERIFIED BUILD</span>
-      {shortCommit && (
-        <span className="font-mono text-emerald-400">{shortCommit}</span>
-      )}
-      {branch && (
-        <span className="text-emerald-600 hidden sm:inline">· {branch}</span>
-      )}
+      {shortCommit && <span className="font-mono text-emerald-400">{shortCommit}</span>}
+      {branch && <span className="text-emerald-600 hidden sm:inline">· {branch}</span>}
       {formattedDate && (
         <span className="text-emerald-700 hidden md:inline">· {formattedDate} UTC</span>
       )}

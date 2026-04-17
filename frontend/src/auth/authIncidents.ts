@@ -45,7 +45,8 @@ export const AUTH_INCIDENTS: Record<AuthIncidentCode, AuthIncidentMeta> = {
   AUTH_REDIRECT_RESULT_EMPTY: {
     code: 'AUTH_REDIRECT_RESULT_EMPTY',
     severity: 'warning',
-    userMessage: 'La connexion a été interrompue ou refusée par votre navigateur. Activez les cookies tiers ou réessayez.',
+    userMessage:
+      'La connexion a été interrompue ou refusée par votre navigateur. Activez les cookies tiers ou réessayez.',
     debugMessage: 'getRedirectResult() returned null/empty.',
   },
   AUTH_STATE_NO_USER: {
@@ -94,7 +95,7 @@ export const AUTH_INCIDENTS: Record<AuthIncidentCode, AuthIncidentMeta> = {
 
 /** Returns the incident metadata for a given code, or null if code is absent. */
 export function getAuthIncidentMeta(
-  code: AuthIncidentCode | null | undefined,
+  code: AuthIncidentCode | null | undefined
 ): AuthIncidentMeta | null {
   if (!code) return null;
   return AUTH_INCIDENTS[code] ?? AUTH_INCIDENTS.AUTH_UNKNOWN_ERROR;
@@ -102,7 +103,7 @@ export function getAuthIncidentMeta(
 
 /** Returns the user-facing message for an incident code, or null. */
 export function getAuthIncidentUserMessage(
-  code: AuthIncidentCode | null | undefined,
+  code: AuthIncidentCode | null | undefined
 ): string | null {
   return getAuthIncidentMeta(code)?.userMessage ?? null;
 }

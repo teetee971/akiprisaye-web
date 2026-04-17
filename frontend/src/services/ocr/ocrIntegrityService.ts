@@ -1,7 +1,6 @@
- 
 /**
  * OCR Data Integrity Service
- * 
+ *
  * Provides cryptographic signature for OCR results
  * - SHA-256 hash of extracted text
  * - Timestamp
@@ -26,19 +25,16 @@ async function generateSHA256(text: string): Promise<string> {
   const data = encoder.encode(text);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   return hashHex;
 }
 
 /**
  * Sign OCR result with cryptographic hash
  */
-export async function signOCRResult(
-  text: string,
-  confidence: number
-): Promise<OCRSignature> {
+export async function signOCRResult(text: string, confidence: number): Promise<OCRSignature> {
   const hash = await generateSHA256(text);
-  
+
   return {
     hash,
     timestamp: Date.now(),
@@ -51,10 +47,7 @@ export async function signOCRResult(
 /**
  * Verify OCR signature
  */
-export async function verifyOCRSignature(
-  text: string,
-  signature: OCRSignature
-): Promise<boolean> {
+export async function verifyOCRSignature(text: string, signature: OCRSignature): Promise<boolean> {
   try {
     const currentHash = await generateSHA256(text);
     return currentHash === signature.hash && text.length === signature.textLength;

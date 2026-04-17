@@ -19,14 +19,14 @@
 import { useState, useRef, useEffect } from 'react';
 
 interface VideoCard {
-  id: string;             // YouTube video ID
+  id: string; // YouTube video ID
   title: string;
   description: string;
-  source: string;         // e.g. "France Outre-mer La 1ère"
-  duration: string;       // e.g. "3 min 42"
-  posterUrl: string;      // Unsplash fallback poster
+  source: string; // e.g. "France Outre-mer La 1ère"
+  duration: string; // e.g. "3 min 42"
+  posterUrl: string; // Unsplash fallback poster
   posterAlt: string;
-  tag: string;            // e.g. "🎙️ Reportage"
+  tag: string; // e.g. "🎙️ Reportage"
 }
 
 const VIDEO_CARDS: VideoCard[] = [
@@ -34,8 +34,8 @@ const VIDEO_CARDS: VideoCard[] = [
     id: 'xSdh47r2W9k',
     title: 'Vie chère en Martinique — Édition spéciale',
     description:
-      "Reportage de Martinique la 1ère : témoignages de consommateurs, analyse des mécanismes " +
-      "de la vie chère et impact sur le quotidien des habitants.",
+      'Reportage de Martinique la 1ère : témoignages de consommateurs, analyse des mécanismes ' +
+      'de la vie chère et impact sur le quotidien des habitants.',
     source: 'Martinique la 1ère',
     duration: '14 min',
     posterUrl:
@@ -47,8 +47,8 @@ const VIDEO_CARDS: VideoCard[] = [
     id: 's-X4KEZ97jA',
     title: 'Martinique, les révoltés de la vie chère — Outre-mer aux avant-postes 2025',
     description:
-      "Analyse approfondie des causes de la vie chère en Martinique : monopoles de distribution, " +
-      "octroi de mer, coûts de transport et mobilisations citoyennes de 2025.",
+      'Analyse approfondie des causes de la vie chère en Martinique : monopoles de distribution, ' +
+      'octroi de mer, coûts de transport et mobilisations citoyennes de 2025.',
     source: 'Le Point',
     duration: '24 min',
     posterUrl:
@@ -58,7 +58,12 @@ const VIDEO_CARDS: VideoCard[] = [
   },
 ];
 
-function LiteYouTubeEmbed({ videoId, posterUrl, posterAlt, title }: {
+function LiteYouTubeEmbed({
+  videoId,
+  posterUrl,
+  posterAlt,
+  title,
+}: {
   videoId: string;
   posterUrl: string;
   posterAlt: string;
@@ -124,8 +129,10 @@ export default function VideoVieChere() {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15 },
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.15 }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -143,8 +150,8 @@ export default function VideoVieChere() {
           La vie chère outre-mer en vidéo
         </h2>
         <p className="video-viechere-sub slide-up">
-          Reportages et analyses pour comprendre pourquoi les prix sont systématiquement
-          plus élevés dans les territoires ultramarins français.
+          Reportages et analyses pour comprendre pourquoi les prix sont systématiquement plus élevés
+          dans les territoires ultramarins français.
         </p>
       </div>
 
@@ -160,9 +167,7 @@ export default function VideoVieChere() {
                 title={card.title}
               />
             )}
-            {!visible && (
-              <div className="video-embed-skeleton" aria-hidden="true" />
-            )}
+            {!visible && <div className="video-embed-skeleton" aria-hidden="true" />}
             <div className="video-card-body">
               <h3 className="video-card-title">{card.title}</h3>
               <p className="video-card-desc">{card.description}</p>
@@ -176,9 +181,9 @@ export default function VideoVieChere() {
       </div>
 
       <p className="video-viechere-disclaimer">
-        Les vidéos sont hébergées sur YouTube. Leur lecture envoie des données à Google.
-        Aucun cookie de suivi n'est chargé avant que vous cliquiez sur lecture
-        (domaine <em>youtube-nocookie.com</em>).
+        Les vidéos sont hébergées sur YouTube. Leur lecture envoie des données à Google. Aucun
+        cookie de suivi n'est chargé avant que vous cliquiez sur lecture (domaine{' '}
+        <em>youtube-nocookie.com</em>).
       </p>
     </section>
   );

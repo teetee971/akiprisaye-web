@@ -13,7 +13,7 @@ function clamp(value: number, min: number, max: number) {
 function stdDeviation(values: number[]): number {
   if (values.length < 2) return 0;
   const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
-  const variance = values.reduce((sum, value) => sum + ((value - mean) ** 2), 0) / values.length;
+  const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
   return Math.sqrt(variance);
 }
 
@@ -31,7 +31,9 @@ export function computeConfidenceScore(item: ConfidenceInput): number {
     if (daysAgo <= 7) score += 10;
   }
 
-  const prices = (item.priceHistory ?? []).map((point) => point.price).filter((value) => Number.isFinite(value));
+  const prices = (item.priceHistory ?? [])
+    .map((point) => point.price)
+    .filter((value) => Number.isFinite(value));
   if (prices.length >= 5) {
     score += 10;
   }

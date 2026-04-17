@@ -49,7 +49,12 @@ const openFoodFactsProvider: PriceProvider = {
         const url = `${OFF_PROXY_PRODUCT_ENDPOINT}?barcode=${encodeURIComponent(input.barcode)}`;
         const response = await fetch(url, { signal });
         if (!response.ok) {
-          return { source: 'open_food_facts', status: 'UNAVAILABLE', observations: [], warnings: [] };
+          return {
+            source: 'open_food_facts',
+            status: 'UNAVAILABLE',
+            observations: [],
+            warnings: [],
+          };
         }
         const data = (await response.json()) as {
           data?: { productName?: string };
@@ -119,20 +124,32 @@ const PROVIDERS: PriceProvider[] = [
   calameoDynamicProvider,
 ];
 
-export async function runPriceProviders(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult[]> {
+export async function runPriceProviders(
+  input: PriceSearchInput,
+  signal: AbortSignal
+): Promise<ProviderResult[]> {
   const enabledProviders = PROVIDERS.filter((provider) => provider.isEnabled());
 
   if (enabledProviders.length === 0) {
     return [await seedProvider.search(input, signal)];
   }
 
-  const settled = await Promise.allSettled(enabledProviders.map((provider) => provider.search(input, signal)));
+  const settled = await Promise.allSettled(
+    enabledProviders.map((provider) => provider.search(input, signal))
+  );
   const liveResults = settled.flatMap((result, index) => {
     const provider = enabledProviders[index];
     if (result.status === 'fulfilled') {
       return [result.value];
     }
-    return [{ source: provider.source, status: 'UNAVAILABLE', observations: [], warnings: [] } as ProviderResult];
+    return [
+      {
+        source: provider.source,
+        status: 'UNAVAILABLE',
+        observations: [],
+        warnings: [],
+      } as ProviderResult,
+    ];
   });
 
   const hasPriceObservations = liveResults.some((result) => result.observations.length > 0);

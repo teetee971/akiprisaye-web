@@ -24,14 +24,14 @@ const HOW_IT_WORKS = [
   },
   {
     step: '3',
-    title: 'Score d\'anomalie',
-    desc: "Un algorithme de scoring détecte les variations statistiquement anormales (> 2σ).",
+    title: "Score d'anomalie",
+    desc: 'Un algorithme de scoring détecte les variations statistiquement anormales (> 2σ).',
     done: false,
   },
   {
     step: '4',
     title: 'Alerte et signalement',
-    desc: "Les anomalies sont remontées pour validation humaine avant signalement public.",
+    desc: 'Les anomalies sont remontées pour validation humaine avant signalement public.',
     done: false,
   },
 ];
@@ -79,14 +79,13 @@ export default function DetectionFraude() {
         </div>
 
         <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
-
           {/* Intro */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <p className="text-sm text-gray-700 leading-relaxed">
-              Les DOM-COM sont particulièrement exposés aux hausses de prix injustifiées.
-              Ce module combine la surveillance citoyenne et des algorithmes de détection automatique
-              pour identifier et signaler les anomalies de prix aux autorités compétentes
-              (DGCCRF, observatoires locaux).
+              Les DOM-COM sont particulièrement exposés aux hausses de prix injustifiées. Ce module
+              combine la surveillance citoyenne et des algorithmes de détection automatique pour
+              identifier et signaler les anomalies de prix aux autorités compétentes (DGCCRF,
+              observatoires locaux).
             </p>
           </div>
 
@@ -95,17 +94,23 @@ export default function DetectionFraude() {
             <h2 className="font-bold text-gray-900">🔍 Comment ça marche</h2>
             {HOW_IT_WORKS.map(({ step, title, desc, done }) => (
               <div key={step} className="flex gap-4 bg-white border border-gray-200 rounded-xl p-4">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold
-                  ${done ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
+                <div
+                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold
+                  ${done ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}
+                >
                   {done ? <CheckCircle className="w-4 h-4" /> : step}
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold text-sm text-gray-900">{title}</p>
                     {done ? (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Actif</span>
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">
+                        Actif
+                      </span>
                     ) : (
-                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">V3</span>
+                      <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                        V3
+                      </span>
                     )}
                   </div>
                   <p className="text-xs text-gray-500 mt-1 leading-relaxed">{desc}</p>
@@ -121,8 +126,8 @@ export default function DetectionFraude() {
               <h3 className="font-semibold text-red-900">Signalez un abus dès maintenant</h3>
             </div>
             <p className="text-sm text-red-700 mb-4">
-              Sans attendre l'automatisation, vous pouvez déjà signaler manuellement
-              toute hausse de prix suspecte observée dans votre territoire.
+              Sans attendre l'automatisation, vous pouvez déjà signaler manuellement toute hausse de
+              prix suspecte observée dans votre territoire.
             </p>
             <Link
               to="/signalement"
@@ -135,7 +140,9 @@ export default function DetectionFraude() {
 
           {/* Outils disponibles */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h3 className="font-semibold text-gray-900 mb-3">🔧 Outils de surveillance disponibles</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">
+              🔧 Outils de surveillance disponibles
+            </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {EXISTING_TOOLS.map(({ label, route, icon: Icon }) => (
                 <Link

@@ -5,7 +5,7 @@ import {
   createUserMessage,
   createAssistantMessage,
   isProhibitedQuery,
-  type AssistantMessage
+  type AssistantMessage,
 } from '../services/assistantService';
 
 export default function AssistantChat() {
@@ -30,27 +30,27 @@ export default function AssistantChat() {
 
   const handleSendMessage = async () => {
     const query = inputValue.trim();
-    
+
     if (!query) return;
-    
+
     // Check for prohibited content
     if (isProhibitedQuery(query)) {
       toast.error('⚠️ Cette question contient un contenu interdit.');
       return;
     }
-    
+
     // Add user message
     const userMsg = createUserMessage(query);
-    setMessages(prev => [...prev, userMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInputValue('');
     setIsTyping(true);
-    
+
     // Simulate typing delay for more natural feel
     setTimeout(() => {
       const response = generateAssistantResponse(query);
       const assistantMsg = createAssistantMessage(query, response);
-      
-      setMessages(prev => [...prev, assistantMsg]);
+
+      setMessages((prev) => [...prev, assistantMsg]);
       setIsTyping(false);
     }, 800);
   };
@@ -72,17 +72,11 @@ export default function AssistantChat() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all ${
-          isOpen
-            ? 'bg-red-600 hover:bg-red-500'
-            : 'bg-blue-600 hover:bg-blue-500 animate-pulse'
+          isOpen ? 'bg-red-600 hover:bg-red-500' : 'bg-blue-600 hover:bg-blue-500 animate-pulse'
         }`}
-        aria-label={isOpen ? 'Fermer l\'assistant' : 'Ouvrir l\'assistant'}
+        aria-label={isOpen ? "Fermer l'assistant" : "Ouvrir l'assistant"}
       >
-        {isOpen ? (
-          <span className="text-2xl">✕</span>
-        ) : (
-          <span className="text-2xl">💬</span>
-        )}
+        {isOpen ? <span className="text-2xl">✕</span> : <span className="text-2xl">💬</span>}
       </button>
 
       {/* Chat Window */}
@@ -91,9 +85,7 @@ export default function AssistantChat() {
           {/* Header */}
           <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-white">
-                Assistant A KI PRI SA YÉ
-              </h3>
+              <h3 className="text-lg font-semibold text-white">Assistant A KI PRI SA YÉ</h3>
               <p className="text-xs text-gray-400">Lecture seule • Sources vérifiables</p>
             </div>
             {messages.length > 0 && (
@@ -113,9 +105,12 @@ export default function AssistantChat() {
               <div className="h-full flex items-center justify-center text-center px-4">
                 <div>
                   <div className="text-4xl mb-4">👋</div>
-                  <p className="text-gray-300 mb-2">Bonjour ! Je suis l'assistant A KI PRI SA YÉ.</p>
+                  <p className="text-gray-300 mb-2">
+                    Bonjour ! Je suis l'assistant A KI PRI SA YÉ.
+                  </p>
                   <p className="text-sm text-gray-400">
-                    Posez-moi vos questions sur le service, les tarifs, les données ou les fonctionnalités.
+                    Posez-moi vos questions sur le service, les tarifs, les données ou les
+                    fonctionnalités.
                   </p>
                   <div className="mt-4 space-y-2">
                     <button
@@ -125,7 +120,7 @@ export default function AssistantChat() {
                       💳 Quels sont les tarifs ?
                     </button>
                     <button
-                      onClick={() => setInputValue('D\'où viennent les données ?')}
+                      onClick={() => setInputValue("D'où viennent les données ?")}
                       className="block w-full px-3 py-2 bg-slate-800/50 hover:bg-slate-700/50 rounded text-sm text-gray-300 transition-colors"
                     >
                       📊 D'où viennent les données ?
@@ -144,9 +139,7 @@ export default function AssistantChat() {
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`flex ${
-                      msg.role === 'user' ? 'justify-end' : 'justify-start'
-                    }`}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
                       className={`max-w-[85%] rounded-lg p-3 ${
@@ -155,10 +148,8 @@ export default function AssistantChat() {
                           : 'bg-slate-800/50 text-gray-200'
                       }`}
                     >
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                        {msg.content}
-                      </p>
-                      
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
+
                       {/* Sources */}
                       {msg.role === 'assistant' && msg.sources && msg.sources.length > 0 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/50">
@@ -175,39 +166,47 @@ export default function AssistantChat() {
                           </div>
                         </div>
                       )}
-                      
+
                       {/* Related FAQ */}
                       {msg.role === 'assistant' && msg.relatedFAQ && msg.relatedFAQ.length > 1 && (
                         <div className="mt-2 pt-2 border-t border-slate-700/50">
                           <p className="text-xs text-gray-400">
-                            📋 {msg.relatedFAQ.length - 1} question{msg.relatedFAQ.length > 2 ? 's' : ''} liée{msg.relatedFAQ.length > 2 ? 's' : ''}
+                            📋 {msg.relatedFAQ.length - 1} question
+                            {msg.relatedFAQ.length > 2 ? 's' : ''} liée
+                            {msg.relatedFAQ.length > 2 ? 's' : ''}
                           </p>
                         </div>
                       )}
-                      
+
                       <p className="text-xs text-gray-500 mt-1">
                         {msg.timestamp.toLocaleTimeString('fr-FR', {
                           hour: '2-digit',
-                          minute: '2-digit'
+                          minute: '2-digit',
                         })}
                       </p>
                     </div>
                   </div>
                 ))}
-                
+
                 {/* Typing indicator */}
                 {isTyping && (
                   <div className="flex justify-start">
                     <div className="bg-slate-800/50 rounded-lg p-3">
                       <div className="flex space-x-1">
                         <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
+                        <span
+                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '0.2s' }}
+                        ></span>
+                        <span
+                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '0.4s' }}
+                        ></span>
                       </div>
                     </div>
                   </div>
                 )}
-                
+
                 <div ref={messagesEndRef} />
               </>
             )}

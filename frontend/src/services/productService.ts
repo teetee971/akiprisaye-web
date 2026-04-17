@@ -1,19 +1,14 @@
 /**
  * Product Service - v1.1.0
- * 
+ *
  * Service for fetching and managing live product prices.
- * 
+ *
  * @module productService
  */
 
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 import { liveApiFetchJson } from './liveApiClient';
-import type { 
-  Product, 
-  ProductSearchParams, 
-  ProductListResponse
-} from '../types/product';
-
+import type { Product, ProductSearchParams, ProductListResponse } from '../types/product';
 
 /**
  * Fetch products from live API.
@@ -28,7 +23,7 @@ export async function fetchProducts(
     products: apiProducts,
     total: apiProducts.length,
     hasMore: false,
-    filters: params
+    filters: params,
   };
 }
 
@@ -80,13 +75,13 @@ export function calculatePricePerUnit(
 ): number {
   // Convert to kg or L
   let factor = 1;
-  
+
   if (unite === 'g') {
     factor = 1000; // convert g to kg
   } else if (unite === 'ml') {
     factor = 1000; // convert ml to L
   }
-  
+
   return (prix_unitaire / contenance) * factor;
 }
 
@@ -104,7 +99,7 @@ export function formatDate(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();
   const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-  
+
   if (diffDays === 0) return "Aujourd'hui";
   if (diffDays === 1) return 'Hier';
   if (diffDays < 7) return `Il y a ${diffDays} jours`;

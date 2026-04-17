@@ -23,5 +23,5 @@ export const TERRITORY_FILE_MAP: Record<string, string> = {
   PM: 'saint-pierre-et-miquelon',
   WF: 'wallis-et-futuna',
   PF: 'polynesie-francaise',
-  NC: 'nouvelle-caledonie'
+  NC: 'nouvelle-caledonie',
 };

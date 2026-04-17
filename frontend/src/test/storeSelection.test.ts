@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { clearSelection, getSelection, LEGACY_STORE_SELECTION_KEY, setSelection, STORE_SELECTION_KEY } from '../modules/store/storeSelection';
+import {
+  clearSelection,
+  getSelection,
+  LEGACY_STORE_SELECTION_KEY,
+  setSelection,
+  STORE_SELECTION_KEY,
+} from '../modules/store/storeSelection';
 
 const sample = {
   storeId: 'gp-leclerc-bas-du-fort',

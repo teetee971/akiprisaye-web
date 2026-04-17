@@ -25,19 +25,25 @@ export function DecisionBacklogSection({ decisions = [] }: DecisionBacklogSectio
     return (
       <section className="rounded-xl bg-gray-900 border border-gray-700 p-4">
         <h2 className="text-lg font-semibold text-white mb-2">🎯 Backlog décisions</h2>
-        <p className="text-gray-400 text-sm">Aucune décision en attente. Lancez le workflow Executive OS.</p>
+        <p className="text-gray-400 text-sm">
+          Aucune décision en attente. Lancez le workflow Executive OS.
+        </p>
       </section>
     );
   }
 
   return (
     <section className="rounded-xl bg-gray-900 border border-gray-700 p-4">
-      <h2 className="text-lg font-semibold text-white mb-3">🎯 Backlog décisions ({decisions.length})</h2>
+      <h2 className="text-lg font-semibold text-white mb-3">
+        🎯 Backlog décisions ({decisions.length})
+      </h2>
       <ul className="space-y-2">
         {decisions.slice(0, 8).map((d) => (
           <li key={d.id} className="bg-gray-800 rounded-lg px-3 py-2">
             <div className="flex items-center gap-2 mb-1">
-              <span className={`text-xs rounded px-1.5 py-0.5 font-semibold ${priorityBadge[d.priority]}`}>
+              <span
+                className={`text-xs rounded px-1.5 py-0.5 font-semibold ${priorityBadge[d.priority]}`}
+              >
                 {d.priority}
               </span>
               {d.category && <span className="text-xs text-gray-500">{d.category}</span>}

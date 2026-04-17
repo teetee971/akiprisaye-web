@@ -61,27 +61,24 @@ export function useLoyaltyCards() {
     setCards(readCards());
   }, []);
 
-  const addCard = useCallback(
-    (storeName: string, cardNumber: string, color?: string) => {
-      const resolvedColor =
-        color ??
-        PRESET_STORES.find((s) => s.name === storeName)?.color ??
-        CARD_COLORS[colorIndex++ % CARD_COLORS.length];
-      const newCard: LoyaltyCard = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        storeName: storeName.trim(),
-        cardNumber: cardNumber.trim(),
-        color: resolvedColor,
-        createdAt: new Date().toISOString(),
-      };
-      setCards((prev) => {
-        const next = [newCard, ...prev];
-        safeLocalStorage?.setItem(STORAGE_KEY, JSON.stringify(next));
-        return next;
-      });
-    },
-    []
-  );
+  const addCard = useCallback((storeName: string, cardNumber: string, color?: string) => {
+    const resolvedColor =
+      color ??
+      PRESET_STORES.find((s) => s.name === storeName)?.color ??
+      CARD_COLORS[colorIndex++ % CARD_COLORS.length];
+    const newCard: LoyaltyCard = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+      storeName: storeName.trim(),
+      cardNumber: cardNumber.trim(),
+      color: resolvedColor,
+      createdAt: new Date().toISOString(),
+    };
+    setCards((prev) => {
+      const next = [newCard, ...prev];
+      safeLocalStorage?.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
 
   const removeCard = useCallback((id: string) => {
     setCards((prev) => {

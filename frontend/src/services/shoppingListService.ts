@@ -102,7 +102,7 @@ export async function getProductByEan(ean: string): Promise<FirestoreProduct | n
  */
 export async function getPricesByEan(
   ean: string,
-  options: PriceQueryOptions = {},
+  options: PriceQueryOptions = {}
 ): Promise<FirestorePrice[]> {
   if (!db) {
     logWarn('Firebase not initialized - returning empty array');
@@ -132,8 +132,9 @@ export async function getPricesByEan(
       const data = docSnap.data() as DocumentData;
 
       // Filter out expired prices
-      const expiresMillis =
-        data['expiresAt']?.toMillis ? (data['expiresAt'].toMillis() as number) : null;
+      const expiresMillis = data['expiresAt']?.toMillis
+        ? (data['expiresAt'].toMillis() as number)
+        : null;
       if (expiresMillis !== null && expiresMillis < now) return;
 
       const capturedMillis: number = data['capturedAt']?.toMillis
@@ -151,7 +152,10 @@ export async function getPricesByEan(
         ageHours,
         capturedAt: capturedMillis,
         expiresAt: expiresMillis,
-        price: typeof data['price'] === 'number' ? data['price'] : parseFloat(data['price'] as string) || 0,
+        price:
+          typeof data['price'] === 'number'
+            ? data['price']
+            : parseFloat(data['price'] as string) || 0,
       } as FirestorePrice);
     });
 
@@ -177,7 +181,7 @@ export async function getStoresByTerritory(territory: string): Promise<Firestore
     const q = query(
       storesRef,
       where('territory', '==', territory),
-      where('presence', '==', 'confirmee'),
+      where('presence', '==', 'confirmee')
     );
 
     const snapshot = await getDocs(q);
@@ -185,7 +189,9 @@ export async function getStoresByTerritory(territory: string): Promise<Firestore
 
     snapshot.forEach((docSnap) => {
       const data = docSnap.data() as DocumentData;
-      const coords = data['coordonnees_gps'] as { latitude?: number; longitude?: number } | undefined;
+      const coords = data['coordonnees_gps'] as
+        | { latitude?: number; longitude?: number }
+        | undefined;
       if (coords?.latitude && coords?.longitude) {
         stores.push({
           id: docSnap.id,

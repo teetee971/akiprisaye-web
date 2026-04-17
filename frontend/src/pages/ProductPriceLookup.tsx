@@ -14,9 +14,20 @@ import React, { useState, useCallback, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
-  Search, Barcode, MapPin, TrendingDown, TrendingUp, Minus,
-  ChevronRight, RotateCcw, ShoppingCart, Star, AlertCircle,
-  Loader2, Package, Clock,
+  Search,
+  Barcode,
+  MapPin,
+  TrendingDown,
+  TrendingUp,
+  Minus,
+  ChevronRight,
+  RotateCcw,
+  ShoppingCart,
+  Star,
+  AlertCircle,
+  Loader2,
+  Package,
+  Clock,
 } from 'lucide-react';
 import { useProductLivePrices } from '../hooks/useProductLivePrices';
 import type { TerritoryPriceSummary } from '../hooks/useProductLivePrices';
@@ -24,7 +35,11 @@ import type { TerritoryPriceSummary } from '../hooks/useProductLivePrices';
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const TERRITORY_FLAGS: Record<string, string> = {
-  gp: '🇬🇵', mq: '🇲🇶', gf: '🇬🇫', re: '🇷🇪', yt: '🇾🇹',
+  gp: '🇬🇵',
+  mq: '🇲🇶',
+  gf: '🇬🇫',
+  re: '🇷🇪',
+  yt: '🇾🇹',
 };
 
 const TERRITORY_COLORS: Record<string, string> = {
@@ -36,8 +51,11 @@ const TERRITORY_COLORS: Record<string, string> = {
 };
 
 const NUTRISCORE_COLORS: Record<string, string> = {
-  a: 'bg-green-500', b: 'bg-lime-400', c: 'bg-yellow-400',
-  d: 'bg-orange-500', e: 'bg-red-500',
+  a: 'bg-green-500',
+  b: 'bg-lime-400',
+  c: 'bg-yellow-400',
+  d: 'bg-orange-500',
+  e: 'bg-red-500',
 };
 
 // Produits de référence pour démarrer rapidement
@@ -60,13 +78,16 @@ function PriceTrendIcon({ min, max }: { min: number | null; max: number | null }
   if (!min || !max) return <Minus size={14} className="text-slate-400" />;
   const spread = ((max - min) / min) * 100;
   if (spread > 10) return <TrendingUp size={14} className="text-red-400" />;
-  if (spread < 3)  return <TrendingDown size={14} className="text-green-400" />;
+  if (spread < 3) return <TrendingDown size={14} className="text-green-400" />;
   return <Minus size={14} className="text-slate-400" />;
 }
 
 // ─── Subcomponents ────────────────────────────────────────────────────────────
 
-function ProductCard({ product, scannedAt }: {
+function ProductCard({
+  product,
+  scannedAt,
+}: {
   product: NonNullable<ReturnType<typeof useProductLivePrices>['state']['result']>['product'];
   scannedAt: string;
 }) {
@@ -79,11 +100,15 @@ function ProductCard({ product, scannedAt }: {
           alt={product.name}
           loading="lazy"
           className="w-20 h-20 object-contain rounded-xl bg-white/10 flex-shrink-0"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = 'none';
+          }}
         />
       )}
       <div className="flex-1 min-w-0">
-        <p className="font-bold text-white text-base leading-tight truncate">{product.name || 'Produit inconnu'}</p>
+        <p className="font-bold text-white text-base leading-tight truncate">
+          {product.name || 'Produit inconnu'}
+        </p>
         {product.brand && <p className="text-sm text-slate-300 mt-0.5">{product.brand}</p>}
         <div className="flex items-center gap-2 mt-2 flex-wrap">
           {product.category && (
@@ -92,17 +117,23 @@ function ProductCard({ product, scannedAt }: {
             </span>
           )}
           {product.nutriscore && (
-            <span className={`text-xs font-bold text-white px-2 py-0.5 rounded-full ${NUTRISCORE_COLORS[product.nutriscore] ?? 'bg-slate-500'}`}>
+            <span
+              className={`text-xs font-bold text-white px-2 py-0.5 rounded-full ${NUTRISCORE_COLORS[product.nutriscore] ?? 'bg-slate-500'}`}
+            >
               Nutri-Score {product.nutriscore.toUpperCase()}
             </span>
           )}
           {product.quantity && (
-            <span className="text-xs text-slate-400">{product.quantity}{product.unit}</span>
+            <span className="text-xs text-slate-400">
+              {product.quantity}
+              {product.unit}
+            </span>
           )}
         </div>
         <p className="text-xs text-slate-500 mt-2">
           <Clock size={11} className="inline mr-1" />
-          Scanné à {new Date(scannedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+          Scanné à{' '}
+          {new Date(scannedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>
     </div>
@@ -110,23 +141,26 @@ function ProductCard({ product, scannedAt }: {
 }
 
 function TerritoryRow({
-  summary, isCheapest,
+  summary,
+  isCheapest,
 }: {
   summary: TerritoryPriceSummary;
   isCheapest: boolean;
 }) {
   const { territory, territoryName, min, max, avg, count, currency } = summary;
-  const flag    = TERRITORY_FLAGS[territory] ?? '🏝️';
+  const flag = TERRITORY_FLAGS[territory] ?? '🏝️';
   const gradient = TERRITORY_COLORS[territory] ?? 'from-slate-500 to-slate-400';
 
   return (
-    <div className={`relative flex items-center gap-3 p-3 rounded-xl border transition-all ${
-      isCheapest
-        ? 'border-emerald-400/60 bg-emerald-900/20'
-        : count > 0
-          ? 'border-white/10 bg-white/5 hover:bg-white/8'
-          : 'border-white/5 bg-white/2 opacity-50'
-    }`}>
+    <div
+      className={`relative flex items-center gap-3 p-3 rounded-xl border transition-all ${
+        isCheapest
+          ? 'border-emerald-400/60 bg-emerald-900/20'
+          : count > 0
+            ? 'border-white/10 bg-white/5 hover:bg-white/8'
+            : 'border-white/5 bg-white/2 opacity-50'
+      }`}
+    >
       {/* Gradient pill */}
       <div className={`w-1 h-10 rounded-full bg-gradient-to-b ${gradient} flex-shrink-0`} />
 
@@ -159,7 +193,9 @@ function TerritoryRow({
       {/* Count + trend */}
       <div className="flex flex-col items-end gap-1 flex-shrink-0">
         <PriceTrendIcon min={min} max={max} />
-        <span className="text-xs text-slate-500">{count} relevé{count !== 1 ? 's' : ''}</span>
+        <span className="text-xs text-slate-500">
+          {count} relevé{count !== 1 ? 's' : ''}
+        </span>
       </div>
 
       {/* Cheapest badge */}
@@ -176,22 +212,28 @@ function TerritoryRow({
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function ProductPriceLookup() {
-  const [input, setInput]     = useState('');
+  const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>([]);
-  const inputRef              = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const { state, scan, clear } = useProductLivePrices();
 
-  const handleScan = useCallback(async (ean: string) => {
-    const clean = ean.trim();
-    if (!isValidEAN(clean)) return;
-    setHistory((h) => [clean, ...h.filter((x) => x !== clean)].slice(0, 5));
-    await scan(clean);
-  }, [scan]);
+  const handleScan = useCallback(
+    async (ean: string) => {
+      const clean = ean.trim();
+      if (!isValidEAN(clean)) return;
+      setHistory((h) => [clean, ...h.filter((x) => x !== clean)].slice(0, 5));
+      await scan(clean);
+    },
+    [scan]
+  );
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    handleScan(input);
-  }, [input, handleScan]);
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      handleScan(input);
+    },
+    [input, handleScan]
+  );
 
   const handleClear = useCallback(() => {
     clear();
@@ -212,10 +254,12 @@ export default function ProductPriceLookup() {
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white pb-16">
-
         {/* ── Header ── */}
         <div className="px-4 pt-8 pb-6 max-w-2xl mx-auto">
-          <Link to="/" className="text-slate-400 hover:text-white text-sm flex items-center gap-1 mb-6 transition-colors">
+          <Link
+            to="/"
+            className="text-slate-400 hover:text-white text-sm flex items-center gap-1 mb-6 transition-colors"
+          >
             ← Accueil
           </Link>
 
@@ -231,12 +275,14 @@ export default function ProductPriceLookup() {
         </div>
 
         <div className="px-4 max-w-2xl mx-auto space-y-5">
-
           {/* ── Search bar ── */}
           <form onSubmit={handleSubmit} className="relative">
             <div className="flex gap-2">
               <div className="relative flex-1">
-                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <Search
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                />
                 <input
                   ref={inputRef}
                   type="text"
@@ -254,7 +300,11 @@ export default function ProductPriceLookup() {
                 disabled={!isValidEAN(input) || loading}
                 className="px-5 py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 disabled:opacity-40 rounded-2xl font-semibold text-white transition-all flex items-center gap-2"
               >
-                {loading ? <Loader2 size={18} className="animate-spin" /> : <ChevronRight size={18} />}
+                {loading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <ChevronRight size={18} />
+                )}
                 <span className="hidden sm:inline">Rechercher</span>
               </button>
             </div>
@@ -270,7 +320,10 @@ export default function ProductPriceLookup() {
                 {QUICK_EANS.map(({ ean, label }) => (
                   <button
                     key={ean}
-                    onClick={() => { setInput(ean); handleScan(ean); }}
+                    onClick={() => {
+                      setInput(ean);
+                      handleScan(ean);
+                    }}
                     className="text-xs px-3 py-1.5 bg-white/8 hover:bg-white/15 border border-white/10 rounded-full text-slate-300 transition-all"
                   >
                     {label}
@@ -290,7 +343,10 @@ export default function ProductPriceLookup() {
                 {history.map((ean) => (
                   <button
                     key={ean}
-                    onClick={() => { setInput(ean); handleScan(ean); }}
+                    onClick={() => {
+                      setInput(ean);
+                      handleScan(ean);
+                    }}
                     className="text-xs px-3 py-1.5 bg-violet-500/15 hover:bg-violet-500/25 border border-violet-400/20 rounded-full text-violet-300 font-mono transition-all"
                   >
                     {ean}
@@ -342,7 +398,8 @@ export default function ProductPriceLookup() {
                         className="underline"
                       >
                         l'ajouter ici
-                      </a>.
+                      </a>
+                      .
                     </p>
                   </div>
                 </div>
@@ -380,7 +437,9 @@ export default function ProductPriceLookup() {
               <div className="p-4 bg-violet-900/20 border border-violet-400/20 rounded-2xl flex items-start gap-3">
                 <TrendingDown size={18} className="text-violet-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm text-violet-300 font-medium">Vous connaissez un meilleur prix ?</p>
+                  <p className="text-sm text-violet-300 font-medium">
+                    Vous connaissez un meilleur prix ?
+                  </p>
                   <p className="text-xs text-slate-400 mt-0.5">
                     Contribuez en signalant le prix observé près de chez vous.
                   </p>
@@ -409,8 +468,8 @@ export default function ProductPriceLookup() {
             <div className="p-5 bg-white/5 border border-white/10 rounded-2xl text-center">
               <Barcode size={40} className="mx-auto text-slate-500 mb-3" />
               <p className="text-sm text-slate-400 leading-relaxed">
-                Entrez un code EAN (code-barres) pour comparer instantanément les prix
-                sur tous les territoires DOM-TOM grâce aux données{' '}
+                Entrez un code EAN (code-barres) pour comparer instantanément les prix sur tous les
+                territoires DOM-TOM grâce aux données{' '}
                 <span className="text-violet-400 font-medium">Open Prices</span>.
               </p>
               <p className="text-xs text-slate-600 mt-3">

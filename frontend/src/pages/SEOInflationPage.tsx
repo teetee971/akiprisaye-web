@@ -28,21 +28,21 @@ import {
 
 // ── Category display map ───────────────────────────────────────────────────────
 const CATEGORY_DISPLAY: Record<string, { name: string; icon: string }> = {
-  'alimentaire':       { name: 'Alimentaire',        icon: '🛒' },
-  'boissons':          { name: 'Boissons',            icon: '🥤' },
-  'produits-laitiers': { name: 'Produits Laitiers',   icon: '🥛' },
-  'viande':            { name: 'Viande',              icon: '🥩' },
-  'epicerie':          { name: 'Épicerie',            icon: '🥫' },
+  alimentaire: { name: 'Alimentaire', icon: '🛒' },
+  boissons: { name: 'Boissons', icon: '🥤' },
+  'produits-laitiers': { name: 'Produits Laitiers', icon: '🥛' },
+  viande: { name: 'Viande', icon: '🥩' },
+  epicerie: { name: 'Épicerie', icon: '🥫' },
   'hygiene-entretien': { name: 'Hygiène & Entretien', icon: '🧴' },
-  'fruits-legumes':    { name: 'Fruits & Légumes',    icon: '🥗' },
-  'bebe':              { name: 'Bébé',                icon: '👶' },
+  'fruits-legumes': { name: 'Fruits & Légumes', icon: '🥗' },
+  bebe: { name: 'Bébé', icon: '👶' },
 };
 
 // ── Real trend data loader ────────────────────────────────────────────────────
 async function getRealMonthlyData(
   categorySlug: string,
   _territory: string,
-  year: string,
+  year: string
 ): Promise<Array<{ month: string; rate: number; avgPrice: number }>> {
   const { getHistoriquePrix, buildMonthlyData } = await import('../services/realDataService');
   const historique = await getHistoriquePrix();
@@ -58,13 +58,12 @@ function InflationBar({ rate, maxRate }: { rate: number; maxRate: number }) {
   return (
     <div className="flex items-center gap-2">
       <div className="h-4 flex-1 overflow-hidden rounded-sm bg-white/5">
-        <div
-          className={`h-full rounded-sm transition-all ${color}`}
-          style={{ width: `${pct}%` }}
-        />
+        <div className={`h-full rounded-sm transition-all ${color}`} style={{ width: `${pct}%` }} />
       </div>
-      <span className={`w-10 text-right text-xs font-bold tabular-nums
-        ${rate > 6 ? 'text-rose-400' : rate > 4 ? 'text-amber-400' : 'text-emerald-400'}`}>
+      <span
+        className={`w-10 text-right text-xs font-bold tabular-nums
+        ${rate > 6 ? 'text-rose-400' : rate > 4 ? 'text-amber-400' : 'text-emerald-400'}`}
+      >
         +{rate}%
       </span>
     </div>
@@ -74,7 +73,9 @@ function InflationBar({ rate, maxRate }: { rate: number; maxRate: number }) {
 // ── Slug parser ────────────────────────────────────────────────────────────────
 // Format: <category>-<territory>-<year>   e.g. alimentaire-guadeloupe-2026
 function parseInflationSlug(slug: string): {
-  category: string; territory: string; year: string;
+  category: string;
+  territory: string;
+  year: string;
 } {
   // Extract year from end
   const yearMatch = slug.match(/-(\d{4})$/);
@@ -82,9 +83,7 @@ function parseInflationSlug(slug: string): {
   const withoutYear = yearMatch ? slug.slice(0, -5) : slug; // -5 = "-YYYY"
 
   // Extract territory
-  const territories = Object.entries(TERRITORY_SLUG_MAP).sort(
-    (a, b) => b[0].length - a[0].length,
-  );
+  const territories = Object.entries(TERRITORY_SLUG_MAP).sort((a, b) => b[0].length - a[0].length);
   for (const [tSlug, code] of territories) {
     if (withoutYear.endsWith(`-${tSlug}`)) {
       const category = withoutYear.slice(0, -(tSlug.length + 1));
@@ -99,35 +98,37 @@ function parseInflationSlug(slug: string): {
 export default function SEOInflationPage() {
   const { slug = '' } = useParams<{ slug: string }>();
 
-  const { category, territory, year } = useMemo(
-    () => parseInflationSlug(slug),
-    [slug],
-  );
+  const { category, territory, year } = useMemo(() => parseInflationSlug(slug), [slug]);
 
-  const categoryInfo   = CATEGORY_DISPLAY[category] ?? { name: 'Alimentaire', icon: '🛒' };
-  const territoryName  = getTerritoryName(territory);
-  const [monthlyData, setMonthlyData] = useState<Array<{ month: string; rate: number; avgPrice: number }>>([]);
+  const categoryInfo = CATEGORY_DISPLAY[category] ?? { name: 'Alimentaire', icon: '🛒' };
+  const territoryName = getTerritoryName(territory);
+  const [monthlyData, setMonthlyData] = useState<
+    Array<{ month: string; rate: number; avgPrice: number }>
+  >([]);
 
   useEffect(() => {
     let cancelled = false;
     getRealMonthlyData(category, territory, year).then((data) => {
       if (!cancelled) setMonthlyData(data);
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [category, territory, year]);
 
-  const maxRate        = Math.max(...monthlyData.map((d) => d.rate));
-  const avgRate        = +(monthlyData.reduce((s, d) => s + d.rate, 0) / monthlyData.length).toFixed(1);
-  const latestRate     = monthlyData[monthlyData.length - 1]?.rate ?? 0;
-  const trend          = monthlyData.length >= 2
-    ? monthlyData[monthlyData.length - 1].rate - monthlyData[monthlyData.length - 2].rate
-    : 0;
+  const maxRate = Math.max(...monthlyData.map((d) => d.rate));
+  const avgRate = +(monthlyData.reduce((s, d) => s + d.rate, 0) / monthlyData.length).toFixed(1);
+  const latestRate = monthlyData[monthlyData.length - 1]?.rate ?? 0;
+  const trend =
+    monthlyData.length >= 2
+      ? monthlyData[monthlyData.length - 1].rate - monthlyData[monthlyData.length - 2].rate
+      : 0;
 
   const jsonLd = buildInflationJsonLd(categoryInfo.name, territory, year);
 
-  const seoTitle       = `Inflation ${categoryInfo.name} en ${territoryName} ${year} — Évolution des prix`;
+  const seoTitle = `Inflation ${categoryInfo.name} en ${territoryName} ${year} — Évolution des prix`;
   const seoDescription = `Suivez l'inflation des prix ${categoryInfo.name.toLowerCase()} en ${territoryName} en ${year}. Taux moyen : +${avgRate}%. Données mises à jour mensuellement.`;
-  const canonical      = `${SITE_URL}/inflation/${slug}`;
+  const canonical = `${SITE_URL}/inflation/${slug}`;
 
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8">
@@ -139,15 +140,28 @@ export default function SEOInflationPage() {
       />
 
       <div className="mx-auto max-w-2xl space-y-4">
-
         {/* Breadcrumb */}
         <nav aria-label="Fil d'Ariane" className="text-xs text-zinc-500">
           <ol className="flex flex-wrap items-center gap-1.5">
-            <li><Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
-            <li><Link to="/tableau-inflation" className="hover:text-emerald-400 transition-colors">Inflation</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
-            <li className="truncate text-zinc-300">{categoryInfo.name} · {territoryName} · {year}</li>
+            <li>
+              <Link to="/" className="hover:text-emerald-400 transition-colors">
+                Accueil
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
+            <li>
+              <Link to="/tableau-inflation" className="hover:text-emerald-400 transition-colors">
+                Inflation
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
+            <li className="truncate text-zinc-300">
+              {categoryInfo.name} · {territoryName} · {year}
+            </li>
           </ol>
         </nav>
 
@@ -164,15 +178,19 @@ export default function SEOInflationPage() {
           </div>
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center">
             <div className="text-xs text-zinc-500">Dernier mois</div>
-            <div className={`mt-1 text-2xl font-extrabold
-              ${latestRate > 6 ? 'text-rose-400' : latestRate > 4 ? 'text-amber-400' : 'text-emerald-400'}`}>
+            <div
+              className={`mt-1 text-2xl font-extrabold
+              ${latestRate > 6 ? 'text-rose-400' : latestRate > 4 ? 'text-amber-400' : 'text-emerald-400'}`}
+            >
               +{latestRate}%
             </div>
           </div>
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center">
             <div className="text-xs text-zinc-500">Tendance</div>
-            <div className={`mt-1 text-2xl font-extrabold
-              ${trend > 0 ? 'text-rose-400' : trend < 0 ? 'text-emerald-400' : 'text-zinc-400'}`}>
+            <div
+              className={`mt-1 text-2xl font-extrabold
+              ${trend > 0 ? 'text-rose-400' : trend < 0 ? 'text-emerald-400' : 'text-zinc-400'}`}
+            >
               {trend > 0 ? '▲' : trend < 0 ? '▼' : '→'} {Math.abs(trend).toFixed(1)}%
             </div>
           </div>
@@ -192,9 +210,16 @@ export default function SEOInflationPage() {
             ))}
           </div>
           <div className="mt-4 flex items-center gap-4 text-[10px] text-zinc-600">
-            <span><span className="inline-block h-2 w-4 rounded-sm bg-emerald-500 mr-1" /> Faible (&lt;4%)</span>
-            <span><span className="inline-block h-2 w-4 rounded-sm bg-amber-500 mr-1" /> Modéré (4-6%)</span>
-            <span><span className="inline-block h-2 w-4 rounded-sm bg-rose-500 mr-1" /> Élevé (&gt;6%)</span>
+            <span>
+              <span className="inline-block h-2 w-4 rounded-sm bg-emerald-500 mr-1" /> Faible
+              (&lt;4%)
+            </span>
+            <span>
+              <span className="inline-block h-2 w-4 rounded-sm bg-amber-500 mr-1" /> Modéré (4-6%)
+            </span>
+            <span>
+              <span className="inline-block h-2 w-4 rounded-sm bg-rose-500 mr-1" /> Élevé (&gt;6%)
+            </span>
           </div>
         </div>
 
@@ -207,11 +232,17 @@ export default function SEOInflationPage() {
             {Object.entries(CATEGORY_DISPLAY).map(([slug, info]) => (
               <Link
                 key={slug}
-                to={`/inflation/${slug}-${territoryName.toLowerCase().replace(/\s/g, '-').normalize('NFD').replace(/[\u0300-\u036f]/g, '')}-${year}`}
+                to={`/inflation/${slug}-${territoryName
+                  .toLowerCase()
+                  .replace(/\s/g, '-')
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')}-${year}`}
                 className={`rounded-lg border px-3 py-1.5 text-xs transition-all
-                  ${slug === category
-                    ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300'
-                    : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'}`}
+                  ${
+                    slug === category
+                      ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300'
+                      : 'border-white/10 bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white'
+                  }`}
               >
                 {info.icon} {info.name}
               </Link>
@@ -227,15 +258,15 @@ export default function SEOInflationPage() {
           <div className="space-y-2 text-xs leading-relaxed text-zinc-500">
             <p>
               En {year}, l'inflation pour les {categoryInfo.name.toLowerCase()} en {territoryName}
-              atteint en moyenne <strong className="text-zinc-400">+{avgRate}%</strong>.
-              Ce chiffre est supérieur à la moyenne métropolitaine en raison des coûts de transport
-              maritime et aérien, des taxes d'importation (octroi de mer) et de la faible concurrence
-              dans certains secteurs.
+              atteint en moyenne <strong className="text-zinc-400">+{avgRate}%</strong>. Ce chiffre
+              est supérieur à la moyenne métropolitaine en raison des coûts de transport maritime et
+              aérien, des taxes d'importation (octroi de mer) et de la faible concurrence dans
+              certains secteurs.
             </p>
             <p>
-              Pour faire face à la hausse des prix, notre comparateur permet de trouver les enseignes
-              proposant les prix les plus bas en {territoryName}. En comparant avant chaque course,
-              vous pouvez économiser significativement sur votre budget alimentaire.
+              Pour faire face à la hausse des prix, notre comparateur permet de trouver les
+              enseignes proposant les prix les plus bas en {territoryName}. En comparant avant
+              chaque course, vous pouvez économiser significativement sur votre budget alimentaire.
             </p>
           </div>
         </section>
@@ -286,7 +317,6 @@ export default function SEOInflationPage() {
             </Link>
           </div>
         </section>
-
       </div>
     </div>
   );

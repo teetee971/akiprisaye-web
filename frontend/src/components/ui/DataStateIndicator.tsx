@@ -17,12 +17,12 @@ interface DataStateIndicatorProps {
   };
 }
 
-export function DataStateIndicator({ 
-  state, 
-  title, 
-  message, 
+export function DataStateIndicator({
+  state,
+  title,
+  message,
   icon,
-  action 
+  action,
 }: DataStateIndicatorProps) {
   // Default titles and messages based on state
   const defaults = {
@@ -30,26 +30,26 @@ export function DataStateIndicator({
       title: 'Chargement en cours...',
       message: 'Recherche des données',
       icon: <Loader2 className="w-12 h-12 text-blue-400 animate-spin" />,
-      bgClass: 'bg-blue-900/10 border-blue-500/30'
+      bgClass: 'bg-blue-900/10 border-blue-500/30',
     },
     empty: {
       title: 'Aucune donnée disponible',
-      message: 'Ce produit n\'est pas encore référencé pour ce territoire.',
+      message: "Ce produit n'est pas encore référencé pour ce territoire.",
       icon: <Info className="w-12 h-12 text-gray-400" />,
-      bgClass: 'bg-gray-900/10 border-gray-500/30'
+      bgClass: 'bg-gray-900/10 border-gray-500/30',
     },
     partial: {
       title: 'Données en cours de consolidation',
       message: 'Les informations affichées sont partielles et seront complétées progressivement.',
       icon: <AlertCircle className="w-12 h-12 text-yellow-400" />,
-      bgClass: 'bg-yellow-900/10 border-yellow-500/30'
+      bgClass: 'bg-yellow-900/10 border-yellow-500/30',
     },
     error: {
       title: 'Erreur de chargement',
       message: 'Impossible de charger les données. Veuillez réessayer ultérieurement.',
       icon: <AlertCircle className="w-12 h-12 text-red-400" />,
-      bgClass: 'bg-red-900/10 border-red-500/30'
-    }
+      bgClass: 'bg-red-900/10 border-red-500/30',
+    },
   };
 
   const config = defaults[state];
@@ -58,19 +58,13 @@ export function DataStateIndicator({
     <GlassCard className={`text-center py-12 ${config.bgClass}`}>
       <div className="flex flex-col items-center space-y-4">
         {/* Icon */}
-        <div className="mb-2">
-          {icon || config.icon}
-        </div>
+        <div className="mb-2">{icon || config.icon}</div>
 
         {/* Title */}
-        <h3 className="text-xl font-semibold text-white">
-          {title || config.title}
-        </h3>
+        <h3 className="text-xl font-semibold text-white">{title || config.title}</h3>
 
         {/* Message */}
-        <p className="text-gray-300 text-sm max-w-md mx-auto">
-          {message || config.message}
-        </p>
+        <p className="text-gray-300 text-sm max-w-md mx-auto">{message || config.message}</p>
 
         {/* Optional Action Button */}
         {action && (
@@ -100,16 +94,10 @@ export function PartialDataState({ message }: { message?: string }) {
   return <DataStateIndicator state="partial" message={message} />;
 }
 
-export function ErrorState({ 
-  message, 
-  onRetry 
-}: { 
-  message?: string; 
-  onRetry?: () => void 
-}) {
+export function ErrorState({ message, onRetry }: { message?: string; onRetry?: () => void }) {
   return (
-    <DataStateIndicator 
-      state="error" 
+    <DataStateIndicator
+      state="error"
       message={message}
       action={onRetry ? { label: 'Réessayer', onClick: onRetry } : undefined}
     />

@@ -1,9 +1,9 @@
 /**
  * colors.ts — Centralized color palette definitions
- * 
+ *
  * Purpose: Single source of truth for all color schemes used in charts and UI
  * Used by: PriceCharts, data visualizations, themed components
- * 
+ *
  * @module colors
  */
 

@@ -20,13 +20,15 @@ const mockTransportComponents: MobilityCostComponent[] = [
     observationCount: 50,
     weight: 0.7,
     weightRationale: 'Primary mode for island territories',
-    sources: [{
-      type: 'official_site',
-      url: 'https://example.com',
-      observedAt: '2025-12-20T10:00:00Z',
-      verificationMethod: 'automated',
-      reliability: 'high',
-    }],
+    sources: [
+      {
+        type: 'official_site',
+        url: 'https://example.com',
+        observedAt: '2025-12-20T10:00:00Z',
+        verificationMethod: 'automated',
+        reliability: 'high',
+      },
+    ],
   },
   {
     type: 'TRANSPORT',
@@ -35,12 +37,14 @@ const mockTransportComponents: MobilityCostComponent[] = [
     observationCount: 30,
     weight: 0.3,
     weightRationale: 'Inter-island connectivity',
-    sources: [{
-      type: 'official_site',
-      observedAt: '2025-12-20T10:00:00Z',
-      verificationMethod: 'automated',
-      reliability: 'high',
-    }],
+    sources: [
+      {
+        type: 'official_site',
+        observedAt: '2025-12-20T10:00:00Z',
+        verificationMethod: 'automated',
+        reliability: 'high',
+      },
+    ],
   },
 ];
 
@@ -49,16 +53,18 @@ const mockLandMobilityComponents: MobilityCostComponent[] = [
   {
     type: 'LAND_MOBILITY',
     mode: 'BUS',
-    averageCost: 1.50,
+    averageCost: 1.5,
     observationCount: 100,
     weight: 0.4,
     weightRationale: 'Public transit usage',
-    sources: [{
-      type: 'user_report',
-      observedAt: '2025-12-20T10:00:00Z',
-      verificationMethod: 'manual',
-      reliability: 'medium',
-    }],
+    sources: [
+      {
+        type: 'user_report',
+        observedAt: '2025-12-20T10:00:00Z',
+        verificationMethod: 'manual',
+        reliability: 'medium',
+      },
+    ],
   },
   {
     type: 'LAND_MOBILITY',
@@ -67,26 +73,30 @@ const mockLandMobilityComponents: MobilityCostComponent[] = [
     observationCount: 50,
     weight: 0.3,
     weightRationale: 'Taxi/VTC usage',
-    sources: [{
-      type: 'official_site',
-      observedAt: '2025-12-20T10:00:00Z',
-      verificationMethod: 'automated',
-      reliability: 'high',
-    }],
+    sources: [
+      {
+        type: 'official_site',
+        observedAt: '2025-12-20T10:00:00Z',
+        verificationMethod: 'automated',
+        reliability: 'high',
+      },
+    ],
   },
   {
     type: 'LAND_MOBILITY',
     mode: 'FUEL',
-    averageCost: 1.80,
+    averageCost: 1.8,
     observationCount: 200,
     weight: 0.3,
     weightRationale: 'Personal vehicle usage',
-    sources: [{
-      type: 'official_site',
-      observedAt: '2025-12-20T10:00:00Z',
-      verificationMethod: 'automated',
-      reliability: 'high',
-    }],
+    sources: [
+      {
+        type: 'official_site',
+        observedAt: '2025-12-20T10:00:00Z',
+        verificationMethod: 'automated',
+        reliability: 'high',
+      },
+    ],
   },
 ];
 
@@ -103,7 +113,7 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         mockTransportComponents,
         mockLandMobilityComponents
       );
-      
+
       expect(result).not.toBeNull();
       expect(result!.territory).toBe('MQ');
       expect(result!.indexValue).toBeGreaterThan(0);
@@ -111,12 +121,8 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
     });
 
     it('should handle transport-only data', () => {
-      const result = calculateGlobalMobilityIndex(
-        'MQ',
-        mockTransportComponents,
-        []
-      );
-      
+      const result = calculateGlobalMobilityIndex('MQ', mockTransportComponents, []);
+
       expect(result).not.toBeNull();
       expect(result!.breakdown.transportCost).toBeGreaterThan(0);
       expect(result!.breakdown.landMobilityCost).toBe(0);
@@ -124,12 +130,8 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
     });
 
     it('should handle land-mobility-only data', () => {
-      const result = calculateGlobalMobilityIndex(
-        'MQ',
-        [],
-        mockLandMobilityComponents
-      );
-      
+      const result = calculateGlobalMobilityIndex('MQ', [], mockLandMobilityComponents);
+
       expect(result).not.toBeNull();
       expect(result!.breakdown.transportCost).toBe(0);
       expect(result!.breakdown.landMobilityCost).toBeGreaterThan(0);
@@ -142,7 +144,7 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         mockTransportComponents,
         mockLandMobilityComponents
       );
-      
+
       expect(result!.profile.classification).toBe('ISLAND');
       expect(result!.profile.characteristics.hasAirTransport).toBe(true);
       expect(result!.profile.characteristics.hasMaritimeTransport).toBe(true);
@@ -154,7 +156,7 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         mockTransportComponents,
         mockLandMobilityComponents
       );
-      
+
       expect(result!.profile.classification).toBe('ARCHIPELAGO');
     });
 
@@ -164,7 +166,7 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         mockTransportComponents,
         mockLandMobilityComponents
       );
-      
+
       expect(result!.profile.classification).toBe('CONTINENTAL');
     });
 
@@ -174,15 +176,14 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         mockTransportComponents,
         mockLandMobilityComponents
       );
-      
+
       expect(result!.breakdown.transportWeight).toBe(0.6);
       expect(result!.breakdown.landMobilityWeight).toBe(0.4);
-      
+
       // Verify calculation
-      const expectedIndex = 
-        (result!.breakdown.transportCost * 0.6) + 
-        (result!.breakdown.landMobilityCost * 0.4);
-      
+      const expectedIndex =
+        result!.breakdown.transportCost * 0.6 + result!.breakdown.landMobilityCost * 0.4;
+
       expect(result!.indexValue).toBeCloseTo(expectedIndex, 2);
     });
 
@@ -192,7 +193,7 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         mockTransportComponents,
         mockLandMobilityComponents
       );
-      
+
       expect(result!.metadata.methodology).toBeDefined();
       expect(result!.metadata.methodology.version).toBe('v3.0.0');
       expect(result!.metadata.methodology.calculationFormula).toBeDefined();
@@ -206,12 +207,10 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         mockTransportComponents,
         mockLandMobilityComponents
       );
-      
+
       expect(result!.metadata.limitations).toBeDefined();
       expect(result!.metadata.limitations.length).toBeGreaterThan(0);
-      expect(result!.metadata.limitations.some(l => 
-        l.includes('DESCRIPTIVE ONLY')
-      )).toBe(true);
+      expect(result!.metadata.limitations.some((l) => l.includes('DESCRIPTIVE ONLY'))).toBe(true);
     });
   });
 
@@ -238,7 +237,7 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
 
     it('should calculate period comparison correctly', () => {
       const result = compareMobilityIndexPeriods('MQ', mockPeriods);
-      
+
       expect(result).not.toBeNull();
       expect(result!.territory).toBe('MQ');
       expect(result!.variation.absoluteChange).toBe(20);
@@ -251,15 +250,15 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         { period: '2025-01', indexValue: 200, transportCost: 300, landMobilityCost: 10 },
         { period: '2025-02', indexValue: 205, transportCost: 305, landMobilityCost: 10 },
       ];
-      
+
       const result = compareMobilityIndexPeriods('MQ', stablePeriods);
-      
+
       expect(result!.variation.direction).toBe('stable');
     });
 
     it('should calculate component variations', () => {
       const result = compareMobilityIndexPeriods('MQ', mockPeriods);
-      
+
       expect(result!.componentVariations).toHaveLength(2);
       expect(result!.componentVariations[0].component).toBe('Transport');
       expect(result!.componentVariations[1].component).toBe('Land Mobility');
@@ -274,7 +273,7 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
 
     it('should compare territories', () => {
       const result = compareTerritoriesMobilityIndex(mockIndices);
-      
+
       expect(result.territories).toHaveLength(2);
       expect(result.comparisonDate).toBeDefined();
       expect(result.methodology).toBeDefined();
@@ -284,15 +283,12 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
       // Modify GP to have different costs
       const gpIndex = calculateGlobalMobilityIndex(
         'GP',
-        [{...mockTransportComponents[0], averageCost: 450}],
+        [{ ...mockTransportComponents[0], averageCost: 450 }],
         mockLandMobilityComponents
       )!;
-      
-      const result = compareTerritoriesMobilityIndex(
-        [mockIndices[0], gpIndex],
-        'MQ'
-      );
-      
+
+      const result = compareTerritoriesMobilityIndex([mockIndices[0], gpIndex], 'MQ');
+
       expect(result.baseTerritory).toBe('MQ');
       expect(result.territories[1].differenceFromBase).toBeDefined();
       expect(result.territories[1].differenceFromBase!.absoluteIndex).not.toBe(0);
@@ -315,17 +311,17 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
     it('should filter by classification', () => {
       const filtered = applyMobilityIndexFilters(mockIndices, { classification: 'ISLAND' });
       expect(filtered.length).toBeGreaterThan(0);
-      expect(filtered.every(i => i.profile.classification === 'ISLAND')).toBe(true);
+      expect(filtered.every((i) => i.profile.classification === 'ISLAND')).toBe(true);
     });
 
     it('should filter by coverage percentage', () => {
       const filtered = applyMobilityIndexFilters(mockIndices, { minCoveragePercent: 50 });
-      expect(filtered.every(i => i.metadata.dataQuality.coveragePercentage >= 50)).toBe(true);
+      expect(filtered.every((i) => i.metadata.dataQuality.coveragePercentage >= 50)).toBe(true);
     });
 
     it('should exclude partial data by default', () => {
       const filtered = applyMobilityIndexFilters(mockIndices, { includePartialData: false });
-      expect(filtered.every(i => i.metadata.dataQuality.coveragePercentage >= 30)).toBe(true);
+      expect(filtered.every((i) => i.metadata.dataQuality.coveragePercentage >= 30)).toBe(true);
     });
   });
 
@@ -339,17 +335,19 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
           observationCount: 20,
           weight: 1.0,
           weightRationale: 'Only connection mode',
-          sources: [{
-            type: 'official_site',
-            observedAt: '2025-12-20T10:00:00Z',
-            verificationMethod: 'automated',
-            reliability: 'high',
-          }],
+          sources: [
+            {
+              type: 'official_site',
+              observedAt: '2025-12-20T10:00:00Z',
+              verificationMethod: 'automated',
+              reliability: 'high',
+            },
+          ],
         },
       ];
-      
+
       const result = calculateGlobalMobilityIndex('WF', isolatedComponents, []);
-      
+
       expect(result).not.toBeNull();
       expect(result!.profile.characteristics.isIsolated).toBe(true);
     });
@@ -360,19 +358,21 @@ describe('Global Mobility Cost Index Service v3.0.0', () => {
         mockTransportComponents,
         mockLandMobilityComponents
       );
-      
+
       expect(result!.profile.classification).toBe('CONTINENTAL');
       expect(result!.profile.characteristics.isIsolated).toBe(false);
     });
 
     it('should handle partial data gracefully', () => {
-      const partialTransport: MobilityCostComponent[] = [{
-        ...mockTransportComponents[0],
-        observationCount: 5,
-      }];
-      
+      const partialTransport: MobilityCostComponent[] = [
+        {
+          ...mockTransportComponents[0],
+          observationCount: 5,
+        },
+      ];
+
       const result = calculateGlobalMobilityIndex('MQ', partialTransport, []);
-      
+
       expect(result).not.toBeNull();
       expect(result!.metadata.warnings).toBeDefined();
       expect(result!.metadata.warnings!.length).toBeGreaterThan(0);

@@ -8,11 +8,7 @@ interface Props {
   afterLabel: string;
 }
 
-export default function DomNarrationAuto({
-  deltas,
-  beforeLabel,
-  afterLabel,
-}: Props) {
+export default function DomNarrationAuto({ deltas, beforeLabel, afterLabel }: Props) {
   const [text, setText] = useState('');
 
   useEffect(() => {
@@ -66,9 +62,7 @@ export default function DomNarrationAuto({
 
   return (
     <div className="bg-black/30 border border-white/10 rounded-xl p-4 text-sm leading-relaxed">
-      <h3 className="font-semibold mb-2">
-        Analyse automatique — évolution des prix
-      </h3>
+      <h3 className="font-semibold mb-2">Analyse automatique — évolution des prix</h3>
       <p>{text}</p>
     </div>
   );

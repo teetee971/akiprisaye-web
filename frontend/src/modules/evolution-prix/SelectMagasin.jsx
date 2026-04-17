@@ -49,10 +49,8 @@ export function SelectMagasin({ stores = [], selected = null, onSelect }) {
 
       {selectedStore && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="text-sm font-semibold text-blue-900 mb-3">
-            Informations contextuelles
-          </h4>
-          
+          <h4 className="text-sm font-semibold text-blue-900 mb-3">Informations contextuelles</h4>
+
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-blue-700">Enseigne</span>
@@ -64,7 +62,9 @@ export function SelectMagasin({ stores = [], selected = null, onSelect }) {
             </div>
             <div className="flex justify-between">
               <span className="text-blue-700">Territoire</span>
-              <span className="font-medium text-blue-900 capitalize">{selectedStore.territory}</span>
+              <span className="font-medium text-blue-900 capitalize">
+                {selectedStore.territory}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-blue-700">Observations</span>
@@ -74,7 +74,7 @@ export function SelectMagasin({ stores = [], selected = null, onSelect }) {
 
           <div className="mt-4 pt-4 border-t border-blue-300">
             <p className="text-xs text-blue-800">
-              <strong>Note :</strong> Ces observations sont ponctuelles et ne représentent pas 
+              <strong>Note :</strong> Ces observations sont ponctuelles et ne représentent pas
               l'intégralité des prix pratiqués par l'enseigne.
             </p>
           </div>
@@ -84,8 +84,8 @@ export function SelectMagasin({ stores = [], selected = null, onSelect }) {
       {/* Security Notice */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
         <p className="text-xs text-gray-700">
-          <strong>Règle de sécurité :</strong> Seuls les magasins avec au moins {MIN_OBSERVATIONS} observations 
-          sont affichables pour garantir la pertinence des données.
+          <strong>Règle de sécurité :</strong> Seuls les magasins avec au moins {MIN_OBSERVATIONS}{' '}
+          observations sont affichables pour garantir la pertinence des données.
         </p>
       </div>
     </div>

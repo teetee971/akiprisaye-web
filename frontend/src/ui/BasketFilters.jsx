@@ -4,8 +4,8 @@ import { TIME_SLOTS, ALL_TIME_SLOTS } from '../config/periods';
 export default function BasketFilters({ filters, onFilterChange }) {
   // Get active territories (excluding 'all' option for multi-select)
   const territories = getActiveTerritories()
-    .filter(t => ['GP', 'MQ', 'GF'].includes(t.code))
-    .map(t => ({ code: t.code, name: t.name, flag: t.flag }));
+    .filter((t) => ['GP', 'MQ', 'GF'].includes(t.code))
+    .map((t) => ({ code: t.code, name: t.name, flag: t.flag }));
 
   // Handle territory selection toggle
   const handleTerritoryToggle = (territoryCode) => {
@@ -14,7 +14,7 @@ export default function BasketFilters({ filters, onFilterChange }) {
 
     if (currentTerritories.includes(territoryCode)) {
       // Deselect territory (keep at least one selected)
-      newTerritories = currentTerritories.filter(t => t !== territoryCode);
+      newTerritories = currentTerritories.filter((t) => t !== territoryCode);
       if (newTerritories.length === 0) {
         // If trying to deselect the last one, keep it selected
         return;
@@ -24,48 +24,50 @@ export default function BasketFilters({ filters, onFilterChange }) {
       newTerritories = [...currentTerritories, territoryCode];
     }
 
-    onFilterChange({ 
-      ...filters, 
+    onFilterChange({
+      ...filters,
       selectedTerritories: newTerritories,
       // Remove legacy single territory filter
-      territory: undefined 
+      territory: undefined,
     });
   };
 
   // Initialize selectedTerritories if not present (backward compatibility)
-  const selectedTerritories = filters.selectedTerritories || 
-    (filters.territory && filters.territory !== 'all' ? [filters.territory] : [territories[0]?.code]);
+  const selectedTerritories =
+    filters.selectedTerritories ||
+    (filters.territory && filters.territory !== 'all'
+      ? [filters.territory]
+      : [territories[0]?.code]);
 
   // Select all territories
   const handleSelectAll = () => {
-    onFilterChange({ 
-      ...filters, 
-      selectedTerritories: territories.map(t => t.code),
-      territory: undefined 
+    onFilterChange({
+      ...filters,
+      selectedTerritories: territories.map((t) => t.code),
+      territory: undefined,
     });
   };
 
   // Clear selection (keep first territory)
   const handleClearSelection = () => {
-    onFilterChange({ 
-      ...filters, 
+    onFilterChange({
+      ...filters,
       selectedTerritories: [territories[0]?.code],
-      territory: undefined 
+      territory: undefined,
     });
   };
 
   return (
     <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6 mb-6">
-      <h2 className="text-xl font-semibold mb-4 text-slate-100">
-        🔍 Filtres
-      </h2>
+      <h2 className="text-xl font-semibold mb-4 text-slate-100">🔍 Filtres</h2>
 
       <div className="space-y-4">
         {/* Multi-Territory Selection */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-medium text-slate-300">
-              Territoires à comparer {selectedTerritories.length > 1 && (
+              Territoires à comparer{' '}
+              {selectedTerritories.length > 1 && (
                 <span className="text-blue-400">({selectedTerritories.length} sélectionnés)</span>
               )}
             </label>
@@ -88,7 +90,7 @@ export default function BasketFilters({ filters, onFilterChange }) {
               )}
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {territories.map((territory) => {
               const isSelected = selectedTerritories.includes(territory.code);
@@ -98,9 +100,10 @@ export default function BasketFilters({ filters, onFilterChange }) {
                   aria-label={territory.name}
                   className={`
                     flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all
-                    ${isSelected
-                      ? 'bg-blue-900/30 border-blue-500 hover:bg-blue-900/40'
-                      : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:border-slate-600'
+                    ${
+                      isSelected
+                        ? 'bg-blue-900/30 border-blue-500 hover:bg-blue-900/40'
+                        : 'bg-slate-800/50 border-slate-700 hover:bg-slate-800 hover:border-slate-600'
                     }
                   `}
                 >
@@ -121,7 +124,8 @@ export default function BasketFilters({ filters, onFilterChange }) {
 
           {selectedTerritories.length > 1 && (
             <div className="mt-2 p-2 bg-blue-900/20 border border-blue-700/30 rounded text-xs text-blue-300">
-              💡 <strong>Mode comparaison actif</strong> - Le tableau comparatif s'affichera pour chaque panier
+              💡 <strong>Mode comparaison actif</strong> - Le tableau comparatif s'affichera pour
+              chaque panier
             </div>
           )}
         </div>
@@ -145,7 +149,10 @@ export default function BasketFilters({ filters, onFilterChange }) {
 
           {/* Time Slot Filter */}
           <div>
-            <label htmlFor="filter-timeslot" className="block text-sm font-medium mb-2 text-slate-300">
+            <label
+              htmlFor="filter-timeslot"
+              className="block text-sm font-medium mb-2 text-slate-300"
+            >
               Créneau horaire
             </label>
             <select
@@ -156,7 +163,9 @@ export default function BasketFilters({ filters, onFilterChange }) {
             >
               <option value={ALL_TIME_SLOTS}>Tous les créneaux</option>
               {TIME_SLOTS.map((slot) => (
-                <option key={slot} value={slot}>{slot}</option>
+                <option key={slot} value={slot}>
+                  {slot}
+                </option>
               ))}
             </select>
           </div>
@@ -180,13 +189,15 @@ export default function BasketFilters({ filters, onFilterChange }) {
       <div className="mt-4 pt-4 border-t border-slate-700">
         <button
           type="button"
-          onClick={() => onFilterChange({ 
-            selectedTerritories: [territories[0]?.code], 
-            territory: undefined,
-            store: '', 
-            timeSlot: ALL_TIME_SLOTS, 
-            stockOnly: false 
-          })}
+          onClick={() =>
+            onFilterChange({
+              selectedTerritories: [territories[0]?.code],
+              territory: undefined,
+              store: '',
+              timeSlot: ALL_TIME_SLOTS,
+              stockOnly: false,
+            })
+          }
           className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm transition"
         >
           🔄 Réinitialiser tous les filtres

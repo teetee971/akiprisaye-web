@@ -42,7 +42,8 @@ export default function GlobalDashboardPage() {
     const filtered = allMetrics.filter((m) => {
       if (pageTypeFilter !== 'all' && m.pageType !== pageTypeFilter) return false;
       if (territoryFilter !== 'all' && m.territory !== territoryFilter) return false;
-      if (classificationFilter !== 'all' && classifyPage(m.globalScore) !== classificationFilter) return false;
+      if (classificationFilter !== 'all' && classifyPage(m.globalScore) !== classificationFilter)
+        return false;
       return true;
     });
     return filtered.slice().sort((a, b) => {
@@ -53,7 +54,9 @@ export default function GlobalDashboardPage() {
   }, [pageTypeFilter, territoryFilter, classificationFilter, sortKey, sortDir]);
 
   const totalRevenue = allMetrics.reduce((s, m) => s + m.estimatedRevenue, 0);
-  const highValueCount = allMetrics.filter((m) => classifyPage(m.globalScore) === 'HIGH_VALUE').length;
+  const highValueCount = allMetrics.filter(
+    (m) => classifyPage(m.globalScore) === 'HIGH_VALUE'
+  ).length;
   const needsAttention = allMetrics.filter((m) => {
     const c = classifyPage(m.globalScore);
     return c === 'LOW_VALUE' || c === 'CONVERSION_GAP';
@@ -75,31 +78,46 @@ export default function GlobalDashboardPage() {
 
   return (
     <>
-      <SEOHead title="Global Dashboard" description="Vue globale des métriques SEO, revenus et autorité." noIndex />
+      <SEOHead
+        title="Global Dashboard"
+        description="Vue globale des métriques SEO, revenus et autorité."
+        noIndex
+      />
       <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-5xl space-y-8">
-
           <div>
             <h1 className="text-2xl font-extrabold text-white">🌐 Global Dashboard</h1>
-            <p className="mt-1 text-sm text-zinc-400">Vue agrégée : SEO, revenus, autorité et potentiel d'expansion</p>
+            <p className="mt-1 text-sm text-zinc-400">
+              Vue agrégée : SEO, revenus, autorité et potentiel d'expansion
+            </p>
           </div>
 
           {/* Summary cards */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Pages totales</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Pages totales
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-white">{allMetrics.length}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">HIGH_VALUE</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                HIGH_VALUE
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-emerald-400">{highValueCount}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Revenu estimé</p>
-              <p className="mt-1 text-2xl font-extrabold text-emerald-400">{totalRevenue.toFixed(2)} €</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Revenu estimé
+              </p>
+              <p className="mt-1 text-2xl font-extrabold text-emerald-400">
+                {totalRevenue.toFixed(2)} €
+              </p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">À traiter</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                À traiter
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-rose-400">{needsAttention}</p>
             </div>
           </div>
@@ -107,7 +125,12 @@ export default function GlobalDashboardPage() {
           {/* Filter bar */}
           <div className="flex flex-wrap gap-4">
             <div className="flex flex-col gap-1">
-              <label htmlFor="global-filter-type" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Type</label>
+              <label
+                htmlFor="global-filter-type"
+                className="text-[10px] font-bold uppercase tracking-wide text-zinc-500"
+              >
+                Type
+              </label>
               <select
                 id="global-filter-type"
                 value={pageTypeFilter}
@@ -115,12 +138,19 @@ export default function GlobalDashboardPage() {
                 className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"
               >
                 {PAGE_TYPES.map((t) => (
-                  <option key={t} value={t}>{t === 'all' ? 'Tous types' : t}</option>
+                  <option key={t} value={t}>
+                    {t === 'all' ? 'Tous types' : t}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="global-filter-territory" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Territoire</label>
+              <label
+                htmlFor="global-filter-territory"
+                className="text-[10px] font-bold uppercase tracking-wide text-zinc-500"
+              >
+                Territoire
+              </label>
               <select
                 id="global-filter-territory"
                 value={territoryFilter}
@@ -128,12 +158,19 @@ export default function GlobalDashboardPage() {
                 className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"
               >
                 {TERRITORIES.map((t) => (
-                  <option key={t} value={t}>{t === 'all' ? 'Tous territoires' : t}</option>
+                  <option key={t} value={t}>
+                    {t === 'all' ? 'Tous territoires' : t}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="flex flex-col gap-1">
-              <label htmlFor="global-filter-classification" className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Classification</label>
+              <label
+                htmlFor="global-filter-classification"
+                className="text-[10px] font-bold uppercase tracking-wide text-zinc-500"
+              >
+                Classification
+              </label>
               <select
                 id="global-filter-classification"
                 value={classificationFilter}
@@ -141,7 +178,9 @@ export default function GlobalDashboardPage() {
                 className="rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-400"
               >
                 {CLASSIFICATIONS.map((c) => (
-                  <option key={c} value={c}>{c === 'all' ? 'Toutes' : c}</option>
+                  <option key={c} value={c}>
+                    {c === 'all' ? 'Toutes' : c}
+                  </option>
                 ))}
               </select>
             </div>
@@ -149,7 +188,9 @@ export default function GlobalDashboardPage() {
 
           {/* Sortable table */}
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-            <h2 className="mb-4 text-sm font-bold text-white">Pages ({filteredAndSorted.length})</h2>
+            <h2 className="mb-4 text-sm font-bold text-white">
+              Pages ({filteredAndSorted.length})
+            </h2>
             {filteredAndSorted.length === 0 ? (
               <p className="text-sm text-zinc-500">Aucune page pour ces filtres.</p>
             ) : (
@@ -162,25 +203,29 @@ export default function GlobalDashboardPage() {
                         className="cursor-pointer pb-2 pr-3 hover:text-zinc-300"
                         onClick={() => toggleSort('globalScore')}
                       >
-                        Score<SortIcon k="globalScore" />
+                        Score
+                        <SortIcon k="globalScore" />
                       </th>
                       <th
                         className="cursor-pointer pb-2 pr-3 hover:text-zinc-300"
                         onClick={() => toggleSort('ctr')}
                       >
-                        CTR<SortIcon k="ctr" />
+                        CTR
+                        <SortIcon k="ctr" />
                       </th>
                       <th
                         className="cursor-pointer pb-2 pr-3 hover:text-zinc-300"
                         onClick={() => toggleSort('estimatedRevenue')}
                       >
-                        Revenu<SortIcon k="estimatedRevenue" />
+                        Revenu
+                        <SortIcon k="estimatedRevenue" />
                       </th>
                       <th
                         className="cursor-pointer pb-2 pr-3 hover:text-zinc-300"
                         onClick={() => toggleSort('authorityScore')}
                       >
-                        Autorité<SortIcon k="authorityScore" />
+                        Autorité
+                        <SortIcon k="authorityScore" />
                       </th>
                       <th className="pb-2 pr-3">Classification</th>
                       <th className="pb-2">Action</th>
@@ -190,9 +235,13 @@ export default function GlobalDashboardPage() {
                     {filteredAndSorted.map((m) => {
                       const classification = classifyPage(m.globalScore);
                       const scoreColor =
-                        m.globalScore > 70 ? 'text-emerald-400' :
-                        m.globalScore > 50 ? 'text-amber-400' :
-                        m.globalScore > 30 ? 'text-blue-400' : 'text-zinc-400';
+                        m.globalScore > 70
+                          ? 'text-emerald-400'
+                          : m.globalScore > 50
+                            ? 'text-amber-400'
+                            : m.globalScore > 30
+                              ? 'text-blue-400'
+                              : 'text-zinc-400';
                       return (
                         <tr key={m.url} className={ROW_BG[classification]}>
                           <td className="py-2 pr-3 font-mono text-zinc-400">
@@ -210,10 +259,14 @@ export default function GlobalDashboardPage() {
                             </div>
                           </td>
                           <td className="py-2 pr-3 text-zinc-300">{(m.ctr * 100).toFixed(1)}%</td>
-                          <td className="py-2 pr-3 text-zinc-300">{m.estimatedRevenue.toFixed(2)} €</td>
+                          <td className="py-2 pr-3 text-zinc-300">
+                            {m.estimatedRevenue.toFixed(2)} €
+                          </td>
                           <td className="py-2 pr-3 text-zinc-300">{m.authorityScore}</td>
                           <td className="py-2 pr-3">
-                            <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${CLASSIFICATION_STYLES[classification]}`}>
+                            <span
+                              className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${CLASSIFICATION_STYLES[classification]}`}
+                            >
                               {classification}
                             </span>
                           </td>
@@ -226,7 +279,6 @@ export default function GlobalDashboardPage() {
               </div>
             )}
           </div>
-
         </div>
       </div>
     </>

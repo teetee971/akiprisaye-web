@@ -127,7 +127,13 @@ describe('authStateMachine — nextAuthFlowState', () => {
 });
 
 describe('authStateMachine — isAuthBusy', () => {
-  const busyStates: AuthFlowState[] = ['starting', 'redirecting', 'returning', 'resolving', 'recovering'];
+  const busyStates: AuthFlowState[] = [
+    'starting',
+    'redirecting',
+    'returning',
+    'resolving',
+    'recovering',
+  ];
   const quietStates: AuthFlowState[] = ['idle', 'authenticated', 'failed'];
 
   for (const state of busyStates) {
@@ -288,7 +294,11 @@ describe('authStorage — setRedirectPendingFlag / getRedirectPendingFlag', () =
   });
 
   it('returns null and removes stale flag after TTL', () => {
-    const stale = JSON.stringify({ provider: 'google', next: '/', ts: Date.now() - REDIRECT_PENDING_TTL_MS - 1 });
+    const stale = JSON.stringify({
+      provider: 'google',
+      next: '/',
+      ts: Date.now() - REDIRECT_PENDING_TTL_MS - 1,
+    });
     sessionStorage.setItem(REDIRECT_PENDING_KEY, stale);
     expect(getRedirectPendingFlag()).toBeNull();
     expect(sessionStorage.getItem(REDIRECT_PENDING_KEY)).toBeNull();
@@ -387,7 +397,10 @@ describe('authTelemetry — createAuthTelemetryEvent', () => {
   });
 
   it('merges extra fields', () => {
-    const ev = createAuthTelemetryEvent('AUTH_REDIRECT_START', { provider: 'google', mode: 'redirect' });
+    const ev = createAuthTelemetryEvent('AUTH_REDIRECT_START', {
+      provider: 'google',
+      mode: 'redirect',
+    });
     expect(ev.provider).toBe('google');
     expect(ev.mode).toBe('redirect');
   });
@@ -491,43 +504,51 @@ describe('authRecovery — resolvePostAuthNavigation', () => {
 
 describe('authRecovery — classifyAuthFailure', () => {
   it('returns AUTH_REDIRECT_TIMEOUT when timedOut', () => {
-    expect(classifyAuthFailure({
-      hadPendingFlag: true,
-      hasUser: false,
-      redirectResultResolved: false,
-      timedOut: true,
-      retryExhausted: false,
-    })).toBe('AUTH_REDIRECT_TIMEOUT');
+    expect(
+      classifyAuthFailure({
+        hadPendingFlag: true,
+        hasUser: false,
+        redirectResultResolved: false,
+        timedOut: true,
+        retryExhausted: false,
+      })
+    ).toBe('AUTH_REDIRECT_TIMEOUT');
   });
 
   it('returns AUTH_RECOVERY_RETRY_EXHAUSTED when retry exhausted', () => {
-    expect(classifyAuthFailure({
-      hadPendingFlag: false,
-      hasUser: false,
-      redirectResultResolved: false,
-      timedOut: false,
-      retryExhausted: true,
-    })).toBe('AUTH_RECOVERY_RETRY_EXHAUSTED');
+    expect(
+      classifyAuthFailure({
+        hadPendingFlag: false,
+        hasUser: false,
+        redirectResultResolved: false,
+        timedOut: false,
+        retryExhausted: true,
+      })
+    ).toBe('AUTH_RECOVERY_RETRY_EXHAUSTED');
   });
 
   it('returns AUTH_REDIRECT_RESULT_EMPTY when flag was set but no result', () => {
-    expect(classifyAuthFailure({
-      hadPendingFlag: true,
-      hasUser: false,
-      redirectResultResolved: false,
-      timedOut: false,
-      retryExhausted: false,
-    })).toBe('AUTH_REDIRECT_RESULT_EMPTY');
+    expect(
+      classifyAuthFailure({
+        hadPendingFlag: true,
+        hasUser: false,
+        redirectResultResolved: false,
+        timedOut: false,
+        retryExhausted: false,
+      })
+    ).toBe('AUTH_REDIRECT_RESULT_EMPTY');
   });
 
   it('returns AUTH_STATE_NO_USER for no user without other causes', () => {
-    expect(classifyAuthFailure({
-      hadPendingFlag: false,
-      hasUser: false,
-      redirectResultResolved: true,
-      timedOut: false,
-      retryExhausted: false,
-    })).toBe('AUTH_STATE_NO_USER');
+    expect(
+      classifyAuthFailure({
+        hadPendingFlag: false,
+        hasUser: false,
+        redirectResultResolved: true,
+        timedOut: false,
+        retryExhausted: false,
+      })
+    ).toBe('AUTH_STATE_NO_USER');
   });
 });
 
@@ -623,29 +644,33 @@ describe('authSelectors — selectShouldShowAuthSkeleton', () => {
 
 describe('authSelectors — selectShouldShowAuthenticatedHeader', () => {
   it('returns true when user + authenticated state', () => {
-    expect(selectShouldShowAuthenticatedHeader(
-      makeInput({ user: { uid: 'u1' } as never, authFlowState: 'authenticated' }),
-    )).toBe(true);
+    expect(
+      selectShouldShowAuthenticatedHeader(
+        makeInput({ user: { uid: 'u1' } as never, authFlowState: 'authenticated' })
+      )
+    ).toBe(true);
   });
 
   it('returns false when user present but state is not authenticated', () => {
-    expect(selectShouldShowAuthenticatedHeader(
-      makeInput({ user: { uid: 'u1' } as never, authFlowState: 'idle' }),
-    )).toBe(false);
+    expect(
+      selectShouldShowAuthenticatedHeader(
+        makeInput({ user: { uid: 'u1' } as never, authFlowState: 'idle' })
+      )
+    ).toBe(false);
   });
 
   it('returns false when no user', () => {
-    expect(selectShouldShowAuthenticatedHeader(
-      makeInput({ authFlowState: 'authenticated' }),
-    )).toBe(false);
+    expect(selectShouldShowAuthenticatedHeader(makeInput({ authFlowState: 'authenticated' }))).toBe(
+      false
+    );
   });
 });
 
 describe('authSelectors — selectShouldRedirectAwayFromLogin', () => {
   it('returns true when user is present and auth resolved', () => {
-    expect(selectShouldRedirectAwayFromLogin(
-      makeInput({ user: { uid: 'u1' } as never }),
-    )).toBe(true);
+    expect(selectShouldRedirectAwayFromLogin(makeInput({ user: { uid: 'u1' } as never }))).toBe(
+      true
+    );
   });
 
   it('returns false when no user', () => {
@@ -653,27 +678,37 @@ describe('authSelectors — selectShouldRedirectAwayFromLogin', () => {
   });
 
   it('returns false when not yet resolved', () => {
-    expect(selectShouldRedirectAwayFromLogin(
-      makeInput({ user: { uid: 'u1' } as never, authResolved: false }),
-    )).toBe(false);
+    expect(
+      selectShouldRedirectAwayFromLogin(
+        makeInput({ user: { uid: 'u1' } as never, authResolved: false })
+      )
+    ).toBe(false);
   });
 });
 
 describe('authSelectors — selectHasRecoverableIncident', () => {
   it('returns true for timeout incident', () => {
-    expect(selectHasRecoverableIncident(makeInput({ lastIncident: 'AUTH_REDIRECT_TIMEOUT' }))).toBe(true);
+    expect(selectHasRecoverableIncident(makeInput({ lastIncident: 'AUTH_REDIRECT_TIMEOUT' }))).toBe(
+      true
+    );
   });
 
   it('returns true for empty redirect result', () => {
-    expect(selectHasRecoverableIncident(makeInput({ lastIncident: 'AUTH_REDIRECT_RESULT_EMPTY' }))).toBe(true);
+    expect(
+      selectHasRecoverableIncident(makeInput({ lastIncident: 'AUTH_REDIRECT_RESULT_EMPTY' }))
+    ).toBe(true);
   });
 
   it('returns true for no-user state', () => {
-    expect(selectHasRecoverableIncident(makeInput({ lastIncident: 'AUTH_STATE_NO_USER' }))).toBe(true);
+    expect(selectHasRecoverableIncident(makeInput({ lastIncident: 'AUTH_STATE_NO_USER' }))).toBe(
+      true
+    );
   });
 
   it('returns false for exhausted retry (terminal)', () => {
-    expect(selectHasRecoverableIncident(makeInput({ lastIncident: 'AUTH_RECOVERY_RETRY_EXHAUSTED' }))).toBe(false);
+    expect(
+      selectHasRecoverableIncident(makeInput({ lastIncident: 'AUTH_RECOVERY_RETRY_EXHAUSTED' }))
+    ).toBe(false);
   });
 
   it('returns false when no incident', () => {

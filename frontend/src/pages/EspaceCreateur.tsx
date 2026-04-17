@@ -4,25 +4,25 @@ import { Link, Navigate } from 'react-router-dom';
 import { Building2, Clock3, Crown, Key, RefreshCw, Wrench } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { getDailyStats } from '../utils/priceClickTracker';
-import { generateDailyPost, getGhostwriterHistory, saveGhostwriterPost } from '../services/ghostwriterService';
+import {
+  generateDailyPost,
+  getGhostwriterHistory,
+  saveGhostwriterPost,
+} from '../services/ghostwriterService';
 import type { GhostwriterHistoryEntry } from '../services/ghostwriterService';
 import { getPredatorSeedAlerts, runPredatorMonitoring } from '../services/predatorService';
 import { useVisitorStats } from '../hooks/useVisitorStats';
-import type { InterestStats, TerritoryInterestStat, TerritoryStats } from '../hooks/useVisitorStats';
+import type {
+  InterestStats,
+  TerritoryInterestStat,
+  TerritoryStats,
+} from '../hooks/useVisitorStats';
 import CreatorSkeleton from '../components/creator/CreatorSkeleton';
 
-const CreatorAudiencePanel = lazy(
-  () => import('../components/creator/CreatorAudiencePanel'),
-);
-const CreatorRevenuePanel = lazy(
-  () => import('../components/creator/CreatorRevenuePanel'),
-);
-const CreatorAdminTools = lazy(
-  () => import('../components/creator/CreatorAdminTools'),
-);
-const CreatorActivationGuide = lazy(
-  () => import('../components/creator/CreatorActivationGuide'),
-);
+const CreatorAudiencePanel = lazy(() => import('../components/creator/CreatorAudiencePanel'));
+const CreatorRevenuePanel = lazy(() => import('../components/creator/CreatorRevenuePanel'));
+const CreatorAdminTools = lazy(() => import('../components/creator/CreatorAdminTools'));
+const CreatorActivationGuide = lazy(() => import('../components/creator/CreatorActivationGuide'));
 
 const radarStyle = `
 @keyframes radarPulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
@@ -47,7 +47,9 @@ export function buildCreatorBriefing({
   const liveEmoji = topInterest?.emoji ?? '📌';
   const liveLabel = (topInterest?.name ?? 'aucun focus').toLowerCase();
   const historicalEmoji = topTerritoryHistoricalInterest?.emoji ?? '';
-  const historicalLabel = (topTerritoryHistoricalInterest?.name ?? 'aucun historique dominant').toLowerCase();
+  const historicalLabel = (
+    topTerritoryHistoricalInterest?.name ?? 'aucun historique dominant'
+  ).toLowerCase();
 
   const liveKey = normalizeInterestKey(topInterest?.key);
   const historicalKey = normalizeInterestKey(topTerritoryHistoricalInterest?.interest);
@@ -69,7 +71,9 @@ const EspaceCreateur: React.FC = () => {
   const [predatorScanning, setPredatorScanning] = useState(false);
   const [predatorAlerts, setPredatorAlerts] = useState(() => getPredatorSeedAlerts());
   const [predatorLastScan, setPredatorLastScan] = useState<string | null>(null);
-  const [postHistory, setPostHistory] = useState<GhostwriterHistoryEntry[]>(() => getGhostwriterHistory());
+  const [postHistory, setPostHistory] = useState<GhostwriterHistoryEntry[]>(() =>
+    getGhostwriterHistory()
+  );
 
   const weeklyStats = useMemo(() => getDailyStats(7), []);
   const monthlyStats = useMemo(() => getDailyStats(30), []);
@@ -93,10 +97,8 @@ const EspaceCreateur: React.FC = () => {
   // Most dormant territory — lowest live online count; available for growth-ops recommendations
   const mostDormantTerritory = useMemo(
     () =>
-      byTerritory.length > 0
-        ? [...byTerritory].sort((a, b) => a.online - b.online)[0]
-        : undefined,
-    [byTerritory],
+      byTerritory.length > 0 ? [...byTerritory].sort((a, b) => a.online - b.online)[0] : undefined,
+    [byTerritory]
   );
   void mostDormantTerritory;
 
@@ -117,8 +119,7 @@ const EspaceCreateur: React.FC = () => {
       predatorAlerts.length > 0
         ? predatorAlerts.reduce((sum, a) => sum + a.deltaPercent, 0) / predatorAlerts.length
         : ghostwriterPriceSignal;
-    const topProduct =
-      predatorAlerts.length > 0 ? predatorAlerts[0].targetName : undefined;
+    const topProduct = predatorAlerts.length > 0 ? predatorAlerts[0].targetName : undefined;
 
     return generateDailyPost({
       territory: byTerritory[0]?.name ?? 'Guadeloupe',
@@ -127,7 +128,11 @@ const EspaceCreateur: React.FC = () => {
       notableDrops: drops,
       notableIncreases: increases,
       topProduct,
-      date: new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }),
+      date: new Date().toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+      }),
     });
   }, [byTerritory, byInterest, predatorAlerts, ghostwriterPriceSignal]);
 
@@ -146,7 +151,7 @@ const EspaceCreateur: React.FC = () => {
             }
           : undefined,
       }),
-    [byTerritory, byInterest],
+    [byTerritory, byInterest]
   );
 
   const handleCopyGhostwriterPost = useCallback(() => {
@@ -155,7 +160,7 @@ const EspaceCreateur: React.FC = () => {
     setTimeout(() => setGhostwriterCopied(false), 2000);
     const entry = saveGhostwriterPost(ghostwriterPost, audienceBriefing);
     setPostHistory((prev) =>
-      prev.length > 0 && prev[0].id === entry.id ? prev : [entry, ...prev].slice(0, 10),
+      prev.length > 0 && prev[0].id === entry.id ? prev : [entry, ...prev].slice(0, 10)
     );
   }, [ghostwriterPost, audienceBriefing]);
 
@@ -211,7 +216,10 @@ const EspaceCreateur: React.FC = () => {
           <div>
             <h1 className="text-2xl font-black">Espace Créateur v{creatorSpaceVersion}</h1>
             <p className="text-xs text-amber-200/60 flex items-center gap-1 mt-1">
-              <Clock3 size={12} /> Dernière synchro: {predatorLastScan ? new Date(predatorLastScan).toLocaleTimeString('fr-FR') : 'en attente'}
+              <Clock3 size={12} /> Dernière synchro:{' '}
+              {predatorLastScan
+                ? new Date(predatorLastScan).toLocaleTimeString('fr-FR')
+                : 'en attente'}
             </p>
           </div>
         </div>
@@ -262,7 +270,11 @@ const EspaceCreateur: React.FC = () => {
         >
           <Wrench size={22} />
         </Link>
-        <Link to="/mon-compte" className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform" aria-label="Mon compte">
+        <Link
+          to="/mon-compte"
+          className="text-slate-500 hover:text-slate-300 hover:scale-110 transition-transform"
+          aria-label="Mon compte"
+        >
           <Key size={22} />
         </Link>
         <button

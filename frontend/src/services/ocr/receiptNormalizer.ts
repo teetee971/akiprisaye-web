@@ -34,7 +34,10 @@ const POSTAL_PREFIX_TO_TERRITORY: Record<string, TerritoryCode> = {
 
 // Keyword-based heuristics (city / island names in store name or address)
 const KEYWORD_TERRITORY: Array<[RegExp, TerritoryCode]> = [
-  [/guadeloupe|petit.?canal|morne.?[àa].?l.eau|baie.?mahault|pointe.?[àa].?pitre|basse.?terre|capesterre|sainte.?anne/i, 'GP'],
+  [
+    /guadeloupe|petit.?canal|morne.?[àa].?l.eau|baie.?mahault|pointe.?[àa].?pitre|basse.?terre|capesterre|sainte.?anne/i,
+    'GP',
+  ],
   [/martinique|fort.?de.?france|le.?lamentin|schoelcher/i, 'MQ'],
   [/guyane|cayenne|saint.?laurent/i, 'GF'],
   [/r[eé]union|saint.?denis|saint.?pierre|le.?port/i, 'RE'],
@@ -48,7 +51,7 @@ const KEYWORD_TERRITORY: Array<[RegExp, TerritoryCode]> = [
 export function detectTerritory(
   storeAddress?: string,
   storeName?: string,
-  fallback: TerritoryCode = 'GP',
+  fallback: TerritoryCode = 'GP'
 ): TerritoryCode {
   const haystack = `${storeAddress ?? ''} ${storeName ?? ''}`.trim();
   if (!haystack) return fallback;
@@ -120,10 +123,7 @@ const CATEGORY_RULES: Array<[RegExp, ObsCategory]> = [
     /\b(lessive|javel|nettoyant|detergent|essuie.?tout|torchon|eponge|sac.?poubelle|papier.toilette|entretien)\b/i,
     'Entretien',
   ],
-  [
-    /\b(couche|bebe|lait.?maternell[e]?|biberon|linge.?bebe)\b/i,
-    'Bébé',
-  ],
+  [/\b(couche|bebe|lait.?maternell[e]?|biberon|linge.?bebe)\b/i, 'Bébé'],
 ];
 
 /**
@@ -149,10 +149,10 @@ const ABBREVIATIONS: Array<[RegExp, string]> = [
   [/\bRAPP?[.\s]/gi, 'râpé '],
   [/\bPAST[.\s]/gi, 'pasteurisé '],
   [/\b1\/2\s*ECRE?M?E?\b/gi, 'demi-écrémé'],
-  [/\bPXM\b/gi, ''],   // internal POS code
-  [/\bLS\b/gi, ''],    // internal lot code
+  [/\bPXM\b/gi, ''], // internal POS code
+  [/\bLS\b/gi, ''], // internal lot code
   [/\bUC\d+\b/gi, ''], // unit code
-  [/\bPQC\b/gi, ''],   // internal batch code
+  [/\bPQC\b/gi, ''], // internal batch code
 ];
 
 /**
@@ -190,18 +190,15 @@ const AMBIGUOUS_PATTERNS = [
  *  − ambiguous label
  *  − very short or numeric-only label
  */
-export function computeConfidenceScore(
-  item: ReceiptLineItem,
-  parsed: ParsedReceipt,
-): number {
-  let score = 0.80;
+export function computeConfidenceScore(item: ReceiptLineItem, parsed: ParsedReceipt): number {
+  let score = 0.8;
 
   if (item.name.length >= 8) score += 0.05;
   if (item.price > 0 && item.price < 200) score += 0.05;
   if (parsed.checksum.matches) score += 0.05;
 
-  if (AMBIGUOUS_PATTERNS.some(p => p.test(item.name))) score -= 0.15;
-  if (item.name.length < 5 || /^\d+$/.test(item.name.trim())) score -= 0.20;
+  if (AMBIGUOUS_PATTERNS.some((p) => p.test(item.name))) score -= 0.15;
+  if (item.name.length < 5 || /^\d+$/.test(item.name.trim())) score -= 0.2;
 
   return Math.max(0, Math.min(1, Math.round(score * 100) / 100));
 }
@@ -223,32 +220,30 @@ export interface ReceiptNormalizerOptions {
  */
 export function normalizeReceipt(
   receipt: ParsedReceipt,
-  opts?: ReceiptNormalizerOptions,
+  opts?: ReceiptNormalizerOptions
 ): PriceObservation[] {
-  const territory =
-    opts?.territory ??
-    detectTerritory(receipt.storeAddress, receipt.storeName);
+  const territory = opts?.territory ?? detectTerritory(receipt.storeAddress, receipt.storeName);
 
   const observedAt = toIsoDate(receipt.date, receipt.time);
   const storeLabel = receipt.storeName ?? 'Enseigne inconnue';
 
   return receipt.items
-    .filter(item => item.name.trim().length >= 3 && item.price > 0)
-    .map(item => {
-      const label      = normalizeLabel(item.name);
-      const productId  = toProductKey(label);
-      const category   = detectCategory(label);
+    .filter((item) => item.name.trim().length >= 3 && item.price > 0)
+    .map((item) => {
+      const label = normalizeLabel(item.name);
+      const productId = toProductKey(label);
+      const category = detectCategory(label);
 
       const obs: PriceObservation = {
         productId,
-        productLabel:    label,
+        productLabel: label,
         territory,
-        price:           item.price,
+        price: item.price,
         observedAt,
         storeLabel,
         productCategory: category,
-        currency:        'EUR',
-        sourceType:      'citizen',
+        currency: 'EUR',
+        sourceType: 'citizen',
       };
       return obs;
     });

@@ -23,11 +23,7 @@ function getBuildId(): string {
   return (window as Window & { __BUILD_SHA__?: string }).__BUILD_SHA__ ?? 'unknown';
 }
 
-function makeEntry(
-  type: ErrorEntry['type'],
-  message: string,
-  stack?: string,
-): ErrorEntry {
+function makeEntry(type: ErrorEntry['type'], message: string, stack?: string): ErrorEntry {
   return {
     type,
     message: message.slice(0, 500), // cap length for storage
@@ -73,14 +69,16 @@ export function initErrorTracker(): void {
 
 /** Return all buffered errors (newest last) */
 export function getErrors(): ErrorEntry[] {
-  return monitoringBuffer.getItems().filter(
-    (item): item is ErrorEntry =>
-      typeof item === 'object' &&
-      item !== null &&
-      'type' in item &&
-      ((item as ErrorEntry).type === 'runtime_error' ||
-        (item as ErrorEntry).type === 'promise_rejection'),
-  );
+  return monitoringBuffer
+    .getItems()
+    .filter(
+      (item): item is ErrorEntry =>
+        typeof item === 'object' &&
+        item !== null &&
+        'type' in item &&
+        ((item as ErrorEntry).type === 'runtime_error' ||
+          (item as ErrorEntry).type === 'promise_rejection')
+    );
 }
 
 /** Reset install flag (tests only) */

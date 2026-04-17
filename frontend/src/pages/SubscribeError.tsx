@@ -13,12 +13,10 @@ export default function SubscribeError() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const reason = searchParams.get('reason') || 'Le paiement n\'a pas pu être traité.';
+  const reason = searchParams.get('reason') || "Le paiement n'a pas pu être traité.";
   const planId = searchParams.get('plan') || '';
 
-  const retryUrl = planId
-    ? `/subscribe?plan=${encodeURIComponent(planId)}`
-    : '/subscribe';
+  const retryUrl = planId ? `/subscribe?plan=${encodeURIComponent(planId)}` : '/subscribe';
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
@@ -47,19 +45,11 @@ export default function SubscribeError() {
         </GlassCard>
 
         <div className="space-y-3">
-          <CivicButton
-            variant="primary"
-            className="w-full"
-            onClick={() => navigate(retryUrl)}
-          >
+          <CivicButton variant="primary" className="w-full" onClick={() => navigate(retryUrl)}>
             Réessayer le paiement
           </CivicButton>
 
-          <CivicButton
-            variant="secondary"
-            className="w-full"
-            onClick={() => navigate('/pricing')}
-          >
+          <CivicButton variant="secondary" className="w-full" onClick={() => navigate('/pricing')}>
             Retour aux tarifs
           </CivicButton>
         </div>

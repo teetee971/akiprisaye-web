@@ -5,20 +5,105 @@
 
 import { useState } from 'react';
 import { SEOHead } from '../components/ui/SEOHead';
-import { analyzeAuthority, computeAuthorityScore, type LinkableAsset, type AuthorityAction } from '../utils/backlinkAuthorityEngine';
+import {
+  analyzeAuthority,
+  computeAuthorityScore,
+  type LinkableAsset,
+  type AuthorityAction,
+} from '../utils/backlinkAuthorityEngine';
 import { getBacklinkStats } from '../utils/backlinkTracker';
 
 const RAW_ASSETS: Omit<LinkableAsset, 'authorityScore'>[] = [
-  { url: '/guide-prix-alimentaire-dom', title: 'Guide Prix Alimentaire DOM', pageType: 'pillar', internalLinks: 12, pageViews: 180, backlinksCount: 3, outreachStatus: 'won' },
-  { url: '/comparateur-supermarches-dom', title: 'Comparateur Supermarchés DOM', pageType: 'comparison', internalLinks: 8, pageViews: 220, backlinksCount: 6, outreachStatus: 'won' },
-  { url: '/inflation-alimentaire-dom', title: 'Inflation Alimentaire DOM', pageType: 'inflation', internalLinks: 9, pageViews: 160, backlinksCount: 5, outreachStatus: 'contacted' },
-  { url: '/ou-faire-courses-dom', title: 'Où Faire ses Courses DOM', pageType: 'pillar', internalLinks: 7, pageViews: 140, backlinksCount: 2, outreachStatus: 'new' },
-  { url: '/prix/coca-cola-1-5l-guadeloupe', title: 'Prix Coca-Cola Guadeloupe', pageType: 'product', internalLinks: 3, pageViews: 120, backlinksCount: 1, outreachStatus: 'new' },
-  { url: '/prix/huile-tournesol-martinique', title: 'Prix Huile Martinique', pageType: 'product', internalLinks: 2, pageViews: 55, backlinksCount: 0, outreachStatus: 'new' },
-  { url: '/comparer/carrefour-vs-leclerc-guadeloupe', title: 'Carrefour vs Leclerc GP', pageType: 'comparison', internalLinks: 6, pageViews: 200, backlinksCount: 4, outreachStatus: 'contacted' },
-  { url: '/prix/farine-ble-guyane', title: 'Prix Farine Guyane', pageType: 'product', internalLinks: 1, pageViews: 30, backlinksCount: 0, outreachStatus: 'new' },
-  { url: '/categorie/produits-laitiers-reunion', title: 'Produits Laitiers Réunion', pageType: 'category', internalLinks: 4, pageViews: 78, backlinksCount: 1, outreachStatus: 'new' },
-  { url: '/inflation/alimentation-guadeloupe-2024', title: 'Inflation Alimentation GP 2024', pageType: 'inflation', internalLinks: 5, pageViews: 95, backlinksCount: 2, outreachStatus: 'contacted' },
+  {
+    url: '/guide-prix-alimentaire-dom',
+    title: 'Guide Prix Alimentaire DOM',
+    pageType: 'pillar',
+    internalLinks: 12,
+    pageViews: 180,
+    backlinksCount: 3,
+    outreachStatus: 'won',
+  },
+  {
+    url: '/comparateur-supermarches-dom',
+    title: 'Comparateur Supermarchés DOM',
+    pageType: 'comparison',
+    internalLinks: 8,
+    pageViews: 220,
+    backlinksCount: 6,
+    outreachStatus: 'won',
+  },
+  {
+    url: '/inflation-alimentaire-dom',
+    title: 'Inflation Alimentaire DOM',
+    pageType: 'inflation',
+    internalLinks: 9,
+    pageViews: 160,
+    backlinksCount: 5,
+    outreachStatus: 'contacted',
+  },
+  {
+    url: '/ou-faire-courses-dom',
+    title: 'Où Faire ses Courses DOM',
+    pageType: 'pillar',
+    internalLinks: 7,
+    pageViews: 140,
+    backlinksCount: 2,
+    outreachStatus: 'new',
+  },
+  {
+    url: '/prix/coca-cola-1-5l-guadeloupe',
+    title: 'Prix Coca-Cola Guadeloupe',
+    pageType: 'product',
+    internalLinks: 3,
+    pageViews: 120,
+    backlinksCount: 1,
+    outreachStatus: 'new',
+  },
+  {
+    url: '/prix/huile-tournesol-martinique',
+    title: 'Prix Huile Martinique',
+    pageType: 'product',
+    internalLinks: 2,
+    pageViews: 55,
+    backlinksCount: 0,
+    outreachStatus: 'new',
+  },
+  {
+    url: '/comparer/carrefour-vs-leclerc-guadeloupe',
+    title: 'Carrefour vs Leclerc GP',
+    pageType: 'comparison',
+    internalLinks: 6,
+    pageViews: 200,
+    backlinksCount: 4,
+    outreachStatus: 'contacted',
+  },
+  {
+    url: '/prix/farine-ble-guyane',
+    title: 'Prix Farine Guyane',
+    pageType: 'product',
+    internalLinks: 1,
+    pageViews: 30,
+    backlinksCount: 0,
+    outreachStatus: 'new',
+  },
+  {
+    url: '/categorie/produits-laitiers-reunion',
+    title: 'Produits Laitiers Réunion',
+    pageType: 'category',
+    internalLinks: 4,
+    pageViews: 78,
+    backlinksCount: 1,
+    outreachStatus: 'new',
+  },
+  {
+    url: '/inflation/alimentation-guadeloupe-2024',
+    title: 'Inflation Alimentation GP 2024',
+    pageType: 'inflation',
+    internalLinks: 5,
+    pageViews: 95,
+    backlinksCount: 2,
+    outreachStatus: 'contacted',
+  },
 ];
 
 const assets: LinkableAsset[] = RAW_ASSETS.map((a) => ({
@@ -52,7 +137,11 @@ const ACTION_COLORS: Record<string, string> = {
 
 export default function AuthorityDashboardPage() {
   const [backlinkStats] = useState(() => {
-    try { return getBacklinkStats(); } catch { return null; }
+    try {
+      return getBacklinkStats();
+    } catch {
+      return null;
+    }
   });
 
   const topLinkable = assets.filter((a) => a.authorityScore > 60).length;
@@ -63,27 +152,38 @@ export default function AuthorityDashboardPage() {
 
   return (
     <>
-      <SEOHead title="Authority Dashboard" description="Analyse de l'autorité des pages et backlinks." noIndex />
+      <SEOHead
+        title="Authority Dashboard"
+        description="Analyse de l'autorité des pages et backlinks."
+        noIndex
+      />
       <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-4xl space-y-8">
-
           <div>
             <h1 className="text-2xl font-extrabold text-white">🔗 Authority Dashboard</h1>
-            <p className="mt-1 text-sm text-zinc-400">Score d'autorité des pages et opportunités backlinks</p>
+            <p className="mt-1 text-sm text-zinc-400">
+              Score d'autorité des pages et opportunités backlinks
+            </p>
           </div>
 
           {/* Summary cards */}
           <div className="grid grid-cols-3 gap-3">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Pages linkables top</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Pages linkables top
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-emerald-400">{topLinkable}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Outreach urgent</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Outreach urgent
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-rose-400">{outreachNow}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">À renforcer</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                À renforcer
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-white">{needStrengthening}</p>
             </div>
           </div>
@@ -96,7 +196,10 @@ export default function AuthorityDashboardPage() {
               .map((asset) => {
                 const action = actionByUrl.get(asset.url);
                 return (
-                  <div key={asset.url} className="rounded-xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
+                  <div
+                    key={asset.url}
+                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4 space-y-3"
+                  >
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="text-sm font-semibold text-zinc-100">{asset.title}</p>
@@ -104,17 +207,25 @@ export default function AuthorityDashboardPage() {
                           {asset.url.length > 40 ? `${asset.url.slice(0, 40)}…` : asset.url}
                         </p>
                       </div>
-                      <span className="text-lg font-extrabold text-emerald-400">{asset.authorityScore}</span>
+                      <span className="text-lg font-extrabold text-emerald-400">
+                        {asset.authorityScore}
+                      </span>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${PAGE_TYPE_COLORS[asset.pageType] ?? ''}`}>
+                      <span
+                        className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${PAGE_TYPE_COLORS[asset.pageType] ?? ''}`}
+                      >
                         {asset.pageType}
                       </span>
-                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${OUTREACH_COLORS[asset.outreachStatus ?? 'new'] ?? ''}`}>
+                      <span
+                        className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${OUTREACH_COLORS[asset.outreachStatus ?? 'new'] ?? ''}`}
+                      >
                         {asset.outreachStatus ?? 'new'}
                       </span>
                       {action && (
-                        <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${ACTION_COLORS[action.type] ?? ''}`}>
+                        <span
+                          className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${ACTION_COLORS[action.type] ?? ''}`}
+                        >
                           {action.type}
                         </span>
                       )}
@@ -150,7 +261,9 @@ export default function AuthorityDashboardPage() {
                     { label: 'Perdus', value: backlinkStats.lost, color: 'text-rose-400' },
                   ].map(({ label, value, color }) => (
                     <div key={label} className="text-center">
-                      <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">{label}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                        {label}
+                      </p>
                       <p className={`text-xl font-extrabold ${color}`}>{value}</p>
                     </div>
                   ))}
@@ -173,7 +286,6 @@ export default function AuthorityDashboardPage() {
               <p className="text-sm text-zinc-500">Aucun backlink enregistré.</p>
             )}
           </div>
-
         </div>
       </div>
     </>

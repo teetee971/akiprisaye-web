@@ -69,18 +69,11 @@ export default function SubscribeSuccess() {
         </GlassCard>
 
         <div className="space-y-3">
-          <CivicButton
-            variant="primary"
-            className="w-full"
-            onClick={() => navigate('/')}
-          >
+          <CivicButton variant="primary" className="w-full" onClick={() => navigate('/')}>
             Accéder à la plateforme
           </CivicButton>
 
-          <Link
-            to="/account"
-            className="block text-blue-400 hover:underline text-sm"
-          >
+          <Link to="/account" className="block text-blue-400 hover:underline text-sm">
             Gérer mon abonnement
           </Link>
         </div>

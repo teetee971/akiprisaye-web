@@ -25,7 +25,7 @@ export function useA11yPreferences() {
   const [preferences, setPreferences] = useState<A11yPreferences>(() => {
     // Charger les préférences depuis localStorage
     const stored = safeLocalStorage.getJSON<A11yPreferences>(STORAGE_KEY, DEFAULT_PREFERENCES);
-    
+
     // Détecter les préférences système si aucune préférence n'est enregistrée
     if (stored.reducedMotion === false) {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -33,7 +33,7 @@ export function useA11yPreferences() {
         stored.reducedMotion = true;
       }
     }
-    
+
     return stored;
   });
 
@@ -47,27 +47,26 @@ export function useA11yPreferences() {
   // Appliquer les préférences au DOM
   useEffect(() => {
     const root = document.documentElement;
-    
+
     // Taille de police
     root.style.fontSize = `${preferences.fontSize}%`;
-    
+
     // Mode contraste élevé
     if (preferences.highContrast) {
       root.classList.add('high-contrast');
     } else {
       root.classList.remove('high-contrast');
     }
-    
+
     // Animations réduites
     if (preferences.reducedMotion) {
       root.classList.add('reduce-motion');
     } else {
       root.classList.remove('reduce-motion');
     }
-    
+
     // Mode daltonien
     root.setAttribute('data-colorblind-mode', preferences.colorBlindMode);
-    
   }, [preferences]);
 
   // Fonctions helper pour modifier des préférences individuelles

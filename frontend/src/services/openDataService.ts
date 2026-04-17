@@ -1,7 +1,6 @@
- 
 /**
  * Open Data Service
- * 
+ *
  * Provides public access to price and anomaly data
  * Formats: JSON, CSV
  * License: Etalab 2.0
@@ -81,7 +80,7 @@ export async function generateDataHash(data: string): Promise<string> {
     const msgBuffer = new TextEncoder().encode(data);
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
     return hashHex;
   } catch (error) {
     console.error('Failed to generate hash:', error);
@@ -97,7 +96,7 @@ export async function exportPricesToJSON(
   territories: string[]
 ): Promise<OpenDataPricesExport> {
   const metadata = generateMetadata(territories, records.length, 'prices');
-  
+
   const dataString = JSON.stringify(records);
   metadata.dataHash = await generateDataHash(dataString);
 
@@ -124,7 +123,7 @@ export function exportPricesToCSV(records: OpenDataPriceRecord[]): string {
     'Score Qualité',
   ];
 
-  const rows = records.map(record => [
+  const rows = records.map((record) => [
     record.ean || '',
     record.productName,
     record.category,
@@ -139,7 +138,7 @@ export function exportPricesToCSV(records: OpenDataPriceRecord[]): string {
 
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
+    ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
   ].join('\n');
 
   // Add BOM for Excel compatibility
@@ -154,7 +153,7 @@ export async function exportAnomaliesToJSON(
   territories: string[]
 ): Promise<OpenDataAnomaliesExport> {
   const metadata = generateMetadata(territories, anomalies.length, 'anomalies');
-  
+
   const dataString = JSON.stringify(anomalies);
   metadata.dataHash = await generateDataHash(dataString);
 
@@ -178,7 +177,7 @@ export function exportAnomaliesToCSV(anomalies: PriceAnomaly[]): string {
     'Métadonnées',
   ];
 
-  const rows = anomalies.map(anomaly => [
+  const rows = anomalies.map((anomaly) => [
     anomaly.type,
     anomaly.severity,
     anomaly.productName,
@@ -190,7 +189,7 @@ export function exportAnomaliesToCSV(anomalies: PriceAnomaly[]): string {
 
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.map(cell => `"${cell}"`).join(',')),
+    ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
   ].join('\n');
 
   // Add BOM for Excel compatibility
@@ -215,7 +214,10 @@ export function downloadAsFile(content: string, filename: string, mimeType: stri
 /**
  * Download prices as JSON
  */
-export async function downloadPricesJSON(records: OpenDataPriceRecord[], territories: string[]): Promise<void> {
+export async function downloadPricesJSON(
+  records: OpenDataPriceRecord[],
+  territories: string[]
+): Promise<void> {
   const data = await exportPricesToJSON(records, territories);
   const content = JSON.stringify(data, null, 2);
   const timestamp = new Date().toISOString().split('T')[0];
@@ -234,7 +236,10 @@ export function downloadPricesCSV(records: OpenDataPriceRecord[]): void {
 /**
  * Download anomalies as JSON
  */
-export async function downloadAnomaliesJSON(anomalies: PriceAnomaly[], territories: string[]): Promise<void> {
+export async function downloadAnomaliesJSON(
+  anomalies: PriceAnomaly[],
+  territories: string[]
+): Promise<void> {
   const data = await exportAnomaliesToJSON(anomalies, territories);
   const content = JSON.stringify(data, null, 2);
   const timestamp = new Date().toISOString().split('T')[0];

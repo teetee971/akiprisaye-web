@@ -1,4 +1,16 @@
-import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, where } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { safeJsonParse } from '../utils/safeLocalStorage';
 
@@ -34,7 +46,10 @@ const minTs = () => Date.now() - HISTORY_RETENTION_DAYS * 24 * 60 * 60 * 1000;
 export const getGuestQuotaStatus = (): QuotaStatus => {
   const raw = localStorage.getItem(GUEST_QUOTA_KEY);
   const today = todayKey();
-  const parsed = safeJsonParse(raw, { day: today, searchesUsed: 0 }) as { day: string; searchesUsed: number };
+  const parsed = safeJsonParse(raw, { day: today, searchesUsed: 0 }) as {
+    day: string;
+    searchesUsed: number;
+  };
   const used = parsed.day === today ? parsed.searchesUsed : 0;
   const status = {
     allowed: used < GUEST_LIMIT,
@@ -92,7 +107,10 @@ export const saveGuestHistory = (entry: Omit<SearchHistoryEntry, 'id' | 'created
   const now = Date.now();
   const raw = localStorage.getItem(GUEST_HISTORY_KEY);
   const list = safeJsonParse(raw, [] as SearchHistoryEntry[]);
-  const next: SearchHistoryEntry[] = [{ id: `g-${now}-${Math.random().toString(36).slice(2, 8)}`, createdAt: now, ...entry }, ...list]
+  const next: SearchHistoryEntry[] = [
+    { id: `g-${now}-${Math.random().toString(36).slice(2, 8)}`, createdAt: now, ...entry },
+    ...list,
+  ]
     .filter((item) => item.createdAt >= minTs())
     .slice(0, 100);
   localStorage.setItem(GUEST_HISTORY_KEY, JSON.stringify(next));
@@ -102,11 +120,15 @@ export const getGuestHistory = (): SearchHistoryEntry[] => {
   const raw = localStorage.getItem(GUEST_HISTORY_KEY);
   const list = safeJsonParse(raw, [] as SearchHistoryEntry[]);
   const filtered = list.filter((item) => item.createdAt >= minTs());
-  if (filtered.length !== list.length) localStorage.setItem(GUEST_HISTORY_KEY, JSON.stringify(filtered));
+  if (filtered.length !== list.length)
+    localStorage.setItem(GUEST_HISTORY_KEY, JSON.stringify(filtered));
   return filtered;
 };
 
-export const saveUserHistory = async (uid: string, entry: Omit<SearchHistoryEntry, 'id' | 'createdAt'>) => {
+export const saveUserHistory = async (
+  uid: string,
+  entry: Omit<SearchHistoryEntry, 'id' | 'createdAt'>
+) => {
   if (!db) return;
   await addDoc(collection(db, 'users', uid, 'searches'), {
     ...entry,
@@ -151,9 +173,11 @@ export const getCachedProduct = (id: string): Record<string, unknown> | null => 
 
 export const FREEMIUM_LIMITS = { guest: GUEST_LIMIT, free: FREE_LIMIT };
 
-
-export const shouldTriggerPaywall = (allowed: boolean, reason: "quota" | "pro_feature" | null): boolean => {
-  if (reason === "pro_feature") return true;
+export const shouldTriggerPaywall = (
+  allowed: boolean,
+  reason: 'quota' | 'pro_feature' | null
+): boolean => {
+  if (reason === 'pro_feature') return true;
   return !allowed;
 };
 

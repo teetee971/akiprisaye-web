@@ -28,7 +28,19 @@ const safeNumber = (value: unknown): number | null => {
 };
 
 const VALID_TERRITORIES = new Set<TerritoryCode>([
-  'fr', 'gp', 'mq', 'gf', 're', 'yt', 'pm', 'bl', 'mf', 'wf', 'pf', 'nc', 'tf',
+  'fr',
+  'gp',
+  'mq',
+  'gf',
+  're',
+  'yt',
+  'pm',
+  'bl',
+  'mf',
+  'wf',
+  'pf',
+  'nc',
+  'tf',
 ]);
 
 const isValidTerritory = (v: unknown): v is TerritoryCode =>
@@ -58,7 +70,11 @@ const withTimeoutSignal = (signal: AbortSignal, ms: number): AbortSignal => {
   return ctrl.signal;
 };
 
-const mapItem = (item: CatalogItem, source: PriceSourceId, input: PriceSearchInput): PriceObservation | null => {
+const mapItem = (
+  item: CatalogItem,
+  source: PriceSourceId,
+  input: PriceSearchInput
+): PriceObservation | null => {
   const price = safeNumber(item.price);
   if (price === null || price <= 0) return null;
 
@@ -115,7 +131,9 @@ export function createLeclercCategoryProvider(cfg: LeclercCategoryProviderConfig
       const url = `${base}${cfg.apiEndpoint}?${params.toString()}`;
 
       try {
-        const response = await fetch(url, { signal: withTimeoutSignal(signal, REQUEST_TIMEOUT_MS) });
+        const response = await fetch(url, {
+          signal: withTimeoutSignal(signal, REQUEST_TIMEOUT_MS),
+        });
 
         if (!response.ok) {
           return {

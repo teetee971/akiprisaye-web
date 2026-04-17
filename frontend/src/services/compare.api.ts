@@ -4,7 +4,7 @@ import type { CompareResponse, CompareParams } from '../types/compare';
 export async function fetchCompareApi(
   query: string,
   territory: string,
-  retailer?: string,
+  retailer?: string
 ): Promise<CompareResponse> {
   const params: CompareParams = { query, territory, retailer };
   const qs = new URLSearchParams({ query, territory });

@@ -17,7 +17,7 @@ export interface BacklinkRecord {
   targetUrl: string;
   anchor?: string;
   status: 'pending' | 'live' | 'lost';
-  firstSeenAt?: string;   // ISO date
+  firstSeenAt?: string; // ISO date
   lastCheckedAt?: string;
   trafficClicks?: number;
   territory?: string;
@@ -61,10 +61,7 @@ export function addBacklink(record: BacklinkRecord): void {
   writeAll(items);
 }
 
-export function updateBacklinkStatus(
-  sourceDomain: string,
-  status: BacklinkRecord['status']
-): void {
+export function updateBacklinkStatus(sourceDomain: string, status: BacklinkRecord['status']): void {
   const items = readAll().map((item) =>
     item.sourceDomain === sourceDomain
       ? { ...item, status, lastCheckedAt: new Date().toISOString() }

@@ -120,10 +120,7 @@ export function NearbyStoresList({
 
               {/* Open Status Badge */}
               <div className="mt-1">
-                <StoreOpenStatus
-                  hours={getStoreHours(store.id, store.territory)}
-                  compact={true}
-                />
+                <StoreOpenStatus hours={getStoreHours(store.id, store.territory)} compact={true} />
               </div>
 
               {/* Location */}

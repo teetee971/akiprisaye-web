@@ -8,16 +8,16 @@ import { safeLocalStorage } from './safeLocalStorage';
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const KEY_SEO_VIEWS = 'akp:seo:views:v1';
-const MAX_ENTRIES   = 200;
-const TTL_MS        = 30 * 24 * 60 * 60 * 1000; // 30 days
+const MAX_ENTRIES = 200;
+const TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface SEOPageEntry {
-  slug:         string;
-  pageType:     string;
-  territory:    string;
-  views:        number;
+  slug: string;
+  pageType: string;
+  territory: string;
+  views: number;
   lastViewedAt: number;
 }
 
@@ -58,18 +58,14 @@ function pruneEntries(entries: SEOPageEntry[]): SEOPageEntry[] {
  * Track a view of an SEO page.
  * Increments counter if the same slug+pageType+territory was already seen.
  */
-export function trackSEOPageView(
-  pageType: string,
-  slug: string,
-  territory: string,
-): void {
+export function trackSEOPageView(pageType: string, slug: string, territory: string): void {
   const entries = readJson<SEOPageEntry[]>(KEY_SEO_VIEWS, []);
   const existing = entries.find(
-    (e) => e.slug === slug && e.pageType === pageType && e.territory === territory,
+    (e) => e.slug === slug && e.pageType === pageType && e.territory === territory
   );
 
   if (existing) {
-    existing.views       += 1;
+    existing.views += 1;
     existing.lastViewedAt = Date.now();
   } else {
     entries.push({ slug, pageType, territory, views: 1, lastViewedAt: Date.now() });
@@ -83,8 +79,8 @@ export function trackSEOPageView(
  */
 export function getSEOPageStats(): SEOPageStats[] {
   const entries = readJson<SEOPageEntry[]>(KEY_SEO_VIEWS, []);
-  const pruned  = pruneEntries(entries);
-  const total   = pruned.reduce((s, e) => s + e.views, 0);
+  const pruned = pruneEntries(entries);
+  const total = pruned.reduce((s, e) => s + e.views, 0);
   return pruned.map((e) => ({
     ...e,
     ctr: total > 0 ? e.views / total : 0,

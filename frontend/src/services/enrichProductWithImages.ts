@@ -1,17 +1,16 @@
- 
 /**
  * Product Image Enrichment Service
- * 
+ *
  * Automatically fetches and enriches product images from Open Food Facts
  * with caching, validation, and fallback mechanisms.
- * 
+ *
  * Features:
  * - Automatic image fetching from Open Food Facts API
  * - Image URL validation and caching
  * - Multiple image quality options (thumbnail, small, large, original)
  * - Fallback to category-based icons
  * - GDPR-compliant with no personal data storage
- * 
+ *
  * @module enrichProductWithImages
  */
 
@@ -99,7 +98,7 @@ function cleanExpiredCache(cache: Map<string, ImageCacheEntry>): void {
 
 /**
  * Enrich product with images from Open Food Facts
- * 
+ *
  * @param barcode - Product EAN/barcode
  * @param forceRefresh - Force refresh from API even if cached
  * @returns Product image data or null if not found
@@ -115,10 +114,10 @@ export async function enrichProductWithImages(
   // Check cache first
   const cache = getImageCache();
   cleanExpiredCache(cache);
-  
+
   const cacheKey = `img_${barcode}`;
   const cached = cache.get(cacheKey);
-  
+
   if (cached && !forceRefresh && cached.validated) {
     // Return cached data if still valid
     return {
@@ -129,25 +128,28 @@ export async function enrichProductWithImages(
         large: cached.url,
         medium: cached.url,
         small: cached.url,
-        thumbnail: cached.url
+        thumbnail: cached.url,
       },
       source: 'openfoodfacts',
       lastUpdated: new Date(cached.timestamp).toISOString(),
-      validated: true
+      validated: true,
     };
   }
 
   try {
     // Fetch from Open Food Facts
-    const productData = await fetchProductFromOpenFoodFacts(barcode) as { imageUrl?: string; imageSmallUrl?: string } | null;
-    
+    const productData = (await fetchProductFromOpenFoodFacts(barcode)) as {
+      imageUrl?: string;
+      imageSmallUrl?: string;
+    } | null;
+
     if (!productData || !productData.imageUrl) {
       return null;
     }
 
     // Validate the main image URL
     const isValid = await validateImageUrl(productData.imageUrl);
-    
+
     const imageData: ProductImageData = {
       productId: barcode,
       barcode,
@@ -156,11 +158,11 @@ export async function enrichProductWithImages(
         large: productData.imageUrl,
         medium: productData.imageUrl,
         small: productData.imageSmallUrl || productData.imageUrl,
-        thumbnail: productData.imageSmallUrl || productData.imageUrl
+        thumbnail: productData.imageSmallUrl || productData.imageUrl,
       },
       source: 'openfoodfacts',
       lastUpdated: new Date().toISOString(),
-      validated: isValid
+      validated: isValid,
     };
 
     // Cache the result
@@ -169,7 +171,7 @@ export async function enrichProductWithImages(
       url: productData.imageUrl,
       validated: isValid,
       timestamp: now,
-      expiresAt: now + CACHE_DURATION_MS
+      expiresAt: now + CACHE_DURATION_MS,
     });
     saveImageCache(cache);
 
@@ -182,7 +184,7 @@ export async function enrichProductWithImages(
 
 /**
  * Batch enrich multiple products with images
- * 
+ *
  * @param barcodes - Array of product EAN/barcodes
  * @param maxConcurrent - Maximum concurrent API requests (default: 5)
  * @returns Map of barcode to image data
@@ -192,25 +194,25 @@ export async function batchEnrichProductImages(
   maxConcurrent: number = 5
 ): Promise<Map<string, ProductImageData>> {
   const results = new Map<string, ProductImageData>();
-  
+
   // Process in batches to avoid overwhelming the API
   for (let i = 0; i < barcodes.length; i += maxConcurrent) {
     const batch = barcodes.slice(i, i + maxConcurrent);
-    const promises = batch.map(barcode => enrichProductWithImages(barcode));
+    const promises = batch.map((barcode) => enrichProductWithImages(barcode));
     const batchResults = await Promise.all(promises);
-    
+
     batchResults.forEach((result, index) => {
       if (result) {
         results.set(batch[index], result);
       }
     });
-    
+
     // Small delay between batches to be respectful to the API
     if (i + maxConcurrent < barcodes.length) {
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
   }
-  
+
   return results;
 }
 
@@ -236,24 +238,24 @@ export function getImageCacheStats(): {
 } {
   const cache = getImageCache();
   const now = Date.now();
-  
+
   let validatedCount = 0;
   let expiredCount = 0;
-  
+
   for (const entry of cache.values()) {
     if (entry.validated) validatedCount++;
     if (entry.expiresAt < now) expiredCount++;
   }
-  
+
   // Estimate cache size in bytes
   const cacheData = safeLocalStorage.getItem(IMAGE_CACHE_KEY);
   const cacheSize = cacheData ? new Blob([cacheData]).size : 0;
-  
+
   return {
     totalEntries: cache.size,
     validatedEntries: validatedCount,
     expiredEntries: expiredCount,
-    cacheSize
+    cacheSize,
   };
 }
 

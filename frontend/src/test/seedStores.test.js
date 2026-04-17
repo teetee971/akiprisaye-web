@@ -35,13 +35,13 @@ describe('Stores Data', () => {
     });
 
     it('should have unique store IDs', () => {
-      const ids = SEED_STORES.map(s => s.id);
+      const ids = SEED_STORES.map((s) => s.id);
       const uniqueIds = new Set(ids);
       expect(uniqueIds.size).toBe(ids.length);
     });
 
     it('should have valid coordinates', () => {
-      SEED_STORES.forEach(store => {
+      SEED_STORES.forEach((store) => {
         expect(store.coordinates.lat).toBeTypeOf('number');
         expect(store.coordinates.lon).toBeTypeOf('number');
         expect(store.coordinates.lat).toBeGreaterThanOrEqual(-90);
@@ -70,7 +70,7 @@ describe('Stores Data', () => {
     it('should return stores for Guadeloupe', () => {
       const stores = getStoresByTerritory('Guadeloupe');
       expect(stores.length).toBeGreaterThan(0);
-      stores.forEach(store => {
+      stores.forEach((store) => {
         expect(store.territory).toBe('Guadeloupe');
       });
     });
@@ -103,7 +103,7 @@ describe('Stores Data', () => {
     it('should search by store name', () => {
       const results = searchStores('Carrefour');
       expect(results.length).toBeGreaterThan(0);
-      results.forEach(store => {
+      results.forEach((store) => {
         expect(store.name.toLowerCase()).toContain('carrefour');
       });
     });
@@ -111,7 +111,7 @@ describe('Stores Data', () => {
     it('should search by city', () => {
       const results = searchStores('Saint-Denis');
       expect(results.length).toBeGreaterThan(0);
-      results.forEach(store => {
+      results.forEach((store) => {
         expect(store.city.toLowerCase()).toContain('saint-denis');
       });
     });
@@ -131,7 +131,7 @@ describe('Stores Data', () => {
     it('should return stores by chain name', () => {
       const stores = getStoresByChain('Carrefour');
       expect(stores.length).toBeGreaterThan(0);
-      stores.forEach(store => {
+      stores.forEach((store) => {
         expect(store.chain).toBe('Carrefour');
       });
     });
@@ -149,7 +149,7 @@ describe('Stores Data', () => {
       expect(territories.length).toBeGreaterThan(0);
       expect(territories).toContain('Guadeloupe');
       expect(territories).toContain('Martinique');
-      
+
       // Check if sorted
       const sorted = [...territories].sort();
       expect(territories).toEqual(sorted);
@@ -170,15 +170,9 @@ describe('Stores Data', () => {
 
   describe('Territory Coverage', () => {
     it('should have stores for main territories', () => {
-      const mainTerritories = [
-        'Guadeloupe',
-        'Martinique',
-        'Guyane',
-        'La Réunion',
-        'Mayotte',
-      ];
+      const mainTerritories = ['Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte'];
 
-      mainTerritories.forEach(territory => {
+      mainTerritories.forEach((territory) => {
         const stores = getStoresByTerritory(territory);
         expect(stores.length).toBeGreaterThan(0);
       });
@@ -197,7 +191,7 @@ describe('Stores Data', () => {
         'hyper_u_cayenne',
       ];
 
-      productStoreIds.forEach(storeId => {
+      productStoreIds.forEach((storeId) => {
         const store = getStoreById(storeId);
         expect(store).not.toBeNull();
         expect(store).toBeDefined();

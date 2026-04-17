@@ -1,6 +1,6 @@
 /**
  * Store Selector Component
- * 
+ *
  * Allows filtering stores by territory, distance, and other criteria
  */
 
@@ -26,13 +26,13 @@ export function StoreSelector({
   filters,
   onFiltersChange,
   hasUserLocation,
-  className = ''
+  className = '',
 }: StoreSelectorProps) {
   const handleTerritoryToggle = (territory: string) => {
     const newTerritories = filters.territories.includes(territory)
-      ? filters.territories.filter(t => t !== territory)
+      ? filters.territories.filter((t) => t !== territory)
       : [...filters.territories, territory];
-    
+
     onFiltersChange({ ...filters, territories: newTerritories });
   };
 
@@ -61,10 +61,8 @@ export function StoreSelector({
 
       {/* Territory Filter */}
       <div className="mb-5">
-        <p className="block text-sm font-medium text-gray-300 mb-2">
-          Territoires
-        </p>
-        
+        <p className="block text-sm font-medium text-gray-300 mb-2">Territoires</p>
+
         <div className="flex gap-2 mb-2">
           <button
             onClick={handleSelectAllTerritories}
@@ -81,9 +79,9 @@ export function StoreSelector({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {availableTerritories.map(territory => {
+          {availableTerritories.map((territory) => {
             const isSelected = filters.territories.includes(territory);
-            
+
             return (
               <button
                 key={territory}
@@ -108,7 +106,7 @@ export function StoreSelector({
           <MapPin className="inline mr-1" size={14} />
           Distance maximale
         </p>
-        
+
         {!hasUserLocation && (
           <div className="mb-2 text-xs text-amber-300 bg-amber-900/20 border border-amber-700/50 rounded p-2">
             ℹ️ Activez la géolocalisation pour filtrer par distance
@@ -127,8 +125,8 @@ export function StoreSelector({
           >
             Tous
           </button>
-          
-          {[1, 5, 10, 20, 50].map(distance => (
+
+          {[1, 5, 10, 20, 50].map((distance) => (
             <button
               key={distance}
               onClick={() => handleDistanceChange(distance)}
@@ -147,7 +145,10 @@ export function StoreSelector({
 
       {/* Promotions Filter */}
       <div>
-        <label aria-label="Inclure les promotions" className="flex items-center gap-3 cursor-pointer group">
+        <label
+          aria-label="Inclure les promotions"
+          className="flex items-center gap-3 cursor-pointer group"
+        >
           <div className="relative">
             <input
               id="store-selector-promos"
@@ -159,7 +160,7 @@ export function StoreSelector({
             <div className="w-11 h-6 bg-slate-700 rounded-full peer-checked:bg-blue-600 transition-colors"></div>
             <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
           </div>
-          
+
           <div className="flex-1">
             <div className="text-sm font-medium text-gray-300 group-hover:text-white transition-colors">
               Inclure les promotions

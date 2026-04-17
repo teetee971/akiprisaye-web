@@ -1,16 +1,16 @@
 /**
  * ⑰ Monthly Savings Dashboard - Gamified Personal Achievement Tracker
- * 
+ *
  * Shows user's monthly savings with badges, trends, and annual projection.
  * Psychological effect: Pride + engagement → Regular returns to track score
- * 
+ *
  * Features:
  * - Total saved this month (€ + %)
  * - Comparison with previous month
  * - Achievement badges (unlockable)
  * - Annual projection
  * - Trend visualization
- * 
+ *
  * Data: 100% safeLocalStorage (GDPR-compliant)
  */
 
@@ -48,15 +48,15 @@ const AVAILABLE_BADGES: Badge[] = [
     icon: '🎯',
     description: 'Économisé plus de 20€ en un mois',
     unlocked: false,
-    requirement: '20€+/mois'
+    requirement: '20€+/mois',
   },
   {
     id: 'eco',
     name: 'Éco-Citoyen',
     icon: '🌱',
-    description: 'Utilisé l\'itinéraire optimal 5 fois',
+    description: "Utilisé l'itinéraire optimal 5 fois",
     unlocked: false,
-    requirement: '5 itinéraires'
+    requirement: '5 itinéraires',
   },
   {
     id: 'regular',
@@ -64,7 +64,7 @@ const AVAILABLE_BADGES: Badge[] = [
     icon: '⭐',
     description: 'Actif pendant 3 mois consécutifs',
     unlocked: false,
-    requirement: '3 mois'
+    requirement: '3 mois',
   },
   {
     id: 'expert',
@@ -72,8 +72,8 @@ const AVAILABLE_BADGES: Badge[] = [
     icon: '💎',
     description: 'Économisé plus de 100€ au total',
     unlocked: false,
-    requirement: '100€ total'
-  }
+    requirement: '100€ total',
+  },
 ];
 
 export function MonthlySavingsDashboard() {
@@ -88,7 +88,7 @@ export function MonthlySavingsDashboard() {
   const loadSavingsData = () => {
     // Load from safeLocalStorage
     const data = safeLocalStorage.getJSON<MonthlySavings | null>('monthlySavings:v1', null);
-    
+
     if (data) {
       setSavings(data);
       updateBadges(data);
@@ -98,14 +98,14 @@ export function MonthlySavingsDashboard() {
         currentMonth: {
           amount: 24.35,
           percentage: 12.5,
-          transactions: 8
+          transactions: 8,
         },
         previousMonth: {
-          amount: 18.20,
-          percentage: 9.8
+          amount: 18.2,
+          percentage: 9.8,
         },
         badges: ['hunter'],
-        annualProjection: 292.20
+        annualProjection: 292.2,
       };
       setSavings(exampleData);
       updateBadges(exampleData);
@@ -113,9 +113,9 @@ export function MonthlySavingsDashboard() {
   };
 
   const updateBadges = (data: MonthlySavings) => {
-    const updatedBadges = AVAILABLE_BADGES.map(badge => ({
+    const updatedBadges = AVAILABLE_BADGES.map((badge) => ({
       ...badge,
-      unlocked: data.badges.includes(badge.id)
+      unlocked: data.badges.includes(badge.id),
     }));
     setBadges(updatedBadges);
   };
@@ -132,7 +132,7 @@ export function MonthlySavingsDashboard() {
     if (!savings) return 'Stable';
     const diff = savings.currentMonth.amount - savings.previousMonth.amount;
     const diffPercent = ((diff / savings.previousMonth.amount) * 100).toFixed(1);
-    
+
     if (diff > 0) {
       return `+${diff.toFixed(2)}€ (${diffPercent}%) vs mois dernier`;
     }
@@ -181,9 +181,7 @@ export function MonthlySavingsDashboard() {
             <span className="text-4xl font-bold text-green-400">
               {savings.currentMonth.amount.toFixed(2)}€
             </span>
-            <span className="text-xl text-green-400/70">
-              -{savings.currentMonth.percentage}%
-            </span>
+            <span className="text-xl text-green-400/70">-{savings.currentMonth.percentage}%</span>
           </div>
           <div className="text-xs text-gray-500 mt-1">
             Sur {savings.currentMonth.transactions} transactions
@@ -198,9 +196,7 @@ export function MonthlySavingsDashboard() {
               {savings.annualProjection.toFixed(2)}€
             </span>
           </div>
-          <div className="text-xs text-gray-500 mt-1">
-            Si vous continuez à ce rythme
-          </div>
+          <div className="text-xs text-gray-500 mt-1">Si vous continuez à ce rythme</div>
         </div>
       </div>
 
@@ -219,10 +215,10 @@ export function MonthlySavingsDashboard() {
       <div className="mb-4">
         <h4 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
           <span>🏆</span>
-          Achievements ({badges.filter(b => b.unlocked).length}/{badges.length})
+          Achievements ({badges.filter((b) => b.unlocked).length}/{badges.length})
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {badges.map(badge => (
+          {badges.map((badge) => (
             <div
               key={badge.id}
               className={`p-3 rounded-lg border transition-all ${
@@ -253,10 +249,19 @@ export function MonthlySavingsDashboard() {
             <strong>Comment c'est calculé ?</strong>
           </div>
           <ul className="text-xs text-gray-400 space-y-2">
-            <li>• <strong>Total économisé</strong> : Différence entre prix observé et meilleur prix trouvé</li>
-            <li>• <strong>Pourcentage</strong> : Économies / Prix total sans comparaison</li>
-            <li>• <strong>Projection annuelle</strong> : (Moyenne mensuelle × 12)</li>
-            <li>• <strong>Badges</strong> : Débloqués automatiquement selon votre activité</li>
+            <li>
+              • <strong>Total économisé</strong> : Différence entre prix observé et meilleur prix
+              trouvé
+            </li>
+            <li>
+              • <strong>Pourcentage</strong> : Économies / Prix total sans comparaison
+            </li>
+            <li>
+              • <strong>Projection annuelle</strong> : (Moyenne mensuelle × 12)
+            </li>
+            <li>
+              • <strong>Badges</strong> : Débloqués automatiquement selon votre activité
+            </li>
           </ul>
           <div className="text-xs text-gray-500 italic pt-2 border-t border-gray-700/50">
             💡 Revenez régulièrement pour débloquer tous les badges !

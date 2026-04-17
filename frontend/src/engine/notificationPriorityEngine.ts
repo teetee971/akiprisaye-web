@@ -19,32 +19,32 @@ import type { UserSegment } from './userSegmentation';
 export type NotificationPriority = 'critical' | 'high' | 'medium' | 'low' | 'none';
 
 export interface NotificationContext {
-  segment:          UserSegment;
-  retentionScore:   number;
-  hasFavorites:     boolean;
-  lastSeenAt:       number;
+  segment: UserSegment;
+  retentionScore: number;
+  hasFavorites: boolean;
+  lastSeenAt: number;
   /** Deal delta in EUR — optional context for push triggering */
-  dealDelta?:       number;
+  dealDelta?: number;
   /** Whether this product is in the user's favorites */
-  isFavoriteDeal?:  boolean;
+  isFavoriteDeal?: boolean;
 }
 
 export interface NotificationDecision {
-  priority:   NotificationPriority;
+  priority: NotificationPriority;
   shouldSend: boolean;
   /** Delay before sending (ms) — 0 = immediate */
-  delayMs:    number;
-  reason:     string;
+  delayMs: number;
+  reason: string;
 }
 
 // ── Priority matrix ───────────────────────────────────────────────────────────
 
 const SEGMENT_BASE_PRIORITY: Record<UserSegment, number> = {
-  'chasseur-promos':  80,
-  'comparateur':      65,
-  'fidele-enseigne':  70,
-  'panier-frequent':  85,
-  'visiteur-froid':   30,
+  'chasseur-promos': 80,
+  comparateur: 65,
+  'fidele-enseigne': 70,
+  'panier-frequent': 85,
+  'visiteur-froid': 30,
 };
 
 // ── Core engine ───────────────────────────────────────────────────────────────
@@ -59,9 +59,7 @@ const SEGMENT_BASE_PRIORITY: Record<UserSegment, number> = {
  *   4. dealDelta > 0.50 → boost +15
  *   5. Compute final priority from combined score
  */
-export function computeNotificationPriority(
-  ctx: NotificationContext,
-): NotificationPriority {
+export function computeNotificationPriority(ctx: NotificationContext): NotificationPriority {
   return buildDecision(ctx).priority;
 }
 
@@ -71,27 +69,41 @@ export function computeNotificationPriority(
 export function buildDecision(ctx: NotificationContext): NotificationDecision {
   // Rule 1: never spam cold visitors
   if (ctx.segment === 'visiteur-froid' || ctx.retentionScore < 20) {
-    return { priority: 'none', shouldSend: false, delayMs: 0, reason: 'utilisateur froid — pas de push' };
+    return {
+      priority: 'none',
+      shouldSend: false,
+      delayMs: 0,
+      reason: 'utilisateur froid — pas de push',
+    };
   }
 
   // Build score from segment + retention + deal signals
-  const base         = SEGMENT_BASE_PRIORITY[ctx.segment] ?? 50;
-  const retBonus     = Math.round((ctx.retentionScore / 100) * 20);   // up to +20
-  const favBonus     = ctx.isFavoriteDeal   ? 20 : 0;
-  const deltaBonus   = (ctx.dealDelta ?? 0) >= 0.5 ? 15 : (ctx.dealDelta ?? 0) >= 0.25 ? 8 : 0;
+  const base = SEGMENT_BASE_PRIORITY[ctx.segment] ?? 50;
+  const retBonus = Math.round((ctx.retentionScore / 100) * 20); // up to +20
+  const favBonus = ctx.isFavoriteDeal ? 20 : 0;
+  const deltaBonus = (ctx.dealDelta ?? 0) >= 0.5 ? 15 : (ctx.dealDelta ?? 0) >= 0.25 ? 8 : 0;
 
   const combined = Math.min(100, base + retBonus + favBonus + deltaBonus);
 
   const priority = classifyPriority(combined);
   const shouldSend = priority !== 'none';
-  const delayMs    = priority === 'critical' ? 0 : priority === 'high' ? 30_000 : priority === 'medium' ? 3_600_000 : 86_400_000;
+  const delayMs =
+    priority === 'critical'
+      ? 0
+      : priority === 'high'
+        ? 30_000
+        : priority === 'medium'
+          ? 3_600_000
+          : 86_400_000;
 
   const reason = [
     `segment=${ctx.segment}`,
     `retention=${ctx.retentionScore}`,
     ctx.isFavoriteDeal ? 'favori' : null,
     ctx.dealDelta ? `delta=${ctx.dealDelta.toFixed(2)}€` : null,
-  ].filter(Boolean).join(', ');
+  ]
+    .filter(Boolean)
+    .join(', ');
 
   return { priority, shouldSend, delayMs, reason };
 }

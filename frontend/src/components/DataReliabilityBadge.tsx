@@ -1,40 +1,40 @@
 // src/components/DataReliabilityBadge.tsx
 // Data Reliability Badge Component - Displays factual data quality indicator
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   computeReliabilityScore,
   getReliabilityLabel,
   getReliabilityColor,
   getReliabilityEmoji,
   type ReliabilityParams,
-} from '../utils/dataReliability'
+} from '../utils/dataReliability';
 
 type DataReliabilityBadgeProps = {
-  values: number[]
-  lastUpdated: string
-  className?: string
-}
+  values: number[];
+  lastUpdated: string;
+  className?: string;
+};
 
 export default function DataReliabilityBadge({
   values,
   lastUpdated,
   className = '',
 }: DataReliabilityBadgeProps) {
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(false);
 
   // Check feature flag
-  const isEnabled = import.meta.env.VITE_FEATURE_DATA_RELIABILITY === 'true'
+  const isEnabled = import.meta.env.VITE_FEATURE_DATA_RELIABILITY === 'true';
 
   if (!isEnabled) {
-    return null // Hide completely when disabled
+    return null; // Hide completely when disabled
   }
 
-  const params: ReliabilityParams = { values, lastUpdated }
-  const reliability = computeReliabilityScore(params)
+  const params: ReliabilityParams = { values, lastUpdated };
+  const reliability = computeReliabilityScore(params);
 
-  const color = getReliabilityColor(reliability.level)
-  const emoji = getReliabilityEmoji(reliability.level)
-  const label = getReliabilityLabel(reliability.level)
+  const color = getReliabilityColor(reliability.level);
+  const emoji = getReliabilityEmoji(reliability.level);
+  const label = getReliabilityLabel(reliability.level);
 
   return (
     <div className={`inline-block ${className}`}>
@@ -76,25 +76,21 @@ export default function DataReliabilityBadge({
           <div className="space-y-2 text-gray-300">
             <div className="flex justify-between items-center">
               <span>Points observés:</span>
-              <span className="font-medium">
-                {reliability.details.observationScore}/40
-              </span>
+              <span className="font-medium">{reliability.details.observationScore}/40</span>
             </div>
-            <p className="text-xs text-gray-400 ml-4">{reliability.details.observations} observations</p>
+            <p className="text-xs text-gray-400 ml-4">
+              {reliability.details.observations} observations
+            </p>
 
             <div className="flex justify-between items-center">
               <span>Récence:</span>
-              <span className="font-medium">
-                {reliability.details.recencyScore}/30
-              </span>
+              <span className="font-medium">{reliability.details.recencyScore}/30</span>
             </div>
             <p className="text-xs text-gray-400 ml-4">{reliability.details.recency}</p>
 
             <div className="flex justify-between items-center">
               <span>Cohérence:</span>
-              <span className="font-medium">
-                {reliability.details.coherenceScore}/30
-              </span>
+              <span className="font-medium">{reliability.details.coherenceScore}/30</span>
             </div>
             <p className="text-xs text-gray-400 ml-4">{reliability.details.coherence}</p>
           </div>
@@ -113,5 +109,5 @@ export default function DataReliabilityBadge({
         </div>
       )}
     </div>
-  )
+  );
 }

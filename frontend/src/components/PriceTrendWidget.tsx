@@ -48,7 +48,7 @@ function formatPrice(price: number) {
 function formatDate(dateStr: string) {
   try {
     return new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(
-      new Date(dateStr),
+      new Date(dateStr)
     );
   } catch {
     return dateStr;
@@ -58,12 +58,7 @@ function formatDate(dateStr: string) {
 /** Find the best-matching known product for a given free-form product name. */
 function matchKnownProduct(productName: string): string | null {
   if (!productName) return null;
-  const norm = (s: string) =>
-    s
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .trim();
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
   const needle = norm(productName);
   // Exact match first
   const exact = KNOWN_OBSERVATOIRE_PRODUCTS.find((p) => norm(p) === needle);
@@ -102,7 +97,13 @@ function Sparkline({ prices }: { prices: number[] }) {
       aria-hidden="true"
       className="flex-shrink-0"
     >
-      <polyline points={polyline} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+      <polyline
+        points={polyline}
+        fill="none"
+        stroke={color}
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -231,9 +232,7 @@ export default function PriceTrendWidget({
       {/* Confidence interval */}
       {prediction.confidenceLow !== null && prediction.confidenceHigh !== null && (
         <div className="rounded-lg bg-slate-800/40 border border-slate-700/60 px-3 py-2">
-          <p className="text-xs text-slate-400 mb-1">
-            Fourchette estimée à ~30 jours (±1σ)
-          </p>
+          <p className="text-xs text-slate-400 mb-1">Fourchette estimée à ~30 jours (±1σ)</p>
           <p className="text-sm font-medium text-white">
             {formatPrice(prediction.confidenceLow)}
             <span className="mx-2 text-slate-500">→</span>

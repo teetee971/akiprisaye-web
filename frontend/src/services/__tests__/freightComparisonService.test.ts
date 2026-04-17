@@ -26,7 +26,7 @@ const makeQuote = (
   id: string,
   carrier: string,
   basePrice: number,
-  totalTTC: number,
+  totalTTC: number
 ): FreightQuote => ({
   id,
   carrier,
@@ -119,11 +119,7 @@ describe('calculateTotalCost', () => {
   });
 
   it('includes insurance when declared value is provided', () => {
-    const withInsurance = calculateTotalCost(
-      100,
-      { ...mockPackage, declaredValue: 500 },
-      'GP',
-    );
+    const withInsurance = calculateTotalCost(100, { ...mockPackage, declaredValue: 500 }, 'GP');
     expect(withInsurance.insurance).toBeDefined();
     expect(withInsurance.insurance).toBeCloseTo(10, 5); // 500 * 0.02
   });

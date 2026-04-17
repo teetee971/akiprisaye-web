@@ -4,16 +4,7 @@
  */
 
 import React from 'react';
-import { 
-  Scan, 
-  Scale, 
-  FileText, 
-  MapPin, 
-  Calendar, 
-  TrendingUp,
-  Award,
-  Target
-} from 'lucide-react';
+import { Scan, Scale, FileText, MapPin, Calendar, TrendingUp, Award, Target } from 'lucide-react';
 import type { UserProfile } from '../../types/gamification';
 
 interface StatsOverviewProps {
@@ -52,50 +43,50 @@ export function StatsOverview({ profile, className = '' }: StatsOverviewProps) {
       icon: <Scan className="text-blue-600" size={24} />,
       label: 'Scans effectués',
       value: stats.totalScans.toLocaleString(),
-      color: 'border-blue-600'
+      color: 'border-blue-600',
     },
     {
       icon: <Scale className="text-purple-600" size={24} />,
       label: 'Comparaisons',
       value: stats.totalComparisons.toLocaleString(),
-      color: 'border-purple-600'
+      color: 'border-purple-600',
     },
     {
       icon: <FileText className="text-green-600" size={24} />,
       label: 'Contributions',
       value: stats.totalContributions.toLocaleString(),
-      color: 'border-green-600'
+      color: 'border-green-600',
     },
     {
       icon: <MapPin className="text-orange-600" size={24} />,
       label: 'Territoires visités',
       value: stats.territoriesVisited?.length || 0,
-      color: 'border-orange-600'
+      color: 'border-orange-600',
     },
     {
       icon: <Calendar className="text-teal-600" size={24} />,
       label: 'Jours actifs',
       value: stats.activeDays.toLocaleString(),
-      color: 'border-teal-600'
+      color: 'border-teal-600',
     },
     {
       icon: <Award className="text-yellow-600" size={24} />,
       label: 'Badges débloqués',
       value: profile.badges.length,
-      color: 'border-yellow-600'
+      color: 'border-yellow-600',
     },
     {
       icon: <Target className="text-pink-600" size={24} />,
       label: 'Défis complétés',
       value: profile.completedChallenges.length,
-      color: 'border-pink-600'
+      color: 'border-pink-600',
     },
     {
       icon: <TrendingUp className="text-indigo-600" size={24} />,
       label: 'Total XP',
       value: profile.totalXP.toLocaleString(),
-      color: 'border-indigo-600'
-    }
+      color: 'border-indigo-600',
+    },
   ];
 
   return (
@@ -143,8 +134,8 @@ export function StatsOverview({ profile, className = '' }: StatsOverviewProps) {
           <div className="bg-gradient-to-r from-green-50 to-teal-50 rounded-lg p-4">
             <h3 className="font-semibold text-gray-900 mb-2">Territoires explorés</h3>
             <div className="flex flex-wrap gap-2">
-              {stats.territoriesVisited.map(territory => (
-                <span 
+              {stats.territoriesVisited.map((territory) => (
+                <span
                   key={territory}
                   className="px-3 py-1 bg-white rounded-full text-sm font-medium text-gray-700 shadow-sm"
                 >

@@ -24,9 +24,7 @@ describe('Price search empty state', () => {
       </MemoryRouter>
     );
 
-    expect(
-      screen.getByText('Aucune donnée de prix disponible')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Aucune donnée de prix disponible')).toBeInTheDocument();
     expect(screen.getByRole('status')).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /rechercher un autre produit/i })

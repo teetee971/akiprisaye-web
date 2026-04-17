@@ -35,7 +35,7 @@ export interface UserProfile {
  */
 export function recommendProducts(
   events: RevenueEvent[] = getRevenueEvents(),
-  limit = 5,
+  limit = 5
 ): string[] {
   if (events.length === 0) return [];
 
@@ -74,7 +74,8 @@ export function getUserProfile(): UserProfile | null {
     .slice(0, 10)
     .map(([p]) => p);
 
-  const preferredRetailer = Object.entries(retailerCounts).sort(([, a], [, b]) => b - a)[0]?.[0] ?? null;
+  const preferredRetailer =
+    Object.entries(retailerCounts).sort(([, a], [, b]) => b - a)[0]?.[0] ?? null;
 
   return { topProducts, preferredRetailer, totalEvents: events.length };
 }

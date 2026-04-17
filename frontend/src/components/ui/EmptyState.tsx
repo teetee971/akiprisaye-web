@@ -23,7 +23,11 @@ export function EmptyState({ icon, title, description, action, className = '' }:
     <div
       className={`flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/8 bg-white/[0.02] px-6 py-12 text-center ${className}`}
     >
-      {icon && <div className="text-4xl" aria-hidden="true">{icon}</div>}
+      {icon && (
+        <div className="text-4xl" aria-hidden="true">
+          {icon}
+        </div>
+      )}
       <p className="text-base font-semibold text-white/80">{title}</p>
       {description && <p className="text-sm text-white/50 max-w-xs">{description}</p>}
       {action && <div className="mt-2">{action}</div>}

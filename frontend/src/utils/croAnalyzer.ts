@@ -14,10 +14,7 @@
  * RGPD: pure computation — no storage, no network.
  */
 
-import type {
-  UserBehaviorMetric,
-  CroRecommendation,
-} from '../../../shared/src/cro';
+import type { UserBehaviorMetric, CroRecommendation } from '../../../shared/src/cro';
 
 // ── Optional supplemental metric shapes ───────────────────────────────────────
 
@@ -37,13 +34,13 @@ export interface RevenueMetric {
 
 // ── Thresholds ────────────────────────────────────────────────────────────────
 
-const HIGH_VIEWS = 10;           // min pageViews to be considered "high traffic"
-const LOW_CTA_RATIO = 0.05;      // ctaClicks / pageViews below this → weak CTA
+const HIGH_VIEWS = 10; // min pageViews to be considered "high traffic"
+const LOW_CTA_RATIO = 0.05; // ctaClicks / pageViews below this → weak CTA
 const LOW_RETAILER_RATIO = 0.03; // retailerClicks / pageViews below this → weak price signal
-const LOW_SCROLL = 40;           // avgScrollDepth below this → hero may be too complex
-const HIGH_COMPARE = 3;          // compareInteractions above this → compare block is prominent
-const VERY_WEAK_VIEWS = 3;       // pageViews below this → deprioritise
-const VERY_WEAK_CLICKS = 1;      // ctaClicks + retailerClicks below this → deprioritise
+const LOW_SCROLL = 40; // avgScrollDepth below this → hero may be too complex
+const HIGH_COMPARE = 3; // compareInteractions above this → compare block is prominent
+const VERY_WEAK_VIEWS = 3; // pageViews below this → deprioritise
+const VERY_WEAK_CLICKS = 1; // ctaClicks + retailerClicks below this → deprioritise
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
@@ -57,16 +54,12 @@ const VERY_WEAK_CLICKS = 1;      // ctaClicks + retailerClicks below this → de
 export function analyzeCro(
   metrics: UserBehaviorMetric[],
   seoMetrics?: SeoMetric[],
-  revenueMetrics?: RevenueMetric[],
+  revenueMetrics?: RevenueMetric[]
 ): CroRecommendation[] {
   if (!Array.isArray(metrics) || metrics.length === 0) return [];
 
-  const seoMap = new Map<string, SeoMetric>(
-    (seoMetrics ?? []).map((s) => [s.url, s]),
-  );
-  const revMap = new Map<string, RevenueMetric>(
-    (revenueMetrics ?? []).map((r) => [r.url, r]),
-  );
+  const seoMap = new Map<string, SeoMetric>((seoMetrics ?? []).map((s) => [s.url, s]));
+  const revMap = new Map<string, RevenueMetric>((revenueMetrics ?? []).map((r) => [r.url, r]));
 
   const recommendations: CroRecommendation[] = [];
 
@@ -111,8 +104,7 @@ export function analyzeCro(
     }
 
     // ── Rule 3 — SIMPLIFY_HERO ───────────────────────────────────────────────
-    const hasStrongSeoSignal =
-      seo != null && (seo.impressions ?? 0) > 100 && (seo.clicks ?? 0) > 5;
+    const hasStrongSeoSignal = seo != null && (seo.impressions ?? 0) > 100 && (seo.clicks ?? 0) > 5;
     if (hasStrongSeoSignal && avgScrollDepth < LOW_SCROLL) {
       recommendations.push({
         type: 'SIMPLIFY_HERO',
@@ -136,8 +128,6 @@ export function analyzeCro(
   // Sort: high → medium → low, then by url for determinism
   const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 } as const;
   return recommendations.sort(
-    (a, b) =>
-      PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority] ||
-      a.url.localeCompare(b.url),
+    (a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority] || a.url.localeCompare(b.url)
   );
 }

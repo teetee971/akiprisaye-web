@@ -64,7 +64,12 @@ function getBaseUrl(): string {
 
 function normalizeResponse(data: unknown): PriceApiResult {
   const parsed = data as Partial<PriceApiResult>;
-  if (!parsed || typeof parsed !== 'object' || typeof parsed.ean !== 'string' || typeof parsed.status !== 'string') {
+  if (
+    !parsed ||
+    typeof parsed !== 'object' ||
+    typeof parsed.ean !== 'string' ||
+    typeof parsed.status !== 'string'
+  ) {
     throw new Error('Invalid price-api response');
   }
 
@@ -80,7 +85,11 @@ function normalizeResponse(data: unknown): PriceApiResult {
   };
 }
 
-export async function getPrices({ ean, territory, retailer }: GetPricesInput): Promise<PriceApiResult> {
+export async function getPrices({
+  ean,
+  territory,
+  retailer,
+}: GetPricesInput): Promise<PriceApiResult> {
   if (!EAN_REGEX.test(ean)) {
     throw new Error('Invalid ean format (expected 8-14 digits)');
   }

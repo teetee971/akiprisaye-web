@@ -62,12 +62,9 @@ export function createSyncLog(jobId: string): SyncLog {
 /**
  * Met à jour un log de synchronisation
  */
-export function updateSyncLog(
-  logId: string,
-  updates: Partial<SyncLog>
-): void {
+export function updateSyncLog(logId: string, updates: Partial<SyncLog>): void {
   const logs = getSyncLogs();
-  const index = logs.findIndex(log => log.id === logId);
+  const index = logs.findIndex((log) => log.id === logId);
 
   if (index !== -1) {
     logs[index] = {
@@ -81,10 +78,7 @@ export function updateSyncLog(
 /**
  * Marque un log comme complété
  */
-export function completeSyncLog(
-  logId: string,
-  result: SyncResult
-): void {
+export function completeSyncLog(logId: string, result: SyncResult): void {
   updateSyncLog(logId, {
     endTime: new Date(),
     status: 'completed',
@@ -95,10 +89,7 @@ export function completeSyncLog(
 /**
  * Marque un log comme échoué
  */
-export function failSyncLog(
-  logId: string,
-  error: string
-): void {
+export function failSyncLog(logId: string, error: string): void {
   updateSyncLog(logId, {
     endTime: new Date(),
     status: 'failed',
@@ -111,7 +102,7 @@ export function failSyncLog(
  */
 export function getLogsByJobId(jobId: string): SyncLog[] {
   const logs = getSyncLogs();
-  return logs.filter(log => log.jobId === jobId);
+  return logs.filter((log) => log.jobId === jobId);
 }
 
 /**
@@ -127,7 +118,7 @@ export function getLastLogByJobId(jobId: string): SyncLog | null {
  */
 export function getLogsByStatus(status: SyncLog['status']): SyncLog[] {
   const logs = getSyncLogs();
-  return logs.filter(log => log.status === status);
+  return logs.filter((log) => log.status === status);
 }
 
 /**
@@ -138,7 +129,7 @@ export function getRecentLogs(hours: number = 24): SyncLog[] {
   const cutoff = new Date();
   cutoff.setHours(cutoff.getHours() - hours);
 
-  return logs.filter(log => new Date(log.startTime) >= cutoff);
+  return logs.filter((log) => new Date(log.startTime) >= cutoff);
 }
 
 /**
@@ -149,7 +140,7 @@ export function cleanupOldLogs(days: number = 30): number {
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
 
-  const filteredLogs = logs.filter(log => new Date(log.startTime) >= cutoff);
+  const filteredLogs = logs.filter((log) => new Date(log.startTime) >= cutoff);
   const removed = logs.length - filteredLogs.length;
 
   saveSyncLogs(filteredLogs);
@@ -178,7 +169,7 @@ export function exportLogs(): string {
 export function importLogs(jsonData: string): boolean {
   try {
     const logs = JSON.parse(jsonData) as SyncLog[];
-    
+
     // Validation basique
     if (!Array.isArray(logs)) {
       throw new Error('Invalid logs format');
@@ -204,22 +195,20 @@ export function getLogsStats(): {
   averageDuration: number;
 } {
   const logs = getSyncLogs();
-  
-  const completed = logs.filter(log => log.status === 'completed');
-  const failed = logs.filter(log => log.status === 'failed');
-  const running = logs.filter(log => log.status === 'running');
 
-  const successRate = logs.length > 0 
-    ? (completed.length / (completed.length + failed.length)) * 100 
-    : 0;
+  const completed = logs.filter((log) => log.status === 'completed');
+  const failed = logs.filter((log) => log.status === 'failed');
+  const running = logs.filter((log) => log.status === 'running');
+
+  const successRate =
+    logs.length > 0 ? (completed.length / (completed.length + failed.length)) * 100 : 0;
 
   const durations = completed
-    .filter(log => log.result?.duration)
-    .map(log => log.result!.duration);
+    .filter((log) => log.result?.duration)
+    .map((log) => log.result!.duration);
 
-  const averageDuration = durations.length > 0
-    ? durations.reduce((sum, d) => sum + d, 0) / durations.length
-    : 0;
+  const averageDuration =
+    durations.length > 0 ? durations.reduce((sum, d) => sum + d, 0) / durations.length : 0;
 
   return {
     total: logs.length,
@@ -234,11 +223,7 @@ export function getLogsStats(): {
 /**
  * Log un message dans la console avec le contexte du job
  */
-export function logMessage(
-  jobId: string,
-  level: 'info' | 'warn' | 'error',
-  message: string
-): void {
+export function logMessage(jobId: string, level: 'info' | 'warn' | 'error', message: string): void {
   const timestamp = new Date().toISOString();
   const prefix = `[Sync ${jobId}] [${timestamp}]`;
 

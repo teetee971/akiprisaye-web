@@ -1,4 +1,3 @@
- 
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Shield, Plane, Ship, Wifi, Smartphone, Droplet, Zap, TrendingUp } from 'lucide-react';
@@ -15,13 +14,7 @@ import {
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
-type ServiceType =
-  | 'flights'
-  | 'boats'
-  | 'internet'
-  | 'mobile'
-  | 'water'
-  | 'electricity';
+type ServiceType = 'flights' | 'boats' | 'internet' | 'mobile' | 'water' | 'electricity';
 
 const ServiceComparator: React.FC = () => {
   const [territory, setTerritory] = useState<TerritoryCode>('GP');
@@ -130,7 +123,10 @@ const ServiceComparator: React.FC = () => {
   };
 
   const renderFlightResult = (flight: any) => (
-    <div key={flight.id} className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow">
+    <div
+      key={flight.id}
+      className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow"
+    >
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900">
@@ -151,15 +147,21 @@ const ServiceComparator: React.FC = () => {
         </div>
       </div>
       <div className="flex items-center justify-between pt-4 border-t">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(flight.reliability?.level)}`}>
-          Fiabilité: {flight.reliability?.score}% ({flight.reliability?.confirmations} confirmations)
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(flight.reliability?.level)}`}
+        >
+          Fiabilité: {flight.reliability?.score}% ({flight.reliability?.confirmations}{' '}
+          confirmations)
         </span>
       </div>
     </div>
   );
 
   const renderBoatResult = (boat: any) => (
-    <div key={boat.id} className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow">
+    <div
+      key={boat.id}
+      className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow"
+    >
       <div className="flex justify-between items-start mb-4">
         <div>
           <h3 className="text-lg font-bold text-gray-900">
@@ -177,7 +179,9 @@ const ServiceComparator: React.FC = () => {
         </div>
       </div>
       <div className="flex items-center justify-between pt-4 border-t">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(boat.reliability?.level)}`}>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(boat.reliability?.level)}`}
+        >
           Fiabilité: {boat.reliability?.score}% ({boat.reliability?.confirmations} confirmations)
         </span>
       </div>
@@ -185,7 +189,10 @@ const ServiceComparator: React.FC = () => {
   );
 
   const renderInternetResult = (internet: any) => (
-    <div key={internet.id} className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow">
+    <div
+      key={internet.id}
+      className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow"
+    >
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-bold text-gray-900">{internet.name}</h3>
@@ -194,7 +201,10 @@ const ServiceComparator: React.FC = () => {
           </p>
           <div className="mt-2">
             {(internet.features ?? []).map((feature: string, idx: number) => (
-              <span key={idx} className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-2 mb-1">
+              <span
+                key={idx}
+                className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-2 mb-1"
+              >
                 {feature}
               </span>
             ))}
@@ -204,12 +214,16 @@ const ServiceComparator: React.FC = () => {
         <div className="text-right ml-4">
           <p className="text-2xl font-bold text-purple-600">{internet.price?.monthly}€/mois</p>
           {internet.price?.installation && (
-            <p className="text-sm text-gray-600 mt-1">+ {internet.price.installation}€ installation</p>
+            <p className="text-sm text-gray-600 mt-1">
+              + {internet.price.installation}€ installation
+            </p>
           )}
         </div>
       </div>
       <div className="flex items-center justify-between pt-4 border-t">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(internet.reliability?.level)}`}>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(internet.reliability?.level)}`}
+        >
           Fiabilité: {internet.reliability?.score}%
         </span>
       </div>
@@ -217,14 +231,20 @@ const ServiceComparator: React.FC = () => {
   );
 
   const renderMobileResult = (mobile: any) => (
-    <div key={mobile.id} className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow">
+    <div
+      key={mobile.id}
+      className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow"
+    >
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-bold text-gray-900">{mobile.name}</h3>
           <p className="text-sm text-gray-600 mt-1">📱 {mobile.data} Go de data</p>
           <div className="mt-2">
             {(mobile.features ?? []).map((feature: string, idx: number) => (
-              <span key={idx} className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-2 mb-1">
+              <span
+                key={idx}
+                className="inline-block bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded mr-2 mb-1"
+              >
                 {feature}
               </span>
             ))}
@@ -236,7 +256,9 @@ const ServiceComparator: React.FC = () => {
         </div>
       </div>
       <div className="flex items-center justify-between pt-4 border-t">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(mobile.reliability?.level)}`}>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(mobile.reliability?.level)}`}
+        >
           Fiabilité: {mobile.reliability?.score}%
         </span>
       </div>
@@ -244,15 +266,22 @@ const ServiceComparator: React.FC = () => {
   );
 
   const renderWaterResult = (water: any) => (
-    <div key={water.id} className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow">
+    <div
+      key={water.id}
+      className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow"
+    >
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-bold text-gray-900">{water.commune}</h3>
-          <p className="text-sm text-gray-600 mt-1">Abonnement: {water.price?.fixedMonthly}€/mois</p>
+          <p className="text-sm text-gray-600 mt-1">
+            Abonnement: {water.price?.fixedMonthly}€/mois
+          </p>
           <p className="text-sm text-gray-600">Prix au m³: {water.price?.perCubicMeter}€</p>
         </div>
         <div className="text-right ml-4">
-          <p className="text-2xl font-bold text-blue-600">{water.averageMonthlyBill?.average}€/mois</p>
+          <p className="text-2xl font-bold text-blue-600">
+            {water.averageMonthlyBill?.average}€/mois
+          </p>
           <p className="text-xs text-gray-500">Facture moyenne</p>
           <p className="text-sm text-gray-600 mt-1">
             {water.averageMonthlyBill?.min}€ - {water.averageMonthlyBill?.max}€
@@ -260,7 +289,9 @@ const ServiceComparator: React.FC = () => {
         </div>
       </div>
       <div className="flex items-center justify-between pt-4 border-t">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(water.reliability?.level)}`}>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(water.reliability?.level)}`}
+        >
           Fiabilité: {water.reliability?.score}%
         </span>
       </div>
@@ -274,7 +305,10 @@ const ServiceComparator: React.FC = () => {
   };
 
   const renderElectricityResult = (elec: any) => (
-    <div key={elec.id} className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow">
+    <div
+      key={elec.id}
+      className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow"
+    >
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
           <h3 className="text-lg font-bold text-gray-900">
@@ -287,7 +321,9 @@ const ServiceComparator: React.FC = () => {
           )}
         </div>
         <div className="text-right ml-4">
-          <p className="text-2xl font-bold text-yellow-600">{elec.averageMonthlyBill?.average}€/mois</p>
+          <p className="text-2xl font-bold text-yellow-600">
+            {elec.averageMonthlyBill?.average}€/mois
+          </p>
           <p className="text-xs text-gray-500">Facture moyenne</p>
           <p className="text-sm text-gray-600 mt-1">
             {elec.averageMonthlyBill?.min}€ - {elec.averageMonthlyBill?.max}€
@@ -295,7 +331,9 @@ const ServiceComparator: React.FC = () => {
         </div>
       </div>
       <div className="flex items-center justify-between pt-4 border-t">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(elec.reliability?.level)}`}>
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${getReliabilityColor(elec.reliability?.level)}`}
+        >
           Fiabilité: {elec.reliability?.score}%
         </span>
       </div>
@@ -316,7 +354,9 @@ const ServiceComparator: React.FC = () => {
       return (
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <p className="text-gray-600">Aucun résultat trouvé</p>
-          <p className="text-sm text-gray-500 mt-2">Essayez de modifier vos critères de recherche</p>
+          <p className="text-sm text-gray-500 mt-2">
+            Essayez de modifier vos critères de recherche
+          </p>
         </div>
       );
     }
@@ -343,7 +383,7 @@ const ServiceComparator: React.FC = () => {
     if (!isActive) {
       return 'border-gray-200 hover:border-gray-300 text-gray-600';
     }
-    
+
     // Predefined color classes to ensure Tailwind includes them
     const colorClasses: Record<string, string> = {
       flights: 'border-blue-500 bg-blue-50 text-blue-700',
@@ -353,7 +393,7 @@ const ServiceComparator: React.FC = () => {
       water: 'border-blue-500 bg-blue-50 text-blue-700',
       electricity: 'border-yellow-500 bg-yellow-50 text-yellow-700',
     };
-    
+
     return colorClasses[catId] || 'border-gray-500 bg-gray-50 text-gray-700';
   };
 
@@ -361,10 +401,24 @@ const ServiceComparator: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8">
       <Helmet>
         <title>Comparateur Télécoms & Services — A KI PRI SA YÉ</title>
-        <meta name="description" content="Comparez les abonnements internet, mobile, eau, électricité et tarifs transport dans les DOM-TOM." />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-services" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-services" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-services" />
+        <meta
+          name="description"
+          content="Comparez les abonnements internet, mobile, eau, électricité et tarifs transport dans les DOM-TOM."
+        />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/comparateur-services"
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/comparateur-services"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/comparateur-services"
+        />
       </Helmet>
       <div className="max-w-7xl mx-auto px-4">
         {/* Hero Banner */}
@@ -391,19 +445,27 @@ const ServiceComparator: React.FC = () => {
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-white rounded-lg shadow p-4 text-center">
-              <p className="text-3xl font-bold text-blue-600">{stats.totalFlights + stats.totalBoats}</p>
+              <p className="text-3xl font-bold text-blue-600">
+                {stats.totalFlights + stats.totalBoats}
+              </p>
               <p className="text-sm text-gray-600">Routes transport</p>
             </div>
             <div className="bg-white rounded-lg shadow p-4 text-center">
-              <p className="text-3xl font-bold text-purple-600">{stats.totalInternetOffers + stats.totalMobileOffers}</p>
+              <p className="text-3xl font-bold text-purple-600">
+                {stats.totalInternetOffers + stats.totalMobileOffers}
+              </p>
               <p className="text-sm text-gray-600">Offres télécoms</p>
             </div>
             <div className="bg-white rounded-lg shadow p-4 text-center">
-              <p className="text-3xl font-bold text-green-600">{stats.totalWaterServices + stats.totalElectricityServices}</p>
+              <p className="text-3xl font-bold text-green-600">
+                {stats.totalWaterServices + stats.totalElectricityServices}
+              </p>
               <p className="text-sm text-gray-600">Services publics</p>
             </div>
             <div className="bg-white rounded-lg shadow p-4 text-center">
-              <p className="text-3xl font-bold text-orange-600">{(stats.territories ?? []).length}</p>
+              <p className="text-3xl font-bold text-orange-600">
+                {(stats.territories ?? []).length}
+              </p>
               <p className="text-sm text-gray-600">Territoires couverts</p>
             </div>
           </div>
@@ -419,7 +481,10 @@ const ServiceComparator: React.FC = () => {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => { setServiceType(cat.id as ServiceType); setResults([]); }}
+                  onClick={() => {
+                    setServiceType(cat.id as ServiceType);
+                    setResults([]);
+                  }}
                   className={`flex flex-col items-center justify-center p-4 rounded-lg border-2 transition-all ${getButtonClasses(cat.id, isActive)}`}
                 >
                   <Icon className="h-6 w-6 mb-2" />
@@ -438,7 +503,10 @@ const ServiceComparator: React.FC = () => {
               {territories.map((terr) => (
                 <button
                   key={terr.code}
-                  onClick={() => { setTerritory(terr.code as TerritoryCode); setResults([]); }}
+                  onClick={() => {
+                    setTerritory(terr.code as TerritoryCode);
+                    setResults([]);
+                  }}
                   className={`px-4 py-2 rounded-lg border-2 transition-all ${
                     territory === terr.code
                       ? 'border-blue-500 bg-blue-50 text-blue-700'
@@ -455,11 +523,16 @@ const ServiceComparator: React.FC = () => {
         {/* Search Filters */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <h2 className="text-xl font-bold mb-4">Filtres de recherche</h2>
-          
+
           {serviceType === 'flights' && (
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="service-vol-depart" className="block text-sm font-medium text-gray-700 mb-2">Départ</label>
+                <label
+                  htmlFor="service-vol-depart"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Départ
+                </label>
                 <input
                   id="service-vol-depart"
                   type="text"
@@ -470,7 +543,12 @@ const ServiceComparator: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="service-vol-destination" className="block text-sm font-medium text-gray-700 mb-2">Destination</label>
+                <label
+                  htmlFor="service-vol-destination"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Destination
+                </label>
                 <input
                   id="service-vol-destination"
                   type="text"
@@ -486,7 +564,12 @@ const ServiceComparator: React.FC = () => {
           {serviceType === 'boats' && (
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="service-bateau-depart" className="block text-sm font-medium text-gray-700 mb-2">Départ</label>
+                <label
+                  htmlFor="service-bateau-depart"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Départ
+                </label>
                 <input
                   id="service-bateau-depart"
                   type="text"
@@ -497,7 +580,12 @@ const ServiceComparator: React.FC = () => {
                 />
               </div>
               <div>
-                <label htmlFor="service-bateau-destination" className="block text-sm font-medium text-gray-700 mb-2">Destination</label>
+                <label
+                  htmlFor="service-bateau-destination"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Destination
+                </label>
                 <input
                   id="service-bateau-destination"
                   type="text"
@@ -512,7 +600,10 @@ const ServiceComparator: React.FC = () => {
 
           {serviceType === 'internet' && (
             <div>
-              <label htmlFor="service-internet-vitesse" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="service-internet-vitesse"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Vitesse minimale: {internetMinSpeed} Mbps
               </label>
               <input
@@ -530,7 +621,10 @@ const ServiceComparator: React.FC = () => {
 
           {serviceType === 'mobile' && (
             <div>
-              <label htmlFor="service-mobile-data" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="service-mobile-data"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Data minimale: {mobileMinData} Go
               </label>
               <input
@@ -548,7 +642,12 @@ const ServiceComparator: React.FC = () => {
 
           {serviceType === 'water' && (
             <div>
-              <label htmlFor="service-eau-commune" className="block text-sm font-medium text-gray-700 mb-2">Commune</label>
+              <label
+                htmlFor="service-eau-commune"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Commune
+              </label>
               <input
                 id="service-eau-commune"
                 type="text"
@@ -562,7 +661,12 @@ const ServiceComparator: React.FC = () => {
 
           {serviceType === 'electricity' && (
             <div>
-              <label htmlFor="service-elec-puissance" className="block text-sm font-medium text-gray-700 mb-2">Puissance</label>
+              <label
+                htmlFor="service-elec-puissance"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Puissance
+              </label>
               <select
                 id="service-elec-puissance"
                 value={electricityPower}
@@ -588,9 +692,7 @@ const ServiceComparator: React.FC = () => {
         {/* Results */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-900">
-              Résultats ({results.length})
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900">Résultats ({results.length})</h2>
           </div>
           {renderResults()}
         </div>
@@ -602,9 +704,9 @@ const ServiceComparator: React.FC = () => {
             <div>
               <h3 className="font-bold text-blue-900 mb-2">Outil d'information citoyenne</h3>
               <p className="text-sm text-blue-800">
-                Les prix et informations affichés sont indicatifs et peuvent varier. 
-                Vérifiez toujours directement auprès des fournisseurs avant de souscrire. 
-                Données mises à jour régulièrement depuis sources officielles et contributions citoyennes.
+                Les prix et informations affichés sont indicatifs et peuvent varier. Vérifiez
+                toujours directement auprès des fournisseurs avant de souscrire. Données mises à
+                jour régulièrement depuis sources officielles et contributions citoyennes.
               </p>
               {stats && (
                 <p className="text-xs text-blue-600 mt-2">

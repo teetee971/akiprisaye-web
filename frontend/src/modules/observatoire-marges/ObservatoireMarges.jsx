@@ -1,4 +1,3 @@
- 
 import { useState, useEffect } from 'react';
 import { ComparatifEnseignes } from './ComparatifEnseignes.jsx';
 
@@ -21,7 +20,7 @@ export default function ObservatoireMarges({ territory = 'guadeloupe', productId
         setLoading(true);
         const response = await fetch(`${import.meta.env.BASE_URL}data/observatoire-marges.json`);
         if (!response.ok) {
-          throw new Error('Impossible de charger les données de l\'observatoire');
+          throw new Error("Impossible de charger les données de l'observatoire");
         }
         const jsonData = await response.json();
         setData(jsonData);
@@ -80,30 +79,27 @@ export default function ObservatoireMarges({ territory = 'guadeloupe', productId
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Observatoire des Marges
-        </h2>
-        <p className="text-sm text-gray-600">
-          {territoryData.label}
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Observatoire des Marges</h2>
+        <p className="text-sm text-gray-600">{territoryData.label}</p>
       </div>
 
       {/* Legal Disclaimer */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-900 font-medium mb-2">
-          ℹ️ Information importante
-        </p>
+        <p className="text-sm text-blue-900 font-medium mb-2">ℹ️ Information importante</p>
         <p className="text-sm text-blue-800">
-          Les écarts présentés sont des <strong>différences de prix observées</strong> par rapport à un prix de référence indicatif.
-          Ils ne constituent ni une accusation ni une qualification juridique.
-          Ces données sont fournies à titre informatif uniquement.
+          Les écarts présentés sont des <strong>différences de prix observées</strong> par rapport à
+          un prix de référence indicatif. Ils ne constituent ni une accusation ni une qualification
+          juridique. Ces données sont fournies à titre informatif uniquement.
         </p>
       </div>
 
       {/* Product Selector */}
       {availableProducts.length > 0 && (
         <div className="bg-white rounded-lg shadow-md p-6">
-          <label htmlFor="observatoire-produit" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="observatoire-produit"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Sélectionner un produit
           </label>
           <select

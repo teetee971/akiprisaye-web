@@ -40,7 +40,7 @@ export function useRole(user) {
  */
 export function useHasRole(user, requiredRole) {
   const { roles, loading } = useRole(user);
-  
+
   if (loading) return null;
   return roles[requiredRole] === true;
 }

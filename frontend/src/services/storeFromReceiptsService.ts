@@ -65,9 +65,7 @@ export async function loadReceiptObservations(): Promise<ReceiptObservation[]> {
 /**
  * Extract store information from receipt observations.
  */
-export function extractStoresFromReceipts(
-  observations: ReceiptObservation[],
-): ReceiptStore[] {
+export function extractStoresFromReceipts(observations: ReceiptObservation[]): ReceiptStore[] {
   const storesMap = new Map<string, ReceiptStore>();
 
   for (const obs of observations) {
@@ -109,9 +107,7 @@ export function extractStoresFromReceipts(
 export async function getStoresFromReceipts(): Promise<ReceiptStore[]> {
   const observations = await loadReceiptObservations();
   const stores = extractStoresFromReceipts(observations);
-  return stores.filter(
-    (s) => !s.needsGeocoding && s.coordinates?.lat && s.coordinates?.lon,
-  );
+  return stores.filter((s) => !s.needsGeocoding && s.coordinates?.lat && s.coordinates?.lon);
 }
 
 /**
@@ -119,7 +115,7 @@ export async function getStoresFromReceipts(): Promise<ReceiptStore[]> {
  */
 export function matchReceiptStoresWithKnown(
   receiptStores: ReceiptStore[],
-  knownStores: Array<Record<string, unknown>>,
+  knownStores: Array<Record<string, unknown>>
 ): ReceiptStore[] {
   return receiptStores.map((receiptStore) => {
     const match = knownStores.find((knownStore) => {

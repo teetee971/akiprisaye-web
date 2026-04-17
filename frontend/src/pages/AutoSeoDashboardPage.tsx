@@ -71,14 +71,19 @@ export default function AutoSeoDashboardPage() {
 
   return (
     <>
-      <SEOHead title="Auto SEO Engine" description="Tableau de bord du moteur SEO automatique." noIndex />
+      <SEOHead
+        title="Auto SEO Engine"
+        description="Tableau de bord du moteur SEO automatique."
+        noIndex
+      />
 
       <div className="min-h-screen bg-zinc-950 text-zinc-100 px-4 py-8 md:px-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">🤖 Auto SEO Engine</h1>
           <p className="text-zinc-400 text-sm md:text-base">
-            Analyse automatique des signaux SEO · Recommandations priorisées · Revue humaine requise avant application
+            Analyse automatique des signaux SEO · Recommandations priorisées · Revue humaine requise
+            avant application
           </p>
         </div>
 
@@ -155,15 +160,20 @@ export default function AutoSeoDashboardPage() {
           <ul className="space-y-2 text-sm text-zinc-400">
             <li className="flex items-center gap-2">
               <span className="text-emerald-400">✓</span>
-              Maximum <span className="text-zinc-200 font-medium">{MAX_HIGH_PRIORITY}</span> actions haute priorité par cycle
+              Maximum <span className="text-zinc-200 font-medium">{MAX_HIGH_PRIORITY}</span> actions
+              haute priorité par cycle
             </li>
             <li className="flex items-center gap-2">
               <span className="text-emerald-400">✓</span>
-              Maximum <span className="text-zinc-200 font-medium">{MAX_DUPLICATIONS}</span> duplications de pages
+              Maximum <span className="text-zinc-200 font-medium">{MAX_DUPLICATIONS}</span>{' '}
+              duplications de pages
             </li>
             <li className="flex items-center gap-2">
               <span className="text-emerald-400">✓</span>
-              <span className="text-zinc-200 font-medium">{WHITELISTED_PATCH_FILES.length}</span> fichiers cibles autorisés (whitelist stricte)
+              <span className="text-zinc-200 font-medium">
+                {WHITELISTED_PATCH_FILES.length}
+              </span>{' '}
+              fichiers cibles autorisés (whitelist stricte)
             </li>
             <li className="flex items-center gap-2">
               <span className="text-emerald-400">✓</span>
@@ -178,7 +188,9 @@ export default function AutoSeoDashboardPage() {
             <p className="text-xs text-zinc-600 font-medium mb-1">Fichiers whitelistés :</p>
             <ul className="space-y-1">
               {WHITELISTED_PATCH_FILES.map((f) => (
-                <li key={f} className="text-xs text-zinc-500 font-mono">{f}</li>
+                <li key={f} className="text-xs text-zinc-500 font-mono">
+                  {f}
+                </li>
               ))}
             </ul>
           </div>
@@ -212,7 +224,9 @@ function FilterSelect({
 }) {
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-xs text-zinc-500">{label}</label>
+      <label htmlFor={id} className="text-xs text-zinc-500">
+        {label}
+      </label>
       <select
         id={id}
         value={value}
@@ -233,12 +247,16 @@ function RecommendationRow({ rec }: { rec: AutoSeoRecommendation }) {
   return (
     <tr className="border-b border-zinc-800/50 hover:bg-zinc-800/30 transition-colors">
       <td className="px-4 py-3">
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${ACTION_STYLES[rec.type]}`}>
+        <span
+          className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${ACTION_STYLES[rec.type]}`}
+        >
           {rec.type}
         </span>
       </td>
       <td className="px-4 py-3">
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${PRIORITY_STYLES[rec.priority]}`}>
+        <span
+          className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium ${PRIORITY_STYLES[rec.priority]}`}
+        >
           {rec.priority}
         </span>
       </td>

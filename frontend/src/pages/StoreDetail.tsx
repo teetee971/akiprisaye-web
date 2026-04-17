@@ -1,15 +1,13 @@
-
- 
 /**
  * Store Detail Page
- * 
+ *
  * Comprehensive store profile page displaying:
  * - Store information (name, address, contact)
  * - Company information (SIREN, group, subsidiaries)
  * - Price history graphs
  * - Territory statistics
  * - Comparative metrics
- * 
+ *
  * Public interest tool - institutional presentation
  * No dark patterns - transparent data sources
  */
@@ -20,7 +18,11 @@ import { getStoreWithCompany } from '../services/storeCompanyService';
 import { getCompanyById } from '../services/companyRegistryService';
 import type { StoreWithCompany } from '../services/storeCompanyService';
 import type { Company } from '../types/company';
-import { getCheapestProductsAtStore, calculateDataReliability, type CheapestProduct } from '../services/storeCheapestProductsService';
+import {
+  getCheapestProductsAtStore,
+  calculateDataReliability,
+  type CheapestProduct,
+} from '../services/storeCheapestProductsService';
 import CheapestProductsSection from '../components/store/CheapestProductsSection';
 import { StoreOpenStatus } from '../components/store/StoreOpenStatus';
 import { StoreHoursDisplay } from '../components/store/StoreHoursDisplay';
@@ -56,7 +58,7 @@ export default function StoreDetail() {
     if (!store?.coordinates) return;
 
     const coords = store.coordinates;
-    requestGeolocation().then(result => {
+    requestGeolocation().then((result) => {
       if (result.success && result.position) {
         setUserPosition({
           lat: result.position.latitude,
@@ -131,7 +133,7 @@ export default function StoreDetail() {
           >
             ← Retour
           </button>
-          
+
           <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
             <div className="flex items-start justify-between flex-wrap gap-4">
               <div className="flex-1 min-w-[300px]">
@@ -144,11 +146,13 @@ export default function StoreDetail() {
                     <p className="text-gray-400 text-sm">{store.chain}</p>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2 text-gray-300">
                     <span className="text-gray-500">📍</span>
-                    <span>{store.address}, {store.postalCode} {store.city}</span>
+                    <span>
+                      {store.address}, {store.postalCode} {store.city}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-300">
                     <span className="text-gray-500">🌍</span>
@@ -159,7 +163,10 @@ export default function StoreDetail() {
                   {store.phone && (
                     <div className="flex items-center gap-2 text-gray-300">
                       <span className="text-gray-500">📞</span>
-                      <a href={`tel:${store.phone}`} className="hover:text-blue-400 transition-colors">
+                      <a
+                        href={`tel:${store.phone}`}
+                        className="hover:text-blue-400 transition-colors"
+                      >
                         {store.phone}
                       </a>
                     </div>
@@ -168,8 +175,8 @@ export default function StoreDetail() {
                     <div className="flex items-center gap-2 text-gray-300">
                       <span className="text-gray-500">📏</span>
                       <span>
-                        {distance < 1 
-                          ? `${Math.round(distance * 1000)} m` 
+                        {distance < 1
+                          ? `${Math.round(distance * 1000)} m`
                           : `${distance.toFixed(1)} km`}
                       </span>
                     </div>
@@ -180,23 +187,24 @@ export default function StoreDetail() {
               {/* Status Badge */}
               <div className="flex flex-col gap-2">
                 {/* Open/Closed Status */}
-                <StoreOpenStatus
-                  hours={getStoreHours(store.id, store.territory?.toLowerCase())}
-                />
+                <StoreOpenStatus hours={getStoreHours(store.id, store.territory?.toLowerCase())} />
 
                 {store.isCompanyActive !== undefined && (
-                  <div className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
-                    store.isCompanyActive 
-                      ? 'bg-green-900/30 text-green-300 border border-green-700'
-                      : 'bg-red-900/30 text-red-300 border border-red-700'
-                  }`}>
+                  <div
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium ${
+                      store.isCompanyActive
+                        ? 'bg-green-900/30 text-green-300 border border-green-700'
+                        : 'bg-red-900/30 text-red-300 border border-red-700'
+                    }`}
+                  >
                     {store.isCompanyActive ? '✅ Entreprise active' : '⚠️ Entreprise cessée'}
                   </div>
                 )}
-                
+
                 {store.services && store.services.length > 0 && (
                   <div className="text-sm text-gray-400">
-                    <span className="font-medium text-gray-300">Services :</span> {store.services.join(', ')}
+                    <span className="font-medium text-gray-300">Services :</span>{' '}
+                    {store.services.join(', ')}
                   </div>
                 )}
               </div>
@@ -215,7 +223,7 @@ export default function StoreDetail() {
                   <span>Y aller (GPS)</span>
                 </a>
               )}
-              
+
               {basketCount > 0 && (
                 <Link
                   to={`/comparer-panier?storeId=${store.id}`}
@@ -238,8 +246,9 @@ export default function StoreDetail() {
                 Outil d'observation - Aucun conseil
               </p>
               <p className="text-amber-100/80 text-xs">
-                Cette page présente des données observées et déclarées. Nous ne donnons aucun conseil d'achat, 
-                aucune recommandation commerciale. Les informations sont fournies à titre informatif uniquement.
+                Cette page présente des données observées et déclarées. Nous ne donnons aucun
+                conseil d'achat, aucune recommandation commerciale. Les informations sont fournies à
+                titre informatif uniquement.
               </p>
             </div>
           </div>
@@ -253,7 +262,7 @@ export default function StoreDetail() {
               { id: 'prices', label: '💰 Prix moyens', icon: '💰' },
               { id: 'company', label: '🏢 Entreprise', icon: '🏢' },
               { id: 'history', label: '📊 Historique', icon: '📊' },
-            ].map(tab => (
+            ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
@@ -319,13 +328,15 @@ export default function StoreDetail() {
             {/* Prices Tab - PROMPT 2 */}
             {activeTab === 'prices' && (
               <div className="space-y-6">
-                <CheapestProductsSection 
-                  products={getCheapestProductsAtStore(store.id, 10).map((r): CheapestProduct => ({
-                    id: r.productId,
-                    name: r.productName,
-                    price: r.price,
-                    observationDate: new Date().toISOString().slice(0, 10),
-                  }))}
+                <CheapestProductsSection
+                  products={getCheapestProductsAtStore(store.id, 10).map(
+                    (r): CheapestProduct => ({
+                      id: r.productId,
+                      name: r.productName,
+                      price: r.price,
+                      observationDate: new Date().toISOString().slice(0, 10),
+                    })
+                  )}
                   storeName={store.name}
                 />
               </div>
@@ -337,7 +348,9 @@ export default function StoreDetail() {
                 {store.companyData ? (
                   <>
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Informations entreprise</h3>
+                      <h3 className="text-lg font-semibold text-white mb-4">
+                        Informations entreprise
+                      </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <InfoCard label="Raison sociale" value={store.companyData.legalName} />
                         {store.companyData.tradeName && (
@@ -352,16 +365,29 @@ export default function StoreDetail() {
                         {store.companyData.vatCode && (
                           <InfoCard label="N° TVA" value={store.companyData.vatCode} />
                         )}
-                        <InfoCard 
-                          label="Statut" 
-                          value={store.companyData.activityStatus === 'ACTIVE' ? 'Active' : 'Cessée'}
-                          valueClassName={store.companyData.activityStatus === 'ACTIVE' ? 'text-green-400' : 'text-red-400'}
+                        <InfoCard
+                          label="Statut"
+                          value={
+                            store.companyData.activityStatus === 'ACTIVE' ? 'Active' : 'Cessée'
+                          }
+                          valueClassName={
+                            store.companyData.activityStatus === 'ACTIVE'
+                              ? 'text-green-400'
+                              : 'text-red-400'
+                          }
                         />
-                        <InfoCard label="Date de création" value={new Date(store.companyData.creationDate).toLocaleDateString('fr-FR')} />
+                        <InfoCard
+                          label="Date de création"
+                          value={new Date(store.companyData.creationDate).toLocaleDateString(
+                            'fr-FR'
+                          )}
+                        />
                         {store.companyData.cessationDate && (
-                          <InfoCard 
-                            label="Date de cessation" 
-                            value={new Date(store.companyData.cessationDate).toLocaleDateString('fr-FR')}
+                          <InfoCard
+                            label="Date de cessation"
+                            value={new Date(store.companyData.cessationDate).toLocaleDateString(
+                              'fr-FR'
+                            )}
                             valueClassName="text-red-400"
                           />
                         )}
@@ -372,10 +398,15 @@ export default function StoreDetail() {
                       <h3 className="text-lg font-semibold text-white mb-4">Siège social</h3>
                       <div className="bg-slate-800 rounded-lg p-4">
                         <p className="text-gray-300">
-                          {store.companyData.headOffice.streetNumber && `${store.companyData.headOffice.streetNumber} `}
-                          {store.companyData.headOffice.streetName}<br />
-                          {store.companyData.headOffice.postalCode} {store.companyData.headOffice.city}<br />
-                          {store.companyData.headOffice.department}, {store.companyData.headOffice.country}
+                          {store.companyData.headOffice.streetNumber &&
+                            `${store.companyData.headOffice.streetNumber} `}
+                          {store.companyData.headOffice.streetName}
+                          <br />
+                          {store.companyData.headOffice.postalCode}{' '}
+                          {store.companyData.headOffice.city}
+                          <br />
+                          {store.companyData.headOffice.department},{' '}
+                          {store.companyData.headOffice.country}
                         </p>
                       </div>
                     </div>
@@ -386,21 +417,25 @@ export default function StoreDetail() {
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-2xl">🔍</span>
                           <p className="text-gray-300 font-medium">
-                            {store.companyData.source === 'REGISTRE_ENTREPRISES' && 'Registre des entreprises'}
+                            {store.companyData.source === 'REGISTRE_ENTREPRISES' &&
+                              'Registre des entreprises'}
                             {store.companyData.source === 'API_PUBLIQUE' && 'API publique'}
-                            {store.companyData.source === 'VALIDATION_INTERNE' && 'Validation interne'}
+                            {store.companyData.source === 'VALIDATION_INTERNE' &&
+                              'Validation interne'}
                           </p>
                         </div>
                         <p className="text-gray-400 text-sm">
-                          Dernière mise à jour : {new Date(store.companyData.lastUpdate).toLocaleDateString('fr-FR')}
+                          Dernière mise à jour :{' '}
+                          {new Date(store.companyData.lastUpdate).toLocaleDateString('fr-FR')}
                         </p>
                       </div>
                     </div>
 
                     <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
                       <p className="text-blue-200 text-sm">
-                        <strong>Transparence :</strong> Les données d'entreprise proviennent de sources publiques 
-                        (INSEE, registres officiels). Elles sont présentées à titre informatif uniquement.
+                        <strong>Transparence :</strong> Les données d'entreprise proviennent de
+                        sources publiques (INSEE, registres officiels). Elles sont présentées à
+                        titre informatif uniquement.
                       </p>
                     </div>
                   </>
@@ -420,20 +455,24 @@ export default function StoreDetail() {
             {activeTab === 'history' && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Historique des observations</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">
+                    Historique des observations
+                  </h3>
                   <div className="bg-slate-800 rounded-lg p-6 text-center">
                     <div className="text-5xl mb-4">📈</div>
                     <p className="text-gray-300 mb-2">Historique à venir</p>
                     <p className="text-gray-400 text-sm">
-                      Cette section affichera l'historique des observations de prix pour cette enseigne.
+                      Cette section affichera l'historique des observations de prix pour cette
+                      enseigne.
                     </p>
                   </div>
                 </div>
 
                 <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
                   <p className="text-blue-200 text-sm">
-                    <strong>Note :</strong> L'historique présente uniquement des observations déclarées. 
-                    Il ne constitue pas un engagement contractuel et ne garantit pas l'exhaustivité des données.
+                    <strong>Note :</strong> L'historique présente uniquement des observations
+                    déclarées. Il ne constitue pas un engagement contractuel et ne garantit pas
+                    l'exhaustivité des données.
                   </p>
                 </div>
               </div>
@@ -445,9 +484,7 @@ export default function StoreDetail() {
         <div className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-700/50 rounded-xl p-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Contribuer à l'observatoire
-              </h3>
+              <h3 className="text-lg font-semibold text-white mb-2">Contribuer à l'observatoire</h3>
               <p className="text-gray-300 text-sm">
                 Signalez des prix observés dans cette enseigne pour enrichir les données publiques.
               </p>

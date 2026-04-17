@@ -15,12 +15,25 @@ interface BadgeGridProps {
   className?: string;
 }
 
-type FilterType = 'all' | 'unlocked' | 'locked' | 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
+type FilterType =
+  | 'all'
+  | 'unlocked'
+  | 'locked'
+  | 'bronze'
+  | 'silver'
+  | 'gold'
+  | 'platinum'
+  | 'diamond';
 
-export function BadgeGrid({ badges, showProgress = true, onBadgeClick, className = '' }: BadgeGridProps) {
+export function BadgeGrid({
+  badges,
+  showProgress = true,
+  onBadgeClick,
+  className = '',
+}: BadgeGridProps) {
   const [filter, setFilter] = useState<FilterType>('all');
 
-  const filteredBadges = badges.filter(badge => {
+  const filteredBadges = badges.filter((badge) => {
     if (filter === 'all') return true;
     if (filter === 'unlocked') return badge.isUnlocked;
     if (filter === 'locked') return !badge.isUnlocked;
@@ -29,8 +42,8 @@ export function BadgeGrid({ badges, showProgress = true, onBadgeClick, className
 
   const stats = {
     total: badges.length,
-    unlocked: badges.filter(b => b.isUnlocked).length,
-    locked: badges.filter(b => !b.isUnlocked).length
+    unlocked: badges.filter((b) => b.isUnlocked).length,
+    locked: badges.filter((b) => !b.isUnlocked).length,
   };
 
   const filters: { value: FilterType; label: string }[] = [
@@ -41,7 +54,7 @@ export function BadgeGrid({ badges, showProgress = true, onBadgeClick, className
     { value: 'silver', label: 'Argent' },
     { value: 'gold', label: 'Or' },
     { value: 'platinum', label: 'Platine' },
-    { value: 'diamond', label: 'Diamant' }
+    { value: 'diamond', label: 'Diamant' },
   ];
 
   return (
@@ -79,7 +92,7 @@ export function BadgeGrid({ badges, showProgress = true, onBadgeClick, className
           </div>
         </div>
         <div className="mt-3 w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full bg-gradient-to-r from-blue-500 to-purple-600 transition-all duration-500"
             style={{ width: `${(stats.unlocked / stats.total) * 100}%` }}
           />
@@ -89,7 +102,7 @@ export function BadgeGrid({ badges, showProgress = true, onBadgeClick, className
       {/* Badge Grid */}
       {filteredBadges.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {filteredBadges.map(badge => (
+          {filteredBadges.map((badge) => (
             <BadgeCard
               key={badge.id}
               badge={badge}

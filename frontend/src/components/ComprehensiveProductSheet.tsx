@@ -1,7 +1,6 @@
- 
 /**
  * Comprehensive Product Sheet Component - v1.0.0
- * 
+ *
  * Displays complete product information from photo analysis:
  * - Product identification
  * - Ingredients list
@@ -9,7 +8,7 @@
  * - Price trends
  * - Product insights
  * - Traceability
- * 
+ *
  * Conforme aux principes institutionnels
  */
 
@@ -33,27 +32,35 @@ export default function ComprehensiveProductSheet({
   ocrQuality,
   warnings,
 }: ComprehensiveProductSheetProps) {
-  const [activeTab, setActiveTab] = useState<'info' | 'ingredients' | 'nutrition' | 'price'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'ingredients' | 'nutrition' | 'price'>(
+    'info'
+  );
 
   // Quality indicator colors
-  const qualityColor = 
-    ocrQuality === 'excellent' ? 'text-green-600 bg-green-100' :
-    ocrQuality === 'good' ? 'text-blue-600 bg-blue-100' :
-    ocrQuality === 'fair' ? 'text-yellow-600 bg-yellow-100' :
-    'text-red-600 bg-red-100';
+  const qualityColor =
+    ocrQuality === 'excellent'
+      ? 'text-green-600 bg-green-100'
+      : ocrQuality === 'good'
+        ? 'text-blue-600 bg-blue-100'
+        : ocrQuality === 'fair'
+          ? 'text-yellow-600 bg-yellow-100'
+          : 'text-red-600 bg-red-100';
 
-  const confidenceColor = 
-    confidenceScore >= 80 ? 'text-green-600' :
-    confidenceScore >= 60 ? 'text-yellow-600' :
-    'text-red-600';
+  const confidenceColor =
+    confidenceScore >= 80
+      ? 'text-green-600'
+      : confidenceScore >= 60
+        ? 'text-yellow-600'
+        : 'text-red-600';
 
-  const trendIcon = productSheet.price?.trend === 'rising' ? (
-    <TrendingUp className="w-5 h-5 text-red-500" />
-  ) : productSheet.price?.trend === 'falling' ? (
-    <TrendingDown className="w-5 h-5 text-green-500" />
-  ) : (
-    <Minus className="w-5 h-5 text-gray-500" />
-  );
+  const trendIcon =
+    productSheet.price?.trend === 'rising' ? (
+      <TrendingUp className="w-5 h-5 text-red-500" />
+    ) : productSheet.price?.trend === 'falling' ? (
+      <TrendingDown className="w-5 h-5 text-green-500" />
+    ) : (
+      <Minus className="w-5 h-5 text-gray-500" />
+    );
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-sm">
@@ -87,7 +94,9 @@ export default function ComprehensiveProductSheet({
               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${qualityColor}`}>
                 Qualité OCR: {ocrQuality}
               </span>
-              <span className={`px-3 py-1 rounded-full text-xs font-semibold bg-white/20 ${confidenceColor}`}>
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-semibold bg-white/20 ${confidenceColor}`}
+              >
                 Confiance: {confidenceScore}%
               </span>
               <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20">
@@ -148,7 +157,10 @@ export default function ComprehensiveProductSheet({
               <div className="space-y-6">
                 {/* Product image */}
                 {productSheet.imageUrl && (
-                  <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                  <div
+                    className="relative bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden"
+                    style={{ aspectRatio: '16/9' }}
+                  >
                     <img
                       src={productSheet.imageUrl}
                       alt={productSheet.name}
@@ -217,13 +229,17 @@ export default function ComprehensiveProductSheet({
                       </span>
                     </div>
                     <div>
-                      <span className="text-blue-700 dark:text-blue-300 font-medium">Territoire:</span>{' '}
+                      <span className="text-blue-700 dark:text-blue-300 font-medium">
+                        Territoire:
+                      </span>{' '}
                       <span className="text-blue-600 dark:text-blue-400">
                         {productSheet.traceability.territory}
                       </span>
                     </div>
                     <div>
-                      <span className="text-blue-700 dark:text-blue-300 font-medium">Dernière MAJ:</span>{' '}
+                      <span className="text-blue-700 dark:text-blue-300 font-medium">
+                        Dernière MAJ:
+                      </span>{' '}
                       <span className="text-blue-600 dark:text-blue-400">
                         {new Date(productSheet.traceability.lastUpdate).toLocaleDateString('fr-FR')}
                       </span>
@@ -540,8 +556,8 @@ export default function ComprehensiveProductSheet({
                       <p className="font-semibold mb-1">ℹ️ Information importante</p>
                       <p>
                         Les prix affichés sont issus d'observations citoyennes et ont un caractère
-                        strictement informatif et non contractuel. Ce service est un outil d'information
-                        publique, pas une valeur de référence commerciale.
+                        strictement informatif et non contractuel. Ce service est un outil
+                        d'information publique, pas une valeur de référence commerciale.
                       </p>
                     </div>
                   </div>
@@ -562,7 +578,7 @@ export default function ComprehensiveProductSheet({
               <button
                 onClick={() => {
                   // Export functionality could be added here
-                  toast('Fonctionnalité d\'export à venir', { icon: '📥' });
+                  toast("Fonctionnalité d'export à venir", { icon: '📥' });
                 }}
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
               >

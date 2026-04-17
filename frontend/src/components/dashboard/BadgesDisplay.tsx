@@ -7,14 +7,12 @@ interface BadgesDisplayProps {
 }
 
 export default function BadgesDisplay({ badges, className = '' }: BadgesDisplayProps) {
-  const unlockedBadges = badges.filter(b => b.unlocked);
-  const lockedBadges = badges.filter(b => !b.unlocked);
+  const unlockedBadges = badges.filter((b) => b.unlocked);
+  const lockedBadges = badges.filter((b) => !b.unlocked);
 
   return (
     <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 ${className}`}>
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-        🏆 Mes Badges
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">🏆 Mes Badges</h3>
 
       {/* Unlocked Badges */}
       {unlockedBadges.length > 0 && (
@@ -23,7 +21,7 @@ export default function BadgesDisplay({ badges, className = '' }: BadgesDisplayP
             Débloqués ({unlockedBadges.length})
           </h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {unlockedBadges.map(badge => (
+            {unlockedBadges.map((badge) => (
               <div
                 key={badge.id}
                 className="flex flex-col items-center p-4 rounded-lg bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 border-2 border-yellow-300 dark:border-yellow-700"
@@ -48,7 +46,7 @@ export default function BadgesDisplay({ badges, className = '' }: BadgesDisplayP
             À débloquer ({lockedBadges.length})
           </h4>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {lockedBadges.map(badge => (
+            {lockedBadges.map((badge) => (
               <div
                 key={badge.id}
                 className="flex flex-col items-center p-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border-2 border-gray-200 dark:border-gray-700 opacity-60"

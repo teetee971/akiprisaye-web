@@ -45,9 +45,9 @@ export interface RankedProduct extends GrowthProduct {
 // ── Scoring weights ───────────────────────────────────────────────────────────
 
 const WEIGHTS = {
-  clicks:   0.5,   // Direct revenue signal — most important
-  delta:    0.3,   // Viral potential — bigger price gap = more shareable
-  searches: 0.2,   // Reach — how much demand exists for this product
+  clicks: 0.5, // Direct revenue signal — most important
+  delta: 0.3, // Viral potential — bigger price gap = more shareable
+  searches: 0.2, // Reach — how much demand exists for this product
 } as const;
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -63,8 +63,8 @@ const WEIGHTS = {
  */
 export function computeScore(product: GrowthProduct): number {
   return (
-    product.clicks  * WEIGHTS.clicks  +
-    product.delta   * WEIGHTS.delta   +
+    product.clicks * WEIGHTS.clicks +
+    product.delta * WEIGHTS.delta +
     product.searches * WEIGHTS.searches
   );
 }
@@ -96,7 +96,7 @@ export function rankProducts(products: GrowthProduct[]): RankedProduct[] {
   return products
     .map((p) => ({
       ...p,
-      score:    computeScore(p),
+      score: computeScore(p),
       priority: classifyPriority(p.clicks),
     }))
     .sort((a, b) => b.score - a.score);

@@ -1,9 +1,9 @@
 /**
  * Electricity Price Service
- * 
+ *
  * Service de comparaison des prix de l'électricité
  * Données simulées structurées pour démonstration
- * 
+ *
  * IMPORTANT:
  * - Données publiques uniquement
  * - Sources: CRE, EDF, autorités locales, rapports officiels
@@ -15,8 +15,8 @@
 
 export interface ElectricityPrice {
   fournisseur: string;
-  typeTarif: string;        // "Tarif réglementé" ou "Offre de marché"
-  prixKWh: number;          // Prix du kWh en € TTC
+  typeTarif: string; // "Tarif réglementé" ou "Offre de marché"
+  prixKWh: number; // Prix du kWh en € TTC
   abonnementMensuel: number; // Abonnement mensuel en € TTC
   territoire: string;
   source: string;
@@ -61,7 +61,7 @@ const SIMULATED_DATA: ElectricityPrice[] = [
     source: 'Observation publique',
     dateReleve: '2026-01-04',
   },
-  
+
   // Guadeloupe
   {
     fournisseur: 'EDF Archipel Guadeloupe',
@@ -76,7 +76,7 @@ const SIMULATED_DATA: ElectricityPrice[] = [
     fournisseur: 'EDF Archipel Guadeloupe',
     typeTarif: 'Offre de marché',
     prixKWh: 0.1921,
-    abonnementMensuel: 12.10,
+    abonnementMensuel: 12.1,
     territoire: 'Guadeloupe',
     source: 'Observation publique',
     dateReleve: '2026-01-06',
@@ -90,7 +90,7 @@ const SIMULATED_DATA: ElectricityPrice[] = [
     source: 'Observation publique',
     dateReleve: '2026-01-05',
   },
-  
+
   // Martinique
   {
     fournisseur: 'EDF Archipel Guadeloupe',
@@ -114,12 +114,12 @@ const SIMULATED_DATA: ElectricityPrice[] = [
     fournisseur: 'Albioma',
     typeTarif: 'Offre de marché',
     prixKWh: 0.1905,
-    abonnementMensuel: 11.90,
+    abonnementMensuel: 11.9,
     territoire: 'Martinique',
     source: 'Observation publique',
     dateReleve: '2026-01-05',
   },
-  
+
   // Guyane
   {
     fournisseur: 'EDF Guyane',
@@ -134,12 +134,12 @@ const SIMULATED_DATA: ElectricityPrice[] = [
     fournisseur: 'EDF Guyane',
     typeTarif: 'Offre de marché',
     prixKWh: 0.1572,
-    abonnementMensuel: 11.20,
+    abonnementMensuel: 11.2,
     territoire: 'Guyane',
     source: 'Observation publique',
     dateReleve: '2026-01-06',
   },
-  
+
   // Réunion
   {
     fournisseur: 'EDF Réunion',
@@ -163,7 +163,7 @@ const SIMULATED_DATA: ElectricityPrice[] = [
     fournisseur: 'Albioma',
     typeTarif: 'Offre de marché',
     prixKWh: 0.2018,
-    abonnementMensuel: 12.20,
+    abonnementMensuel: 12.2,
     territoire: 'Réunion',
     source: 'Observation publique',
     dateReleve: '2026-01-05',
@@ -175,9 +175,7 @@ const SIMULATED_DATA: ElectricityPrice[] = [
  * Tri par: 1. Prix du kWh, 2. Date de relevé
  */
 export function searchElectricityPrices(params: ElectricityPriceSearchParams): ElectricityPrice[] {
-  let results = SIMULATED_DATA.filter(
-    (price) => price.territoire === params.territoire
-  );
+  let results = SIMULATED_DATA.filter((price) => price.territoire === params.territoire);
 
   // Filtrer par type de tarif si spécifié
   if (params.typeTarif) {
@@ -230,6 +228,7 @@ export function calculateDOMMetropoleGap(territoire: string): number | null {
     return null;
   }
 
-  const gap = ((territoireRegulated.prixKWh - metropoleRegulated.prixKWh) / metropoleRegulated.prixKWh) * 100;
+  const gap =
+    ((territoireRegulated.prixKWh - metropoleRegulated.prixKWh) / metropoleRegulated.prixKWh) * 100;
   return Math.round(gap * 100) / 100;
 }

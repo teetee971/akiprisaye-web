@@ -30,65 +30,65 @@ const RANKINGS: Record<string, TerritoryRanking> = {
     flag: '🇫🇷',
     label: 'France métro.',
     stores: [
-      { store: 'Lidl',          avg: 1.05 },
-      { store: 'Aldi',          avg: 1.08 },
-      { store: 'E.Leclerc',     avg: 1.12 },
-      { store: 'Intermarché',   avg: 1.18 },
-      { store: 'Carrefour',     avg: 1.25 },
-      { store: 'Monoprix',      avg: 1.48 },
+      { store: 'Lidl', avg: 1.05 },
+      { store: 'Aldi', avg: 1.08 },
+      { store: 'E.Leclerc', avg: 1.12 },
+      { store: 'Intermarché', avg: 1.18 },
+      { store: 'Carrefour', avg: 1.25 },
+      { store: 'Monoprix', avg: 1.48 },
     ],
   },
   guadeloupe: {
     flag: '🇬🇵',
     label: 'Guadeloupe',
     stores: [
-      { store: 'Leader Price',  avg: 1.35 },
-      { store: 'Cora',          avg: 1.41 },
-      { store: 'Hyper U',       avg: 1.43 },
-      { store: 'Carrefour',     avg: 1.45 },
-      { store: 'Jumbo Score',   avg: 1.48 },
-      { store: 'E.Leclerc',     avg: 3.30 },
+      { store: 'Leader Price', avg: 1.35 },
+      { store: 'Cora', avg: 1.41 },
+      { store: 'Hyper U', avg: 1.43 },
+      { store: 'Carrefour', avg: 1.45 },
+      { store: 'Jumbo Score', avg: 1.48 },
+      { store: 'E.Leclerc', avg: 3.3 },
     ],
   },
   martinique: {
     flag: '🇲🇶',
     label: 'Martinique',
     stores: [
-      { store: 'Hyper U',       avg: 1.59 },
-      { store: 'Carrefour',     avg: 1.68 },
-      { store: 'Jumbo Score',   avg: 1.73 },
-      { store: 'Leader Price',  avg: 1.85 },
-      { store: 'E.Leclerc',     avg: 2.16 },
+      { store: 'Hyper U', avg: 1.59 },
+      { store: 'Carrefour', avg: 1.68 },
+      { store: 'Jumbo Score', avg: 1.73 },
+      { store: 'Leader Price', avg: 1.85 },
+      { store: 'E.Leclerc', avg: 2.16 },
     ],
   },
   guyane: {
     flag: '🇬🇫',
     label: 'Guyane',
     stores: [
-      { store: 'Carrefour',    avg: 1.94 },
-      { store: 'Hyper U',      avg: 2.12 },
+      { store: 'Carrefour', avg: 1.94 },
+      { store: 'Hyper U', avg: 2.12 },
       { store: 'Leader Price', avg: 2.27 },
-      { store: 'Score',        avg: 2.52 },
+      { store: 'Score', avg: 2.52 },
     ],
   },
   reunion: {
     flag: '🇷🇪',
     label: 'La Réunion',
     stores: [
-      { store: 'Carrefour',    avg: 1.68 },
-      { store: 'Hyper U',      avg: 1.74 },
-      { store: 'Jumbo Score',  avg: 1.79 },
+      { store: 'Carrefour', avg: 1.68 },
+      { store: 'Hyper U', avg: 1.74 },
+      { store: 'Jumbo Score', avg: 1.79 },
       { store: 'Leader Price', avg: 1.85 },
-      { store: 'E.Leclerc',    avg: 2.08 },
+      { store: 'E.Leclerc', avg: 2.08 },
     ],
   },
   mayotte: {
     flag: '🇾🇹',
     label: 'Mayotte',
     stores: [
-      { store: 'Score',        avg: 2.00 },
-      { store: 'Jumbo Score',  avg: 2.27 },
-      { store: 'Independant',  avg: 2.79 },
+      { store: 'Score', avg: 2.0 },
+      { store: 'Jumbo Score', avg: 2.27 },
+      { store: 'Independant', avg: 2.79 },
     ],
   },
   saint_martin: {
@@ -96,8 +96,8 @@ const RANKINGS: Record<string, TerritoryRanking> = {
     label: 'Saint-Martin',
     stores: [
       { store: 'Leader Price', avg: 2.22 },
-      { store: 'Hyper U',      avg: 2.61 },
-      { store: 'Casino',       avg: 3.69 },
+      { store: 'Hyper U', avg: 2.61 },
+      { store: 'Casino', avg: 3.69 },
     ],
   },
 };
@@ -156,8 +156,8 @@ function CrossTerritoryView() {
   return (
     <div className="price-chart-wrap" style={{ maxWidth: 560 }}>
       <p style={{ margin: '0 0 1rem', fontSize: '0.82rem', color: '#94a3b8', lineHeight: 1.5 }}>
-        Prix moyen du meilleur supermarché par territoire — du moins cher au plus cher.
-        La surcharge est calculée par rapport à la France métropolitaine.
+        Prix moyen du meilleur supermarché par territoire — du moins cher au plus cher. La surcharge
+        est calculée par rapport à la France métropolitaine.
       </p>
       <ol style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {rows.map((row, idx) => {
@@ -167,9 +167,8 @@ function CrossTerritoryView() {
               (globalMostExpensiveAvg - globalCheapestAvg || 1)) *
               80 +
             20;
-          const overcostPct = row.key !== 'france'
-            ? ((row.cheapestAvg - refAvg) / refAvg) * 100
-            : null;
+          const overcostPct =
+            row.key !== 'france' ? ((row.cheapestAvg - refAvg) / refAvg) * 100 : null;
           return (
             <li
               key={row.key}
@@ -291,8 +290,7 @@ function CrossTerritoryView() {
           <strong style={{ color: '#fbbf24' }}>
             +
             {(
-              ((rows[rows.length - 1].cheapestAvg - rows[0].cheapestAvg) /
-                rows[0].cheapestAvg) *
+              ((rows[rows.length - 1].cheapestAvg - rows[0].cheapestAvg) / rows[0].cheapestAvg) *
               100
             ).toFixed(0)}{' '}
             %
@@ -346,11 +344,18 @@ export default function StoreRankingWidget() {
         />
         <div className="section-context-banner-overlay" aria-hidden="true" />
         <div className="section-context-banner-caption">
-          <span className="section-context-banner-title" aria-hidden="true">🏪 Quelle enseigne est la moins chère ?</span>
+          <span className="section-context-banner-title" aria-hidden="true">
+            🏪 Quelle enseigne est la moins chère ?
+          </span>
           <span className="section-context-banner-badge">Relevés citoyens 2026</span>
         </div>
       </div>
-      <h2 className="section-title slide-up" style={{ textAlign: 'center', marginBottom: '0.5rem' }}>🏪 Quelle enseigne est la moins chère ?</h2>
+      <h2
+        className="section-title slide-up"
+        style={{ textAlign: 'center', marginBottom: '0.5rem' }}
+      >
+        🏪 Quelle enseigne est la moins chère ?
+      </h2>
 
       <div className="price-chart-header">
         <p className="price-chart-sub">
@@ -373,7 +378,8 @@ export default function StoreRankingWidget() {
           onKeyDown={(e) => {
             const idx = ALL_KEYS.indexOf(COMPARE_KEY);
             if (e.key === 'ArrowRight') setActiveKey(ALL_KEYS[(idx + 1) % ALL_KEYS.length]);
-            else if (e.key === 'ArrowLeft') setActiveKey(ALL_KEYS[(idx - 1 + ALL_KEYS.length) % ALL_KEYS.length]);
+            else if (e.key === 'ArrowLeft')
+              setActiveKey(ALL_KEYS[(idx - 1 + ALL_KEYS.length) % ALL_KEYS.length]);
             else if (e.key === 'Home') setActiveKey(ALL_KEYS[0]);
             else if (e.key === 'End') setActiveKey(ALL_KEYS[ALL_KEYS.length - 1]);
           }}
@@ -396,8 +402,7 @@ export default function StoreRankingWidget() {
               className={`price-chart-tab${key === activeKey ? ' price-chart-tab--active' : ''}`}
               onClick={() => setActiveKey(key)}
               onKeyDown={(e) => {
-                if (e.key === 'ArrowRight')
-                  setActiveKey(ALL_KEYS[(allIdx + 1) % ALL_KEYS.length]);
+                if (e.key === 'ArrowRight') setActiveKey(ALL_KEYS[(allIdx + 1) % ALL_KEYS.length]);
                 else if (e.key === 'ArrowLeft')
                   setActiveKey(ALL_KEYS[(allIdx - 1 + ALL_KEYS.length) % ALL_KEYS.length]);
                 else if (e.key === 'Home') setActiveKey(ALL_KEYS[0]);
@@ -476,9 +481,7 @@ export default function StoreRankingWidget() {
                         {entry.store}
                       </span>
                       {label && (
-                        <span style={{ fontSize: '0.65rem', color, fontWeight: 700 }}>
-                          {label}
-                        </span>
+                        <span style={{ fontSize: '0.65rem', color, fontWeight: 700 }}>{label}</span>
                       )}
                     </div>
                     <div

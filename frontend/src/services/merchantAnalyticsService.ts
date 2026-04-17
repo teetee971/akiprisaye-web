@@ -22,7 +22,7 @@ interface AnalyticsEvent {
   type: 'view' | 'click' | 'comparison_win' | 'comparison_loss';
   merchantId: string;
   storeId?: string;
-  date: string;  // ISO date
+  date: string; // ISO date
 }
 
 function loadEvents(): AnalyticsEvent[] {
@@ -94,9 +94,8 @@ export function getMerchantAnalytics(
   const comparaisonsGagnees = events.filter((e) => e.type === 'comparison_win').length;
   const comparaisonsPerdues = events.filter((e) => e.type === 'comparison_loss').length;
   const totalComparisons = comparaisonsGagnees + comparaisonsPerdues;
-  const positionnementPrix = totalComparisons > 0
-    ? Math.round((comparaisonsGagnees / totalComparisons) * 100)
-    : 0;
+  const positionnementPrix =
+    totalComparisons > 0 ? Math.round((comparaisonsGagnees / totalComparisons) * 100) : 0;
 
   return {
     merchantId,
@@ -118,10 +117,22 @@ export function getMerchantAnalytics(
  * Génère un fichier CSV des analytics pour export.
  * Disponible pour les plans Pro et Groupe.
  */
-export function exportAnalyticsCsv(merchantId: string, period: 'day' | 'week' | 'month' = 'month'): string {
+export function exportAnalyticsCsv(
+  merchantId: string,
+  period: 'day' | 'week' | 'month' = 'month'
+): string {
   const analytics = getMerchantAnalytics(merchantId, period);
   const rows = [
-    ['Période', 'Début', 'Fin', 'Vues', 'Clics', 'Comparaisons gagnées', 'Comparaisons perdues', 'Score positionnement prix (%)'],
+    [
+      'Période',
+      'Début',
+      'Fin',
+      'Vues',
+      'Clics',
+      'Comparaisons gagnées',
+      'Comparaisons perdues',
+      'Score positionnement prix (%)',
+    ],
     [
       analytics.period,
       analytics.periodStart.slice(0, 10),
@@ -139,7 +150,11 @@ export function exportAnalyticsCsv(merchantId: string, period: 'day' | 'week' | 
 /**
  * Déclenche le téléchargement du CSV dans le navigateur.
  */
-export function downloadAnalyticsCsv(merchantId: string, nomCommercial: string, period: 'day' | 'week' | 'month' = 'month'): void {
+export function downloadAnalyticsCsv(
+  merchantId: string,
+  nomCommercial: string,
+  period: 'day' | 'week' | 'month' = 'month'
+): void {
   const csv = exportAnalyticsCsv(merchantId, period);
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);

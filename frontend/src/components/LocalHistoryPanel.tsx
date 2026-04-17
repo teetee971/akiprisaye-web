@@ -1,31 +1,30 @@
- 
 // src/components/LocalHistoryPanel.tsx
 // Local History Panel Component - displays recent consultations
-import React from 'react'
-import { GlassCard } from './ui/glass-card'
-import { useLocalHistory, type HistoryItem, type HistoryItemType } from '../hooks/useLocalHistory'
+import React from 'react';
+import { GlassCard } from './ui/glass-card';
+import { useLocalHistory, type HistoryItem, type HistoryItemType } from '../hooks/useLocalHistory';
 
 /**
  * Get relative time text in French (institutional tone)
  */
 function getRelativeTimeText(dateStr: string): string {
-  const date = new Date(dateStr)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffMinutes = Math.floor(diffMs / (1000 * 60))
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffMinutes < 1) {
-    return "à l'instant"
+    return "à l'instant";
   } else if (diffMinutes < 60) {
-    return `il y a ${diffMinutes} min`
+    return `il y a ${diffMinutes} min`;
   } else if (diffHours < 24) {
-    return `il y a ${diffHours}h`
+    return `il y a ${diffHours}h`;
   } else if (diffDays === 1) {
-    return 'hier'
+    return 'hier';
   } else {
-    return `il y a ${diffDays} jours`
+    return `il y a ${diffDays} jours`;
   }
 }
 
@@ -35,13 +34,13 @@ function getRelativeTimeText(dateStr: string): string {
 function getTypeIcon(type: HistoryItemType): string {
   switch (type) {
     case 'product':
-      return '📦'
+      return '📦';
     case 'comparison':
-      return '⚖️'
+      return '⚖️';
     case 'scan':
-      return '📷'
+      return '📷';
     default:
-      return '•'
+      return '•';
   }
 }
 
@@ -51,24 +50,24 @@ function getTypeIcon(type: HistoryItemType): string {
 function getTypeLabel(type: HistoryItemType): string {
   switch (type) {
     case 'product':
-      return 'Produit'
+      return 'Produit';
     case 'comparison':
-      return 'Comparaison'
+      return 'Comparaison';
     case 'scan':
-      return 'Scan EAN'
+      return 'Scan EAN';
     default:
-      return 'Consultation'
+      return 'Consultation';
   }
 }
 
 export default function LocalHistoryPanel() {
-  const { history, clear } = useLocalHistory()
+  const { history, clear } = useLocalHistory();
 
   // Check feature flag
-  const isEnabled = import.meta.env.VITE_FEATURE_HISTORY === 'true'
+  const isEnabled = import.meta.env.VITE_FEATURE_HISTORY === 'true';
 
   if (!isEnabled) {
-    return null // Hide completely when disabled
+    return null; // Hide completely when disabled
   }
 
   return (
@@ -76,8 +75,8 @@ export default function LocalHistoryPanel() {
       {/* Institutional disclaimer (fixed text) */}
       <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg text-sm text-blue-200">
         <p>
-          Cet historique est stocké uniquement sur votre appareil.
-          Aucune donnée n'est transmise ou conservée à distance.
+          Cet historique est stocké uniquement sur votre appareil. Aucune donnée n'est transmise ou
+          conservée à distance.
         </p>
       </div>
 
@@ -131,5 +130,5 @@ export default function LocalHistoryPanel() {
         </>
       )}
     </GlassCard>
-  )
+  );
 }

@@ -1,23 +1,22 @@
- 
 // src/components/AuthForm.tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-} from "firebase/auth";
-import { auth, db, firebaseError } from "@/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
-import { Button } from "@/components/ui/button";
-import { safeToText } from "../utils/safeToText";
-import SocialLoginButtons from "./SocialLoginButtons";
-import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
-import { SITE_URL } from "../utils/seoHelpers";
+} from 'firebase/auth';
+import { auth, db, firebaseError } from '@/lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { Button } from '@/components/ui/button';
+import { safeToText } from '../utils/safeToText';
+import SocialLoginButtons from './SocialLoginButtons';
+import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from '@/lib/authMessages';
+import { SITE_URL } from '../utils/seoHelpers';
 
 export default function AuthForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [mode, setMode] = useState<"login" | "signup" | "reset">("login");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mode, setMode] = useState<'login' | 'signup' | 'reset'>('login');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -36,39 +35,43 @@ export default function AuthForm() {
       console.error('Firebase Auth Error:', firebaseError);
       return;
     }
-    
+
     if (!email || !password) {
-      setError("Veuillez renseigner votre email et mot de passe.");
+      setError('Veuillez renseigner votre email et mot de passe.');
       return;
     }
-    
+
     if (password.length < 6) {
-      setError("Le mot de passe doit contenir au moins 6 caractères.");
+      setError('Le mot de passe doit contenir au moins 6 caractères.');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     setSuccess(null);
-    
+
     try {
       const userCredential =
-        mode === "login"
+        mode === 'login'
           ? await signInWithEmailAndPassword(auth, email, password)
           : await createUserWithEmailAndPassword(auth, email, password);
 
       // Optionnel: Sauvegarder dans Firestore si disponible
       if (db) {
-        await setDoc(doc(db, "users", userCredential.user.uid), {
-          email,
-          plan: "freemium",
-          createdAt: new Date(),
-        }, { merge: true });
+        await setDoc(
+          doc(db, 'users', userCredential.user.uid),
+          {
+            email,
+            plan: 'freemium',
+            createdAt: new Date(),
+          },
+          { merge: true }
+        );
       }
-      
+
       // Succès - la redirection se fera automatiquement via onAuthStateChanged
     } catch (err: any) {
-      console.error("Email auth error:", err);
+      console.error('Email auth error:', err);
       setError(getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -82,32 +85,35 @@ export default function AuthForm() {
       console.error('Firebase Auth Error:', firebaseError);
       return;
     }
-    
+
     if (!email) {
-      setError("Veuillez saisir votre adresse email.");
+      setError('Veuillez saisir votre adresse email.');
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     setSuccess(null);
-    
+
     try {
       await sendPasswordResetEmail(auth, email, {
         url: `${SITE_URL}/login`,
         handleCodeInApp: false,
       });
-      setSuccess("Un email de réinitialisation a été envoyé à " + email +
-        ". S'il n'apparaît pas dans votre boîte de réception, vérifiez votre dossier Spam.");
-      setMode("login");
+      setSuccess(
+        'Un email de réinitialisation a été envoyé à ' +
+          email +
+          ". S'il n'apparaît pas dans votre boîte de réception, vérifiez votre dossier Spam."
+      );
+      setMode('login');
     } catch (err: any) {
-      console.error("Password reset error:", err);
+      console.error('Password reset error:', err);
       setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
-  
+
   // Helper pour traduire les erreurs Firebase
   const getErrorMessage = (err: unknown): string => {
     return getAuthErrorMessage(err);
@@ -116,7 +122,11 @@ export default function AuthForm() {
   return (
     <div className="bg-slate-900 rounded-2xl p-6 shadow-lg w-full max-w-md mx-auto">
       <h2 className="text-2xl font-semibold mb-6 text-white text-center">
-        {mode === "reset" ? "Réinitialiser le mot de passe" : mode === "login" ? "Connexion" : "Créer un compte"}
+        {mode === 'reset'
+          ? 'Réinitialiser le mot de passe'
+          : mode === 'login'
+            ? 'Connexion'
+            : 'Créer un compte'}
       </h2>
 
       {/* Error Message */}
@@ -140,12 +150,10 @@ export default function AuthForm() {
       )}
 
       {/* Social login buttons */}
-      {mode !== "reset" && (
-        <SocialLoginButtons onError={setError} showDivider={false} />
-      )}
+      {mode !== 'reset' && <SocialLoginButtons onError={setError} showDivider={false} />}
 
       {/* Divider */}
-      {mode !== "reset" && (
+      {mode !== 'reset' && (
         <div className="flex items-center gap-3 my-4">
           <div className="flex-1 h-px bg-slate-700" />
           <span className="text-xs text-slate-500 uppercase tracking-wide">ou par email</span>
@@ -180,9 +188,12 @@ export default function AuthForm() {
       </div>
 
       {/* Password Input (not shown in reset mode) */}
-      {mode !== "reset" && (
+      {mode !== 'reset' && (
         <div className="mb-4">
-          <label htmlFor="auth-form-password" className="block text-sm font-medium text-gray-300 mb-2">
+          <label
+            htmlFor="auth-form-password"
+            className="block text-sm font-medium text-gray-300 mb-2"
+          >
             Mot de passe
           </label>
           <input
@@ -206,30 +217,30 @@ export default function AuthForm() {
       )}
 
       {/* Action Button */}
-      {mode === "reset" ? (
-        <Button 
-          onClick={handlePasswordReset} 
+      {mode === 'reset' ? (
+        <Button
+          onClick={handlePasswordReset}
           disabled={loading}
           className="w-full mb-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
         >
-          {loading ? "⏳ Envoi..." : "Envoyer le lien de réinitialisation"}
+          {loading ? '⏳ Envoi...' : 'Envoyer le lien de réinitialisation'}
         </Button>
       ) : (
-        <Button 
-          onClick={handleEmailAuth} 
+        <Button
+          onClick={handleEmailAuth}
           disabled={loading}
           className="w-full mb-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed"
         >
-          {loading ? "⏳ Chargement..." : mode === "login" ? "Se connecter" : "Créer mon compte"}
+          {loading ? '⏳ Chargement...' : mode === 'login' ? 'Se connecter' : 'Créer mon compte'}
         </Button>
       )}
 
       {/* Forgot Password Link */}
-      {mode === "login" && (
+      {mode === 'login' && (
         <div className="text-center mb-4">
           <button
             onClick={() => {
-              setMode("reset");
+              setMode('reset');
               setError(null);
               setSuccess(null);
             }}
@@ -243,13 +254,13 @@ export default function AuthForm() {
       {/* Mode Switch */}
       <div className="text-center pt-4 border-t border-gray-700">
         <p className="text-gray-400 text-sm">
-          {mode === "reset" ? (
+          {mode === 'reset' ? (
             <>
-              Retour à la{" "}
+              Retour à la{' '}
               <button
                 type="button"
                 onClick={() => {
-                  setMode("login");
+                  setMode('login');
                   setError(null);
                   setSuccess(null);
                 }}
@@ -258,13 +269,13 @@ export default function AuthForm() {
                 connexion
               </button>
             </>
-          ) : mode === "login" ? (
+          ) : mode === 'login' ? (
             <>
-              Pas encore inscrit ?{" "}
+              Pas encore inscrit ?{' '}
               <button
                 type="button"
                 onClick={() => {
-                  setMode("signup");
+                  setMode('signup');
                   setError(null);
                   setSuccess(null);
                 }}
@@ -275,11 +286,11 @@ export default function AuthForm() {
             </>
           ) : (
             <>
-              Déjà un compte ?{" "}
+              Déjà un compte ?{' '}
               <button
                 type="button"
                 onClick={() => {
-                  setMode("login");
+                  setMode('login');
                   setError(null);
                   setSuccess(null);
                 }}
@@ -294,9 +305,7 @@ export default function AuthForm() {
 
       {/* Info Notice */}
       <div className="mt-6 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg">
-        <p className="text-blue-200 text-xs text-center">
-          🔒 Service citoyen gratuit et sécurisé
-        </p>
+        <p className="text-blue-200 text-xs text-center">🔒 Service citoyen gratuit et sécurisé</p>
       </div>
     </div>
   );

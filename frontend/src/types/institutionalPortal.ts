@@ -1,9 +1,9 @@
 /**
  * Institutional Portal Types - v4.0.0
- * 
+ *
  * Types for institutional access to the cost of living observatory
  * Read-only access with transparent methodology
- * 
+ *
  * @module institutionalPortalTypes
  */
 

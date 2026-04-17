@@ -67,7 +67,7 @@ export const addBasket = async (data: Omit<PanieBasket, 'id'>): Promise<PanieBas
  */
 export const updateBasket = async (
   id: string,
-  data: Partial<PanieBasket>,
+  data: Partial<PanieBasket>
 ): Promise<PanieBasket> => {
   if (!db) throw new Error('Database not available');
   try {

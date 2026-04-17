@@ -1,6 +1,6 @@
 /**
  * PriceCharts Component
- * 
+ *
  * Interactive charts for price analysis and trends
  * Uses Recharts library for visualization
  */
@@ -22,12 +22,7 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import {
-  CHART_COLORS,
-  CHART_THEME,
-  getTerritoryColor,
-  getBreakdownColor,
-} from '../config/colors';
+import { CHART_COLORS, CHART_THEME, getTerritoryColor, getBreakdownColor } from '../config/colors';
 import { formatCurrency } from '../utils/formatters';
 
 /**
@@ -52,28 +47,25 @@ export function PriceTrendChart({ data = [], productName = 'Produit' }) {
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid {...CHART_THEME.grid} />
-          <XAxis 
-            dataKey="date" 
-            {...CHART_THEME.axis}
-          />
-          <YAxis 
+          <XAxis dataKey="date" {...CHART_THEME.axis} />
+          <YAxis
             {...CHART_THEME.axis}
             label={{ value: 'Prix (€)', angle: -90, position: 'insideLeft' }}
           />
           <Tooltip {...CHART_THEME.tooltip} />
           <Legend />
-          <Line 
-            type="monotone" 
-            dataKey="price" 
-            stroke={CHART_COLORS.primary} 
+          <Line
+            type="monotone"
+            dataKey="price"
+            stroke={CHART_COLORS.primary}
             strokeWidth={2}
             name="Prix"
             dot={{ fill: CHART_COLORS.primary, r: 4 }}
           />
-          <Line 
-            type="monotone" 
-            dataKey="avgPrice" 
-            stroke={CHART_COLORS.warning} 
+          <Line
+            type="monotone"
+            dataKey="avgPrice"
+            stroke={CHART_COLORS.warning}
             strokeWidth={2}
             strokeDasharray="5 5"
             name="Moyenne"
@@ -107,30 +99,27 @@ export function TerritoryComparisonChart({ data = [] }) {
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={data}>
           <CartesianGrid {...CHART_THEME.grid} />
-          <XAxis 
-            dataKey="territory" 
-            {...CHART_THEME.axis}
-          />
-          <YAxis 
+          <XAxis dataKey="territory" {...CHART_THEME.axis} />
+          <YAxis
             {...CHART_THEME.axis}
             label={{ value: 'Prix moyen (€)', angle: -90, position: 'insideLeft' }}
           />
           <Tooltip {...CHART_THEME.tooltip} />
           <Legend />
-          <Bar 
-            dataKey="avgPrice" 
+          <Bar
+            dataKey="avgPrice"
             fill={CHART_COLORS.primary}
             name="Prix moyen"
             radius={[8, 8, 0, 0]}
           />
-          <Bar 
-            dataKey="minPrice" 
+          <Bar
+            dataKey="minPrice"
             fill={CHART_COLORS.success}
             name="Prix minimum"
             radius={[8, 8, 0, 0]}
           />
-          <Bar 
-            dataKey="maxPrice" 
+          <Bar
+            dataKey="maxPrice"
             fill={CHART_COLORS.danger}
             name="Prix maximum"
             radius={[8, 8, 0, 0]}
@@ -226,18 +215,15 @@ export function PriceBreakdownChart({ data = null }) {
                 <Cell key={`cell-${index}`} fill={getBreakdownColor(index)} />
               ))}
             </Pie>
-            <Tooltip 
-              {...CHART_THEME.tooltip}
-              formatter={(value) => formatCurrency(value)}
-            />
+            <Tooltip {...CHART_THEME.tooltip} formatter={(value) => formatCurrency(value)} />
           </PieChart>
         </ResponsiveContainer>
-        
+
         <div className="flex flex-col justify-center space-y-3">
           {breakdownData.map((item) => (
             <div key={item.name} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div 
+                <div
                   className="w-4 h-4 rounded"
                   style={{ backgroundColor: getBreakdownColor(index) }}
                 />
@@ -269,9 +255,9 @@ export function PriceBreakdownChart({ data = null }) {
 /**
  * Main dashboard component with multiple charts
  */
-export function PriceDashboard({ 
-  trendData = [], 
-  territoryData = [], 
+export function PriceDashboard({
+  trendData = [],
+  territoryData = [],
   categoryData = [],
   breakdownData = null,
 }) {
@@ -331,9 +317,7 @@ export function PriceDashboard({
       </div>
 
       {/* Active chart */}
-      <div className="animate-fade-in">
-        {charts[activeChart]}
-      </div>
+      <div className="animate-fade-in">{charts[activeChart]}</div>
     </div>
   );
 }

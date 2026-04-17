@@ -1,10 +1,9 @@
- 
 /**
  * Contribution Form Component
- * 
+ *
  * Generic form for citizen contributions to comparators.
  * Highly customizable with dynamic fields.
- * 
+ *
  * Features:
  * - Dynamic field rendering
  * - Real-time validation
@@ -101,7 +100,7 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
 
     // Validate consent
     if (!consentGiven) {
-      validationErrors.consent = 'Vous devez accepter les conditions d\'utilisation';
+      validationErrors.consent = "Vous devez accepter les conditions d'utilisation";
     }
 
     setErrors(validationErrors);
@@ -247,9 +246,7 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
     return (
       <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-8 text-center">
         <Check className="w-16 h-16 text-green-400 mx-auto mb-4" />
-        <h3 className="text-xl font-bold text-gray-100 mb-2">
-          Contribution envoyée !
-        </h3>
+        <h3 className="text-xl font-bold text-gray-100 mb-2">Contribution envoyée !</h3>
         <p className="text-gray-300 mb-4">
           Merci pour votre contribution citoyenne. Elle sera vérifiée avant publication.
         </p>
@@ -273,14 +270,16 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       {/* Form Fields */}
       {fields.map((field) => (
         <div key={field.name}>
-          <label htmlFor={field.name} aria-label={field.label} className="block text-sm font-medium text-gray-300 mb-2">
+          <label
+            htmlFor={field.name}
+            aria-label={field.label}
+            className="block text-sm font-medium text-gray-300 mb-2"
+          >
             {field.label}
             {field.required && <span className="text-red-400 ml-1">*</span>}
           </label>
           {renderField(field)}
-          {field.helpText && (
-            <p className="mt-1 text-xs text-gray-400">{field.helpText}</p>
-          )}
+          {field.helpText && <p className="mt-1 text-xs text-gray-400">{field.helpText}</p>}
           {errors[field.name] && (
             <p id={`${field.name}-error`} className="mt-1 text-xs text-red-400">
               {errors[field.name]}
@@ -292,7 +291,10 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
       {/* Proof Upload */}
       {requireProof && (
         <div>
-          <label htmlFor="contribution-proof" className="block text-sm font-medium text-gray-300 mb-2">
+          <label
+            htmlFor="contribution-proof"
+            className="block text-sm font-medium text-gray-300 mb-2"
+          >
             Preuve (photo, facture, etc.) <span className="text-red-400">*</span>
           </label>
           <input
@@ -302,9 +304,7 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
             accept="image/*,application/pdf"
             className="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
           />
-          {errors.proof && (
-            <p className="mt-1 text-xs text-red-400">{errors.proof}</p>
-          )}
+          {errors.proof && <p className="mt-1 text-xs text-red-400">{errors.proof}</p>}
         </div>
       )}
 
@@ -335,13 +335,11 @@ export const ContributionForm: React.FC<ContributionFormProps> = ({
             className="mt-0.5 w-4 h-4 rounded border-slate-600 bg-slate-800"
           />
           <label htmlFor="consent" className="text-xs text-gray-300">
-            J'accepte que mes données soient utilisées pour améliorer ce comparateur citoyen
-            (RGPD - Données traitées de manière anonymisée)
+            J'accepte que mes données soient utilisées pour améliorer ce comparateur citoyen (RGPD -
+            Données traitées de manière anonymisée)
           </label>
         </div>
-        {errors.consent && (
-          <p className="text-xs text-red-400 ml-6">{errors.consent}</p>
-        )}
+        {errors.consent && <p className="text-xs text-red-400 ml-6">{errors.consent}</p>}
       </div>
 
       {/* Privacy Note */}

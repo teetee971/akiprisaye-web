@@ -8,9 +8,7 @@ import { afterEach, vi } from 'vitest';
 const store: Record<string, string> = {};
 
 const mockGetItem = vi.fn((key: string) => {
-  return Object.prototype.hasOwnProperty.call(store, key)
-    ? store[key]
-    : null;
+  return Object.prototype.hasOwnProperty.call(store, key) ? store[key] : null;
 });
 
 const mockSetItem = vi.fn((key: string, value: string) => {

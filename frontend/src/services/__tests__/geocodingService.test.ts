@@ -1,4 +1,3 @@
- 
 /**
  * Tests for Geocoding Service
  * Phase 7: Test address-to-coordinates conversion and batch operations

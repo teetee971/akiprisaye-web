@@ -1,4 +1,3 @@
- 
 /**
  * Composant de synchronisation manuelle
  */
@@ -28,7 +27,7 @@ export default function ManualSync({ onSync }: ManualSyncProps) {
 
     try {
       const product = await openFoodFactsService.getProductByBarcode(ean.trim());
-      
+
       if (product) {
         setResult({
           success: true,
@@ -60,7 +59,7 @@ export default function ManualSync({ onSync }: ManualSyncProps) {
 
     try {
       const prices = await openPricesService.getPricesByProduct(ean.trim());
-      
+
       setResult({
         success: true,
         message: `${prices.length} prix trouvé(s)`,
@@ -80,7 +79,7 @@ export default function ManualSync({ onSync }: ManualSyncProps) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-4">Synchronisation manuelle</h2>
-      
+
       <div className="space-y-4">
         <div>
           <label htmlFor="sync-ean" className="block text-sm font-medium text-gray-700 mb-2">
@@ -123,12 +122,18 @@ export default function ManualSync({ onSync }: ManualSyncProps) {
             }`}
           >
             <p className="font-medium">{result.message}</p>
-            
+
             {result.product && (
               <div className="mt-3 text-sm space-y-1">
-                <p><strong>Nom:</strong> {result.product.product_name}</p>
-                <p><strong>Marque:</strong> {result.product.brands || 'N/A'}</p>
-                <p><strong>Catégorie:</strong> {result.product.categories_tags?.join(', ') || 'N/A'}</p>
+                <p>
+                  <strong>Nom:</strong> {result.product.product_name}
+                </p>
+                <p>
+                  <strong>Marque:</strong> {result.product.brands || 'N/A'}
+                </p>
+                <p>
+                  <strong>Catégorie:</strong> {result.product.categories_tags?.join(', ') || 'N/A'}
+                </p>
                 {result.product.image_url && (
                   <img
                     src={result.product.image_url}
@@ -139,14 +144,15 @@ export default function ManualSync({ onSync }: ManualSyncProps) {
                 )}
               </div>
             )}
-            
+
             {result.prices && result.prices.length > 0 && (
               <div className="mt-3 text-sm">
                 <p className="font-medium mb-2">Prix trouvés:</p>
                 <ul className="space-y-1">
                   {result.prices.slice(0, 5).map((price: any) => (
                     <li key={`${price.date}_${price.price}`}>
-                      {price.price} {price.currency} - {new Date(price.date).toLocaleDateString('fr-FR')}
+                      {price.price} {price.currency} -{' '}
+                      {new Date(price.date).toLocaleDateString('fr-FR')}
                     </li>
                   ))}
                   {result.prices.length > 5 && (

@@ -28,12 +28,12 @@ const API_BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? ''
 async function fetchHistory(
   productId: string,
   territory: string,
-  range: '7d' | '30d',
+  range: '7d' | '30d'
 ): Promise<HistoryPoint[]> {
   if (!API_BASE) return [];
   try {
     const res = await fetch(
-      `${API_BASE}/api/products/${encodeURIComponent(productId)}/history?territory=${encodeURIComponent(territory)}&range=${range}`,
+      `${API_BASE}/api/products/${encodeURIComponent(productId)}/history?territory=${encodeURIComponent(territory)}&range=${range}`
     );
     if (!res.ok) return [];
     const data = (await res.json()) as { history?: HistoryPoint[] };
@@ -87,7 +87,10 @@ function LineChart({ data }: { data: HistoryPoint[] }) {
   );
 }
 
-interface StatProps { label: string; value: number | null; }
+interface StatProps {
+  label: string;
+  value: number | null;
+}
 function Stat({ label, value }: StatProps) {
   return (
     <div className="text-center">
@@ -101,7 +104,7 @@ function Stat({ label, value }: StatProps) {
 
 export function PriceHistory({ productId, territory, onLoaded }: PriceHistoryProps) {
   const [range, setRange] = useState<'7d' | '30d'>('7d');
-  const [data, setData]   = useState<HistoryPoint[]>([]);
+  const [data, setData] = useState<HistoryPoint[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -150,8 +153,8 @@ export function PriceHistory({ productId, territory, onLoaded }: PriceHistoryPro
       </div>
 
       <div className="mt-4 grid grid-cols-3 gap-4">
-        <Stat label="Min"      value={stats.min} />
-        <Stat label="Max"      value={stats.max} />
+        <Stat label="Min" value={stats.min} />
+        <Stat label="Max" value={stats.max} />
         <Stat label="Variation" value={stats.delta} />
       </div>
     </div>

@@ -35,23 +35,23 @@ export default function FeedbackWidget({
   brandName = 'A KI PRI SA YÉ',
   className = '',
 }: FeedbackWidgetProps) {
-  const [open, setOpen]       = useState(false);
-  const [mode, setMode]       = useState<FeedbackMode>(null);
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<FeedbackMode>(null);
   const [message, setMessage] = useState('');
-  const { pathname }          = useLocation();
-  const variant               = getVariantForPage(pathname);
+  const { pathname } = useLocation();
+  const variant = getVariantForPage(pathname);
 
-  const currentUrl  = typeof window !== 'undefined' ? window.location.href     : '';
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
   const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
 
   const placeholder = useMemo(() => {
-    if (mode === 'bug')        return 'Explique brièvement le bug rencontré…';
+    if (mode === 'bug') return 'Explique brièvement le bug rencontré…';
     if (mode === 'suggestion') return 'Décris ton idée ou ta suggestion…';
     return '';
   }, [mode]);
 
   const title = useMemo(() => {
-    if (mode === 'bug')        return 'Signaler un bug';
+    if (mode === 'bug') return 'Signaler un bug';
     if (mode === 'suggestion') return 'Faire une suggestion';
     return 'Votre avis';
   }, [mode]);
@@ -64,9 +64,7 @@ export default function FeedbackWidget({
 
   function buildWhatsappText(type: Exclude<FeedbackMode, null>) {
     const header =
-      type === 'bug'
-        ? `🐛 Signalement de bug - ${brandName}`
-        : `💡 Suggestion - ${brandName}`;
+      type === 'bug' ? `🐛 Signalement de bug - ${brandName}` : `💡 Suggestion - ${brandName}`;
 
     return [
       header,
@@ -83,14 +81,14 @@ export default function FeedbackWidget({
 
   function openWhatsapp(type: Exclude<FeedbackMode, null>) {
     trackConversionEvent({
-      pageUrl:     currentPath,
-      retailer:    `feedback-${type}`,
+      pageUrl: currentPath,
+      retailer: `feedback-${type}`,
       productName: 'feedback-submit',
       variant,
-      clickedAt:   new Date().toISOString(),
+      clickedAt: new Date().toISOString(),
     });
     const text = encodeURIComponent(buildWhatsappText(type));
-    const url  = `https://wa.me/${whatsappNumber}?text=${text}`;
+    const url = `https://wa.me/${whatsappNumber}?text=${text}`;
     window.open(url, '_blank', 'noopener,noreferrer');
     resetAndClose();
   }
@@ -98,11 +96,11 @@ export default function FeedbackWidget({
   function handleToggle() {
     if (!open) {
       trackConversionEvent({
-        pageUrl:     currentPath,
-        retailer:    'feedback-widget',
+        pageUrl: currentPath,
+        retailer: 'feedback-widget',
         productName: 'feedback-open',
         variant,
-        clickedAt:   new Date().toISOString(),
+        clickedAt: new Date().toISOString(),
       });
     }
     setOpen((v) => !v);
@@ -125,7 +123,9 @@ export default function FeedbackWidget({
           className,
         ].join(' ')}
       >
-        <span className="text-xl" aria-hidden="true">💬</span>
+        <span className="text-xl" aria-hidden="true">
+          💬
+        </span>
       </button>
 
       {/* Modal overlay */}
@@ -133,7 +133,9 @@ export default function FeedbackWidget({
         <div
           className="fixed inset-0 z-[80] bg-black/50 p-4 backdrop-blur-[2px]"
           role="presentation"
-          onClick={(e) => { if (e.target === e.currentTarget) resetAndClose(); }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) resetAndClose();
+          }}
         >
           <div
             role="dialog"
@@ -143,7 +145,9 @@ export default function FeedbackWidget({
           >
             <div className="mb-3 flex items-start justify-between gap-3">
               <div>
-                <h2 id="feedback-title" className="text-base font-bold">{title}</h2>
+                <h2 id="feedback-title" className="text-base font-bold">
+                  {title}
+                </h2>
                 <p className="mt-1 text-xs text-zinc-400">
                   Réponse rapide, sans formulaire compliqué.
                 </p>
@@ -187,7 +191,10 @@ export default function FeedbackWidget({
             {/* Message form */}
             {mode && (
               <div className="mt-2">
-                <label htmlFor="feedback-message" className="mb-2 block text-xs font-medium text-zinc-300">
+                <label
+                  htmlFor="feedback-message"
+                  className="mb-2 block text-xs font-medium text-zinc-300"
+                >
                   {mode === 'bug' ? 'Décris le problème' : 'Décris ton idée'}
                 </label>
                 <textarea

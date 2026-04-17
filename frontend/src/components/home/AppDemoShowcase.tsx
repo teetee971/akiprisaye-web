@@ -17,28 +17,28 @@ import { useState, useEffect, useRef } from 'react';
 
 // Real prices from observatoire 2026-03 for "Lait demi-écrémé UHT 1L"
 const DEMO_PRICES = [
-  { store: 'E.Leclerc',    price: 1.11, territory: 'Hexagone', color: '#22c55e' },
+  { store: 'E.Leclerc', price: 1.11, territory: 'Hexagone', color: '#22c55e' },
   { store: 'Carrefour GP', price: 1.45, territory: 'Guadeloupe', color: '#f59e0b' },
-  { store: 'Hyper U MQ',   price: 1.58, territory: 'Martinique', color: '#f97316' },
+  { store: 'Hyper U MQ', price: 1.58, territory: 'Martinique', color: '#f97316' },
   { store: 'Carrefour GF', price: 1.86, territory: 'Guyane', color: '#ef4444' },
-  { store: 'Score YT',     price: 2.03, territory: 'Mayotte', color: '#dc2626' },
+  { store: 'Score YT', price: 2.03, territory: 'Mayotte', color: '#dc2626' },
 ];
 
 // Real territory overcost data from IndiceEquite (mars 2026)
 const TERRITORY_OVERCOSTS = [
-  { code: 'GP', flag: '🇬🇵', label: 'Guadeloupe', pct: 39.3,  color: '#f59e0b' },
-  { code: 'MQ', flag: '🇲🇶', label: 'Martinique', pct: 37.5,  color: '#f59e0b' },
-  { code: 'RE', flag: '🇷🇪', label: 'La Réunion', pct: 38.2,  color: '#f59e0b' },
-  { code: 'GF', flag: '🇬🇫', label: 'Guyane',     pct: 59.4,  color: '#f97316' },
-  { code: 'YT', flag: '🇾🇹', label: 'Mayotte',    pct: 82.0,  color: '#ef4444' },
-  { code: 'BL', flag: '🇧🇱', label: 'St-Barth',   pct: 99.5,  color: '#dc2626' },
+  { code: 'GP', flag: '🇬🇵', label: 'Guadeloupe', pct: 39.3, color: '#f59e0b' },
+  { code: 'MQ', flag: '🇲🇶', label: 'Martinique', pct: 37.5, color: '#f59e0b' },
+  { code: 'RE', flag: '🇷🇪', label: 'La Réunion', pct: 38.2, color: '#f59e0b' },
+  { code: 'GF', flag: '🇬🇫', label: 'Guyane', pct: 59.4, color: '#f97316' },
+  { code: 'YT', flag: '🇾🇹', label: 'Mayotte', pct: 82.0, color: '#ef4444' },
+  { code: 'BL', flag: '🇧🇱', label: 'St-Barth', pct: 99.5, color: '#dc2626' },
 ];
 
 const SCREENS = ['scan', 'compare', 'territoire'] as const;
 type Screen = (typeof SCREENS)[number];
 
 const SCREEN_LABELS: Record<Screen, string> = {
-  scan: '📷 Scan EAN',
+  scan: '📷 Scanner',
   compare: '📊 Comparer',
   territoire: '🗺️ Territoire',
 };
@@ -47,8 +47,19 @@ const SCREEN_LABELS: Record<Screen, string> = {
 function BarcodeLines() {
   return (
     <svg viewBox="0 0 120 50" width="120" height="50" aria-hidden="true" className="demo-barcode">
-      {[3,7,10,14,18,21,25,28,32,37,41,44,48,52,56,59,63,67,71,74,78,82,86,89,93,97,101,104,108,112,116].map((x, i) => (
-        <rect key={i} x={x} y="0" width={i % 5 === 0 ? 3 : 1.5} height="50" fill="#e2e8f0" opacity={0.9} />
+      {[
+        3, 7, 10, 14, 18, 21, 25, 28, 32, 37, 41, 44, 48, 52, 56, 59, 63, 67, 71, 74, 78, 82, 86,
+        89, 93, 97, 101, 104, 108, 112, 116,
+      ].map((x, i) => (
+        <rect
+          key={i}
+          x={x}
+          y="0"
+          width={i % 5 === 0 ? 3 : 1.5}
+          height="50"
+          fill="#e2e8f0"
+          opacity={0.9}
+        />
       ))}
     </svg>
   );
@@ -73,7 +84,7 @@ function ScanScreen() {
           <span className="demo-scan-emoji">🥛</span>
           <div>
             <p className="demo-scan-product-name">Lait demi-écrémé UHT 1L</p>
-            <p className="demo-scan-ean">EAN : 3560070123456</p>
+            <p className="demo-scan-ean">Code-barres : 3560070123456</p>
           </div>
         </div>
         <div className="demo-scan-price-row">
@@ -136,7 +147,9 @@ function TerritoireScreen() {
           const barW = Math.min(96, Math.round((t.pct / 100) * 96));
           return (
             <div key={t.code} className="demo-terr-row">
-              <span className="demo-terr-flag" aria-hidden="true">{t.flag}</span>
+              <span className="demo-terr-flag" aria-hidden="true">
+                {t.flag}
+              </span>
               <span className="demo-terr-label">{t.label}</span>
               <div className="demo-terr-bar-wrap">
                 <div
@@ -144,7 +157,9 @@ function TerritoireScreen() {
                   style={{ transform: `scaleX(${barW / 100})`, background: t.color }}
                 />
               </div>
-              <span className="demo-terr-pct" style={{ color: t.color }}>+{t.pct}%</span>
+              <span className="demo-terr-pct" style={{ color: t.color }}>
+                +{t.pct}%
+              </span>
             </div>
           );
         })}
@@ -172,8 +187,10 @@ export default function AppDemoShowcase() {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.3 },
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
+      { threshold: 0.3 }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -192,15 +209,15 @@ export default function AppDemoShowcase() {
             L'application en action
           </h2>
           <p className="app-demo-sub">
-            Scannez, comparez et économisez — directement depuis votre téléphone,
-            avec des données réelles relevées sur le terrain.
+            Scannez, comparez et économisez — directement depuis votre téléphone, avec des données
+            réelles relevées sur le terrain.
           </p>
           <ul className="app-demo-features" aria-label="Fonctionnalités">
             <li>
               <span className="app-demo-feat-icon">📷</span>
               <div>
                 <strong>Scan instantané</strong>
-                <span> — visez le code-barres, obtenez le prix juste</span>
+                <span> — visez le code-barres, obtenez le bon prix</span>
               </div>
             </li>
             <li>

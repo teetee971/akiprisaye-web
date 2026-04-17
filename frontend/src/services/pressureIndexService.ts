@@ -34,12 +34,10 @@ function classify(index: number): TerritoryPressureIndex['level'] {
 }
 
 export async function computePressureIndex(): Promise<TerritoryPressureIndex[]> {
-  const datasets = await Promise.all(
-    TERRITORIES.map(t => loadTerritory(t))
-  );
+  const datasets = await Promise.all(TERRITORIES.map((t) => loadTerritory(t)));
 
-  const averages = datasets.map(data =>
-    avg(data.map(p => p.pricePerUnit ?? p.price).filter(Boolean))
+  const averages = datasets.map((data) =>
+    avg(data.map((p) => p.pricePerUnit ?? p.price).filter(Boolean))
   );
 
   const globalAverage = avg(averages);

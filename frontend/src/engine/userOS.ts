@@ -7,20 +7,23 @@
  * All data stays in localStorage (RGPD-safe, no PII, no external calls).
  */
 
-import { buildUserProfile, aggregateEvents, type UserProfile }      from './userProfileEngine';
-import { classifyUser, type UserSegment }                           from './userSegmentation';
-import { computeRetentionScore, type RetentionInput }               from './retentionEngine';
-import { computeNotificationPriority, type NotificationContext }    from './notificationPriorityEngine';
-import { getEvents }                                                 from '../utils/eventTracker';
+import { buildUserProfile, aggregateEvents, type UserProfile } from './userProfileEngine';
+import { classifyUser, type UserSegment } from './userSegmentation';
+import { computeRetentionScore, type RetentionInput } from './retentionEngine';
+import {
+  computeNotificationPriority,
+  type NotificationContext,
+} from './notificationPriorityEngine';
+import { getEvents } from '../utils/eventTracker';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface UserState {
-  profile:              UserProfile;
-  segment:              UserSegment;
-  retentionScore:       number;
+  profile: UserProfile;
+  segment: UserSegment;
+  retentionScore: number;
   notificationPriority: 'critical' | 'high' | 'medium' | 'low' | 'none';
-  lastComputedAt:       number;
+  lastComputedAt: number;
 }
 
 // ── Cache (module-level, reset on cold start) ─────────────────────────────────
@@ -46,25 +49,25 @@ export function getUserState(forceRefresh = false): UserState {
   // Build profile
   const aggregated = aggregateEvents(
     events.map((e) => ({
-      type:      e.type,
-      product:   e.product,
-      retailer:  e.retailer,
+      type: e.type,
+      product: e.product,
+      retailer: e.retailer,
       territory: e.territory as string | undefined,
-      page:      e.page,
-      ts:        e.ts,
-      category:  e.category as string | undefined,
-    })),
+      page: e.page,
+      ts: e.ts,
+      category: e.category as string | undefined,
+    }))
   );
   const profile = buildUserProfile(aggregated);
   const segment = classifyUser(profile);
 
   // Compute retention score
   const retInput: RetentionInput = {
-    repeatVisits:    profile.repeatVisits,
-    hasFavorites:    profile.viewedProducts.length > 0,
-    clickCount:      profile.clickedProducts.length,
-    lastSeenAt:      profile.lastSeenAt,
-    pushEngaged:     false, // updated externally
+    repeatVisits: profile.repeatVisits,
+    hasFavorites: profile.viewedProducts.length > 0,
+    clickCount: profile.clickedProducts.length,
+    lastSeenAt: profile.lastSeenAt,
+    pushEngaged: false, // updated externally
   };
   const retentionScore = computeRetentionScore(retInput);
 
@@ -73,7 +76,7 @@ export function getUserState(forceRefresh = false): UserState {
     segment,
     retentionScore,
     hasFavorites: profile.viewedProducts.length > 0,
-    lastSeenAt:   profile.lastSeenAt,
+    lastSeenAt: profile.lastSeenAt,
   };
   const notificationPriority = computeNotificationPriority(notifCtx);
 

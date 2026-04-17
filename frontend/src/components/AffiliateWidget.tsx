@@ -42,7 +42,7 @@ export function AffiliateWidget({
   referralCode,
   affiliateId,
   compact = false,
-  label = 'Voir l\'offre',
+  label = "Voir l'offre",
 }: AffiliateWidgetProps) {
   const trackedUrl = buildAffiliateUrl(url, referralCode, affiliateId);
 

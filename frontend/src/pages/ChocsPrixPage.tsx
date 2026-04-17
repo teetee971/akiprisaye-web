@@ -9,7 +9,16 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, TrendingUp, RefreshCw, Filter, ExternalLink, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  AlertTriangle,
+  TrendingUp,
+  RefreshCw,
+  Filter,
+  ExternalLink,
+  FileText,
+  ChevronDown,
+  ChevronUp,
+} from 'lucide-react';
 import { SEOHead } from '../components/ui/SEOHead';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
@@ -61,7 +70,7 @@ async function fetchShocksForTerritory(territory: string): Promise<PriceShock[]>
     productsData.products?.forEach((product) => {
       if (product.territory !== territory) return;
       const sorted = [...(product.priceHistory ?? [])].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
       if (sorted.length < 2) return;
       const latest = sorted[0];
@@ -85,7 +94,7 @@ async function fetchShocksForTerritory(territory: string): Promise<PriceShock[]>
     servicesData.services?.forEach((service) => {
       if (service.territory !== territory) return;
       const sorted = [...(service.priceHistory ?? [])].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
       if (sorted.length < 2) return;
       const latest = sorted[0];
@@ -106,7 +115,9 @@ async function fetchShocksForTerritory(territory: string): Promise<PriceShock[]>
       });
     });
 
-    return shocks.sort((a, b) => b.percentageIncrease * b.priceIncrease - a.percentageIncrease * a.priceIncrease);
+    return shocks.sort(
+      (a, b) => b.percentageIncrease * b.priceIncrease - a.percentageIncrease * a.priceIncrease
+    );
   } catch {
     return [];
   }
@@ -114,21 +125,57 @@ async function fetchShocksForTerritory(territory: string): Promise<PriceShock[]>
 
 // ── Sub-types ─────────────────────────────────────────────────────────────────
 
-interface PriceEntry { date: string; price: number; observations?: number; stores?: number; }
-interface ProductEntry { territory?: string; name?: string; category?: string; priceHistory?: PriceEntry[]; }
-interface ServiceEntry { territory?: string; name?: string; priceHistory?: PriceEntry[]; }
+interface PriceEntry {
+  date: string;
+  price: number;
+  observations?: number;
+  stores?: number;
+}
+interface ProductEntry {
+  territory?: string;
+  name?: string;
+  category?: string;
+  priceHistory?: PriceEntry[];
+}
+interface ServiceEntry {
+  territory?: string;
+  name?: string;
+  priceHistory?: PriceEntry[];
+}
 
 // ── Helper: severity badge ────────────────────────────────────────────────────
 
 function SeverityBadge({ pct }: { pct: number }) {
-  if (pct >= 20) return <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-700/40 text-red-200 border border-red-500/40">🔴 Grave +{pct.toFixed(0)}%</span>;
-  if (pct >= 10) return <span className="px-2 py-0.5 rounded text-xs font-bold bg-orange-700/40 text-orange-200 border border-orange-500/40">🟠 Élevé +{pct.toFixed(0)}%</span>;
-  return <span className="px-2 py-0.5 rounded text-xs font-bold bg-yellow-700/40 text-yellow-200 border border-yellow-500/40">🟡 Modéré +{pct.toFixed(0)}%</span>;
+  if (pct >= 20)
+    return (
+      <span className="px-2 py-0.5 rounded text-xs font-bold bg-red-700/40 text-red-200 border border-red-500/40">
+        🔴 Grave +{pct.toFixed(0)}%
+      </span>
+    );
+  if (pct >= 10)
+    return (
+      <span className="px-2 py-0.5 rounded text-xs font-bold bg-orange-700/40 text-orange-200 border border-orange-500/40">
+        🟠 Élevé +{pct.toFixed(0)}%
+      </span>
+    );
+  return (
+    <span className="px-2 py-0.5 rounded text-xs font-bold bg-yellow-700/40 text-yellow-200 border border-yellow-500/40">
+      🟡 Modéré +{pct.toFixed(0)}%
+    </span>
+  );
 }
 
 // ── Territory card ─────────────────────────────────────────────────────────────
 
-function TerritoryShockCard({ territory, flag, label }: { territory: string; flag: string; label: string }) {
+function TerritoryShockCard({
+  territory,
+  flag,
+  label,
+}: {
+  territory: string;
+  flag: string;
+  label: string;
+}) {
   const [shocks, setShocks] = useState<PriceShock[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
@@ -137,9 +184,14 @@ function TerritoryShockCard({ territory, flag, label }: { territory: string; fla
     let cancelled = false;
     setLoading(true);
     fetchShocksForTerritory(territory).then((s) => {
-      if (!cancelled) { setShocks(s); setLoading(false); }
+      if (!cancelled) {
+        setShocks(s);
+        setLoading(false);
+      }
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [territory]);
 
   const visible = expanded ? shocks : shocks.slice(0, 3);
@@ -151,12 +203,18 @@ function TerritoryShockCard({ territory, flag, label }: { territory: string; fla
         <span className="text-2xl">{flag}</span>
         <h3 className="font-semibold text-white">{label}</h3>
         {!loading && (
-          <span className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium ${
-            shocks.length === 0 ? 'bg-green-900/40 text-green-300 border border-green-500/30'
-            : shocks.length < 3 ? 'bg-yellow-900/40 text-yellow-300 border border-yellow-500/30'
-            : 'bg-red-900/40 text-red-300 border border-red-500/30'
-          }`}>
-            {shocks.length === 0 ? '✓ Stable' : `${shocks.length} hausse${shocks.length > 1 ? 's' : ''}`}
+          <span
+            className={`ml-auto text-xs px-2 py-0.5 rounded-full font-medium ${
+              shocks.length === 0
+                ? 'bg-green-900/40 text-green-300 border border-green-500/30'
+                : shocks.length < 3
+                  ? 'bg-yellow-900/40 text-yellow-300 border border-yellow-500/30'
+                  : 'bg-red-900/40 text-red-300 border border-red-500/30'
+            }`}
+          >
+            {shocks.length === 0
+              ? '✓ Stable'
+              : `${shocks.length} hausse${shocks.length > 1 ? 's' : ''}`}
           </span>
         )}
       </div>
@@ -174,11 +232,25 @@ function TerritoryShockCard({ territory, flag, label }: { territory: string; fla
       {!loading && shocks.length > 0 && (
         <div className="space-y-2">
           {visible.map((shock, i) => (
-            <div key={i} className="flex items-center gap-2 text-sm bg-slate-900/40 rounded-lg px-3 py-2">
-              <span className="text-red-400 font-bold shrink-0">+{shock.percentageIncrease.toFixed(1)}%</span>
+            <div
+              key={i}
+              className="flex items-center gap-2 text-sm bg-slate-900/40 rounded-lg px-3 py-2"
+            >
+              <span className="text-red-400 font-bold shrink-0">
+                +{shock.percentageIncrease.toFixed(1)}%
+              </span>
               <span className="text-white truncate flex-1">{shock.productName}</span>
-              {shock.category && <span className="text-gray-500 text-xs hidden sm:inline">{shock.category}</span>}
-              {shock.isConfirmed && <span className="text-blue-400 text-xs shrink-0" title="Confirmé par plusieurs sources">✓</span>}
+              {shock.category && (
+                <span className="text-gray-500 text-xs hidden sm:inline">{shock.category}</span>
+              )}
+              {shock.isConfirmed && (
+                <span
+                  className="text-blue-400 text-xs shrink-0"
+                  title="Confirmé par plusieurs sources"
+                >
+                  ✓
+                </span>
+              )}
             </div>
           ))}
 
@@ -187,7 +259,15 @@ function TerritoryShockCard({ territory, flag, label }: { territory: string; fla
               onClick={() => setExpanded((v) => !v)}
               className="w-full text-xs text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1 py-1"
             >
-              {expanded ? <><ChevronUp size={12} /> Voir moins</> : <><ChevronDown size={12} /> +{shocks.length - 3} de plus</>}
+              {expanded ? (
+                <>
+                  <ChevronUp size={12} /> Voir moins
+                </>
+              ) : (
+                <>
+                  <ChevronDown size={12} /> +{shocks.length - 3} de plus
+                </>
+              )}
             </button>
           )}
         </div>
@@ -203,7 +283,10 @@ function SummaryBanner({ allShocks, loading }: { allShocks: PriceShock[]; loadin
   const total = allShocks.length;
   const grave = allShocks.filter((s) => s.percentageIncrease >= 20).length;
   const confirmed = allShocks.filter((s) => s.isConfirmed).length;
-  const maxShock = allShocks.reduce((acc, s) => (s.percentageIncrease > acc ? s.percentageIncrease : acc), 0);
+  const maxShock = allShocks.reduce(
+    (acc, s) => (s.percentageIncrease > acc ? s.percentageIncrease : acc),
+    0
+  );
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
@@ -211,9 +294,17 @@ function SummaryBanner({ allShocks, loading }: { allShocks: PriceShock[]; loadin
         { label: 'Hausses détectées', value: total, icon: '📈', color: 'text-orange-300' },
         { label: 'Hausses graves (≥20%)', value: grave, icon: '🔴', color: 'text-red-300' },
         { label: 'Confirmées', value: confirmed, icon: '✅', color: 'text-blue-300' },
-        { label: 'Hausse max', value: `+${maxShock.toFixed(1)}%`, icon: '🚨', color: 'text-yellow-300' },
+        {
+          label: 'Hausse max',
+          value: `+${maxShock.toFixed(1)}%`,
+          icon: '🚨',
+          color: 'text-yellow-300',
+        },
       ].map(({ label, value, icon, color }) => (
-        <div key={label} className="bg-slate-800/60 border border-slate-700/40 rounded-xl p-3 text-center">
+        <div
+          key={label}
+          className="bg-slate-800/60 border border-slate-700/40 rounded-xl p-3 text-center"
+        >
           <div className="text-2xl mb-1">{icon}</div>
           <div className={`text-xl font-bold ${color}`}>{value}</div>
           <div className="text-xs text-gray-400">{label}</div>
@@ -225,19 +316,43 @@ function SummaryBanner({ allShocks, loading }: { allShocks: PriceShock[]; loadin
 
 // ── Top shocks list ───────────────────────────────────────────────────────────
 
-function TopShocksList({ shocks, filter, loading }: { shocks: PriceShock[]; filter: string; loading: boolean }) {
-  const filtered = filter === 'all' ? shocks : shocks.filter((s) => s.territory === filter || s.category === filter);
+function TopShocksList({
+  shocks,
+  filter,
+  loading,
+}: {
+  shocks: PriceShock[];
+  filter: string;
+  loading: boolean;
+}) {
+  const filtered =
+    filter === 'all'
+      ? shocks
+      : shocks.filter((s) => s.territory === filter || s.category === filter);
   const top = filtered.slice(0, 20);
 
-  if (loading) return <div className="text-center py-12 text-gray-400"><span className="animate-spin inline-block mr-2">⏳</span>Analyse de tous les territoires…</div>;
-  if (top.length === 0) return <div className="text-center py-12 text-green-400">✅ Aucune hausse significative détectée sur les 7 derniers jours.</div>;
+  if (loading)
+    return (
+      <div className="text-center py-12 text-gray-400">
+        <span className="animate-spin inline-block mr-2">⏳</span>Analyse de tous les territoires…
+      </div>
+    );
+  if (top.length === 0)
+    return (
+      <div className="text-center py-12 text-green-400">
+        ✅ Aucune hausse significative détectée sur les 7 derniers jours.
+      </div>
+    );
 
   return (
     <div className="space-y-3">
       {top.map((shock, i) => {
         const terr = DOM_TOM_TERRITORIES.find((t) => t.code === shock.territory);
         return (
-          <div key={i} className="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4 flex items-start gap-4">
+          <div
+            key={i}
+            className="bg-slate-800/60 border border-slate-700/40 rounded-xl p-4 flex items-start gap-4"
+          >
             <div className="shrink-0 text-2xl font-bold text-gray-500">#{i + 1}</div>
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-start gap-2 mb-1">
@@ -250,10 +365,18 @@ function TopShocksList({ shocks, filter, loading }: { shocks: PriceShock[]; filt
                 )}
               </div>
               <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-                <span className="text-red-400 font-medium">+{shock.priceIncrease.toFixed(2)} €</span>
-                <span className="text-gray-400">{shock.previousPrice.toFixed(2)} € → {shock.currentPrice.toFixed(2)} €</span>
+                <span className="text-red-400 font-medium">
+                  +{shock.priceIncrease.toFixed(2)} €
+                </span>
+                <span className="text-gray-400">
+                  {shock.previousPrice.toFixed(2)} € → {shock.currentPrice.toFixed(2)} €
+                </span>
                 {shock.category && <span className="text-gray-500">{shock.category}</span>}
-                {terr && <span className="text-gray-400">{terr.flag} {terr.label}</span>}
+                {terr && (
+                  <span className="text-gray-400">
+                    {terr.flag} {terr.label}
+                  </span>
+                )}
               </div>
             </div>
             <Link
@@ -281,13 +404,17 @@ export default function ChocsPrixPage() {
 
   const loadAll = useCallback(async () => {
     setLoadingAll(true);
-    const results = await Promise.all(DOM_TOM_TERRITORIES.map((t) => fetchShocksForTerritory(t.code)));
+    const results = await Promise.all(
+      DOM_TOM_TERRITORIES.map((t) => fetchShocksForTerritory(t.code))
+    );
     setAllShocks(results.flat());
     setLastUpdated(new Date());
     setLoadingAll(false);
   }, []);
 
-  useEffect(() => { loadAll(); }, [loadAll]);
+  useEffect(() => {
+    loadAll();
+  }, [loadAll]);
 
   return (
     <>
@@ -308,11 +435,10 @@ export default function ChocsPrixPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-red-900/40 border border-red-500/40 rounded-full text-sm text-red-300 mb-4">
               <AlertTriangle size={14} /> Alertes hausses — 7 derniers jours
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">
-              🔥 Chocs de Prix
-            </h1>
+            <h1 className="text-3xl sm:text-4xl font-black text-white mb-3">🔥 Chocs de Prix</h1>
             <p className="text-lg text-slate-300 max-w-2xl mx-auto">
-              Détection automatique des hausses anormales dans les DOM-TOM. Données citoyennes collaboratives.
+              Détection automatique des hausses anormales dans les DOM-TOM. Données citoyennes
+              collaboratives.
             </p>
           </div>
         </HeroImage>
@@ -335,7 +461,8 @@ export default function ChocsPrixPage() {
                 onClick={() => setViewMode('liste')}
                 className={`px-3 py-1.5 text-sm transition-colors ${viewMode === 'liste' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-slate-700'}`}
               >
-                <TrendingUp size={14} className="inline mr-1" />Top 20
+                <TrendingUp size={14} className="inline mr-1" />
+                Top 20
               </button>
             </div>
 
@@ -349,7 +476,9 @@ export default function ChocsPrixPage() {
                 >
                   <option value="all">Tous les territoires</option>
                   {DOM_TOM_TERRITORIES.map((t) => (
-                    <option key={t.code} value={t.code}>{t.flag} {t.label}</option>
+                    <option key={t.code} value={t.code}>
+                      {t.flag} {t.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -367,7 +496,8 @@ export default function ChocsPrixPage() {
 
           {lastUpdated && (
             <p className="text-xs text-gray-500 mb-4">
-              Dernière analyse : {lastUpdated.toLocaleTimeString('fr-FR')} — données des 7 derniers jours
+              Dernière analyse : {lastUpdated.toLocaleTimeString('fr-FR')} — données des 7 derniers
+              jours
             </p>
           )}
 
@@ -384,7 +514,9 @@ export default function ChocsPrixPage() {
 
           {/* CTA */}
           <div className="mt-10 bg-blue-900/20 border border-blue-500/30 rounded-xl p-6 text-center">
-            <h2 className="text-lg font-bold text-white mb-2">Vous constatez une hausse abusive ?</h2>
+            <h2 className="text-lg font-bold text-white mb-2">
+              Vous constatez une hausse abusive ?
+            </h2>
             <p className="text-sm text-gray-300 mb-4">
               Signalez-la à la DGCCRF et contribuez à la transparence des prix citoyens.
             </p>

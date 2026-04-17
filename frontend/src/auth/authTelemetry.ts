@@ -41,7 +41,7 @@ export function truncateUid(uid: string | null | undefined): string | null {
 /** Creates a typed telemetry event with the current timestamp. */
 export function createAuthTelemetryEvent(
   type: string,
-  input: Omit<AuthTelemetryEvent, 'type' | 'ts'> = {},
+  input: Omit<AuthTelemetryEvent, 'type' | 'ts'> = {}
 ): AuthTelemetryEvent {
   return {
     type,
@@ -56,19 +56,16 @@ export function formatAuthTelemetryEvent(event: AuthTelemetryEvent): string {
   const parts: Array<string | null> = [
     `[${date}]`,
     event.type,
-    event.route       ? `route=${event.route}`              : null,
-    event.provider    ? `provider=${event.provider}`        : null,
-    event.mode        ? `mode=${event.mode}`                : null,
-    event.state       ? `state=${event.state}`              : null,
-    event.incident    ? `incident=${event.incident}`        : null,
-    typeof event.hasPendingFlag === 'boolean'
-      ? `pending=${event.hasPendingFlag}`                   : null,
-    typeof event.retryCount === 'number'
-      ? `retry=${event.retryCount}`                         : null,
-    typeof event.hasUser === 'boolean'
-      ? `hasUser=${event.hasUser}`                          : null,
-    event.uid         ? `uid=${event.uid}`                  : null,
-    event.errorCode   ? `error=${event.errorCode}`          : null,
+    event.route ? `route=${event.route}` : null,
+    event.provider ? `provider=${event.provider}` : null,
+    event.mode ? `mode=${event.mode}` : null,
+    event.state ? `state=${event.state}` : null,
+    event.incident ? `incident=${event.incident}` : null,
+    typeof event.hasPendingFlag === 'boolean' ? `pending=${event.hasPendingFlag}` : null,
+    typeof event.retryCount === 'number' ? `retry=${event.retryCount}` : null,
+    typeof event.hasUser === 'boolean' ? `hasUser=${event.hasUser}` : null,
+    event.uid ? `uid=${event.uid}` : null,
+    event.errorCode ? `error=${event.errorCode}` : null,
   ];
 
   return parts.filter(Boolean).join(' ');

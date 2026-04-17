@@ -1,7 +1,6 @@
- 
 /**
  * Housing Cost Observatory Service v2.4.0
- * 
+ *
  * Implements citizen housing cost observation with:
  * - Read-only data access (no data modification)
  * - Rent analysis by surface, type, territory
@@ -32,10 +31,10 @@ import type { Territory } from '../types/priceAlerts';
  * Configuration constants
  */
 const HOUSING_CONFIG = {
-  MEDIAN_TOLERANCE_PERCENT: 15,   // ±15% for median category
+  MEDIAN_TOLERANCE_PERCENT: 15, // ±15% for median category
   MIN_COVERAGE_WARNING_PERCENT: 50,
   MAX_PRICE_AGE_WARNING_DAYS: 30,
-  STABLE_VARIATION_THRESHOLD: 5,  // ±5% considered stable
+  STABLE_VARIATION_THRESHOLD: 5, // ±5% considered stable
 } as const;
 
 /**
@@ -51,9 +50,9 @@ export function analyzeHousingCosts(
   }
 
   // Filter by territory and optional housing type
-  let filtered = pricePoints.filter(p => p.territory === territory);
+  let filtered = pricePoints.filter((p) => p.territory === territory);
   if (housingType) {
-    filtered = filtered.filter(p => p.type === housingType);
+    filtered = filtered.filter((p) => p.type === housingType);
   }
 
   if (filtered.length === 0) {
@@ -61,10 +60,10 @@ export function analyzeHousingCosts(
   }
 
   // Calculate rent per m² for each point
-  const pricePointsWithM2: HousingCostPerM2[] = filtered.map(p => ({
+  const pricePointsWithM2: HousingCostPerM2[] = filtered.map((p) => ({
     pricePoint: p,
     rentPerM2: Math.round((p.rent / p.surface) * 100) / 100,
-    totalCostPerM2: p.charges 
+    totalCostPerM2: p.charges
       ? Math.round(((p.rent + p.charges) / p.surface) * 100) / 100
       : undefined,
   }));
@@ -97,9 +96,9 @@ export function calculateHousingAggregation(
     throw new Error('Cannot calculate aggregation for empty price list');
   }
 
-  const rents = pricePoints.map(p => p.rent);
-  const surfaces = pricePoints.map(p => p.surface);
-  const rentsPerM2 = pricePoints.map(p => p.rent / p.surface);
+  const rents = pricePoints.map((p) => p.rent);
+  const surfaces = pricePoints.map((p) => p.surface);
+  const rentsPerM2 = pricePoints.map((p) => p.rent / p.surface);
 
   // Calculate basic statistics
   const averageRent = rents.reduce((sum, r) => sum + r, 0) / rents.length;
@@ -122,13 +121,13 @@ export function calculateHousingAggregation(
 
   // Urban/rural breakdown
   const urbanRuralBreakdown = {
-    urban: pricePoints.filter(p => p.location?.urbanRuralClassification === 'urban').length,
-    suburban: pricePoints.filter(p => p.location?.urbanRuralClassification === 'suburban').length,
-    rural: pricePoints.filter(p => p.location?.urbanRuralClassification === 'rural').length,
+    urban: pricePoints.filter((p) => p.location?.urbanRuralClassification === 'urban').length,
+    suburban: pricePoints.filter((p) => p.location?.urbanRuralClassification === 'suburban').length,
+    rural: pricePoints.filter((p) => p.location?.urbanRuralClassification === 'rural').length,
   };
 
   // Date range
-  const dates = pricePoints.map(p => new Date(p.observationDate).getTime());
+  const dates = pricePoints.map((p) => new Date(p.observationDate).getTime());
   const oldestDate = new Date(Math.min(...dates)).toISOString();
   const newestDate = new Date(Math.max(...dates)).toISOString();
 
@@ -169,9 +168,7 @@ function calculateMedian(values: number[]): number {
   if (values.length === 0) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0
-    ? (sorted[mid - 1] + sorted[mid]) / 2
-    : sorted[mid];
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 }
 
 /**
@@ -179,7 +176,7 @@ function calculateMedian(values: number[]): number {
  */
 function calculateStandardDeviation(values: number[], mean: number): number {
   if (values.length === 0) return 0;
-  const squaredDiffs = values.map(v => Math.pow(v - mean, 2));
+  const squaredDiffs = values.map((v) => Math.pow(v - mean, 2));
   const variance = squaredDiffs.reduce((sum, d) => sum + d, 0) / values.length;
   return Math.sqrt(variance);
 }
@@ -200,20 +197,18 @@ function calculatePercentile(values: number[], percentile: number): number {
 /**
  * Generate metadata for transparency
  */
-export function generateHousingMetadata(
-  pricePoints: HousingPricePoint[]
-): HousingCostMetadata {
+export function generateHousingMetadata(pricePoints: HousingPricePoint[]): HousingCostMetadata {
   const totalListings = pricePoints.length;
   const listingsWithData = totalListings;
 
   // Date range
-  const dates = pricePoints.map(p => new Date(p.observationDate).getTime());
+  const dates = pricePoints.map((p) => new Date(p.observationDate).getTime());
   const oldestDate = new Date(Math.min(...dates)).toISOString();
   const newestDate = new Date(Math.max(...dates)).toISOString();
 
   // Source summary
   const sourceCounts = new Map<string, number>();
-  pricePoints.forEach(p => {
+  pricePoints.forEach((p) => {
     const sourceType = p.source.type;
     sourceCounts.set(sourceType, (sourceCounts.get(sourceType) || 0) + 1);
   });
@@ -230,13 +225,15 @@ export function generateHousingMetadata(
   const warnings: string[] = [];
   const coveragePercentage = (listingsWithData / totalListings) * 100;
   if (coveragePercentage < HOUSING_CONFIG.MIN_COVERAGE_WARNING_PERCENT) {
-    warnings.push(`Low coverage: Only ${Math.round(coveragePercentage)}% of listings have complete data`);
+    warnings.push(
+      `Low coverage: Only ${Math.round(coveragePercentage)}% of listings have complete data`
+    );
   }
 
   const now = Date.now();
   const maxAgeMs = HOUSING_CONFIG.MAX_PRICE_AGE_WARNING_DAYS * 24 * 60 * 60 * 1000;
   const hasOldData = pricePoints.some(
-    p => now - new Date(p.observationDate).getTime() > maxAgeMs
+    (p) => now - new Date(p.observationDate).getTime() > maxAgeMs
   );
   if (hasOldData) {
     warnings.push(
@@ -276,53 +273,53 @@ export function applyHousingFilters(
   let filtered = pricePoints;
 
   if (filter.territory) {
-    filtered = filtered.filter(p => p.territory === filter.territory);
+    filtered = filtered.filter((p) => p.territory === filter.territory);
   }
 
   if (filter.housingType) {
-    filtered = filtered.filter(p => p.type === filter.housingType);
+    filtered = filtered.filter((p) => p.type === filter.housingType);
   }
 
   if (filter.minSurface !== undefined) {
-    filtered = filtered.filter(p => p.surface >= filter.minSurface!);
+    filtered = filtered.filter((p) => p.surface >= filter.minSurface!);
   }
 
   if (filter.maxSurface !== undefined) {
-    filtered = filtered.filter(p => p.surface <= filter.maxSurface!);
+    filtered = filtered.filter((p) => p.surface <= filter.maxSurface!);
   }
 
   if (filter.minRent !== undefined) {
-    filtered = filtered.filter(p => p.rent >= filter.minRent!);
+    filtered = filtered.filter((p) => p.rent >= filter.minRent!);
   }
 
   if (filter.maxRent !== undefined) {
-    filtered = filtered.filter(p => p.rent <= filter.maxRent!);
+    filtered = filtered.filter((p) => p.rent <= filter.maxRent!);
   }
 
   if (filter.furnished !== undefined) {
-    filtered = filtered.filter(p => p.furnished === filter.furnished);
+    filtered = filtered.filter((p) => p.furnished === filter.furnished);
   }
 
   if (filter.urbanRuralClassification) {
     filtered = filtered.filter(
-      p => p.location?.urbanRuralClassification === filter.urbanRuralClassification
+      (p) => p.location?.urbanRuralClassification === filter.urbanRuralClassification
     );
   }
 
   if (filter.maxPriceAge) {
     const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() - filter.maxPriceAge);
-    filtered = filtered.filter(p => new Date(p.observationDate) >= maxDate);
+    filtered = filtered.filter((p) => new Date(p.observationDate) >= maxDate);
   }
 
   if (filter.minConfidence) {
     const confidenceLevels = { low: 1, medium: 2, high: 3 };
     const minLevel = confidenceLevels[filter.minConfidence];
-    filtered = filtered.filter(p => confidenceLevels[p.confidence] >= minLevel);
+    filtered = filtered.filter((p) => confidenceLevels[p.confidence] >= minLevel);
   }
 
   if (filter.verifiedOnly) {
-    filtered = filtered.filter(p => p.verified);
+    filtered = filtered.filter((p) => p.verified);
   }
 
   return filtered;
@@ -341,14 +338,14 @@ export function buildHousingHistory(
   }
 
   // Filter by territory and optional type
-  let filtered = pricePoints.filter(p => p.territory === territory);
+  let filtered = pricePoints.filter((p) => p.territory === territory);
   if (housingType) {
-    filtered = filtered.filter(p => p.type === housingType);
+    filtered = filtered.filter((p) => p.type === housingType);
   }
 
   // Group by month
   const monthlyGroups = new Map<string, HousingPricePoint[]>();
-  filtered.forEach(p => {
+  filtered.forEach((p) => {
     const date = new Date(p.observationDate);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     if (!monthlyGroups.has(monthKey)) {
@@ -360,8 +357,8 @@ export function buildHousingHistory(
   // Build history points
   const history: HousingCostHistory[] = [];
   monthlyGroups.forEach((points, monthKey) => {
-    const rents = points.map(p => p.rent);
-    const rentsPerM2 = points.map(p => p.rent / p.surface);
+    const rents = points.map((p) => p.rent);
+    const rentsPerM2 = points.map((p) => p.rent / p.surface);
 
     history.push({
       date: `${monthKey}-01`,
@@ -369,10 +366,11 @@ export function buildHousingHistory(
       housingType,
       averageRent: Math.round((rents.reduce((sum, r) => sum + r, 0) / rents.length) * 100) / 100,
       medianRent: Math.round(calculateMedian(rents) * 100) / 100,
-      averageRentPerM2: Math.round((rentsPerM2.reduce((sum, r) => sum + r, 0) / rentsPerM2.length) * 100) / 100,
+      averageRentPerM2:
+        Math.round((rentsPerM2.reduce((sum, r) => sum + r, 0) / rentsPerM2.length) * 100) / 100,
       medianRentPerM2: Math.round(calculateMedian(rentsPerM2) * 100) / 100,
       listingCount: points.length,
-      sources: points.map(p => p.source),
+      sources: points.map((p) => p.source),
     });
   });
 
@@ -393,9 +391,7 @@ export function calculateHousingVariation(
   const last = history[history.length - 1];
 
   const absoluteChange = last.medianRent - first.medianRent;
-  const percentageChange = first.medianRent > 0
-    ? (absoluteChange / first.medianRent) * 100
-    : 0;
+  const percentageChange = first.medianRent > 0 ? (absoluteChange / first.medianRent) * 100 : 0;
 
   let direction: 'increase' | 'decrease' | 'stable';
   if (Math.abs(percentageChange) < HOUSING_CONFIG.STABLE_VARIATION_THRESHOLD) {
@@ -434,7 +430,7 @@ export function rankHousingByRentPerM2(
     return [];
   }
 
-  const withRentPerM2 = pricePoints.map(p => ({
+  const withRentPerM2 = pricePoints.map((p) => ({
     pricePoint: p,
     rentPerM2: p.rent / p.surface,
   }));

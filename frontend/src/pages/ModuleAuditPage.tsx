@@ -64,7 +64,7 @@ const CATEGORIES: AuditCategory[] = [
     modules: [
       {
         name: 'Comparateur multi-enseignes',
-        description: 'Comparer les prix d\'un produit dans plusieurs enseignes locales.',
+        description: "Comparer les prix d'un produit dans plusieurs enseignes locales.",
         status: 'done',
         route: '/comparateur',
         features: [
@@ -80,13 +80,13 @@ const CATEGORIES: AuditCategory[] = [
         route: '/comparateur-territoires',
         features: [
           { label: 'Comparaison DOM ↔ Métropole', done: true },
-          { label: 'Indice d\'écart DOM / Hexagone', done: true },
+          { label: "Indice d'écart DOM / Hexagone", done: true },
           { label: 'Données officielles intégrées', done: true },
         ],
       },
       {
         name: 'Comparateur panier citoyen',
-        description: 'Comparer le coût total d\'un panier selon l\'enseigne.',
+        description: "Comparer le coût total d'un panier selon l'enseigne.",
         status: 'done',
         route: '/comparaison-panier',
         features: [
@@ -130,7 +130,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Comparateur assurances',
-        description: 'Comparer les offres d\'assurance adaptées aux DOM.',
+        description: "Comparer les offres d'assurance adaptées aux DOM.",
         status: 'done',
         route: '/comparateur-assurances',
         features: [
@@ -196,7 +196,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Hub comparateurs',
-        description: 'Point d\'entrée unifié vers tous les comparateurs spécialisés.',
+        description: "Point d'entrée unifié vers tous les comparateurs spécialisés.",
         status: 'done',
         route: '/comparateurs',
         features: [
@@ -237,7 +237,7 @@ const CATEGORIES: AuditCategory[] = [
     modules: [
       {
         name: 'Hub Scanner universel',
-        description: 'Point d\'entrée unifié pour tous les modes de scan.',
+        description: "Point d'entrée unifié pour tous les modes de scan.",
         status: 'done',
         route: '/scanner',
         features: [
@@ -260,7 +260,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'OCR tickets de caisse',
-        description: 'Extraire les données d\'un ticket de caisse par photo.',
+        description: "Extraire les données d'un ticket de caisse par photo.",
         status: 'done',
         route: '/scan-ocr',
         features: [
@@ -283,7 +283,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Analyse photo avancée',
-        description: 'Analyse détaillée d\'un produit par photo.',
+        description: "Analyse détaillée d'un produit par photo.",
         status: 'done',
         route: '/analyse-photo-produit',
         features: [
@@ -313,11 +313,11 @@ const CATEGORIES: AuditCategory[] = [
     modules: [
       {
         name: 'Observatoire Hub',
-        description: 'Portail principal de l\'observatoire des prix DOM.',
+        description: "Portail principal de l'observatoire des prix DOM.",
         status: 'done',
         route: '/observatoire',
         features: [
-          { label: 'Vue d\'ensemble des prix', done: true },
+          { label: "Vue d'ensemble des prix", done: true },
           { label: 'Navigation par territoire', done: true },
           { label: 'Liens vers sous-modules', done: true },
         ],
@@ -357,7 +357,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Inflation par catégorie',
-        description: 'Suivi de l\'inflation segmenté par catégorie de produit.',
+        description: "Suivi de l'inflation segmenté par catégorie de produit.",
         status: 'done',
         route: '/inflation-categories',
         features: [
@@ -379,7 +379,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Méthodologie observatoire',
-        description: 'Documentation technique de l\'observatoire.',
+        description: "Documentation technique de l'observatoire.",
         status: 'done',
         route: '/observatoire/methodologie',
         features: [
@@ -398,7 +398,7 @@ const CATEGORIES: AuditCategory[] = [
     modules: [
       {
         name: 'Prédictions de prix',
-        description: 'Prévisions de prix à court terme basées sur l\'historique.',
+        description: "Prévisions de prix à court terme basées sur l'historique.",
         status: 'done',
         route: '/predictions',
         features: [
@@ -426,10 +426,10 @@ const CATEGORIES: AuditCategory[] = [
         route: '/devis-ia',
         features: [
           { label: 'Formulaire identité légale (SIRET)', done: true },
-          { label: 'Moteur d\'estimation explicable', done: true },
+          { label: "Moteur d'estimation explicable", done: true },
           { label: 'TVA DOM 8.5% intégrée', done: true },
           { label: 'Pipeline DRAFT → PAID', done: true },
-          { label: 'Piste d\'audit Firestore', done: true },
+          { label: "Piste d'audit Firestore", done: true },
           { label: 'Validation humaine obligatoire', done: true },
         ],
       },
@@ -457,7 +457,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Indice IEVR',
-        description: 'Indice d\'Effort de Vie Réelle territorial.',
+        description: "Indice d'Effort de Vie Réelle territorial.",
         status: 'done',
         route: '/ievr',
         features: [
@@ -522,7 +522,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Budget réel mensuel',
-        description: 'Suivi du budget réel d\'un ménage type DOM.',
+        description: "Suivi du budget réel d'un ménage type DOM.",
         status: 'done',
         route: '/budget-reel-mensuel',
         features: [
@@ -578,7 +578,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Mes demandes',
-        description: 'Suivi des demandes et signalements soumis par l\'utilisateur.',
+        description: "Suivi des demandes et signalements soumis par l'utilisateur.",
         status: 'done',
         route: '/mes-demandes',
         features: [
@@ -676,7 +676,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Suggestions citoyennes',
-        description: 'Soumettre des suggestions d\'amélioration à la plateforme.',
+        description: "Soumettre des suggestions d'amélioration à la plateforme.",
         status: 'done',
         route: '/suggestions',
         features: [
@@ -736,7 +736,7 @@ const CATEGORIES: AuditCategory[] = [
     modules: [
       {
         name: 'Onboarding marchands',
-        description: 'Processus d\'inscription pour les enseignes partenaires.',
+        description: "Processus d'inscription pour les enseignes partenaires.",
         status: 'done',
         route: '/marketplace/inscription',
         features: [
@@ -836,12 +836,12 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Licence institution',
-        description: 'Conditions d\'utilisation pour les collectivités.',
+        description: "Conditions d'utilisation pour les collectivités.",
         status: 'done',
         route: '/licence-institution',
         features: [
-          { label: 'Cadre légal d\'usage', done: true },
-          { label: 'Droits d\'accès données', done: true },
+          { label: "Cadre légal d'usage", done: true },
+          { label: "Droits d'accès données", done: true },
           { label: 'Conditions de redistribution', done: true },
         ],
       },
@@ -858,7 +858,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Presse & actualités',
-        description: 'Espace presse et articles d\'actualités de la plateforme.',
+        description: "Espace presse et articles d'actualités de la plateforme.",
         status: 'done',
         route: '/presse',
         features: [
@@ -933,7 +933,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Tableau de bord inflation',
-        description: 'Dashboard interactif de suivi de l\'inflation DOM.',
+        description: "Dashboard interactif de suivi de l'inflation DOM.",
         status: 'done',
         route: '/tableau-inflation',
         features: [
@@ -944,7 +944,7 @@ const CATEGORIES: AuditCategory[] = [
       },
       {
         name: 'Hub de recherche',
-        description: 'Point d\'entrée centralisé pour toutes les recherches de prix.',
+        description: "Point d'entrée centralisé pour toutes les recherches de prix.",
         status: 'done',
         route: '/recherche-hub',
         features: [
@@ -1035,7 +1035,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Liste / création / édition', done: true },
           { label: 'Géolocalisation magasin', done: true },
-          { label: 'Horaires d\'ouverture', done: true },
+          { label: "Horaires d'ouverture", done: true },
         ],
       },
       {
@@ -1079,7 +1079,7 @@ const CATEGORIES: AuditCategory[] = [
         features: [
           { label: 'Import CSV prix', done: true },
           { label: 'Statut synchronisation', done: true },
-          { label: 'Logs d\'erreur', done: true },
+          { label: "Logs d'erreur", done: true },
         ],
       },
     ],
@@ -1092,7 +1092,7 @@ const CATEGORIES: AuditCategory[] = [
     modules: [
       {
         name: 'Hub territorial',
-        description: 'Page d\'accueil dédiée à chaque territoire DOM-COM.',
+        description: "Page d'accueil dédiée à chaque territoire DOM-COM.",
         status: 'done',
         route: '/territoire/:territory',
         features: [
@@ -1119,7 +1119,7 @@ const CATEGORIES: AuditCategory[] = [
         route: '/comparaison-territoires',
         features: [
           { label: 'Sélection multi-territoires', done: true },
-          { label: 'Indice d\'écart inter-territoires', done: true },
+          { label: "Indice d'écart inter-territoires", done: true },
           { label: 'Graphiques comparatifs', done: true },
         ],
       },
@@ -1146,7 +1146,7 @@ const CATEGORIES: AuditCategory[] = [
         ],
       },
       {
-        name: 'Périmètre d\'analyse',
+        name: "Périmètre d'analyse",
         description: 'Définir et visualiser le périmètre de couverture de la plateforme.',
         status: 'done',
         route: '/perimetre',
@@ -1175,7 +1175,10 @@ function computeStats(categories: AuditCategory[]) {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<ModuleStatus, { label: string; color: string; icon: React.ElementType }> = {
+const STATUS_CONFIG: Record<
+  ModuleStatus,
+  { label: string; color: string; icon: React.ElementType }
+> = {
   done: { label: 'Opérationnel', color: 'bg-green-100 text-green-700', icon: CheckCircle },
   partial: { label: 'Partiel', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
   planned: { label: 'Planifié', color: 'bg-gray-100 text-gray-500', icon: Circle },
@@ -1211,7 +1214,11 @@ function ModuleCard({ mod }: { mod: AuditModule }) {
       >
         <StatusIcon
           className={`w-4 h-4 flex-shrink-0 ${
-            mod.status === 'done' ? 'text-green-500' : mod.status === 'partial' ? 'text-yellow-500' : 'text-gray-300'
+            mod.status === 'done'
+              ? 'text-green-500'
+              : mod.status === 'partial'
+                ? 'text-yellow-500'
+                : 'text-gray-300'
           }`}
         />
         <div className="flex-1 min-w-0">
@@ -1222,7 +1229,9 @@ function ModuleCard({ mod }: { mod: AuditModule }) {
           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${cfg.color}`}>
             {cfg.label}
           </span>
-          <span className="text-xs text-gray-400">{featDone}/{featTotal}</span>
+          <span className="text-xs text-gray-400">
+            {featDone}/{featTotal}
+          </span>
           {mod.route && (
             <Link
               to={mod.route}
@@ -1296,9 +1305,17 @@ export default function ModuleAuditPage() {
           name="description"
           content="Audit complet de l'implémentation de tous les modules de la plateforme A KI PRI SA YÉ — statuts, fonctionnalités, couverture."
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/module-audit" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/module-audit" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/module-audit" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/module-audit" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/module-audit"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/module-audit"
+        />
       </Helmet>
 
       <HeroImage
@@ -1307,8 +1324,12 @@ export default function ModuleAuditPage() {
         gradient="from-slate-950 to-slate-800"
         height="h-40 sm:h-52"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🔍 Audit des modules</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>État et disponibilité de tous les modules de la plateforme</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          🔍 Audit des modules
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          État et disponibilité de tous les modules de la plateforme
+        </p>
       </HeroImage>
 
       <div className="min-h-screen bg-gray-50">
@@ -1330,7 +1351,9 @@ export default function ModuleAuditPage() {
             <div>
               <div className="flex justify-between text-xs text-gray-600 mb-1">
                 <span>Fonctionnalités implémentées</span>
-                <span className="font-semibold">{stats.featDone}/{stats.featTotal} ({featPercent}%)</span>
+                <span className="font-semibold">
+                  {stats.featDone}/{stats.featTotal} ({featPercent}%)
+                </span>
               </div>
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div
@@ -1420,11 +1443,13 @@ export default function ModuleAuditPage() {
             <div className="flex flex-wrap gap-4 text-xs text-gray-600">
               <span className="flex items-center gap-1.5">
                 <CheckCircle className="w-4 h-4 text-green-500" />
-                <strong>Opérationnel</strong> — Toutes les fonctionnalités principales sont actives en production.
+                <strong>Opérationnel</strong> — Toutes les fonctionnalités principales sont actives
+                en production.
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="w-4 h-4 text-yellow-500" />
-                <strong>Partiel</strong> — Module déployé mais certaines fonctionnalités sont en cours.
+                <strong>Partiel</strong> — Module déployé mais certaines fonctionnalités sont en
+                cours.
               </span>
               <span className="flex items-center gap-1.5">
                 <Circle className="w-4 h-4 text-gray-300" />
@@ -1432,14 +1457,11 @@ export default function ModuleAuditPage() {
               </span>
             </div>
             <p className="mt-3 text-xs text-gray-400">
-              Cet audit reflète l'état réel de la base de code. Seuls les modules
-              constatés dans les sources sont référencés. Dernière mise à jour : mars 2026.
+              Cet audit reflète l'état réel de la base de code. Seuls les modules constatés dans les
+              sources sont référencés. Dernière mise à jour : mars 2026.
             </p>
             <div className="mt-3 flex gap-3">
-              <Link
-                to="/roadmap"
-                className="text-xs text-indigo-600 hover:underline font-medium"
-              >
+              <Link to="/roadmap" className="text-xs text-indigo-600 hover:underline font-medium">
                 → Roadmap & Architecture complète
               </Link>
               <Link

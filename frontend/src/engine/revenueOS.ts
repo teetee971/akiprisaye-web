@@ -50,12 +50,12 @@ export interface RevenueOSScoredProduct extends RevenueOSProduct {
 
 // ── Weights ───────────────────────────────────────────────────────────────────
 
-const W_CLICKS      = 0.20;
-const W_CONVERSIONS = 0.30;
-const W_MARGIN      = 0.20;
-const W_SPONSOR     = 0.15;
-const W_RECENCY     = 0.10;
-const W_STRATEGIC   = 0.05;
+const W_CLICKS = 0.2;
+const W_CONVERSIONS = 0.3;
+const W_MARGIN = 0.2;
+const W_SPONSOR = 0.15;
+const W_RECENCY = 0.1;
+const W_STRATEGIC = 0.05;
 
 // ── Core scoring ──────────────────────────────────────────────────────────────
 
@@ -68,27 +68,24 @@ const W_STRATEGIC   = 0.05;
  * @param product  Product fields (delta, sponsorBoost, strategicBoost)
  * @param stats    Behavioural stats (clicks, conversions, recency)
  */
-export function computeRevenueOSScore(
-  product: RevenueOSProduct,
-  stats: RevenueOSStats,
-): number {
+export function computeRevenueOSScore(product: RevenueOSProduct, stats: RevenueOSStats): number {
   // Normalise click count: assume 200 clicks = max score
-  const clickScore       = Math.min(100, ((stats.clicks ?? 0) / 200) * 100);
+  const clickScore = Math.min(100, ((stats.clicks ?? 0) / 200) * 100);
   // Normalise conversion count: assume 50 conversions = max score
-  const conversionScore  = Math.min(100, ((stats.conversions ?? 0) / 50) * 100);
+  const conversionScore = Math.min(100, ((stats.conversions ?? 0) / 50) * 100);
   // Normalise delta: assume 5 € max useful spread
-  const marginScore      = Math.min(100, ((product.delta ?? 0) / 5) * 100);
-  const sponsorScore     = Math.min(100, product.sponsorBoost ?? 0);
-  const recencyScore     = Math.min(100, stats.recency ?? 50);
-  const strategicScore   = Math.min(100, product.strategicBoost ?? 0);
+  const marginScore = Math.min(100, ((product.delta ?? 0) / 5) * 100);
+  const sponsorScore = Math.min(100, product.sponsorBoost ?? 0);
+  const recencyScore = Math.min(100, stats.recency ?? 50);
+  const strategicScore = Math.min(100, product.strategicBoost ?? 0);
 
   const raw =
-    clickScore      * W_CLICKS      +
+    clickScore * W_CLICKS +
     conversionScore * W_CONVERSIONS +
-    marginScore     * W_MARGIN      +
-    sponsorScore    * W_SPONSOR     +
-    recencyScore    * W_RECENCY     +
-    strategicScore  * W_STRATEGIC;
+    marginScore * W_MARGIN +
+    sponsorScore * W_SPONSOR +
+    recencyScore * W_RECENCY +
+    strategicScore * W_STRATEGIC;
 
   return Math.min(100, Math.max(0, Math.round(raw)));
 }
@@ -101,17 +98,17 @@ export function computeRevenueOSScore(
  */
 export function scoreProducts(
   products: RevenueOSProduct[],
-  statsMap: Map<string, RevenueOSStats> = new Map(),
+  statsMap: Map<string, RevenueOSStats> = new Map()
 ): RevenueOSScoredProduct[] {
   return products
     .map((p) => {
-      const key   = String(p.name).toLowerCase().trim();
+      const key = String(p.name).toLowerCase().trim();
       const stats = statsMap.get(key) ?? {};
       const score = computeRevenueOSScore(p, stats);
       return {
         ...p,
         revenueOSScore: score,
-        revenueTier:    classifyRevenueTier(score),
+        revenueTier: classifyRevenueTier(score),
       };
     })
     .sort((a, b) => b.revenueOSScore - a.revenueOSScore);

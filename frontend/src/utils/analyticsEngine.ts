@@ -12,9 +12,9 @@
  * RGPD: reads localStorage only, no network calls, no external SDK.
  */
 
-import { getCROStats }         from './conversionTracker';
-import { getConversionStats }  from './priceClickTracker';
-import { getSEOPageStats }     from './statsTracker';
+import { getCROStats } from './conversionTracker';
+import { getConversionStats } from './priceClickTracker';
+import { getSEOPageStats } from './statsTracker';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -52,22 +52,22 @@ export interface AnalyticsSnapshot {
  * Safe to call on every render — pure reads, no writes.
  */
 export function getAnalyticsSnapshot(): AnalyticsSnapshot {
-  let visits      = 0;
-  let clicks      = 0;
+  let visits = 0;
+  let clicks = 0;
   let conversions = 0;
-  let revenue     = 0;
-  let dailyRevenue        = 0;
-  let topPages: { url: string; clicks: number }[]              = [];
-  let topRetailers: { retailer: string; clicks: number }[]     = [];
+  let revenue = 0;
+  let dailyRevenue = 0;
+  let topPages: { url: string; clicks: number }[] = [];
+  let topRetailers: { retailer: string; clicks: number }[] = [];
   let topProducts: { barcode: string; name: string; views: number; ctr: number }[] = [];
-  let subscriptionClicks  = 0;
+  let subscriptionClicks = 0;
   let variantBreakdown: Record<string, number> = { A: 0, B: 0, C: 0 };
 
   // ── 1. CRO stats (CTA clicks + conversion rate + top pages) ──────────────
   try {
     const cro = getCROStats();
-    clicks    = cro.totalClicks;
-    topPages  = cro.topPages.map((p) => ({ url: p.url, clicks: p.clicks }));
+    clicks = cro.totalClicks;
+    topPages = cro.topPages.map((p) => ({ url: p.url, clicks: p.clicks }));
     variantBreakdown = cro.byVariant;
 
     // Count subscription clicks from retailer names that start with "alerte-"
@@ -87,7 +87,7 @@ export function getAnalyticsSnapshot(): AnalyticsSnapshot {
   try {
     const pcs = getConversionStats(30);
     conversions = pcs.totalClicks;
-    revenue     = pcs.estimatedRevenue;
+    revenue = pcs.estimatedRevenue;
 
     // Merge visit count (take the larger of the two estimates)
     if (pcs.totalViews > visits) visits = pcs.totalViews;
@@ -100,9 +100,9 @@ export function getAnalyticsSnapshot(): AnalyticsSnapshot {
     // Top products
     topProducts = pcs.topProducts.slice(0, 5).map((p) => ({
       barcode: p.barcode,
-      name:    p.name,
-      views:   p.views,
-      ctr:     p.ctr,
+      name: p.name,
+      views: p.views,
+      ctr: p.ctr,
     }));
   } catch {
     // Silently ignore
@@ -125,17 +125,17 @@ export function getAnalyticsSnapshot(): AnalyticsSnapshot {
 
   return {
     visits,
-    clicks:             totalClicks,
+    clicks: totalClicks,
     conversions,
-    revenue:            +revenue.toFixed(2),
-    ctr:                +ctr.toFixed(4),
-    dailyRevenue:       +dailyRevenue.toFixed(2),
+    revenue: +revenue.toFixed(2),
+    ctr: +ctr.toFixed(4),
+    dailyRevenue: +dailyRevenue.toFixed(2),
     topPages,
     topRetailers,
     topProducts,
     subscriptionClicks,
     variantBreakdown,
-    generatedAt:        new Date().toISOString(),
+    generatedAt: new Date().toISOString(),
   };
 }
 
@@ -154,7 +154,7 @@ export function formatCtr(ctr: number): string {
  *   red    → CTR < 5%
  */
 export function ctrStatus(ctr: number): 'green' | 'amber' | 'red' {
-  if (ctr >= 0.10) return 'green';
+  if (ctr >= 0.1) return 'green';
   if (ctr >= 0.05) return 'amber';
   return 'red';
 }

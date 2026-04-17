@@ -148,18 +148,27 @@ export async function getTrainingStatistics(territory: Territory) {
 
   return {
     totalPrograms: programs.length,
-    byDomain: programs.reduce((acc, p) => {
-      acc[p.details.domain] = (acc[p.details.domain] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>),
-    byLevel: programs.reduce((acc, p) => {
-      acc[p.details.level] = (acc[p.details.level] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>),
-    byMode: programs.reduce((acc, p) => {
-      acc[p.details.mode] = (acc[p.details.mode] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>),
+    byDomain: programs.reduce(
+      (acc, p) => {
+        acc[p.details.domain] = (acc[p.details.domain] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    ),
+    byLevel: programs.reduce(
+      (acc, p) => {
+        acc[p.details.level] = (acc[p.details.level] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    ),
+    byMode: programs.reduce(
+      (acc, p) => {
+        acc[p.details.mode] = (acc[p.details.mode] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    ),
     averagePrice: programs.reduce((sum, p) => sum + p.pricing.catalogPrice, 0) / programs.length,
     cpfEligibleCount: programs.filter((p) => p.pricing.cpfEligible).length,
     poleEmploiEligibleCount: programs.filter((p) => p.pricing.poleEmploiEligible).length,

@@ -61,7 +61,7 @@ const PLANS: ComparatorPlan[] = [
     highlight: true,
     highlightLabel: '⭐ Populaire',
     socialProof: '90% des nouveaux abonnés choisissent ce plan',
-    ctaLabel: "Choisir ce plan",
+    ctaLabel: 'Choisir ce plan',
     features: [
       { label: 'Tout le plan Gratuit', included: true },
       { label: 'Alertes prix personnalisées', included: true },
@@ -196,9 +196,7 @@ export default function PricingComparator({ highlightPlanId }: PricingComparator
             onClick={() => setCycle('monthly')}
             aria-pressed={cycle === 'monthly'}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${
-              cycle === 'monthly'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-400 hover:text-white'
+              cycle === 'monthly' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
             Mensuel
@@ -207,15 +205,11 @@ export default function PricingComparator({ highlightPlanId }: PricingComparator
             onClick={() => setCycle('yearly')}
             aria-pressed={cycle === 'yearly'}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
-              cycle === 'yearly'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-400 hover:text-white'
+              cycle === 'yearly' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
             Annuel
-            <span className="text-xs bg-green-600 text-white px-1.5 py-0.5 rounded-full">
-              -20%
-            </span>
+            <span className="text-xs bg-green-600 text-white px-1.5 py-0.5 rounded-full">-20%</span>
           </button>
         </div>
       </div>
@@ -254,9 +248,7 @@ export default function PricingComparator({ highlightPlanId }: PricingComparator
 
               {/* Price */}
               <div className="mb-4">
-                <p className="text-3xl font-extrabold text-white">
-                  {getPrice(plan)}
-                </p>
+                <p className="text-3xl font-extrabold text-white">{getPrice(plan)}</p>
                 {getYearlyNote(plan) && (
                   <p className="text-gray-400 text-xs mt-1">{getYearlyNote(plan)}</p>
                 )}
@@ -292,8 +284,8 @@ export default function PricingComparator({ highlightPlanId }: PricingComparator
                   isHighlighted
                     ? 'bg-blue-600 hover:bg-blue-500 text-white focus:ring-blue-400'
                     : plan.id === 'FREE'
-                    ? 'bg-white/[0.08] hover:bg-white/[0.12] text-white border border-white/20 focus:ring-white/20'
-                    : 'bg-white/[0.06] hover:bg-white/[0.10] text-gray-200 border border-white/10 focus:ring-white/10'
+                      ? 'bg-white/[0.08] hover:bg-white/[0.12] text-white border border-white/20 focus:ring-white/20'
+                      : 'bg-white/[0.06] hover:bg-white/[0.10] text-gray-200 border border-white/10 focus:ring-white/10'
                 }`}
               >
                 {plan.ctaLabel}

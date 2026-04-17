@@ -1,4 +1,3 @@
- 
 /**
  * Unit Tests for Transport Price Service v2.2.0
  */
@@ -42,7 +41,7 @@ const mockOperatorPrices: TransportPricePoint[] = [
     operatorId: 'AF',
     operatorName: 'Air France',
     route: mockRoute,
-    price: 450.00,
+    price: 450.0,
     currency: 'EUR',
     priceType: 'base',
     observationDate: '2025-12-20T10:00:00Z',
@@ -61,7 +60,7 @@ const mockOperatorPrices: TransportPricePoint[] = [
     operatorId: 'AC',
     operatorName: 'Air Caraïbes',
     route: mockRoute,
-    price: 389.00,
+    price: 389.0,
     currency: 'EUR',
     priceType: 'base',
     observationDate: '2025-12-21T14:30:00Z',
@@ -80,7 +79,7 @@ const mockOperatorPrices: TransportPricePoint[] = [
     operatorId: 'TO',
     operatorName: 'French Bee',
     route: mockRoute,
-    price: 425.50,
+    price: 425.5,
     currency: 'EUR',
     priceType: 'promotional',
     observationDate: '2025-12-22T09:15:00Z',
@@ -108,9 +107,9 @@ const mockBoatRoute: TransportRouteIdentifier = {
 const mockBoatPrices: TransportPricePoint[] = [
   {
     operatorId: 'EXPRESS',
-    operatorName: 'L\'Express des Îles',
+    operatorName: "L'Express des Îles",
     route: mockBoatRoute,
-    price: 85.00,
+    price: 85.0,
     currency: 'EUR',
     priceType: 'base',
     observationDate: '2025-12-20T10:00:00Z',
@@ -141,7 +140,7 @@ const mockInterIslandPrices: TransportPricePoint[] = [
     operatorId: 'CTM',
     operatorName: 'CTM Deher',
     route: mockInterIslandRoute,
-    price: 35.00,
+    price: 35.0,
     currency: 'EUR',
     priceType: 'base',
     observationDate: '2025-12-20T10:00:00Z',
@@ -157,9 +156,9 @@ const mockInterIslandPrices: TransportPricePoint[] = [
   },
   {
     operatorId: 'VAL',
-    operatorName: 'Val\'Ferry',
+    operatorName: "Val'Ferry",
     route: mockInterIslandRoute,
-    price: 38.50,
+    price: 38.5,
     currency: 'EUR',
     priceType: 'base',
     observationDate: '2025-12-20T11:00:00Z',
@@ -198,7 +197,7 @@ describe('Transport Price Service v2.2.0', () => {
 
     it('should successfully compare prices for a route', () => {
       const result = compareTransportPricesByRoute(mockRoute, mockOperatorPrices);
-      
+
       expect(result).not.toBeNull();
       expect(result!.route).toEqual(mockRoute);
       expect(result!.operatorPrices).toHaveLength(3);
@@ -209,10 +208,10 @@ describe('Transport Price Service v2.2.0', () => {
 
     it('should rank operators from cheapest to most expensive', () => {
       const result = compareTransportPricesByRoute(mockRoute, mockOperatorPrices);
-      
-      expect(result!.operatorPrices[0].transportPrice.price).toBe(389.00); // Air Caraïbes
-      expect(result!.operatorPrices[1].transportPrice.price).toBe(425.50); // French Bee
-      expect(result!.operatorPrices[2].transportPrice.price).toBe(450.00); // Air France
+
+      expect(result!.operatorPrices[0].transportPrice.price).toBe(389.0); // Air Caraïbes
+      expect(result!.operatorPrices[1].transportPrice.price).toBe(425.5); // French Bee
+      expect(result!.operatorPrices[2].transportPrice.price).toBe(450.0); // Air France
     });
   });
 
@@ -220,9 +219,9 @@ describe('Transport Price Service v2.2.0', () => {
     it('should filter prices by route', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices];
       const filtered = filterPricesByRoute(allPrices, mockRoute);
-      
+
       expect(filtered).toHaveLength(3);
-      expect(filtered.every(p => p.route.mode === 'plane')).toBe(true);
+      expect(filtered.every((p) => p.route.mode === 'plane')).toBe(true);
     });
 
     it('should return empty array when no matches', () => {
@@ -234,7 +233,7 @@ describe('Transport Price Service v2.2.0', () => {
         mode: 'boat',
       };
       const filtered = filterPricesByRoute(mockOperatorPrices, differentRoute);
-      
+
       expect(filtered).toHaveLength(0);
     });
   });
@@ -243,15 +242,15 @@ describe('Transport Price Service v2.2.0', () => {
     it('should filter by origin territory', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices];
       const filtered = filterPricesByTerritory(allPrices, 'MQ', undefined);
-      
+
       expect(filtered).toHaveLength(4);
-      expect(filtered.every(p => p.route.originTerritory === 'MQ')).toBe(true);
+      expect(filtered.every((p) => p.route.originTerritory === 'MQ')).toBe(true);
     });
 
     it('should filter by destination territory', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices];
       const filtered = filterPricesByTerritory(allPrices, undefined, 'GP');
-      
+
       expect(filtered).toHaveLength(1);
       expect(filtered[0].route.destinationTerritory).toBe('GP');
     });
@@ -259,7 +258,7 @@ describe('Transport Price Service v2.2.0', () => {
     it('should filter by both territories', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices];
       const filtered = filterPricesByTerritory(allPrices, 'MQ', 'GP');
-      
+
       expect(filtered).toHaveLength(1);
       expect(filtered[0].route.mode).toBe('boat');
     });
@@ -269,25 +268,25 @@ describe('Transport Price Service v2.2.0', () => {
     it('should filter by plane mode', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices, ...mockInterIslandPrices];
       const filtered = filterPricesByMode(allPrices, 'plane');
-      
+
       expect(filtered).toHaveLength(3);
-      expect(filtered.every(p => p.route.mode === 'plane')).toBe(true);
+      expect(filtered.every((p) => p.route.mode === 'plane')).toBe(true);
     });
 
     it('should filter by boat mode', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices, ...mockInterIslandPrices];
       const filtered = filterPricesByMode(allPrices, 'boat');
-      
+
       expect(filtered).toHaveLength(1);
-      expect(filtered[0].operatorName).toBe('L\'Express des Îles');
+      expect(filtered[0].operatorName).toBe("L'Express des Îles");
     });
 
     it('should filter by inter_island mode', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices, ...mockInterIslandPrices];
       const filtered = filterPricesByMode(allPrices, 'inter_island');
-      
+
       expect(filtered).toHaveLength(2);
-      expect(filtered.every(p => p.route.mode === 'inter_island')).toBe(true);
+      expect(filtered.every((p) => p.route.mode === 'inter_island')).toBe(true);
     });
   });
 
@@ -306,13 +305,13 @@ describe('Transport Price Service v2.2.0', () => {
 
     it('should apply verified only filter', () => {
       const filtered = applyTransportFilters(allPrices, { verifiedOnly: true });
-      expect(filtered.every(p => p.verified)).toBe(true);
+      expect(filtered.every((p) => p.verified)).toBe(true);
       expect(filtered.length).toBeLessThan(allPrices.length);
     });
 
     it('should apply confidence level filter', () => {
       const filtered = applyTransportFilters(allPrices, { minConfidence: 'high' });
-      expect(filtered.every(p => p.confidence === 'high')).toBe(true);
+      expect(filtered.every((p) => p.confidence === 'high')).toBe(true);
     });
 
     it('should apply multiple filters', () => {
@@ -322,19 +321,19 @@ describe('Transport Price Service v2.2.0', () => {
         minConfidence: 'high',
       });
       expect(filtered).toHaveLength(2); // Air France, Air Caraïbes
-      expect(filtered.every(p => p.verified && p.confidence === 'high')).toBe(true);
+      expect(filtered.every((p) => p.verified && p.confidence === 'high')).toBe(true);
     });
   });
 
   describe('calculateRouteAggregation', () => {
     it('should calculate aggregation correctly', () => {
       const aggregation = calculateRouteAggregation(mockOperatorPrices, mockRoute);
-      
+
       expect(aggregation.operatorCount).toBe(3);
-      expect(aggregation.minPrice).toBe(389.00);
-      expect(aggregation.maxPrice).toBe(450.00);
-      expect(aggregation.priceRange).toBe(61.00);
-      expect(aggregation.averagePrice).toBeCloseTo(421.50, 2);
+      expect(aggregation.minPrice).toBe(389.0);
+      expect(aggregation.maxPrice).toBe(450.0);
+      expect(aggregation.priceRange).toBe(61.0);
+      expect(aggregation.averagePrice).toBeCloseTo(421.5, 2);
     });
 
     it('should throw error for empty price list', () => {
@@ -344,7 +343,7 @@ describe('Transport Price Service v2.2.0', () => {
     it('should handle single operator', () => {
       const singlePrice = [mockOperatorPrices[0]];
       const aggregation = calculateRouteAggregation(singlePrice, mockRoute);
-      
+
       expect(aggregation.operatorCount).toBe(1);
       expect(aggregation.minPrice).toBe(aggregation.maxPrice);
       expect(aggregation.priceRange).toBe(0);
@@ -353,9 +352,9 @@ describe('Transport Price Service v2.2.0', () => {
 
   describe('rankTransportPrices', () => {
     it('should rank prices correctly', () => {
-      const averagePrice = 421.50;
+      const averagePrice = 421.5;
       const ranked = rankTransportPrices(mockOperatorPrices, averagePrice);
-      
+
       expect(ranked).toHaveLength(3);
       expect(ranked[0].rank).toBe(1);
       expect(ranked[0].priceCategory).toBe('cheapest');
@@ -364,13 +363,13 @@ describe('Transport Price Service v2.2.0', () => {
     });
 
     it('should calculate differences from cheapest', () => {
-      const averagePrice = 421.50;
+      const averagePrice = 421.5;
       const ranked = rankTransportPrices(mockOperatorPrices, averagePrice);
-      
+
       expect(ranked[0].absoluteDifferenceFromCheapest).toBe(0);
       expect(ranked[0].percentageDifferenceFromCheapest).toBe(0);
-      expect(ranked[1].absoluteDifferenceFromCheapest).toBeCloseTo(36.50, 2);
-      expect(ranked[2].absoluteDifferenceFromCheapest).toBeCloseTo(61.00, 2);
+      expect(ranked[1].absoluteDifferenceFromCheapest).toBeCloseTo(36.5, 2);
+      expect(ranked[2].absoluteDifferenceFromCheapest).toBeCloseTo(61.0, 2);
     });
 
     it('should return empty array for empty input', () => {
@@ -382,7 +381,7 @@ describe('Transport Price Service v2.2.0', () => {
   describe('generateTransportMetadata', () => {
     it('should generate metadata with correct structure', () => {
       const metadata = generateTransportMetadata(mockOperatorPrices);
-      
+
       expect(metadata.methodology).toBe('v2.2.0');
       expect(metadata.aggregationMethod).toBe('mean');
       expect(metadata.dataQuality.totalOperators).toBe(3);
@@ -393,8 +392,8 @@ describe('Transport Price Service v2.2.0', () => {
 
     it('should calculate source summary correctly', () => {
       const metadata = generateTransportMetadata(mockOperatorPrices);
-      
-      const officialSource = metadata.sources.find(s => s.source === 'official_site');
+
+      const officialSource = metadata.sources.find((s) => s.source === 'official_site');
       expect(officialSource).toBeDefined();
       expect(officialSource!.observationCount).toBe(2);
       expect(officialSource!.operatorCount).toBe(2);
@@ -423,7 +422,7 @@ describe('Transport Price Service v2.2.0', () => {
       const cheapest = getCheapestOperator(mockOperatorPrices);
       expect(cheapest).not.toBeNull();
       expect(cheapest!.operatorName).toBe('Air Caraïbes');
-      expect(cheapest!.price).toBe(389.00);
+      expect(cheapest!.price).toBe(389.0);
     });
 
     it('should return null for empty array', () => {
@@ -437,7 +436,7 @@ describe('Transport Price Service v2.2.0', () => {
       const expensive = getMostExpensiveOperator(mockOperatorPrices);
       expect(expensive).not.toBeNull();
       expect(expensive!.operatorName).toBe('Air France');
-      expect(expensive!.price).toBe(450.00);
+      expect(expensive!.price).toBe(450.0);
     });
 
     it('should return null for empty array', () => {
@@ -449,7 +448,7 @@ describe('Transport Price Service v2.2.0', () => {
   describe('calculatePotentialSavings', () => {
     it('should calculate savings correctly', () => {
       const savings = calculatePotentialSavings(450, 389);
-      expect(savings.absolute).toBe(61.00);
+      expect(savings.absolute).toBe(61.0);
       expect(savings.percentage).toBeCloseTo(15.68, 2);
     });
 
@@ -464,7 +463,7 @@ describe('Transport Price Service v2.2.0', () => {
     it('should group prices by transport mode', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices, ...mockInterIslandPrices];
       const grouped = groupPricesByMode(allPrices);
-      
+
       expect(grouped.size).toBe(3);
       expect(grouped.get('plane')).toHaveLength(3);
       expect(grouped.get('boat')).toHaveLength(1);
@@ -476,7 +475,7 @@ describe('Transport Price Service v2.2.0', () => {
     it('should group prices by territory', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices];
       const grouped = groupPricesByTerritory(allPrices);
-      
+
       expect(grouped.has('MQ')).toBe(true);
       expect(grouped.has('FR')).toBe(true);
       expect(grouped.has('GP')).toBe(true);
@@ -484,7 +483,7 @@ describe('Transport Price Service v2.2.0', () => {
 
     it('should handle single territory routes', () => {
       const grouped = groupPricesByTerritory(mockInterIslandPrices);
-      
+
       expect(grouped.has('GP')).toBe(true);
       expect(grouped.get('GP')).toHaveLength(2);
     });
@@ -514,11 +513,11 @@ describe('Transport Price Service v2.2.0', () => {
     it('should return unique routes', () => {
       const allPrices = [...mockOperatorPrices, ...mockBoatPrices, ...mockInterIslandPrices];
       const routes = getUniqueRoutes(allPrices);
-      
+
       expect(routes).toHaveLength(3);
-      expect(routes.some(r => r.mode === 'plane')).toBe(true);
-      expect(routes.some(r => r.mode === 'boat')).toBe(true);
-      expect(routes.some(r => r.mode === 'inter_island')).toBe(true);
+      expect(routes.some((r) => r.mode === 'plane')).toBe(true);
+      expect(routes.some((r) => r.mode === 'boat')).toBe(true);
+      expect(routes.some((r) => r.mode === 'inter_island')).toBe(true);
     });
   });
 
@@ -526,7 +525,7 @@ describe('Transport Price Service v2.2.0', () => {
     it('should handle single operator scenario', () => {
       const singlePrice = [mockOperatorPrices[0]];
       const result = compareTransportPricesByRoute(mockRoute, singlePrice);
-      
+
       expect(result).not.toBeNull();
       expect(result!.operatorPrices).toHaveLength(1);
       expect(result!.operatorPrices[0].rank).toBe(1);
@@ -541,7 +540,7 @@ describe('Transport Price Service v2.2.0', () => {
         conditions: undefined,
       };
       const result = compareTransportPricesByRoute(mockRoute, [incompletePrice]);
-      
+
       expect(result).not.toBeNull();
       expect(result!.operatorPrices).toHaveLength(1);
     });
@@ -553,13 +552,15 @@ describe('Transport Price Service v2.2.0', () => {
         { ...mockOperatorPrices[0], operatorId: 'OP3', price: 400 },
       ];
       const result = compareTransportPricesByRoute(mockRoute, identicalPrices);
-      
+
       expect(result).not.toBeNull();
       expect(result!.aggregation.priceRange).toBe(0);
       expect(result!.aggregation.averagePrice).toBe(400);
       expect(result!.operatorPrices[0].priceCategory).toBe('cheapest');
       expect(result!.operatorPrices[2].priceCategory).toBe('most_expensive');
-      expect(result!.operatorPrices.every(p => p.absoluteDifferenceFromCheapest === 0)).toBe(true);
+      expect(result!.operatorPrices.every((p) => p.absoluteDifferenceFromCheapest === 0)).toBe(
+        true
+      );
     });
 
     it('should handle very large price differences', () => {
@@ -568,7 +569,7 @@ describe('Transport Price Service v2.2.0', () => {
         { ...mockOperatorPrices[1], price: 1000 },
       ];
       const result = compareTransportPricesByRoute(mockRoute, extremePrices);
-      
+
       expect(result).not.toBeNull();
       expect(result!.aggregation.priceRangePercentage).toBe(900);
       expect(result!.operatorPrices[1].percentageDifferenceFromCheapest).toBe(900);

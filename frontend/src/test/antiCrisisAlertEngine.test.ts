@@ -34,7 +34,7 @@ describe('Anti-Crisis Alert Engine', () => {
     it('should not alert when score unchanged', () => {
       // First observation
       shouldTriggerAntiCrisisAlert(testId, 2);
-      
+
       // Second observation with same score
       const trigger = shouldTriggerAntiCrisisAlert(testId, 2);
 
@@ -47,7 +47,7 @@ describe('Anti-Crisis Alert Engine', () => {
     it('should not alert when score decreases', () => {
       // Start with score 2
       shouldTriggerAntiCrisisAlert(testId, 2);
-      
+
       // Score drops to 1
       const trigger = shouldTriggerAntiCrisisAlert(testId, 1);
 
@@ -60,7 +60,7 @@ describe('Anti-Crisis Alert Engine', () => {
     it('should alert when score goes from <2 to ≥2 (becomes Anti-Crisis)', () => {
       // Start with score 1
       shouldTriggerAntiCrisisAlert(testId, 1);
-      
+
       // Score improves to 2
       const trigger = shouldTriggerAntiCrisisAlert(testId, 2);
 
@@ -74,7 +74,7 @@ describe('Anti-Crisis Alert Engine', () => {
     it('should alert when score goes from 2 to 3 (becomes Strong)', () => {
       // Start with score 2
       shouldTriggerAntiCrisisAlert(testId, 2);
-      
+
       // Score improves to 3
       const trigger = shouldTriggerAntiCrisisAlert(testId, 3);
 
@@ -221,10 +221,10 @@ describe('Anti-Crisis Alert Engine', () => {
     it('should clear alert state for an item', () => {
       // Create some state
       shouldTriggerAntiCrisisAlert(testId, 2);
-      
+
       // Reset
       resetAlertState(testId);
-      
+
       // Should behave like first observation again
       const trigger = shouldTriggerAntiCrisisAlert(testId, 2);
       expect(trigger.reason).toContain('First observation');

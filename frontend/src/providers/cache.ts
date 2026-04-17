@@ -84,7 +84,8 @@ function loadFromStorage(): void {
     memoryCache.set(key, {
       value: entry.value,
       updatedAt: entry.updatedAt,
-      lastAccessedAt: typeof entry.lastAccessedAt === 'number' ? entry.lastAccessedAt : entry.updatedAt,
+      lastAccessedAt:
+        typeof entry.lastAccessedAt === 'number' ? entry.lastAccessedAt : entry.updatedAt,
     });
   });
 }
@@ -92,7 +93,9 @@ function loadFromStorage(): void {
 function persistToStorage(): void {
   if (!isBrowser || storageDisabled) return;
 
-  const sorted = Array.from(memoryCache.entries()).sort((a, b) => b[1].lastAccessedAt - a[1].lastAccessedAt);
+  const sorted = Array.from(memoryCache.entries()).sort(
+    (a, b) => b[1].lastAccessedAt - a[1].lastAccessedAt
+  );
   const trimmed = sorted.slice(0, MAX_ENTRIES);
 
   const entries: Record<string, CacheEntry<unknown>> = {};

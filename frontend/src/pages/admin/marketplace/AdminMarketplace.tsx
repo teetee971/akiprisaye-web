@@ -12,9 +12,20 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
-  Building2, CheckCircle, XCircle, AlertCircle, Clock,
-  Search, Filter, Eye, Slash, RotateCcw,
-  BarChart3, CreditCard, FileText, Shield,
+  Building2,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Clock,
+  Search,
+  Filter,
+  Eye,
+  Slash,
+  RotateCcw,
+  BarChart3,
+  CreditCard,
+  FileText,
+  Shield,
 } from 'lucide-react';
 import {
   getAllMerchants,
@@ -37,14 +48,32 @@ import type {
 
 function StatusBadge({ status }: { status: MerchantStatus }) {
   const cfg = {
-    PENDING:   { label: 'En attente',  cls: 'bg-yellow-600/20 text-yellow-300 border-yellow-600/30', icon: <Clock className="w-3 h-3" /> },
-    APPROVED:  { label: 'Approuvé',    cls: 'bg-green-600/20 text-green-300 border-green-600/30',   icon: <CheckCircle className="w-3 h-3" /> },
-    SUSPENDED: { label: 'Suspendu',    cls: 'bg-red-600/20 text-red-400 border-red-600/30',         icon: <XCircle className="w-3 h-3" /> },
-    REJECTED:  { label: 'Rejeté',      cls: 'bg-orange-600/20 text-orange-300 border-orange-600/30', icon: <AlertCircle className="w-3 h-3" /> },
+    PENDING: {
+      label: 'En attente',
+      cls: 'bg-yellow-600/20 text-yellow-300 border-yellow-600/30',
+      icon: <Clock className="w-3 h-3" />,
+    },
+    APPROVED: {
+      label: 'Approuvé',
+      cls: 'bg-green-600/20 text-green-300 border-green-600/30',
+      icon: <CheckCircle className="w-3 h-3" />,
+    },
+    SUSPENDED: {
+      label: 'Suspendu',
+      cls: 'bg-red-600/20 text-red-400 border-red-600/30',
+      icon: <XCircle className="w-3 h-3" />,
+    },
+    REJECTED: {
+      label: 'Rejeté',
+      cls: 'bg-orange-600/20 text-orange-300 border-orange-600/30',
+      icon: <AlertCircle className="w-3 h-3" />,
+    },
   };
   const c = cfg[status];
   return (
-    <span className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${c.cls}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border ${c.cls}`}
+    >
       {c.icon} {c.label}
     </span>
   );
@@ -66,13 +95,46 @@ function ActionModal({
   const [reason, setReason] = useState('');
   const requiresReason = action === 'REJECT' || action === 'SUSPEND';
 
-  const labels: Record<AdminActionType, { title: string; desc: string; btn: string; btnCls: string }> = {
-    APPROVE:         { title: 'Approuver l\'enseigne', desc: 'Le compte sera activé et l\'enseigne apparaîtra dans le comparateur.', btn: 'Approuver', btnCls: 'bg-green-600 hover:bg-green-700' },
-    REJECT:          { title: 'Rejeter le dossier', desc: 'L\'enseigne sera notifiée par email avec le motif de rejet.', btn: 'Rejeter', btnCls: 'bg-orange-600 hover:bg-orange-700' },
-    SUSPEND:         { title: 'Suspendre le compte', desc: 'L\'enseigne ne sera plus visible dans le comparateur.', btn: 'Suspendre', btnCls: 'bg-red-600 hover:bg-red-700' },
-    REACTIVATE:      { title: 'Réactiver le compte', desc: 'Le compte sera de nouveau actif.', btn: 'Réactiver', btnCls: 'bg-blue-600 hover:bg-blue-700' },
-    PRICE_FLAG:      { title: 'Signaler un prix', desc: 'Un avertissement sera ajouté au journal d\'audit.', btn: 'Signaler', btnCls: 'bg-yellow-600 hover:bg-yellow-700' },
-    DATA_CORRECTION: { title: 'Signaler données incorrectes', desc: 'Une correction sera demandée à l\'enseigne.', btn: 'Signaler', btnCls: 'bg-yellow-600 hover:bg-yellow-700' },
+  const labels: Record<
+    AdminActionType,
+    { title: string; desc: string; btn: string; btnCls: string }
+  > = {
+    APPROVE: {
+      title: "Approuver l'enseigne",
+      desc: "Le compte sera activé et l'enseigne apparaîtra dans le comparateur.",
+      btn: 'Approuver',
+      btnCls: 'bg-green-600 hover:bg-green-700',
+    },
+    REJECT: {
+      title: 'Rejeter le dossier',
+      desc: "L'enseigne sera notifiée par email avec le motif de rejet.",
+      btn: 'Rejeter',
+      btnCls: 'bg-orange-600 hover:bg-orange-700',
+    },
+    SUSPEND: {
+      title: 'Suspendre le compte',
+      desc: "L'enseigne ne sera plus visible dans le comparateur.",
+      btn: 'Suspendre',
+      btnCls: 'bg-red-600 hover:bg-red-700',
+    },
+    REACTIVATE: {
+      title: 'Réactiver le compte',
+      desc: 'Le compte sera de nouveau actif.',
+      btn: 'Réactiver',
+      btnCls: 'bg-blue-600 hover:bg-blue-700',
+    },
+    PRICE_FLAG: {
+      title: 'Signaler un prix',
+      desc: "Un avertissement sera ajouté au journal d'audit.",
+      btn: 'Signaler',
+      btnCls: 'bg-yellow-600 hover:bg-yellow-700',
+    },
+    DATA_CORRECTION: {
+      title: 'Signaler données incorrectes',
+      desc: "Une correction sera demandée à l'enseigne.",
+      btn: 'Signaler',
+      btnCls: 'bg-yellow-600 hover:bg-yellow-700',
+    },
   };
 
   const cfg = labels[action];
@@ -88,7 +150,9 @@ function ActionModal({
 
         {requiresReason && (
           <div className="mb-4">
-            <label htmlFor="marketplace-motif" className="block text-sm text-gray-300 mb-1">Motif * (obligatoire)</label>
+            <label htmlFor="marketplace-motif" className="block text-sm text-gray-300 mb-1">
+              Motif * (obligatoire)
+            </label>
             <textarea
               id="marketplace-motif"
               value={reason}
@@ -145,8 +209,12 @@ function MerchantRow({
       </td>
       <td className="py-4 pr-4 text-sm text-gray-300">{plan?.label ?? merchant.plan}</td>
       <td className="py-4 pr-4 text-sm text-gray-300 uppercase">{merchant.territoire}</td>
-      <td className="py-4 pr-4 text-sm text-gray-400">{new Date(merchant.createdAt).toLocaleDateString('fr-FR')}</td>
-      <td className="py-4 pr-4 text-sm text-gray-300">{paidInvoices.length} facture{paidInvoices.length !== 1 ? 's' : ''}</td>
+      <td className="py-4 pr-4 text-sm text-gray-400">
+        {new Date(merchant.createdAt).toLocaleDateString('fr-FR')}
+      </td>
+      <td className="py-4 pr-4 text-sm text-gray-300">
+        {paidInvoices.length} facture{paidInvoices.length !== 1 ? 's' : ''}
+      </td>
       <td className="py-4">
         <div className="flex items-center gap-1 flex-wrap">
           {merchant.status === 'PENDING' && (
@@ -206,7 +274,10 @@ export default function AdminMarketplace() {
   const [filter, setFilter] = useState<MerchantStatus | 'ALL'>('ALL');
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'merchants' | 'audit' | 'stats'>('merchants');
-  const [pendingAction, setPendingAction] = useState<{ merchant: MerchantProfile; action: AdminActionType } | null>(null);
+  const [pendingAction, setPendingAction] = useState<{
+    merchant: MerchantProfile;
+    action: AdminActionType;
+  } | null>(null);
   const [totalRevenue, setTotalRevenue] = useState(0);
 
   useEffect(() => {
@@ -226,7 +297,12 @@ export default function AdminMarketplace() {
   const handleConfirm = (reason: string) => {
     if (!pendingAction) return;
     const actingAdminId = auth?.currentUser?.uid || 'admin_platform';
-    adminChangeMerchantStatus(pendingAction.merchant.id, actingAdminId, pendingAction.action, reason);
+    adminChangeMerchantStatus(
+      pendingAction.merchant.id,
+      actingAdminId,
+      pendingAction.action,
+      reason
+    );
     setPendingAction(null);
     reload();
   };
@@ -248,11 +324,11 @@ export default function AdminMarketplace() {
   });
 
   const counts = {
-    ALL:       merchants.length,
-    PENDING:   merchants.filter((m) => m.status === 'PENDING').length,
-    APPROVED:  merchants.filter((m) => m.status === 'APPROVED').length,
+    ALL: merchants.length,
+    PENDING: merchants.filter((m) => m.status === 'PENDING').length,
+    APPROVED: merchants.filter((m) => m.status === 'APPROVED').length,
     SUSPENDED: merchants.filter((m) => m.status === 'SUSPENDED').length,
-    REJECTED:  merchants.filter((m) => m.status === 'REJECTED').length,
+    REJECTED: merchants.filter((m) => m.status === 'REJECTED').length,
   };
 
   return (
@@ -270,7 +346,9 @@ export default function AdminMarketplace() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">Administration Marketplace</h1>
-              <p className="text-gray-400 text-sm">Validation, modération et contrôle des enseignes</p>
+              <p className="text-gray-400 text-sm">
+                Validation, modération et contrôle des enseignes
+              </p>
             </div>
           </div>
 
@@ -296,16 +374,20 @@ export default function AdminMarketplace() {
 
           {/* Navigation onglets */}
           <div className="flex gap-2 mb-6">
-            {([
-              { id: 'merchants', label: 'Enseignes', icon: Building2 },
-              { id: 'audit',     label: 'Journal d\'audit', icon: FileText },
-              { id: 'stats',     label: 'Statistiques', icon: BarChart3 },
-            ] as const).map(({ id, label, icon: Icon }) => (
+            {(
+              [
+                { id: 'merchants', label: 'Enseignes', icon: Building2 },
+                { id: 'audit', label: "Journal d'audit", icon: FileText },
+                { id: 'stats', label: 'Statistiques', icon: BarChart3 },
+              ] as const
+            ).map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
                 onClick={() => setActiveTab(id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  activeTab === id ? 'bg-purple-600 text-white' : 'bg-white/[0.05] text-gray-400 hover:text-white'
+                  activeTab === id
+                    ? 'bg-purple-600 text-white'
+                    : 'bg-white/[0.05] text-gray-400 hover:text-white'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -335,7 +417,9 @@ export default function AdminMarketplace() {
                       key={s}
                       onClick={() => setFilter(s)}
                       className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                        filter === s ? 'bg-purple-600 text-white' : 'bg-white/[0.05] text-gray-400 hover:text-white'
+                        filter === s
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-white/[0.05] text-gray-400 hover:text-white'
                       }`}
                     >
                       {s === 'ALL' ? `Toutes (${counts.ALL})` : `${s} (${counts[s]})`}
@@ -379,7 +463,8 @@ export default function AdminMarketplace() {
           {activeTab === 'audit' && (
             <div>
               <p className="text-gray-400 text-sm mb-4">
-                Journal immuable de toutes les actions admin. Chaque entrée est horodatée et conservée définitivement.
+                Journal immuable de toutes les actions admin. Chaque entrée est horodatée et
+                conservée définitivement.
               </p>
               {auditLog.length === 0 ? (
                 <div className="text-center py-12 text-gray-400">
@@ -391,7 +476,10 @@ export default function AdminMarketplace() {
                   {auditLog.map((log) => {
                     const m = merchants.find((x) => x.id === log.merchantId);
                     return (
-                      <div key={log.id} className="bg-white/[0.04] border border-white/10 rounded-xl p-4 flex items-start gap-4 text-sm">
+                      <div
+                        key={log.id}
+                        className="bg-white/[0.04] border border-white/10 rounded-xl p-4 flex items-start gap-4 text-sm"
+                      >
                         <div className="flex-shrink-0 w-8 h-8 bg-purple-600/20 rounded-lg flex items-center justify-center">
                           <Shield className="w-4 h-4 text-purple-400" />
                         </div>
@@ -399,14 +487,17 @@ export default function AdminMarketplace() {
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="text-white font-medium">{log.actionType}</span>
                             <span className="text-gray-500">→</span>
-                            <span className="text-gray-300">{m?.nomCommercial ?? log.merchantId}</span>
-                            <span className="text-gray-500 text-xs">{log.previousStatus} → {log.newStatus}</span>
+                            <span className="text-gray-300">
+                              {m?.nomCommercial ?? log.merchantId}
+                            </span>
+                            <span className="text-gray-500 text-xs">
+                              {log.previousStatus} → {log.newStatus}
+                            </span>
                           </div>
-                          {log.reason && (
-                            <p className="text-gray-400 text-xs mt-1">{log.reason}</p>
-                          )}
+                          {log.reason && <p className="text-gray-400 text-xs mt-1">{log.reason}</p>}
                           <p className="text-gray-500 text-xs mt-1">
-                            Admin : {log.adminId} · {new Date(log.createdAt).toLocaleString('fr-FR')}
+                            Admin : {log.adminId} ·{' '}
+                            {new Date(log.createdAt).toLocaleString('fr-FR')}
                           </p>
                         </div>
                       </div>
@@ -424,7 +515,10 @@ export default function AdminMarketplace() {
                 {MARKETPLACE_PLANS.map((plan) => {
                   const count = merchants.filter((m) => m.plan === plan.id).length;
                   return (
-                    <div key={plan.id} className="bg-white/[0.05] border border-white/10 rounded-xl p-5">
+                    <div
+                      key={plan.id}
+                      className="bg-white/[0.05] border border-white/10 rounded-xl p-5"
+                    >
                       <div className="text-xs text-gray-400 mb-1">{plan.label}</div>
                       <div className="text-3xl font-bold text-white">{count}</div>
                       <div className="text-sm text-gray-400">enseigne{count !== 1 ? 's' : ''}</div>
@@ -436,29 +530,33 @@ export default function AdminMarketplace() {
                 })}
                 <div className="bg-green-600/10 border border-green-600/20 rounded-xl p-5">
                   <div className="text-xs text-green-400/70 mb-1">Revenus totaux (payés)</div>
-                  <div className="text-3xl font-bold text-green-300">{totalRevenue.toFixed(2)} €</div>
+                  <div className="text-3xl font-bold text-green-300">
+                    {totalRevenue.toFixed(2)} €
+                  </div>
                   <div className="text-sm text-green-400/70">TTC</div>
                 </div>
               </div>
 
               <div className="bg-white/[0.05] border border-white/10 rounded-xl p-5">
                 <h3 className="text-white font-semibold mb-4">Répartition par territoire</h3>
-                {['gp', 'mq', 'gf', 're', 'yt', 'pf', 'nc', 'wf', 'mf', 'bl', 'pm', 'fr'].map((terr) => {
-                  const count = merchants.filter((m) => m.territoire === terr).length;
-                  if (count === 0) return null;
-                  return (
-                    <div key={terr} className="flex items-center gap-3 mb-2">
-                      <span className="text-gray-400 text-sm w-12 uppercase">{terr}</span>
-                      <div className="flex-1 bg-white/10 rounded-full h-2 overflow-hidden">
-                        <div
-                          className="h-full bg-purple-500 rounded-full"
-                          style={{ width: `${(count / merchants.length) * 100}%` }}
-                        />
+                {['gp', 'mq', 'gf', 're', 'yt', 'pf', 'nc', 'wf', 'mf', 'bl', 'pm', 'fr'].map(
+                  (terr) => {
+                    const count = merchants.filter((m) => m.territoire === terr).length;
+                    if (count === 0) return null;
+                    return (
+                      <div key={terr} className="flex items-center gap-3 mb-2">
+                        <span className="text-gray-400 text-sm w-12 uppercase">{terr}</span>
+                        <div className="flex-1 bg-white/10 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="h-full bg-purple-500 rounded-full"
+                            style={{ width: `${(count / merchants.length) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-white text-sm w-8 text-right">{count}</span>
                       </div>
-                      <span className="text-white text-sm w-8 text-right">{count}</span>
-                    </div>
-                  );
-                })}
+                    );
+                  }
+                )}
               </div>
             </div>
           )}

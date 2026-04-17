@@ -19,7 +19,7 @@ export function usePriceStats(prices: number[]) {
       median: calculateMedian(prices),
       range: sorted[sorted.length - 1] - sorted[0],
       variance: calculateVariance(prices),
-      stdDev: calculateStdDev(prices)
+      stdDev: calculateStdDev(prices),
     };
   }, [prices]);
 }

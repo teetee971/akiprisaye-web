@@ -65,10 +65,7 @@ function getSessionId(): string {
     // Prefer native crypto.randomUUID when available
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
       _sessionId = crypto.randomUUID();
-    } else if (
-      typeof crypto !== 'undefined' &&
-      typeof crypto.getRandomValues === 'function'
-    ) {
+    } else if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
       // Fallback: generate a UUID-like value from cryptographically secure random bytes
       const bytes = new Uint8Array(16);
       crypto.getRandomValues(bytes);
@@ -133,10 +130,10 @@ export async function getMyBatimentCalculations(): Promise<BatimentCalcRecord[]>
     const q = query(
       collection(db, COLLECTION),
       where('userId', '==', userId),
-      orderBy('createdAt', 'desc'),
+      orderBy('createdAt', 'desc')
     );
     const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as BatimentCalcRecord));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as BatimentCalcRecord);
   } catch {
     return [];
   }
@@ -149,7 +146,7 @@ export async function getAllBatimentCalculations(): Promise<BatimentCalcRecord[]
   try {
     const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
     const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as BatimentCalcRecord));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as BatimentCalcRecord);
   } catch {
     return [];
   }
@@ -159,31 +156,31 @@ export async function getAllBatimentCalculations(): Promise<BatimentCalcRecord[]
 
 export const CALC_TYPE_LABELS: Record<string, string> = {
   // ── Gros œuvre ──
-  'parpaing':        'Parpaing / Bloc US',
-  'dalle-beton':     'Dalle béton',
-  'fondations':      'Fondations',
-  'chape':           'Chape de sol',
+  parpaing: 'Parpaing / Bloc US',
+  'dalle-beton': 'Dalle béton',
+  fondations: 'Fondations',
+  chape: 'Chape de sol',
   // ── Finitions ──
-  'carrelage':       'Carrelage',
-  'peinture':        'Peinture',
-  'enduit':          'Enduit / Crépissage',
+  carrelage: 'Carrelage',
+  peinture: 'Peinture',
+  enduit: 'Enduit / Crépissage',
   // ── Extérieur ──
-  'toles':           'Tôles de couverture',
-  'terrassement':    'Terrassement',
-  'cloture':         'Clôture',
+  toles: 'Tôles de couverture',
+  terrassement: 'Terrassement',
+  cloture: 'Clôture',
   // ── Outils ──
-  'beton-courant':   'Béton courant',
-  'escalier':        'Escalier',
+  'beton-courant': 'Béton courant',
+  escalier: 'Escalier',
   // ── Électricité & Plomberie ──
-  'electricite':     'Section câble électrique',
-  'plomberie':       'Tuyauterie / Plomberie',
-  'isolation':       'Isolation thermique',
-  'charpente':       'Charpente bois',
+  electricite: 'Section câble électrique',
+  plomberie: 'Tuyauterie / Plomberie',
+  isolation: 'Isolation thermique',
+  charpente: 'Charpente bois',
   // ── Second œuvre & Aménagement ──
-  'platrerie':       'Plâtrerie / Plaques BA13',
-  'parquet':         'Parquet & Sols stratifiés',
-  'gouttiere':       'Gouttières & Descentes EP',
-  'menuiserie':      'Menuiserie extérieure',
+  platrerie: 'Plâtrerie / Plaques BA13',
+  parquet: 'Parquet & Sols stratifiés',
+  gouttiere: 'Gouttières & Descentes EP',
+  menuiserie: 'Menuiserie extérieure',
 };
 
 export const TERRITORY_LABELS: Record<string, string> = {

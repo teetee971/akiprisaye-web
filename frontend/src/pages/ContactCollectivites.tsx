@@ -29,7 +29,7 @@ export default function ContactCollectivites() {
     besoin: '',
     message: '',
   });
-  
+
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -40,13 +40,13 @@ export default function ContactCollectivites() {
     'Préfecture',
     'Observatoire des prix',
     'CCI (Chambre de Commerce)',
-    'Association d\'intérêt général',
+    "Association d'intérêt général",
     'Établissement public',
     'Autre organisme public',
   ];
 
   const besoins = [
-    'Découverte de l\'outil',
+    "Découverte de l'outil",
     'Demande de devis',
     'Démonstration en ligne',
     'Présentation en préfecture/mairie',
@@ -57,22 +57,22 @@ export default function ContactCollectivites() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
-    if (!formData.organisme.trim()) newErrors.organisme = 'Nom de l\'organisme requis';
-    if (!formData.typeOrganisme) newErrors.typeOrganisme = 'Type d\'organisme requis';
+
+    if (!formData.organisme.trim()) newErrors.organisme = "Nom de l'organisme requis";
+    if (!formData.typeOrganisme) newErrors.typeOrganisme = "Type d'organisme requis";
     if (!formData.nom.trim()) newErrors.nom = 'Nom requis';
     if (!formData.email.trim()) newErrors.email = 'Email requis';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Email invalide';
     if (!formData.besoin) newErrors.besoin = 'Objet de la demande requis';
     if (!formData.message.trim()) newErrors.message = 'Message requis';
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -82,7 +82,11 @@ export default function ContactCollectivites() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ ...formData, submittedAt: new Date().toISOString(), type: 'collectivite' }),
+        body: JSON.stringify({
+          ...formData,
+          submittedAt: new Date().toISOString(),
+          type: 'collectivite',
+        }),
       });
       // Accept any 2xx or gracefully degrade if endpoint not deployed
       if (!res.ok && res.status !== 404 && res.status !== 405) {
@@ -92,19 +96,19 @@ export default function ContactCollectivites() {
       // If API not available, open mailto as fallback
       const subject = encodeURIComponent(`Demande collectivité — ${formData.organisme}`);
       const body = encodeURIComponent(
-        `Organisme: ${formData.organisme}\nType: ${formData.typeOrganisme}\nContact: ${formData.nom} (${formData.fonction})\nEmail: ${formData.email}\nTéléphone: ${formData.telephone}\nTerritoire: ${formData.territoire}\n\nMessage:\n${formData.message}`,
+        `Organisme: ${formData.organisme}\nType: ${formData.typeOrganisme}\nContact: ${formData.nom} (${formData.fonction})\nEmail: ${formData.email}\nTéléphone: ${formData.telephone}\nTerritoire: ${formData.territoire}\n\nMessage:\n${formData.message}`
       );
       window.open(`mailto:contact@akiprisaye.fr?subject=${subject}&body=${body}`);
     }
-    
+
     setSubmitted(true);
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -114,8 +118,18 @@ export default function ContactCollectivites() {
         <GlassCard className="max-w-2xl w-full text-center">
           <div className="mb-6">
             <div className="w-20 h-20 bg-green-600/20 border-2 border-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-10 h-10 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-10 h-10 text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
             <h2 className="text-3xl font-bold text-white mb-4">Message envoyé !</h2>
@@ -134,12 +148,10 @@ export default function ContactCollectivites() {
               </p>
             </div>
             <p className="text-gray-400 text-sm mb-6">
-              Un membre de notre équipe vous répondra dans un délai de <strong className="text-white">48 heures ouvrées</strong>.
+              Un membre de notre équipe vous répondra dans un délai de{' '}
+              <strong className="text-white">48 heures ouvrées</strong>.
             </p>
-            <CivicButton
-              variant="primary"
-              onClick={() => setSubmitted(false)}
-            >
+            <CivicButton variant="primary" onClick={() => setSubmitted(false)}>
               Envoyer un nouveau message
             </CivicButton>
           </div>
@@ -157,8 +169,14 @@ export default function ContactCollectivites() {
           gradient="from-slate-950 to-blue-900"
           height="h-40 sm:h-52"
         >
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🏢 Contact Collectivités</h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Solutions institutionnelles pour les collectivités et administrations</p>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🏢 Contact Collectivités
+          </h1>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Solutions institutionnelles pour les collectivités et administrations
+          </p>
         </HeroImage>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -166,7 +184,7 @@ export default function ContactCollectivites() {
           <div className="md:col-span-2">
             <GlassCard>
               <h2 className="text-2xl font-bold text-white mb-6">Formulaire de contact</h2>
-              
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Organisme */}
                 <div>
@@ -183,7 +201,9 @@ export default function ContactCollectivites() {
                     aria-required="true"
                     aria-invalid={!!errors.organisme}
                   />
-                  {errors.organisme && <p className="text-red-400 text-sm mt-1">{errors.organisme}</p>}
+                  {errors.organisme && (
+                    <p className="text-red-400 text-sm mt-1">{errors.organisme}</p>
+                  )}
                 </div>
 
                 {/* Type Organisme */}
@@ -199,11 +219,15 @@ export default function ContactCollectivites() {
                     aria-required="true"
                   >
                     <option value="">Sélectionnez un type</option>
-                    {typesOrganismes.map(type => (
-                      <option key={type} value={type}>{type}</option>
+                    {typesOrganismes.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
                     ))}
                   </select>
-                  {errors.typeOrganisme && <p className="text-red-400 text-sm mt-1">{errors.typeOrganisme}</p>}
+                  {errors.typeOrganisme && (
+                    <p className="text-red-400 text-sm mt-1">{errors.typeOrganisme}</p>
+                  )}
                 </div>
 
                 {/* Nom et Fonction */}
@@ -223,7 +247,7 @@ export default function ContactCollectivites() {
                     />
                     {errors.nom && <p className="text-red-400 text-sm mt-1">{errors.nom}</p>}
                   </div>
-                  
+
                   <div>
                     <label htmlFor="fonction" className="block text-white font-medium mb-2">
                       Fonction
@@ -256,7 +280,7 @@ export default function ContactCollectivites() {
                     />
                     {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
                   </div>
-                  
+
                   <div>
                     <label htmlFor="telephone" className="block text-white font-medium mb-2">
                       Téléphone
@@ -315,8 +339,10 @@ export default function ContactCollectivites() {
                     aria-required="true"
                   >
                     <option value="">Sélectionnez un objet</option>
-                    {besoins.map(besoin => (
-                      <option key={besoin} value={besoin}>{besoin}</option>
+                    {besoins.map((besoin) => (
+                      <option key={besoin} value={besoin}>
+                        {besoin}
+                      </option>
                     ))}
                   </select>
                   {errors.besoin && <p className="text-red-400 text-sm mt-1">{errors.besoin}</p>}
@@ -342,17 +368,14 @@ export default function ContactCollectivites() {
                 {/* RGPD Notice */}
                 <LimitNote>
                   <p className="text-sm">
-                    <strong>Protection des données</strong>: Vos données sont utilisées uniquement pour traiter votre demande. 
-                    Elles ne sont jamais cédées à des tiers. Conformité RGPD. Vous disposez d'un droit d'accès, de rectification et de suppression.
+                    <strong>Protection des données</strong>: Vos données sont utilisées uniquement
+                    pour traiter votre demande. Elles ne sont jamais cédées à des tiers. Conformité
+                    RGPD. Vous disposez d'un droit d'accès, de rectification et de suppression.
                   </p>
                 </LimitNote>
 
                 {/* Submit */}
-                <CivicButton
-                  type="submit"
-                  variant="primary"
-                  className="w-full"
-                >
+                <CivicButton type="submit" variant="primary" className="w-full">
                   Envoyer la demande
                 </CivicButton>
               </form>
@@ -368,13 +391,18 @@ export default function ContactCollectivites() {
                 <div className="flex items-start gap-3">
                   <Mail className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-semibold text-white text-sm mb-1">Email institutionnel</div>
-                    <a href="mailto:institutions@akiprisaye.fr" className="text-sm text-blue-400 hover:underline">
+                    <div className="font-semibold text-white text-sm mb-1">
+                      Email institutionnel
+                    </div>
+                    <a
+                      href="mailto:institutions@akiprisaye.fr"
+                      className="text-sm text-blue-400 hover:underline"
+                    >
                       institutions@akiprisaye.fr
                     </a>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <Phone className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
                   <div>
@@ -382,7 +410,7 @@ export default function ContactCollectivites() {
                     <div className="text-sm">Sur rendez-vous uniquement</div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <MapPin className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
                   <div>
@@ -397,7 +425,9 @@ export default function ContactCollectivites() {
             <GlassCard>
               <h3 className="text-xl font-bold text-white mb-4">Horaires de réponse</h3>
               <div className="space-y-2 text-gray-300 text-sm">
-                <p><strong className="text-white">Lundi - Vendredi :</strong> 9h - 17h</p>
+                <p>
+                  <strong className="text-white">Lundi - Vendredi :</strong> 9h - 17h
+                </p>
                 <p className="text-xs">Réponse sous 48h ouvrées</p>
               </div>
             </GlassCard>
@@ -406,16 +436,16 @@ export default function ContactCollectivites() {
             <GlassCard>
               <h3 className="text-xl font-bold text-white mb-4">Documentation</h3>
               <div className="space-y-3">
-                <Link 
-                  to="/licence-institution" 
+                <Link
+                  to="/licence-institution"
                   className="flex items-center gap-3 p-3 bg-white/[0.05] hover:bg-white/[0.08] rounded-lg transition-colors"
                 >
                   <FileText className="w-5 h-5 text-blue-400" />
                   <span className="text-sm text-gray-300">Licence Institutionnelle</span>
                 </Link>
-                
-                <Link 
-                  to="/pricing" 
+
+                <Link
+                  to="/pricing"
                   className="flex items-center gap-3 p-3 bg-white/[0.05] hover:bg-white/[0.08] rounded-lg transition-colors"
                 >
                   <FileText className="w-5 h-5 text-green-400" />

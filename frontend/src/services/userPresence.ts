@@ -39,7 +39,7 @@ export async function writeUserPresence(uid: string): Promise<void> {
   await setDoc(
     doc(db, 'user_presence', uid),
     { uid, lastSeen: serverTimestamp() },
-    { merge: true },
+    { merge: true }
   );
 }
 
@@ -76,7 +76,7 @@ export interface OnlineUsersSnapshot {
  * Only documents with lastSeen ≤ PRESENCE_TTL_MS ago are counted.
  */
 export function subscribeOnlineUsers(
-  callback: (snapshot: OnlineUsersSnapshot) => void,
+  callback: (snapshot: OnlineUsersSnapshot) => void
 ): Unsubscribe {
   if (!db) {
     callback({ count: 0, uids: new Set(), lastSeenAt: null });
@@ -102,6 +102,6 @@ export function subscribeOnlineUsers(
 
       callback({ count: uids.size, uids, lastSeenAt });
     },
-    () => callback({ count: 0, uids: new Set(), lastSeenAt: null }),
+    () => callback({ count: 0, uids: new Set(), lastSeenAt: null })
   );
 }

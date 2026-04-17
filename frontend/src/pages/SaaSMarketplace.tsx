@@ -3,7 +3,15 @@
  * Route : /saas-marketplace
  */
 import { Helmet } from 'react-helmet-async';
-import { Store, Smartphone, MessageCircle, Mic, ExternalLink, CheckCircle, TrendingUp } from 'lucide-react';
+import {
+  Store,
+  Smartphone,
+  MessageCircle,
+  Mic,
+  ExternalLink,
+  CheckCircle,
+  TrendingUp,
+} from 'lucide-react';
 
 const SAAS_PRODUCTS = [
   {
@@ -110,7 +118,10 @@ export default function SaaSMarketplace() {
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <Helmet>
         <title>SaaS Marketplace — A KI PRI SA YÉ</title>
-        <meta name="description" content="Extensions navigateur, SDKs mobiles, chatbots et skills smart speakers basés sur les données de prix Akiprisaye." />
+        <meta
+          name="description"
+          content="Extensions navigateur, SDKs mobiles, chatbots et skills smart speakers basés sur les données de prix Akiprisaye."
+        />
       </Helmet>
 
       {/* Hero */}
@@ -120,12 +131,13 @@ export default function SaaSMarketplace() {
           <span className="text-indigo-400 text-sm">SaaS Marketplace</span>
         </div>
         <h1 className="text-4xl font-bold text-white mb-4">
-          Powered by Akiprisaye<br />
+          Powered by Akiprisaye
+          <br />
           <span className="text-indigo-400">Distribué partout</span>
         </h1>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-          Extensions, SDKs, chatbots et skills vocal. Distribuez les données de prix
-          DOM-TOM dans tous les canaux. Potentiel 210k€+/mois.
+          Extensions, SDKs, chatbots et skills vocal. Distribuez les données de prix DOM-TOM dans
+          tous les canaux. Potentiel 210k€+/mois.
         </p>
         <div className="mt-4 text-2xl font-bold text-white">
           Potentiel : <span className="text-indigo-400">210k€+/mois</span>
@@ -172,7 +184,9 @@ export default function SaaSMarketplace() {
                 ))}
               </ul>
 
-              <button className={`w-full border rounded-lg py-2 text-sm font-medium transition-colors border-current ${product.color} hover:bg-white/5`}>
+              <button
+                className={`w-full border rounded-lg py-2 text-sm font-medium transition-colors border-current ${product.color} hover:bg-white/5`}
+              >
                 {product.cta} <ExternalLink className="w-3.5 h-3.5 inline ml-1" />
               </button>
             </div>

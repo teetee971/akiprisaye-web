@@ -11,17 +11,17 @@ import { Card } from './ui/card.jsx';
 
 /** Territories that have real observatoire snapshots */
 const TERRITORY_STEMS = [
-  { code: 'GP', name: 'Guadeloupe',              flag: '🇬🇵', stem: 'guadeloupe' },
-  { code: 'MQ', name: 'Martinique',              flag: '🇲🇶', stem: 'martinique' },
-  { code: 'GF', name: 'Guyane',                  flag: '🇬🇫', stem: 'guyane' },
-  { code: 'RE', name: 'La Réunion',              flag: '🇷🇪', stem: 'la_r\u00e9union' },
-  { code: 'YT', name: 'Mayotte',                 flag: '🇾🇹', stem: 'mayotte' },
-  { code: 'BL', name: 'Saint-Barthélemy',        flag: '🇧🇱', stem: 'saint_barthelemy' },
-  { code: 'MF', name: 'Saint-Martin',            flag: '🇲🇫', stem: 'saint_martin' },
-  { code: 'PM', name: 'Saint-Pierre-et-Miquelon',flag: '🇵🇲', stem: 'saint_pierre_et_miquelon' },
+  { code: 'GP', name: 'Guadeloupe', flag: '🇬🇵', stem: 'guadeloupe' },
+  { code: 'MQ', name: 'Martinique', flag: '🇲🇶', stem: 'martinique' },
+  { code: 'GF', name: 'Guyane', flag: '🇬🇫', stem: 'guyane' },
+  { code: 'RE', name: 'La Réunion', flag: '🇷🇪', stem: 'la_r\u00e9union' },
+  { code: 'YT', name: 'Mayotte', flag: '🇾🇹', stem: 'mayotte' },
+  { code: 'BL', name: 'Saint-Barthélemy', flag: '🇧🇱', stem: 'saint_barthelemy' },
+  { code: 'MF', name: 'Saint-Martin', flag: '🇲🇫', stem: 'saint_martin' },
+  { code: 'PM', name: 'Saint-Pierre-et-Miquelon', flag: '🇵🇲', stem: 'saint_pierre_et_miquelon' },
 ];
 
-const CURRENT_MONTH  = '2026-03';
+const CURRENT_MONTH = '2026-03';
 const PREVIOUS_MONTH = '2026-02';
 const BASE_URL = typeof import.meta !== 'undefined' ? (import.meta.env?.BASE_URL ?? '/') : '/';
 
@@ -58,7 +58,7 @@ export function IndiceVieChere({ selectedTerritory = null }) {
     try {
       // Load hexagone as baseline
       const hexSnap = await fetchSnapshot('hexagone', CURRENT_MONTH);
-      const hexAvg  = avgPrices(hexSnap);
+      const hexAvg = avgPrices(hexSnap);
 
       const results = await Promise.all(
         TERRITORY_STEMS.map(async (t) => {
@@ -90,7 +90,7 @@ export function IndiceVieChere({ selectedTerritory = null }) {
             trend,
             trendPercent: Math.round(trendPercent * 10) / 10,
           };
-        }),
+        })
       );
 
       let data = results.filter(Boolean).sort((a, b) => b.vsMetropole - a.vsMetropole);
@@ -130,12 +130,8 @@ export function IndiceVieChere({ selectedTerritory = null }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-primary-500 to-primary-700 rounded-lg p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">
-          📊 Indice Vie Chère DOM-COM
-        </h2>
-        <p className="text-primary-50">
-          Comparaison des prix moyens par territoire
-        </p>
+        <h2 className="text-2xl font-bold mb-2">📊 Indice Vie Chère DOM-COM</h2>
+        <p className="text-primary-50">Comparaison des prix moyens par territoire</p>
       </div>
 
       {/* Category filter */}
@@ -180,9 +176,7 @@ export function IndiceVieChere({ selectedTerritory = null }) {
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-2xl">{indice.flag}</span>
-                  <h3 className="font-semibold text-lg">
-                    {indice.territoryName}
-                  </h3>
+                  <h3 className="font-semibold text-lg">{indice.territoryName}</h3>
                 </div>
                 {index === 0 && (
                   <span className="inline-block px-2 py-1 text-xs font-semibold bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 rounded">
@@ -199,40 +193,32 @@ export function IndiceVieChere({ selectedTerritory = null }) {
                 <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                   {indice.avgPrice.toFixed(0)}
                 </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  indice
-                </div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">indice</div>
               </div>
             </div>
 
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  vs Métropole
-                </span>
+                <span className="text-gray-600 dark:text-gray-400">vs Métropole</span>
                 <span className="font-semibold text-orange-600 dark:text-orange-400">
                   +{indice.vsMetropole.toFixed(1)}%
                 </span>
               </div>
 
               <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Produits
-                </span>
-                <span className="font-medium">
-                  {indice.productCount}
-                </span>
+                <span className="text-gray-600 dark:text-gray-400">Produits</span>
+                <span className="font-medium">{indice.productCount}</span>
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-gray-400">
-                  Tendance
-                </span>
-                <span className={`flex items-center gap-1 ${
-                  indice.trend === 'up'
-                    ? 'text-red-600 dark:text-red-400'
-                    : 'text-green-600 dark:text-green-400'
-                }`}>
+                <span className="text-gray-600 dark:text-gray-400">Tendance</span>
+                <span
+                  className={`flex items-center gap-1 ${
+                    indice.trend === 'up'
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-green-600 dark:text-green-400'
+                  }`}
+                >
                   {indice.trend === 'up' ? '↗' : '↘'}
                   {indice.trendPercent.toFixed(1)}%
                 </span>
@@ -251,8 +237,9 @@ export function IndiceVieChere({ selectedTerritory = null }) {
       {/* Footer info */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-800 dark:text-blue-200">
-          ℹ️ L'indice vie chère est calculé sur la base des prix moyens de {indices.reduce((sum, i) => sum + i.productCount, 0)} produits.
-          Données mises à jour quotidiennement.
+          ℹ️ L'indice vie chère est calculé sur la base des prix moyens de{' '}
+          {indices.reduce((sum, i) => sum + i.productCount, 0)} produits. Données mises à jour
+          quotidiennement.
         </p>
       </div>
     </div>

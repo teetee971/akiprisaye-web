@@ -5,9 +5,9 @@
  * Both "creator" and "admin" users are granted access.
  */
 
-import type { ReactElement } from "react";
+import type { ReactElement } from 'react';
 
-import RequireRole from "./RequireRole";
+import RequireRole from './RequireRole';
 
 interface RequireCreatorProps {
   children: ReactElement;

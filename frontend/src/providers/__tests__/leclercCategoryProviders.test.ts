@@ -66,11 +66,9 @@ const mockFetchOk = (observations: unknown[]) =>
     json: async () => ({ status: observations.length > 0 ? 'OK' : 'NO_DATA', observations }),
   });
 
-const mockFetchFail = () =>
-  vi.fn().mockRejectedValue(new Error('Network error'));
+const mockFetchFail = () => vi.fn().mockRejectedValue(new Error('Network error'));
 
-const mockFetchHttpError = (status: number) =>
-  vi.fn().mockResolvedValue({ ok: false, status });
+const mockFetchHttpError = (status: number) => vi.fn().mockResolvedValue({ ok: false, status });
 
 for (const { name, provider, envFlag } of PROVIDERS_UNDER_TEST) {
   describe(name, () => {
@@ -131,7 +129,7 @@ for (const { name, provider, envFlag } of PROVIDERS_UNDER_TEST) {
             observedAt: '2026-03-08',
             territory: 'gp',
           },
-        ]),
+        ])
       );
 
       const result = await provider.search({ query: 'produit test' }, makeController().signal);
@@ -162,7 +160,7 @@ for (const { name, provider, envFlag } of PROVIDERS_UNDER_TEST) {
           { productName: 'Prix négatif', price: -1, unit: 'unit' },
           { productName: 'Prix zéro', price: 0, unit: 'unit' },
           { productName: 'Prix absent', unit: 'unit' },
-        ]),
+        ])
       );
 
       const result = await provider.search({ query: 'produit' }, makeController().signal);
@@ -184,7 +182,7 @@ for (const { name, provider, envFlag } of PROVIDERS_UNDER_TEST) {
             ok: true,
             json: async () => ({ status: 'NO_DATA', observations: [] }),
           });
-        }),
+        })
       );
 
       await provider.search({ query: 'tondeuse', territory: 'gp' }, makeController().signal);

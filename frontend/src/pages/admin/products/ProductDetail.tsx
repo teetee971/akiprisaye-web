@@ -151,12 +151,8 @@ export function ProductDetail() {
           {/* Details */}
           <div className="md:col-span-2 space-y-6">
             <div>
-              <h1 className="text-3xl font-bold text-white/90 mb-2">
-                {product.name}
-              </h1>
-              {product.brand && (
-                <p className="text-lg text-white/70">{product.brand}</p>
-              )}
+              <h1 className="text-3xl font-bold text-white/90 mb-2">{product.name}</h1>
+              {product.brand && <p className="text-lg text-white/70">{product.brand}</p>}
             </div>
 
             {/* Info Grid */}
@@ -211,9 +207,7 @@ export function ProductDetail() {
             {/* Description */}
             {product.description && (
               <div>
-                <h3 className="text-lg font-semibold text-white/80 mb-2">
-                  Description
-                </h3>
+                <h3 className="text-lg font-semibold text-white/80 mb-2">Description</h3>
                 <p className="text-white/70 leading-relaxed">{product.description}</p>
               </div>
             )}
@@ -224,9 +218,7 @@ export function ProductDetail() {
       {/* Additional Info Card */}
       {(product.updatedAt || product.id) && (
         <GlassCard className="mt-6">
-          <h3 className="text-lg font-semibold text-white/80 mb-4">
-            Informations techniques
-          </h3>
+          <h3 className="text-lg font-semibold text-white/80 mb-4">Informations techniques</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-white/50">ID:</span>

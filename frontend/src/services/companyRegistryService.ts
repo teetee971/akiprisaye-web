@@ -25,9 +25,9 @@ const companyRegistry: Map<string, Company> = new Map();
 /**
  * Indexes
  */
-const siretIndex: Map<string, string> = new Map();            // SIRET -> companyId
-const sirenIndex: Map<string, Set<string>> = new Map();       // SIREN -> Set<companyId>
-const vatIndex: Map<string, string> = new Map();              // VAT -> companyId
+const siretIndex: Map<string, string> = new Map(); // SIRET -> companyId
+const sirenIndex: Map<string, Set<string>> = new Map(); // SIREN -> Set<companyId>
+const vatIndex: Map<string, string> = new Map(); // VAT -> companyId
 
 /* -------------------------------------------------------------------------- */
 /*                                   WRITE                                    */
@@ -78,7 +78,7 @@ export function getCompanyBySiret(siretCode: string): Company | null {
   if (!siret) return null;
 
   const id = siretIndex.get(siret);
-  return id ? companyRegistry.get(id) ?? null : null;
+  return id ? (companyRegistry.get(id) ?? null) : null;
 }
 
 export function getCompaniesBySiren(sirenCode: string): Company[] {
@@ -91,7 +91,7 @@ export function getCompaniesBySiren(sirenCode: string): Company[] {
   if (!idSet) return [];
 
   return Array.from(idSet)
-    .map(id => companyRegistry.get(id))
+    .map((id) => companyRegistry.get(id))
     .filter((c): c is Company => Boolean(c));
 }
 
@@ -102,7 +102,7 @@ export function getCompanyByVat(vatCode: string): Company | null {
   if (!vat) return null;
 
   const id = vatIndex.get(vat);
-  return id ? companyRegistry.get(id) ?? null : null;
+  return id ? (companyRegistry.get(id) ?? null) : null;
 }
 
 /**
@@ -122,10 +122,7 @@ export function getCompany(identifier: string): Company | null {
   if (isValidSiren(identifier)) {
     const companies = getCompaniesBySiren(identifier);
     if (companies.length > 0) {
-      return (
-        companies.find(c => c.siretCode?.endsWith('00001')) ??
-        companies[0]
-      );
+      return companies.find((c) => c.siretCode?.endsWith('00001')) ?? companies[0];
     }
   }
 
@@ -141,9 +138,7 @@ export function getCompany(identifier: string): Company | null {
 /*                                   SEARCH                                   */
 /* -------------------------------------------------------------------------- */
 
-export function searchCompanies(
-  criteria: CompanyLookupCriteria
-): Company[] {
+export function searchCompanies(criteria: CompanyLookupCriteria): Company[] {
   if (criteria.internalId) {
     const c = getCompanyById(criteria.internalId);
     return c ? [c] : [];
@@ -163,7 +158,7 @@ export function searchCompanies(
     return c ? [c] : [];
   }
 
-  return Array.from(companyRegistry.values()).filter(company => {
+  return Array.from(companyRegistry.values()).filter((company) => {
     let ok = true;
 
     if (criteria.legalName) {
@@ -177,9 +172,7 @@ export function searchCompanies(
     if (criteria.territory) {
       ok =
         ok &&
-        company.headOffice.department
-          .toLowerCase()
-          .includes(criteria.territory.toLowerCase());
+        company.headOffice.department.toLowerCase().includes(criteria.territory.toLowerCase());
     }
 
     return ok;
@@ -214,9 +207,5 @@ export function getEstablishments(sirenCode: string): Company[] {
 }
 
 export function getHeadquarters(sirenCode: string): Company | null {
-  return (
-    getCompaniesBySiren(sirenCode).find(c =>
-      c.siretCode?.endsWith('00001')
-    ) ?? null
-  );
+  return getCompaniesBySiren(sirenCode).find((c) => c.siretCode?.endsWith('00001')) ?? null;
 }

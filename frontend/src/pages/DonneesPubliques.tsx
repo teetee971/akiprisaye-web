@@ -254,7 +254,9 @@ export default function DonneesPubliques() {
           <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
             📂 Données Publiques
           </h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
             Accédez aux jeux de données ouverts de la plateforme
           </p>
         </HeroImage>
@@ -272,16 +274,22 @@ export default function DonneesPubliques() {
             </span>
           </div>
           <p className="text-sm text-slate-400">
-            Formats JSON lisibles par tous · Pas de cookie · Pas de tracker · Pas d’identifiants requis.
+            Formats JSON lisibles par tous · Pas de cookie · Pas de tracker · Pas d’identifiants
+            requis.
           </p>
         </div>
 
         <section className="space-y-4">
           {dataFiles.map((file) => (
-            <article key={file.name} className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-2">
+            <article
+              key={file.name}
+              className="bg-slate-900/60 border border-slate-800 rounded-xl p-5 space-y-2"
+            >
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-lg font-semibold text-white">{file.name}</h2>
-                <code className="text-xs bg-slate-800 px-2 py-1 rounded text-slate-200">{file.path}</code>
+                <code className="text-xs bg-slate-800 px-2 py-1 rounded text-slate-200">
+                  {file.path}
+                </code>
               </div>
               <p className="text-slate-300">{file.description}</p>
               <dl className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-slate-200">
@@ -318,7 +326,9 @@ export default function DonneesPubliques() {
                 <span className="text-2xl mr-3">🇫🇷</span>
                 <div>
                   <h3 className="font-semibold text-blue-200 text-sm">data.gouv.fr</h3>
-                  <p className="text-xs text-blue-400">Portail officiel des données ouvertes françaises — Licence Ouverte Etalab</p>
+                  <p className="text-xs text-blue-400">
+                    Portail officiel des données ouvertes françaises — Licence Ouverte Etalab
+                  </p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-blue-400 flex-shrink-0" />
@@ -334,7 +344,9 @@ export default function DonneesPubliques() {
                 <span className="text-2xl mr-3">⛽</span>
                 <div>
                   <h3 className="font-semibold text-blue-200 text-sm">prix-carburants.gouv.fr</h3>
-                  <p className="text-xs text-blue-400">Prix des carburants en temps réel — Open Data gouvernemental (XML)</p>
+                  <p className="text-xs text-blue-400">
+                    Prix des carburants en temps réel — Open Data gouvernemental (XML)
+                  </p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-blue-400 flex-shrink-0" />
@@ -350,7 +362,9 @@ export default function DonneesPubliques() {
                 <span className="text-2xl mr-3">🥫</span>
                 <div>
                   <h3 className="font-semibold text-blue-200 text-sm">Open Food Facts</h3>
-                  <p className="text-xs text-blue-400">Base mondiale de produits alimentaires — Licence ODbL</p>
+                  <p className="text-xs text-blue-400">
+                    Base mondiale de produits alimentaires — Licence ODbL
+                  </p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-blue-400 flex-shrink-0" />
@@ -366,7 +380,9 @@ export default function DonneesPubliques() {
                 <span className="text-2xl mr-3">🏷️</span>
                 <div>
                   <h3 className="font-semibold text-blue-200 text-sm">Open Prices API</h3>
-                  <p className="text-xs text-blue-400">Prix contributifs géolocalisés — ODbL — API REST gratuite</p>
+                  <p className="text-xs text-blue-400">
+                    Prix contributifs géolocalisés — ODbL — API REST gratuite
+                  </p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-blue-400 flex-shrink-0" />
@@ -380,7 +396,9 @@ export default function DonneesPubliques() {
                 <span className="text-2xl mr-3">✍️</span>
                 <div>
                   <h3 className="font-semibold text-emerald-200 text-sm">Contribuer aux données</h3>
-                  <p className="text-xs text-emerald-400">Partagez vos relevés de prix pour enrichir l'observatoire</p>
+                  <p className="text-xs text-emerald-400">
+                    Partagez vos relevés de prix pour enrichir l'observatoire
+                  </p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-emerald-400 flex-shrink-0" />
@@ -393,8 +411,12 @@ export default function DonneesPubliques() {
               <div className="flex items-center">
                 <span className="text-2xl mr-3">🔒</span>
                 <div>
-                  <h3 className="font-semibold text-emerald-200 text-sm">Politique de transparence</h3>
-                  <p className="text-xs text-emerald-400">Notre engagement pour des données fiables et ouvertes</p>
+                  <h3 className="font-semibold text-emerald-200 text-sm">
+                    Politique de transparence
+                  </h3>
+                  <p className="text-xs text-emerald-400">
+                    Notre engagement pour des données fiables et ouvertes
+                  </p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-emerald-400 flex-shrink-0" />
@@ -407,8 +429,12 @@ export default function DonneesPubliques() {
               <div className="flex items-center">
                 <span className="text-2xl mr-3">📜</span>
                 <div>
-                  <h3 className="font-semibold text-emerald-200 text-sm">Licences &amp; sources institutionnelles</h3>
-                  <p className="text-xs text-emerald-400">Cadre légal et sources officielles (INSEE, OPMR, DGCCRF…)</p>
+                  <h3 className="font-semibold text-emerald-200 text-sm">
+                    Licences &amp; sources institutionnelles
+                  </h3>
+                  <p className="text-xs text-emerald-400">
+                    Cadre légal et sources officielles (INSEE, OPMR, DGCCRF…)
+                  </p>
                 </div>
               </div>
               <ExternalLink className="w-4 h-4 text-emerald-400 flex-shrink-0" />

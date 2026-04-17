@@ -1,15 +1,26 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Ship, AlertCircle, Info, Car, BarChart3, Download, FileText, ExternalLink, CheckCircle2, XCircle, Award, TrendingDown } from 'lucide-react';
+import {
+  Ship,
+  AlertCircle,
+  Info,
+  Car,
+  BarChart3,
+  Download,
+  FileText,
+  ExternalLink,
+  CheckCircle2,
+  XCircle,
+  Award,
+  TrendingDown,
+} from 'lucide-react';
 import type {
   BoatPricePoint,
   BoatComparisonResult,
   BoatRoute,
   Port,
 } from '../types/boatComparison';
-import {
-  compareBoatPricesByRoute,
-} from '../services/boatComparisonService';
+import { compareBoatPricesByRoute } from '../services/boatComparisonService';
 import PriceChart from '../components/comparateur/LazyPriceChart';
 import ComparisonSummary from '../components/comparateur/ComparisonSummary';
 import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
@@ -74,9 +85,7 @@ const BoatComparator: React.FC = () => {
       origin: originPort,
       destination: destinationPort,
       routeType:
-        originPort.territory === destinationPort.territory
-          ? 'inter_island'
-          : 'inter_territory',
+        originPort.territory === destinationPort.territory ? 'inter_island' : 'inter_territory',
       islandGroup: 'Antilles',
     };
 
@@ -137,8 +146,8 @@ const BoatComparator: React.FC = () => {
   const passengerPriceChartData = useMemo(() => {
     if (!comparisonResult) return null;
 
-    const labels = comparisonResult.operators.map(r => r.boatPrice.operator);
-    const prices = comparisonResult.operators.map(r => r.boatPrice.pricing.passengerPrice);
+    const labels = comparisonResult.operators.map((r) => r.boatPrice.operator);
+    const prices = comparisonResult.operators.map((r) => r.boatPrice.pricing.passengerPrice);
 
     return {
       labels,
@@ -159,14 +168,16 @@ const BoatComparator: React.FC = () => {
     if (!comparisonResult) return null;
 
     const operatorsWithVehicles = comparisonResult.operators.filter(
-      r => r.boatPrice.pricing.vehiclePrice
+      (r) => r.boatPrice.pricing.vehiclePrice
     );
 
     if (operatorsWithVehicles.length === 0) return null;
 
-    const labels = operatorsWithVehicles.map(r => r.boatPrice.operator);
-    const carPrices = operatorsWithVehicles.map(r => r.boatPrice.pricing.vehiclePrice?.car || 0);
-    const motorcyclePrices = operatorsWithVehicles.map(r => r.boatPrice.pricing.vehiclePrice?.motorcycle || 0);
+    const labels = operatorsWithVehicles.map((r) => r.boatPrice.operator);
+    const carPrices = operatorsWithVehicles.map((r) => r.boatPrice.pricing.vehiclePrice?.car || 0);
+    const motorcyclePrices = operatorsWithVehicles.map(
+      (r) => r.boatPrice.pricing.vehiclePrice?.motorcycle || 0
+    );
 
     return {
       labels,
@@ -192,10 +203,10 @@ const BoatComparator: React.FC = () => {
   // Sorted operators for display
   const sortedOperators = useMemo(() => {
     if (!comparisonResult) return [];
-    
+
     const sorted = [...comparisonResult.operators].sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
         case 'price':
           comparison = a.boatPrice.pricing.passengerPrice - b.boatPrice.pricing.passengerPrice;
@@ -209,10 +220,10 @@ const BoatComparator: React.FC = () => {
           comparison = a.boatPrice.operator.localeCompare(b.boatPrice.operator);
           break;
       }
-      
+
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-    
+
     return sorted;
   }, [comparisonResult, sortBy, sortDirection]);
 
@@ -225,15 +236,16 @@ const BoatComparator: React.FC = () => {
   };
 
   const OPERATOR_BOOKING_URLS: Record<string, string> = {
-    'EXPR': 'https://www.express-des-iles.com/',
-    'JFF': 'https://www.jeansforfreedom.com/',
-    'CTM': 'https://www.ctm-martinique.com/',
-    'OMAN': 'https://www.omanferries.com/',
-    'DEFAULT': '#',
+    EXPR: 'https://www.express-des-iles.com/',
+    JFF: 'https://www.jeansforfreedom.com/',
+    CTM: 'https://www.ctm-martinique.com/',
+    OMAN: 'https://www.omanferries.com/',
+    DEFAULT: '#',
   };
 
   const getOperatorBookingUrl = (operatorCode: string, bookingUrl?: string): string => {
-    const base = bookingUrl || OPERATOR_BOOKING_URLS[operatorCode] || OPERATOR_BOOKING_URLS['DEFAULT'];
+    const base =
+      bookingUrl || OPERATOR_BOOKING_URLS[operatorCode] || OPERATOR_BOOKING_URLS['DEFAULT'];
     return buildBookingUrl(base, 'comparateur-bateaux');
   };
 
@@ -263,7 +275,12 @@ const BoatComparator: React.FC = () => {
           Observer, pas vendre · Données observatoire citoyennes
         </p>
         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300 mt-2">
-          🔄 Données du {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+          🔄 Données du{' '}
+          {new Date().toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
         </span>
       </HeroImage>
     </div>
@@ -274,11 +291,25 @@ const BoatComparator: React.FC = () => {
       <div className="min-h-screen bg-slate-950">
         <Helmet>
           <title>Comparateur Bateaux / Ferries — A KI PRI SA YÉ</title>
-          <meta name="description" content="Comparez les prix des traversées inter-îles en Antilles, transport de véhicules et passagers." />
-                <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux" />
-      </Helmet>
+          <meta
+            name="description"
+            content="Comparez les prix des traversées inter-îles en Antilles, transport de véhicules et passagers."
+          />
+          <link
+            rel="canonical"
+            href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux"
+          />
+          <link
+            rel="alternate"
+            hrefLang="fr"
+            href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux"
+          />
+          <link
+            rel="alternate"
+            hrefLang="x-default"
+            href="https://teetee971.github.io/akiprisaye-web/comparateur-bateaux"
+          />
+        </Helmet>
         {heroSection}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="space-y-6">
@@ -313,7 +344,10 @@ const BoatComparator: React.FC = () => {
     <div className="min-h-screen bg-slate-950">
       <Helmet>
         <title>Comparateur Bateaux / Ferries — A KI PRI SA YÉ</title>
-        <meta name="description" content="Comparez les prix des traversées inter-îles en Antilles, transport de véhicules et passagers. Données observatoire." />
+        <meta
+          name="description"
+          content="Comparez les prix des traversées inter-îles en Antilles, transport de véhicules et passagers. Données observatoire."
+        />
       </Helmet>
       {heroSection}
       {/* Main Content */}
@@ -325,7 +359,10 @@ const BoatComparator: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Origin */}
               <div>
-                <label htmlFor="bateau-port-depart" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="bateau-port-depart"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Port de départ
                 </label>
                 <select
@@ -366,7 +403,10 @@ const BoatComparator: React.FC = () => {
 
               {/* Destination */}
               <div>
-                <label htmlFor="bateau-port-arrivee" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="bateau-port-arrivee"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Port d'arrivée
                 </label>
                 <select
@@ -416,8 +456,10 @@ const BoatComparator: React.FC = () => {
                 worstPrice={comparisonResult.aggregation.passengerPricing.maxPrice}
                 averagePrice={comparisonResult.aggregation.passengerPricing.averagePrice}
                 savingsPercentage={
-                  ((comparisonResult.aggregation.passengerPricing.maxPrice - comparisonResult.aggregation.passengerPricing.minPrice) / 
-                  comparisonResult.aggregation.passengerPricing.maxPrice) * 100
+                  ((comparisonResult.aggregation.passengerPricing.maxPrice -
+                    comparisonResult.aggregation.passengerPricing.minPrice) /
+                    comparisonResult.aggregation.passengerPricing.maxPrice) *
+                  100
                 }
                 bestProvider={comparisonResult.operators[0].boatPrice.operator}
                 totalObservations={comparisonResult.aggregation.totalObservations}
@@ -542,39 +584,63 @@ const BoatComparator: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-slate-800">
                       {sortedOperators.map((ranking) => (
-                        <tr key={ranking.boatPrice.id} className="hover:bg-slate-800/30 transition-colors">
-                          <td className="px-3 py-3 font-medium text-white">{ranking.boatPrice.operator}</td>
-                          <td className="px-3 py-3 text-right font-semibold text-cyan-300">{formatPrice(ranking.boatPrice.pricing.passengerPrice)}</td>
-                          <td className="px-3 py-3 text-right text-gray-300">
-                            {ranking.boatPrice.pricing.childPrice ? formatPrice(ranking.boatPrice.pricing.childPrice) : '—'}
+                        <tr
+                          key={ranking.boatPrice.id}
+                          className="hover:bg-slate-800/30 transition-colors"
+                        >
+                          <td className="px-3 py-3 font-medium text-white">
+                            {ranking.boatPrice.operator}
+                          </td>
+                          <td className="px-3 py-3 text-right font-semibold text-cyan-300">
+                            {formatPrice(ranking.boatPrice.pricing.passengerPrice)}
                           </td>
                           <td className="px-3 py-3 text-right text-gray-300">
-                            {ranking.boatPrice.pricing.vehiclePrice?.car ? formatPrice(ranking.boatPrice.pricing.vehiclePrice.car) : '—'}
+                            {ranking.boatPrice.pricing.childPrice
+                              ? formatPrice(ranking.boatPrice.pricing.childPrice)
+                              : '—'}
                           </td>
-                          <td className="px-3 py-3 text-center text-gray-300">{ranking.boatPrice.schedule.duration}</td>
-                          <td className="px-3 py-3 text-center">
-                            {ranking.boatPrice.fareConditions.cabinAvailable
-                              ? <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
-                              : <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />}
+                          <td className="px-3 py-3 text-right text-gray-300">
+                            {ranking.boatPrice.pricing.vehiclePrice?.car
+                              ? formatPrice(ranking.boatPrice.pricing.vehiclePrice.car)
+                              : '—'}
                           </td>
-                          <td className="px-3 py-3 text-center">
-                            {ranking.boatPrice.fareConditions.mealsIncluded
-                              ? <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
-                              : <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />}
-                          </td>
-                          <td className="px-3 py-3 text-center">
-                            {ranking.boatPrice.fareConditions.refundable
-                              ? <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
-                              : <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />}
+                          <td className="px-3 py-3 text-center text-gray-300">
+                            {ranking.boatPrice.schedule.duration}
                           </td>
                           <td className="px-3 py-3 text-center">
-                            {ranking.boatPrice.fareConditions.changeable
-                              ? <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
-                              : <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />}
+                            {ranking.boatPrice.fareConditions.cabinAvailable ? (
+                              <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
+                            ) : (
+                              <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />
+                            )}
+                          </td>
+                          <td className="px-3 py-3 text-center">
+                            {ranking.boatPrice.fareConditions.mealsIncluded ? (
+                              <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
+                            ) : (
+                              <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />
+                            )}
+                          </td>
+                          <td className="px-3 py-3 text-center">
+                            {ranking.boatPrice.fareConditions.refundable ? (
+                              <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
+                            ) : (
+                              <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />
+                            )}
+                          </td>
+                          <td className="px-3 py-3 text-center">
+                            {ranking.boatPrice.fareConditions.changeable ? (
+                              <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
+                            ) : (
+                              <XCircle className="w-4 h-4 text-red-400/70 mx-auto" />
+                            )}
                           </td>
                           <td className="px-3 py-3 text-center">
                             <a
-                              href={getOperatorBookingUrl(ranking.boatPrice.operatorCode, (ranking.boatPrice as any).bookingUrl)}
+                              href={getOperatorBookingUrl(
+                                ranking.boatPrice.operatorCode,
+                                (ranking.boatPrice as any).bookingUrl
+                              )}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 px-2 py-1 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-lg transition-colors"
@@ -587,7 +653,9 @@ const BoatComparator: React.FC = () => {
                     </tbody>
                   </table>
                 </div>
-                <div className="mt-3"><BookingLinkBadge /></div>
+                <div className="mt-3">
+                  <BookingLinkBadge />
+                </div>
               </section>
 
               {/* Profile Recommendation */}
@@ -605,13 +673,24 @@ const BoatComparator: React.FC = () => {
                       <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <TrendingDown className="w-4 h-4 text-green-400" />
-                          <span className="text-sm font-semibold text-green-300">Meilleur prix passager</span>
+                          <span className="text-sm font-semibold text-green-300">
+                            Meilleur prix passager
+                          </span>
                         </div>
-                        <p className="text-white font-bold text-lg">{cheapest.boatPrice.operator}</p>
-                        <p className="text-2xl font-bold text-green-400">{formatPrice(cheapest.boatPrice.pricing.passengerPrice)}</p>
-                        <p className="text-xs text-gray-400 mt-1">Durée : {cheapest.boatPrice.schedule.duration}</p>
+                        <p className="text-white font-bold text-lg">
+                          {cheapest.boatPrice.operator}
+                        </p>
+                        <p className="text-2xl font-bold text-green-400">
+                          {formatPrice(cheapest.boatPrice.pricing.passengerPrice)}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Durée : {cheapest.boatPrice.schedule.duration}
+                        </p>
                         <a
-                          href={getOperatorBookingUrl(cheapest.boatPrice.operatorCode, (cheapest.boatPrice as any).bookingUrl)}
+                          href={getOperatorBookingUrl(
+                            cheapest.boatPrice.operatorCode,
+                            (cheapest.boatPrice as any).bookingUrl
+                          )}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-lg transition-colors"
@@ -623,20 +702,29 @@ const BoatComparator: React.FC = () => {
                   })()}
                   {/* Best for family */}
                   {(() => {
-                    const withChild = sortedOperators.filter(r => r.boatPrice.pricing.childPrice);
+                    const withChild = sortedOperators.filter((r) => r.boatPrice.pricing.childPrice);
                     if (!withChild.length) return null;
-                    const best = withChild.reduce((a, b) => (a.boatPrice.pricing.childPrice! < b.boatPrice.pricing.childPrice! ? a : b));
+                    const best = withChild.reduce((a, b) =>
+                      a.boatPrice.pricing.childPrice! < b.boatPrice.pricing.childPrice! ? a : b
+                    );
                     return (
                       <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <Award className="w-4 h-4 text-blue-400" />
-                          <span className="text-sm font-semibold text-blue-300">Meilleur pour famille</span>
+                          <span className="text-sm font-semibold text-blue-300">
+                            Meilleur pour famille
+                          </span>
                         </div>
                         <p className="text-white font-bold text-lg">{best.boatPrice.operator}</p>
-                        <p className="text-2xl font-bold text-blue-400">{formatPrice(best.boatPrice.pricing.childPrice!)}</p>
+                        <p className="text-2xl font-bold text-blue-400">
+                          {formatPrice(best.boatPrice.pricing.childPrice!)}
+                        </p>
                         <p className="text-xs text-gray-400 mt-1">Tarif enfant le plus bas</p>
                         <a
-                          href={getOperatorBookingUrl(best.boatPrice.operatorCode, (best.boatPrice as any).bookingUrl)}
+                          href={getOperatorBookingUrl(
+                            best.boatPrice.operatorCode,
+                            (best.boatPrice as any).bookingUrl
+                          )}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-lg transition-colors"
@@ -648,23 +736,34 @@ const BoatComparator: React.FC = () => {
                   })()}
                   {/* Best flexibility */}
                   {(() => {
-                    const flexible = sortedOperators.filter(r => r.boatPrice.fareConditions.changeable || r.boatPrice.fareConditions.refundable);
+                    const flexible = sortedOperators.filter(
+                      (r) =>
+                        r.boatPrice.fareConditions.changeable ||
+                        r.boatPrice.fareConditions.refundable
+                    );
                     if (!flexible.length) return null;
                     const best = flexible[0];
                     return (
                       <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <Award className="w-4 h-4 text-purple-400" />
-                          <span className="text-sm font-semibold text-purple-300">Meilleure flexibilité</span>
+                          <span className="text-sm font-semibold text-purple-300">
+                            Meilleure flexibilité
+                          </span>
                         </div>
                         <p className="text-white font-bold text-lg">{best.boatPrice.operator}</p>
                         <p className="text-xs text-gray-300 mt-1">
                           {best.boatPrice.fareConditions.changeable && '✓ Modifiable '}
                           {best.boatPrice.fareConditions.refundable && '✓ Remboursable'}
                         </p>
-                        <p className="text-2xl font-bold text-purple-400">{formatPrice(best.boatPrice.pricing.passengerPrice)}</p>
+                        <p className="text-2xl font-bold text-purple-400">
+                          {formatPrice(best.boatPrice.pricing.passengerPrice)}
+                        </p>
                         <a
-                          href={getOperatorBookingUrl(best.boatPrice.operatorCode, (best.boatPrice as any).bookingUrl)}
+                          href={getOperatorBookingUrl(
+                            best.boatPrice.operatorCode,
+                            (best.boatPrice as any).bookingUrl
+                          )}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 mt-3 px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-lg transition-colors"
@@ -739,7 +838,9 @@ const BoatComparator: React.FC = () => {
                             </div>
                             <div>
                               <p className="text-gray-400">Fréquence</p>
-                              <p className="font-semibold">{ranking.boatPrice.schedule.frequency}</p>
+                              <p className="font-semibold">
+                                {ranking.boatPrice.schedule.frequency}
+                              </p>
                             </div>
                           </div>
 
@@ -760,7 +861,9 @@ const BoatComparator: React.FC = () => {
                                   <div>
                                     <span className="text-gray-400">Moto:</span>{' '}
                                     <span className="font-semibold text-gray-200">
-                                      {formatPrice(ranking.boatPrice.pricing.vehiclePrice.motorcycle)}
+                                      {formatPrice(
+                                        ranking.boatPrice.pricing.vehiclePrice.motorcycle
+                                      )}
                                     </span>
                                   </div>
                                 )}
@@ -799,13 +902,14 @@ const BoatComparator: React.FC = () => {
                           )}
 
                           <div className="mt-3 text-xs text-gray-400">
-                            <p>
-                              Observation : {formatDate(ranking.boatPrice.observationDate)}
-                            </p>
+                            <p>Observation : {formatDate(ranking.boatPrice.observationDate)}</p>
                           </div>
                           <div className="mt-3">
                             <a
-                              href={getOperatorBookingUrl(ranking.boatPrice.operatorCode, (ranking.boatPrice as any).bookingUrl)}
+                              href={getOperatorBookingUrl(
+                                ranking.boatPrice.operatorCode,
+                                (ranking.boatPrice as any).bookingUrl
+                              )}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-medium rounded-lg transition-colors"
@@ -862,7 +966,10 @@ const BoatComparator: React.FC = () => {
                   {comparisonResult.vehicleTransportAnalysis.recommendations.length > 0 && (
                     <div className="mb-4 space-y-2">
                       {comparisonResult.vehicleTransportAnalysis.recommendations.map((rec, idx) => (
-                        <div key={idx} className="bg-orange-500/10 border border-orange-500/30 rounded p-3">
+                        <div
+                          key={idx}
+                          className="bg-orange-500/10 border border-orange-500/30 rounded p-3"
+                        >
                           <p className="text-sm text-orange-200">{rec}</p>
                         </div>
                       ))}
@@ -874,18 +981,29 @@ const BoatComparator: React.FC = () => {
                         <h3 className="text-sm font-semibold text-gray-200 mb-2">{op.operator}</h3>
                         <p className="text-xs text-gray-400 mb-2">
                           Disponibilité:{' '}
-                          <span className={`font-semibold ${
-                            op.availability === 'high' ? 'text-green-400' :
-                            op.availability === 'medium' ? 'text-yellow-400' : 'text-red-400'
-                          }`}>
-                            {op.availability === 'high' ? 'Élevée' : op.availability === 'medium' ? 'Moyenne' : 'Faible'}
+                          <span
+                            className={`font-semibold ${
+                              op.availability === 'high'
+                                ? 'text-green-400'
+                                : op.availability === 'medium'
+                                  ? 'text-yellow-400'
+                                  : 'text-red-400'
+                            }`}
+                          >
+                            {op.availability === 'high'
+                              ? 'Élevée'
+                              : op.availability === 'medium'
+                                ? 'Moyenne'
+                                : 'Faible'}
                           </span>
                         </p>
                         <div className="space-y-1">
                           {op.pricing.map((p) => (
                             <div key={p.vehicleType} className="text-xs">
                               <span className="text-gray-400 capitalize">{p.vehicleType}:</span>{' '}
-                              <span className="font-semibold text-gray-200">{formatPrice(p.price)}</span>
+                              <span className="font-semibold text-gray-200">
+                                {formatPrice(p.price)}
+                              </span>
                             </div>
                           ))}
                         </div>
@@ -918,7 +1036,8 @@ const BoatComparator: React.FC = () => {
             <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-8 text-center">
               <AlertCircle className="w-12 h-12 text-gray-500 mx-auto mb-4" />
               <p className="text-gray-400">
-                Aucune donnée disponible pour cette route. Veuillez sélectionner une autre combinaison.
+                Aucune donnée disponible pour cette route. Veuillez sélectionner une autre
+                combinaison.
               </p>
             </div>
           )}

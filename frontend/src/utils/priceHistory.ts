@@ -1,11 +1,11 @@
 import { safeLocalStorage } from './safeLocalStorage';
 /**
  * priceHistory.ts — Local price history tracking for baskets
- * 
+ *
  * Purpose: Track basket price evolution over time per territory
  * Storage: safeLocalStorage (lightweight) or IndexedDB for larger datasets
  * RGPD compliant - all data stored locally
- * 
+ *
  * @module priceHistory
  */
 
@@ -70,7 +70,7 @@ function getStoredHistory(): PriceHistoryData {
     }
 
     const data: PriceHistoryData = JSON.parse(stored);
-    
+
     // Version migration if needed
     if (data.version !== HISTORY_VERSION) {
       console.warn('Price history version mismatch, resetting history');
@@ -119,13 +119,13 @@ function cleanupOldSnapshots(data: PriceHistoryData, aggressive: boolean = false
   const cutoffTime = now - retentionMs;
 
   // Remove snapshots older than retention period
-  data.snapshots = data.snapshots.filter(s => s.timestamp > cutoffTime);
+  data.snapshots = data.snapshots.filter((s) => s.timestamp > cutoffTime);
 
   // If aggressive cleanup, also limit per-basket entries
   if (aggressive) {
     const basketGroups = new Map<string, BasketPriceSnapshot[]>();
-    
-    data.snapshots.forEach(snapshot => {
+
+    data.snapshots.forEach((snapshot) => {
       const key = `${snapshot.basketId}_${snapshot.territoryId}`;
       if (!basketGroups.has(key)) {
         basketGroups.set(key, []);
@@ -135,7 +135,7 @@ function cleanupOldSnapshots(data: PriceHistoryData, aggressive: boolean = false
 
     // Keep only most recent entries per basket-territory pair
     data.snapshots = [];
-    basketGroups.forEach(group => {
+    basketGroups.forEach((group) => {
       group.sort((a, b) => b.timestamp - a.timestamp);
       data.snapshots.push(...group.slice(0, MAX_ENTRIES_PER_BASKET));
     });
@@ -146,12 +146,12 @@ function cleanupOldSnapshots(data: PriceHistoryData, aggressive: boolean = false
 
 /**
  * Save a basket price snapshot
- * 
+ *
  * @param basketId - Unique basket identifier
  * @param territoryId - Territory code
  * @param totalPrice - Total basket price
  * @param date - Optional date (defaults to now)
- * 
+ *
  * @example
  * saveBasketSnapshot('basket-1', 'GP', 45.50);
  */
@@ -167,9 +167,7 @@ export function saveBasketSnapshot(
 
   // Check if we already have a snapshot for this basket-territory-date
   const existingIndex = data.snapshots.findIndex(
-    s => s.basketId === basketId && 
-         s.territoryId === territoryId && 
-         s.date === dateStr
+    (s) => s.basketId === basketId && s.territoryId === territoryId && s.date === dateStr
   );
 
   const snapshot: BasketPriceSnapshot = {
@@ -201,7 +199,7 @@ export function saveBasketSnapshot(
 
 /**
  * Get price history for a specific territory
- * 
+ *
  * @param territoryId - Territory code
  * @param basketId - Optional basket ID to filter
  * @returns Array of price snapshots sorted by timestamp (oldest first)
@@ -211,11 +209,11 @@ export function getHistoryByTerritory(
   basketId?: string
 ): BasketPriceSnapshot[] {
   const data = getStoredHistory();
-  
-  let filtered = data.snapshots.filter(s => s.territoryId === territoryId);
-  
+
+  let filtered = data.snapshots.filter((s) => s.territoryId === territoryId);
+
   if (basketId) {
-    filtered = filtered.filter(s => s.basketId === basketId);
+    filtered = filtered.filter((s) => s.basketId === basketId);
   }
 
   // Sort by timestamp ascending (oldest first)
@@ -224,25 +222,25 @@ export function getHistoryByTerritory(
 
 /**
  * Get price history for a specific basket across all territories
- * 
+ *
  * @param basketId - Basket identifier
  * @returns Array of price snapshots sorted by timestamp
  */
 export function getHistoryByBasket(basketId: string): BasketPriceSnapshot[] {
   const data = getStoredHistory();
   return data.snapshots
-    .filter(s => s.basketId === basketId)
+    .filter((s) => s.basketId === basketId)
     .sort((a, b) => a.timestamp - b.timestamp);
 }
 
 /**
  * Analyze price trend for a territory
- * 
+ *
  * @param territoryId - Territory code
  * @param period - Time period to analyze ('day', 'week', 'month')
  * @param basketId - Optional basket ID
  * @returns Trend analysis with direction and percentage change
- * 
+ *
  * @example
  * const trend = getTrend('GP', 'week', 'basket-1');
  * // Returns: { direction: 'up', percentageChange: 5.2, ... }
@@ -275,7 +273,7 @@ export function getTrend(
   const cutoffTime = now - periodMs[period];
 
   // Get snapshots within the period
-  const recentSnapshots = history.filter(s => s.timestamp >= cutoffTime);
+  const recentSnapshots = history.filter((s) => s.timestamp >= cutoffTime);
 
   if (recentSnapshots.length === 0) {
     return {
@@ -296,14 +294,13 @@ export function getTrend(
   const previousPrice = previousSnapshot.totalPrice;
 
   // Calculate percentage change
-  const percentageChange = previousPrice > 0
-    ? ((currentPrice - previousPrice) / previousPrice) * 100
-    : 0;
+  const percentageChange =
+    previousPrice > 0 ? ((currentPrice - previousPrice) / previousPrice) * 100 : 0;
 
   // Determine trend direction (threshold: 2% to avoid noise)
   const STABILITY_THRESHOLD = 2;
   let direction: TrendDirection = 'stable';
-  
+
   if (Math.abs(percentageChange) < STABILITY_THRESHOLD) {
     direction = 'stable';
   } else if (percentageChange > 0) {
@@ -323,12 +320,12 @@ export function getTrend(
 
 /**
  * Get all baskets with available history
- * 
+ *
  * @returns Array of basket IDs that have price history
  */
 export function getBasketsWithHistory(): string[] {
   const data = getStoredHistory();
-  const basketIds = new Set(data.snapshots.map(s => s.basketId));
+  const basketIds = new Set(data.snapshots.map((s) => s.basketId));
   return Array.from(basketIds);
 }
 
@@ -363,16 +360,13 @@ export function getHistoryStats(): {
   storageSizeKB: number;
 } {
   const data = getStoredHistory();
-  const basketIds = new Set(data.snapshots.map(s => s.basketId));
-  const territoryIds = new Set(data.snapshots.map(s => s.territoryId));
+  const basketIds = new Set(data.snapshots.map((s) => s.basketId));
+  const territoryIds = new Set(data.snapshots.map((s) => s.territoryId));
 
-  const timestamps = data.snapshots.map(s => s.timestamp).sort((a, b) => a - b);
-  const oldestSnapshot = timestamps.length > 0 
-    ? new Date(timestamps[0]).toISOString() 
-    : null;
-  const newestSnapshot = timestamps.length > 0 
-    ? new Date(timestamps[timestamps.length - 1]).toISOString() 
-    : null;
+  const timestamps = data.snapshots.map((s) => s.timestamp).sort((a, b) => a - b);
+  const oldestSnapshot = timestamps.length > 0 ? new Date(timestamps[0]).toISOString() : null;
+  const newestSnapshot =
+    timestamps.length > 0 ? new Date(timestamps[timestamps.length - 1]).toISOString() : null;
 
   // Estimate storage size
   const jsonStr = JSON.stringify(data);

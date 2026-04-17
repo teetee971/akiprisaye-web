@@ -56,10 +56,7 @@ export function analyzeSeoLoop(metrics: SeoLoopMetric[]): SeoLoopAction[] {
         YT: 'guadeloupe',
       };
       const suggestedTarget = m.territory
-        ? m.url.replace(
-            m.territory.toLowerCase(),
-            territories[m.territory] ?? 'martinique',
-          )
+        ? m.url.replace(m.territory.toLowerCase(), territories[m.territory] ?? 'martinique')
         : undefined;
       actions.push({
         type: 'DUPLICATE_PAGE',

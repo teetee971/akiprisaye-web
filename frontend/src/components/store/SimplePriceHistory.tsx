@@ -1,10 +1,9 @@
- 
 /**
  * Simple Price History Chart Component
- * 
+ *
  * Displays a minimal price history chart with clear explanations.
  * PROMPT 5: Historique de prix simplifié (lisible)
- * 
+ *
  * - Shows 7, 30, or 90 day history
  * - Simple line chart with sober colors
  * - No AI/prediction language
@@ -30,10 +29,10 @@ interface SimplePriceHistoryProps {
   currentPrice?: number;
 }
 
-export default function SimplePriceHistory({ 
-  productName, 
+export default function SimplePriceHistory({
+  productName,
   priceHistory,
-  currentPrice 
+  currentPrice,
 }: SimplePriceHistoryProps) {
   const [period, setPeriod] = useState<7 | 30 | 90>(30);
 
@@ -41,9 +40,9 @@ export default function SimplePriceHistory({
   const getFilteredHistory = () => {
     const now = new Date();
     const cutoffDate = new Date(now.getTime() - period * 24 * 60 * 60 * 1000);
-    
+
     return priceHistory
-      .filter(point => new Date(point.date) >= cutoffDate)
+      .filter((point) => new Date(point.date) >= cutoffDate)
       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   };
 
@@ -51,7 +50,7 @@ export default function SimplePriceHistory({
   const hasData = filteredHistory.length >= 2;
 
   // Calculate min and max for scaling
-  const prices = filteredHistory.map(p => p.price);
+  const prices = filteredHistory.map((p) => p.price);
   const minPrice = hasData ? Math.min(...prices) : 0;
   const maxPrice = hasData ? Math.max(...prices) : 0;
   const priceRange = maxPrice - minPrice;
@@ -62,10 +61,13 @@ export default function SimplePriceHistory({
 
     const points = filteredHistory.map((point, index) => {
       const x = (index / (filteredHistory.length - 1)) * CHART_WIDTH;
-      const y = priceRange > 0 
-        ? CHART_HEIGHT - CHART_PADDING - ((point.price - minPrice) / priceRange) * (CHART_HEIGHT - 2 * CHART_PADDING)
-        : HALF_HEIGHT;
-      
+      const y =
+        priceRange > 0
+          ? CHART_HEIGHT -
+            CHART_PADDING -
+            ((point.price - minPrice) / priceRange) * (CHART_HEIGHT - 2 * CHART_PADDING)
+          : HALF_HEIGHT;
+
       return `${x},${y}`;
     });
 
@@ -75,21 +77,22 @@ export default function SimplePriceHistory({
   const path = generatePath();
 
   // Calculate price change
-  const priceChange = hasData && filteredHistory.length >= 2
-    ? ((filteredHistory[filteredHistory.length - 1].price - filteredHistory[0].price) / filteredHistory[0].price) * 100
-    : 0;
+  const priceChange =
+    hasData && filteredHistory.length >= 2
+      ? ((filteredHistory[filteredHistory.length - 1].price - filteredHistory[0].price) /
+          filteredHistory[0].price) *
+        100
+      : 0;
 
   return (
     <div className="bg-slate-800 rounded-lg p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-white">
-          📈 Historique des prix
-        </h3>
-        
+        <h3 className="text-lg font-semibold text-white">📈 Historique des prix</h3>
+
         {/* Period Selector */}
         <div className="flex gap-2">
-          {[7, 30, 90].map(days => (
+          {[7, 30, 90].map((days) => (
             <button
               key={days}
               onClick={() => setPeriod(days as 7 | 30 | 90)}
@@ -113,9 +116,7 @@ export default function SimplePriceHistory({
           <p className="text-gray-400 text-sm">
             Pas assez de données sur cette période pour afficher l'historique.
             {priceHistory.length > 0 && (
-              <span className="block mt-1">
-                Essayez une période plus longue.
-              </span>
+              <span className="block mt-1">Essayez une période plus longue.</span>
             )}
           </p>
         </div>
@@ -150,8 +151,16 @@ export default function SimplePriceHistory({
               className="w-full h-full"
             >
               {/* Grid lines */}
-              <line x1="0" y1={HALF_HEIGHT} x2={CHART_WIDTH} y2={HALF_HEIGHT} stroke="#374151" strokeWidth="0.3" strokeDasharray="2,2" />
-              
+              <line
+                x1="0"
+                y1={HALF_HEIGHT}
+                x2={CHART_WIDTH}
+                y2={HALF_HEIGHT}
+                stroke="#374151"
+                strokeWidth="0.3"
+                strokeDasharray="2,2"
+              />
+
               {/* Price line */}
               <path
                 d={path}
@@ -160,14 +169,17 @@ export default function SimplePriceHistory({
                 strokeWidth="2"
                 vectorEffect="non-scaling-stroke"
               />
-              
+
               {/* Data points */}
               {filteredHistory.map((point, index) => {
                 const x = (index / (filteredHistory.length - 1)) * CHART_WIDTH;
-                const y = priceRange > 0
-                  ? CHART_HEIGHT - CHART_PADDING - ((point.price - minPrice) / priceRange) * (CHART_HEIGHT - 2 * CHART_PADDING)
-                  : HALF_HEIGHT;
-                
+                const y =
+                  priceRange > 0
+                    ? CHART_HEIGHT -
+                      CHART_PADDING -
+                      ((point.price - minPrice) / priceRange) * (CHART_HEIGHT - 2 * CHART_PADDING)
+                    : HALF_HEIGHT;
+
                 return (
                   <circle
                     key={point.date}
@@ -185,10 +197,16 @@ export default function SimplePriceHistory({
           {/* Price Change Indicator */}
           {priceChange !== 0 && (
             <div className="mt-3 text-center">
-              <span className={`text-sm font-medium ${
-                priceChange > 0 ? 'text-amber-400' : priceChange < 0 ? 'text-green-400' : 'text-blue-400'
-              }`}>
-                {priceChange > 0 ? '↑' : priceChange < 0 ? '↓' : '='} 
+              <span
+                className={`text-sm font-medium ${
+                  priceChange > 0
+                    ? 'text-amber-400'
+                    : priceChange < 0
+                      ? 'text-green-400'
+                      : 'text-blue-400'
+                }`}
+              >
+                {priceChange > 0 ? '↑' : priceChange < 0 ? '↓' : '='}
                 {Math.abs(priceChange).toFixed(1)}% sur {period} jours
               </span>
             </div>
@@ -197,9 +215,9 @@ export default function SimplePriceHistory({
           {/* Explanation */}
           <div className="mt-4 pt-4 border-t border-slate-700 text-xs text-gray-400">
             <p>
-              <strong className="text-gray-300">Explication :</strong> Ce graphique montre 
-              l'évolution des prix observés sur les {period} derniers jours. 
-              Les données proviennent d'observations déclarées. Aucune prédiction n'est effectuée.
+              <strong className="text-gray-300">Explication :</strong> Ce graphique montre
+              l'évolution des prix observés sur les {period} derniers jours. Les données proviennent
+              d'observations déclarées. Aucune prédiction n'est effectuée.
             </p>
           </div>
         </div>

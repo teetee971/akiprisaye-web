@@ -47,9 +47,9 @@ export function loadSavingsData(): SavingsData {
   const defaultData: SavingsData = {
     entries: [],
     monthlyGoal: 50, // default goal of 50€
-    lastUpdated: Date.now()
+    lastUpdated: Date.now(),
   };
-  
+
   return safeLocalStorage.getJSON<SavingsData>(STORAGE_KEY, defaultData);
 }
 
@@ -71,19 +71,19 @@ export function addSavingsEntry(
   category?: string
 ): SavingsEntry {
   const data = loadSavingsData();
-  
+
   const entry: SavingsEntry = {
     id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     date: Date.now(),
     amount,
     productName,
     storeName,
-    category
+    category,
   };
-  
+
   data.entries.push(entry);
   saveSavingsData(data);
-  
+
   return entry;
 }
 
@@ -93,9 +93,9 @@ export function addSavingsEntry(
 export function getTotalSavings(sinceDate?: number): number {
   const data = loadSavingsData();
   const cutoffDate = sinceDate || 0;
-  
+
   return data.entries
-    .filter(entry => entry.date >= cutoffDate)
+    .filter((entry) => entry.date >= cutoffDate)
     .reduce((total, entry) => total + entry.amount, 0);
 }
 
@@ -126,7 +126,7 @@ export function getMonthlySavings(monthsCount: number = 6): MonthlySavings[] {
   const data = loadSavingsData();
   const now = new Date();
   const monthsMap = new Map<string, MonthlySavings>();
-  
+
   // Initialize last N months
   for (let i = monthsCount - 1; i >= 0; i--) {
     const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
@@ -134,22 +134,22 @@ export function getMonthlySavings(monthsCount: number = 6): MonthlySavings[] {
     monthsMap.set(monthKey, {
       month: monthKey,
       total: 0,
-      entries: []
+      entries: [],
     });
   }
-  
+
   // Group entries by month
-  data.entries.forEach(entry => {
+  data.entries.forEach((entry) => {
     const entryDate = new Date(entry.date);
     const monthKey = `${entryDate.getFullYear()}-${String(entryDate.getMonth() + 1).padStart(2, '0')}`;
-    
+
     if (monthsMap.has(monthKey)) {
       const monthData = monthsMap.get(monthKey)!;
       monthData.total += entry.amount;
       monthData.entries.push(entry);
     }
   });
-  
+
   return Array.from(monthsMap.values());
 }
 
@@ -168,9 +168,9 @@ export function setMonthlyGoal(goal: number): boolean {
 export function getMonthlyGoalProgress(): number {
   const data = loadSavingsData();
   const monthSavings = getMonthSavings();
-  
+
   if (data.monthlyGoal <= 0) return 0;
-  
+
   return Math.min(100, Math.round((monthSavings / data.monthlyGoal) * 100));
 }
 
@@ -183,43 +183,43 @@ const BADGE_DEFINITIONS: Omit<Badge, 'unlocked' | 'progress' | 'unlockedAt'>[] =
     name: 'Économe débutant',
     icon: '🥉',
     description: 'Économisez 10€',
-    target: 10
+    target: 10,
   },
   {
     id: 'confirmed',
     name: 'Économe confirmé',
     icon: '🥈',
     description: 'Économisez 50€',
-    target: 50
+    target: 50,
   },
   {
     id: 'master',
     name: 'Maître des économies',
     icon: '🥇',
     description: 'Économisez 200€',
-    target: 200
+    target: 200,
   },
   {
     id: 'champion',
     name: 'Champion annuel',
     icon: '🏆',
     description: 'Économisez 500€',
-    target: 500
+    target: 500,
   },
   {
     id: 'first_saving',
     name: 'Premier pas',
     icon: '🎯',
     description: 'Faites votre première économie',
-    target: 1
+    target: 1,
   },
   {
     id: 'monthly_goal',
     name: 'Objectif atteint',
     icon: '⭐',
     description: 'Atteignez votre objectif mensuel',
-    target: 1
-  }
+    target: 1,
+  },
 ];
 
 /**
@@ -230,11 +230,11 @@ export function getBadges(): Badge[] {
   const goalProgress = getMonthlyGoalProgress();
   const savingsCount = loadSavingsData().entries.length;
   const unlockedBadges = safeLocalStorage.getJSON<Record<string, number>>(BADGES_KEY, {});
-  
-  return BADGE_DEFINITIONS.map(badgeDef => {
+
+  return BADGE_DEFINITIONS.map((badgeDef) => {
     let progress = 0;
     let unlocked = false;
-    
+
     switch (badgeDef.id) {
       case 'first_saving':
         progress = savingsCount;
@@ -261,7 +261,7 @@ export function getBadges(): Badge[] {
         unlocked = goalProgress >= 100;
         break;
     }
-    
+
     // Track when badge was unlocked
     let unlockedAt = unlockedBadges[badgeDef.id];
     if (unlocked && !unlockedAt) {
@@ -269,12 +269,12 @@ export function getBadges(): Badge[] {
       unlockedBadges[badgeDef.id] = unlockedAt;
       safeLocalStorage.setJSON(BADGES_KEY, unlockedBadges);
     }
-    
+
     return {
       ...badgeDef,
       unlocked,
       progress: Math.min(progress, badgeDef.target || progress),
-      unlockedAt
+      unlockedAt,
     };
   });
 }
@@ -305,18 +305,16 @@ export function getSavingsStats(): SavingsStats {
   const monthSavings = getMonthSavings();
   const weekSavings = getWeekSavings();
   const entriesCount = data.entries.length;
-  
+
   const averageSaving = entriesCount > 0 ? totalSavings / entriesCount : 0;
-  const bestSaving = data.entries.length > 0 
-    ? Math.max(...data.entries.map(e => e.amount))
-    : 0;
-  
+  const bestSaving = data.entries.length > 0 ? Math.max(...data.entries.map((e) => e.amount)) : 0;
+
   return {
     totalSavings,
     monthSavings,
     weekSavings,
     entriesCount,
     averageSaving,
-    bestSaving
+    bestSaving,
   };
 }

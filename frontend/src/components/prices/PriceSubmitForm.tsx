@@ -1,4 +1,3 @@
- 
 /**
  * Price Submit Form Component
  * Form for submitting new price observations
@@ -29,9 +28,7 @@ const PriceSubmitForm: React.FC<PriceSubmitFormProps> = ({
 }) => {
   const [price, setPrice] = useState('');
   const [source, setSource] = useState<PriceSource>('MANUAL_ENTRY');
-  const [observedAt, setObservedAt] = useState(
-    new Date().toISOString().split('T')[0]
-  );
+  const [observedAt, setObservedAt] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -72,7 +69,7 @@ const PriceSubmitForm: React.FC<PriceSubmitFormProps> = ({
       const result = await response.json();
       setSuccess(result.message || 'Prix soumis avec succès');
       setPrice('');
-      
+
       if (onSubmit) {
         onSubmit(result);
       }
@@ -85,16 +82,11 @@ const PriceSubmitForm: React.FC<PriceSubmitFormProps> = ({
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">
-        Signaler un prix
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-800 mb-4">Signaler un prix</h3>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label
-            htmlFor="price"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+          <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
             Prix (€) *
           </label>
           <input
@@ -111,10 +103,7 @@ const PriceSubmitForm: React.FC<PriceSubmitFormProps> = ({
         </div>
 
         <div>
-          <label
-            htmlFor="observedAt"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+          <label htmlFor="observedAt" className="block text-sm font-medium text-gray-700 mb-1">
             Date d'observation *
           </label>
           <input
@@ -129,10 +118,7 @@ const PriceSubmitForm: React.FC<PriceSubmitFormProps> = ({
         </div>
 
         <div>
-          <label
-            htmlFor="source"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
+          <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">
             Source *
           </label>
           <select
@@ -168,7 +154,7 @@ const PriceSubmitForm: React.FC<PriceSubmitFormProps> = ({
           >
             {loading ? 'Envoi...' : 'Soumettre'}
           </button>
-          
+
           {onCancel && (
             <button
               type="button"

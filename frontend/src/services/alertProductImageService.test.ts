@@ -42,10 +42,13 @@ describe('alertProductImageService fallback and cache', () => {
   });
 
   it('returns category placeholder when backend has no image', async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      json: async () => ({ source: 'none' }),
-    }) as unknown as globalThis.Response);
+    const fetchMock = vi.fn(
+      async () =>
+        ({
+          ok: true,
+          json: async () => ({ source: 'none' }),
+        }) as unknown as globalThis.Response
+    );
     vi.stubGlobal('fetch', fetchMock);
 
     const result = await getProductImageUrl('3760123456789', 'bébé');
@@ -67,10 +70,19 @@ describe('alertProductImageService fallback and cache', () => {
   });
 
   it('accepts redirect_to fallback field when url is absent', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => ({
-      ok: true,
-      json: async () => ({ source: 'off', redirect_to: 'https://images.openfoodfacts.org/test.jpg' }),
-    }) as unknown as globalThis.Response));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(
+        async () =>
+          ({
+            ok: true,
+            json: async () => ({
+              source: 'off',
+              redirect_to: 'https://images.openfoodfacts.org/test.jpg',
+            }),
+          }) as unknown as globalThis.Response
+      )
+    );
 
     const result = await getProductImageUrl('3017620422003', 'epicerie');
 

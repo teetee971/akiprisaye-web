@@ -11,11 +11,11 @@
  *  4. Role satisfied → render children
  */
 
-import type { ReactElement } from "react";
-import { Navigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/context/authHook";
-import { hasRole } from "@/auth/rbac";
-import type { UserRole } from "@/auth/rbac";
+import type { ReactElement } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/authHook';
+import { hasRole } from '@/auth/rbac';
+import type { UserRole } from '@/auth/rbac';
 
 interface RequireRoleProps {
   role: UserRole;
@@ -23,7 +23,7 @@ interface RequireRoleProps {
   redirectTo?: string;
 }
 
-export default function RequireRole({ role, children, redirectTo = "/" }: RequireRoleProps) {
+export default function RequireRole({ role, children, redirectTo = '/' }: RequireRoleProps) {
   const { user, userRole, loading, authResolved } = useAuth();
   const location = useLocation();
 
@@ -35,21 +35,21 @@ export default function RequireRole({ role, children, redirectTo = "/" }: Requir
       <div
         data-testid="auth-loading-spinner"
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100vh",
-          background: "#020617",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh',
+          background: '#020617',
         }}
       >
         <div
           style={{
             width: 36,
             height: 36,
-            borderRadius: "50%",
-            border: "3px solid rgba(251,191,36,0.2)",
-            borderTopColor: "#fbbf24",
-            animation: "spin 0.7s linear infinite",
+            borderRadius: '50%',
+            border: '3px solid rgba(251,191,36,0.2)',
+            borderTopColor: '#fbbf24',
+            animation: 'spin 0.7s linear infinite',
           }}
         />
         <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

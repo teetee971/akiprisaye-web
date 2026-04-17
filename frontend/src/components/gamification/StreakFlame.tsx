@@ -15,8 +15,8 @@ interface StreakFlameProps {
 export function StreakFlame({ isActive = true, size = 24, className = '' }: StreakFlameProps) {
   return (
     <div className={`relative inline-block ${className}`}>
-      <Flame 
-        size={size} 
+      <Flame
+        size={size}
         className={`${isActive ? 'text-orange-500 animate-pulse' : 'text-gray-400'} transition-colors duration-300`}
         fill={isActive ? 'currentColor' : 'none'}
       />

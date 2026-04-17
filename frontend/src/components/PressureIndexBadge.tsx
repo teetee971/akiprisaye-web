@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  computePressureIndex,
-  TerritoryPressureIndex,
-} from '../services/pressureIndexService';
+import { computePressureIndex, TerritoryPressureIndex } from '../services/pressureIndexService';
 
 export default function PressureIndexBadge() {
   const [data, setData] = useState<TerritoryPressureIndex[] | null>(null);
@@ -10,7 +7,7 @@ export default function PressureIndexBadge() {
   useEffect(() => {
     let mounted = true;
     computePressureIndex()
-      .then(res => mounted && setData(res))
+      .then((res) => mounted && setData(res))
       .catch(() => mounted && setData([]));
     return () => {
       mounted = false;
@@ -21,7 +18,7 @@ export default function PressureIndexBadge() {
 
   return (
     <section className="grid md:grid-cols-4 gap-4">
-      {data.map(t => (
+      {data.map((t) => (
         <Card key={t.territory} item={t} />
       ))}
     </section>
@@ -33,28 +30,22 @@ function Card({ item }: { item: TerritoryPressureIndex }) {
     item.level === 'FAIBLE'
       ? 'bg-green-900/40'
       : item.level === 'MODÉRÉE'
-      ? 'bg-yellow-900/40'
-      : item.level === 'ÉLEVÉE'
-      ? 'bg-orange-900/40'
-      : 'bg-red-900/50';
+        ? 'bg-yellow-900/40'
+        : item.level === 'ÉLEVÉE'
+          ? 'bg-orange-900/40'
+          : 'bg-red-900/50';
 
   return (
     <div className={`rounded-xl p-5 border border-white/10 ${color}`}>
-      <div className="text-xs uppercase opacity-70">
-        {item.territory}
-      </div>
+      <div className="text-xs uppercase opacity-70">{item.territory}</div>
 
-      <div className="text-3xl font-bold">
-        {item.index.toFixed(0)}
-      </div>
+      <div className="text-3xl font-bold">{item.index.toFixed(0)}</div>
 
       <div className="text-sm mt-1">
         Pression <strong>{item.level}</strong>
       </div>
 
-      <div className="text-xs opacity-60 mt-2">
-        Prix moyen : {item.averagePrice.toFixed(2)} €
-      </div>
+      <div className="text-xs opacity-60 mt-2">Prix moyen : {item.averagePrice.toFixed(2)} €</div>
     </div>
   );
 }

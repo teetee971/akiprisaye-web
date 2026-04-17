@@ -1,6 +1,6 @@
 /**
  * Invoice OCR Service v1.0.0
- * 
+ *
  * Service d'extraction automatique des données de factures transporteurs
  * Détection des frais cachés
  */
@@ -57,7 +57,7 @@ export function detectHiddenFees(
   expectedQuote: FreightQuote | null
 ): HiddenFee[] {
   const hiddenFees: HiddenFee[] = [];
-  
+
   if (!expectedQuote) {
     // Pas de devis de référence, marquer tous les frais comme potentiellement cachés
     invoiceData.fees.forEach((fee) => {
@@ -70,7 +70,7 @@ export function detectHiddenFees(
     });
     return hiddenFees;
   }
-  
+
   // Comparer avec le devis attendu
   const expectedFees = new Map<string, number>();
   expectedFees.set('base', expectedQuote.pricing.basePrice);
@@ -79,12 +79,12 @@ export function detectHiddenFees(
     expectedFees.set('assurance', expectedQuote.pricing.insurance);
   }
   expectedFees.set('octroi', expectedQuote.pricing.octroi);
-  
+
   // Vérifier chaque frais de la facture
   invoiceData.fees.forEach((fee) => {
     const category = categorizeFee(fee.name);
     const expectedAmount = expectedFees.get(category);
-    
+
     if (!expectedAmount) {
       // Frais non prévu
       hiddenFees.push({
@@ -103,11 +103,9 @@ export function detectHiddenFees(
       });
     }
   });
-  
+
   // Vérifier le total
-  const totalDifference = Math.abs(
-    invoiceData.totalPaid - expectedQuote.pricing.totalTTC
-  );
+  const totalDifference = Math.abs(invoiceData.totalPaid - expectedQuote.pricing.totalTTC);
   if (totalDifference > expectedQuote.pricing.totalTTC * 0.05) {
     // Différence > 5% sur le total
     hiddenFees.push({
@@ -117,7 +115,7 @@ export function detectHiddenFees(
       category: 'surcharge',
     });
   }
-  
+
   return hiddenFees;
 }
 
@@ -126,7 +124,7 @@ export function detectHiddenFees(
  */
 function categorizeFee(feeName: string): HiddenFee['category'] {
   const lowerName = feeName.toLowerCase();
-  
+
   if (
     lowerName.includes('manutention') ||
     lowerName.includes('handling') ||
@@ -134,7 +132,7 @@ function categorizeFee(feeName: string): HiddenFee['category'] {
   ) {
     return 'handling';
   }
-  
+
   if (
     lowerName.includes('douane') ||
     lowerName.includes('customs') ||
@@ -142,7 +140,7 @@ function categorizeFee(feeName: string): HiddenFee['category'] {
   ) {
     return 'customs';
   }
-  
+
   if (
     lowerName.includes('octroi') ||
     lowerName.includes('taxe') ||
@@ -151,7 +149,7 @@ function categorizeFee(feeName: string): HiddenFee['category'] {
   ) {
     return 'tax';
   }
-  
+
   if (
     lowerName.includes('supplément') ||
     lowerName.includes('surcharge') ||
@@ -159,7 +157,7 @@ function categorizeFee(feeName: string): HiddenFee['category'] {
   ) {
     return 'surcharge';
   }
-  
+
   return 'other';
 }
 
@@ -173,27 +171,27 @@ export function validateInvoiceData(data: InvoiceData): {
 } {
   const errors: string[] = [];
   const warnings: string[] = [];
-  
+
   if (!data.carrier || data.carrier === 'Non détecté') {
     errors.push('Transporteur non détecté');
   }
-  
+
   if (!data.route.origin || !data.route.destination) {
     errors.push('Origine ou destination manquante');
   }
-  
+
   if (data.basePrice <= 0) {
     errors.push('Prix de base invalide');
   }
-  
+
   if (data.totalPaid <= 0) {
     errors.push('Total payé invalide');
   }
-  
+
   if (data.extractionConfidence < 0.7) {
-    warnings.push('Confiance d\'extraction faible - vérifiez les données');
+    warnings.push("Confiance d'extraction faible - vérifiez les données");
   }
-  
+
   // Vérifier cohérence
   const calculatedTotal = data.basePrice + data.fees.reduce((sum, f) => sum + f.amount, 0);
   const difference = Math.abs(calculatedTotal - data.totalPaid);
@@ -201,7 +199,7 @@ export function validateInvoiceData(data: InvoiceData): {
     // Différence > 1%
     warnings.push('Incohérence entre le total calculé et le total payé');
   }
-  
+
   return {
     valid: errors.length === 0,
     errors,
@@ -265,7 +263,7 @@ export function parseInvoiceText(text: string): Partial<InvoiceData> {
   const data: Partial<InvoiceData> = {
     fees: [],
   };
-  
+
   // Patterns de détection
   const carrierPatterns = [
     /colissimo/i,
@@ -276,7 +274,7 @@ export function parseInvoiceText(text: string): Partial<InvoiceData> {
     /cma\s*cgm/i,
     /maersk/i,
   ];
-  
+
   // Détecter le transporteur
   for (const pattern of carrierPatterns) {
     const match = text.match(pattern);
@@ -285,33 +283,33 @@ export function parseInvoiceText(text: string): Partial<InvoiceData> {
       break;
     }
   }
-  
+
   // Détecter les montants (EUR, €)
   const pricePattern = /(\d+[.,]\d{2})\s*(?:EUR|€)/gi;
   const prices = Array.from(text.matchAll(pricePattern)).map((m) =>
     parseFloat(m[1].replace(',', '.'))
   );
-  
+
   if (prices.length > 0) {
     data.totalPaid = prices[prices.length - 1]; // Dernier montant = total
     if (prices.length > 1) {
       data.basePrice = prices[0]; // Premier montant = base
     }
   }
-  
+
   // Détecter poids (kg)
   const weightPattern = /(\d+[.,]?\d*)\s*kg/i;
   const weightMatch = text.match(weightPattern);
   if (weightMatch) {
     data.weight = parseFloat(weightMatch[1].replace(',', '.'));
   }
-  
+
   // Détecter numéro de suivi
   const trackingPattern = /(?:tracking|suivi|n°|numéro)\s*:?\s*([A-Z0-9]{10,})/i;
   const trackingMatch = text.match(trackingPattern);
   if (trackingMatch) {
     data.trackingNumber = trackingMatch[1];
   }
-  
+
   return data;
 }

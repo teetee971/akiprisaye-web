@@ -44,9 +44,7 @@ export function selectShouldShowAuthSkeleton(input: AuthViewModelInput): boolean
  * True when the header should display the authenticated-user UI
  * (avatar, name, sign-out button) rather than a "Se connecter" link.
  */
-export function selectShouldShowAuthenticatedHeader(
-  input: AuthViewModelInput,
-): boolean {
+export function selectShouldShowAuthenticatedHeader(input: AuthViewModelInput): boolean {
   return Boolean(input.user) && input.authFlowState === 'authenticated';
 }
 
@@ -54,9 +52,7 @@ export function selectShouldShowAuthenticatedHeader(
  * True when an authenticated user on a "guest-only" page (e.g. /connexion)
  * should be redirected away immediately.
  */
-export function selectShouldRedirectAwayFromLogin(
-  input: AuthViewModelInput,
-): boolean {
+export function selectShouldRedirectAwayFromLogin(input: AuthViewModelInput): boolean {
   return Boolean(input.user) && input.authResolved;
 }
 

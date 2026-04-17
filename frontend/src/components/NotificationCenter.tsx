@@ -99,7 +99,9 @@ export function NotificationCenter({ fullPage = false }: NotificationCenterProps
   };
 
   if (fullPage) {
-    return <NotificationList items={items} onDismiss={handleDismiss} onMarkAllRead={handleMarkAllRead} />;
+    return (
+      <NotificationList items={items} onDismiss={handleDismiss} onMarkAllRead={handleMarkAllRead} />
+    );
   }
 
   return (
@@ -125,11 +127,7 @@ export function NotificationCenter({ fullPage = false }: NotificationCenterProps
       {/* Popover */}
       {open && (
         <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} aria-hidden="true" />
           <div className="absolute right-0 z-50 mt-2 w-80 rounded-xl bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
               <h3 className="font-semibold text-slate-900 dark:text-white text-sm">
@@ -146,7 +144,12 @@ export function NotificationCenter({ fullPage = false }: NotificationCenterProps
               )}
             </div>
             <div className="max-h-96 overflow-y-auto">
-              <NotificationList items={items} onDismiss={handleDismiss} onMarkAllRead={handleMarkAllRead} compact />
+              <NotificationList
+                items={items}
+                onDismiss={handleDismiss}
+                onMarkAllRead={handleMarkAllRead}
+                compact
+              />
             </div>
           </div>
         </>
@@ -164,10 +167,17 @@ interface NotificationListProps {
   compact?: boolean;
 }
 
-function NotificationList({ items, onDismiss, onMarkAllRead, compact = false }: NotificationListProps) {
+function NotificationList({
+  items,
+  onDismiss,
+  onMarkAllRead,
+  compact = false,
+}: NotificationListProps) {
   if (items.length === 0) {
     return (
-      <div className={`flex flex-col items-center justify-center py-10 text-slate-400 dark:text-slate-500 ${compact ? 'px-4' : 'py-16'}`}>
+      <div
+        className={`flex flex-col items-center justify-center py-10 text-slate-400 dark:text-slate-500 ${compact ? 'px-4' : 'py-16'}`}
+      >
         <BellOff className="w-8 h-8 mb-2 opacity-40" />
         <p className="text-sm">Aucune notification</p>
       </div>
@@ -193,15 +203,15 @@ function NotificationList({ items, onDismiss, onMarkAllRead, compact = false }: 
           className={`
             flex items-start gap-3 px-4 py-3 border-l-4 transition-colors
             ${severityClass(n.severity)}
-            ${n.read
-              ? 'bg-white dark:bg-slate-800'
-              : 'bg-blue-50 dark:bg-blue-900/20'}
+            ${n.read ? 'bg-white dark:bg-slate-800' : 'bg-blue-50 dark:bg-blue-900/20'}
             ${!compact ? 'rounded-lg border border-slate-200 dark:border-slate-700' : 'border-b border-slate-100 dark:border-slate-700'}
           `}
         >
           <span className="mt-0.5 flex-shrink-0">{kindIcon(n.kind)}</span>
           <div className="flex-1 min-w-0">
-            <p className={`text-sm font-medium truncate ${n.read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white'}`}>
+            <p
+              className={`text-sm font-medium truncate ${n.read ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white'}`}
+            >
               {n.productName}
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">

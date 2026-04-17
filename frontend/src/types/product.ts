@@ -1,9 +1,9 @@
 /**
  * Product Data Model - v1.1.0
- * 
+ *
  * Unified product model for automatic price display
  * with photos and detailed information
- * 
+ *
  * @module productModel
  */
 
@@ -17,7 +17,7 @@ export type PriceSource = 'api' | 'user' | 'historical' | 'estimated';
 /**
  * Product category types
  */
-export type ProductCategory = 
+export type ProductCategory =
   | 'alimentaire'
   | 'boissons'
   | 'hygiene'
@@ -73,52 +73,52 @@ export interface PriceChange {
 export interface Product {
   /** Unique product identifier */
   id: string;
-  
+
   /** Product name */
   nom: string;
-  
+
   /** Brand name */
   marque?: string;
-  
+
   /** Product category */
   categorie: ProductCategory;
-  
+
   /** Content amount (e.g., 500 for 500g) */
   contenance: number;
-  
+
   /** Content unit */
   unite: Unit;
-  
+
   /** Unit price (actual retail price) */
   prix_unitaire: number;
-  
+
   /** Price per kg or liter for comparison */
   prix_au_kilo_ou_litre: number;
-  
+
   /** Store/chain name */
   enseigne: string;
-  
+
   /** Territory code */
   territoire: TerritoryCode;
-  
+
   /** Date of price observation */
   date_releve: string; // ISO 8601
-  
+
   /** Price data source */
   source_prix: PriceSource;
-  
+
   /** Reliability score (0-100) */
   fiabilite_score: ReliabilityScore;
-  
+
   /** Product photos */
   photos: ProductPhoto[];
-  
+
   /** Price change information */
   price_change?: PriceChange;
-  
+
   /** Barcode if available */
   barcode?: string;
-  
+
   /** Additional metadata */
   metadata?: {
     verified: boolean;

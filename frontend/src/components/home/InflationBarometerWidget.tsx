@@ -19,7 +19,7 @@ import { useEffect, useState } from 'react';
 import { getTerritoryAsset } from '../../config/imageAssets';
 
 interface SparkPoint {
-  month: string;       // e.g. "Jan 26"
+  month: string; // e.g. "Jan 26"
   basket: number | null;
 }
 
@@ -27,7 +27,7 @@ interface BarometerEntry {
   code: string;
   territory: string;
   flag: string;
-  spark: SparkPoint[];  // 3 monthly points
+  spark: SparkPoint[]; // 3 monthly points
   basketJan: number | null;
   basketMar: number | null;
   trendPct: number | null; // Jan→Mar %
@@ -59,12 +59,12 @@ const MONTHS: Array<{ key: string; label: string }> = [
 ];
 
 const TERRITORIES = [
-  { code: 'fr',  stem: 'hexagone',   flag: '🇫🇷', label: 'Hexagone'    },
-  { code: 'gp',  stem: 'guadeloupe', flag: '🇬🇵', label: 'Guadeloupe'  },
-  { code: 'mq',  stem: 'martinique', flag: '🇲🇶', label: 'Martinique'  },
-  { code: 'gf',  stem: 'guyane',     flag: '🇬🇫', label: 'Guyane'      },
-  { code: 're',  stem: 'la_réunion', flag: '🇷🇪', label: 'La Réunion'  },
-  { code: 'yt',  stem: 'mayotte',    flag: '🇾🇹', label: 'Mayotte'     },
+  { code: 'fr', stem: 'hexagone', flag: '🇫🇷', label: 'Hexagone' },
+  { code: 'gp', stem: 'guadeloupe', flag: '🇬🇵', label: 'Guadeloupe' },
+  { code: 'mq', stem: 'martinique', flag: '🇲🇶', label: 'Martinique' },
+  { code: 'gf', stem: 'guyane', flag: '🇬🇫', label: 'Guyane' },
+  { code: 're', stem: 'la_réunion', flag: '🇷🇪', label: 'La Réunion' },
+  { code: 'yt', stem: 'mayotte', flag: '🇾🇹', label: 'Mayotte' },
 ];
 
 /** Compute average basket price for products present in `donnees`, require ≥5 matches */
@@ -88,7 +88,15 @@ function computeBasket(donnees: ObsEntry[]): number | null {
 const SPARK_MONTH_LABELS = ['Jan', 'Fév', 'Mar'];
 
 /** SVG mini-sparkline — 3 points, 64×28 px with optional month labels */
-function Sparkline({ points, color, showLabels }: { points: (number | null)[]; color: string; showLabels?: boolean }) {
+function Sparkline({
+  points,
+  color,
+  showLabels,
+}: {
+  points: (number | null)[];
+  color: string;
+  showLabels?: boolean;
+}) {
   const valid = points.filter((p): p is number => p !== null);
   if (valid.length < 2) return null;
 
@@ -111,7 +119,10 @@ function Sparkline({ points, color, showLabels }: { points: (number | null)[]; c
   let d = '';
   let penDown = false;
   for (const c of coords) {
-    if (c === null) { penDown = false; continue; }
+    if (c === null) {
+      penDown = false;
+      continue;
+    }
     d += penDown ? `L${c[0]},${c[1]}` : `M${c[0]},${c[1]}`;
     penDown = true;
   }
@@ -127,14 +138,23 @@ function Sparkline({ points, color, showLabels }: { points: (number | null)[]; c
         aria-hidden="true"
         className="ibw-sparkline"
       >
-        <path d={d} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-        {lastCoord && (
-          <circle cx={lastCoord[0]} cy={lastCoord[1]} r="2.5" fill={color} />
-        )}
+        <path
+          d={d}
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+        {lastCoord && <circle cx={lastCoord[0]} cy={lastCoord[1]} r="2.5" fill={color} />}
       </svg>
       {showLabels && (
         <div className="ibw-spark-labels" aria-hidden="true">
-          {SPARK_MONTH_LABELS.map((l) => <span key={l} className="ibw-spark-label">{l}</span>)}
+          {SPARK_MONTH_LABELS.map((l) => (
+            <span key={l} className="ibw-spark-label">
+              {l}
+            </span>
+          ))}
         </div>
       )}
     </div>
@@ -159,11 +179,11 @@ function trendArrow(pct: number | null): string {
 /** Editorial qualitative interpretation of the price trend */
 function editorialContext(pct: number | null): string {
   if (pct === null) return 'Données insuffisantes';
-  if (pct > 4)    return 'Forte pression tarifaire';
-  if (pct > 2)    return 'Hausse significative';
-  if (pct > 0.5)  return 'Légère hausse des prix';
+  if (pct > 4) return 'Forte pression tarifaire';
+  if (pct > 2) return 'Hausse significative';
+  if (pct > 0.5) return 'Légère hausse des prix';
   if (pct > -0.5) return 'Stabilité tarifaire';
-  if (pct > -2)   return 'Légère détente tarifaire';
+  if (pct > -2) return 'Légère détente tarifaire';
   return 'Baisse notable des prix';
 }
 
@@ -203,7 +223,9 @@ function TerritoryBarometerCard({ entry }: { entry: BarometerEntry }) {
         )}
         <div className="ibw-card-photo-overlay" aria-hidden="true" />
         <div className="ibw-card-header">
-          <span className="ibw-flag" aria-hidden="true">{entry.flag}</span>
+          <span className="ibw-flag" aria-hidden="true">
+            {entry.flag}
+          </span>
           <span className="ibw-territory">{entry.territory}</span>
           {isHex && <span className="ibw-badge ibw-badge--ref">Référence</span>}
         </div>
@@ -211,12 +233,16 @@ function TerritoryBarometerCard({ entry }: { entry: BarometerEntry }) {
 
       {/* Card body */}
       <div className="ibw-card-body">
-        <p className="ibw-editorial" style={{ color }}>{editorialContext(entry.trendPct)}</p>
+        <p className="ibw-editorial" style={{ color }}>
+          {editorialContext(entry.trendPct)}
+        </p>
 
         <div className="ibw-spark-row">
           <Sparkline points={sparkValues} color={color} showLabels />
           <div className="ibw-trend" style={{ color }}>
-            <span className="ibw-arrow" aria-hidden="true">{arrow}</span>
+            <span className="ibw-arrow" aria-hidden="true">
+              {arrow}
+            </span>
             <span className="ibw-pct">
               {entry.trendPct !== null
                 ? `${entry.trendPct > 0 ? '+' : ''}${entry.trendPct.toFixed(1)} %`
@@ -228,8 +254,12 @@ function TerritoryBarometerCard({ entry }: { entry: BarometerEntry }) {
         {entry.basketJan !== null && entry.basketMar !== null && (
           <div className="ibw-prices">
             <span className="ibw-price-old">{entry.basketJan.toFixed(2)}&nbsp;€</span>
-            <span className="ibw-price-arrow" aria-hidden="true">→</span>
-            <span className="ibw-price-new" style={{ color }}>{entry.basketMar.toFixed(2)}&nbsp;€</span>
+            <span className="ibw-price-arrow" aria-hidden="true">
+              →
+            </span>
+            <span className="ibw-price-new" style={{ color }}>
+              {entry.basketMar.toFixed(2)}&nbsp;€
+            </span>
           </div>
         )}
 
@@ -272,8 +302,8 @@ export default function InflationBarometerWidget() {
               if (!snapshots[t.code]) snapshots[t.code] = {};
               snapshots[t.code][m.key] = null;
             }
-          }),
-        ),
+          })
+        )
       );
 
       if (cancelled) return;
@@ -321,7 +351,9 @@ export default function InflationBarometerWidget() {
     }
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (loading) {
@@ -359,11 +391,15 @@ export default function InflationBarometerWidget() {
         />
         <div className="section-context-banner-overlay" aria-hidden="true" />
         <div className="section-context-banner-caption">
-          <span className="section-context-banner-title" aria-hidden="true">🌡️ Baromètre des prix</span>
+          <span className="section-context-banner-title" aria-hidden="true">
+            🌡️ Baromètre des prix
+          </span>
           <span className="section-context-banner-badge">Janv. → Mars 2026</span>
         </div>
       </div>
-      <h2 id="ibw-heading" className="section-title slide-up">🌡️ Baromètre des prix</h2>
+      <h2 id="ibw-heading" className="section-title slide-up">
+        🌡️ Baromètre des prix
+      </h2>
 
       <div className="ibw-header">
         <p className="ibw-subtitle slide-up">
@@ -377,7 +413,8 @@ export default function InflationBarometerWidget() {
           <p className="ibw-hex-ref fade-in">
             Référence Hexagone&nbsp;:{' '}
             <strong style={{ color: trendColor(hexEntry.trendPct) }}>
-              {hexEntry.trendPct > 0 ? '+' : ''}{hexEntry.trendPct.toFixed(2)}&nbsp;%
+              {hexEntry.trendPct > 0 ? '+' : ''}
+              {hexEntry.trendPct.toFixed(2)}&nbsp;%
             </strong>{' '}
             sur 3 mois
           </p>
@@ -387,20 +424,34 @@ export default function InflationBarometerWidget() {
       {/* Basket composition detail */}
       <div className="ibw-basket-detail fade-in">
         <span className="ibw-basket-detail-label">🛒 Composition du panier observé</span>
-        {['🥛 Lait UHT 1L', '🍚 Riz 1 kg', '💧 Eau 1,5 L', '🍝 Pâtes 500 g', '🍬 Sucre 1 kg', '🫙 Huile tournesol 1 L'].map((item) => (
-          <span key={item} className="ibw-basket-item">{item}</span>
+        {[
+          '🥛 Lait UHT 1L',
+          '🍚 Riz 1 kg',
+          '💧 Eau 1,5 L',
+          '🍝 Pâtes 500 g',
+          '🍬 Sucre 1 kg',
+          '🫙 Huile tournesol 1 L',
+        ].map((item) => (
+          <span key={item} className="ibw-basket-item">
+            {item}
+          </span>
         ))}
       </div>
 
-      {worstEntry?.trendPct !== null && worstEntry?.trendPct !== undefined && worstEntry.trendPct > 2 && (
-        <div className="ibw-alert fade-in" role="alert">
-          <span className="ibw-alert-icon">⚠️</span>
-          <span>
-            <strong>{worstEntry.flag} {worstEntry.territory}</strong> enregistre la plus forte
-            hausse&nbsp;: <strong>+{worstEntry.trendPct.toFixed(1)}&nbsp;%</strong> sur 3 mois.
-          </span>
-        </div>
-      )}
+      {worstEntry?.trendPct !== null &&
+        worstEntry?.trendPct !== undefined &&
+        worstEntry.trendPct > 2 && (
+          <div className="ibw-alert fade-in" role="alert">
+            <span className="ibw-alert-icon">⚠️</span>
+            <span>
+              <strong>
+                {worstEntry.flag} {worstEntry.territory}
+              </strong>{' '}
+              enregistre la plus forte hausse&nbsp;:{' '}
+              <strong>+{worstEntry.trendPct.toFixed(1)}&nbsp;%</strong> sur 3 mois.
+            </span>
+          </div>
+        )}
 
       <div className="ibw-grid" role="list">
         {entries.map((entry) => (

@@ -1,6 +1,6 @@
 /**
  * Seed Company Data for DROM-COM Stores
- * 
+ *
  * This file contains real company data for major retailers in French overseas territories.
  * Data structure follows the Company Registry specification.
  */
@@ -155,7 +155,7 @@ export const SEED_COMPANIES: Company[] = [
     headOffice: {
       streetNumber: '1',
       streetName: 'Avenue de la République',
-      city: 'Villeneuve-d\'Ascq',
+      city: "Villeneuve-d'Ascq",
       department: '59',
       postalCode: '59650',
       country: 'France',
@@ -265,7 +265,7 @@ export const SEED_COMPANIES: Company[] = [
       country: 'France',
     },
     geoLocation: {
-      latitude: 14.6160,
+      latitude: 14.616,
       longitude: -61.0588,
     },
     lastUpdate: '2024-12-18T12:00:00Z',
@@ -291,8 +291,8 @@ export const SEED_COMPANIES: Company[] = [
       country: 'France',
     },
     geoLocation: {
-      latitude: 16.2450,
-      longitude: -61.5700,
+      latitude: 16.245,
+      longitude: -61.57,
     },
     lastUpdate: '2024-12-18T12:00:00Z',
     source: 'REGISTRE_ENTREPRISES',
@@ -317,8 +317,8 @@ export const SEED_COMPANIES: Company[] = [
       country: 'France',
     },
     geoLocation: {
-      latitude: -20.9400,
-      longitude: 55.2930,
+      latitude: -20.94,
+      longitude: 55.293,
     },
     lastUpdate: '2024-12-18T12:00:00Z',
     source: 'REGISTRE_ENTREPRISES',
@@ -327,28 +327,28 @@ export const SEED_COMPANIES: Company[] = [
 
 /**
  * Get company by ID
- * 
+ *
  * @param companyId - Company ID
  * @returns Company or undefined
  */
 export function getCompanyFromSeed(companyId: string): Company | undefined {
-  return SEED_COMPANIES.find(c => c.id === companyId);
+  return SEED_COMPANIES.find((c) => c.id === companyId);
 }
 
 /**
  * Get company by SIREN
- * 
+ *
  * @param siren - SIREN code
  * @returns Company or undefined
  */
 export function getCompanyBySirenFromSeed(siren: string): Company | undefined {
   const normalized = siren.replace(/[\s-]/g, '');
-  return SEED_COMPANIES.find(c => c.sirenCode === normalized);
+  return SEED_COMPANIES.find((c) => c.sirenCode === normalized);
 }
 
 /**
  * Get all seed companies
- * 
+ *
  * @returns Array of all seed companies
  */
 export function getAllSeedCompanies(): Company[] {

@@ -1,10 +1,9 @@
- 
 /**
  * Geolocation Utility Service
- * 
+ *
  * Provides geolocation functionality for store distance calculation
  * and GPS-based filtering in comparison pages.
- * 
+ *
  * PERFORMANCE OPTIMIZATIONS:
  * - Position caching to avoid repeated geolocation requests
  * - Distance calculation caching with memoization
@@ -75,12 +74,7 @@ function getCacheKey(lat1: number, lon1: number, lat2: number, lon2: number): st
  * @param lon2 Longitude of second point
  * @returns Distance in kilometers
  */
-export function calculateDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
+export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   // Check cache first
   const cacheKey = getCacheKey(lat1, lon1, lat2, lon2);
   const cached = distanceCache.get(cacheKey);
@@ -93,15 +87,14 @@ export function calculateDistance(
   const dLon = toRadians(lon2 - lon1);
   const lat1Rad = toRadians(lat1);
   const lat2Rad = toRadians(lat2);
-  
+
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1Rad) * Math.cos(lat2Rad) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  
+    Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = Math.round(EARTH_RADIUS_KM * c * 10) / 10; // Round to 1 decimal
-  
+
   // Cache the result (with size limit)
   if (distanceCache.size >= DISTANCE_CACHE_MAX_SIZE) {
     // Remove oldest entry (first key)
@@ -109,7 +102,7 @@ export function calculateDistance(
     if (firstKey) distanceCache.delete(firstKey);
   }
   distanceCache.set(cacheKey, distance);
-  
+
   return distance;
 }
 
@@ -126,20 +119,19 @@ export function calculateDistancesBatch<T extends StoreLocation>(
   // Pre-compute user position in radians for efficiency
   const userLatRad = toRadians(userPos.lat);
   const cosUserLat = Math.cos(userLatRad);
-  
-  return stores.map(store => {
+
+  return stores.map((store) => {
     const dLat = toRadians(store.lat - userPos.lat);
     const dLon = toRadians(store.lon - userPos.lon);
     const storLatRad = toRadians(store.lat);
-    
+
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      cosUserLat * Math.cos(storLatRad) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    
+      cosUserLat * Math.cos(storLatRad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = Math.round(EARTH_RADIUS_KM * c * 10) / 10;
-    
+
     return { ...store, distance };
   });
 }
@@ -171,13 +163,13 @@ export async function getUserPosition(forceRefresh = false): Promise<GeoPosition
           lat: position.coords.latitude,
           lon: position.coords.longitude,
         };
-        
+
         // Update cache
         positionCache = {
           position: geoPos,
           timestamp: Date.now(),
         };
-        
+
         resolve(geoPos);
       },
       (error) => {

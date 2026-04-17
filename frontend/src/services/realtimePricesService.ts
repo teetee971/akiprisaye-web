@@ -46,7 +46,8 @@ function parseItems(payload: any): RealtimePrice[] {
     const normalized = {
       ...item,
       currency: item?.currency ?? 'EUR',
-      observedAt: typeof item?.observedAt === 'string' ? item.observedAt : item?.updated_at ?? null,
+      observedAt:
+        typeof item?.observedAt === 'string' ? item.observedAt : (item?.updated_at ?? null),
     };
     if (isValidPrice(normalized)) {
       items.push(normalized);
@@ -55,7 +56,9 @@ function parseItems(payload: any): RealtimePrice[] {
   return items;
 }
 
-export async function getRealtimePrices(options?: { timeoutMs?: number }): Promise<RealtimePriceResult> {
+export async function getRealtimePrices(options?: {
+  timeoutMs?: number;
+}): Promise<RealtimePriceResult> {
   const timeoutMs = Math.max(MIN_TIMEOUT_MS, options?.timeoutMs ?? DEFAULT_TIMEOUT_MS);
 
   try {
@@ -69,19 +72,18 @@ export async function getRealtimePrices(options?: { timeoutMs?: number }): Promi
     }
 
     const state: RealtimePriceState =
-      json?.state === 'cached' || json?.state === 'offline'
-        ? json.state
-        : 'live';
+      json?.state === 'cached' || json?.state === 'offline' ? json.state : 'live';
 
     const updatedAt =
-      typeof json?.updated_at === 'string' ? json.updated_at : items[0]?.observedAt ?? null;
+      typeof json?.updated_at === 'string' ? json.updated_at : (items[0]?.observedAt ?? null);
 
     return {
       state,
       updatedAt,
       items,
       cache: typeof json?.cache === 'string' ? json.cache : null,
-      source: typeof json?.source?.name === 'string' ? json.source.name : 'API /api/prices/realtime',
+      source:
+        typeof json?.source?.name === 'string' ? json.source.name : 'API /api/prices/realtime',
       message: typeof json?.message === 'string' ? json.message : undefined,
     };
   } catch (error) {

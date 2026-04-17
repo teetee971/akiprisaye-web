@@ -19,17 +19,13 @@ import { removeAccents } from './productLabelNormalizer';
  * @param brand  - Marque optionnelle (non utilisée pour l'instant, réservée extension)
  * @param size   - Grammage optionnel (non utilisé pour l'instant, réservée extension)
  */
-export function toProductKey(
-  label: string,
-  _brand?: string | null,
-  _size?: string | null,
-): string {
+export function toProductKey(label: string, _brand?: string | null, _size?: string | null): string {
   return removeAccents(label)
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, ' ')   // Garder lettres, chiffres, espaces, tirets
-    .replace(/\s+/g, '-')             // Espaces → tirets
-    .replace(/-{2,}/g, '-')           // Tirets multiples → un seul
-    .replace(/^-+|-+$/g, '')          // Trim tirets de début/fin
+    .replace(/[^a-z0-9\s-]/g, ' ') // Garder lettres, chiffres, espaces, tirets
+    .replace(/\s+/g, '-') // Espaces → tirets
+    .replace(/-{2,}/g, '-') // Tirets multiples → un seul
+    .replace(/^-+|-+$/g, '') // Trim tirets de début/fin
     .slice(0, 80);
 }
 

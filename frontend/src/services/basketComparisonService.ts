@@ -1,7 +1,6 @@
- 
 /**
  * Basket Store Comparison Service
- * 
+ *
  * Compares a user's basket across multiple stores to find the best prices.
  * PROMPT 4: Comparaison automatique du panier entre magasins
  */
@@ -51,7 +50,7 @@ export interface BasketItemAtStore {
 function calculateDataFreshness(observationDates: string[]): number {
   if (observationDates.length === 0) return 50;
 
-  const scores = observationDates.map(dateString => {
+  const scores = observationDates.map((dateString) => {
     try {
       const date = new Date(dateString);
       const now = new Date();
@@ -60,17 +59,17 @@ function calculateDataFreshness(observationDates: string[]): number {
 
       // Fresh data (0-7 days) = 100%
       if (diffDays <= 7) return 100;
-      
+
       // Recent data (8-30 days) = 80-99%
       if (diffDays <= 30) {
         return Math.round(100 - ((diffDays - 7) / 23) * 20);
       }
-      
+
       // Older data (31-90 days) = 50-79%
       if (diffDays <= 90) {
         return Math.round(80 - ((diffDays - 30) / 60) * 30);
       }
-      
+
       // Very old data (90+ days) = 50% minimum
       return 50;
     } catch (e) {
@@ -87,7 +86,7 @@ function calculateDataFreshness(observationDates: string[]): number {
  */
 function getMostRecentDate(dates: string[]): string {
   if (dates.length === 0) return new Date().toISOString();
-  
+
   return dates.reduce((latest, current) => {
     return new Date(current) > new Date(latest) ? current : latest;
   });
@@ -95,7 +94,7 @@ function getMostRecentDate(dates: string[]): string {
 
 /**
  * Compare basket across all stores
- * 
+ *
  * @param basketItems - Items in the user's basket
  * @param userPosition - Optional user position for distance calculation
  * @returns Array of store comparisons sorted by total price
@@ -115,14 +114,15 @@ export function compareBasketAcrossStores(
 
     // Check each basket item at this store
     for (const basketItem of basketItems) {
-      const product = SEED_PRODUCTS.find(p => p.ean === basketItem.id);
-      
+      const product = SEED_PRODUCTS.find((p) => p.ean === basketItem.id);
+
       if (!product) {
         // Product not found in catalog - use metadata if available
-        const itemName = basketItem.meta && typeof basketItem.meta === 'object' && 'name' in basketItem.meta
-          ? String(basketItem.meta.name)
-          : 'Produit inconnu';
-        
+        const itemName =
+          basketItem.meta && typeof basketItem.meta === 'object' && 'name' in basketItem.meta
+            ? String(basketItem.meta.name)
+            : 'Produit inconnu';
+
         storeItems.push({
           id: basketItem.id,
           name: itemName,
@@ -133,8 +133,10 @@ export function compareBasketAcrossStores(
       }
 
       // Find price at this store
-      const storePrice = product.prices.find((p: { storeId?: string; price?: number; ts?: string }) => p.storeId === store.id);
-      
+      const storePrice = product.prices.find(
+        (p: { storeId?: string; price?: number; ts?: string }) => p.storeId === store.id
+      );
+
       if (storePrice) {
         storeItems.push({
           id: basketItem.id,
@@ -144,7 +146,7 @@ export function compareBasketAcrossStores(
           available: true,
           observationDate: storePrice.ts,
         });
-        
+
         totalPrice += storePrice.price * basketItem.quantity;
         availableCount++;
         observationDates.push(storePrice.ts);
@@ -161,7 +163,7 @@ export function compareBasketAcrossStores(
     // Only include stores that have at least one item
     if (availableCount > 0) {
       let distance: number | undefined;
-      
+
       if (userPosition && store.coordinates) {
         distance = calculateDistance(
           userPosition.lat,
@@ -230,9 +232,8 @@ export function getBasketComparisonStats(comparisons: BasketStoreComparison[]): 
   const cheapest = comparisons[0];
   const mostExpensive = comparisons[comparisons.length - 1];
   const priceDiff = mostExpensive.totalPrice - cheapest.totalPrice;
-  const percentSavings = mostExpensive.totalPrice > 0 
-    ? (priceDiff / mostExpensive.totalPrice) * 100 
-    : 0;
+  const percentSavings =
+    mostExpensive.totalPrice > 0 ? (priceDiff / mostExpensive.totalPrice) * 100 : 0;
 
   return {
     cheapestStore: cheapest,

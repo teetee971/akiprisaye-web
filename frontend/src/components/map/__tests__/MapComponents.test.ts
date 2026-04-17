@@ -1,6 +1,6 @@
 /**
  * Map Components Test Suite
- * 
+ *
  * Basic tests to verify component structure and functionality
  */
 
@@ -19,7 +19,7 @@ const mockStore: StoreMarkerType = {
   },
   priceIndex: 45,
   priceCategory: 'medium',
-  averageBasketPrice: 125.50,
+  averageBasketPrice: 125.5,
   distance: 2.5,
   isOpen: true,
   address: '123 Rue de la République',
@@ -90,20 +90,20 @@ describe('Map Components', () => {
     ];
 
     it('should filter by chain', () => {
-      const filtered = stores.filter(s => s.chain === 'Super U');
+      const filtered = stores.filter((s) => s.chain === 'Super U');
       expect(filtered).toHaveLength(1);
       expect(filtered[0].id).toBe('store-1');
     });
 
     it('should filter by price category', () => {
-      const cheapStores = stores.filter(s => s.priceIndex <= 33);
+      const cheapStores = stores.filter((s) => s.priceIndex <= 33);
       expect(cheapStores).toHaveLength(1);
       expect(cheapStores[0].priceIndex).toBe(25);
     });
 
     it('should filter by multiple chains', () => {
       const chains = ['Super U', 'Carrefour'];
-      const filtered = stores.filter(s => chains.includes(s.chain));
+      const filtered = stores.filter((s) => chains.includes(s.chain));
       expect(filtered).toHaveLength(2);
     });
   });

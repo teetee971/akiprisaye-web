@@ -1,6 +1,6 @@
 /**
  * Enhanced Price Comparison Display
- * 
+ *
  * Features:
  * - Price comparison with reliability badges
  * - Product images (mobile-optimized)
@@ -32,27 +32,27 @@ export default function EnhancedComparisonDisplay({
   onReportAnomaly,
 }: EnhancedComparisonDisplayProps) {
   const [expandedPriceIndex, setExpandedPriceIndex] = useState<number | null>(null);
-  
+
   // Compute price trend prediction
   const pricePrediction = useMemo(() => {
-    const observations = comparison.prices.map(p => ({
+    const observations = comparison.prices.map((p) => ({
       date: p.observedAt,
       price: p.price,
       store: p.storeName,
     }));
     return computePrediction(observations);
   }, [comparison.prices]);
-  
+
   const togglePriceDetails = (index: number) => {
     setExpandedPriceIndex(expandedPriceIndex === index ? null : index);
   };
-  
+
   const formatDate = (isoDate: string): string => {
     const date = new Date(isoDate);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) {
       return "Aujourd'hui";
     } else if (diffDays === 1) {
@@ -60,19 +60,19 @@ export default function EnhancedComparisonDisplay({
     } else if (diffDays < 7) {
       return `Il y a ${diffDays} jours`;
     } else {
-      const options: Intl.DateTimeFormatOptions = { 
-        day: 'numeric', 
+      const options: Intl.DateTimeFormatOptions = {
+        day: 'numeric',
         month: 'short',
       };
-      
+
       if (date.getFullYear() !== now.getFullYear()) {
         options.year = 'numeric';
       }
-      
+
       return date.toLocaleDateString('fr-FR', options);
     }
   };
-  
+
   return (
     <div className="space-y-6">
       {/* Product Header */}
@@ -89,23 +89,19 @@ export default function EnhancedComparisonDisplay({
                 loading="eager"
               />
             </div>
-            
+
             {/* Product Info */}
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                {comparison.product.name}
-              </h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-1">{comparison.product.name}</h2>
               <div className="flex items-center gap-2 text-gray-600">
                 <span className="font-medium">{comparison.product.brand}</span>
                 <span>•</span>
                 <span>{comparison.product.format.displayText}</span>
               </div>
-              <div className="mt-1 text-sm text-gray-500">
-                EAN: {comparison.product.ean}
-              </div>
+              <div className="mt-1 text-sm text-gray-500">EAN: {comparison.product.ean}</div>
             </div>
           </div>
-          
+
           {/* Badges Column */}
           <div className="flex flex-col gap-3">
             {/* Average Reliability Badge */}
@@ -116,7 +112,7 @@ export default function EnhancedComparisonDisplay({
                 <span>{comparison.metadata.averageReliability}%</span>
               </div>
             </div>
-            
+
             {/* Price Trend Prediction */}
             <div className="text-center">
               <div className="text-xs text-gray-500 mb-1">Tendance de prix</div>
@@ -124,7 +120,7 @@ export default function EnhancedComparisonDisplay({
             </div>
           </div>
         </div>
-        
+
         {/* Statistics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-blue-50 rounded-lg">
           <div>
@@ -152,7 +148,7 @@ export default function EnhancedComparisonDisplay({
             </div>
           </div>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="mt-4 flex flex-wrap gap-2">
           {onViewHistory && (
@@ -181,28 +177,31 @@ export default function EnhancedComparisonDisplay({
           )}
         </div>
       </div>
-      
+
       {/* Price List */}
       <div className="space-y-3">
         <h3 className="text-lg font-semibold text-gray-900">
-          Prix dans {comparison.metadata.totalStores} magasin{comparison.metadata.totalStores > 1 ? 's' : ''}
+          Prix dans {comparison.metadata.totalStores} magasin
+          {comparison.metadata.totalStores > 1 ? 's' : ''}
         </h3>
-        
+
         {(comparison.pricesByStore || comparison.prices).map((priceData, index) => {
           const isExpanded = expandedPriceIndex === index;
           const isCheapest = index === 0;
-          const isMostExpensive = index === (comparison.pricesByStore || comparison.prices).length - 1 && (comparison.pricesByStore || comparison.prices).length > 1;
+          const isMostExpensive =
+            index === (comparison.pricesByStore || comparison.prices).length - 1 &&
+            (comparison.pricesByStore || comparison.prices).length > 1;
           const hasDistance = 'distance' in priceData && priceData.distance !== undefined;
-          
+
           return (
             <div
               key={`${priceData.storeChain}-${priceData.storeName}-${index}`}
               className={`bg-white rounded-xl shadow border-2 transition-all ${
-                isCheapest 
-                  ? 'border-green-300 shadow-green-100' 
+                isCheapest
+                  ? 'border-green-300 shadow-green-100'
                   : isMostExpensive
-                  ? 'border-red-300 shadow-red-100'
-                  : 'border-gray-200'
+                    ? 'border-red-300 shadow-red-100'
+                    : 'border-gray-200'
               }`}
             >
               <div className="p-4">
@@ -212,15 +211,11 @@ export default function EnhancedComparisonDisplay({
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-2xl font-bold">#{priceData.rank}</span>
                       <div>
-                        <h4 className="font-semibold text-gray-900">
-                          {priceData.storeName}
-                        </h4>
-                        <p className="text-sm text-gray-600">
-                          {priceData.storeChain}
-                        </p>
+                        <h4 className="font-semibold text-gray-900">{priceData.storeName}</h4>
+                        <p className="text-sm text-gray-600">{priceData.storeChain}</p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
                       <span>Observé {formatDate(priceData.observedAt)}</span>
                       {hasDistance && (
@@ -233,20 +228,20 @@ export default function EnhancedComparisonDisplay({
                       )}
                     </div>
                   </div>
-                  
+
                   {/* Price and Badge */}
                   <div className="flex flex-col items-end gap-2">
                     <div className="text-3xl font-bold text-gray-900">
                       {priceData.price.toFixed(2)}€
                     </div>
-                    
+
                     <ReliabilityBadge
                       reliability={priceData.reliability}
                       source={priceData.source}
                       showDetails={false}
                       compact={true}
                     />
-                    
+
                     {/* Price Difference */}
                     {priceData.differenceFromCheapest.absolute > 0 && (
                       <div className="text-sm">
@@ -258,7 +253,7 @@ export default function EnhancedComparisonDisplay({
                         </span>
                       </div>
                     )}
-                    
+
                     {isCheapest && (
                       <div className="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-semibold">
                         ⭐ Meilleur prix
@@ -266,7 +261,7 @@ export default function EnhancedComparisonDisplay({
                     )}
                   </div>
                 </div>
-                
+
                 {/* Actions */}
                 <div className="mt-3 pt-3 border-t border-gray-200 flex items-center justify-between">
                   <button
@@ -275,7 +270,7 @@ export default function EnhancedComparisonDisplay({
                   >
                     {isExpanded ? '▼ Masquer les détails' : '▶ Voir les détails'}
                   </button>
-                  
+
                   {onReportAnomaly && (
                     <button
                       onClick={() => onReportAnomaly(comparison.product.ean, priceData.storeName)}
@@ -285,7 +280,7 @@ export default function EnhancedComparisonDisplay({
                     </button>
                   )}
                 </div>
-                
+
                 {/* Expanded Details */}
                 {isExpanded && (
                   <div className="mt-3 pt-3 border-t border-gray-200">
@@ -302,7 +297,7 @@ export default function EnhancedComparisonDisplay({
           );
         })}
       </div>
-      
+
       {/* Metadata Footer */}
       <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-600 space-y-2">
         <div className="flex items-center gap-2">
@@ -312,13 +307,14 @@ export default function EnhancedComparisonDisplay({
         <div className="flex items-center gap-2">
           <span className="font-medium">Données collectées entre :</span>
           <span>
-            {formatDate(comparison.metadata.oldestUpdate)} et {formatDate(comparison.metadata.mostRecentUpdate)}
+            {formatDate(comparison.metadata.oldestUpdate)} et{' '}
+            {formatDate(comparison.metadata.mostRecentUpdate)}
           </span>
         </div>
         <div className="pt-2 border-t border-gray-300">
           <p className="text-xs italic">
-            💡 Les prix affichés correspondent à des observations réelles vérifiées. 
-            La fiabilité indique la qualité et la fraîcheur des données.
+            💡 Les prix affichés correspondent à des observations réelles vérifiées. La fiabilité
+            indique la qualité et la fraîcheur des données.
           </p>
         </div>
       </div>

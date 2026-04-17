@@ -1,7 +1,7 @@
 /**
  * EAN Validator Service
  * Strict validation for EAN-8 and EAN-13 barcodes with checksum verification
- * 
+ *
  * References:
  * - EAN-13: https://en.wikipedia.org/wiki/International_Article_Number
  * - EAN-8: https://en.wikipedia.org/wiki/EAN-8
@@ -11,7 +11,7 @@ import type { EanValidationResult } from '../types/ean';
 
 /**
  * Validate EAN-8 or EAN-13 barcode format and checksum
- * 
+ *
  * @param code - Barcode string to validate
  * @returns Validation result with format and checksum status
  */
@@ -26,7 +26,7 @@ export function validateEan(code: string): EanValidationResult {
       ean: cleanCode,
       format: null,
       checksum: false,
-      error: 'Le code doit contenir uniquement des chiffres'
+      error: 'Le code doit contenir uniquement des chiffres',
     };
   }
 
@@ -49,7 +49,7 @@ export function validateEan(code: string): EanValidationResult {
       ean: cleanCode,
       format: null,
       checksum: false,
-      error: `Longueur invalide: ${length} chiffres (attendu: 8 ou 13 chiffres)`
+      error: `Longueur invalide: ${length} chiffres (attendu: 8 ou 13 chiffres)`,
     };
   }
 
@@ -61,19 +61,19 @@ export function validateEan(code: string): EanValidationResult {
     ean: cleanCode,
     format,
     checksum: checksumValid,
-    error: checksumValid ? undefined : 'Somme de contrôle invalide'
+    error: checksumValid ? undefined : 'Somme de contrôle invalide',
   };
 }
 
 /**
  * Verify EAN/UPC checksum using modulo 10 algorithm
- * 
+ *
  * Algorithm:
  * 1. Starting from the right (excluding check digit), alternate multiplying by 3 and 1
  * 2. Sum all products
  * 3. Subtract from next highest multiple of 10
  * 4. Result should equal the check digit
- * 
+ *
  * @param code - Complete EAN code including check digit
  * @returns True if checksum is valid
  */
@@ -87,14 +87,14 @@ export function verifyChecksum(code: string): boolean {
 
   // Extract check digit (last digit)
   const checkDigit = digits[length - 1];
-  
+
   // Calculate checksum for digits before check digit
   let sum = 0;
-  
+
   // For EAN-13 and EAN-8, alternate weights are 1 and 3 (from right to left, excluding check digit)
   for (let i = length - 2; i >= 0; i--) {
     // Position from right (0 = first digit before check, 1 = second digit before check, etc.)
-    const positionFromRight = (length - 2) - i;
+    const positionFromRight = length - 2 - i;
     // Alternate: multiply by 3 for even positions, by 1 for odd positions
     const weight = positionFromRight % 2 === 0 ? 3 : 1;
     sum += digits[i] * weight;
@@ -109,7 +109,7 @@ export function verifyChecksum(code: string): boolean {
 /**
  * Calculate checksum digit for an EAN code without check digit
  * Useful for generating valid EAN codes or fixing incomplete codes
- * 
+ *
  * @param codeWithoutCheck - EAN code without the final check digit (7 or 12 digits)
  * @returns The calculated check digit (0-9)
  */
@@ -119,7 +119,7 @@ export function calculateCheckDigit(codeWithoutCheck: string): number {
 
   // Calculate sum with alternating weights
   for (let i = digits.length - 1; i >= 0; i--) {
-    const positionFromRight = (digits.length - 1) - i;
+    const positionFromRight = digits.length - 1 - i;
     const weight = positionFromRight % 2 === 0 ? 3 : 1;
     sum += digits[i] * weight;
   }

@@ -6,7 +6,15 @@ export default function ScrollToTop() {
   const location = useLocation();
 
   // Routes where FloatingActions (FABs) are disabled/hidden
-  const fabDisabledRoutes = ['/observatoire', '/pricing', '/tarifs', '/inscription', '/login', '/connexion', '/subscribe'];
+  const fabDisabledRoutes = [
+    '/observatoire',
+    '/pricing',
+    '/tarifs',
+    '/inscription',
+    '/login',
+    '/connexion',
+    '/subscribe',
+  ];
   const areFABsVisible = !fabDisabledRoutes.some((path) => location.pathname.startsWith(path));
 
   // Show button when page is scrolled down

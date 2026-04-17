@@ -1,7 +1,7 @@
 /**
  * Text Product Recognition Service Tests
  * Part of PR D - Text-based Product Recognition
- * 
+ *
  * Node-safe tests only (no OCR, no browser APIs)
  */
 
@@ -124,7 +124,7 @@ describe('fuzzySearchProducts', () => {
 
   it('should return scores between 0 and 1', () => {
     const results = fuzzySearchProducts(['NUTELLA'], mockCatalog);
-    results.forEach(result => {
+    results.forEach((result) => {
       expect(result.score).toBeGreaterThanOrEqual(0);
       expect(result.score).toBeLessThanOrEqual(1);
     });
@@ -152,10 +152,7 @@ describe('fuzzySearchProducts', () => {
   });
 
   it('should handle special characters in search', () => {
-    const catalogWithSpecial = [
-      { label: 'Coca-Cola 330ml' },
-      { label: "Lay's Chips" },
-    ];
+    const catalogWithSpecial = [{ label: 'Coca-Cola 330ml' }, { label: "Lay's Chips" }];
     const results = fuzzySearchProducts(['COCA', 'COLA'], catalogWithSpecial);
     expect(results.length).toBeGreaterThan(0);
   });
@@ -178,7 +175,7 @@ describe('Integration: extractProductHints + fuzzySearchProducts', () => {
     const ocrText = 'NUTELLA 750G';
     const hints = extractProductHints(ocrText);
     const results = fuzzySearchProducts(hints.keywords, mockCatalog);
-    
+
     expect(results.length).toBeGreaterThan(0);
     expect(results[0].label).toBe('Nutella 750g');
   });
@@ -187,7 +184,7 @@ describe('Integration: extractProductHints + fuzzySearchProducts', () => {
     const ocrText = 'RIZ BASMA 1KG';
     const hints = extractProductHints(ocrText);
     const results = fuzzySearchProducts(hints.keywords, mockCatalog);
-    
+
     expect(results.length).toBeGreaterThan(0);
     expect(results[0].label).toBe('Riz Basmati 1kg');
   });
@@ -196,7 +193,7 @@ describe('Integration: extractProductHints + fuzzySearchProducts', () => {
     const ocrText = 'LAIT UHT';
     const hints = extractProductHints(ocrText);
     const results = fuzzySearchProducts(hints.keywords, mockCatalog);
-    
+
     expect(results.length).toBeGreaterThan(0);
     expect(results[0].score).toBeGreaterThan(0);
     // User should see this score to validate

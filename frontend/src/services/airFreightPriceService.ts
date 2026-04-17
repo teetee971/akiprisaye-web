@@ -1,9 +1,9 @@
 /**
  * Air Freight Price Service
- * 
+ *
  * Service de comparaison des coûts de fret aérien
  * Données simulées structurées pour démonstration
- * 
+ *
  * IMPORTANT:
  * - Données publiques/professionnelles uniquement
  * - Sources: Aéroports, compagnies aériennes, rapports logistiques
@@ -15,12 +15,12 @@
 
 export interface AirFreightPrice {
   operateurAerien: string;
-  typeFret: string;             // "Cargo dédié", "Soute passager"
-  typeMarchandise: string;      // "Alimentaire", "Médical", "Urgent", "Général"
+  typeFret: string; // "Cargo dédié", "Soute passager"
+  typeMarchandise: string; // "Alimentaire", "Médical", "Urgent", "Général"
   aeroportDepart: string;
   aeroportArrivee: string;
-  prixParKg: number;            // Prix en € par kg
-  devise: string;               // "EUR"
+  prixParKg: number; // Prix en € par kg
+  devise: string; // "EUR"
   source: string;
   dateReleve: string;
 }
@@ -43,7 +43,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Général',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Pointe-à-Pitre (PTP)',
-    prixParKg: 4.80,
+    prixParKg: 4.8,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-06',
@@ -54,7 +54,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Général',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Pointe-à-Pitre (PTP)',
-    prixParKg: 5.20,
+    prixParKg: 5.2,
     devise: 'EUR',
     source: 'Observation publique',
     dateReleve: '2026-01-05',
@@ -65,7 +65,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Alimentaire',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Pointe-à-Pitre (PTP)',
-    prixParKg: 5.50,
+    prixParKg: 5.5,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-06',
@@ -76,7 +76,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Médical',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Pointe-à-Pitre (PTP)',
-    prixParKg: 6.80,
+    prixParKg: 6.8,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-06',
@@ -87,12 +87,12 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Général',
     aeroportDepart: 'Paris ORY',
     aeroportArrivee: 'Pointe-à-Pitre (PTP)',
-    prixParKg: 5.40,
+    prixParKg: 5.4,
     devise: 'EUR',
     source: 'Observation publique',
     dateReleve: '2026-01-04',
   },
-  
+
   // Paris → Martinique (FDF)
   {
     operateurAerien: 'Air France Cargo',
@@ -149,7 +149,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     source: 'Observation publique',
     dateReleve: '2026-01-04',
   },
-  
+
   // Paris → Guyane (CAY)
   {
     operateurAerien: 'Air France Cargo',
@@ -157,7 +157,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Général',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Cayenne (CAY)',
-    prixParKg: 5.20,
+    prixParKg: 5.2,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-06',
@@ -179,7 +179,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Alimentaire',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Cayenne (CAY)',
-    prixParKg: 5.90,
+    prixParKg: 5.9,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-06',
@@ -190,12 +190,12 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Médical',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Cayenne (CAY)',
-    prixParKg: 7.20,
+    prixParKg: 7.2,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-06',
   },
-  
+
   // Paris → La Réunion (RUN)
   {
     operateurAerien: 'Air France Cargo',
@@ -203,7 +203,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Général',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Saint-Denis de La Réunion (RUN)',
-    prixParKg: 6.50,
+    prixParKg: 6.5,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-07',
@@ -214,7 +214,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Général',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Saint-Denis de La Réunion (RUN)',
-    prixParKg: 7.00,
+    prixParKg: 7.0,
     devise: 'EUR',
     source: 'Observation publique',
     dateReleve: '2026-01-06',
@@ -225,7 +225,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Alimentaire',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Saint-Denis de La Réunion (RUN)',
-    prixParKg: 7.30,
+    prixParKg: 7.3,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-07',
@@ -236,7 +236,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Médical',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Saint-Denis de La Réunion (RUN)',
-    prixParKg: 8.80,
+    prixParKg: 8.8,
     devise: 'EUR',
     source: 'Tarifs publics fret aérien - Observation 2026',
     dateReleve: '2026-01-07',
@@ -247,7 +247,7 @@ const SIMULATED_DATA: AirFreightPrice[] = [
     typeMarchandise: 'Général',
     aeroportDepart: 'Paris CDG',
     aeroportArrivee: 'Saint-Denis de La Réunion (RUN)',
-    prixParKg: 7.20,
+    prixParKg: 7.2,
     devise: 'EUR',
     source: 'Observation publique',
     dateReleve: '2026-01-05',
@@ -260,8 +260,8 @@ const SIMULATED_DATA: AirFreightPrice[] = [
  */
 export function searchAirFreightPrices(params: AirFreightPriceSearchParams): AirFreightPrice[] {
   let results = SIMULATED_DATA.filter(
-    (price) => 
-      price.aeroportDepart === params.aeroportDepart && 
+    (price) =>
+      price.aeroportDepart === params.aeroportDepart &&
       price.aeroportArrivee === params.aeroportArrivee
   );
 
@@ -287,12 +287,12 @@ export function searchAirFreightPrices(params: AirFreightPriceSearchParams): Air
 export function getAirports(): { departure: string[]; arrival: string[] } {
   const departureAirports = new Set<string>();
   const arrivalAirports = new Set<string>();
-  
+
   SIMULATED_DATA.forEach((price) => {
     departureAirports.add(price.aeroportDepart);
     arrivalAirports.add(price.aeroportArrivee);
   });
-  
+
   return {
     departure: Array.from(departureAirports).sort(),
     arrival: Array.from(arrivalAirports).sort(),

@@ -114,49 +114,55 @@ export function usePendingProductUpdates(): UsePendingProductUpdatesResult {
     }
   }, []);
 
-  const approveUpdate = useCallback(async (updateId: string): Promise<boolean> => {
-    try {
-      const response = await fetch(`/api/products/updates/${updateId}/approve`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+  const approveUpdate = useCallback(
+    async (updateId: string): Promise<boolean> => {
+      try {
+        const response = await fetch(`/api/products/updates/${updateId}/approve`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      if (!response.ok) {
-        throw new Error('Failed to approve update');
+        if (!response.ok) {
+          throw new Error('Failed to approve update');
+        }
+
+        // Refetch pending updates
+        await fetchPendingUpdates();
+        return true;
+      } catch (err) {
+        console.error('Error approving update:', err);
+        return false;
       }
+    },
+    [fetchPendingUpdates]
+  );
 
-      // Refetch pending updates
-      await fetchPendingUpdates();
-      return true;
-    } catch (err) {
-      console.error('Error approving update:', err);
-      return false;
-    }
-  }, [fetchPendingUpdates]);
+  const rejectUpdate = useCallback(
+    async (updateId: string): Promise<boolean> => {
+      try {
+        const response = await fetch(`/api/products/updates/${updateId}/reject`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-  const rejectUpdate = useCallback(async (updateId: string): Promise<boolean> => {
-    try {
-      const response = await fetch(`/api/products/updates/${updateId}/reject`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+        if (!response.ok) {
+          throw new Error('Failed to reject update');
+        }
 
-      if (!response.ok) {
-        throw new Error('Failed to reject update');
+        // Refetch pending updates
+        await fetchPendingUpdates();
+        return true;
+      } catch (err) {
+        console.error('Error rejecting update:', err);
+        return false;
       }
-
-      // Refetch pending updates
-      await fetchPendingUpdates();
-      return true;
-    } catch (err) {
-      console.error('Error rejecting update:', err);
-      return false;
-    }
-  }, [fetchPendingUpdates]);
+    },
+    [fetchPendingUpdates]
+  );
 
   useEffect(() => {
     fetchPendingUpdates();

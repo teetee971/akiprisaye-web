@@ -1,13 +1,13 @@
 /**
  * AddMissingProduct Component
  * Allows users to add products not found in the database
- * 
+ *
  * Features:
  * - Product details form (name, brand, category)
  * - Optional photo upload
  * - EAN code capture
  * - Validation before submission
- * 
+ *
  * Workflow:
  * 1. User scans unknown EAN
  * 2. System shows "not found"
@@ -38,11 +38,7 @@ const CATEGORIES = [
   'Autre',
 ];
 
-export default function AddMissingProduct({
-  ean,
-  onSuccess,
-  onCancel,
-}: AddMissingProductProps) {
+export default function AddMissingProduct({ ean, onSuccess, onCancel }: AddMissingProductProps) {
   const [step, setStep] = useState<'form' | 'photo' | 'success'>('form');
   const [formData, setFormData] = useState({
     name: '',
@@ -95,17 +91,16 @@ export default function AddMissingProduct({
         photoUrl: photoId || undefined,
         consentGiven: true,
       });
-      
+
       setStep('success');
-      
+
       // Call success callback after a brief delay
       setTimeout(() => {
         onSuccess?.(contributionId);
       }, 2000);
-      
     } catch (err) {
       console.error('Product submission error:', err);
-      setError('Erreur lors de l\'envoi. Veuillez réessayer.');
+      setError("Erreur lors de l'envoi. Veuillez réessayer.");
     } finally {
       setLoading(false);
     }
@@ -137,19 +132,30 @@ export default function AddMissingProduct({
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 max-w-2xl mx-auto">
         <div className="text-center space-y-4">
           <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto">
-            <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg
+              className="w-10 h-10 text-green-600 dark:text-green-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </div>
-          
+
           <h3 className="text-xl font-bold text-gray-900 dark:text-white">
             Produit ajouté avec succès !
           </h3>
-          
+
           <p className="text-gray-600 dark:text-gray-400">
-            Merci pour votre contribution ! Le produit sera visible après validation par notre équipe.
+            Merci pour votre contribution ! Le produit sera visible après validation par notre
+            équipe.
           </p>
-          
+
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-left">
             <p className="text-sm text-gray-700 dark:text-gray-300">
               <strong>Prochaines étapes :</strong>
@@ -160,7 +166,7 @@ export default function AddMissingProduct({
               <li>Le produit apparaîtra dans les recherches</li>
             </ul>
           </div>
-          
+
           <button
             onClick={onCancel}
             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
@@ -194,17 +200,16 @@ export default function AddMissingProduct({
       <div className="p-6 space-y-6">
         {/* EAN display */}
         <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-            Code EAN scanné
-          </p>
-          <code className="font-mono text-lg font-bold text-gray-900 dark:text-white">
-            {ean}
-          </code>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Code EAN scanné</p>
+          <code className="font-mono text-lg font-bold text-gray-900 dark:text-white">{ean}</code>
         </div>
 
         {/* Product name */}
         <div>
-          <label htmlFor="add-product-name" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label
+            htmlFor="add-product-name"
+            className="block text-sm font-semibold text-gray-900 dark:text-white mb-2"
+          >
             Nom du produit <span className="text-red-500">*</span>
           </label>
           <input
@@ -220,7 +225,10 @@ export default function AddMissingProduct({
 
         {/* Brand */}
         <div>
-          <label htmlFor="add-product-brand" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label
+            htmlFor="add-product-brand"
+            className="block text-sm font-semibold text-gray-900 dark:text-white mb-2"
+          >
             Marque
           </label>
           <input
@@ -236,7 +244,10 @@ export default function AddMissingProduct({
 
         {/* Category */}
         <div>
-          <label htmlFor="add-product-category" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label
+            htmlFor="add-product-category"
+            className="block text-sm font-semibold text-gray-900 dark:text-white mb-2"
+          >
             Catégorie <span className="text-red-500">*</span>
           </label>
           <select
@@ -256,7 +267,10 @@ export default function AddMissingProduct({
 
         {/* Size/Quantity */}
         <div>
-          <label htmlFor="add-product-size" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label
+            htmlFor="add-product-size"
+            className="block text-sm font-semibold text-gray-900 dark:text-white mb-2"
+          >
             Contenance / Quantité
           </label>
           <input
@@ -272,7 +286,10 @@ export default function AddMissingProduct({
 
         {/* Description */}
         <div>
-          <label htmlFor="add-product-description" className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+          <label
+            htmlFor="add-product-description"
+            className="block text-sm font-semibold text-gray-900 dark:text-white mb-2"
+          >
             Description (optionnel)
           </label>
           <textarea
@@ -298,7 +315,12 @@ export default function AddMissingProduct({
             {photoId && (
               <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
                 Photo ajoutée
               </span>
@@ -309,7 +331,12 @@ export default function AddMissingProduct({
             className="w-full px-4 py-3 bg-gray-100 dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-400 transition-colors flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
             </svg>
             {photoId ? 'Changer la photo' : 'Ajouter une photo'}
           </button>
@@ -321,9 +348,7 @@ export default function AddMissingProduct({
         {/* Error message */}
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-            <p className="text-sm text-red-800 dark:text-red-200">
-              {error}
-            </p>
+            <p className="text-sm text-red-800 dark:text-red-200">{error}</p>
           </div>
         )}
 
@@ -346,8 +371,19 @@ export default function AddMissingProduct({
             {loading ? (
               <>
                 <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
                 Envoi en cours...
               </>

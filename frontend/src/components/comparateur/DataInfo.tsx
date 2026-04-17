@@ -28,7 +28,7 @@ export default function DataInfo({ territoire, dateSnapshot, source, qualite }: 
           bg: 'bg-green-100 dark:bg-green-900/30',
           text: 'text-green-700 dark:text-green-300',
           icon: '✓',
-          label: 'Vérifié'
+          label: 'Vérifié',
         };
       case 'en_cours':
       case 'en cours':
@@ -36,14 +36,14 @@ export default function DataInfo({ territoire, dateSnapshot, source, qualite }: 
           bg: 'bg-yellow-100 dark:bg-yellow-900/30',
           text: 'text-yellow-700 dark:text-yellow-300',
           icon: '⏳',
-          label: 'En cours'
+          label: 'En cours',
         };
       default:
         return {
           bg: 'bg-blue-100 dark:bg-blue-900/30',
           text: 'text-blue-700 dark:text-blue-300',
           icon: 'ℹ️',
-          label: quality
+          label: quality,
         };
     }
   };
@@ -75,9 +75,7 @@ export default function DataInfo({ territoire, dateSnapshot, source, qualite }: 
               Territoire
             </span>
           </div>
-          <p className="text-sm font-bold text-slate-900 dark:text-white">
-            {territoire}
-          </p>
+          <p className="text-sm font-bold text-slate-900 dark:text-white">{territoire}</p>
         </div>
 
         {/* Date */}
@@ -97,9 +95,7 @@ export default function DataInfo({ territoire, dateSnapshot, source, qualite }: 
         <div className="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-base">🔍</span>
-            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">
-              Source
-            </span>
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">Source</span>
           </div>
           <p className="text-sm font-bold text-slate-900 dark:text-white capitalize">
             {source.replace(/_/g, ' ')}
@@ -114,7 +110,9 @@ export default function DataInfo({ territoire, dateSnapshot, source, qualite }: 
               Qualité
             </span>
           </div>
-          <span className={`inline-flex items-center gap-1 px-2 py-1 ${qualityBadge.bg} ${qualityBadge.text} text-xs font-bold rounded-full`}>
+          <span
+            className={`inline-flex items-center gap-1 px-2 py-1 ${qualityBadge.bg} ${qualityBadge.text} text-xs font-bold rounded-full`}
+          >
             <span>{qualityBadge.icon}</span>
             <span>{qualityBadge.label}</span>
           </span>

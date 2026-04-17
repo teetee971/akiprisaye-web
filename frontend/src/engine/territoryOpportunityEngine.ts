@@ -40,12 +40,15 @@ export interface TerritoryOpportunity {
 
 // ── Static territory metadata ─────────────────────────────────────────────────
 
-const TERRITORY_META: Record<TerritoryCode, { name: string; population: number; maxPages: number }> = {
+const TERRITORY_META: Record<
+  TerritoryCode,
+  { name: string; population: number; maxPages: number }
+> = {
   gp: { name: 'Guadeloupe', population: 400_000, maxPages: 300 },
-  mq: { name: 'Martinique',  population: 360_000, maxPages: 300 },
-  gf: { name: 'Guyane',      population: 300_000, maxPages: 200 },
-  re: { name: 'La Réunion',  population: 900_000, maxPages: 400 },
-  yt: { name: 'Mayotte',     population: 320_000, maxPages: 150 },
+  mq: { name: 'Martinique', population: 360_000, maxPages: 300 },
+  gf: { name: 'Guyane', population: 300_000, maxPages: 200 },
+  re: { name: 'La Réunion', population: 900_000, maxPages: 400 },
+  yt: { name: 'Mayotte', population: 320_000, maxPages: 150 },
 };
 
 const MAX_POPULATION = Math.max(...Object.values(TERRITORY_META).map((m) => m.population));
@@ -58,11 +61,13 @@ const MAX_POPULATION = Math.max(...Object.values(TERRITORY_META).map((m) => m.po
  * @param statsMap  Map of territory code → TerritoryOpportunityStats
  */
 export function rankTerritories(
-  statsMap: Map<TerritoryCode, TerritoryOpportunityStats> = new Map(),
+  statsMap: Map<TerritoryCode, TerritoryOpportunityStats> = new Map()
 ): TerritoryOpportunity[] {
-  return (Object.entries(TERRITORY_META) as [TerritoryCode, typeof TERRITORY_META[TerritoryCode]][])
+  return (
+    Object.entries(TERRITORY_META) as [TerritoryCode, (typeof TERRITORY_META)[TerritoryCode]][]
+  )
     .map(([code, meta]) => {
-      const stats  = statsMap.get(code) ?? {};
+      const stats = statsMap.get(code) ?? {};
       const result = scoreTerritoryOpportunity(code, meta, stats);
       return result;
     })
@@ -72,16 +77,14 @@ export function rankTerritories(
 function scoreTerritoryOpportunity(
   code: TerritoryCode,
   meta: { name: string; population: number; maxPages: number },
-  stats: TerritoryOpportunityStats,
+  stats: TerritoryOpportunityStats
 ): TerritoryOpportunity {
-  const existing     = stats.existingPages ?? 0;
-  const maxPages     = meta.maxPages;
-  const popWeight    = meta.population / MAX_POPULATION; // 0–1
+  const existing = stats.existingPages ?? 0;
+  const maxPages = meta.maxPages;
+  const popWeight = meta.population / MAX_POPULATION; // 0–1
 
   // SEO gap: how many pages are still missing (0 = fully covered, 100 = no pages)
-  const seoGap = existing >= maxPages
-    ? 0
-    : Math.round((1 - existing / maxPages) * 100);
+  const seoGap = existing >= maxPages ? 0 : Math.round((1 - existing / maxPages) * 100);
 
   // Data coverage: more data = higher confidence = lower risk bonus
   const dataCoverage = Math.min(100, ((stats.dataCoverage ?? 0) / 500) * 100);
@@ -91,20 +94,17 @@ function scoreTerritoryOpportunity(
 
   // Opportunity = big gap + high population + enough data to act on
   const opportunityScore = Math.round(
-    seoGap       * 0.40 +
-    popWeight * 100 * 0.30 +
-    dataCoverage * 0.20 +
-    (100 - clickSignal) * 0.10, // prefer under-served traffic
+    seoGap * 0.4 + popWeight * 100 * 0.3 + dataCoverage * 0.2 + (100 - clickSignal) * 0.1 // prefer under-served traffic
   );
 
   const targetNewPages = Math.max(0, Math.min(maxPages, Math.round((seoGap / 100) * maxPages)));
 
   return {
     code,
-    name:             meta.name,
+    name: meta.name,
     seoGap,
     opportunityScore: Math.min(100, opportunityScore),
-    priority:         classifyTerritoryPriority(opportunityScore),
+    priority: classifyTerritoryPriority(opportunityScore),
     populationWeight: popWeight,
     targetNewPages,
   };
@@ -122,7 +122,7 @@ function classifyTerritoryPriority(score: number): TerritoryOpportunity['priorit
  * Counts existing pages and data points per territory.
  */
 export function buildTerritoryStatsMap(
-  items: { territory?: string; pageUrl?: string; type?: string }[],
+  items: { territory?: string; pageUrl?: string; type?: string }[]
 ): Map<TerritoryCode, TerritoryOpportunityStats> {
   const map = new Map<TerritoryCode, TerritoryOpportunityStats>();
   const CODES = new Set<string>(['gp', 'mq', 'gf', 're', 'yt']);
@@ -130,10 +130,11 @@ export function buildTerritoryStatsMap(
   for (const item of items) {
     const code = (item.territory ?? '').toLowerCase().trim() as TerritoryCode;
     if (!CODES.has(code)) continue;
-    if (!map.has(code)) map.set(code, { existingPages: 0, dataCoverage: 0, clicks30d: 0, conversions30d: 0 });
+    if (!map.has(code))
+      map.set(code, { existingPages: 0, dataCoverage: 0, clicks30d: 0, conversions30d: 0 });
     const s = map.get(code)!;
     if (item.pageUrl) s.existingPages = (s.existingPages ?? 0) + 1;
-    else              s.dataCoverage  = (s.dataCoverage  ?? 0) + 1;
+    else s.dataCoverage = (s.dataCoverage ?? 0) + 1;
   }
   return map;
 }

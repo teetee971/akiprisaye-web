@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { PLAN_DEFINITIONS } from '../billing/plans';
 
-function shouldAllowMultiTerritory(plan: keyof typeof PLAN_DEFINITIONS, selectedTerritories: string[]) {
+function shouldAllowMultiTerritory(
+  plan: keyof typeof PLAN_DEFINITIONS,
+  selectedTerritories: string[]
+) {
   const def = PLAN_DEFINITIONS[plan];
   return selectedTerritories.length <= def.quotas.maxTerritories && def.features.MULTI_TERRITORY;
 }

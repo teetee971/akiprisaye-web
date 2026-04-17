@@ -3,7 +3,14 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
-import { MapPin, Navigation, TrendingDown, SlidersHorizontal, ShoppingCart, ExternalLink } from 'lucide-react';
+import {
+  MapPin,
+  Navigation,
+  TrendingDown,
+  SlidersHorizontal,
+  ShoppingCart,
+  ExternalLink,
+} from 'lucide-react';
 import { storesMock } from '../modules/store/stores.mock';
 
 interface StoreScore {
@@ -71,7 +78,8 @@ export function RouteOptimizer() {
 
   const best = scores[0];
   const worst = scores[scores.length - 1];
-  const estimatedSavings = best && worst ? ((worst.priceIndex - best.priceIndex) * 50).toFixed(2) : '0.00';
+  const estimatedSavings =
+    best && worst ? ((worst.priceIndex - best.priceIndex) * 50).toFixed(2) : '0.00';
 
   const totalDistance = useMemo(() => {
     if (scores.length < 2) return 0;
@@ -83,9 +91,7 @@ export function RouteOptimizer() {
     return Math.round(dist * 10) / 10;
   }, [scores]);
 
-  const mapsUrl = best
-    ? `https://maps.google.com/maps?daddr=${best.lat},${best.lon}`
-    : '#';
+  const mapsUrl = best ? `https://maps.google.com/maps?daddr=${best.lat},${best.lon}` : '#';
 
   const addItem = useCallback(() => {
     const name = newItem.trim();
@@ -144,7 +150,9 @@ export function RouteOptimizer() {
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-slate-500 w-5">#{i + 1}</span>
                 <div>
-                  <p className={`text-sm font-medium ${i === 0 ? 'text-emerald-200' : 'text-slate-200'}`}>
+                  <p
+                    className={`text-sm font-medium ${i === 0 ? 'text-emerald-200' : 'text-slate-200'}`}
+                  >
                     {s.name}
                   </p>
                   <p className="text-xs text-slate-500">
@@ -152,9 +160,7 @@ export function RouteOptimizer() {
                   </p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-slate-400">
-                {s.score.toFixed(3)}
-              </span>
+              <span className="text-xs font-bold text-slate-400">{s.score.toFixed(3)}</span>
             </div>
           ))}
         </div>
@@ -177,8 +183,12 @@ export function RouteOptimizer() {
           ))}
         </div>
         <div className="flex items-center gap-4 text-xs text-slate-400 mb-3">
-          <span>Distance totale estimée : <strong className="text-white">{totalDistance} km</strong></span>
-          <span>Économies estimées : <strong className="text-emerald-400">{estimatedSavings} €</strong></span>
+          <span>
+            Distance totale estimée : <strong className="text-white">{totalDistance} km</strong>
+          </span>
+          <span>
+            Économies estimées : <strong className="text-emerald-400">{estimatedSavings} €</strong>
+          </span>
         </div>
         <a
           href={mapsUrl}
@@ -215,7 +225,10 @@ export function RouteOptimizer() {
         </div>
         <div className="space-y-1">
           {items.map((item) => (
-            <div key={item.id} className="flex items-center justify-between text-sm bg-slate-900 rounded-lg px-3 py-2">
+            <div
+              key={item.id}
+              className="flex items-center justify-between text-sm bg-slate-900 rounded-lg px-3 py-2"
+            >
               <span className="text-slate-300">{item.name}</span>
               <div className="flex items-center gap-3">
                 <span className="text-xs text-emerald-400">{best?.name ?? '—'}</span>
@@ -231,7 +244,8 @@ export function RouteOptimizer() {
         </div>
         {best && (
           <p className="text-xs text-slate-500 italic mt-2">
-            Tous les articles assignés au magasin le plus avantageux : <strong className="text-slate-300">{best.name}</strong>
+            Tous les articles assignés au magasin le plus avantageux :{' '}
+            <strong className="text-slate-300">{best.name}</strong>
           </p>
         )}
       </div>

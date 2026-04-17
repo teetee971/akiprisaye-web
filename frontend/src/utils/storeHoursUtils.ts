@@ -1,6 +1,6 @@
 /**
  * Store Hours Utilities
- * 
+ *
  * Utilities for handling store opening hours, timezones, and status calculation
  * Supports DOM-TOM timezones and special hours (holidays, exceptional closures)
  */
@@ -9,8 +9,8 @@
  * Store opening hours for a single day
  */
 export interface DayHours {
-  open?: string;   // e.g., "08:00"
-  close?: string;  // e.g., "20:00"
+  open?: string; // e.g., "08:00"
+  close?: string; // e.g., "20:00"
   closed?: boolean; // true if closed all day
 }
 
@@ -18,11 +18,11 @@ export interface DayHours {
  * Special hours for exceptional dates
  */
 export interface SpecialHours {
-  date: string;     // ISO date string (YYYY-MM-DD)
-  open?: string;    // Opening time, if open
-  close?: string;   // Closing time, if open
+  date: string; // ISO date string (YYYY-MM-DD)
+  open?: string; // Opening time, if open
+  close?: string; // Closing time, if open
   closed?: boolean; // true if closed all day
-  reason?: string;  // e.g., "Noël", "Jour férié"
+  reason?: string; // e.g., "Noël", "Jour férié"
 }
 
 /**
@@ -47,8 +47,8 @@ export type StoreStatus = 'open' | 'closing_soon' | 'closed' | 'unknown';
  */
 export interface StoreStatusInfo {
   status: StoreStatus;
-  message: string;          // Human-readable message
-  nextChange?: Date;        // Time of next status change
+  message: string; // Human-readable message
+  nextChange?: Date; // Time of next status change
   nextChangeMessage?: string; // Message about next change
 }
 
@@ -65,7 +65,7 @@ export function getStoreLocalTime(timezone: string): Date {
   // Note: This is a simplified approach using Intl.DateTimeFormat
   // For production, consider using date-fns-tz for more robust timezone handling
   const now = new Date();
-  
+
   // Get time components in the target timezone
   const formatter = new Intl.DateTimeFormat('fr-FR', {
     timeZone: timezone,
@@ -77,10 +77,10 @@ export function getStoreLocalTime(timezone: string): Date {
     second: '2-digit',
     hour12: false,
   });
-  
+
   const parts = formatter.formatToParts(now);
-  const getValue = (type: string) => parts.find(p => p.type === type)?.value || '0';
-  
+  const getValue = (type: string) => parts.find((p) => p.type === type)?.value || '0';
+
   // Construct local date
   const localDate = new Date(
     parseInt(getValue('year')),
@@ -90,7 +90,7 @@ export function getStoreLocalTime(timezone: string): Date {
     parseInt(getValue('minute')),
     parseInt(getValue('second'))
   );
-  
+
   return localDate;
 }
 
@@ -106,7 +106,7 @@ function parseTimeToMinutes(time: string): number {
  * Format time in minutes to HH:MM string
  * (Currently unused but kept for future use)
  */
- 
+
 function formatMinutesToTime(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
@@ -116,10 +116,7 @@ function formatMinutesToTime(minutes: number): string {
 /**
  * Check if a store is open at a specific time
  */
-export function isStoreOpen(
-  hours: StoreHours,
-  checkTime?: Date
-): StoreStatusInfo {
+export function isStoreOpen(hours: StoreHours, checkTime?: Date): StoreStatusInfo {
   if (!hours || !hours.regularHours) {
     return {
       status: 'unknown',
@@ -131,13 +128,13 @@ export function isStoreOpen(
   const now = checkTime || getStoreLocalTime(hours.timezone);
   const dayOfWeek = DAYS_OF_WEEK[now.getDay()];
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
-  
+
   // Format date for special hours check (YYYY-MM-DD)
   const dateStr = now.toISOString().split('T')[0];
-  
+
   // Check for special hours first
   if (hours.specialHours) {
-    const specialHour = hours.specialHours.find(sh => sh.date === dateStr);
+    const specialHour = hours.specialHours.find((sh) => sh.date === dateStr);
     if (specialHour) {
       if (specialHour.closed) {
         return {
@@ -145,14 +142,14 @@ export function isStoreOpen(
           message: `Fermé${specialHour.reason ? ` - ${specialHour.reason}` : ''}`,
         };
       }
-      
+
       if (specialHour.open && specialHour.close) {
         const openMinutes = parseTimeToMinutes(specialHour.open);
         const closeMinutes = parseTimeToMinutes(specialHour.close);
-        
+
         if (currentMinutes >= openMinutes && currentMinutes < closeMinutes) {
           const minutesUntilClose = closeMinutes - currentMinutes;
-          
+
           if (minutesUntilClose <= 60) {
             return {
               status: 'closing_soon',
@@ -161,7 +158,7 @@ export function isStoreOpen(
               nextChangeMessage: `Ferme à ${specialHour.close}`,
             };
           }
-          
+
           return {
             status: 'open',
             message: `Ouvert · Ferme à ${specialHour.close}`,
@@ -172,38 +169,38 @@ export function isStoreOpen(
       }
     }
   }
-  
+
   // Check regular hours
   const todayHours = hours.regularHours[dayOfWeek];
-  
+
   if (!todayHours || todayHours.length === 0) {
     // No hours defined for today
     return {
       status: 'closed',
-      message: 'Fermé aujourd\'hui',
+      message: "Fermé aujourd'hui",
     };
   }
-  
+
   // Check if closed all day
   if (todayHours[0]?.closed) {
     return {
       status: 'closed',
-      message: 'Fermé aujourd\'hui',
+      message: "Fermé aujourd'hui",
     };
   }
-  
+
   // Check each period (morning, afternoon, etc.)
   for (const period of todayHours) {
     if (period.closed) continue;
     if (!period.open || !period.close) continue;
-    
+
     const openMinutes = parseTimeToMinutes(period.open);
     const closeMinutes = parseTimeToMinutes(period.close);
-    
+
     // Currently open in this period
     if (currentMinutes >= openMinutes && currentMinutes < closeMinutes) {
       const minutesUntilClose = closeMinutes - currentMinutes;
-      
+
       if (minutesUntilClose <= 60) {
         return {
           status: 'closing_soon',
@@ -212,7 +209,7 @@ export function isStoreOpen(
           nextChangeMessage: `Ferme à ${period.close}`,
         };
       }
-      
+
       return {
         status: 'open',
         message: `Ouvert · Ferme à ${period.close}`,
@@ -220,7 +217,7 @@ export function isStoreOpen(
         nextChangeMessage: `Ferme à ${period.close}`,
       };
     }
-    
+
     // Not yet open - check if opening later today
     if (currentMinutes < openMinutes) {
       const minutesUntilOpen = openMinutes - currentMinutes;
@@ -232,7 +229,7 @@ export function isStoreOpen(
       };
     }
   }
-  
+
   // Closed for the day (after last closing time)
   return {
     status: 'closed',
@@ -281,14 +278,14 @@ export function formatDayHours(dayHours: DayHours[]): string {
   if (!dayHours || dayHours.length === 0) {
     return 'Fermé';
   }
-  
+
   if (dayHours[0]?.closed) {
     return 'Fermé';
   }
-  
+
   return dayHours
-    .filter(period => !period.closed)
-    .map(period => `${period.open} - ${period.close}`)
+    .filter((period) => !period.closed)
+    .map((period) => `${period.open} - ${period.close}`)
     .join(', ');
 }
 
@@ -299,10 +296,10 @@ export function getTodayHours(hours: StoreHours, checkTime?: Date): DayHours[] |
   if (!hours || !hours.regularHours) {
     return null;
   }
-  
+
   const now = checkTime || getStoreLocalTime(hours.timezone);
   const dayOfWeek = DAYS_OF_WEEK[now.getDay()];
-  
+
   return hours.regularHours[dayOfWeek] || null;
 }
 
@@ -314,32 +311,28 @@ export function createSampleStoreHours(storeId: string, timezone: string): Store
     storeId,
     timezone,
     regularHours: {
-      'lundi': [
+      lundi: [
         { open: '08:00', close: '12:30' },
         { open: '14:30', close: '20:00' },
       ],
-      'mardi': [
+      mardi: [
         { open: '08:00', close: '12:30' },
         { open: '14:30', close: '20:00' },
       ],
-      'mercredi': [
+      mercredi: [
         { open: '08:00', close: '12:30' },
         { open: '14:30', close: '20:00' },
       ],
-      'jeudi': [
+      jeudi: [
         { open: '08:00', close: '12:30' },
         { open: '14:30', close: '20:00' },
       ],
-      'vendredi': [
+      vendredi: [
         { open: '08:00', close: '12:30' },
         { open: '14:30', close: '20:00' },
       ],
-      'samedi': [
-        { open: '08:00', close: '20:00' },
-      ],
-      'dimanche': [
-        { closed: true },
-      ],
+      samedi: [{ open: '08:00', close: '20:00' }],
+      dimanche: [{ closed: true }],
     },
     specialHours: [
       // Example: Christmas Day
@@ -352,7 +345,7 @@ export function createSampleStoreHours(storeId: string, timezone: string): Store
       {
         date: '2026-01-01',
         closed: true,
-        reason: 'Jour de l\'an',
+        reason: "Jour de l'an",
       },
     ],
   };

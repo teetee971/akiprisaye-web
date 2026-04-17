@@ -1,7 +1,7 @@
 /**
  * Official Database Constants
  * Sources officielles pour l'évaluation cosmétique
- * 
+ *
  * Toutes les données proviennent de bases publiques officielles:
  * - CosIng (EU Cosmetic Ingredients Database)
  * - ANSES (Agence nationale de sécurité sanitaire)
@@ -13,12 +13,14 @@ export const OFFICIAL_DATABASES = {
   COSING: {
     name: 'CosIng - EU Cosmetic Ingredients Database',
     url: 'https://ec.europa.eu/growth/tools-databases/cosing/',
-    description: 'Base de données officielle de la Commission Européenne des ingrédients cosmétiques',
+    description:
+      'Base de données officielle de la Commission Européenne des ingrédients cosmétiques',
   },
   ANSES: {
     name: 'ANSES - Agence nationale de sécurité sanitaire',
     url: 'https://www.anses.fr/',
-    description: 'Agence française de sécurité sanitaire de l\'alimentation, de l\'environnement et du travail',
+    description:
+      "Agence française de sécurité sanitaire de l'alimentation, de l'environnement et du travail",
   },
   ECHA: {
     name: 'ECHA - European Chemicals Agency',
@@ -48,7 +50,8 @@ export const REGULATORY_REFERENCES = {
   },
   ANNEX_III: {
     name: 'Annexe III - Substances soumises à restrictions',
-    description: 'Liste des substances que les produits cosmétiques ne peuvent contenir en dehors des restrictions et conditions prévues',
+    description:
+      'Liste des substances que les produits cosmétiques ne peuvent contenir en dehors des restrictions et conditions prévues',
     url: 'https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX:32009R1223#d1e32-76-1',
   },
   ANNEX_IV: {
@@ -117,7 +120,7 @@ export const COSMETIC_FUNCTIONS = {
   DEPILATORY: 'Dépilatoire',
   EMOLLIENT: 'Émollient',
   EMULSIFYING: 'Émulsifiant',
-  EMULSION_STABILISING: 'Stabilisant d\'émulsion',
+  EMULSION_STABILISING: "Stabilisant d'émulsion",
   FILM_FORMING: 'Filmogène',
   FOAMING: 'Moussant',
   FRAGRANCE: 'Parfum',
@@ -126,7 +129,7 @@ export const COSMETIC_FUNCTIONS = {
   OXIDISING: 'Oxydant',
   PRESERVATIVE: 'Conservateur',
   REDUCING: 'Réducteur',
-  SKIN_CONDITIONING: 'Agent d\'entretien de la peau',
+  SKIN_CONDITIONING: "Agent d'entretien de la peau",
   SKIN_PROTECTING: 'Protecteur cutané',
   SMOOTHING: 'Lissant',
   SOLVENT: 'Solvant',

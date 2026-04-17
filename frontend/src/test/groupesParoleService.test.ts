@@ -3,7 +3,7 @@ import { moderateText } from '../utils/textModeration';
 
 describe('groupesParoleService — moderateText', () => {
   it('returns null for clean messages', () => {
-    expect(moderateText('La vie chère en Guadeloupe c\'est insupportable')).toBeNull();
+    expect(moderateText("La vie chère en Guadeloupe c'est insupportable")).toBeNull();
     expect(moderateText('Bonjour à tous, comment allez-vous ?')).toBeNull();
     expect(moderateText('Les prix ont augmenté de 10% ce mois-ci')).toBeNull();
   });

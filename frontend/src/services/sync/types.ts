@@ -1,4 +1,3 @@
- 
 /**
  * Types et interfaces pour le système de synchronisation
  */
@@ -71,24 +70,24 @@ export interface Territory {
 export const DOM_TOM_TERRITORIES: Record<string, Territory> = {
   guadeloupe: {
     name: 'Guadeloupe',
-    bounds: { lat: [15.8, 16.6], lon: [-61.9, -60.8] }
+    bounds: { lat: [15.8, 16.6], lon: [-61.9, -60.8] },
   },
   martinique: {
     name: 'Martinique',
-    bounds: { lat: [14.3, 14.9], lon: [-61.3, -60.8] }
+    bounds: { lat: [14.3, 14.9], lon: [-61.3, -60.8] },
   },
   guyane: {
     name: 'Guyane',
-    bounds: { lat: [2.0, 6.0], lon: [-54.6, -51.6] }
+    bounds: { lat: [2.0, 6.0], lon: [-54.6, -51.6] },
   },
   reunion: {
     name: 'Réunion',
-    bounds: { lat: [-21.4, -20.8], lon: [55.2, 55.9] }
+    bounds: { lat: [-21.4, -20.8], lon: [55.2, 55.9] },
   },
   mayotte: {
     name: 'Mayotte',
-    bounds: { lat: [-13.1, -12.6], lon: [44.9, 45.4] }
-  }
+    bounds: { lat: [-13.1, -12.6], lon: [44.9, 45.4] },
+  },
 };
 
 // ============================================

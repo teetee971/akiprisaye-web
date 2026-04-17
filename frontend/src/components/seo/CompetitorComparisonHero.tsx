@@ -3,11 +3,11 @@
  */
 
 interface CompetitorComparisonHeroProps {
-  retailer1:             string;
-  retailer2:             string;
-  territory:             string;
-  winner:                string;
-  winnerSavings:         number;   // avg savings vs loser in €
+  retailer1: string;
+  retailer2: string;
+  territory: string;
+  winner: string;
+  winnerSavings: number; // avg savings vs loser in €
   totalProductsCompared: number;
 }
 
@@ -39,8 +39,8 @@ export default function CompetitorComparisonHero({
 
       {/* Savings */}
       <p className="mt-4 text-sm text-zinc-400">
-        Économie moyenne :{' '}
-        <span className="font-bold text-emerald-400">{savingsFmt}</span> par rapport à l'enseigne concurrente
+        Économie moyenne : <span className="font-bold text-emerald-400">{savingsFmt}</span> par
+        rapport à l'enseigne concurrente
       </p>
 
       {/* Sub-text */}

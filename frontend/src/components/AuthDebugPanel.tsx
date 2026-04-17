@@ -21,7 +21,12 @@ import { useLocation } from 'react-router-dom';
 
 import { useAuth } from '@/context/authHook';
 import { isAuthDebugEnabled, useAuthEvents, subscribeToAuthEvents } from '@/utils/authLogger';
-import { getRedirectPendingFlag, getAuthRetryCount, clearAuthTransientStorage, type RedirectPendingData } from '@/auth/authStorage';
+import {
+  getRedirectPendingFlag,
+  getAuthRetryCount,
+  clearAuthTransientStorage,
+  type RedirectPendingData,
+} from '@/auth/authStorage';
 import { getAuthDiagnosticReport, clearAuthHistory } from '@/utils/authLogger';
 
 /** Shorten an ISO timestamp to HH:MM:SS.mmm for compact display. */
@@ -36,9 +41,9 @@ function shortTs(iso: string): string {
 /** Colour code for each event type. */
 function eventColour(event: string): string {
   if (event.includes('USER_PRESENT') || event.includes('SUCCESS')) return '#4ade80'; // green
-  if (event.includes('NO_USER') || event.includes('TIMEOUT')) return '#f87171';      // red
-  if (event.includes('START')) return '#60a5fa';                                      // blue
-  return '#facc15';                                                                   // yellow
+  if (event.includes('NO_USER') || event.includes('TIMEOUT')) return '#f87171'; // red
+  if (event.includes('START')) return '#60a5fa'; // blue
+  return '#facc15'; // yellow
 }
 
 export default function AuthDebugPanel() {
@@ -77,9 +82,9 @@ export default function AuthDebugPanel() {
 
   // ── Status indicators ─────────────────────────────────────────────────────
   const loadingColour = loading ? '#facc15' : '#4ade80';
-  const userColour    = user ? '#4ade80' : '#94a3b8';
-  const flagColour    = pendingFlag ? '#f97316' : '#94a3b8';
-  const lastEvent     = events[events.length - 1];
+  const userColour = user ? '#4ade80' : '#94a3b8';
+  const flagColour = pendingFlag ? '#f97316' : '#94a3b8';
+  const lastEvent = events[events.length - 1];
 
   return (
     <div
@@ -134,8 +139,14 @@ export default function AuthDebugPanel() {
           {/* Status row */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
             <StatusBadge colour={loadingColour} label={loading ? 'LOADING' : 'READY'} />
-            <StatusBadge colour={userColour}    label={user ? `✓ ${user.email ?? user.uid}` : '✗ no user'} />
-            <StatusBadge colour={flagColour}    label={pendingFlag ? `⏳ ${pendingFlag.provider}` : '✗ no flag'} />
+            <StatusBadge
+              colour={userColour}
+              label={user ? `✓ ${user.email ?? user.uid}` : '✗ no user'}
+            />
+            <StatusBadge
+              colour={flagColour}
+              label={pendingFlag ? `⏳ ${pendingFlag.provider}` : '✗ no flag'}
+            />
           </div>
 
           {/* Route */}
@@ -145,20 +156,11 @@ export default function AuthDebugPanel() {
           {user && <Row label="UID" value={user.uid} />}
 
           {/* Pending flag detail */}
-          {pendingFlag && (
-            <Row
-              label="Flag→next"
-              value={pendingFlag.next}
-            />
-          )}
+          {pendingFlag && <Row label="Flag→next" value={pendingFlag.next} />}
 
           {/* Last event */}
           {lastEvent && (
-            <Row
-              label="Last event"
-              value={lastEvent.event}
-              colour={eventColour(lastEvent.event)}
-            />
+            <Row label="Last event" value={lastEvent.event} colour={eventColour(lastEvent.event)} />
           )}
 
           {/* Event history (last 6 entries) */}
@@ -166,7 +168,15 @@ export default function AuthDebugPanel() {
             <div style={{ marginTop: 4, borderTop: '1px solid #334155', paddingTop: 4 }}>
               <div style={{ color: '#64748b', marginBottom: 2 }}>Events ({events.length}):</div>
               {events.slice(-6).map((e) => (
-                <div key={`${e.ts}_${e.event}`} style={{ color: eventColour(e.event), overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <div
+                  key={`${e.ts}_${e.event}`}
+                  style={{
+                    color: eventColour(e.event),
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   {shortTs(e.ts)} {e.event}
                 </div>
               ))}
@@ -177,7 +187,11 @@ export default function AuthDebugPanel() {
           <button
             type="button"
             onClick={() => {
-              try { sessionStorage.removeItem('auth:debug'); } catch { /* */ }
+              try {
+                sessionStorage.removeItem('auth:debug');
+              } catch {
+                /* */
+              }
               window.location.reload();
             }}
             style={{
@@ -225,12 +239,25 @@ function StatusBadge({ colour, label }: { colour: string; label: string }) {
   );
 }
 
-function Row({ label, value, colour = '#cbd5e1' }: { label: string; value: string; colour?: string }) {
+function Row({
+  label,
+  value,
+  colour = '#cbd5e1',
+}: {
+  label: string;
+  value: string;
+  colour?: string;
+}) {
   return (
     <div style={{ display: 'flex', gap: 4, marginBottom: 2, overflow: 'hidden' }}>
       <span style={{ color: '#64748b', flexShrink: 0 }}>{label}:</span>
       <span
-        style={{ color: colour, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+        style={{
+          color: colour,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
         title={value}
       >
         {value}

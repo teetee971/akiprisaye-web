@@ -100,14 +100,8 @@ const FreshnessIndicator: React.FC<FreshnessIndicatorProps> = ({
         {config.icon}
       </span>
       <div className="flex flex-col">
-        {showLabel && (
-          <span className={`text-xs font-medium ${config.color}`}>
-            {config.label}
-          </span>
-        )}
-        <span className={`text-sm ${config.color}`}>
-          {getTimeAgoText(daysSince)}
-        </span>
+        {showLabel && <span className={`text-xs font-medium ${config.color}`}>{config.label}</span>}
+        <span className={`text-sm ${config.color}`}>{getTimeAgoText(daysSince)}</span>
       </div>
     </div>
   );

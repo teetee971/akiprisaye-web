@@ -1,46 +1,43 @@
- 
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { 
-  GraduationCap, 
-  Briefcase, 
-  Euro, 
-  Calendar, 
-  MapPin, 
-  TrendingUp, 
+import {
+  GraduationCap,
+  Briefcase,
+  Euro,
+  Calendar,
+  MapPin,
+  TrendingUp,
   CheckCircle,
   Filter,
   Search,
   Award,
   Clock,
   Target,
-  DollarSign
+  DollarSign,
 } from 'lucide-react';
 import type { Territory } from '../types/priceAlerts';
-import type { 
-  TrainingProgram, 
+import type {
+  TrainingProgram,
   TrainingFilters,
   TrainingLevel,
   TrainingMode,
   JobMarket,
   UserProfile,
-  JobMatch
+  JobMatch,
 } from '../types/trainingComparison';
 import {
   getAllTrainings,
   searchTrainings,
   getAvailableDomains,
   getTrainingStatistics,
-  compareTrainings
+  compareTrainings,
 } from '../services/trainingCatalogService';
 import {
   getJobsInDemand,
   matchJobsToUser,
-  getTopJobOpportunitiesWithROI
+  getTopJobOpportunitiesWithROI,
 } from '../services/jobMatchingService';
-import {
-  simulateFunding
-} from '../services/fundingService';
+import { simulateFunding } from '../services/fundingService';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
@@ -55,7 +52,7 @@ const TrainingComparator: React.FC = () => {
   const [activeView, setActiveView] = useState<'catalog' | 'jobs' | 'comparison'>('jobs');
   const [selectedTrainings, setSelectedTrainings] = useState<string[]>([]);
   const [availableDomains, setAvailableDomains] = useState<string[]>([]);
-  
+
   // Filters
   const [filters, setFilters] = useState<TrainingFilters>({
     territory,
@@ -76,9 +73,9 @@ const TrainingComparator: React.FC = () => {
         getAllTrainings(territory),
         getJobsInDemand(territory),
         getTopJobOpportunitiesWithROI(territory, 10),
-        getAvailableDomains(territory)
+        getAvailableDomains(territory),
       ]);
-      
+
       setTrainings(allTrainings);
       setJobsInDemand(jobs);
       setTopOpportunities(opportunities);
@@ -95,28 +92,29 @@ const TrainingComparator: React.FC = () => {
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      result = result.filter(t => 
-        t.name.toLowerCase().includes(query) ||
-        t.details.domain.toLowerCase().includes(query) ||
-        t.organisme.name.toLowerCase().includes(query) ||
-        t.outcomes.jobs.some(job => job.toLowerCase().includes(query))
+      result = result.filter(
+        (t) =>
+          t.name.toLowerCase().includes(query) ||
+          t.details.domain.toLowerCase().includes(query) ||
+          t.organisme.name.toLowerCase().includes(query) ||
+          t.outcomes.jobs.some((job) => job.toLowerCase().includes(query))
       );
     }
 
     if (filters.domain) {
-      result = result.filter(t => t.details.domain === filters.domain);
+      result = result.filter((t) => t.details.domain === filters.domain);
     }
 
     if (filters.level) {
-      result = result.filter(t => t.details.level === filters.level);
+      result = result.filter((t) => t.details.level === filters.level);
     }
 
     if (filters.mode) {
-      result = result.filter(t => t.details.mode === filters.mode);
+      result = result.filter((t) => t.details.mode === filters.mode);
     }
 
     if (filters.cpfEligible) {
-      result = result.filter(t => t.pricing.cpfEligible);
+      result = result.filter((t) => t.pricing.cpfEligible);
     }
 
     setFilteredTrainings(result);
@@ -132,7 +130,7 @@ const TrainingComparator: React.FC = () => {
 
   const toggleTrainingSelection = (trainingId: string) => {
     if (selectedTrainings.includes(trainingId)) {
-      setSelectedTrainings(selectedTrainings.filter(id => id !== trainingId));
+      setSelectedTrainings(selectedTrainings.filter((id) => id !== trainingId));
     } else if (selectedTrainings.length < 3) {
       setSelectedTrainings([...selectedTrainings, trainingId]);
     }
@@ -142,10 +140,24 @@ const TrainingComparator: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900">
       <Helmet>
         <title>Comparateur Formations DOM-TOM — A KI PRI SA YÉ</title>
-        <meta name="description" content="Comparez les formations professionnelles et certifiantes dans les DOM-TOM. Trouvez la formation qui mène à l'emploi." />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-formations" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-formations" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-formations" />
+        <meta
+          name="description"
+          content="Comparez les formations professionnelles et certifiantes dans les DOM-TOM. Trouvez la formation qui mène à l'emploi."
+        />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/comparateur-formations"
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/comparateur-formations"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/comparateur-formations"
+        />
       </Helmet>
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 pt-6 pb-2">
@@ -180,13 +192,19 @@ const TrainingComparator: React.FC = () => {
             </div>
             <div className="bg-white/10 backdrop-blur rounded-lg p-4">
               <div className="text-3xl font-bold text-white">
-                {trainings.filter(t => t.pricing.cpfEligible).length}
+                {trainings.filter((t) => t.pricing.cpfEligible).length}
               </div>
               <div className="text-sm text-indigo-200">Éligibles CPF</div>
             </div>
             <div className="bg-white/10 backdrop-blur rounded-lg p-4">
               <div className="text-3xl font-bold text-white">
-                {trainings.length > 0 ? Math.round(trainings.reduce((sum, t) => sum + (t.outcomes.insertionRate6M || 0), 0) / trainings.length) : 0}%
+                {trainings.length > 0
+                  ? Math.round(
+                      trainings.reduce((sum, t) => sum + (t.outcomes.insertionRate6M || 0), 0) /
+                        trainings.length
+                    )
+                  : 0}
+                %
               </div>
               <div className="text-sm text-indigo-200">Taux insertion moyen</div>
             </div>
@@ -194,7 +212,12 @@ const TrainingComparator: React.FC = () => {
 
           {/* Territory Selector */}
           <div className="mt-4">
-            <label htmlFor="formation-territoire" className="block text-sm font-medium text-white mb-2">Territoire</label>
+            <label
+              htmlFor="formation-territoire"
+              className="block text-sm font-medium text-white mb-2"
+            >
+              Territoire
+            </label>
             <select
               id="formation-territoire"
               value={territory}
@@ -268,7 +291,7 @@ const TrainingComparator: React.FC = () => {
                 <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
                   <h2 className="text-2xl font-bold text-white mb-4 flex items-center gap-2">
                     <TrendingUp className="w-6 h-6 text-green-400" />
-                    Métiers qui recrutent en {territories.find(t => t.code === territory)?.name}
+                    Métiers qui recrutent en {territories.find((t) => t.code === territory)?.name}
                   </h2>
                   <p className="text-gray-300 mb-6">
                     Découvrez les métiers en tension et les formations qui y mènent
@@ -372,7 +395,9 @@ const TrainingComparator: React.FC = () => {
                   <div className="flex flex-wrap gap-4">
                     <select
                       value={filters.domain || ''}
-                      onChange={(e) => setFilters({ ...filters, domain: e.target.value || undefined })}
+                      onChange={(e) =>
+                        setFilters({ ...filters, domain: e.target.value || undefined })
+                      }
                       className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
                     >
                       <option value="">Tous les domaines</option>
@@ -387,9 +412,9 @@ const TrainingComparator: React.FC = () => {
                       value={filters.level || ''}
                       onChange={(e) => {
                         const value = e.target.value;
-                        setFilters({ 
-                          ...filters, 
-                          level: value ? value as TrainingLevel : undefined 
+                        setFilters({
+                          ...filters,
+                          level: value ? (value as TrainingLevel) : undefined,
                         });
                       }}
                       className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
@@ -407,9 +432,9 @@ const TrainingComparator: React.FC = () => {
                       value={filters.mode || ''}
                       onChange={(e) => {
                         const value = e.target.value;
-                        setFilters({ 
-                          ...filters, 
-                          mode: value ? value as TrainingMode : undefined 
+                        setFilters({
+                          ...filters,
+                          mode: value ? (value as TrainingMode) : undefined,
                         });
                       }}
                       className="px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white"
@@ -424,7 +449,9 @@ const TrainingComparator: React.FC = () => {
                       <input
                         type="checkbox"
                         checked={filters.cpfEligible || false}
-                        onChange={(e) => setFilters({ ...filters, cpfEligible: e.target.checked || undefined })}
+                        onChange={(e) =>
+                          setFilters({ ...filters, cpfEligible: e.target.checked || undefined })
+                        }
                         className="w-4 h-4"
                       />
                       <span>CPF uniquement</span>
@@ -445,12 +472,8 @@ const TrainingComparator: React.FC = () => {
                     >
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-xl font-bold text-white mb-1">
-                            {training.name}
-                          </h3>
-                          <p className="text-gray-400 text-sm">
-                            {training.organisme.name}
-                          </p>
+                          <h3 className="text-xl font-bold text-white mb-1">{training.name}</h3>
+                          <p className="text-gray-400 text-sm">{training.organisme.name}</p>
                         </div>
                         <button
                           onClick={() => toggleTrainingSelection(training.id)}
@@ -503,9 +526,7 @@ const TrainingComparator: React.FC = () => {
                       </div>
 
                       <div className="border-t border-slate-700 pt-4">
-                        <div className="text-sm font-medium text-gray-400 mb-2">
-                          Métiers visés:
-                        </div>
+                        <div className="text-sm font-medium text-gray-400 mb-2">Métiers visés:</div>
                         <div className="flex flex-wrap gap-2">
                           {training.outcomes.jobs.slice(0, 3).map((job, idx) => (
                             <span
@@ -535,17 +556,13 @@ const TrainingComparator: React.FC = () => {
             {activeView === 'comparison' && selectedTrainings.length > 0 && (
               <div className="space-y-6">
                 <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    Comparaison des formations
-                  </h2>
+                  <h2 className="text-2xl font-bold text-white mb-6">Comparaison des formations</h2>
 
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
                         <tr className="border-b border-slate-700">
-                          <th className="px-4 py-3 text-left text-gray-400 font-medium">
-                            Critère
-                          </th>
+                          <th className="px-4 py-3 text-left text-gray-400 font-medium">Critère</th>
                           {selectedTrainings.map((id) => {
                             const training = trainings.find((t) => t.id === id);
                             return (

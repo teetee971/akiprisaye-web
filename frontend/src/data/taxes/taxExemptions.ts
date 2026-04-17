@@ -6,17 +6,23 @@
  */
 
 export interface TaxExemption {
-  id: string
-  taxType: 'tva' | 'octroi_de_mer' | 'octroi_de_mer_regional' | 'taxe_soda' | 'taxe_alcool' | 'droits_douane'
-  category: string
-  description: string
-  beneficiaries: string
-  legalBasis: string
-  territoryApplicability: 'all' | 'dom' | 'metropole' | 'specific'
-  specificTerritories?: string[]
-  exemptionRate: number // 0-100, where 100 = full exemption
-  conditions: string
-  examples: string[]
+  id: string;
+  taxType:
+    | 'tva'
+    | 'octroi_de_mer'
+    | 'octroi_de_mer_regional'
+    | 'taxe_soda'
+    | 'taxe_alcool'
+    | 'droits_douane';
+  category: string;
+  description: string;
+  beneficiaries: string;
+  legalBasis: string;
+  territoryApplicability: 'all' | 'dom' | 'metropole' | 'specific';
+  specificTerritories?: string[];
+  exemptionRate: number; // 0-100, where 100 = full exemption
+  conditions: string;
+  examples: string[];
 }
 
 /**
@@ -34,7 +40,8 @@ export const TAX_EXEMPTIONS: TaxExemption[] = [
     legalBasis: 'Code général des impôts - Article 278-0 bis et suivants',
     territoryApplicability: 'all',
     exemptionRate: 72.5, // 5.5% au lieu de 20% = réduction de 72.5%
-    conditions: 'Produits non transformés ou transformation minimale. Liste précise définie par la loi.',
+    conditions:
+      'Produits non transformés ou transformation minimale. Liste précise définie par la loi.',
     examples: [
       'Pain et produits de boulangerie de base',
       'Lait et produits laitiers frais',
@@ -63,16 +70,16 @@ export const TAX_EXEMPTIONS: TaxExemption[] = [
     id: 'tva_livres',
     taxType: 'tva',
     category: 'Livres et presse',
-    description: 'Taux réduit pour favoriser l\'accès à la culture et à l\'information',
+    description: "Taux réduit pour favoriser l'accès à la culture et à l'information",
     beneficiaries: 'Lecteurs et étudiants',
     legalBasis: 'Code général des impôts - Article 278-0 bis A',
     territoryApplicability: 'all',
     exemptionRate: 72.5, // 5.5% au lieu de 20%
-    conditions: 'Livres imprimés et numériques, presse d\'information',
+    conditions: "Livres imprimés et numériques, presse d'information",
     examples: [
       'Livres scolaires et universitaires',
       'Romans, essais, bandes dessinées',
-      'Presse quotidienne et magazines d\'actualité',
+      "Presse quotidienne et magazines d'actualité",
     ],
   },
 
@@ -86,7 +93,8 @@ export const TAX_EXEMPTIONS: TaxExemption[] = [
     legalBasis: 'Code général des impôts - Annexe IV, Articles 1er à 10. Loi du 2 juillet 2004',
     territoryApplicability: 'dom',
     exemptionRate: 100, // Exonération totale possible
-    conditions: 'Produit fabriqué localement avec un pourcentage minimum de valeur ajoutée locale (généralement 50%)',
+    conditions:
+      'Produit fabriqué localement avec un pourcentage minimum de valeur ajoutée locale (généralement 50%)',
     examples: [
       'Rhum agricole produit en Martinique',
       'Fruits et légumes cultivés localement',
@@ -108,7 +116,7 @@ export const TAX_EXEMPTIONS: TaxExemption[] = [
       'Riz, pâtes, farine',
       'Lait en poudre',
       'Médicaments essentiels',
-      'Produits d\'hygiène de base',
+      "Produits d'hygiène de base",
     ],
   },
 
@@ -117,28 +125,29 @@ export const TAX_EXEMPTIONS: TaxExemption[] = [
     id: 'douane_origine_ue',
     taxType: 'droits_douane',
     category: 'Origine Union Européenne',
-    description: 'Exemption totale pour les produits originaires de l\'UE',
+    description: "Exemption totale pour les produits originaires de l'UE",
     beneficiaries: 'Tous les consommateurs pour produits UE',
-    legalBasis: 'Traité sur le fonctionnement de l\'Union européenne (TFUE)',
+    legalBasis: "Traité sur le fonctionnement de l'Union européenne (TFUE)",
     territoryApplicability: 'all',
     exemptionRate: 100,
-    conditions: 'Le produit doit être originaire d\'un État membre de l\'UE ou avoir été mis en libre pratique dans l\'UE',
+    conditions:
+      "Le produit doit être originaire d'un État membre de l'UE ou avoir été mis en libre pratique dans l'UE",
     examples: [
       'Tous produits fabriqués en France métropolitaine',
       'Produits fabriqués en Allemagne, Italie, Espagne, etc.',
-      'Produits en libre circulation dans l\'UE',
+      "Produits en libre circulation dans l'UE",
     ],
   },
   {
     id: 'douane_accords_commerciaux',
     taxType: 'droits_douane',
     category: 'Accords commerciaux préférentiels',
-    description: 'Réduction ou suppression des droits pour les pays ayant des accords avec l\'UE',
+    description: "Réduction ou suppression des droits pour les pays ayant des accords avec l'UE",
     beneficiaries: 'Consommateurs de produits des pays partenaires',
-    legalBasis: 'Accords commerciaux bilatéraux et multilatéraux de l\'UE',
+    legalBasis: "Accords commerciaux bilatéraux et multilatéraux de l'UE",
     territoryApplicability: 'all',
     exemptionRate: 0, // Variable selon accord
-    conditions: 'Certificat d\'origine requis. Conditions spécifiques à chaque accord.',
+    conditions: "Certificat d'origine requis. Conditions spécifiques à chaque accord.",
     examples: [
       'Certains produits du Canada (CETA)',
       'Produits de pays ACP (Afrique, Caraïbes, Pacifique)',
@@ -157,11 +166,12 @@ export const TAX_EXEMPTIONS: TaxExemption[] = [
     territoryApplicability: 'specific',
     specificTerritories: ['Martinique', 'Guadeloupe', 'Guyane', 'La Réunion'],
     exemptionRate: 50, // Jusqu\'à 50% de réduction
-    conditions: 'Contingents annuels fixés. Rhum produit traditionnellement (rhum agricole ou traditionnel de sucrerie). Respect des normes de production.',
+    conditions:
+      'Contingents annuels fixés. Rhum produit traditionnellement (rhum agricole ou traditionnel de sucrerie). Respect des normes de production.',
     examples: [
       'Rhum agricole AOC Martinique',
       'Rhum traditionnel de Guadeloupe',
-      'Dans la limite des contingents fixés annuellement par l\'UE',
+      "Dans la limite des contingents fixés annuellement par l'UE",
     ],
   },
   {
@@ -173,39 +183,37 @@ export const TAX_EXEMPTIONS: TaxExemption[] = [
     legalBasis: 'Code général des impôts - Articles 317 et suivants. Directive UE 92/83/CEE',
     territoryApplicability: 'all',
     exemptionRate: 50, // Jusqu\'à 50% de réduction
-    conditions: 'Production annuelle inférieure à certains seuils. Indépendance juridique et économique.',
+    conditions:
+      'Production annuelle inférieure à certains seuils. Indépendance juridique et économique.',
     examples: [
       'Brasseries artisanales < 200 000 hl/an',
       'Distilleries < 10 hl alcool pur/an',
       'Bouilleurs de cru (régime spécial)',
     ],
   },
-]
+];
 
 /**
  * Get exemptions for a specific tax type
  */
-export function getExemptionsByTaxType(
-  taxType: TaxExemption['taxType']
-): TaxExemption[] {
-  return TAX_EXEMPTIONS.filter((exemption) => exemption.taxType === taxType)
+export function getExemptionsByTaxType(taxType: TaxExemption['taxType']): TaxExemption[] {
+  return TAX_EXEMPTIONS.filter((exemption) => exemption.taxType === taxType);
 }
 
 /**
  * Get exemptions applicable to a specific territory
  */
-export function getExemptionsByTerritory(
-  territoryCode: string
-): TaxExemption[] {
+export function getExemptionsByTerritory(territoryCode: string): TaxExemption[] {
   return TAX_EXEMPTIONS.filter((exemption) => {
-    if (exemption.territoryApplicability === 'all') return true
-    if (exemption.territoryApplicability === 'dom' && territoryCode.startsWith('FR-97')) return true
-    if (exemption.territoryApplicability === 'metropole' && territoryCode === 'FR-MET') return true
+    if (exemption.territoryApplicability === 'all') return true;
+    if (exemption.territoryApplicability === 'dom' && territoryCode.startsWith('FR-97'))
+      return true;
+    if (exemption.territoryApplicability === 'metropole' && territoryCode === 'FR-MET') return true;
     if (exemption.territoryApplicability === 'specific' && exemption.specificTerritories) {
-      return exemption.specificTerritories.some(t => territoryCode.includes(t))
+      return exemption.specificTerritories.some((t) => territoryCode.includes(t));
     }
-    return false
-  })
+    return false;
+  });
 }
 
 /**
@@ -214,12 +222,12 @@ export function getExemptionsByTerritory(
 export function hasExemptions(category: string): boolean {
   return TAX_EXEMPTIONS.some((exemption) =>
     exemption.category.toLowerCase().includes(category.toLowerCase())
-  )
+  );
 }
 
 /**
  * Get all exemption categories
  */
 export function getAllExemptionCategories(): string[] {
-  return [...new Set(TAX_EXEMPTIONS.map((e) => e.category))]
+  return [...new Set(TAX_EXEMPTIONS.map((e) => e.category))];
 }

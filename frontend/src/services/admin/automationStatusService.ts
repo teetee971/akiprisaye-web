@@ -9,7 +9,15 @@
  *   - Lettre hebdo IA (dernière génération Firestore)
  */
 
-import { getFirestore, collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+} from 'firebase/firestore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -36,7 +44,14 @@ export interface WorkflowRun {
   id: number;
   name: string;
   status: 'queued' | 'in_progress' | 'completed' | string;
-  conclusion: 'success' | 'failure' | 'cancelled' | 'skipped' | 'action_required' | 'timed_out' | null;
+  conclusion:
+    | 'success'
+    | 'failure'
+    | 'cancelled'
+    | 'skipped'
+    | 'action_required'
+    | 'timed_out'
+    | null;
   createdAt: string;
   updatedAt: string;
   htmlUrl: string;
@@ -147,7 +162,7 @@ export async function getScrapingHealth(): Promise<ScrapingHealth> {
 const WATCHED_WORKFLOWS = [
   { file: 'auto-scraping.yml', label: '🤖 Scraping automatique' },
   { file: 'lettre-hebdo-ia.yml', label: '📰 Lettre hebdo IA' },
-  { file: 'alert-engine.yml', label: '🔔 Moteur d\'alertes' },
+  { file: 'alert-engine.yml', label: "🔔 Moteur d'alertes" },
   { file: 'auto-update-prices.yml', label: '💰 Mise à jour prix' },
   { file: 'data-refresh.yml', label: '♻️ Rafraîchissement données' },
 ];
@@ -198,8 +213,22 @@ export async function getModerationStats(): Promise<ModerationStats> {
 
     const [pendingSnap, approvedSnap, rejectedSnap] = await Promise.all([
       getDocs(query(collection(db, 'contributions'), where('status', '==', 'pending'), limit(200))),
-      getDocs(query(collection(db, 'contributions'), where('status', '==', 'approved'), orderBy('updatedAt', 'desc'), limit(100))),
-      getDocs(query(collection(db, 'contributions'), where('status', '==', 'rejected'), orderBy('updatedAt', 'desc'), limit(100))),
+      getDocs(
+        query(
+          collection(db, 'contributions'),
+          where('status', '==', 'approved'),
+          orderBy('updatedAt', 'desc'),
+          limit(100)
+        )
+      ),
+      getDocs(
+        query(
+          collection(db, 'contributions'),
+          where('status', '==', 'rejected'),
+          orderBy('updatedAt', 'desc'),
+          limit(100)
+        )
+      ),
     ]);
 
     return {
@@ -228,17 +257,17 @@ export async function getAlertStats(): Promise<AlertStats> {
     const yesterday = new Date(Date.now() - 86_400_000);
 
     const [activeSnap, triggeredSnap] = await Promise.all([
-      getDocs(query(
-        collection(db, 'price_alert_events'),
-        where('processed', '==', false),
-        limit(200)
-      )),
-      getDocs(query(
-        collection(db, 'price_alert_events'),
-        where('observedAt', '>=', yesterday.toISOString()),
-        orderBy('observedAt', 'desc'),
-        limit(100)
-      )),
+      getDocs(
+        query(collection(db, 'price_alert_events'), where('processed', '==', false), limit(200))
+      ),
+      getDocs(
+        query(
+          collection(db, 'price_alert_events'),
+          where('observedAt', '>=', yesterday.toISOString()),
+          orderBy('observedAt', 'desc'),
+          limit(100)
+        )
+      ),
     ]);
 
     const lastTriggered = triggeredSnap.docs[0]?.data()?.observedAt ?? null;

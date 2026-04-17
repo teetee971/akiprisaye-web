@@ -12,7 +12,7 @@ export default function TerritoryKeyIndicators({ territory }: Props) {
   useEffect(() => {
     let mounted = true;
     getTerritoryAnalytics(territory)
-      .then(res => mounted && setData(res))
+      .then((res) => mounted && setData(res))
       .catch(() => mounted && setError('Impossible de charger les indicateurs'));
     return () => {
       mounted = false;
@@ -31,13 +31,21 @@ export default function TerritoryKeyIndicators({ territory }: Props) {
 
       <Block title="Produits les plus chers">
         {data.topIncreases.map((p) => (
-          <Line key={`${p.productName ?? 'Produit'}_${p.price}`} label={p.productName ?? 'Produit'} value={`${p.price.toFixed(2)} €`} />
+          <Line
+            key={`${p.productName ?? 'Produit'}_${p.price}`}
+            label={p.productName ?? 'Produit'}
+            value={`${p.price.toFixed(2)} €`}
+          />
         ))}
       </Block>
 
       <Block title="Produits les moins chers">
         {data.topDecreases.map((p) => (
-          <Line key={`${p.productName ?? 'Produit'}_${p.price}`} label={p.productName ?? 'Produit'} value={`${p.price.toFixed(2)} €`} />
+          <Line
+            key={`${p.productName ?? 'Produit'}_${p.price}`}
+            label={p.productName ?? 'Produit'}
+            value={`${p.price.toFixed(2)} €`}
+          />
         ))}
       </Block>
 

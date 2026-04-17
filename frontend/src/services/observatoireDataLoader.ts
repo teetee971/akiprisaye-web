@@ -2,10 +2,10 @@ import { TERRITORIES } from './territoryNormalizationService';
 
 /**
  * Observatoire Data Loader
- * 
+ *
  * Loads real price observation data from JSON files
  * Provides aggregated statistics and comparison functions
- * 
+ *
  * @module observatoireDataLoader
  */
 
@@ -64,7 +64,7 @@ const DEFAULT_SNAPSHOT_MONTHS = [
 
 export async function loadObservatoireData(
   territory: string = 'Guadeloupe',
-  months: string[] = DEFAULT_SNAPSHOT_MONTHS,
+  months: string[] = DEFAULT_SNAPSHOT_MONTHS
 ): Promise<ObservatoireSnapshot[]> {
   try {
     // Replace spaces and hyphens with underscores to match file stems
@@ -106,7 +106,7 @@ export async function loadObservatoireData(
  * Returns a map keyed by territory code (e.g. 'gp', 'mq').
  */
 export async function loadAllTerritories(
-  months: string[] = DEFAULT_SNAPSHOT_MONTHS,
+  months: string[] = DEFAULT_SNAPSHOT_MONTHS
 ): Promise<Map<string, ObservatoireSnapshot[]>> {
   const result = new Map<string, ObservatoireSnapshot[]>();
 
@@ -117,7 +117,7 @@ export async function loadAllTerritories(
       if (snaps.length > 0) {
         result.set(t.code, snaps);
       }
-    }),
+    })
   );
   return result;
 }
@@ -125,16 +125,14 @@ export async function loadAllTerritories(
 /**
  * Calculate aggregated statistics from observations
  */
-export function calculateStatistics(
-  snapshots: ObservatoireSnapshot[]
-): PriceStatistics[] {
+export function calculateStatistics(snapshots: ObservatoireSnapshot[]): PriceStatistics[] {
   if (snapshots.length === 0) return [];
-  
+
   // Group observations by product EAN or name
   const productMap = new Map<string, ObservatoireObservation[]>();
-  
-  snapshots.forEach(snapshot => {
-    snapshot.donnees.forEach(obs => {
+
+  snapshots.forEach((snapshot) => {
+    snapshot.donnees.forEach((obs) => {
       const key = obs.ean || obs.produit;
       if (!productMap.has(key)) {
         productMap.set(key, []);
@@ -142,22 +140,22 @@ export function calculateStatistics(
       productMap.get(key)!.push(obs);
     });
   });
-  
+
   // Calculate statistics for each product
   const statistics: PriceStatistics[] = [];
-  
+
   productMap.forEach((observations, key) => {
-    const prices = observations.map(o => o.prix);
+    const prices = observations.map((o) => o.prix);
     const avgPrice = prices.reduce((a, b) => a + b, 0) / prices.length;
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
-    
+
     // Get unique enseignes
-    const enseignes = [...new Set(observations.map(o => o.enseigne).filter(Boolean))];
-    
+    const enseignes = [...new Set(observations.map((o) => o.enseigne).filter(Boolean))];
+
     // Use the first observation for metadata
     const firstObs = observations[0];
-    
+
     statistics.push({
       productName: firstObs.produit,
       category: firstObs.categorie,
@@ -167,10 +165,10 @@ export function calculateStatistics(
       observations: observations.length,
       lastUpdate: snapshots[snapshots.length - 1].date_snapshot,
       ean: firstObs.ean,
-      enseignes: enseignes as string[]
+      enseignes: enseignes as string[],
     });
   });
-  
+
   return statistics;
 }
 
@@ -182,23 +180,23 @@ export function calculatePriceChange(
   newSnapshot: ObservatoireSnapshot
 ): Map<string, number> {
   const changes = new Map<string, number>();
-  
+
   // Create maps by EAN or product name
   const oldPrices = new Map<string, number[]>();
   const newPrices = new Map<string, number[]>();
-  
-  oldSnapshot.donnees.forEach(obs => {
+
+  oldSnapshot.donnees.forEach((obs) => {
     const key = obs.ean || obs.produit;
     if (!oldPrices.has(key)) oldPrices.set(key, []);
     oldPrices.get(key)!.push(obs.prix);
   });
-  
-  newSnapshot.donnees.forEach(obs => {
+
+  newSnapshot.donnees.forEach((obs) => {
     const key = obs.ean || obs.produit;
     if (!newPrices.has(key)) newPrices.set(key, []);
     newPrices.get(key)!.push(obs.prix);
   });
-  
+
   // Calculate average price change for each product
   oldPrices.forEach((oldPriceList, key) => {
     const newPriceList = newPrices.get(key);
@@ -209,7 +207,7 @@ export function calculatePriceChange(
       changes.set(key, Math.round(changePercent * 10) / 10);
     }
   });
-  
+
   return changes;
 }
 
@@ -220,34 +218,34 @@ export function getDispersionByStore(
   snapshot: ObservatoireSnapshot
 ): Map<string, { min: number; max: number; variance: number }> {
   const dispersion = new Map();
-  
+
   // Group by product
   const productMap = new Map<string, ObservatoireObservation[]>();
-  
-  snapshot.donnees.forEach(obs => {
+
+  snapshot.donnees.forEach((obs) => {
     const key = obs.ean || obs.produit;
     if (!productMap.has(key)) {
       productMap.set(key, []);
     }
     productMap.get(key)!.push(obs);
   });
-  
+
   // Calculate dispersion for each product
   productMap.forEach((observations, key) => {
     if (observations.length > 1) {
-      const prices = observations.map(o => o.prix);
+      const prices = observations.map((o) => o.prix);
       const min = Math.min(...prices);
       const max = Math.max(...prices);
       const variance = max - min;
-      
+
       dispersion.set(key, {
         min: Math.round(min * 100) / 100,
         max: Math.round(max * 100) / 100,
-        variance: Math.round(variance * 100) / 100
+        variance: Math.round(variance * 100) / 100,
       });
     }
   });
-  
+
   return dispersion;
 }
 
@@ -264,10 +262,10 @@ export function exportToCSV(statistics: PriceStatistics[]): string {
     'Écart',
     'Observations',
     'EAN',
-    'Enseignes'
+    'Enseignes',
   ];
-  
-  const rows = statistics.map(stat => [
+
+  const rows = statistics.map((stat) => [
     stat.productName,
     stat.category,
     stat.avgPrice.toFixed(2),
@@ -276,13 +274,13 @@ export function exportToCSV(statistics: PriceStatistics[]): string {
     (stat.maxPrice - stat.minPrice).toFixed(2),
     stat.observations.toString(),
     stat.ean || '',
-    stat.enseignes.join('; ')
+    stat.enseignes.join('; '),
   ]);
-  
+
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ...rows.map((row) => row.map((cell) => `"${cell}"`).join(',')),
   ].join('\n');
-  
+
   return csvContent;
 }

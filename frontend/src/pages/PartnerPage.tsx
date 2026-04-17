@@ -16,38 +16,52 @@ const WA_NUMBER = import.meta.env.VITE_FEEDBACK_WHATSAPP ?? '';
 
 const CONTACT_WA_URL = WA_NUMBER
   ? `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
-      'Bonjour,\n\nJe suis intéressé par un partenariat avec A KI PRI SA YÉ pour augmenter la visibilité de mon enseigne en Guadeloupe / DOM.\n\nPouvons-nous en discuter ?',
+      'Bonjour,\n\nJe suis intéressé par un partenariat avec A KI PRI SA YÉ pour augmenter la visibilité de mon enseigne en Guadeloupe / DOM.\n\nPouvons-nous en discuter ?'
     )}`
   : `https://wa.me/?text=${encodeURIComponent(
-      'Bonjour, je souhaite devenir partenaire A KI PRI SA YÉ.',
+      'Bonjour, je souhaite devenir partenaire A KI PRI SA YÉ.'
     )}`;
 
 const OFFERS = [
   {
-    tier:  'Starter',
+    tier: 'Starter',
     price: '99€ / mois',
-    desc:  'Mise en avant de votre enseigne sur les pages comparateur.',
-    perks: ['Badge "Enseigne partenaire"', 'Priorité dans le classement', 'Lien direct vers votre site'],
+    desc: 'Mise en avant de votre enseigne sur les pages comparateur.',
+    perks: [
+      'Badge "Enseigne partenaire"',
+      'Priorité dans le classement',
+      'Lien direct vers votre site',
+    ],
   },
   {
-    tier:  'Pro',
+    tier: 'Pro',
     price: '249€ / mois',
-    desc:  'Visibilité étendue + accès aux données de tendances.',
-    perks: ['Tout Starter', 'Rapport mensuel des prix', 'Top 3 garanti sur vos catégories', 'Alerte concurrents'],
+    desc: 'Visibilité étendue + accès aux données de tendances.',
+    perks: [
+      'Tout Starter',
+      'Rapport mensuel des prix',
+      'Top 3 garanti sur vos catégories',
+      'Alerte concurrents',
+    ],
   },
   {
-    tier:  'Premium',
+    tier: 'Premium',
     price: 'Sur devis',
-    desc:  'Données exclusives + intégration complète.',
-    perks: ['Tout Pro', 'Export données prix', 'Dashboard analytique dédié', 'Accompagnement stratégique'],
+    desc: 'Données exclusives + intégration complète.',
+    perks: [
+      'Tout Pro',
+      'Export données prix',
+      'Dashboard analytique dédié',
+      'Accompagnement stratégique',
+    ],
   },
 ];
 
 const TESTIMONIAL_STATS = [
-  { value: '10 s',    label: 'Temps moyen de comparaison' },
-  { value: '+1 000',  label: 'Comparaisons / semaine'     },
-  { value: '4 DOM',   label: 'Territoires couverts'       },
-  { value: '3',       label: 'Enseignes comparées'        },
+  { value: '10 s', label: 'Temps moyen de comparaison' },
+  { value: '+1 000', label: 'Comparaisons / semaine' },
+  { value: '4 DOM', label: 'Territoires couverts' },
+  { value: '3', label: 'Enseignes comparées' },
 ];
 
 export default function PartnerPage() {
@@ -56,11 +70,11 @@ export default function PartnerPage() {
 
   function handleContactClick(source: string) {
     trackConversionEvent({
-      pageUrl:     pathname,
-      retailer:    `partner-contact-${source}`,
+      pageUrl: pathname,
+      retailer: `partner-contact-${source}`,
       productName: 'b2b-lead',
       variant,
-      clickedAt:   new Date().toISOString(),
+      clickedAt: new Date().toISOString(),
     });
   }
 
@@ -79,13 +93,15 @@ export default function PartnerPage() {
         </div>
 
         <h1 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-          Vous êtes une enseigne&nbsp;?<br />
+          Vous êtes une enseigne&nbsp;?
+          <br />
           <span className="text-emerald-400">Soyez vu en premier.</span>
         </h1>
 
         <p className="mx-auto mt-4 max-w-xl text-base text-zinc-400">
-          A KI PRI SA YÉ compare les prix entre Carrefour, E.Leclerc, Super U et d'autres enseignes locales.
-          Chaque jour, des consommateurs décident <strong className="text-white">où faire leurs courses</strong> grâce à notre comparateur.
+          A KI PRI SA YÉ compare les prix entre Carrefour, E.Leclerc, Super U et d'autres enseignes
+          locales. Chaque jour, des consommateurs décident{' '}
+          <strong className="text-white">où faire leurs courses</strong> grâce à notre comparateur.
           Votre enseigne peut être en tête de liste.
         </p>
 
@@ -115,25 +131,23 @@ export default function PartnerPage() {
 
       {/* ── VALUE PROP ────────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-3xl px-4 py-16">
-        <h2 className="mb-8 text-center text-xl font-bold">
-          Pourquoi être partenaire ?
-        </h2>
+        <h2 className="mb-8 text-center text-xl font-bold">Pourquoi être partenaire ?</h2>
         <div className="grid gap-6 sm:grid-cols-3">
           {[
             {
-              icon:  '🎯',
+              icon: '🎯',
               title: 'Clients qualifiés',
-              desc:  "Nos visiteurs sont en intention d'achat immédiate — ils cherchent où acheter maintenant.",
+              desc: "Nos visiteurs sont en intention d'achat immédiate — ils cherchent où acheter maintenant.",
             },
             {
-              icon:  '📊',
-              title:  "Données décision",
-              desc:  "Accédez aux tendances des prix et aux comportements d'achat locaux.",
+              icon: '📊',
+              title: 'Données décision',
+              desc: "Accédez aux tendances des prix et aux comportements d'achat locaux.",
             },
             {
-              icon:  '🏆',
+              icon: '🏆',
               title: 'Visibilité prioritaire',
-              desc:  'Votre enseigne apparaît en premier dans les résultats de comparaison.',
+              desc: 'Votre enseigne apparaît en premier dans les résultats de comparaison.',
             },
           ].map(({ icon, title, desc }) => (
             <div key={title} className="rounded-2xl border border-white/8 bg-white/[0.03] p-6">
@@ -170,7 +184,9 @@ export default function PartnerPage() {
                 <ul className="mt-4 flex-1 space-y-2">
                   {perks.map((perk) => (
                     <li key={perk} className="flex items-start gap-2 text-sm text-zinc-300">
-                      <span className="mt-0.5 text-emerald-400" aria-hidden="true">✔</span>
+                      <span className="mt-0.5 text-emerald-400" aria-hidden="true">
+                        ✔
+                      </span>
                       {perk}
                     </li>
                   ))}
@@ -201,8 +217,8 @@ export default function PartnerPage() {
           <p>Bonjour,</p>
           <br />
           <p>
-            Nous développons un comparateur de prix local pour la Guadeloupe et les DOM.
-            Nous montrons chaque jour aux consommateurs où acheter au meilleur prix.
+            Nous développons un comparateur de prix local pour la Guadeloupe et les DOM. Nous
+            montrons chaque jour aux consommateurs où acheter au meilleur prix.
           </p>
           <br />
           <p>

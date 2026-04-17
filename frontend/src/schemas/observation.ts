@@ -1,4 +1,3 @@
- 
 /**
  * TypeScript schema for price observations from receipt tickets
  * "A KI PRI SA YÉ" - Manual ingestion module
@@ -47,9 +46,9 @@ export interface Observation {
   /** Total amount including tax (euros) */
   total_ttc: number;
   /** Source type - always "ticket_caisse" for this module */
-  source: "ticket_caisse";
+  source: 'ticket_caisse';
   /** Reliability level - always "preuve_physique" for receipt-based observations */
-  fiabilite: "preuve_physique";
+  fiabilite: 'preuve_physique';
   /** Verification status - false by default, set to true after manual verification */
   verifie: boolean;
   /** Timestamp when the observation was created (ISO 8601) */
@@ -97,7 +96,10 @@ export function validateProduct(product: any): string[] {
     errors.push('Product "categorie" must be a string if provided');
   }
 
-  if (product.ean !== undefined && (typeof product.ean !== 'string' || !/^\d{8,13}$/.test(product.ean))) {
+  if (
+    product.ean !== undefined &&
+    (typeof product.ean !== 'string' || !/^\d{8,13}$/.test(product.ean))
+  ) {
     errors.push('Product "ean" must be an 8-13 digit string if provided');
   }
 
@@ -123,12 +125,23 @@ export function validateObservation(observation: any): string[] {
   }
 
   const validTerritories = [
-    'Guadeloupe', 'Martinique', 'Guyane', 'La Réunion', 'Mayotte',
-    'Saint-Pierre-et-Miquelon', 'Saint-Barthélemy', 'Saint-Martin',
-    'Wallis-et-Futuna', 'Polynésie française', 'Nouvelle-Calédonie'
+    'Guadeloupe',
+    'Martinique',
+    'Guyane',
+    'La Réunion',
+    'Mayotte',
+    'Saint-Pierre-et-Miquelon',
+    'Saint-Barthélemy',
+    'Saint-Martin',
+    'Wallis-et-Futuna',
+    'Polynésie française',
+    'Nouvelle-Calédonie',
   ];
 
-  if (typeof observation.territoire !== 'string' || !validTerritories.includes(observation.territoire)) {
+  if (
+    typeof observation.territoire !== 'string' ||
+    !validTerritories.includes(observation.territoire)
+  ) {
     errors.push(`Field "territoire" must be one of: ${validTerritories.join(', ')}`);
   }
 
@@ -160,7 +173,7 @@ export function validateObservation(observation: any): string[] {
   } else {
     observation.produits.forEach((product: any, index: number) => {
       const productErrors = validateProduct(product);
-      productErrors.forEach(err => {
+      productErrors.forEach((err) => {
         errors.push(`Product ${index + 1}: ${err}`);
       });
     });

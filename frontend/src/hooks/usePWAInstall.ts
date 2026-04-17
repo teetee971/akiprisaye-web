@@ -33,8 +33,7 @@ interface UsePWAInstallResult {
 }
 
 export function usePWAInstall(): UsePWAInstallResult {
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {

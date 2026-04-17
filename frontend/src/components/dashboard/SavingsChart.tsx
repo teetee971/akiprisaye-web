@@ -1,4 +1,3 @@
- 
 import React, { useEffect, useRef } from 'react';
 import {
   Chart as ChartJS,
@@ -10,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { MonthlySavings } from '../../services/savingsService';
@@ -32,13 +31,26 @@ interface SavingsChartProps {
   className?: string;
 }
 
-const MONTH_NAMES = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+const MONTH_NAMES = [
+  'Jan',
+  'Fév',
+  'Mar',
+  'Avr',
+  'Mai',
+  'Juin',
+  'Juil',
+  'Août',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Déc',
+];
 
 export default function SavingsChart({ monthlySavings, className = '' }: SavingsChartProps) {
   const chartRef = useRef<ChartJS<'line'>>(null);
 
   // Format month labels
-  const labels = monthlySavings.map(m => {
+  const labels = monthlySavings.map((m) => {
     const [year, month] = m.month.split('-');
     return `${MONTH_NAMES[parseInt(month) - 1]}`;
   });
@@ -48,7 +60,7 @@ export default function SavingsChart({ monthlySavings, className = '' }: Savings
     datasets: [
       {
         label: 'Économies (€)',
-        data: monthlySavings.map(m => m.total),
+        data: monthlySavings.map((m) => m.total),
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         fill: true,
@@ -57,9 +69,9 @@ export default function SavingsChart({ monthlySavings, className = '' }: Savings
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointRadius: 4,
-        pointHoverRadius: 6
-      }
-    ]
+        pointHoverRadius: 6,
+      },
+    ],
   };
 
   const options = {
@@ -67,7 +79,7 @@ export default function SavingsChart({ monthlySavings, className = '' }: Savings
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false
+        display: false,
       },
       tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -77,26 +89,26 @@ export default function SavingsChart({ monthlySavings, className = '' }: Savings
         callbacks: {
           label: (context: any) => {
             return `Économies: ${context.parsed.y.toFixed(2)}€`;
-          }
-        }
-      }
+          },
+        },
+      },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (value: any) => `${value}€`
+          callback: (value: any) => `${value}€`,
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.05)'
-        }
+          color: 'rgba(0, 0, 0, 0.05)',
+        },
       },
       x: {
         grid: {
-          display: false
-        }
-      }
-    }
+          display: false,
+        },
+      },
+    },
   };
 
   return (

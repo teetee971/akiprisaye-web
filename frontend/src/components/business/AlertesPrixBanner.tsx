@@ -13,10 +13,8 @@ import { trackConversionEvent, getVariantForPage } from '../../utils/conversionT
 // ── Config ────────────────────────────────────────────────────────────────────
 
 /** Replace with real WhatsApp business / Telegram channel invite links */
-export const WHATSAPP_SUBSCRIBE_URL =
-  'https://wa.me/message/AKIPRISAYE_SUBSCRIBE';
-export const TELEGRAM_SUBSCRIBE_URL =
-  'https://t.me/akiprisaye';
+export const WHATSAPP_SUBSCRIBE_URL = 'https://wa.me/message/AKIPRISAYE_SUBSCRIBE';
+export const TELEGRAM_SUBSCRIBE_URL = 'https://t.me/akiprisaye';
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -33,8 +31,7 @@ export default function AlertesPrixBanner({
   className = '',
 }: AlertesPrixBannerProps) {
   const territoryLabel = territory === 'MQ' ? 'Martinique' : 'Guadeloupe';
-  const pageUrl =
-    typeof window !== 'undefined' ? window.location.pathname : '';
+  const pageUrl = typeof window !== 'undefined' ? window.location.pathname : '';
   const variant = getVariantForPage(pageUrl);
 
   const track = useCallback(
@@ -48,7 +45,7 @@ export default function AlertesPrixBanner({
         territory,
       });
     },
-    [pageUrl, variant, territory],
+    [pageUrl, variant, territory]
   );
 
   return (
@@ -66,8 +63,8 @@ export default function AlertesPrixBanner({
       <p className="mb-5 text-sm text-zinc-400">
         Sélection hebdomadaire des offres les moins chères en{' '}
         <strong className="text-zinc-200">{territoryLabel}</strong>.{' '}
-        <span className="font-semibold text-emerald-400">4,99 €/mois</span>{' '}
-        — résiliable à tout moment.
+        <span className="font-semibold text-emerald-400">4,99 €/mois</span> — résiliable à tout
+        moment.
       </p>
 
       <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

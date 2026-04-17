@@ -1,4 +1,3 @@
- 
 import { BadgeVariation } from './BadgeVariation.jsx';
 
 /**
@@ -9,42 +8,36 @@ import { BadgeVariation } from './BadgeVariation.jsx';
  * @param {string} storeName - Store name
  * @param {string} currency - Currency code
  */
-export function TimelinePrix({ 
-  history = [], 
-  productLabel: _productLabel = '', 
+export function TimelinePrix({
+  history = [],
+  productLabel: _productLabel = '',
   storeName: _storeName = '',
-  currency = 'EUR' 
+  currency = 'EUR',
 }) {
   if (!history || history.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Chronologie des prix
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Chronologie des prix</h3>
         <div className="bg-gray-50 rounded-lg p-8 text-center">
-          <p className="text-gray-500">
-            Aucun historique disponible pour cette sélection
-          </p>
+          <p className="text-gray-500">Aucun historique disponible pour cette sélection</p>
         </div>
       </div>
     );
   }
 
   // Sort history by date (oldest first)
-  const sortedHistory = [...history].sort((a, b) => 
-    new Date(a.date) - new Date(b.date)
-  );
+  const sortedHistory = [...history].sort((a, b) => new Date(a.date) - new Date(b.date));
 
   // Calculate variations
   const historyWithVariations = sortedHistory.map((entry, index) => {
     if (index === 0) {
       return { ...entry, variation: null, variationPercent: null };
     }
-    
+
     const previousPrice = sortedHistory[index - 1].price;
     const variation = entry.price - previousPrice;
     const variationPercent = (variation / previousPrice) * 100;
-    
+
     return {
       ...entry,
       variation,
@@ -60,18 +53,16 @@ export function TimelinePrix({
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR', { 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Chronologie des prix
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Chronologie des prix</h3>
 
       {/* Overall Summary */}
       <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 mb-6">
@@ -88,15 +79,21 @@ export function TimelinePrix({
             <p className="text-xl font-bold text-gray-900">
               {lastPrice.toFixed(2)} {currency}
             </p>
-            <p className="text-xs text-gray-600">{formatDate(sortedHistory[sortedHistory.length - 1].date)}</p>
+            <p className="text-xs text-gray-600">
+              {formatDate(sortedHistory[sortedHistory.length - 1].date)}
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-700">Variation totale</p>
-            <p className={`text-xl font-bold ${totalVariation >= 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {totalVariation > 0 ? '+' : ''}{totalVariation.toFixed(2)} {currency}
+            <p
+              className={`text-xl font-bold ${totalVariation >= 0 ? 'text-red-600' : 'text-green-600'}`}
+            >
+              {totalVariation > 0 ? '+' : ''}
+              {totalVariation.toFixed(2)} {currency}
             </p>
             <p className="text-xs text-gray-600">
-              {totalVariationPercent > 0 ? '+' : ''}{totalVariationPercent.toFixed(1)}%
+              {totalVariationPercent > 0 ? '+' : ''}
+              {totalVariationPercent.toFixed(1)}%
             </p>
           </div>
         </div>
@@ -112,14 +109,10 @@ export function TimelinePrix({
             <div className="flex-1">
               <div className="flex items-center space-x-3">
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-lg font-bold text-blue-600">
-                    {index + 1}
-                  </span>
+                  <span className="text-lg font-bold text-blue-600">{index + 1}</span>
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">
-                    {formatDate(entry.date)}
-                  </p>
+                  <p className="font-semibold text-gray-900">{formatDate(entry.date)}</p>
                   {entry.variation !== null && (
                     <p className="text-sm text-gray-600">
                       {entry.variation > 0 ? '+' : ''}
@@ -127,9 +120,7 @@ export function TimelinePrix({
                     </p>
                   )}
                   {entry.variation === null && (
-                    <p className="text-sm text-gray-500 italic">
-                      Prix de référence initial
-                    </p>
+                    <p className="text-sm text-gray-500 italic">Prix de référence initial</p>
                   )}
                 </div>
               </div>
@@ -141,9 +132,7 @@ export function TimelinePrix({
                   {entry.price.toFixed(2)} {currency}
                 </p>
               </div>
-              {entry.variationPercent !== null && (
-                <BadgeVariation value={entry.variationPercent} />
-              )}
+              {entry.variationPercent !== null && <BadgeVariation value={entry.variationPercent} />}
             </div>
           </div>
         ))}
@@ -152,8 +141,9 @@ export function TimelinePrix({
       {/* Footer Note */}
       <div className="mt-6 bg-blue-50 rounded-lg p-3">
         <p className="text-xs text-blue-800">
-          <strong>Note :</strong> L'historique présenté correspond aux prix observés aux dates indiquées.
-          Les variations calculées représentent uniquement l'écart entre deux observations successives.
+          <strong>Note :</strong> L'historique présenté correspond aux prix observés aux dates
+          indiquées. Les variations calculées représentent uniquement l'écart entre deux
+          observations successives.
         </p>
       </div>
     </div>

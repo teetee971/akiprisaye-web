@@ -1,4 +1,3 @@
- 
 import React, { useState } from 'react';
 import { Ship, Info, TrendingUp } from 'lucide-react';
 import {
@@ -12,7 +11,7 @@ import {
 
 /**
  * Module de comparaison des prix de bateaux/ferries
- * 
+ *
  * UX Mobile-first (Samsung S24+ prioritaire)
  * Page unique, lisible à une main
  * Aucun pop-up, aucun scroll horizontal
@@ -75,9 +74,7 @@ export default function Bateaux() {
               Prix des bateaux & ferries
             </h1>
           </div>
-          <p className="text-sm text-gray-400">
-            Module en préparation - Données simulées
-          </p>
+          <p className="text-sm text-gray-400">Module en préparation - Données simulées</p>
         </div>
       </header>
 
@@ -184,12 +181,8 @@ export default function Bateaux() {
                             <th className="text-left py-3 px-2 text-gray-400 font-medium">
                               Compagnie
                             </th>
-                            <th className="text-left py-3 px-2 text-gray-400 font-medium">
-                              Prix
-                            </th>
-                            <th className="text-left py-3 px-2 text-gray-400 font-medium">
-                              Mois
-                            </th>
+                            <th className="text-left py-3 px-2 text-gray-400 font-medium">Prix</th>
+                            <th className="text-left py-3 px-2 text-gray-400 font-medium">Mois</th>
                             <th className="text-left py-3 px-2 text-gray-400 font-medium">
                               Relevé le
                             </th>
@@ -197,7 +190,10 @@ export default function Bateaux() {
                         </thead>
                         <tbody>
                           {results.map((boat, index) => (
-                            <tr key={`${boat.compagnie}-${boat.ligne}-${boat.mois}-${index}`} className="border-b border-slate-800 hover:bg-slate-800/30">
+                            <tr
+                              key={`${boat.compagnie}-${boat.ligne}-${boat.mois}-${index}`}
+                              className="border-b border-slate-800 hover:bg-slate-800/30"
+                            >
                               <td className="py-3 px-2">
                                 <div className="text-gray-200 font-medium">{boat.compagnie}</div>
                                 <div className="text-xs text-gray-500">{boat.source}</div>
@@ -214,9 +210,7 @@ export default function Bateaux() {
                                   )}
                                 </div>
                               </td>
-                              <td className="py-3 px-2 text-gray-300">
-                                {formatMonth(boat.mois)}
-                              </td>
+                              <td className="py-3 px-2 text-gray-300">{formatMonth(boat.mois)}</td>
                               <td className="py-3 px-2 text-gray-400 text-xs">
                                 {formatDate(boat.dateReleve)}
                               </td>
@@ -229,7 +223,8 @@ export default function Bateaux() {
                     {/* Badge "Prix observé" */}
                     <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                       <p className="text-xs text-blue-200">
-                        <strong>Prix observé</strong> — Ce ne sont PAS des prix garantis. Les tarifs peuvent varier.
+                        <strong>Prix observé</strong> — Ce ne sont PAS des prix garantis. Les tarifs
+                        peuvent varier.
                       </p>
                     </div>
                   </section>
@@ -241,7 +236,7 @@ export default function Bateaux() {
                         <TrendingUp className="w-5 h-5" />
                         Évolution des prix par mois
                       </h2>
-                      
+
                       <div className="space-y-3">
                         {chartData.map((data) => (
                           <div key={data.mois} className="space-y-1">
@@ -255,7 +250,7 @@ export default function Bateaux() {
                               <div
                                 className="absolute h-full bg-blue-500/30 rounded"
                                 style={{
-                                  width: `${(data.prixMoyen / Math.max(...chartData.map(d => d.prixMax))) * 100}%`,
+                                  width: `${(data.prixMoyen / Math.max(...chartData.map((d) => d.prixMax))) * 100}%`,
                                 }}
                               />
                               <div className="absolute inset-0 flex items-center px-3">
@@ -297,25 +292,29 @@ export default function Bateaux() {
             <div className="flex gap-3">
               <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold text-blue-300">
-                  Méthodologie & Transparence
-                </h3>
-                
+                <h3 className="text-sm font-semibold text-blue-300">Méthodologie & Transparence</h3>
+
                 <div className="space-y-2 text-xs text-gray-300">
                   <p>
-                    <strong>Données publiques</strong> — Les prix affichés proviennent d'observations citoyennes publiques. Aucune garantie de disponibilité ou d'exactitude.
+                    <strong>Données publiques</strong> — Les prix affichés proviennent
+                    d'observations citoyennes publiques. Aucune garantie de disponibilité ou
+                    d'exactitude.
                   </p>
-                  
+
                   <p>
-                    <strong>Aucun tracking</strong> — Aucune donnée utilisateur n'est collectée. Votre recherche reste privée.
+                    <strong>Aucun tracking</strong> — Aucune donnée utilisateur n'est collectée.
+                    Votre recherche reste privée.
                   </p>
-                  
+
                   <p>
-                    <strong>Aucune affiliation</strong> — A KI PRI SA YÉ ne reçoit aucune commission des compagnies maritimes. Comparaison neutre et indépendante.
+                    <strong>Aucune affiliation</strong> — A KI PRI SA YÉ ne reçoit aucune commission
+                    des compagnies maritimes. Comparaison neutre et indépendante.
                   </p>
-                  
+
                   <p>
-                    <strong>Usage informatif</strong> — Cet outil est destiné à l'information et à la comparaison. Il ne remplace pas une recherche approfondie auprès des compagnies.
+                    <strong>Usage informatif</strong> — Cet outil est destiné à l'information et à
+                    la comparaison. Il ne remplace pas une recherche approfondie auprès des
+                    compagnies.
                   </p>
                 </div>
               </div>

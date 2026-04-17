@@ -11,17 +11,28 @@ type IASection = 'conseiller' | 'suivi' | 'rayon';
 
 export default function AssistantIAHub() {
   const [activeSection, setActiveSection] = useState<IASection>('conseiller');
-  
+
   return (
     <>
       <Helmet>
         <title>Assistant IA - A KI PRI SA YÉ</title>
-        <meta name="description" content="Assistant intelligent pour optimiser vos achats et votre budget" />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/assistant-ia" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/assistant-ia" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/assistant-ia" />
+        <meta
+          name="description"
+          content="Assistant intelligent pour optimiser vos achats et votre budget"
+        />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/assistant-ia" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/assistant-ia"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/assistant-ia"
+        />
       </Helmet>
-      
+
       <div className="min-h-screen bg-slate-950 p-4 pt-14">
         <div className="max-w-6xl mx-auto">
           <HeroImage
@@ -30,18 +41,28 @@ export default function AssistantIAHub() {
             gradient="from-slate-950 to-violet-900"
             height="h-40 sm:h-52"
           >
-            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🤖 Assistant IA</h1>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Votre conseiller personnel pour comprendre et optimiser vos dépenses</p>
+            <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+              🤖 Assistant IA
+            </h1>
+            <p
+              style={{
+                margin: '0.25rem 0 0',
+                fontSize: '0.85rem',
+                color: 'rgba(255,255,255,0.75)',
+              }}
+            >
+              Votre conseiller personnel pour comprendre et optimiser vos dépenses
+            </p>
           </HeroImage>
-          
+
           {/* Section Selector */}
           <GlassCard className="mb-6 p-3">
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => setActiveSection('conseiller')}
                 className={`flex flex-col items-center gap-2 px-4 py-4 rounded-xl font-semibold transition-all ${
-                  activeSection === 'conseiller' 
-                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' 
+                  activeSection === 'conseiller'
+                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
                 aria-label="Sélectionner la section conseiller"
@@ -53,8 +74,8 @@ export default function AssistantIAHub() {
               <button
                 onClick={() => setActiveSection('suivi')}
                 className={`flex flex-col items-center gap-2 px-4 py-4 rounded-xl font-semibold transition-all ${
-                  activeSection === 'suivi' 
-                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' 
+                  activeSection === 'suivi'
+                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
                 aria-label="Sélectionner la section suivi"
@@ -66,8 +87,8 @@ export default function AssistantIAHub() {
               <button
                 onClick={() => setActiveSection('rayon')}
                 className={`flex flex-col items-center gap-2 px-4 py-4 rounded-xl font-semibold transition-all ${
-                  activeSection === 'rayon' 
-                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30' 
+                  activeSection === 'rayon'
+                    ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
                 aria-label="Sélectionner la section rayon IA"
@@ -78,11 +99,11 @@ export default function AssistantIAHub() {
               </button>
             </div>
           </GlassCard>
-          
+
           {/* Dynamic Content */}
           <div>
             {activeSection === 'conseiller' && <IaConseiller />}
-            
+
             {activeSection === 'suivi' && (
               <GlassCard>
                 <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-3">
@@ -92,34 +113,30 @@ export default function AssistantIAHub() {
                 <p className="text-gray-400 mb-6">
                   Suivez l'évolution de vos dépenses et recevez des alertes personnalisées
                 </p>
-                
+
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
                     <div className="text-3xl mb-3">📊</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Analyse des dépenses
-                    </h3>
+                    <h3 className="font-semibold text-lg mb-2 text-white">Analyse des dépenses</h3>
                     <p className="text-gray-400 text-sm">
                       Visualisez vos habitudes d'achat et identifiez les opportunités d'économies
                     </p>
                   </div>
-                  
+
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
                     <div className="text-3xl mb-3">🔔</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Alertes prix
-                    </h3>
+                    <h3 className="font-semibold text-lg mb-2 text-white">Alertes prix</h3>
                     <p className="text-gray-400 text-sm">
                       Soyez notifié quand vos produits favoris sont en promotion
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
                   {[
-                    { emoji: '📊', label: 'Mes Économies',    to: '/mes-economies' },
-                    { emoji: '🔔', label: 'Alertes Prix',     to: '/alertes-prix' },
-                    { emoji: '🛒', label: 'Liste Intelligente',to: '/liste-intelligente' },
+                    { emoji: '📊', label: 'Mes Économies', to: '/mes-economies' },
+                    { emoji: '🔔', label: 'Alertes Prix', to: '/alertes-prix' },
+                    { emoji: '🛒', label: 'Liste Intelligente', to: '/liste-intelligente' },
                     { emoji: '📈', label: 'Tableau Inflation', to: '/tableau-inflation' },
                   ].map((item) => (
                     <Link
@@ -147,12 +164,42 @@ export default function AssistantIAHub() {
 
                 <div className="grid md:grid-cols-3 gap-4 mb-6">
                   {[
-                    { emoji: '🥖', label: 'Épicerie',         detail: 'Produits de base et essentiels', to: '/comparateur' },
-                    { emoji: '🥩', label: 'Viande & Poisson', detail: 'Produits frais et surgelés',     to: '/comparateur' },
-                    { emoji: '🥬', label: 'Fruits & Légumes', detail: 'Produits de saison locaux',      to: '/comparateur' },
-                    { emoji: '🧴', label: 'Hygiène & Beauté', detail: 'Cosmétiques et soins',           to: '/evaluation-cosmetique' },
-                    { emoji: '🍼', label: 'Bébé & Puéri.',    detail: 'Produits pour nourrissons',      to: '/comparateur' },
-                    { emoji: '🧹', label: 'Entretien',        detail: 'Produits ménagers',              to: '/comparateur' },
+                    {
+                      emoji: '🥖',
+                      label: 'Épicerie',
+                      detail: 'Produits de base et essentiels',
+                      to: '/comparateur',
+                    },
+                    {
+                      emoji: '🥩',
+                      label: 'Viande & Poisson',
+                      detail: 'Produits frais et surgelés',
+                      to: '/comparateur',
+                    },
+                    {
+                      emoji: '🥬',
+                      label: 'Fruits & Légumes',
+                      detail: 'Produits de saison locaux',
+                      to: '/comparateur',
+                    },
+                    {
+                      emoji: '🧴',
+                      label: 'Hygiène & Beauté',
+                      detail: 'Cosmétiques et soins',
+                      to: '/evaluation-cosmetique',
+                    },
+                    {
+                      emoji: '🍼',
+                      label: 'Bébé & Puéri.',
+                      detail: 'Produits pour nourrissons',
+                      to: '/comparateur',
+                    },
+                    {
+                      emoji: '🧹',
+                      label: 'Entretien',
+                      detail: 'Produits ménagers',
+                      to: '/comparateur',
+                    },
                   ].map((item) => (
                     <Link
                       key={item.label}
@@ -168,7 +215,7 @@ export default function AssistantIAHub() {
               </GlassCard>
             )}
           </div>
-          
+
           {/* Features Section */}
           <div className="mt-8">
             <GlassCard className="bg-purple-900/20 border-purple-700/30">

@@ -32,26 +32,31 @@ vi.mock('react-hot-toast', () => ({
 }));
 
 /* ── Auth service mocks ────────────────────────────────────────────────── */
-const mockSignInGoogleRedirect   = vi.fn().mockResolvedValue(undefined);
+const mockSignInGoogleRedirect = vi.fn().mockResolvedValue(undefined);
 const mockSignInFacebookRedirect = vi.fn().mockResolvedValue(undefined);
-const mockSignInAppleRedirect    = vi.fn().mockResolvedValue(undefined);
+const mockSignInAppleRedirect = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('../services/auth', () => ({
-  signInGoogleRedirect:   (...args: unknown[]) => mockSignInGoogleRedirect(...args),
+  signInGoogleRedirect: (...args: unknown[]) => mockSignInGoogleRedirect(...args),
   signInFacebookRedirect: (...args: unknown[]) => mockSignInFacebookRedirect(...args),
-  signInAppleRedirect:    (...args: unknown[]) => mockSignInAppleRedirect(...args),
+  signInAppleRedirect: (...args: unknown[]) => mockSignInAppleRedirect(...args),
 }));
 
 /* ── authStorage mock (flag lifecycle) ─────────────────────────────────── */
 vi.mock('../auth/authStorage', () => ({
   setRedirectPendingFlag: ({ provider, next }: { provider: string; next: string }) => {
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({ provider, next, ts: Date.now() }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({ provider, next, ts: Date.now() })
+    );
   },
   getRedirectPendingFlag: () => {
     try {
       const raw = sessionStorage.getItem('auth:return:pending');
       return raw ? JSON.parse(raw) : null;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   },
   clearRedirectPendingFlag: () => {
     sessionStorage.removeItem('auth:return:pending');
@@ -109,7 +114,10 @@ vi.mock('../context/authHook', () => ({
 
 /* ── Logger mock ───────────────────────────────────────────────────────── */
 vi.mock('../utils/logger', () => ({
-  logDebug: vi.fn(), logInfo: vi.fn(), logWarn: vi.fn(), logError: vi.fn(),
+  logDebug: vi.fn(),
+  logInfo: vi.fn(),
+  logWarn: vi.fn(),
+  logError: vi.fn(),
 }));
 
 /* ── Import component under test ───────────────────────────────────────── */
@@ -124,7 +132,7 @@ function renderCallback(search = '?provider=google&next=%2Fmon-compte') {
       <Routes>
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 }
 
@@ -154,7 +162,7 @@ describe('SocialLoginButtons — mobile redirect', () => {
     render(
       <MemoryRouter>
         <SocialLoginButtons redirectTo="/mon-compte" />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     fireEvent.click(screen.getByRole('button', { name: /se connecter avec google/i }));
@@ -162,7 +170,7 @@ describe('SocialLoginButtons — mobile redirect', () => {
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith(
         '/auth/callback?provider=google&next=%2Fmon-compte',
-        { replace: false },
+        { replace: false }
       );
     });
   });
@@ -171,7 +179,7 @@ describe('SocialLoginButtons — mobile redirect', () => {
     render(
       <MemoryRouter>
         <SocialLoginButtons redirectTo="/mon-compte" />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     fireEvent.click(screen.getByRole('button', { name: /se connecter avec google/i }));
@@ -226,9 +234,14 @@ describe('AuthCallbackPage — neutral state while pending', () => {
 
   it('shows loading spinner on OAuth return (flag is set, loading=true)', async () => {
     // Simulate OAuth return: flag is already in sessionStorage
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
     authState = makeAuthMock({ loading: true, authResolved: false });
 
     renderCallback();
@@ -257,9 +270,14 @@ describe('AuthCallbackPage — success path', () => {
     const fakeUser = { uid: 'u1', displayName: 'Marie', email: 'm@e.com', photoURL: null };
 
     // Simulate OAuth return scenario
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: fakeUser, loading: false });
 
@@ -273,9 +291,14 @@ describe('AuthCallbackPage — success path', () => {
   it('fires a success toast with the user first name on success', async () => {
     const fakeUser = { uid: 'u1', displayName: 'Marie Dupont', email: 'm@e.com', photoURL: null };
 
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: fakeUser, loading: false });
 
@@ -284,7 +307,7 @@ describe('AuthCallbackPage — success path', () => {
     await waitFor(() => {
       expect(mockToastSuccess).toHaveBeenCalledWith(
         expect.stringContaining('Marie'),
-        expect.objectContaining({ id: 'auth-success' }),
+        expect.objectContaining({ id: 'auth-success' })
       );
     });
   });
@@ -292,9 +315,14 @@ describe('AuthCallbackPage — success path', () => {
   it('logs AUTH_STATE_USER_PRESENT and AUTH_NAVIGATE_AFTER_SUCCESS events on success', async () => {
     const fakeUser = { uid: 'u1', displayName: 'Test', email: 't@e.com', photoURL: null };
 
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: fakeUser, loading: false });
 
@@ -309,9 +337,14 @@ describe('AuthCallbackPage — success path', () => {
   it('respects a custom next param in the flag', async () => {
     const fakeUser = { uid: 'u1', displayName: null, email: 't@e.com', photoURL: null };
 
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mes-economies', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mes-economies',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: fakeUser, loading: false });
 
@@ -335,9 +368,14 @@ describe('AuthCallbackPage — no-user path', () => {
   });
 
   it('shows an error state when auth resolves with no user', async () => {
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: null, loading: false });
 
@@ -350,9 +388,14 @@ describe('AuthCallbackPage — no-user path', () => {
   });
 
   it('logs AUTH_STATE_NO_USER when auth resolves without a user', async () => {
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: null, loading: false });
 
@@ -377,9 +420,14 @@ describe('AuthCallbackPage — flag cleanup', () => {
   it('removes the sessionStorage flag after a successful auth cycle', async () => {
     const fakeUser = { uid: 'u1', displayName: 'Test', email: 't@e.com', photoURL: null };
 
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: fakeUser, loading: false });
 
@@ -393,9 +441,14 @@ describe('AuthCallbackPage — flag cleanup', () => {
   });
 
   it('removes the sessionStorage flag even when auth resolves with no user', async () => {
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: null, loading: false });
 
@@ -428,7 +481,7 @@ describe('AuthCallbackPage — anti-loop / direct access', () => {
         <Routes>
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
         </Routes>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     await waitFor(() => {
@@ -472,9 +525,14 @@ describe('AuthCallbackPage — timeout guard', () => {
 
   it('shows a timeout message and logs AUTH_REDIRECT_TIMEOUT if auth hangs for 15s', async () => {
     // OAuth return: flag is set, auth stays loading=true indefinitely
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     authState = makeAuthMock({ user: null, loading: true, authResolved: false });
 

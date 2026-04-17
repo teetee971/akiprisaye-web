@@ -27,17 +27,13 @@ export function ObservationPopup({ observation }) {
     <div className="p-2 space-y-3" style={{ minWidth: '250px' }}>
       {/* Product Name */}
       <div className="border-b border-gray-200 pb-2">
-        <h3 className="font-semibold text-gray-900 text-base">
-          {observation.product}
-        </h3>
+        <h3 className="font-semibold text-gray-900 text-base">{observation.product}</h3>
       </div>
 
       {/* Price - Most Prominent */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
         <p className="text-xs text-gray-600 mb-1">Prix observé</p>
-        <p className="text-2xl font-bold text-blue-900">
-          {observation.price.toFixed(2)} €
-        </p>
+        <p className="text-2xl font-bold text-blue-900">{observation.price.toFixed(2)} €</p>
         <p className="text-xs text-gray-600 mt-1">{observation.unit}</p>
       </div>
 

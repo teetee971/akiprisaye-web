@@ -8,7 +8,10 @@ export async function checkLiveApiHealth(): Promise<boolean> {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetch(`${API_BASE_URL}/health`, { method: 'GET', signal: controller.signal });
+    const response = await fetch(`${API_BASE_URL}/health`, {
+      method: 'GET',
+      signal: controller.signal,
+    });
     if (!response.ok) {
       activateIncidentMode('live_api_healthcheck_failed');
       return false;

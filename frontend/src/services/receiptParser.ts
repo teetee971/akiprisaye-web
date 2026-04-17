@@ -77,7 +77,8 @@ const RE_TIME = /\b(\d{1,2})[h:](\d{2})(?::(\d{2}))?\b/i;
 const RE_RECEIPT_NUM = /(?:ticket|reçu|n°|numéro)[^\d]*(\d{4,12})/i;
 
 // French total patterns — most permissive first
-const RE_TOTAL = /(?:total\s*(?:ttc)?|montant\s*(?:ttc|à\s*payer|dû)?|à\s*payer)\s*[:-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
+const RE_TOTAL =
+  /(?:total\s*(?:ttc)?|montant\s*(?:ttc|à\s*payer|dû)?|à\s*payer)\s*[:-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
 // Subtotal (HT or partial)
 const RE_SUBTOTAL = /(?:sous[\s-]total|total\s*ht)\s*[:-]?\s*(\d{1,5}[.,]\d{2})\s*€?/i;
 
@@ -86,7 +87,8 @@ const RE_TVA_FULL = /t\.?v\.?a\.?\s*(\d{1,2}[.,]\d+)?\s*%?\s*[:-]?\s*(\d{1,5}[.,
 const RE_TVA_RATE = /(\d{1,2}(?:[.,]\d+)?)\s*%/;
 
 // Payment methods
-const RE_PAYMENT = /\b(cb\b|carte\s*(?:bancaire|bleue|visa|mastercard)?|esp[eè]ces?|ch[eè]que|sans\s*contact|paylib|apple\s*pay|google\s*pay|lydia|paypal|virement)\b/i;
+const RE_PAYMENT =
+  /\b(cb\b|carte\s*(?:bancaire|bleue|visa|mastercard)?|esp[eè]ces?|ch[eè]que|sans\s*contact|paylib|apple\s*pay|google\s*pay|lydia|paypal|virement)\b/i;
 
 /**
  * Match a quantity × unit-price pattern: "2 x 1,49" or "3 × 0.89"
@@ -100,7 +102,8 @@ const RE_QTY_UNIT = /(\d+)\s*[x×]\s*(\d{1,4}[.,]\d{2})/i;
 const RE_ITEM_LINE = /^(.{3,45}?)\s{2,}(\d{1,4}[.,]\d{2})\s*€?\s*$/;
 
 // Patterns that indicate header / metadata lines (NOT items)
-const RE_SKIP_LINE = /(?:total|tva|ticket|date|heure|caisse|opérateur|bonjour|merci|bienvenue|fidélité|points?|solde|code)/i;
+const RE_SKIP_LINE =
+  /(?:total|tva|ticket|date|heure|caisse|opérateur|bonjour|merci|bienvenue|fidélité|points?|solde|code)/i;
 
 // Address heuristic: contains a street number + street word
 const RE_ADDRESS = /\d{1,4}\s+(?:rue|avenue|bd|boulevard|allée|place|impasse|chemin|route)/i;
@@ -256,7 +259,7 @@ export function looksLikeReceipt(text: string): boolean {
   if (/total\s*(ttc)?/i.test(lower)) hits++;
   if (/t\.?v\.?a\.?/i.test(lower)) hits++;
   if (/ticket|caisse/.test(lower)) hits++;
-  if (/\d{1,4}[.,]\d{2}/.test(lower)) hits++;  // price-like number (€ optional)
+  if (/\d{1,4}[.,]\d{2}/.test(lower)) hits++; // price-like number (€ optional)
   if (/montant|à\s*payer/.test(lower)) hits++;
   return hits >= 2;
 }

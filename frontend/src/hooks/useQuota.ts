@@ -1,6 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useAuth } from '../context/authHook';
-import { consumeGuestQuota, consumeUserQuota, getGuestQuotaStatus, QuotaStatus } from '../services/freemium';
+import {
+  consumeGuestQuota,
+  consumeUserQuota,
+  getGuestQuotaStatus,
+  QuotaStatus,
+} from '../services/freemium';
 import { usePlan } from './usePlan';
 
 const initialGuest = getGuestQuotaStatus();

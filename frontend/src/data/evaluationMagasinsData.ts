@@ -30,7 +30,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Alimentaire',
     sectorEmoji: '🛒',
     sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.3, proprete: 4.1, disponibilite: 4.2 },
     totalReviews: 142,
     lastReview: '2024-12-10',
@@ -43,7 +44,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Alimentaire',
     sectorEmoji: '🛒',
     sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.0, proprete: 3.9, disponibilite: 3.7 },
     totalReviews: 89,
     lastReview: '2024-12-08',
@@ -56,7 +58,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Alimentaire',
     sectorEmoji: '🛒',
     sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.5, proprete: 3.8, disponibilite: 4.0 },
     totalReviews: 61,
     lastReview: '2024-12-05',
@@ -69,7 +72,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Alimentaire',
     sectorEmoji: '🛒',
     sectorColor: 'bg-amber-100 text-amber-800',
-    storeImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.2, proprete: 4.3, disponibilite: 4.0 },
     totalReviews: 134,
     lastReview: '2024-11-25',
@@ -82,7 +86,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Pharmacie',
     sectorEmoji: '💊',
     sectorColor: 'bg-green-100 text-green-800',
-    storeImage: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.5, proprete: 4.7, disponibilite: 3.9 },
     totalReviews: 38,
     lastReview: '2024-12-09',
@@ -95,7 +100,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Pharmacie',
     sectorEmoji: '💊',
     sectorColor: 'bg-green-100 text-green-800',
-    storeImage: 'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.9, proprete: 4.4, disponibilite: 3.7 },
     totalReviews: 45,
     lastReview: '2024-12-01',
@@ -108,7 +114,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Boulangerie',
     sectorEmoji: '🥖',
     sectorColor: 'bg-orange-100 text-orange-800',
-    storeImage: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.8, proprete: 4.6, disponibilite: 4.2 },
     totalReviews: 75,
     lastReview: '2024-12-11',
@@ -121,7 +128,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Boulangerie',
     sectorEmoji: '🥖',
     sectorColor: 'bg-orange-100 text-orange-800',
-    storeImage: 'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1568254183919-78a4f43a2877?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.7, proprete: 4.5, disponibilite: 4.3 },
     totalReviews: 83,
     lastReview: '2024-11-30',
@@ -134,7 +142,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Téléphonie',
     sectorEmoji: '📱',
     sectorColor: 'bg-blue-100 text-blue-800',
-    storeImage: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.2, proprete: 4.0, disponibilite: 3.5 },
     totalReviews: 54,
     lastReview: '2024-12-07',
@@ -147,7 +156,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Bricolage',
     sectorEmoji: '🔨',
     sectorColor: 'bg-gray-100 text-gray-700',
-    storeImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.6, proprete: 3.9, disponibilite: 4.1 },
     totalReviews: 112,
     lastReview: '2024-12-06',
@@ -160,7 +170,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Restaurant',
     sectorEmoji: '🍽️',
     sectorColor: 'bg-red-100 text-red-800',
-    storeImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.6, proprete: 4.4, disponibilite: 4.7 },
     totalReviews: 203,
     lastReview: '2024-12-12',
@@ -173,7 +184,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Restaurant',
     sectorEmoji: '🍽️',
     sectorColor: 'bg-red-100 text-red-800',
-    storeImage: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.3, proprete: 4.1, disponibilite: 4.5 },
     totalReviews: 91,
     lastReview: '2024-12-09',
@@ -186,7 +198,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Marché',
     sectorEmoji: '🌿',
     sectorColor: 'bg-lime-100 text-lime-800',
-    storeImage: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.3, proprete: 3.7, disponibilite: 4.8 },
     totalReviews: 167,
     lastReview: '2024-12-10',
@@ -199,7 +212,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Marché',
     sectorEmoji: '🌿',
     sectorColor: 'bg-lime-100 text-lime-800',
-    storeImage: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.0, proprete: 3.5, disponibilite: 4.6 },
     totalReviews: 52,
     lastReview: '2024-11-22',
@@ -212,7 +226,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Mode',
     sectorEmoji: '👗',
     sectorColor: 'bg-purple-100 text-purple-800',
-    storeImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.9, proprete: 4.2, disponibilite: 3.6 },
     totalReviews: 88,
     lastReview: '2024-12-04',
@@ -225,7 +240,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Sport',
     sectorEmoji: '🏋️',
     sectorColor: 'bg-indigo-100 text-indigo-800',
-    storeImage: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.1, proprete: 4.3, disponibilite: 4.0 },
     totalReviews: 97,
     lastReview: '2024-12-03',
@@ -238,7 +254,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Beauté',
     sectorEmoji: '💄',
     sectorColor: 'bg-pink-100 text-pink-800',
-    storeImage: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.4, proprete: 4.6, disponibilite: 3.8 },
     totalReviews: 56,
     lastReview: '2024-11-28',
@@ -252,7 +269,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Informatique',
     sectorEmoji: '🖥️',
     sectorColor: 'bg-sky-100 text-sky-800',
-    storeImage: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.7, proprete: 4.2, disponibilite: 3.9 },
     totalReviews: 118,
     lastReview: '2024-12-11',
@@ -265,7 +283,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Informatique',
     sectorEmoji: '🖥️',
     sectorColor: 'bg-sky-100 text-sky-800',
-    storeImage: 'https://images.unsplash.com/photo-1593640408182-31c228f4b5af?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1593640408182-31c228f4b5af?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.9, proprete: 4.0, disponibilite: 4.1 },
     totalReviews: 73,
     lastReview: '2024-12-02',
@@ -279,7 +298,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Coiffure',
     sectorEmoji: '✂️',
     sectorColor: 'bg-fuchsia-100 text-fuchsia-800',
-    storeImage: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.7, proprete: 4.8, disponibilite: 4.3 },
     totalReviews: 64,
     lastReview: '2024-12-12',
@@ -292,7 +312,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Coiffure',
     sectorEmoji: '✂️',
     sectorColor: 'bg-fuchsia-100 text-fuchsia-800',
-    storeImage: 'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.5, proprete: 4.6, disponibilite: 4.4 },
     totalReviews: 47,
     lastReview: '2024-12-05',
@@ -306,7 +327,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Garage/Auto',
     sectorEmoji: '🔧',
     sectorColor: 'bg-zinc-100 text-zinc-800',
-    storeImage: 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1625047509168-a7026f36de04?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.8, proprete: 3.5, disponibilite: 4.0 },
     totalReviews: 81,
     lastReview: '2024-11-30',
@@ -319,7 +341,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Garage/Auto',
     sectorEmoji: '🔧',
     sectorColor: 'bg-zinc-100 text-zinc-800',
-    storeImage: 'https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.6, proprete: 3.9, disponibilite: 3.8 },
     totalReviews: 59,
     lastReview: '2024-11-20',
@@ -333,7 +356,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Station-service',
     sectorEmoji: '⛽',
     sectorColor: 'bg-yellow-100 text-yellow-800',
-    storeImage: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.4, proprete: 3.2, disponibilite: 4.5 },
     totalReviews: 96,
     lastReview: '2024-12-10',
@@ -346,7 +370,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Station-service',
     sectorEmoji: '⛽',
     sectorColor: 'bg-yellow-100 text-yellow-800',
-    storeImage: 'https://images.unsplash.com/photo-1611605645802-bf21ba17a44b?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1611605645802-bf21ba17a44b?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.6, proprete: 3.4, disponibilite: 4.6 },
     totalReviews: 74,
     lastReview: '2024-11-25',
@@ -360,7 +385,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Boucherie',
     sectorEmoji: '🥩',
     sectorColor: 'bg-rose-100 text-rose-800',
-    storeImage: 'https://images.unsplash.com/photo-1588347818036-c1951ab9b8bc?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1588347818036-c1951ab9b8bc?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.6, proprete: 4.0, disponibilite: 4.4 },
     totalReviews: 103,
     lastReview: '2024-12-08',
@@ -373,7 +399,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Boucherie',
     sectorEmoji: '🥩',
     sectorColor: 'bg-rose-100 text-rose-800',
-    storeImage: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.4, proprete: 3.9, disponibilite: 4.2 },
     totalReviews: 58,
     lastReview: '2024-12-03',
@@ -387,7 +414,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Poissonnerie',
     sectorEmoji: '🐟',
     sectorColor: 'bg-cyan-100 text-cyan-800',
-    storeImage: 'https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.5, proprete: 3.8, disponibilite: 4.7 },
     totalReviews: 88,
     lastReview: '2024-12-11',
@@ -400,7 +428,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Poissonnerie',
     sectorEmoji: '🐟',
     sectorColor: 'bg-cyan-100 text-cyan-800',
-    storeImage: 'https://images.unsplash.com/photo-1510130387422-82bed34b37e9?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1510130387422-82bed34b37e9?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.2, proprete: 3.6, disponibilite: 4.5 },
     totalReviews: 41,
     lastReview: '2024-11-18',
@@ -414,7 +443,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Optique',
     sectorEmoji: '👓',
     sectorColor: 'bg-teal-100 text-teal-800',
-    storeImage: 'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.6, proprete: 4.8, disponibilite: 4.1 },
     totalReviews: 35,
     lastReview: '2024-12-09',
@@ -428,7 +458,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Bijouterie',
     sectorEmoji: '💍',
     sectorColor: 'bg-amber-100 text-yellow-800',
-    storeImage: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.7, proprete: 4.9, disponibilite: 3.8 },
     totalReviews: 42,
     lastReview: '2024-12-04',
@@ -441,7 +472,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Bijouterie',
     sectorEmoji: '💍',
     sectorColor: 'bg-amber-100 text-yellow-800',
-    storeImage: 'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.5, proprete: 4.8, disponibilite: 3.7 },
     totalReviews: 29,
     lastReview: '2024-11-26',
@@ -455,7 +487,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Librairie',
     sectorEmoji: '📚',
     sectorColor: 'bg-emerald-100 text-emerald-800',
-    storeImage: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.8, proprete: 4.7, disponibilite: 4.0 },
     totalReviews: 67,
     lastReview: '2024-12-07',
@@ -469,7 +502,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Fleuriste',
     sectorEmoji: '🌸',
     sectorColor: 'bg-pink-100 text-pink-700',
-    storeImage: 'https://images.unsplash.com/photo-1487530811015-780c8a5c0b82?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1487530811015-780c8a5c0b82?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.9, proprete: 4.8, disponibilite: 4.1 },
     totalReviews: 33,
     lastReview: '2024-12-06',
@@ -483,7 +517,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Vétérinaire',
     sectorEmoji: '🐾',
     sectorColor: 'bg-green-100 text-green-700',
-    storeImage: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.7, proprete: 4.8, disponibilite: 3.9 },
     totalReviews: 51,
     lastReview: '2024-12-01',
@@ -497,7 +532,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Pressing',
     sectorEmoji: '👔',
     sectorColor: 'bg-violet-100 text-violet-800',
-    storeImage: 'https://images.unsplash.com/photo-1517677129300-07b130802f46?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1517677129300-07b130802f46?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.3, proprete: 4.5, disponibilite: 4.2 },
     totalReviews: 28,
     lastReview: '2024-11-29',
@@ -505,13 +541,14 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
   // ── Glacier / Confiserie ──────────────────────────────────────────────────
   {
     id: '37',
-    name: 'Glacier Soleil d\'Or',
+    name: "Glacier Soleil d'Or",
     territory: 'La Réunion',
     address: 'Front de mer, Saint-Gilles-les-Bains',
     sector: 'Glacier',
     sectorEmoji: '🍦',
     sectorColor: 'bg-sky-100 text-sky-700',
-    storeImage: 'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.8, proprete: 4.6, disponibilite: 4.5 },
     totalReviews: 129,
     lastReview: '2024-12-12',
@@ -524,7 +561,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Glacier',
     sectorEmoji: '🍦',
     sectorColor: 'bg-sky-100 text-sky-700',
-    storeImage: 'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1501443762994-82bd5dace89a?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.9, proprete: 4.7, disponibilite: 4.4 },
     totalReviews: 94,
     lastReview: '2024-12-10',
@@ -538,7 +576,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Hôtel',
     sectorEmoji: '🏨',
     sectorColor: 'bg-blue-100 text-blue-700',
-    storeImage: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.3, proprete: 4.5, disponibilite: 4.4 },
     totalReviews: 312,
     lastReview: '2024-12-11',
@@ -551,7 +590,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Hôtel',
     sectorEmoji: '🏨',
     sectorColor: 'bg-blue-100 text-blue-700',
-    storeImage: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.5, proprete: 4.6, disponibilite: 4.3 },
     totalReviews: 278,
     lastReview: '2024-12-09',
@@ -565,7 +605,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Quincaillerie',
     sectorEmoji: '🪛',
     sectorColor: 'bg-stone-100 text-stone-700',
-    storeImage: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.0, proprete: 3.8, disponibilite: 4.4 },
     totalReviews: 44,
     lastReview: '2024-11-27',
@@ -579,7 +620,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Épicerie bio',
     sectorEmoji: '🌱',
     sectorColor: 'bg-lime-100 text-lime-700',
-    storeImage: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.6, proprete: 4.7, disponibilite: 3.9 },
     totalReviews: 69,
     lastReview: '2024-12-08',
@@ -592,7 +634,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Épicerie bio',
     sectorEmoji: '🌱',
     sectorColor: 'bg-lime-100 text-lime-700',
-    storeImage: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 4.5, proprete: 4.6, disponibilite: 3.8 },
     totalReviews: 53,
     lastReview: '2024-12-03',
@@ -606,7 +649,8 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Banque',
     sectorEmoji: '🏦',
     sectorColor: 'bg-slate-100 text-slate-700',
-    storeImage: 'https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 2.9, proprete: 4.1, disponibilite: 3.2 },
     totalReviews: 147,
     lastReview: '2024-12-06',
@@ -619,15 +663,22 @@ export const EXAMPLE_RATINGS: StoreRating[] = [
     sector: 'Banque',
     sectorEmoji: '🏦',
     sectorColor: 'bg-slate-100 text-slate-700',
-    storeImage: 'https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?auto=format&fm=webp&fit=crop&w=800&q=80',
+    storeImage:
+      'https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?auto=format&fm=webp&fit=crop&w=800&q=80',
     ratings: { service: 3.1, proprete: 4.2, disponibilite: 3.0 },
     totalReviews: 189,
     lastReview: '2024-12-04',
   },
 ];
 
-export const ALL_SECTORS = ['Tous', ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.sector))).sort()];
-export const ALL_TERRITORIES = ['Tous', ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.territory))).sort()];
+export const ALL_SECTORS = [
+  'Tous',
+  ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.sector))).sort(),
+];
+export const ALL_TERRITORIES = [
+  'Tous',
+  ...Array.from(new Set(EXAMPLE_RATINGS.map((s) => s.territory))).sort(),
+];
 
 // Mapping sector → emoji + color (used by the form)
 export const SECTOR_META: Record<string, { emoji: string; color: string }> = {
@@ -659,4 +710,3 @@ export const SECTOR_META: Record<string, { emoji: string; color: string }> = {
   Vétérinaire: { emoji: '🐾', color: 'bg-green-100 text-green-700' },
   'Épicerie bio': { emoji: '🌱', color: 'bg-lime-100 text-lime-700' },
 };
-

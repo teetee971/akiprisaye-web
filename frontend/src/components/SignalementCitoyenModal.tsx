@@ -1,16 +1,16 @@
 // src/components/SignalementCitoyenModal.tsx
 // Citizen Observation Reporting Modal - local only, no backend
-import React, { useState } from 'react'
-import { useCitizenReport, type ObservationType } from '../hooks/useCitizenReport'
+import React, { useState } from 'react';
+import { useCitizenReport, type ObservationType } from '../hooks/useCitizenReport';
 
 type SignalementCitoyenModalProps = {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
   productContext?: {
-    name: string
-    ean?: string
-  }
-}
+    name: string;
+    ean?: string;
+  };
+};
 
 /**
  * Get French label for observation type
@@ -18,13 +18,13 @@ type SignalementCitoyenModalProps = {
 function getObservationTypeLabel(type: ObservationType): string {
   switch (type) {
     case 'price_different':
-      return 'Prix différent constaté'
+      return 'Prix différent constaté';
     case 'product_absent':
-      return 'Produit absent'
+      return 'Produit absent';
     case 'reference_error':
-      return 'Erreur de référence'
+      return 'Erreur de référence';
     case 'other_observation':
-      return 'Autre observation terrain'
+      return 'Autre observation terrain';
   }
 }
 
@@ -33,27 +33,25 @@ export default function SignalementCitoyenModal({
   onClose,
   productContext,
 }: SignalementCitoyenModalProps) {
-  const { addReport } = useCitizenReport()
-  const [type, setType] = useState<ObservationType>('price_different')
-  const [description, setDescription] = useState('')
-  const [observationDate, setObservationDate] = useState(
-    new Date().toISOString().split('T')[0]
-  )
-  const [store, setStore] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const { addReport } = useCitizenReport();
+  const [type, setType] = useState<ObservationType>('price_different');
+  const [description, setDescription] = useState('');
+  const [observationDate, setObservationDate] = useState(new Date().toISOString().split('T')[0]);
+  const [store, setStore] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   // Check feature flag
-  const isEnabled = import.meta.env.VITE_FEATURE_CITIZEN_REPORT === 'true'
+  const isEnabled = import.meta.env.VITE_FEATURE_CITIZEN_REPORT === 'true';
 
   if (!isOpen || !isEnabled) {
-    return null
+    return null;
   }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!description.trim()) {
-      return
+      return;
     }
 
     addReport({
@@ -61,19 +59,19 @@ export default function SignalementCitoyenModal({
       description: description.trim(),
       observationDate: `${observationDate}T12:00:00Z`,
       store: store.trim() || undefined,
-    })
+    });
 
-    setSubmitted(true)
+    setSubmitted(true);
 
     // Reset form after 2 seconds
     setTimeout(() => {
-      setSubmitted(false)
-      setDescription('')
-      setStore('')
-      setType('price_different')
-      onClose()
-    }, 2000)
-  }
+      setSubmitted(false);
+      setDescription('');
+      setStore('');
+      setType('price_different');
+      onClose();
+    }, 2000);
+  };
 
   return (
     <div
@@ -127,19 +125,18 @@ export default function SignalementCitoyenModal({
               <div className="text-xl font-semibold text-white mb-3">
                 Observation enregistrée localement
               </div>
-              <p className="text-white/70 mb-2">
-                Merci pour votre contribution citoyenne.
-              </p>
-              <p className="text-sm text-white/60">
-                Aucun envoi réseau.
-              </p>
+              <p className="text-white/70 mb-2">Merci pour votre contribution citoyenne.</p>
+              <p className="text-sm text-white/60">Aucun envoi réseau.</p>
             </div>
           ) : (
             /* Form */
             <form onSubmit={handleSubmit}>
               {/* Observation Type */}
               <div className="mb-4">
-                <label htmlFor="observation-type" className="block text-sm font-medium text-white mb-2">
+                <label
+                  htmlFor="observation-type"
+                  className="block text-sm font-medium text-white mb-2"
+                >
                   Type d'observation <span className="text-red-400">*</span>
                 </label>
                 <select
@@ -188,7 +185,10 @@ export default function SignalementCitoyenModal({
 
               {/* Observation Date */}
               <div className="mb-4">
-                <label htmlFor="observation-date" className="block text-sm font-medium text-white mb-2">
+                <label
+                  htmlFor="observation-date"
+                  className="block text-sm font-medium text-white mb-2"
+                >
                   Date d'observation (optionnel)
                 </label>
                 <input
@@ -249,5 +249,5 @@ export default function SignalementCitoyenModal({
         </div>
       </div>
     </div>
-  )
+  );
 }

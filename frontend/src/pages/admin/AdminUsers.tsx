@@ -6,7 +6,18 @@
  */
 import { useState, useEffect } from 'react';
 import { Search, RefreshCw, UserCheck, Shield, Eye, User, AlertTriangle } from 'lucide-react';
-import { collection, query, orderBy, limit, getDocs, doc, updateDoc, startAfter, type QueryDocumentSnapshot, type DocumentData } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  doc,
+  updateDoc,
+  startAfter,
+  type QueryDocumentSnapshot,
+  type DocumentData,
+} from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { logError } from '../../utils/logger';
 
@@ -23,17 +34,17 @@ interface FirestoreUser {
 }
 
 const ROLE_LABELS: Record<UserRole, string> = {
-  citoyen:    '👤 Citoyen',
-  observateur:'👁️ Observateur',
-  admin:      '🛡️ Administrateur',
-  creator:    '✨ Créateur',
+  citoyen: '👤 Citoyen',
+  observateur: '👁️ Observateur',
+  admin: '🛡️ Administrateur',
+  creator: '✨ Créateur',
 };
 
 const ROLE_COLORS: Record<UserRole, string> = {
-  citoyen:    'bg-green-100 text-green-800',
-  observateur:'bg-blue-100 text-blue-800',
-  admin:      'bg-purple-100 text-purple-800',
-  creator:    'bg-amber-100 text-amber-800',
+  citoyen: 'bg-green-100 text-green-800',
+  observateur: 'bg-blue-100 text-blue-800',
+  admin: 'bg-purple-100 text-purple-800',
+  creator: 'bg-amber-100 text-amber-800',
 };
 
 const PAGE_SIZE = 20;
@@ -60,23 +71,21 @@ export default function AdminUsers() {
     }
     setError(null);
     try {
-      let q = query(
-        collection(db, 'users'),
-        orderBy('createdAt', 'desc'),
-        limit(PAGE_SIZE + 1),
-      );
+      let q = query(collection(db, 'users'), orderBy('createdAt', 'desc'), limit(PAGE_SIZE + 1));
       if (afterDoc) {
         q = query(
           collection(db, 'users'),
           orderBy('createdAt', 'desc'),
           startAfter(afterDoc),
-          limit(PAGE_SIZE + 1),
+          limit(PAGE_SIZE + 1)
         );
       }
       const snap = await getDocs(q);
       const docs = snap.docs;
       const hasMoreResults = docs.length > PAGE_SIZE;
-      const page = docs.slice(0, PAGE_SIZE).map((d) => ({ id: d.id, ...d.data() } as FirestoreUser));
+      const page = docs
+        .slice(0, PAGE_SIZE)
+        .map((d) => ({ id: d.id, ...d.data() }) as FirestoreUser);
 
       if (afterDoc) {
         setUsers((prev) => [...prev, ...page]);
@@ -103,9 +112,7 @@ export default function AdminUsers() {
     setSuccessMsg(null);
     try {
       await updateDoc(doc(db, 'users', userId), { role: newRole });
-      setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)),
-      );
+      setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
       setSuccessMsg(`Rôle mis à jour avec succès.`);
       setTimeout(() => setSuccessMsg(null), 3000);
     } catch (err) {
@@ -188,7 +195,10 @@ export default function AdminUsers() {
       {/* Role legend */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
         {(Object.entries(ROLE_LABELS) as [UserRole, string][]).map(([role, label]) => (
-          <div key={role} className={`flex items-center gap-2 px-3 py-2 rounded-lg ${ROLE_COLORS[role]}`}>
+          <div
+            key={role}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg ${ROLE_COLORS[role]}`}
+          >
             <span>{label}</span>
           </div>
         ))}
@@ -213,7 +223,9 @@ export default function AdminUsers() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-12 text-white/40">
-          {search || roleFilter !== 'all' ? 'Aucun utilisateur ne correspond aux filtres.' : 'Aucun utilisateur trouvé.'}
+          {search || roleFilter !== 'all'
+            ? 'Aucun utilisateur ne correspond aux filtres.'
+            : 'Aucun utilisateur trouvé.'}
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-white/10">
@@ -241,20 +253,22 @@ export default function AdminUsers() {
                             {u.displayName ?? u.email ?? 'Sans nom'}
                           </p>
                           {u.displayName && u.email && (
-                            <p className="text-white/50 text-xs truncate max-w-[180px]">{u.email}</p>
+                            <p className="text-white/50 text-xs truncate max-w-[180px]">
+                              {u.email}
+                            </p>
                           )}
                           <p className="text-white/30 text-xs font-mono">{u.id.slice(0, 8)}…</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ROLE_COLORS[role] ?? 'bg-gray-100 text-gray-800'}`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ROLE_COLORS[role] ?? 'bg-gray-100 text-gray-800'}`}
+                      >
                         {ROLE_LABELS[role] ?? role}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-white/60 text-xs uppercase">
-                      {u.plan ?? '—'}
-                    </td>
+                    <td className="px-4 py-3 text-white/60 text-xs uppercase">{u.plan ?? '—'}</td>
                     <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1">
                         {(['citoyen', 'observateur', 'admin', 'creator'] as UserRole[]).map((r) => {
@@ -265,20 +279,25 @@ export default function AdminUsers() {
                               key={r}
                               disabled={isCurrent || isUpdating}
                               onClick={() => handleRoleChange(u.id, r)}
-                              title={isCurrent ? `Rôle actuel : ${ROLE_LABELS[r]}` : `Attribuer le rôle ${ROLE_LABELS[r]}`}
+                              title={
+                                isCurrent
+                                  ? `Rôle actuel : ${ROLE_LABELS[r]}`
+                                  : `Attribuer le rôle ${ROLE_LABELS[r]}`
+                              }
                               className={`
                                 flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all
-                                ${isCurrent
-                                  ? 'opacity-50 cursor-default bg-white/10 text-white/50'
-                                  : isUpdating
-                                    ? 'cursor-wait opacity-50 bg-white/10 text-white/50'
-                                    : r === 'creator'
-                                      ? 'bg-amber-600/80 hover:bg-amber-500 text-white'
-                                      : r === 'admin'
-                                        ? 'bg-purple-600/80 hover:bg-purple-500 text-white'
-                                        : r === 'observateur'
-                                          ? 'bg-blue-600/80 hover:bg-blue-500 text-white'
-                                          : 'bg-green-700/80 hover:bg-green-600 text-white'
+                                ${
+                                  isCurrent
+                                    ? 'opacity-50 cursor-default bg-white/10 text-white/50'
+                                    : isUpdating
+                                      ? 'cursor-wait opacity-50 bg-white/10 text-white/50'
+                                      : r === 'creator'
+                                        ? 'bg-amber-600/80 hover:bg-amber-500 text-white'
+                                        : r === 'admin'
+                                          ? 'bg-purple-600/80 hover:bg-purple-500 text-white'
+                                          : r === 'observateur'
+                                            ? 'bg-blue-600/80 hover:bg-blue-500 text-white'
+                                            : 'bg-green-700/80 hover:bg-green-600 text-white'
                                 }
                               `}
                             >
@@ -286,7 +305,13 @@ export default function AdminUsers() {
                               {r === 'admin' && <Shield className="w-3 h-3" />}
                               {r === 'observateur' && <Eye className="w-3 h-3" />}
                               {r === 'citoyen' && <User className="w-3 h-3" />}
-                              {r === 'creator' ? 'Créateur' : r === 'admin' ? 'Admin' : r === 'observateur' ? 'Observateur' : 'Citoyen'}
+                              {r === 'creator'
+                                ? 'Créateur'
+                                : r === 'admin'
+                                  ? 'Admin'
+                                  : r === 'observateur'
+                                    ? 'Observateur'
+                                    : 'Citoyen'}
                             </button>
                           );
                         })}
@@ -313,8 +338,11 @@ export default function AdminUsers() {
       )}
 
       <p className="text-white/30 text-xs text-center">
-        {filtered.length} utilisateur{filtered.length > 1 ? 's' : ''} affiché{filtered.length > 1 ? 's' : ''}
-        {users.length !== filtered.length ? ` sur ${users.length} chargé${users.length > 1 ? 's' : ''}` : ''}
+        {filtered.length} utilisateur{filtered.length > 1 ? 's' : ''} affiché
+        {filtered.length > 1 ? 's' : ''}
+        {users.length !== filtered.length
+          ? ` sur ${users.length} chargé${users.length > 1 ? 's' : ''}`
+          : ''}
       </p>
     </div>
   );

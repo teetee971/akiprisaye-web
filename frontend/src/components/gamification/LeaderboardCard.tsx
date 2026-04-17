@@ -16,11 +16,11 @@ interface LeaderboardCardProps {
   className?: string;
 }
 
-export function LeaderboardCard({ 
-  entries, 
+export function LeaderboardCard({
+  entries,
   currentUserId,
   onViewAll,
-  className = '' 
+  className = '',
 }: LeaderboardCardProps) {
   const topEntries = entries.slice(0, 5);
 
@@ -48,14 +48,12 @@ export function LeaderboardCard({
         {topEntries.map((entry) => {
           const isCurrentUser = entry.userId === currentUserId;
           const isTopThree = entry.rank <= 3;
-          
+
           return (
-            <div 
+            <div
               key={entry.userId}
               className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                isCurrentUser 
-                  ? 'bg-blue-50 border border-blue-200' 
-                  : 'hover:bg-gray-50'
+                isCurrentUser ? 'bg-blue-50 border border-blue-200' : 'hover:bg-gray-50'
               }`}
             >
               {/* Rank */}
@@ -72,8 +70,8 @@ export function LeaderboardCard({
               {/* Avatar & Name */}
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 {entry.avatar ? (
-                  <img 
-                    src={entry.avatar} 
+                  <img
+                    src={entry.avatar}
                     alt={entry.username}
                     width={32}
                     height={32}
@@ -86,13 +84,13 @@ export function LeaderboardCard({
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <div className={`font-semibold text-sm truncate ${
-                    isCurrentUser ? 'text-blue-700' : 'text-gray-900'
-                  }`}>
+                  <div
+                    className={`font-semibold text-sm truncate ${
+                      isCurrentUser ? 'text-blue-700' : 'text-gray-900'
+                    }`}
+                  >
                     {entry.username}
-                    {isCurrentUser && (
-                      <span className="ml-1 text-xs">(Vous)</span>
-                    )}
+                    {isCurrentUser && <span className="ml-1 text-xs">(Vous)</span>}
                   </div>
                 </div>
               </div>

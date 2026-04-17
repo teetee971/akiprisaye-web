@@ -12,11 +12,13 @@ describe('Roadmap page', () => {
         <MemoryRouter>
           <RoadmapPage />
         </MemoryRouter>
-      </HelmetProvider>,
+      </HelmetProvider>
     );
 
     expect(screen.getByRole('heading', { name: /état d'avancement global/i })).toBeInTheDocument();
-    expect(screen.getByText(/toutes les feuilles de route ne sont pas encore finalisées/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/toutes les feuilles de route ne sont pas encore finalisées/i)
+    ).toBeInTheDocument();
     expect(screen.getByText(/restent à mettre en ligne/i)).toBeInTheDocument();
   });
 });

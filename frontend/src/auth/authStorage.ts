@@ -15,10 +15,10 @@ import { authLog } from '@/utils/authLogger';
 
 /* ── Constants ──────────────────────────────────────────────────────────── */
 
-export const REDIRECT_PENDING_KEY     = 'auth:return:pending';
-export const AUTH_RETRY_COUNT_KEY     = 'auth:retry-count';
-export const AUTH_LAST_PROVIDER_KEY   = 'auth:last-provider';
-export const AUTH_LAST_NEXT_KEY       = 'auth:last-next';
+export const REDIRECT_PENDING_KEY = 'auth:return:pending';
+export const AUTH_RETRY_COUNT_KEY = 'auth:retry-count';
+export const AUTH_LAST_PROVIDER_KEY = 'auth:last-provider';
+export const AUTH_LAST_NEXT_KEY = 'auth:last-next';
 
 /** Maximum age (ms) for the redirect-pending flag before auto-expiry. */
 export const REDIRECT_PENDING_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -54,9 +54,7 @@ function safeStorage(): Storage | null {
  * Writes the redirect-pending flag to sessionStorage.
  * Also persists last-known provider and next-path for diagnostic use.
  */
-export function setRedirectPendingFlag(
-  data: Omit<RedirectPendingData, 'ts'>,
-): void {
+export function setRedirectPendingFlag(data: Omit<RedirectPendingData, 'ts'>): void {
   const storage = safeStorage();
   if (!storage) return;
 

@@ -39,7 +39,7 @@ function readEvents(): RevenueEvent[] {
     if (!Array.isArray(parsed)) return [];
     const cutoff = Date.now() - TTL_MS;
     return (parsed as RevenueEvent[]).filter(
-      (e) => typeof e.clickedAt === 'number' && e.clickedAt > cutoff,
+      (e) => typeof e.clickedAt === 'number' && e.clickedAt > cutoff
     );
   } catch {
     return [];
@@ -55,18 +55,13 @@ function readEvents(): RevenueEvent[] {
  * @example
  * trackRevenueClick({ url: '/landing', product: 'Coca-Cola 1.5L', retailer: 'E.Leclerc', price: 2.49 });
  */
-export function trackRevenueClick(
-  event: Omit<RevenueEvent, 'clickedAt'>,
-): void {
+export function trackRevenueClick(event: Omit<RevenueEvent, 'clickedAt'>): void {
   try {
     const events = readEvents();
     events.push({ ...event, clickedAt: Date.now() });
 
     // Keep only the most recent MAX_EVENTS entries
-    const capped =
-      events.length > MAX_EVENTS
-        ? events.slice(events.length - MAX_EVENTS)
-        : events;
+    const capped = events.length > MAX_EVENTS ? events.slice(events.length - MAX_EVENTS) : events;
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(capped));
   } catch {

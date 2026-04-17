@@ -13,12 +13,7 @@
  *   - TVA DOM : 8,5 % (taux réduit applicable en Guadeloupe / Martinique / …)
  */
 
-import type {
-  TypeBesoin,
-  DelaiSouhaite,
-  NiveauProfondeur,
-  DevisEstimation,
-} from './devisService';
+import type { TypeBesoin, DelaiSouhaite, NiveauProfondeur, DevisEstimation } from './devisService';
 import { Timestamp } from 'firebase/firestore';
 
 // ── Tarifs de base (€ HT / jour) ─────────────────────────────────────────────
@@ -37,7 +32,7 @@ const TARIF_BASE: Record<TypeBesoin, { jours: number; tarif: number; label: stri
   audit_vie_chere: {
     jours: 4,
     tarif: 950,
-    label: 'Audit vie chère & pouvoir d\'achat (4 j × 950 €)',
+    label: "Audit vie chère & pouvoir d'achat (4 j × 950 €)",
   },
   rapport_institutionnel: {
     jours: 3,
@@ -98,7 +93,7 @@ export function computeEstimation(params: {
   const { typesBesoin, niveauProfondeur, delai, territoire } = params;
 
   if (typesBesoin.length === 0) {
-    throw new Error('Au moins un type de besoin est requis pour l\'estimation');
+    throw new Error("Au moins un type de besoin est requis pour l'estimation");
   }
 
   const justification: string[] = [];
@@ -137,7 +132,9 @@ export function computeEstimation(params: {
   const tauxJournalier = totalJours > 0 ? Math.round(totalHT / totalJours) : 0;
 
   justification.push(`• Total HT : ${totalHT.toLocaleString('fr-FR')} €`);
-  justification.push(`• TVA DOM 8,5 % : ${Math.round(totalHT * tvaRate).toLocaleString('fr-FR')} €`);
+  justification.push(
+    `• TVA DOM 8,5 % : ${Math.round(totalHT * tvaRate).toLocaleString('fr-FR')} €`
+  );
   justification.push(`• Total TTC : ${prixTTC.toLocaleString('fr-FR')} €`);
 
   return {
@@ -149,9 +146,9 @@ export function computeEstimation(params: {
     justification,
     generatedAt: Timestamp.now(),
     disclaimer:
-      "⚠️ Cette estimation est générée automatiquement à titre indicatif. " +
+      '⚠️ Cette estimation est générée automatiquement à titre indicatif. ' +
       "Elle n'engage pas juridiquement la plateforme A KI PRI SA YÉ. " +
-      "Seul un devis signé par un responsable humain habilité a valeur contractuelle.",
+      'Seul un devis signé par un responsable humain habilité a valeur contractuelle.',
   };
 }
 
@@ -184,7 +181,7 @@ export const CLIENT_TYPE_LABELS: Record<string, string> = {
   ministere: 'Ministère / Préfecture',
   association: 'Association',
   franchise: 'Groupe / Franchise',
-  cabinet: 'Cabinet d\'étude',
+  cabinet: "Cabinet d'étude",
   autre: 'Autre',
 };
 

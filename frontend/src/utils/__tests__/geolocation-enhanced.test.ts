@@ -1,11 +1,15 @@
 // @ts-nocheck
- 
+
 /**
  * Test for enhanced geolocation utility
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { requestGeolocation, isGeolocationAvailable, getGeolocationDiagnostics } from '../geolocationEnhanced';
+import {
+  requestGeolocation,
+  isGeolocationAvailable,
+  getGeolocationDiagnostics,
+} from '../geolocationEnhanced';
 
 describe('Enhanced Geolocation Utility', () => {
   beforeEach(() => {
@@ -19,7 +23,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global, 'navigator', {
         value: {},
         writable: true,
-        configurable: true
+        configurable: true,
       });
 
       const result = await requestGeolocation();
@@ -32,7 +36,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global, 'navigator', {
         value: originalNavigator,
         writable: true,
-        configurable: true
+        configurable: true,
       });
     });
 
@@ -42,8 +46,8 @@ describe('Enhanced Geolocation Utility', () => {
         coords: {
           latitude: 48.8566,
           longitude: 2.3522,
-          accuracy: 10
-        }
+          accuracy: 10,
+        },
       };
 
       // Mock geolocation API
@@ -54,7 +58,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global.navigator, 'geolocation', {
         value: { getCurrentPosition: mockGetCurrentPosition },
         writable: true,
-        configurable: true
+        configurable: true,
       });
 
       const result = await requestGeolocation(mockShowMessage);
@@ -62,10 +66,7 @@ describe('Enhanced Geolocation Utility', () => {
       expect(result.success).toBe(true);
       expect(result.position?.latitude).toBe(48.8566);
       expect(result.position?.longitude).toBe(2.3522);
-      expect(mockShowMessage).toHaveBeenCalledWith(
-        expect.stringContaining('succès'),
-        'success'
-      );
+      expect(mockShowMessage).toHaveBeenCalledWith(expect.stringContaining('succès'), 'success');
     });
 
     it('should map PERMISSION_DENIED error to user-friendly message', async () => {
@@ -75,7 +76,7 @@ describe('Enhanced Geolocation Utility', () => {
         message: 'User denied geolocation',
         PERMISSION_DENIED: 1,
         POSITION_UNAVAILABLE: 2,
-        TIMEOUT: 3
+        TIMEOUT: 3,
       };
 
       // Mock geolocation API with error
@@ -86,7 +87,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global.navigator, 'geolocation', {
         value: { getCurrentPosition: mockGetCurrentPosition },
         writable: true,
-        configurable: true
+        configurable: true,
       });
 
       const result = await requestGeolocation(mockShowMessage);
@@ -105,7 +106,7 @@ describe('Enhanced Geolocation Utility', () => {
         message: 'Geolocation has been disabled in this document by permissions policy',
         PERMISSION_DENIED: 1,
         POSITION_UNAVAILABLE: 2,
-        TIMEOUT: 3
+        TIMEOUT: 3,
       };
 
       // Mock geolocation API with Permissions-Policy error
@@ -116,7 +117,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global.navigator, 'geolocation', {
         value: { getCurrentPosition: mockGetCurrentPosition },
         writable: true,
-        configurable: true
+        configurable: true,
       });
 
       const result = await requestGeolocation(mockShowMessage);
@@ -124,10 +125,7 @@ describe('Enhanced Geolocation Utility', () => {
       expect(result.success).toBe(false);
       expect(result.error?.code).toBe('PERMISSIONS_POLICY_BLOCKED');
       expect(result.error?.userMessage).toContain('bloquée');
-      expect(mockShowMessage).toHaveBeenCalledWith(
-        expect.stringContaining('bloquée'),
-        'error'
-      );
+      expect(mockShowMessage).toHaveBeenCalledWith(expect.stringContaining('bloquée'), 'error');
     });
   });
 
@@ -138,7 +136,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global, 'navigator', {
         value: {},
         writable: true,
-        configurable: true
+        configurable: true,
       });
 
       const result = await isGeolocationAvailable();
@@ -150,7 +148,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global, 'navigator', {
         value: originalNavigator,
         writable: true,
-        configurable: true
+        configurable: true,
       });
     });
 
@@ -159,7 +157,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global.navigator, 'geolocation', {
         value: { getCurrentPosition: vi.fn() },
         writable: true,
-        configurable: true
+        configurable: true,
       });
 
       const result = await isGeolocationAvailable();
@@ -174,7 +172,7 @@ describe('Enhanced Geolocation Utility', () => {
       Object.defineProperty(global.navigator, 'geolocation', {
         value: { getCurrentPosition: vi.fn() },
         writable: true,
-        configurable: true
+        configurable: true,
       });
 
       const diagnostics = await getGeolocationDiagnostics();

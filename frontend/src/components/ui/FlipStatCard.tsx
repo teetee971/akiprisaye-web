@@ -44,7 +44,11 @@ export default function FlipStatCard({
       <div className="flip-card-inner">
         {/* Front */}
         <div className="flip-card-front">
-          {icon && <span className="mb-1 flex justify-center" aria-hidden="true">{icon}</span>}
+          {icon && (
+            <span className="mb-1 flex justify-center" aria-hidden="true">
+              {icon}
+            </span>
+          )}
           <div className="flip-card-value">{value}</div>
           <div className="flip-card-label">{label}</div>
         </div>

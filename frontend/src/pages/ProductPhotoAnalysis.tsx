@@ -1,20 +1,23 @@
 /**
  * Product Photo Analysis Page - v1.0.0
- * 
+ *
  * Allows users to:
  * 1. Take a photo of a product
  * 2. Analyze ingredients via OCR
  * 3. Get comprehensive product information
  * 4. View price trends
  * 5. Display complete product sheet
- * 
+ *
  * Conforme aux principes institutionnels
  */
 
 import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { Camera, Upload, ArrowLeft, Loader } from 'lucide-react';
-import { analyzeProductPhoto, type ProductPhotoAnalysisResult } from '../services/productPhotoAnalysisService';
+import {
+  analyzeProductPhoto,
+  type ProductPhotoAnalysisResult,
+} from '../services/productPhotoAnalysisService';
 import ComprehensiveProductSheet from '../components/ComprehensiveProductSheet';
 import EnhancedCamera from '../components/EnhancedCamera';
 import { useFeedback } from '../services/feedbackService';
@@ -89,7 +92,7 @@ export default function ProductPhotoAnalysis() {
       feedback.onError();
       setAnalysisResult({
         success: false,
-        error: 'Erreur lors de l\'analyse de la photo',
+        error: "Erreur lors de l'analyse de la photo",
         confidenceScore: 0,
         ocrQuality: 'poor',
         analysisTimestamp: new Date(),
@@ -158,8 +161,9 @@ export default function ProductPhotoAnalysis() {
             <strong>📸 Reconnaissance assistée • Confirmation humaine possible</strong>
           </p>
           <p className="text-blue-200 text-sm">
-            Cette fonctionnalité analyse les informations visibles sur l'emballage via OCR.
-            Les données sont informatives et non contractuelles. Précision variable selon la qualité de la photo.
+            Cette fonctionnalité analyse les informations visibles sur l'emballage via OCR. Les
+            données sont informatives et non contractuelles. Précision variable selon la qualité de
+            la photo.
           </p>
         </div>
 
@@ -194,9 +198,7 @@ export default function ProductPhotoAnalysis() {
                 >
                   <Upload className="w-12 h-12 mx-auto mb-3 text-white" />
                   <h3 className="text-white font-semibold mb-2">Importer une photo</h3>
-                  <p className="text-purple-100 text-sm">
-                    Choisir une photo existante
-                  </p>
+                  <p className="text-purple-100 text-sm">Choisir une photo existante</p>
                   <div className="mt-3 text-purple-200 text-xs font-medium">
                     ✓ Depuis la galerie
                   </div>
@@ -218,11 +220,17 @@ export default function ProductPhotoAnalysis() {
                 💡 Conseils pour une meilleure analyse
               </h3>
               <ul className="text-gray-300 text-xs space-y-2 list-disc list-inside">
-                <li>Photographiez la <strong>liste des ingrédients</strong> de face</li>
-                <li>Assurez-vous que le <strong>tableau nutritionnel</strong> est visible</li>
+                <li>
+                  Photographiez la <strong>liste des ingrédients</strong> de face
+                </li>
+                <li>
+                  Assurez-vous que le <strong>tableau nutritionnel</strong> est visible
+                </li>
                 <li>Bon éclairage et mise au point nette</li>
                 <li>Évitez les reflets sur l'emballage</li>
-                <li>Si possible, incluez le <strong>code-barres EAN</strong></li>
+                <li>
+                  Si possible, incluez le <strong>code-barres EAN</strong>
+                </li>
               </ul>
             </div>
           </div>
@@ -232,12 +240,8 @@ export default function ProductPhotoAnalysis() {
         {isAnalyzing && (
           <div className="bg-slate-900 rounded-2xl p-12 shadow-lg text-center">
             <Loader className="w-16 h-16 mx-auto mb-4 text-blue-500 animate-spin" />
-            <h2 className="text-white text-xl font-semibold mb-2">
-              🔍 Analyse en cours...
-            </h2>
-            <p className="text-gray-400 text-sm mb-4">
-              Extraction des informations du produit
-            </p>
+            <h2 className="text-white text-xl font-semibold mb-2">🔍 Analyse en cours...</h2>
+            <p className="text-gray-400 text-sm mb-4">Extraction des informations du produit</p>
             <div className="flex justify-center gap-2 text-xs text-gray-500">
               <span className="animate-pulse">OCR en cours</span>
               <span>•</span>
@@ -256,16 +260,20 @@ export default function ProductPhotoAnalysis() {
         {analysisResult && !isAnalyzing && (
           <div className="space-y-4">
             {/* Result summary card */}
-            <div className={`rounded-2xl p-6 shadow-lg ${
-              analysisResult.success 
-                ? 'bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-700'
-                : 'bg-gradient-to-br from-red-900/30 to-red-800/30 border border-red-700'
-            }`}>
+            <div
+              className={`rounded-2xl p-6 shadow-lg ${
+                analysisResult.success
+                  ? 'bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-700'
+                  : 'bg-gradient-to-br from-red-900/30 to-red-800/30 border border-red-700'
+              }`}
+            >
               <div className="flex items-start gap-4">
                 <div className="flex-1">
-                  <h2 className={`text-2xl font-bold mb-2 ${
-                    analysisResult.success ? 'text-green-100' : 'text-red-100'
-                  }`}>
+                  <h2
+                    className={`text-2xl font-bold mb-2 ${
+                      analysisResult.success ? 'text-green-100' : 'text-red-100'
+                    }`}
+                  >
                     {analysisResult.success ? '✅ Analyse réussie' : '❌ Analyse incomplète'}
                   </h2>
 
@@ -278,19 +286,28 @@ export default function ProductPhotoAnalysis() {
 
                   {/* Quality indicators */}
                   <div className="flex gap-2 flex-wrap mb-3">
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      analysisResult.ocrQuality === 'excellent' ? 'bg-green-500/30 text-green-200' :
-                      analysisResult.ocrQuality === 'good' ? 'bg-blue-500/30 text-blue-200' :
-                      analysisResult.ocrQuality === 'fair' ? 'bg-yellow-500/30 text-yellow-200' :
-                      'bg-red-500/30 text-red-200'
-                    }`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        analysisResult.ocrQuality === 'excellent'
+                          ? 'bg-green-500/30 text-green-200'
+                          : analysisResult.ocrQuality === 'good'
+                            ? 'bg-blue-500/30 text-blue-200'
+                            : analysisResult.ocrQuality === 'fair'
+                              ? 'bg-yellow-500/30 text-yellow-200'
+                              : 'bg-red-500/30 text-red-200'
+                      }`}
+                    >
                       OCR: {analysisResult.ocrQuality}
                     </span>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      analysisResult.confidenceScore >= 80 ? 'bg-green-500/30 text-green-200' :
-                      analysisResult.confidenceScore >= 60 ? 'bg-yellow-500/30 text-yellow-200' :
-                      'bg-red-500/30 text-red-200'
-                    }`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        analysisResult.confidenceScore >= 80
+                          ? 'bg-green-500/30 text-green-200'
+                          : analysisResult.confidenceScore >= 60
+                            ? 'bg-yellow-500/30 text-yellow-200'
+                            : 'bg-red-500/30 text-red-200'
+                      }`}
+                    >
                       Confiance: {analysisResult.confidenceScore}%
                     </span>
                     {analysisResult.ean && (
@@ -308,9 +325,7 @@ export default function ProductPhotoAnalysis() {
                       </div>
                     )}
                     {analysisResult.nutritionalValues && (
-                      <div className="text-gray-300">
-                        🥗 Informations nutritionnelles
-                      </div>
+                      <div className="text-gray-300">🥗 Informations nutritionnelles</div>
                     )}
                     {analysisResult.detectedPrice && (
                       <div className="text-gray-300">
@@ -327,11 +342,7 @@ export default function ProductPhotoAnalysis() {
 
                 {capturedImage && (
                   <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-900 flex-shrink-0">
-                    <img
-                      src={capturedImage}
-                      alt="Capture"
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={capturedImage} alt="Capture" className="w-full h-full object-cover" />
                   </div>
                 )}
               </div>

@@ -1,6 +1,6 @@
 /**
  * OCR History Page
- * 
+ *
  * Displays local OCR scan history
  * - Opt-in only
  * - Stored locally (localStorage)
@@ -143,7 +143,10 @@ export default function OCRHistory() {
                 </div>
               </div>
 
-              <label aria-label="Activer le partage des données OCR" className="relative inline-flex items-center cursor-pointer">
+              <label
+                aria-label="Activer le partage des données OCR"
+                className="relative inline-flex items-center cursor-pointer"
+              >
                 <input
                   type="checkbox"
                   checked={consent}
@@ -289,8 +292,8 @@ export default function OCRHistory() {
                               entry.confidence >= 75
                                 ? 'bg-green-900/30 text-green-300'
                                 : entry.confidence >= 50
-                                ? 'bg-orange-900/30 text-orange-300'
-                                : 'bg-gray-700/30 text-gray-300'
+                                  ? 'bg-orange-900/30 text-orange-300'
+                                  : 'bg-gray-700/30 text-gray-300'
                             }`}
                           >
                             {entry.confidence.toFixed(0)}% confiance

@@ -9,9 +9,7 @@ export default function MapLegend() {
       role="region"
       aria-label="Légende de la carte"
     >
-      <h4 className="text-sm font-semibold text-slate-900 mb-2">
-        Indice de prix
-      </h4>
+      <h4 className="text-sm font-semibold text-slate-900 mb-2">Indice de prix</h4>
       <div className="space-y-2">
         {categories.map(({ category, config }) => (
           <div key={category} className="flex items-center gap-2">
@@ -21,9 +19,7 @@ export default function MapLegend() {
               aria-hidden="true"
             />
             <div className="flex-1">
-              <span className="text-xs font-medium text-slate-700">
-                {config.label}
-              </span>
+              <span className="text-xs font-medium text-slate-700">{config.label}</span>
               <span className="text-xs text-slate-500 ml-1">
                 ({config.range[0]}-{config.range[1]})
               </span>

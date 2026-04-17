@@ -1,7 +1,6 @@
- 
 /**
  * CSV Import/Export Service
- * 
+ *
  * Phase 7: Provides CSV import and export functionality for stores and products
  * Supports validation, error handling, and batch operations
  */
@@ -178,7 +177,7 @@ function validateProductRecord(record: ProductCSVRecord, row: number): ImportErr
 
 /**
  * Import stores from CSV content
- * 
+ *
  * @param csvContent - CSV file content as string
  * @param geocode - Whether to geocode addresses without coordinates
  * @param onProgress - Optional progress callback
@@ -195,13 +194,13 @@ export async function importStoresFromCSV(
 
   // Validate all records first
   const validRecords: Array<{ record: StoreCSVRecord; row: number }> = [];
-  
+
   records.forEach((record, index) => {
     // Calculate row number accounting for 0-based index and header row
     const row = index + 2; // +2 because index is 0-based and row 1 is headers
     const storeRecord = record as unknown as StoreCSVRecord;
     const validationErrors = validateStoreRecord(storeRecord, row);
-    
+
     if (validationErrors.length > 0) {
       errors.push(...validationErrors);
     } else {
@@ -212,7 +211,7 @@ export async function importStoresFromCSV(
   // Process valid records
   for (let i = 0; i < validRecords.length; i++) {
     const { record, row } = validRecords[i];
-    
+
     if (onProgress) {
       onProgress(i + 1, validRecords.length);
     }
@@ -225,7 +224,7 @@ export async function importStoresFromCSV(
       try {
         const fullAddress = `${record.address}, ${record.city || ''}, ${record.territory}`.trim();
         const result = await geocodeAddress(fullAddress);
-        
+
         if (result.success && result.coordinates) {
           lat = result.coordinates.lat;
           lon = result.coordinates.lon;
@@ -256,7 +255,7 @@ export async function importStoresFromCSV(
       phone: record.phone?.trim() || '',
       type: record.type?.trim() || 'supermarket',
       coordinates: lat && lon ? { lat, lon } : undefined,
-      services: record.services ? record.services.split(',').map(s => s.trim()) : [],
+      services: record.services ? record.services.split(',').map((s) => s.trim()) : [],
     };
 
     imported.push(store);
@@ -274,7 +273,7 @@ export async function importStoresFromCSV(
 
 /**
  * Import products from CSV content
- * 
+ *
  * @param csvContent - CSV file content as string
  * @param onProgress - Optional progress callback
  * @returns ImportResult with imported products and errors
@@ -290,13 +289,13 @@ export async function importProductsFromCSV(
   records.forEach((record, index) => {
     const row = index + 2;
     const productRecord = record as unknown as ProductCSVRecord;
-    
+
     if (onProgress) {
       onProgress(index + 1, records.length);
     }
 
     const validationErrors = validateProductRecord(productRecord, row);
-    
+
     if (validationErrors.length > 0) {
       errors.push(...validationErrors);
       return;
@@ -309,12 +308,16 @@ export async function importProductsFromCSV(
       brand: productRecord.brand?.trim() || '',
       category: productRecord.category?.trim() || 'Non classé',
       unit: productRecord.unit?.trim() || 'unité',
-      prices: productRecord.price ? [{
-        price: parseFloat(productRecord.price),
-        store: productRecord.store?.trim() || 'unknown',
-        territory: productRecord.territory?.toUpperCase() || 'GP',
-        date: productRecord.date || new Date().toISOString().split('T')[0],
-      }] : [],
+      prices: productRecord.price
+        ? [
+            {
+              price: parseFloat(productRecord.price),
+              store: productRecord.store?.trim() || 'unknown',
+              territory: productRecord.territory?.toUpperCase() || 'GP',
+              date: productRecord.date || new Date().toISOString().split('T')[0],
+            },
+          ]
+        : [],
     };
 
     imported.push(product);
@@ -332,12 +335,12 @@ export async function importProductsFromCSV(
 
 /**
  * Export stores to CSV format
- * 
+ *
  * @param stores - Array of store objects
  * @returns CSV string
  */
 export function exportStoresToCSV(stores: any[]): string {
-  const records = stores.map(store => ({
+  const records = stores.map((store) => ({
     name: store.name || '',
     chain: store.chain || '',
     address: store.address || '',
@@ -355,14 +358,14 @@ export function exportStoresToCSV(stores: any[]): string {
 
 /**
  * Export products to CSV format
- * 
+ *
  * @param products - Array of product objects
  * @returns CSV string
  */
 export function exportProductsToCSV(products: any[]): string {
   const records: any[] = [];
 
-  products.forEach(product => {
+  products.forEach((product) => {
     if (product.prices && Array.isArray(product.prices)) {
       // Create one row per price observation
       product.prices.forEach((price: any) => {
@@ -447,14 +450,14 @@ export function downloadCSV(content: string, filename: string): void {
   const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
-  
+
   link.setAttribute('href', url);
   link.setAttribute('download', filename);
   link.style.visibility = 'hidden';
-  
+
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  
+
   URL.revokeObjectURL(url);
 }

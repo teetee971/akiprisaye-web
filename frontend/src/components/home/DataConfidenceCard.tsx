@@ -3,9 +3,9 @@
  * Rassure sur la fiabilité des données
  */
 
-import { useState } from "react";
-import { GlassCard } from "../ui/glass-card";
-import { calculateConfidenceScore, type DataMetrics } from "../../utils/confidenceScore";
+import { useState } from 'react';
+import { GlassCard } from '../ui/glass-card';
+import { calculateConfidenceScore, type DataMetrics } from '../../utils/confidenceScore';
 
 interface DataConfidenceCardProps {
   nbObservations: number;
@@ -20,16 +20,16 @@ export function DataConfidenceCard({
   nbObservations,
   nbStores,
   lastUpdateDays,
-  territory = "Guadeloupe",
+  territory = 'Guadeloupe',
   territoryStoreCoverage = 72,
-  className = ""
+  className = '',
 }: DataConfidenceCardProps) {
   const [showExplanation, setShowExplanation] = useState(false);
 
   const metrics: DataMetrics = {
     nbObservations,
     nbStores,
-    recencyDays: lastUpdateDays
+    recencyDays: lastUpdateDays,
   };
 
   const score = calculateConfidenceScore(metrics);
@@ -41,14 +41,16 @@ export function DataConfidenceCard({
       <div className="space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-blue-300">
-            🏅 Confiance des données
-          </h3>
+          <h3 className="text-lg font-bold text-blue-300">🏅 Confiance des données</h3>
           <button
             onClick={() => setShowExplanation(!showExplanation)}
             className="text-xs text-gray-400 hover:text-gray-300 underline"
             aria-expanded={showExplanation}
-            aria-label={showExplanation ? "Masquer l'explication du score de confiance" : "Afficher l'explication du score de confiance"}
+            aria-label={
+              showExplanation
+                ? "Masquer l'explication du score de confiance"
+                : "Afficher l'explication du score de confiance"
+            }
           >
             Pourquoi ce score ?
           </button>
@@ -57,7 +59,8 @@ export function DataConfidenceCard({
         {/* Score principal */}
         <div className="text-center space-y-2">
           <div className={`text-5xl font-bold ${scoreColor}`}>
-            {score.total}<span className="text-2xl">/100</span>
+            {score.total}
+            <span className="text-2xl">/100</span>
           </div>
           <div className="text-sm text-gray-400">{scoreLabel}</div>
         </div>
@@ -74,10 +77,13 @@ export function DataConfidenceCard({
           >
             <div
               className={`h-full transition-all duration-500 ${
-                score.total >= 80 ? 'bg-green-500' :
-                score.total >= 60 ? 'bg-blue-500' :
-                score.total >= 40 ? 'bg-yellow-500' :
-                'bg-red-500'
+                score.total >= 80
+                  ? 'bg-green-500'
+                  : score.total >= 60
+                    ? 'bg-blue-500'
+                    : score.total >= 40
+                      ? 'bg-yellow-500'
+                      : 'bg-red-500'
               }`}
               style={{ width: `${score.total}%` }}
             />
@@ -110,7 +116,9 @@ export function DataConfidenceCard({
         {showExplanation && (
           <div className="p-3 bg-slate-800/50 rounded-lg space-y-3 text-xs animate-slide-down">
             <div>
-              <div className="font-semibold text-blue-300 mb-1">📊 Comment est calculé ce score ?</div>
+              <div className="font-semibold text-blue-300 mb-1">
+                📊 Comment est calculé ce score ?
+              </div>
               <p className="text-gray-400">
                 Le score est transparent et basé sur 3 critères objectifs :
               </p>
@@ -121,7 +129,8 @@ export function DataConfidenceCard({
                 <span className="text-green-400 font-bold">{score.obsScore}/50</span>
                 <div className="flex-1 text-gray-400">
                   <span className="font-semibold">Nombre d'observations</span>
-                  <br />Plus il y a de relevés, plus les données sont fiables
+                  <br />
+                  Plus il y a de relevés, plus les données sont fiables
                 </div>
               </div>
 
@@ -129,28 +138,35 @@ export function DataConfidenceCard({
                 <span className="text-blue-400 font-bold">{score.storeScore}/25</span>
                 <div className="flex-1 text-gray-400">
                   <span className="font-semibold">Magasins couverts</span>
-                  <br />Une bonne couverture permet de comparer efficacement
+                  <br />
+                  Une bonne couverture permet de comparer efficacement
                 </div>
               </div>
 
               <div className="flex items-start gap-2">
-                <span className={`font-bold ${
-                  score.recencyScore >= 20 ? 'text-green-400' :
-                  score.recencyScore >= 10 ? 'text-yellow-400' :
-                  'text-red-400'
-                }`}>
+                <span
+                  className={`font-bold ${
+                    score.recencyScore >= 20
+                      ? 'text-green-400'
+                      : score.recencyScore >= 10
+                        ? 'text-yellow-400'
+                        : 'text-red-400'
+                  }`}
+                >
                   {score.recencyScore}/25
                 </span>
                 <div className="flex-1 text-gray-400">
                   <span className="font-semibold">Fraîcheur des données</span>
-                  <br />Les prix récents sont plus pertinents
+                  <br />
+                  Les prix récents sont plus pertinents
                 </div>
               </div>
             </div>
 
             <div className="pt-2 border-t border-slate-700">
               <p className="text-gray-500 italic">
-                Cette méthode transparente garantit que vous savez toujours sur quoi repose notre confiance.
+                Cette méthode transparente garantit que vous savez toujours sur quoi repose notre
+                confiance.
               </p>
             </div>
           </div>
@@ -172,18 +188,18 @@ export function DataConfidenceCard({
  * Couleur selon le score
  */
 function getScoreColor(score: number): string {
-  if (score >= 80) return "text-green-400";
-  if (score >= 60) return "text-blue-400";
-  if (score >= 40) return "text-yellow-400";
-  return "text-red-400";
+  if (score >= 80) return 'text-green-400';
+  if (score >= 60) return 'text-blue-400';
+  if (score >= 40) return 'text-yellow-400';
+  return 'text-red-400';
 }
 
 /**
  * Label selon le score
  */
 function getScoreLabel(score: number): string {
-  if (score >= 80) return "Excellente fiabilité";
-  if (score >= 60) return "Bonne fiabilité";
-  if (score >= 40) return "Fiabilité acceptable";
-  return "Données limitées";
+  if (score >= 80) return 'Excellente fiabilité';
+  if (score >= 60) return 'Bonne fiabilité';
+  if (score >= 40) return 'Fiabilité acceptable';
+  return 'Données limitées';
 }

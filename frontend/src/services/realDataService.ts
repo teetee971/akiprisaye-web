@@ -111,8 +111,8 @@ export function normalizeProductName(name: string): string {
   return name
     .toUpperCase()
     .replace(/\s+\d+(?:\.\d+)?(?:KG|G|L|ML|CL)\b.*/, '') // strip weight suffix
-    .replace(/\s+[A-Z]{2,6}$/, '')                         // strip trailing brand code
-    .replace(/\s+CRF$/, '')                                 // strip Carrefour code
+    .replace(/\s+[A-Z]{2,6}$/, '') // strip trailing brand code
+    .replace(/\s+CRF$/, '') // strip Carrefour code
     .trim();
 }
 
@@ -208,12 +208,15 @@ export function computeStorePriceIndices(catalogue: CatalogueProduct[]): Record<
  */
 export function searchCatalogueBySlug(
   catalogue: CatalogueProduct[],
-  slug: string,
+  slug: string
 ): CatalogueProduct[] {
   const tokens = slug.split('-').filter((t) => t.length > 2);
   return catalogue
     .map((p) => {
-      const nameNorm = p.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const nameNorm = p.name
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
       const matches = tokens.filter((t) => nameNorm.includes(t)).length;
       return { p, matches };
     })
@@ -245,13 +248,26 @@ export interface MonthlyPriceDatum {
   avgPrice: number;
 }
 
-const MONTHS_FR = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+const MONTHS_FR = [
+  'Jan',
+  'Fév',
+  'Mar',
+  'Avr',
+  'Mai',
+  'Juin',
+  'Juil',
+  'Aoû',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Déc',
+];
 
 export function buildMonthlyData(
   historique: HistoriquePrix,
   categorySlug: string,
   _territory: string,
-  year: string,
+  year: string
 ): MonthlyPriceDatum[] {
   const productKey = HISTORIQUE_CATEGORY_MAP[categorySlug] ?? 'riz_1kg';
   const productData = historique.products[productKey];
@@ -298,10 +314,11 @@ export function buildMonthlyData(
   for (let m = 0; m <= maxMonth; m++) {
     const key = `${year}-${String(m + 1).padStart(2, '0')}`;
     const prices = byMonth[key] ?? allByMonth[key] ?? [];
-    const avgPrice = prices.length > 0
-      ? +(prices.reduce((a, b) => a + b) / prices.length).toFixed(2)
-      : +(allEntries[allEntries.length - 1].price * (1 + m * 0.01)).toFixed(2);
-    const rate = prevAvg !== null ? +((avgPrice - prevAvg) / prevAvg * 100).toFixed(1) : 0;
+    const avgPrice =
+      prices.length > 0
+        ? +(prices.reduce((a, b) => a + b) / prices.length).toFixed(2)
+        : +(allEntries[allEntries.length - 1].price * (1 + m * 0.01)).toFixed(2);
+    const rate = prevAvg !== null ? +(((avgPrice - prevAvg) / prevAvg) * 100).toFixed(1) : 0;
     result.push({ month: MONTHS_FR[m], rate, avgPrice });
     prevAvg = avgPrice;
   }
@@ -345,7 +362,7 @@ const OBSERVATOIRE_FILES = [
  */
 export async function getObservatoirePricesForEan(
   ean: string,
-  productName?: string,
+  productName?: string
 ): Promise<ObservatoireObservation[]> {
   const results: ObservatoireObservation[] = [];
 
@@ -370,7 +387,7 @@ export async function getObservatoirePricesForEan(
               .toLowerCase()
               .normalize('NFD')
               .replace(/[\u0300-\u036f]/g, '')
-              .split(' ')[0] ?? '',
+              .split(' ')[0] ?? ''
           );
 
       if (eanMatch || nameMatch) {

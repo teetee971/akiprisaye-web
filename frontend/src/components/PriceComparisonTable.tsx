@@ -1,132 +1,107 @@
-import React, { useState } from 'react'
-import type { PriceObservation } from '../types/PriceObservation'
-import PriceSourceBadge from './PriceSourceBadge'
-import PriceHistoryMiniChart from './PriceHistoryMiniChart'
-import { safeLocalStorage } from '../utils/safeLocalStorage'
+import React, { useState } from 'react';
+import type { PriceObservation } from '../types/PriceObservation';
+import PriceSourceBadge from './PriceSourceBadge';
+import PriceHistoryMiniChart from './PriceHistoryMiniChart';
+import { safeLocalStorage } from '../utils/safeLocalStorage';
 
 type PriceComparisonTableProps = {
-  observations: PriceObservation[]
-  groupedByStore: Record<string, PriceObservation[]>
-}
+  observations: PriceObservation[];
+  groupedByStore: Record<string, PriceObservation[]>;
+};
 
 export default function PriceComparisonTable({
   observations,
   groupedByStore,
 }: PriceComparisonTableProps) {
   const getTimestamp = (value: string) => {
-    const parsed = new Date(value)
-    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime()
-  }
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+  };
 
   // Ordre chronologique
   const sorted = [...observations].sort(
     (a, b) => getTimestamp(a.observedAt) - getTimestamp(b.observedAt)
-  )
+  );
 
   // Meilleur prix par territoire
   const bestPriceByTerritory = sorted.reduce<Record<string, number>>((acc, obs) => {
     if (!acc[obs.territory] || obs.price < acc[obs.territory]) {
-      acc[obs.territory] = obs.price
+      acc[obs.territory] = obs.price;
     }
-    return acc
-  }, {})
+    return acc;
+  }, {});
 
-  const STORAGE_KEY = 'comparateur:watched-prices:v1'
+  const STORAGE_KEY = 'comparateur:watched-prices:v1';
 
   const buildWatchKey = (observation: PriceObservation, storeLabel: string) =>
-    `${observation.productId}:${storeLabel}:${observation.territory}`
+    `${observation.productId}:${storeLabel}:${observation.territory}`;
 
-  const readWatchedPrices = (): Record<
-    string,
-    { price: number; observedAt: string }
-  > => {
-    if (typeof window === 'undefined') return {}
+  const readWatchedPrices = (): Record<string, { price: number; observedAt: string }> => {
+    if (typeof window === 'undefined') return {};
     try {
-      const raw = safeLocalStorage.getItem(STORAGE_KEY)
-      return raw
-        ? (JSON.parse(raw) as Record<string, { price: number; observedAt: string }>)
-        : {}
+      const raw = safeLocalStorage.getItem(STORAGE_KEY);
+      return raw ? (JSON.parse(raw) as Record<string, { price: number; observedAt: string }>) : {};
     } catch {
-      return {}
+      return {};
     }
-  }
+  };
 
   const [watchedPrices, setWatchedPrices] = useState<
     Record<string, { price: number; observedAt: string }>
-  >(() => readWatchedPrices())
+  >(() => readWatchedPrices());
 
-  const persistWatchedPrices = (
-    payload: Record<string, { price: number; observedAt: string }>
-  ) => {
-    if (typeof window === 'undefined') return
-    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
-  }
+  const persistWatchedPrices = (payload: Record<string, { price: number; observedAt: string }>) => {
+    if (typeof window === 'undefined') return;
+    safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  };
 
   const toggleWatch = (key: string, observation: PriceObservation) => {
     setWatchedPrices((prev) => {
-      const next = { ...prev }
+      const next = { ...prev };
       if (next[key]) {
-        delete next[key]
+        delete next[key];
       } else {
         next[key] = {
           price: observation.price,
           observedAt: observation.observedAt,
-        }
+        };
       }
-      persistWatchedPrices(next)
-      return next
-    })
-  }
+      persistWatchedPrices(next);
+      return next;
+    });
+  };
 
   if (observations.length === 0) {
     return (
       <div className="text-center py-8 text-white/60">
         Aucune observation disponible pour ce produit.
       </div>
-    )
+    );
   }
 
   return (
     <div className="overflow-x-auto">
-      <table
-        className="w-full min-w-[700px]"
-        aria-label="Tableau de comparaison des prix observés"
-      >
-        <caption className="sr-only">
-          Comparaison des prix observés entre enseignes
-        </caption>
+      <table className="w-full min-w-[700px]" aria-label="Tableau de comparaison des prix observés">
+        <caption className="sr-only">Comparaison des prix observés entre enseignes</caption>
 
         <thead>
           <tr className="border-b border-white/[0.22]">
-            <th className="text-left py-3 px-4 text-white/90 font-semibold">
-              Enseigne
-            </th>
-            <th className="text-right py-3 px-4 text-white/90 font-semibold">
-              Prix
-            </th>
-            <th className="text-center py-3 px-4 text-white/90 font-semibold">
-              Date
-            </th>
-            <th className="text-center py-3 px-4 text-white/90 font-semibold">
-              Source
-            </th>
-            <th className="text-center py-3 px-4 text-white/90 font-semibold">
-              Territoire
-            </th>
-            <th className="text-center py-3 px-4 text-white/90 font-semibold">
-              Historique
-            </th>
+            <th className="text-left py-3 px-4 text-white/90 font-semibold">Enseigne</th>
+            <th className="text-right py-3 px-4 text-white/90 font-semibold">Prix</th>
+            <th className="text-center py-3 px-4 text-white/90 font-semibold">Date</th>
+            <th className="text-center py-3 px-4 text-white/90 font-semibold">Source</th>
+            <th className="text-center py-3 px-4 text-white/90 font-semibold">Territoire</th>
+            <th className="text-center py-3 px-4 text-white/90 font-semibold">Historique</th>
           </tr>
         </thead>
 
         <tbody>
           {sorted.map((obs, index) => {
-            const storeLabel = obs.storeLabel ?? 'Enseigne inconnue'
-            const storeHistory = groupedByStore[storeLabel] || []
-            const currency = obs.currency ?? 'EUR'
-            const watchKey = buildWatchKey(obs, storeLabel)
-            const isBestPrice =
-              obs.price === bestPriceByTerritory[obs.territory]
+            const storeLabel = obs.storeLabel ?? 'Enseigne inconnue';
+            const storeHistory = groupedByStore[storeLabel] || [];
+            const currency = obs.currency ?? 'EUR';
+            const watchKey = buildWatchKey(obs, storeLabel);
+            const isBestPrice = obs.price === bestPriceByTerritory[obs.territory];
 
             return (
               <tr
@@ -177,10 +152,10 @@ export default function PriceComparisonTable({
                   </div>
                 </td>
               </tr>
-            )
+            );
           })}
         </tbody>
       </table>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
 /**
  * categories.ts — Centralized product and news category definitions
- * 
+ *
  * Purpose: Single source of truth for all category-related configurations
  * Used by: CategoryFilter, ListeCourses, news components, filters
- * 
+ *
  * @module categories
  */
 
@@ -103,5 +103,5 @@ export function getAllCategoryIds(): string[] {
  * Get products by category
  */
 export function getProductsByCategory(categoryId: string): GenericProduct[] {
-  return GENERIC_PRODUCTS.filter(p => p.categorie === categoryId);
+  return GENERIC_PRODUCTS.filter((p) => p.categorie === categoryId);
 }

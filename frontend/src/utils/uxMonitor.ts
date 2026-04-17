@@ -1,21 +1,20 @@
- 
 /**
  * UX Monitor - Lightweight Client-Side Observability
- * 
+ *
  * PURPOSE:
  * Detect real production friction without backend, analytics, or user tracking.
- * 
+ *
  * PRIVACY-FIRST:
  * - No cookies, no fingerprints, no user IDs
  * - No external services (GA, Sentry, PostHog)
  * - No personal data collection
  * - Console logs only (developer tools)
- * 
+ *
  * WHAT WE OBSERVE:
  * 1. Functional errors (scan failures, permission denials)
  * 2. UX friction (timeouts, abandons, loading times)
  * 3. Stability (JS errors, rejected promises)
- * 
+ *
  * HOW TO DISABLE:
  * Set VITE_UX_MONITOR_ENABLED=false in environment or toggle flag below.
  */
@@ -42,13 +41,13 @@ function logEvent(event: UXEvent): void {
   if (!UX_MONITOR_ENABLED) return;
 
   const { type, action, duration, metadata } = event;
-  
+
   let message = `${PREFIX} ${type}:${action}`;
-  
+
   if (duration !== undefined) {
     message += ` in ${duration}ms`;
   }
-  
+
   if (metadata) {
     message += ` ${JSON.stringify(metadata)}`;
   }
@@ -77,9 +76,14 @@ function startTimer(key: string): void {
 /**
  * End timing and log result
  */
-function endTimer(key: string, type: UXEvent['type'], action: string, metadata?: Record<string, any>): void {
+function endTimer(
+  key: string,
+  type: UXEvent['type'],
+  action: string,
+  metadata?: Record<string, any>
+): void {
   if (!UX_MONITOR_ENABLED) return;
-  
+
   const startTime = timers.get(key);
   if (startTime) {
     const duration = Date.now() - startTime;
@@ -100,12 +104,7 @@ export const uxMonitor = {
   },
 
   scanCompleted: (mode: 'barcode' | 'photo' | 'receipt', success: boolean) => {
-    endTimer(
-      `scan_${mode}`,
-      'scan',
-      success ? 'scan_completed' : 'scan_failed',
-      { mode, success }
-    );
+    endTimer(`scan_${mode}`, 'scan', success ? 'scan_completed' : 'scan_failed', { mode, success });
   },
 
   scanCancelled: (mode: 'barcode' | 'photo' | 'receipt') => {
@@ -174,7 +173,7 @@ export const uxMonitor = {
       type: 'performance',
       action: 'loading_timeout',
       duration: threshold,
-      metadata: { context }
+      metadata: { context },
     });
   },
 
@@ -189,8 +188,8 @@ export const uxMonitor = {
       metadata: {
         message: error.message,
         context,
-        stack: error.stack?.split('\n').slice(0, 3).join('\n') // First 3 lines only
-      }
+        stack: error.stack?.split('\n').slice(0, 3).join('\n'), // First 3 lines only
+      },
     });
   },
 
@@ -200,8 +199,8 @@ export const uxMonitor = {
       action: 'unhandled_promise_rejection',
       metadata: {
         reason: String(reason),
-        context
-      }
+        context,
+      },
     });
   },
 
@@ -215,7 +214,7 @@ export const uxMonitor = {
   startCustomTimer: (key: string) => startTimer(key),
   endCustomTimer: (key: string, action: string, metadata?: Record<string, any>) => {
     endTimer(key, 'performance', action, metadata);
-  }
+  },
 };
 
 // =============================================================================

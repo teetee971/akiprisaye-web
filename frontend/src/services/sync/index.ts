@@ -15,26 +15,16 @@ export * from './syncLogger';
 export * from './syncScheduler';
 
 export const syncSchedulerService =
-  (schedulerMod as any).syncSchedulerService ??
-  (schedulerMod as any).default ??
-  schedulerMod;
+  (schedulerMod as any).syncSchedulerService ?? (schedulerMod as any).default ?? schedulerMod;
 
 export const syncLoggerService =
-  (loggerMod as any).syncLoggerService ??
-  (loggerMod as any).default ??
-  loggerMod;
+  (loggerMod as any).syncLoggerService ?? (loggerMod as any).default ?? loggerMod;
 
 export const openPricesService =
-  (openPricesMod as any).openPricesService ??
-  (openPricesMod as any).default ??
-  openPricesMod;
+  (openPricesMod as any).openPricesService ?? (openPricesMod as any).default ?? openPricesMod;
 
 export const openFoodFactsService =
-  (offMod as any).openFoodFactsService ??
-  (offMod as any).default ??
-  offMod;
+  (offMod as any).openFoodFactsService ?? (offMod as any).default ?? offMod;
 
 export const conflictResolverService =
-  (conflictMod as any).conflictResolverService ??
-  (conflictMod as any).default ??
-  conflictMod;
+  (conflictMod as any).conflictResolverService ?? (conflictMod as any).default ?? conflictMod;

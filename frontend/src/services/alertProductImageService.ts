@@ -34,29 +34,30 @@ type OffResponsePayload = {
 };
 
 const PLACEHOLDER_BY_CATEGORY: Record<string, string> = {
-  'bebe': '/assets/placeholders/placeholder-bebe.svg',
-  'epicerie': '/assets/placeholders/placeholder-epicerie.svg',
+  bebe: '/assets/placeholders/placeholder-bebe.svg',
+  epicerie: '/assets/placeholders/placeholder-epicerie.svg',
   'viande/poisson': '/assets/placeholders/placeholder-viande-poisson.svg',
-  'hygiene': '/assets/placeholders/placeholder-hygiene.svg',
+  hygiene: '/assets/placeholders/placeholder-hygiene.svg',
 };
 
 const pendingRequests = new Map<string, Promise<{ url?: string; source: ImageSource }>>();
 
 function normalizeCategory(category?: string): string {
-  return (category ?? '')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .trim();
+  return (category ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 }
 
 function getPlaceholderUrl(category?: string): string {
-  return PLACEHOLDER_BY_CATEGORY[normalizeCategory(category)] ?? '/assets/placeholders/placeholder-default.svg';
+  return (
+    PLACEHOLDER_BY_CATEGORY[normalizeCategory(category)] ??
+    '/assets/placeholders/placeholder-default.svg'
+  );
 }
 
 function getCacheKey(ean?: string, category?: string): string {
   const normalizedEan = (ean ?? '').trim();
-  return normalizedEan.length > 0 ? `ean:${normalizedEan}` : `cat:${normalizeCategory(category) || 'default'}`;
+  return normalizedEan.length > 0
+    ? `ean:${normalizedEan}`
+    : `cat:${normalizeCategory(category) || 'default'}`;
 }
 
 function readLocalCache(): CachedImageMap {
@@ -82,7 +83,6 @@ function pruneExpired(cache: CachedImageMap): CachedImageMap {
   const entries = Object.entries(cache).filter(([, value]) => now - value.cachedAt <= IMAGE_TTL_MS);
   return Object.fromEntries(entries);
 }
-
 
 function isEntryFresh(entry: CachedImageEntry, now: number): boolean {
   if (entry.source === 'off') {
@@ -126,12 +126,17 @@ export function extractOffImageUrl(payload: OffResponsePayload): string | undefi
   const product = payload.product;
   if (!product || payload.status === 0) return undefined;
 
-  return asNonEmptyString(product.selected_images?.front?.display?.fr)
-    ?? asNonEmptyString(product.selected_images?.front?.display?.en)
-    ?? asNonEmptyString(product.image_url);
+  return (
+    asNonEmptyString(product.selected_images?.front?.display?.fr) ??
+    asNonEmptyString(product.selected_images?.front?.display?.en) ??
+    asNonEmptyString(product.image_url)
+  );
 }
 
-async function fetchFromApi(ean: string, category?: string): Promise<{ url?: string; source: ImageSource }> {
+async function fetchFromApi(
+  ean: string,
+  category?: string
+): Promise<{ url?: string; source: ImageSource }> {
   const fetchAttempt = async (): Promise<{ url?: string; source: ImageSource }> => {
     const controller = new window.AbortController();
     const timeoutId = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
@@ -158,16 +163,23 @@ async function fetchFromApi(ean: string, category?: string): Promise<{ url?: str
         return { source: 'none' };
       }
 
-      const payload = (await response.json()) as { url?: unknown; source?: unknown; image_url?: unknown; redirect_to?: unknown };
-      const source = payload.source === 'off'
-        || payload.source === 'openfoodfacts'
-        || payload.source === 'placeholder'
-        || payload.source === 'none'
-        ? payload.source
-        : 'none';
-      const url = asNonEmptyString(payload.url)
-        ?? asNonEmptyString(payload.redirect_to)
-        ?? asNonEmptyString(payload.image_url);
+      const payload = (await response.json()) as {
+        url?: unknown;
+        source?: unknown;
+        image_url?: unknown;
+        redirect_to?: unknown;
+      };
+      const source =
+        payload.source === 'off' ||
+        payload.source === 'openfoodfacts' ||
+        payload.source === 'placeholder' ||
+        payload.source === 'none'
+          ? payload.source
+          : 'none';
+      const url =
+        asNonEmptyString(payload.url) ??
+        asNonEmptyString(payload.redirect_to) ??
+        asNonEmptyString(payload.image_url);
 
       if (!url || source === 'none') {
         return { source: 'none' };
@@ -192,7 +204,7 @@ async function fetchFromApi(ean: string, category?: string): Promise<{ url?: str
 
 export async function getProductImageUrl(
   ean: string,
-  category?: string,
+  category?: string
 ): Promise<{ url?: string; source: ImageSource }> {
   const cacheKey = getCacheKey(ean, category);
   const cached = getFreshCachedEntry(cacheKey);

@@ -30,8 +30,8 @@ const TERRITORY_GUIDES: TerritoryGuide[] = [
     flag: '🇬🇵',
     headline: 'Marché alimentaire sous tension : +12 % vs métropole',
     context:
-      "La Guadeloupe est fortement dépendante des importations (80 % des produits alimentaires). "
-      + "L'octroi de mer et les coûts de fret maritime pèsent sur les prix des produits transformés.",
+      'La Guadeloupe est fortement dépendante des importations (80 % des produits alimentaires). ' +
+      "L'octroi de mer et les coûts de fret maritime pèsent sur les prix des produits transformés.",
     tips: [
       'Privilégiez les marchés locaux pour les fruits et légumes tropicaux',
       'Comparez systématiquement les enseignes avant vos courses en grande surface',
@@ -47,8 +47,8 @@ const TERRITORY_GUIDES: TerritoryGuide[] = [
     flag: '🇲🇶',
     headline: 'Forte concurrence entre enseignes : opportunités à saisir',
     context:
-      'La Martinique bénéficie d\'une densité commerciale élevée. La présence de grandes enseignes '
-      + 'crée une concurrence qui peut être exploitée avec un comparateur de prix.',
+      "La Martinique bénéficie d'une densité commerciale élevée. La présence de grandes enseignes " +
+      'crée une concurrence qui peut être exploitée avec un comparateur de prix.',
     tips: [
       'Comparez les prix entre les différentes enseignes présentes en Martinique',
       'Les marchés de Saint-Pierre et Fort-de-France offrent des prix compétitifs pour le frais',
@@ -64,8 +64,8 @@ const TERRITORY_GUIDES: TerritoryGuide[] = [
     flag: '🇬🇫',
     headline: 'Marché structurellement plus cher : vigilance renforcée',
     context:
-      'La Guyane présente les écarts de prix les plus élevés des DOM, en raison de l\'éloignement '
-      + 'géographique et des coûts logistiques depuis la Métropole ou les Antilles.',
+      "La Guyane présente les écarts de prix les plus élevés des DOM, en raison de l'éloignement " +
+      'géographique et des coûts logistiques depuis la Métropole ou les Antilles.',
     tips: [
       'Planifiez vos achats importants lors des promotions saisonnières',
       'Certains produits brésiliens transfrontaliers peuvent être une alternative moins chère',
@@ -81,8 +81,8 @@ const TERRITORY_GUIDES: TerritoryGuide[] = [
     flag: '🇷🇪',
     headline: 'Production locale dynamique : profitez des circuits courts',
     context:
-      'La Réunion développe activement sa production locale (fruits, légumes, produits laitiers). '
-      + 'Les circuits courts permettent de trouver des produits frais à des prix compétitifs.',
+      'La Réunion développe activement sa production locale (fruits, légumes, produits laitiers). ' +
+      'Les circuits courts permettent de trouver des produits frais à des prix compétitifs.',
     tips: [
       'Les marchés forains sont excellents pour les fruits et légumes réunionnais',
       'Les produits locaux labellisés "Péi" sont souvent de meilleure qualité/prix',
@@ -98,10 +98,10 @@ const TERRITORY_GUIDES: TerritoryGuide[] = [
     flag: '🇾🇹',
     headline: 'Développement commercial récent : surveiller les prix de près',
     context:
-      "Mayotte est le DOM le plus récent et son tissu commercial est en développement. "
-      + "Les prix peuvent varier significativement entre les différentes zones de l'île.",
+      'Mayotte est le DOM le plus récent et son tissu commercial est en développement. ' +
+      "Les prix peuvent varier significativement entre les différentes zones de l'île.",
     tips: [
-      "Comparez les prix entre Mamoudzou et les communes plus éloignées",
+      'Comparez les prix entre Mamoudzou et les communes plus éloignées',
       'Les produits des Comores voisines peuvent parfois offrir une alternative moins chère',
       'Profitez des périodes de livraison maritime pour certains achats importants',
       'Les marchés traditionnels restent compétitifs pour les produits frais locaux',
@@ -152,15 +152,14 @@ export default function GuideIntelligentTerritoires() {
         </div>
 
         <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
-
           {!selected ? (
             <>
               {/* Info banner */}
               <div className="flex gap-3 bg-teal-50 border border-teal-200 rounded-xl p-4">
                 <Info className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-teal-800">
-                  Sélectionnez votre territoire pour obtenir des conseils d'achat personnalisés,
-                  les catégories de produits à surveiller et les spécificités locales.
+                  Sélectionnez votre territoire pour obtenir des conseils d'achat personnalisés, les
+                  catégories de produits à surveiller et les spécificités locales.
                 </p>
               </div>
 
@@ -181,7 +180,8 @@ export default function GuideIntelligentTerritoires() {
                     </div>
                     <p className="text-sm text-gray-600 leading-snug">{guide.headline}</p>
                     <div className="flex items-center gap-1 mt-3 text-teal-600 text-xs font-medium">
-                      Voir le guide <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      Voir le guide{' '}
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </button>
                 ))}

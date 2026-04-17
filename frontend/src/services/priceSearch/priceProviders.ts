@@ -1,4 +1,3 @@
- 
 import type { PriceObservation, PriceSearchInput, PriceSourceId } from './price.types';
 
 export interface PriceProviderResult {
@@ -40,10 +39,7 @@ const openFoodFactsProvider: PriceProvider = {
     try {
       if (input.barcode) {
         const url = `${OFF_PROXY_PRODUCT_ENDPOINT}?barcode=${encodeURIComponent(input.barcode)}`;
-        const data = await fetchJson<{ data?: { productName?: string } }>(
-          url,
-          signal
-        );
+        const data = await fetchJson<{ data?: { productName?: string } }>(url, signal);
         return {
           observations: [],
           warnings,
@@ -110,9 +106,14 @@ const openPricesProvider: PriceProvider = {
         const proxyUrl = `/api/open-prices/by-barcode?${proxyParams.toString()}`;
         const proxyResp = await fetch(proxyUrl, { signal });
         if (proxyResp.ok) {
-          const proxyData = await proxyResp.json() as {
+          const proxyData = (await proxyResp.json()) as {
             status?: string;
-            observations?: Array<{ price: number; currency?: string; unit?: string; observedAt?: string }>;
+            observations?: Array<{
+              price: number;
+              currency?: string;
+              unit?: string;
+              observedAt?: string;
+            }>;
           };
           if (proxyData.status === 'OK' && Array.isArray(proxyData.observations)) {
             const observations: PriceObservation[] = proxyData.observations
@@ -121,7 +122,7 @@ const openPricesProvider: PriceProvider = {
                 source: 'open_prices',
                 price: obs.price,
                 currency: 'EUR',
-                unit: (obs.unit === 'kg' || obs.unit === 'l') ? obs.unit : 'unit',
+                unit: obs.unit === 'kg' || obs.unit === 'l' ? obs.unit : 'unit',
                 observedAt: obs.observedAt,
               }));
             if (observations.length === 0) {
@@ -145,19 +146,21 @@ const openPricesProvider: PriceProvider = {
       }
 
       const rawItems = data.items ?? [];
-      const observations: PriceObservation[] =
-        rawItems
-          .filter((item) => typeof item.price === 'number' && item.price > 0)
-          .map((item) => ({
-            source: 'open_prices',
-            productName: item.product_name,
-            price: item.price,
-            currency: 'EUR',
-            unit: (item.price_per === 'KILOGRAM' || item.unit === 'kg') ? 'kg'
-              : (item.price_per === 'LITER' || item.unit === 'l') ? 'l'
-              : 'unit',
-            observedAt: item.observed_at ?? item.observedAt,
-          }));
+      const observations: PriceObservation[] = rawItems
+        .filter((item) => typeof item.price === 'number' && item.price > 0)
+        .map((item) => ({
+          source: 'open_prices',
+          productName: item.product_name,
+          price: item.price,
+          currency: 'EUR',
+          unit:
+            item.price_per === 'KILOGRAM' || item.unit === 'kg'
+              ? 'kg'
+              : item.price_per === 'LITER' || item.unit === 'l'
+                ? 'l'
+                : 'unit',
+          observedAt: item.observed_at ?? item.observedAt,
+        }));
 
       if (observations.length === 0) {
         warnings.push('Aucun prix Open Prices trouvé pour cette requête.');

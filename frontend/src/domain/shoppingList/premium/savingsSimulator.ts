@@ -14,7 +14,7 @@ export type SavingsSimulationResult = {
 };
 
 function minPriceLast30Days(history: PriceHistoryPoint[]): number | null {
-  const cutoff = Date.now() - (30 * 24 * 60 * 60 * 1000);
+  const cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
   const prices = history
     .filter((point) => {
       const ts = new Date(point.observedAt).getTime();
@@ -35,7 +35,7 @@ export function simulateMonthlySavings(items: SavingsSimulatorItem[]): SavingsSi
     if (!min30 || min30 >= item.lastPrice) return sum;
 
     const quantity = item.quantity && item.quantity > 0 ? item.quantity : 1;
-    return sum + ((item.lastPrice - min30) * quantity);
+    return sum + (item.lastPrice - min30) * quantity;
   }, 0);
 
   return {

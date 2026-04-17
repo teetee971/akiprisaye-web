@@ -1,22 +1,20 @@
- 
- 
 /**
  * OCR Service - Unified API
- * 
+ *
  * Uses Tesseract.js for text extraction from product images
- * 
+ *
  * DESIGN DECISION (PR G - Tech Debt Zero):
  * This service provides a minimal, clean API without caching or preprocessing.
  * Previous optimizations (image resizing, caching) were removed to simplify
  * the codebase and eliminate technical debt. If performance becomes an issue,
  * these optimizations can be re-added as a separate enhancement layer.
- * 
+ *
  * PHASE 2 ENHANCEMENT:
  * - Automatic online/offline detection
  * - Local OCR processing (WASM-based Tesseract)
  * - Works without network connection
  * - Graceful degradation
- * 
+ *
  * ⚠️ CONFORMITÉ RGPD & AI ACT UE ⚠️
  * - NO health interpretation
  * - NO nutritional analysis
@@ -25,10 +23,9 @@
  * - Images processed locally (client-side)
  * - Images NOT stored or transmitted to servers
  * - Images deleted immediately after text extraction
- * 
+ *
  * Base légale : Consentement explicite (RGPD Art. 6.1.a)
  */
-
 
 import type Tesseract from 'tesseract.js';
 
@@ -74,7 +71,7 @@ async function loadTesseract() {
   return TesseractModule;
 }
 
-export const GENERIC_OCR_ERROR = 'Une erreur s\'est produite lors de l\'analyse de l\'image';
+export const GENERIC_OCR_ERROR = "Une erreur s'est produite lors de l'analyse de l'image";
 const pathPrefix = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '');
 const OCR_ASSET_BASE_PATH = `${pathPrefix}/ocr`;
 const WORKER_PATH = `${OCR_ASSET_BASE_PATH}/worker.min.js`;
@@ -115,7 +112,6 @@ export interface OCRResult {
   errorCode?: 'ASSET_MISSING' | 'TIMEOUT' | 'PROCESSING_ERROR';
 }
 
-
 type OCRWorkerLike = Pick<Tesseract.Worker, 'setParameters' | 'recognize' | 'terminate'>;
 
 const OCR_LOAD_ERROR_MESSAGE =
@@ -154,7 +150,11 @@ async function ensureAssetAvailable(url: string, label: string): Promise<void> {
   try {
     const response = await fetch(url, { method: 'HEAD' });
     if (!response.ok) {
-      throw new AssetLoadError(`Asset ${label} unavailable (${response.status})`, response.status, label);
+      throw new AssetLoadError(
+        `Asset ${label} unavailable (${response.status})`,
+        response.status,
+        label
+      );
     }
   } catch (error) {
     console.error(`[OCR] Asset check failed for ${label}:`, error);
@@ -196,7 +196,9 @@ function applySharpenKernel(imageData: ImageData): ImageData {
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      let r = 0, g = 0, b = 0;
+      let r = 0,
+        g = 0,
+        b = 0;
       for (let ky = -1; ky <= 1; ky++) {
         for (let kx = -1; kx <= 1; kx++) {
           const px = Math.min(width - 1, Math.max(0, x + kx));
@@ -222,8 +224,14 @@ function applySharpenKernel(imageData: ImageData): ImageData {
 async function preprocessImage(
   imageUrl: string,
   maxWidth = 1600,
-  receiptMode = false,
-): Promise<{ blob: Blob; width: number; height: number; originalSize: number; processedSize: number }> {
+  receiptMode = false
+): Promise<{
+  blob: Blob;
+  width: number;
+  height: number;
+  originalSize: number;
+  processedSize: number;
+}> {
   const response = await fetch(imageUrl);
   if (!response.ok) {
     throw new AssetLoadError(`Image fetch failed (${response.status})`, response.status, 'image');
@@ -234,7 +242,9 @@ async function preprocessImage(
 
   try {
     // Try to honor EXIF orientation when supported
-    bitmap = await createImageBitmap(originalBlob, { imageOrientation: 'from-image' } as ImageBitmapOptions);
+    bitmap = await createImageBitmap(originalBlob, {
+      imageOrientation: 'from-image',
+    } as ImageBitmapOptions);
   } catch {
     const fallbackImg = document.createElement('img');
     const url = URL.createObjectURL(originalBlob);
@@ -293,7 +303,7 @@ async function preprocessImage(
         }
       },
       'image/png',
-      0.95,
+      0.95
     );
   });
 
@@ -327,7 +337,7 @@ interface RunOCROptions {
  * - Français par défaut
  * - Works offline (local WASM processing)
  * - receiptMode: activates sharpen preprocessing + single-column PSM
- * 
+ *
  * @param imageUrl - URL or path to image
  * @param language - ISO language code (defaults to 'fra')
  * @param options - OCR options (timeout, receiptMode, psm)
@@ -336,7 +346,7 @@ interface RunOCROptions {
 export async function runOCR(
   imageUrl: string,
   language = DEFAULT_LANG,
-  options?: RunOCROptions,
+  options?: RunOCROptions
 ): Promise<OCRResult> {
   const offline = isOffline();
   const startedAt = performance.now();
@@ -346,10 +356,12 @@ export async function runOCR(
   const psmMode = options?.psm ?? (receiptMode ? OCR_PSM.SINGLE_COLUMN : OCR_PSM.AUTO);
   let timeoutId: number | undefined;
   let worker: OCRWorkerLike | null = null;
-  
+
   // Log mode for debugging
   if (import.meta.env.DEV) {
-    console.log(`OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`);
+    console.log(
+      `OCR mode: ${offline ? 'OFFLINE (local WASM)' : 'ONLINE'} receiptMode=${receiptMode} psm=${psmMode}`
+    );
     console.log('[OCR] Asset paths', { WORKER_PATH, CORE_PATH, LANG_PATH, lang: effectiveLang });
   }
 
@@ -365,13 +377,15 @@ export async function runOCR(
 
     const preprocessed = await preprocessImage(imageUrl, 1600, receiptMode);
     // Pass language directly to createWorker (tesseract.js v7 API)
-    worker = await Tesseract.createWorker(effectiveLang, undefined, {
+    worker = (await Tesseract.createWorker(effectiveLang, undefined, {
       workerPath: WORKER_PATH,
       corePath: CORE_PATH,
       langPath: LANG_PATH,
       gzip: true,
-      ...(import.meta.env.DEV ? { logger: (m: Tesseract.LoggerMessage) => console.debug('[OCR]', m) } : {}),
-    }) as OCRWorkerLike;
+      ...(import.meta.env.DEV
+        ? { logger: (m: Tesseract.LoggerMessage) => console.debug('[OCR]', m) }
+        : {}),
+    })) as OCRWorkerLike;
 
     // Tesseract.js runs entirely in the browser via WASM
     // No server calls - works offline by default
@@ -417,14 +431,13 @@ export async function runOCR(
     if (isTimeout) {
       timeoutTriggered = true;
     }
-    const message =
-      isAssetError
-        ? OCR_LOAD_ERROR_MESSAGE
-        : isTimeout
-          ? 'Délai dépassé, réessayez avec une image plus nette'
-          : offline
-            ? 'Analyse impossible hors ligne. Reconnectez-vous à Internet puis réessayez.'
-            : 'L\'analyse du ticket a échoué. Essayez avec une image plus nette ou, si le problème persiste, réduisez le nombre de photos analysées à la fois.';
+    const message = isAssetError
+      ? OCR_LOAD_ERROR_MESSAGE
+      : isTimeout
+        ? 'Délai dépassé, réessayez avec une image plus nette'
+        : offline
+          ? 'Analyse impossible hors ligne. Reconnectez-vous à Internet puis réessayez.'
+          : "L'analyse du ticket a échoué. Essayez avec une image plus nette ou, si le problème persiste, réduisez le nombre de photos analysées à la fois.";
 
     return {
       success: false,

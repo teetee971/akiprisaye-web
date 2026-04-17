@@ -23,8 +23,14 @@ export default function TerritoryHub() {
           gradient="from-slate-950 to-teal-900"
           height="h-40 sm:h-52"
         >
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🗺️ Hub territoires</h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Explorez les données par territoire d'outre-mer</p>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🗺️ Hub territoires
+          </h1>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Explorez les données par territoire d'outre-mer
+          </p>
         </HeroImage>
         <div className="flex flex-wrap gap-4">
           <Link

@@ -4,7 +4,16 @@
  */
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Building2, School, Globe, Heart, CheckCircle, ChevronRight, Euro, Phone } from 'lucide-react';
+import {
+  Building2,
+  School,
+  Globe,
+  Heart,
+  CheckCircle,
+  ChevronRight,
+  Euro,
+  Phone,
+} from 'lucide-react';
 
 const PACKAGES = [
   {
@@ -107,7 +116,10 @@ export default function CorporateSales() {
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <Helmet>
         <title>Offres Corporate B2B — A KI PRI SA YÉ</title>
-        <meta name="description" content="Packages corporate pour centres sociaux, écoles, collectivités et ONG. Tarification adaptée à chaque type d'organisation." />
+        <meta
+          name="description"
+          content="Packages corporate pour centres sociaux, écoles, collectivités et ONG. Tarification adaptée à chaque type d'organisation."
+        />
       </Helmet>
 
       {/* Hero */}
@@ -117,12 +129,13 @@ export default function CorporateSales() {
           <span className="text-emerald-400 text-sm">Corporate B2B</span>
         </div>
         <h1 className="text-4xl font-bold text-white mb-4">
-          Solutions pour<br />
+          Solutions pour
+          <br />
           <span className="text-emerald-400">Organisations & Institutions</span>
         </h1>
         <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-          Des packages dédiés pour centres sociaux, établissements scolaires,
-          collectivités territoriales et ONG. Potentiel 30k€/mois.
+          Des packages dédiés pour centres sociaux, établissements scolaires, collectivités
+          territoriales et ONG. Potentiel 30k€/mois.
         </p>
         <div className="mt-4 text-2xl font-bold text-white">
           Potentiel Total : <span className="text-emerald-400">30k€/mois</span>
@@ -183,7 +196,9 @@ export default function CorporateSales() {
           <form onSubmit={handleContact} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="cs-org" className="block text-sm text-gray-400 mb-1">Organisation</label>
+                <label htmlFor="cs-org" className="block text-sm text-gray-400 mb-1">
+                  Organisation
+                </label>
                 <input
                   id="cs-org"
                   type="text"
@@ -195,7 +210,9 @@ export default function CorporateSales() {
                 />
               </div>
               <div>
-                <label htmlFor="cs-name" className="block text-sm text-gray-400 mb-1">Nom du contact</label>
+                <label htmlFor="cs-name" className="block text-sm text-gray-400 mb-1">
+                  Nom du contact
+                </label>
                 <input
                   id="cs-name"
                   type="text"
@@ -208,7 +225,9 @@ export default function CorporateSales() {
               </div>
             </div>
             <div>
-              <label htmlFor="cs-email" className="block text-sm text-gray-400 mb-1">Email institutionnel</label>
+              <label htmlFor="cs-email" className="block text-sm text-gray-400 mb-1">
+                Email institutionnel
+              </label>
               <input
                 id="cs-email"
                 type="email"
@@ -220,7 +239,9 @@ export default function CorporateSales() {
               />
             </div>
             <div>
-              <label htmlFor="cs-type" className="block text-sm text-gray-400 mb-1">Type d'organisation</label>
+              <label htmlFor="cs-type" className="block text-sm text-gray-400 mb-1">
+                Type d'organisation
+              </label>
               <select
                 id="cs-type"
                 value={selectedType ?? ''}
@@ -228,9 +249,13 @@ export default function CorporateSales() {
                 required
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-emerald-500"
               >
-                <option value="" disabled>Sélectionner...</option>
+                <option value="" disabled>
+                  Sélectionner...
+                </option>
                 {PACKAGES.map((p) => (
-                  <option key={p.type} value={p.type}>{p.label}</option>
+                  <option key={p.type} value={p.type}>
+                    {p.label}
+                  </option>
                 ))}
               </select>
             </div>

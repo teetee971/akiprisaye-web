@@ -14,7 +14,8 @@ const APP_VERSIONS = [
     date: 'avril 2026',
     label: 'latest',
     title: 'Corrections TypeScript — StoreMap & FlipStatCard',
-    description: 'Correction de 3 erreurs TypeScript de compilation : StoreMap.tsx — remplacement de L.MarkerClusterGroup (absent de @types/leaflet) par une interface locale MarkerClusterGroupInstance + alias de type LWithCluster ; FlipStatCard.tsx — type du gestionnaire onKeyDown aligné sur KeyboardEvent<HTMLButtonElement> (était HTMLDivElement). Zéro erreur tsc --noEmit. Bump monorepo 4.7.0 → 4.7.1.',
+    description:
+      'Correction de 3 erreurs TypeScript de compilation : StoreMap.tsx — remplacement de L.MarkerClusterGroup (absent de @types/leaflet) par une interface locale MarkerClusterGroupInstance + alias de type LWithCluster ; FlipStatCard.tsx — type du gestionnaire onKeyDown aligné sur KeyboardEvent<HTMLButtonElement> (était HTMLDivElement). Zéro erreur tsc --noEmit. Bump monorepo 4.7.0 → 4.7.1.',
     changelog: null,
   },
   {
@@ -22,7 +23,8 @@ const APP_VERSIONS = [
     date: 'avril 2026',
     label: null,
     title: 'Ghostwriter OS v6 — Historique des posts & briefing audience',
-    description: 'Ghostwriter Social passe en v6 : historique des 10 derniers posts générés persisté en localStorage (lecture+écriture), affiché dans une section dédiée de l\'Espace Créateur avec date, aperçu et action copier individuelle. Le briefing audience (buildCreatorBriefing) confirme le signal territoire en temps réel. Le post porte désormais la date du jour en clair. Badges severity HIGH/MEDIUM sur toutes les alertes Predator. Version package.json alignée sur 4.7.0.',
+    description:
+      "Ghostwriter Social passe en v6 : historique des 10 derniers posts générés persisté en localStorage (lecture+écriture), affiché dans une section dédiée de l'Espace Créateur avec date, aperçu et action copier individuelle. Le briefing audience (buildCreatorBriefing) confirme le signal territoire en temps réel. Le post porte désormais la date du jour en clair. Badges severity HIGH/MEDIUM sur toutes les alertes Predator. Version package.json alignée sur 4.7.0.",
     changelog: null,
   },
   {
@@ -30,7 +32,8 @@ const APP_VERSIONS = [
     date: 'avril 2026',
     label: null,
     title: 'Horizon Souverain — 254 articles, arbitrage géographique & focus souveraineté',
-    description: 'Le catalogue passe de quelques dizaines à 254 articles réels audités sur le terrain (Le Moule, Saint-François, Morne-à-l\'Eau, Les Abymes). Moteur d\'arbitrage géographique : détection d\'écarts jusqu\'à 42 % (huile tournesol) et 31 % (tomates locales) entre communes voisines. Focus souveraineté : fiches détaillées Sucre Marie-Galante, Farine GMA, Rhum Damoiseau 50 %. Hardening Codex Engine : Similarité de Jaccard pour la recherche, injection massive EAN, migration Railway 2 vCPU / 1 Go RAM.',
+    description:
+      "Le catalogue passe de quelques dizaines à 254 articles réels audités sur le terrain (Le Moule, Saint-François, Morne-à-l'Eau, Les Abymes). Moteur d'arbitrage géographique : détection d'écarts jusqu'à 42 % (huile tournesol) et 31 % (tomates locales) entre communes voisines. Focus souveraineté : fiches détaillées Sucre Marie-Galante, Farine GMA, Rhum Damoiseau 50 %. Hardening Codex Engine : Similarité de Jaccard pour la recherche, injection massive EAN, migration Railway 2 vCPU / 1 Go RAM.",
     changelog: '/news/v4.6.20',
   },
   {
@@ -38,7 +41,8 @@ const APP_VERSIONS = [
     date: 'mars 2026',
     label: null,
     title: 'Calculateur BTP complet & outillage terrain',
-    description: 'Calculateur Bâtiment BTP complet — 6 catégories, 20 calculateurs couvrant tous les corps de métier (FFB/ONISEP) : maçonnerie, dalle, fondations, chape, carrelage, peinture, enduit, tôles, terrassement, clôture, électricité (NF C 15-100), plomberie, isolation thermique (RT2020), charpente bois, plâtrerie BA13, parquet, gouttières/zinguerie, menuiserie extérieure. Images Unsplash réalistes sur toutes les tuiles catégories et calculateurs.',
+    description:
+      'Calculateur Bâtiment BTP complet — 6 catégories, 20 calculateurs couvrant tous les corps de métier (FFB/ONISEP) : maçonnerie, dalle, fondations, chape, carrelage, peinture, enduit, tôles, terrassement, clôture, électricité (NF C 15-100), plomberie, isolation thermique (RT2020), charpente bois, plâtrerie BA13, parquet, gouttières/zinguerie, menuiserie extérieure. Images Unsplash réalistes sur toutes les tuiles catégories et calculateurs.',
     changelog: null,
   },
   {
@@ -46,7 +50,8 @@ const APP_VERSIONS = [
     date: 'mars 2026',
     label: null,
     title: 'Groupes de parole citoyens & versionnage public',
-    description: 'Groupes de Parole Citoyens (Issue #7) : groupes de discussion par territoire, messagerie temps réel Firestore, partage de photos, modération IA automatique par filtre de mots-clés, signalement manuel. Affichage de la version, de l\'environnement et du hash Git dans le pied de page (Issue #0.2).',
+    description:
+      "Groupes de Parole Citoyens (Issue #7) : groupes de discussion par territoire, messagerie temps réel Firestore, partage de photos, modération IA automatique par filtre de mots-clés, signalement manuel. Affichage de la version, de l'environnement et du hash Git dans le pied de page (Issue #0.2).",
     changelog: null,
   },
   {
@@ -54,7 +59,8 @@ const APP_VERSIONS = [
     date: 'mars 2026',
     label: null,
     title: 'ComparateursHub, sitemap étendu & cohérence monorepo',
-    description: 'ComparateursHub exhaustif (34+ liens), nouvelle section Ressources & Comprendre. Alignement de toutes les versions package.json du monorepo (root, frontend, backend, functions, price-api). Sitemap étendu à 60+ URLs. Footer multi-colonnes. manifest.webmanifest PWA corrigé.',
+    description:
+      'ComparateursHub exhaustif (34+ liens), nouvelle section Ressources & Comprendre. Alignement de toutes les versions package.json du monorepo (root, frontend, backend, functions, price-api). Sitemap étendu à 60+ URLs. Footer multi-colonnes. manifest.webmanifest PWA corrigé.',
     changelog: '/CHANGELOG.md',
   },
   {
@@ -62,7 +68,8 @@ const APP_VERSIONS = [
     date: 'mars 2026',
     label: null,
     title: 'Messagerie, IEVR & gamification',
-    description: 'Messagerie interne Firebase (Firestore + onSnapshot). Indice Panier Vital (minutes de SMIC pour panier de 6 produits essentiels). Comparaison internationale Eurostat 2024 / OECD PPP 2024 / INSEE DOM 2023. Gamification (points, badges, classement). 32 snapshots Observatoire (nov. 2025 → mars 2026, 11 territoires). Validation EAN GS1. France métropolitaine ajoutée comme territoire de référence.',
+    description:
+      'Messagerie interne Firebase (Firestore + onSnapshot). Indice Panier Vital (minutes de SMIC pour panier de 6 produits essentiels). Comparaison internationale Eurostat 2024 / OECD PPP 2024 / INSEE DOM 2023. Gamification (points, badges, classement). 32 snapshots Observatoire (nov. 2025 → mars 2026, 11 territoires). Validation EAN GS1. France métropolitaine ajoutée comme territoire de référence.',
     changelog: '/CHANGELOG.md',
   },
   {
@@ -70,7 +77,8 @@ const APP_VERSIONS = [
     date: 'février 2026',
     label: null,
     title: 'Stabilité CI/CD & robustesse déploiement',
-    description: 'Correction timeout readiness Vite preview. Stabilisation pipeline CI/CD avec validation post-déploiement bloquante.',
+    description:
+      'Correction timeout readiness Vite preview. Stabilisation pipeline CI/CD avec validation post-déploiement bloquante.',
     changelog: null,
   },
   {
@@ -78,7 +86,8 @@ const APP_VERSIONS = [
     date: 'janvier 2026',
     label: null,
     title: 'Product Insight System & IEVR DOM-COM',
-    description: 'Product Insight System (OCR + analyse ingrédients). Product Dossier longitudinal. Ingredient Evolution. Export Open Data CSV/JSON. Cost of Living IEVR pour DOM-COM. Feature flags pour toutes les nouvelles fonctionnalités.',
+    description:
+      'Product Insight System (OCR + analyse ingrédients). Product Dossier longitudinal. Ingredient Evolution. Export Open Data CSV/JSON. Cost of Living IEVR pour DOM-COM. Feature flags pour toutes les nouvelles fonctionnalités.',
     changelog: null,
   },
   {
@@ -86,7 +95,8 @@ const APP_VERSIONS = [
     date: 'décembre 2025',
     label: null,
     title: 'Comparateurs spécialisés & observatoire temps réel',
-    description: 'Comparateurs spécialisés (vols, bateaux, fret, carburants, assurances, formations, location voiture, matériaux BTP, télécoms, cosmétiques). Carte interactive multi-territoire. Assistant IA local. Gamification v1. Observatoire temps réel.',
+    description:
+      'Comparateurs spécialisés (vols, bateaux, fret, carburants, assurances, formations, location voiture, matériaux BTP, télécoms, cosmétiques). Carte interactive multi-territoire. Assistant IA local. Gamification v1. Observatoire temps réel.',
     changelog: null,
   },
   {
@@ -94,7 +104,8 @@ const APP_VERSIONS = [
     date: 'novembre 2025',
     label: null,
     title: 'Snapshots observatoire multi-territoires',
-    description: "Snapshots observatoire novembre 2025 : Guadeloupe, Martinique, Guyane, La Réunion, Mayotte, Polynésie, Nouvelle-Calédonie. Comparaison inter-territoires. Tableau de bord inflation multi-territoires.",
+    description:
+      'Snapshots observatoire novembre 2025 : Guadeloupe, Martinique, Guyane, La Réunion, Mayotte, Polynésie, Nouvelle-Calédonie. Comparaison inter-territoires. Tableau de bord inflation multi-territoires.',
     changelog: null,
   },
   {
@@ -102,7 +113,8 @@ const APP_VERSIONS = [
     date: 'septembre 2025',
     label: null,
     title: 'Alertes prix & liste de courses intelligente',
-    description: 'Alertes prix automatiques. Liste de courses intelligente avec GPS. Comparateur citoyen participatif. Historique des prix avec courbes.',
+    description:
+      'Alertes prix automatiques. Liste de courses intelligente avec GPS. Comparateur citoyen participatif. Historique des prix avec courbes.',
     changelog: null,
   },
   {
@@ -110,7 +122,8 @@ const APP_VERSIONS = [
     date: 'mai 2025',
     label: null,
     title: 'Scan EAN, OCR tickets & extension territoriale',
-    description: 'Système de scan EAN-13/EAN-8 (Tesseract.js local). OCR tickets de caisse. Détection shrinkflation. Extension Martinique et Guyane.',
+    description:
+      'Système de scan EAN-13/EAN-8 (Tesseract.js local). OCR tickets de caisse. Détection shrinkflation. Extension Martinique et Guyane.',
     changelog: null,
   },
   {
@@ -118,7 +131,8 @@ const APP_VERSIONS = [
     date: 'février 2025',
     label: null,
     title: 'Clarification éditoriale & sources publiques',
-    description: 'Ajustement des libellés et clarification des sources publiques. Aucune extension territoriale.',
+    description:
+      'Ajustement des libellés et clarification des sources publiques. Aucune extension territoriale.',
     changelog: null,
   },
   {
@@ -126,7 +140,8 @@ const APP_VERSIONS = [
     date: 'janvier 2025',
     label: null,
     title: 'Première mise en ligne publique',
-    description: 'Première mise en ligne du panier alimentaire citoyen. Données terrain Guadeloupe. Fichier statique vérifié manuellement.',
+    description:
+      'Première mise en ligne du panier alimentaire citoyen. Données terrain Guadeloupe. Fichier statique vérifié manuellement.',
     changelog: null,
   },
 ];
@@ -136,25 +151,38 @@ export default function Versions() {
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <Helmet>
         <title>Versions — A KI PRI SA YÉ</title>
-        <meta name="description" content="Historique complet des versions de l'application A KI PRI SA YÉ. Traçabilité des données et des fonctionnalités publiées." />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/versions" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/versions" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/versions" />
+        <meta
+          name="description"
+          content="Historique complet des versions de l'application A KI PRI SA YÉ. Traçabilité des données et des fonctionnalités publiées."
+        />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/versions" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/versions"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/versions"
+        />
       </Helmet>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
-      <HeroImage
-        src={PAGE_HERO_IMAGES.versions}
-        alt="Versions & Changelog"
-        gradient="from-slate-950 to-slate-800"
-        height="h-40 sm:h-52"
-      >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
-          📋 Versions & Changelog
-        </h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
-          Historique des évolutions de la plateforme
-        </p>
-      </HeroImage>
+        <HeroImage
+          src={PAGE_HERO_IMAGES.versions}
+          alt="Versions & Changelog"
+          gradient="from-slate-950 to-slate-800"
+          height="h-40 sm:h-52"
+        >
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            📋 Versions & Changelog
+          </h1>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Historique des évolutions de la plateforme
+          </p>
+        </HeroImage>
 
         <section className="space-y-4">
           {APP_VERSIONS.map((item) => (
@@ -174,8 +202,8 @@ export default function Versions() {
               <div className="flex-1 space-y-2">
                 <h2 className="text-lg font-semibold text-white">{item.title}</h2>
                 <p className="text-slate-200 text-sm leading-relaxed">{item.description}</p>
-                {item.changelog && (
-                  item.changelog.startsWith('/news/') ? (
+                {item.changelog &&
+                  (item.changelog.startsWith('/news/') ? (
                     <Link
                       to={item.changelog}
                       className="text-xs text-blue-400 hover:text-blue-300 underline"
@@ -191,8 +219,7 @@ export default function Versions() {
                     >
                       Voir le changelog complet →
                     </a>
-                  )
-                )}
+                  ))}
               </div>
             </div>
           ))}
@@ -202,9 +229,26 @@ export default function Versions() {
           <h2 className="text-xl font-semibold text-white">Notes de traçabilité</h2>
           <ul className="list-disc list-inside text-slate-200 space-y-2">
             <li>Pas d&apos;historique caché : seules les versions listées ici sont publiées.</li>
-            <li>Les données de l&apos;observatoire sont accessibles dans <code className="font-mono">/public/data/observatoire/</code>.</li>
-            <li>Aucune recommandation médicale ni conseil nutritionnel — données factuelles uniquement.</li>
-            <li>Code source ouvert sur <a href="https://github.com/teetee971/akiprisaye-web" className="text-blue-400 hover:text-blue-300 underline" target="_blank" rel="noreferrer">GitHub</a>.</li>
+            <li>
+              Les données de l&apos;observatoire sont accessibles dans{' '}
+              <code className="font-mono">/public/data/observatoire/</code>.
+            </li>
+            <li>
+              Aucune recommandation médicale ni conseil nutritionnel — données factuelles
+              uniquement.
+            </li>
+            <li>
+              Code source ouvert sur{' '}
+              <a
+                href="https://github.com/teetee971/akiprisaye-web"
+                className="text-blue-400 hover:text-blue-300 underline"
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub
+              </a>
+              .
+            </li>
           </ul>
         </section>
       </div>

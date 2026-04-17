@@ -43,7 +43,7 @@ export default function AddToTiPanierButton({ product }: AddToTiPanierButtonProp
         ...(territory ? { territory } : {}),
         history: latestPrice?.price ? [latestPrice.price] : undefined,
       },
-      quota('maxItems'),
+      quota('maxItems')
     );
 
     setAdded(true);
@@ -65,7 +65,9 @@ export default function AddToTiPanierButton({ product }: AddToTiPanierButtonProp
       onClick={handleAdd}
       disabled={added}
       className={`w-full px-4 py-3 rounded-lg font-medium transition-colors ${
-        added ? 'bg-green-600 text-white cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'
+        added
+          ? 'bg-green-600 text-white cursor-not-allowed'
+          : 'bg-blue-600 hover:bg-blue-500 text-white'
       }`}
       aria-label={`Ajouter ${product.name} au ti-panier`}
     >

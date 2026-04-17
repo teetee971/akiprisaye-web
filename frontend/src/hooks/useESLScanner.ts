@@ -56,7 +56,9 @@ const PRICE_PATTERNS = [
 
 const EAN_PATTERN = /\b(\d{8}|\d{13})\b/;
 
-function extractFromOCRText(text: string): Pick<ESLReadResult, 'ean' | 'price' | 'productName' | 'confidence'> {
+function extractFromOCRText(
+  text: string
+): Pick<ESLReadResult, 'ean' | 'price' | 'productName' | 'confidence'> {
   let price: number | null = null;
   let ean: string | null = null;
   let confidence = 0.5;
@@ -79,7 +81,10 @@ function extractFromOCRText(text: string): Pick<ESLReadResult, 'ean' | 'price' |
   }
 
   // Product name: text before price line (heuristic — first non-numeric line)
-  const lines = text.split(/\n/).map((l) => l.trim()).filter(Boolean);
+  const lines = text
+    .split(/\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
   const nameLine = lines.find((l) => l.length > 3 && !/^\d/.test(l) && !/^[€$£]/.test(l));
 
   return { ean, price, productName: nameLine ?? null, confidence };
@@ -91,11 +96,11 @@ function extractFromOCRText(text: string): Pick<ESLReadResult, 'ean' | 'price' |
  */
 async function captureAndOCR(
   videoEl: HTMLVideoElement,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<Pick<ESLReadResult, 'ean' | 'price' | 'productName' | 'confidence'>> {
   // Draw video frame to canvas
   const canvas = document.createElement('canvas');
-  canvas.width  = videoEl.videoWidth  || 640;
+  canvas.width = videoEl.videoWidth || 640;
   canvas.height = videoEl.videoHeight || 480;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas non disponible');
@@ -103,7 +108,7 @@ async function captureAndOCR(
 
   // Convert to blob for OCR
   const blob = await new Promise<Blob>((res, rej) =>
-    canvas.toBlob((b) => (b ? res(b) : rej(new Error('Canvas vide'))), 'image/png'),
+    canvas.toBlob((b) => (b ? res(b) : rej(new Error('Canvas vide'))), 'image/png')
   );
   if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
 
@@ -123,7 +128,7 @@ async function captureAndOCR(
 // ─── Barcode detection via BarcodeDetector Web API ────────────────────────────
 
 async function detectBarcodeFromVideo(
-  videoEl: HTMLVideoElement,
+  videoEl: HTMLVideoElement
 ): Promise<Pick<ESLReadResult, 'ean' | 'price' | 'productName' | 'confidence'> | null> {
   const BD = (window as any).BarcodeDetector;
   if (!BD) return null;
@@ -138,7 +143,7 @@ async function detectBarcodeFromVideo(
       }
       const urlEan = /(?:ean|gtin|code|barcode)[=/](\d{8}|\d{13})/i.exec(val);
       if (urlEan) {
-        return { ean: urlEan[1], price: null, productName: null, confidence: 0.90 };
+        return { ean: urlEan[1], price: null, productName: null, confidence: 0.9 };
       }
     }
   } catch {
@@ -163,13 +168,13 @@ async function detectBarcodeFromVideo(
  */
 export function useESLScanner() {
   const [state, setState] = useState<ESLScannerState>({
-    status:       'idle',
-    result:       null,
-    error:        null,
+    status: 'idle',
+    result: null,
+    error: null,
     activeMethod: null,
   });
 
-  const abortRef  = useRef<AbortController | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const nfcReader = useNFCReader();
 
   // ── NFC scan ──────────────────────────────────────────────────────────────
@@ -181,18 +186,18 @@ export function useESLScanner() {
 
   // Sync NFC reader result into ESL state
   const nfcResult = nfcReader.state.result;
-  const nfcError  = nfcReader.state.error;
+  const nfcError = nfcReader.state.error;
 
   if (nfcResult && state.activeMethod === 'nfc' && state.status === 'scanning') {
     const eslResult: ESLReadResult = {
-      ean:         nfcResult.ean,
-      price:       nfcResult.price,
-      currency:    'EUR',
+      ean: nfcResult.ean,
+      price: nfcResult.price,
+      currency: 'EUR',
       productName: nfcResult.productName,
-      method:      'nfc',
-      confidence:  nfcResult.ean ? 0.95 : 0.6,
-      readAt:      nfcResult.readAt,
-      eslBrand:    nfcResult.eslBrand,
+      method: 'nfc',
+      confidence: nfcResult.ean ? 0.95 : 0.6,
+      readAt: nfcResult.readAt,
+      eslBrand: nfcResult.eslBrand,
     };
     setState({ status: 'success', result: eslResult, error: null, activeMethod: 'nfc' });
   }
@@ -234,7 +239,12 @@ export function useESLScanner() {
       if (controller.signal.aborted) return;
 
       if (!ocr.ean && !ocr.price) {
-        setState({ status: 'error', result: null, error: 'Aucun prix ou code-barres détecté. Rapprochez-vous de l\'étiquette.', activeMethod: 'ocr' });
+        setState({
+          status: 'error',
+          result: null,
+          error: "Aucun prix ou code-barres détecté. Rapprochez-vous de l'étiquette.",
+          activeMethod: 'ocr',
+        });
         return;
       }
 
@@ -252,7 +262,12 @@ export function useESLScanner() {
       });
     } catch (err: unknown) {
       if ((err as Error)?.name === 'AbortError') return;
-      setState({ status: 'error', result: null, error: `Erreur OCR : ${(err as Error)?.message ?? 'inconnue'}`, activeMethod: 'ocr' });
+      setState({
+        status: 'error',
+        result: null,
+        error: `Erreur OCR : ${(err as Error)?.message ?? 'inconnue'}`,
+        activeMethod: 'ocr',
+      });
     }
   }, []);
 
@@ -266,10 +281,21 @@ export function useESLScanner() {
         status: 'success',
         error: null,
         activeMethod: 'barcode',
-        result: { ...result, currency: 'EUR', method: 'barcode', readAt: new Date().toISOString(), eslBrand: null },
+        result: {
+          ...result,
+          currency: 'EUR',
+          method: 'barcode',
+          readAt: new Date().toISOString(),
+          eslBrand: null,
+        },
       });
     } else {
-      setState({ status: 'error', result: null, error: 'Aucun code-barres détecté. Centrez l\'EAN dans la caméra.', activeMethod: 'barcode' });
+      setState({
+        status: 'error',
+        result: null,
+        error: "Aucun code-barres détecté. Centrez l'EAN dans la caméra.",
+        activeMethod: 'barcode',
+      });
     }
   }, []);
 

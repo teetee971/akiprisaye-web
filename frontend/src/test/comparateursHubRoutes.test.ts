@@ -14,21 +14,19 @@ const normalizePath = (rawPath: string) => {
 
 const hubExposedPaths = Array.from(
   new Set(
-    [
-      ...hubSource.matchAll(/path:\s*'([^']+)'/g),
-      ...hubSource.matchAll(/to="([^"]+)"/g),
-    ]
+    [...hubSource.matchAll(/path:\s*'([^']+)'/g), ...hubSource.matchAll(/to="([^"]+)"/g)]
       .map(([, rawPath]) => rawPath)
       .filter((rawPath) => rawPath.startsWith('/'))
-      .map(normalizePath),
-  ),
+      .map(normalizePath)
+  )
 ).sort();
 
 const appRoutes = Array.from(
   new Set(
-    [...appSource.matchAll(/<Route path="([^"]+)"/g)]
-      .map(([, routePath]) => normalizePath(`/${routePath}`)),
-  ),
+    [...appSource.matchAll(/<Route path="([^"]+)"/g)].map(([, routePath]) =>
+      normalizePath(`/${routePath}`)
+    )
+  )
 ).sort();
 
 describe('ComparateursHub full route coverage', () => {
@@ -48,7 +46,7 @@ describe('ComparateursHub full route coverage', () => {
         '/assistant-ia',
         '/solidarite',
         '/carte-itineraires',
-      ]),
+      ])
     );
   });
 });

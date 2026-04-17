@@ -1,9 +1,9 @@
 /**
  * International Comparison Types - v4.1.0
- * 
+ *
  * Types for international cost of living comparisons
  * Supports DOM vs Metropolitan France, France vs EU, EU vs International
- * 
+ *
  * @module internationalComparisonTypes
  */
 
@@ -34,13 +34,13 @@ export interface CountryCostProfile {
     transportCostIndex: number;
     healthcareCostIndex: number;
     educationCostIndex: number;
-    
+
     // Additional metrics
     averageMonthlyIncome?: number; // In local currency
     averageRent?: number; // In local currency
     basicGroceriesCost?: number; // In local currency
   };
-  
+
   // Metadata
   lastUpdate: string; // ISO 8601
   dataQuality: 'high' | 'medium' | 'low';
@@ -82,26 +82,26 @@ export interface InternationalComparisonResult {
 export interface ComparedCountryResult {
   country: CountryCode;
   countryName: string;
-  
+
   // Raw values
   rawValue: number;
   rawCurrency: CurrencyCode;
-  
+
   // Normalized to EUR
   normalizedValue: number;
   normalizedCurrency: 'EUR';
-  
+
   // Adjusted for PPP
   pppAdjustedValue: number;
   pppAdjustment: PPPAdjustment;
-  
+
   // Comparison to reference
   differenceFromReference: number; // Absolute difference
   percentageDifference: number; // Percentage difference
-  
+
   // Ranking
   ranking?: number;
-  
+
   // Context
   confidence: 'high' | 'medium' | 'low';
   notes?: string[];
@@ -115,7 +115,7 @@ export interface DOMMetropoleComparison {
   domName: string;
   metropole: 'FRA';
   metropoleName: 'France Métropolitaine';
-  
+
   comparison: {
     // Food basket
     foodBasket: {
@@ -124,7 +124,7 @@ export interface DOMMetropoleComparison {
       difference: number;
       percentageDifference: number;
     };
-    
+
     // Housing
     housing: {
       dom: number;
@@ -132,7 +132,7 @@ export interface DOMMetropoleComparison {
       difference: number;
       percentageDifference: number;
     };
-    
+
     // Transport
     transport: {
       dom: number;
@@ -140,7 +140,7 @@ export interface DOMMetropoleComparison {
       difference: number;
       percentageDifference: number;
     };
-    
+
     // Energy
     energy: {
       dom: number;
@@ -148,7 +148,7 @@ export interface DOMMetropoleComparison {
       difference: number;
       percentageDifference: number;
     };
-    
+
     // Overall IEVR
     overall: {
       dom: number;
@@ -157,12 +157,12 @@ export interface DOMMetropoleComparison {
       percentageDifference: number;
     };
   };
-  
+
   // Context
   octroisDeMerEffect?: number; // Impact of octroi de mer on prices
   shippingCostsEffect?: number; // Impact of shipping on prices
   localProductionRate?: number; // Percentage of locally produced goods
-  
+
   date: string; // ISO 8601
   methodology: string;
 }
@@ -173,20 +173,20 @@ export interface DOMMetropoleComparison {
 export interface FranceEUComparison {
   france: CountryCode;
   euCountries: CountryCode[];
-  
+
   indicator: string;
-  
+
   results: {
     france: ComparedCountryResult;
     euAverage: ComparedCountryResult;
     euMedian: ComparedCountryResult;
     euCountries: ComparedCountryResult[];
   };
-  
+
   // Rankings
   franceRankInEU: number; // 1 = cheapest, 27 = most expensive
   totalEUCountries: number;
-  
+
   date: string; // ISO 8601
   methodology: string;
 }
@@ -197,14 +197,14 @@ export interface FranceEUComparison {
 export interface EUInternationalComparison {
   eu: 'EU' | 'EU27';
   internationalCountries: CountryCode[];
-  
+
   indicator: string;
-  
+
   results: {
     euAverage: ComparedCountryResult;
     internationalCountries: ComparedCountryResult[];
   };
-  
+
   date: string; // ISO 8601
   methodology: string;
 }
@@ -270,9 +270,9 @@ export interface ComparisonValidation {
 /**
  * Region grouping for comparisons
  */
-export type RegionCode = 
+export type RegionCode =
   | 'DOM' // Départements d'Outre-Mer
-  | 'ROM' // Régions d'Outre-Mer  
+  | 'ROM' // Régions d'Outre-Mer
   | 'EU' // European Union
   | 'EU27' // EU 27 countries
   | 'NAFTA' // North America
@@ -289,14 +289,14 @@ export interface RegionalComparison {
   regionName: string;
   countries: CountryCode[];
   indicator: string;
-  
+
   regionalAverage: number;
   regionalMedian: number;
   regionalMin: number;
   regionalMax: number;
-  
+
   countryResults: ComparedCountryResult[];
-  
+
   date: string; // ISO 8601
   methodology: string;
 }

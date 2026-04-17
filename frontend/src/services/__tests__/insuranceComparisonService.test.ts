@@ -119,43 +119,33 @@ describe('compareInsuranceByType', () => {
 
 describe('calculateInsuranceAggregation', () => {
   it('calculates correct min and max', () => {
-    const gpAuto = mockInsurances.filter(
-      (i) => i.insuranceType === 'auto' && i.territory === 'GP',
-    );
+    const gpAuto = mockInsurances.filter((i) => i.insuranceType === 'auto' && i.territory === 'GP');
     const agg = calculateInsuranceAggregation(gpAuto);
     expect(agg.minPrice).toBe(480);
     expect(agg.maxPrice).toBe(820);
   });
 
   it('calculates correct average price', () => {
-    const gpAuto = mockInsurances.filter(
-      (i) => i.insuranceType === 'auto' && i.territory === 'GP',
-    );
+    const gpAuto = mockInsurances.filter((i) => i.insuranceType === 'auto' && i.territory === 'GP');
     const agg = calculateInsuranceAggregation(gpAuto);
     // (480 + 650 + 820) / 3 ≈ 650
     expect(agg.averagePrice).toBeCloseTo(650, 0);
   });
 
   it('calculates correct price range', () => {
-    const gpAuto = mockInsurances.filter(
-      (i) => i.insuranceType === 'auto' && i.territory === 'GP',
-    );
+    const gpAuto = mockInsurances.filter((i) => i.insuranceType === 'auto' && i.territory === 'GP');
     const agg = calculateInsuranceAggregation(gpAuto);
     expect(agg.priceRange).toBe(340);
   });
 
   it('counts total offers correctly', () => {
-    const gpAuto = mockInsurances.filter(
-      (i) => i.insuranceType === 'auto' && i.territory === 'GP',
-    );
+    const gpAuto = mockInsurances.filter((i) => i.insuranceType === 'auto' && i.territory === 'GP');
     const agg = calculateInsuranceAggregation(gpAuto);
     expect(agg.totalOffers).toBe(3);
   });
 
   it('lists available coverage levels', () => {
-    const gpAuto = mockInsurances.filter(
-      (i) => i.insuranceType === 'auto' && i.territory === 'GP',
-    );
+    const gpAuto = mockInsurances.filter((i) => i.insuranceType === 'auto' && i.territory === 'GP');
     const agg = calculateInsuranceAggregation(gpAuto);
     expect(agg.coverageLevels).toContain('basic');
     expect(agg.coverageLevels).toContain('intermediate');

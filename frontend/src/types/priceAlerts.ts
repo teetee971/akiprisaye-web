@@ -1,6 +1,6 @@
 /**
  * Type definitions for Real Price Alert System
- * 
+ *
  * Ensures:
  * - No predictive data
  * - Only historical, observable information
@@ -10,26 +10,26 @@
 
 export type AlertType = 'price_drop' | 'price_increase' | 'shrinkflation';
 
-export type DataSource = 
-  | 'official_site'      // Official government/institutional data
-  | 'public_listing'     // Public price listings (e.g., e-commerce)
-  | 'user_report'        // Citizen-reported data
-  | 'observateur';       // Price observatory data
+export type DataSource =
+  | 'official_site' // Official government/institutional data
+  | 'public_listing' // Public price listings (e.g., e-commerce)
+  | 'user_report' // Citizen-reported data
+  | 'observateur'; // Price observatory data
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
-export type Territory = 
-  | 'GP'  // Guadeloupe
-  | 'MQ'  // Martinique
-  | 'GF'  // Guyane
-  | 'RE'  // La Réunion
-  | 'YT'  // Mayotte
-  | 'PM'  // Saint-Pierre-et-Miquelon
-  | 'BL'  // Saint-Barthélemy
-  | 'MF'  // Saint-Martin
-  | 'WF'  // Wallis-et-Futuna
-  | 'PF'  // Polynésie française
-  | 'NC'  // Nouvelle-Calédonie
+export type Territory =
+  | 'GP' // Guadeloupe
+  | 'MQ' // Martinique
+  | 'GF' // Guyane
+  | 'RE' // La Réunion
+  | 'YT' // Mayotte
+  | 'PM' // Saint-Pierre-et-Miquelon
+  | 'BL' // Saint-Barthélemy
+  | 'MF' // Saint-Martin
+  | 'WF' // Wallis-et-Futuna
+  | 'PF' // Polynésie française
+  | 'NC' // Nouvelle-Calédonie
   | 'TF'; // Terres australes et antarctiques françaises
 
 /**
@@ -37,22 +37,22 @@ export type Territory =
  */
 export interface PricePoint {
   price: number;
-  quantity?: number;        // For shrinkflation detection
-  unit?: string;            // e.g., 'kg', 'L', 'unit'
-  date: string;             // ISO 8601 date
+  quantity?: number; // For shrinkflation detection
+  unit?: string; // e.g., 'kg', 'L', 'unit'
+  date: string; // ISO 8601 date
   source: DataSource;
   confidence: ConfidenceLevel;
   store?: string;
   territory: Territory;
-  verified?: boolean;       // Has this been verified by multiple sources?
+  verified?: boolean; // Has this been verified by multiple sources?
 }
 
 /**
  * Product tracking configuration
  */
 export interface TrackedProduct {
-  id: string;               // Product ID or EAN
-  userId: string;           // User tracking this product
+  id: string; // Product ID or EAN
+  userId: string; // User tracking this product
   productName: string;
   category?: string;
   store?: string;
@@ -61,7 +61,7 @@ export interface TrackedProduct {
   lastKnownQuantity?: number;
   lastObservationDate: string;
   lastObservationSource: DataSource;
-  trackingSince: string;    // When user started tracking
+  trackingSince: string; // When user started tracking
   alertsEnabled: boolean;
   alertPreferences: AlertPreferences;
 }
@@ -73,11 +73,11 @@ export interface AlertPreferences {
   priceDropEnabled: boolean;
   priceIncreaseEnabled: boolean;
   shrinkflationEnabled: boolean;
-  
+
   // Thresholds for price increase alerts
-  increasePercentageThreshold: number;  // e.g., 5 for 5%
-  increaseAbsoluteThreshold: number;    // e.g., 0.50 for 0.50€
-  
+  increasePercentageThreshold: number; // e.g., 5 for 5%
+  increaseAbsoluteThreshold: number; // e.g., 0.50 for 0.50€
+
   // Notification channels
   inAppNotifications: boolean;
   emailNotifications: boolean;
@@ -93,34 +93,34 @@ export interface PriceAlert {
   productId: string;
   productName: string;
   alertType: AlertType;
-  
+
   // Historical comparison (REAL data only)
   previousPrice: number;
   currentPrice: number;
   previousQuantity?: number;
   currentQuantity?: number;
-  
+
   // Changes
   absoluteChange: number;
   percentageChange: number;
-  
+
   // Context
   store?: string;
   territory: Territory;
   category?: string;
-  
+
   // Data transparency
   previousDataSource: DataSource;
   currentDataSource: DataSource;
   previousObservationDate: string;
   currentObservationDate: string;
   confidence: ConfidenceLevel;
-  
+
   // Alert metadata
   triggeredAt: string;
   acknowledged: boolean;
   severity: 'high' | 'medium' | 'low';
-  
+
   // For shrinkflation
   shrinkflationDetails?: {
     previousQuantity: number;

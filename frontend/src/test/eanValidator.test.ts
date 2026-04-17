@@ -31,7 +31,7 @@ describe('validateEAN13', () => {
   });
 
   it('rejects codes of wrong length', () => {
-    expect(validateEAN13('54490000004')).toBe(false);   // 11 digits
+    expect(validateEAN13('54490000004')).toBe(false); // 11 digits
     expect(validateEAN13('54490000004391')).toBe(false); // 14 digits
   });
 
@@ -83,13 +83,13 @@ describe('validateUPCA', () => {
 // ---------------------------------------------------------------------------
 describe('validateGTIN', () => {
   it('validates EAN-8, EAN-13, UPC-A and GTIN-14', () => {
-    expect(validateGTIN('73513537')).toBe(true);     // EAN-8
+    expect(validateGTIN('73513537')).toBe(true); // EAN-8
     expect(validateGTIN('3017620422003')).toBe(true); // EAN-13
-    expect(validateGTIN('614141000036')).toBe(true);  // UPC-A (12 digits)
+    expect(validateGTIN('614141000036')).toBe(true); // UPC-A (12 digits)
   });
 
   it('rejects invalid or unsupported lengths', () => {
-    expect(validateGTIN('1234')).toBe(false);  // too short
+    expect(validateGTIN('1234')).toBe(false); // too short
     expect(validateGTIN('12345678901')).toBe(false); // 11 digits
   });
 });

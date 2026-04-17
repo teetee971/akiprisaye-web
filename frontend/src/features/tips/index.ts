@@ -13,7 +13,11 @@ export const tipRules: TipRule[] = [
   ruleSeasonality,
 ];
 
-export function buildTips(ctx: TipContext): { tips: Tip[]; score: number; premiumEnabled: boolean } {
+export function buildTips(ctx: TipContext): {
+  tips: Tip[];
+  score: number;
+  premiumEnabled: boolean;
+} {
   const score = computeSavingsScore(ctx);
   const tips = runTips(tipRules, ctx);
   const premiumEnabled = isPremiumTipEnabled(score);

@@ -16,12 +16,16 @@
  */
 
 export type Observation = { date: string; price: number; store?: string };
-export type PredictionLabel = 'Baisse probable' | 'Hausse probable' | 'Prix stable' | 'Données insuffisantes';
+export type PredictionLabel =
+  | 'Baisse probable'
+  | 'Hausse probable'
+  | 'Prix stable'
+  | 'Données insuffisantes';
 
 export type PredictionResult = {
   label: PredictionLabel;
   slopePerDay: number | null; // prix / jour
-  volatility: number | null;   // coefficient de variation (std / mean)
+  volatility: number | null; // coefficient de variation (std / mean)
   usedCount: number;
   explanation: string;
   /** Prix prédit dans ~30 jours (null si données insuffisantes) */
@@ -43,7 +47,7 @@ function mean(nums: number[]) {
 
 function stddev(nums: number[], _mean?: number) {
   if (!nums.length) return null;
-  const m = _mean ?? (nums.reduce((a, b) => a + b, 0) / nums.length);
+  const m = _mean ?? nums.reduce((a, b) => a + b, 0) / nums.length;
   const v = nums.reduce((s, x) => s + (x - m) ** 2, 0) / nums.length;
   return Math.sqrt(v);
 }
@@ -52,15 +56,18 @@ function stddev(nums: number[], _mean?: number) {
  * linearRegressionDays
  * - Retourne slope (prix / jour) et intercept si possible, sinon null
  */
-export function linearRegressionDays(observations: Observation[]) : { slopePerDay: number; intercept: number } | null {
+export function linearRegressionDays(
+  observations: Observation[]
+): { slopePerDay: number; intercept: number } | null {
   if (!observations || observations.length < 2) return null;
-  const sorted = [...observations].slice().sort((a,b) => toTs(a.date) - toTs(b.date));
+  const sorted = [...observations].slice().sort((a, b) => toTs(a.date) - toTs(b.date));
   const t0 = toTs(sorted[0].date);
-  const xs = sorted.map(o => (toTs(o.date) - t0) / (1000 * 3600 * 24)); // jours
-  const ys = sorted.map(o => o.price);
+  const xs = sorted.map((o) => (toTs(o.date) - t0) / (1000 * 3600 * 24)); // jours
+  const ys = sorted.map((o) => o.price);
   const xmean = mean(xs)!;
   const ymean = mean(ys)!;
-  let num = 0, den = 0;
+  let num = 0,
+    den = 0;
   for (let i = 0; i < xs.length; i++) {
     num += (xs[i] - xmean) * (ys[i] - ymean);
     den += (xs[i] - xmean) ** 2;
@@ -76,11 +83,7 @@ export function linearRegressionDays(observations: Observation[]) : { slopePerDa
  * σ = sqrt(Σ(y_i - ŷ_i)² / (n - 2))
  * Utilisé pour construire les intervalles de confiance.
  */
-function residualStdDev(
-  sorted: Observation[],
-  slope: number,
-  intercept: number,
-): number {
+function residualStdDev(sorted: Observation[], slope: number, intercept: number): number {
   const t0 = toTs(sorted[0].date);
   const n = sorted.length;
   if (n < 3) return 0;
@@ -102,7 +105,15 @@ function residualStdDev(
  *    - volatilityThreshold: coefficient of variation threshold for "stable"
  *    - horizonDays: nombre de jours à projeter pour le prix prédit (default 30)
  */
-export function computePrediction(observations: Observation[], options?: { window?: number; epsSlope?: number; volatilityThreshold?: number; horizonDays?: number }): PredictionResult {
+export function computePrediction(
+  observations: Observation[],
+  options?: {
+    window?: number;
+    epsSlope?: number;
+    volatilityThreshold?: number;
+    horizonDays?: number;
+  }
+): PredictionResult {
   const window = options?.window ?? 10;
   const epsSlope = options?.epsSlope ?? 0.001; // prix/unité par jour
   const volatilityThreshold = options?.volatilityThreshold ?? 0.08; // 8%
@@ -116,12 +127,13 @@ export function computePrediction(observations: Observation[], options?: { windo
       slopePerDay: null,
       volatility: null,
       usedCount: observations?.length ?? 0,
-      explanation: "Pas assez d'observations (au moins 3 requises) pour une analyse statistique fiable.",
+      explanation:
+        "Pas assez d'observations (au moins 3 requises) pour une analyse statistique fiable.",
       ...nullIntervals,
     };
   }
 
-  const sorted = [...observations].slice().sort((a,b) => toTs(a.date) - toTs(b.date));
+  const sorted = [...observations].slice().sort((a, b) => toTs(a.date) - toTs(b.date));
   const tail = sorted.slice(-window);
 
   const reg = linearRegressionDays(tail);
@@ -136,7 +148,7 @@ export function computePrediction(observations: Observation[], options?: { windo
     };
   }
 
-  const prices = tail.map(o => o.price);
+  const prices = tail.map((o) => o.price);
   const mu = mean(prices)!;
   const sd = stddev(prices, mu)!;
   const volatility = mu === 0 ? null : sd / Math.abs(mu);
@@ -144,7 +156,8 @@ export function computePrediction(observations: Observation[], options?: { windo
   const slope = reg.slopePerDay;
 
   let label: PredictionLabel = 'Prix stable';
-  if (slope < -epsSlope && volatility !== null && volatility < volatilityThreshold) label = 'Baisse probable';
+  if (slope < -epsSlope && volatility !== null && volatility < volatilityThreshold)
+    label = 'Baisse probable';
   else if (slope > epsSlope) label = 'Hausse probable';
   else label = 'Prix stable';
 
@@ -152,9 +165,11 @@ export function computePrediction(observations: Observation[], options?: { windo
     `Analyse basée sur les ${tail.length} dernières observations.`,
     `Pente estimée: ${slope.toFixed(4)} (prix/jour).`,
     `Volatilité (écart‐type relative): ${volatility !== null ? volatility.toFixed(3) : 'n/a'}.`,
-    label === 'Baisse probable' ? `La pente négative combinée à une volatilité faible suggère une baisse probable.` :
-    label === 'Hausse probable' ? `La pente positive suggère une hausse probable.` :
-    `Aucune tendance claire détectée — prix stable selon les règles définies.`
+    label === 'Baisse probable'
+      ? `La pente négative combinée à une volatilité faible suggère une baisse probable.`
+      : label === 'Hausse probable'
+        ? `La pente positive suggère une hausse probable.`
+        : `Aucune tendance claire détectée — prix stable selon les règles définies.`,
   ].join(' ');
 
   // Calcul des intervalles de confiance

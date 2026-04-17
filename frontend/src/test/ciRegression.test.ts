@@ -39,8 +39,7 @@ describe('CI regression — vite.config.ts + package.json', () => {
 
     const usesTerser = /minify\s*:\s*['"]terser['"]/.test(viteConfig);
     if (usesTerser) {
-      const hasTerser =
-        Boolean(pkg.devDependencies?.terser) || Boolean(pkg.dependencies?.terser);
+      const hasTerser = Boolean(pkg.devDependencies?.terser) || Boolean(pkg.dependencies?.terser);
       expect(hasTerser).toBe(true);
     }
   });

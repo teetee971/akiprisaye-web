@@ -9,15 +9,17 @@ describe('ChecklistProduction page', () => {
     render(
       <HelmetProvider>
         <ChecklistProduction />
-      </HelmetProvider>,
+      </HelmetProvider>
     );
 
     expect(
       screen.getByText((_, element) => {
         if (!element || element.tagName.toLowerCase() !== 'p') return false;
         const content = element.textContent?.replace(/\s+/g, ' ').trim() ?? '';
-        return /^Il reste \d+ tâches? à intégrer pour finir le site : \d+ prévues? non démarrées? et \d+ non finies? \(en cours\), dont \d+ critiques?\.$/i.test(content);
-      }),
+        return /^Il reste \d+ tâches? à intégrer pour finir le site : \d+ prévues? non démarrées? et \d+ non finies? \(en cours\), dont \d+ critiques?\.$/i.test(
+          content
+        );
+      })
     ).toBeInTheDocument();
   });
 });

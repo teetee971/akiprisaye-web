@@ -10,15 +10,8 @@ import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 export default function MesEconomies() {
-  const {
-    stats,
-    badges,
-    monthlySavings,
-    goalProgress,
-    data,
-    refresh,
-    isLoading
-  } = useSavingsData();
+  const { stats, badges, monthlySavings, goalProgress, data, refresh, isLoading } =
+    useSavingsData();
 
   const handleUpdateGoal = (newGoal: number) => {
     setMonthlyGoal(newGoal);
@@ -46,8 +39,12 @@ export default function MesEconomies() {
           gradient="from-emerald-950 to-slate-900"
           height="h-36 sm:h-48"
         >
-          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">💰 Mes Économies</h1>
-          <p className="text-slate-200 text-sm drop-shadow">Suivez vos économies réalisées grâce à A KI PRI SA YÉ</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">
+            💰 Mes Économies
+          </h1>
+          <p className="text-slate-200 text-sm drop-shadow">
+            Suivez vos économies réalisées grâce à A KI PRI SA YÉ
+          </p>
         </HeroImage>
       </div>
 
@@ -65,11 +62,7 @@ export default function MesEconomies() {
           icon="📅"
           subtitle={`Objectif: ${data.monthlyGoal}€`}
         />
-        <SavingsSummaryCard
-          title="Cette semaine"
-          amount={stats.weekSavings}
-          icon="📊"
-        />
+        <SavingsSummaryCard title="Cette semaine" amount={stats.weekSavings} icon="📊" />
       </div>
 
       {/* Goal Progress */}
@@ -123,7 +116,8 @@ export default function MesEconomies() {
             Commencez à économiser !
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            Utilisez notre comparateur de prix pour trouver les meilleures offres et suivez vos économies ici.
+            Utilisez notre comparateur de prix pour trouver les meilleures offres et suivez vos
+            économies ici.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a

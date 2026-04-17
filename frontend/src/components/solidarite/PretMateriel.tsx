@@ -13,9 +13,23 @@ import { useState, useEffect, useCallback } from 'react';
 import { GlassCard } from '../ui/glass-card';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 import {
-  Leaf, Wrench, UtensilsCrossed, Bike, Baby,
-  Music, Camera, BookOpen, Package, HelpCircle,
-  Plus, X, Search, Clock, MapPin, CheckCircle, AlertCircle,
+  Leaf,
+  Wrench,
+  UtensilsCrossed,
+  Bike,
+  Baby,
+  Music,
+  Camera,
+  BookOpen,
+  Package,
+  HelpCircle,
+  Plus,
+  X,
+  Search,
+  Clock,
+  MapPin,
+  CheckCircle,
+  AlertCircle,
   RefreshCw,
 } from 'lucide-react';
 
@@ -44,7 +58,7 @@ export interface ObjetPret {
   description: string;
   etat: EtatObjet;
   dureePret: DureePret;
-  conditions?: string;     // Ex: "Restituer nettoyé", "Caution 20€"
+  conditions?: string; // Ex: "Restituer nettoyé", "Caution 20€"
   territoire: string;
   quartier?: string;
   createdAt: string;
@@ -57,36 +71,91 @@ export interface ObjetPret {
 const STORAGE_KEY = 'akiprisaye_pret_materiel';
 
 const CATEGORIES: { id: PretCategory; label: string; emoji: string; exemples: string }[] = [
-  { id: 'jardinage',  label: 'Jardinage',             emoji: '🌱', exemples: 'Tondeuse, taille-haie, débroussailleuse, arrosoir, bêche' },
-  { id: 'cuisine',    label: 'Cuisine & Électroménager',emoji: '🍳', exemples: 'Robot pâtissier, centrifugeuse, crêpière, plancha, fondue' },
-  { id: 'jouets',     label: 'Jouets & Jeux',          emoji: '🧸', exemples: 'Jeux de société, jouets bébé, vélo enfant, trottinette' },
-  { id: 'bricolage',  label: 'Bricolage & Outillage',  emoji: '🔧', exemples: 'Perceuse, ponceuse, scie sauteuse, échelle, niveau laser' },
-  { id: 'sport',      label: 'Sport & Loisirs',        emoji: '⚽', exemples: 'Vélo, kayak, surf, randonnée, tentes de camping' },
-  { id: 'musique',    label: 'Instruments de musique', emoji: '🎸', exemples: 'Guitare, ukulélé, clavier, percussions' },
-  { id: 'bebe',       label: 'Puériculture & Bébé',    emoji: '👶', exemples: 'Poussette, siège auto, transat, baby phone, chaise haute' },
-  { id: 'multimedia', label: 'Multimédia & Photo',     emoji: '📷', exemples: 'Appareil photo, vidéoprojecteur, écran portable, trépied' },
-  { id: 'livres',     label: 'Livres & BD',             emoji: '📚', exemples: 'Romans, BD, livres scolaires, encyclopédies, guides' },
-  { id: 'fete',       label: 'Fête & Événement',        emoji: '🎉', exemples: 'Guirlandes, tréteaux, chaises, sono légère, décoration' },
-  { id: 'autre',      label: 'Autre',                   emoji: '📦', exemples: 'Tout objet utile non listé ci-dessus' },
+  {
+    id: 'jardinage',
+    label: 'Jardinage',
+    emoji: '🌱',
+    exemples: 'Tondeuse, taille-haie, débroussailleuse, arrosoir, bêche',
+  },
+  {
+    id: 'cuisine',
+    label: 'Cuisine & Électroménager',
+    emoji: '🍳',
+    exemples: 'Robot pâtissier, centrifugeuse, crêpière, plancha, fondue',
+  },
+  {
+    id: 'jouets',
+    label: 'Jouets & Jeux',
+    emoji: '🧸',
+    exemples: 'Jeux de société, jouets bébé, vélo enfant, trottinette',
+  },
+  {
+    id: 'bricolage',
+    label: 'Bricolage & Outillage',
+    emoji: '🔧',
+    exemples: 'Perceuse, ponceuse, scie sauteuse, échelle, niveau laser',
+  },
+  {
+    id: 'sport',
+    label: 'Sport & Loisirs',
+    emoji: '⚽',
+    exemples: 'Vélo, kayak, surf, randonnée, tentes de camping',
+  },
+  {
+    id: 'musique',
+    label: 'Instruments de musique',
+    emoji: '🎸',
+    exemples: 'Guitare, ukulélé, clavier, percussions',
+  },
+  {
+    id: 'bebe',
+    label: 'Puériculture & Bébé',
+    emoji: '👶',
+    exemples: 'Poussette, siège auto, transat, baby phone, chaise haute',
+  },
+  {
+    id: 'multimedia',
+    label: 'Multimédia & Photo',
+    emoji: '📷',
+    exemples: 'Appareil photo, vidéoprojecteur, écran portable, trépied',
+  },
+  {
+    id: 'livres',
+    label: 'Livres & BD',
+    emoji: '📚',
+    exemples: 'Romans, BD, livres scolaires, encyclopédies, guides',
+  },
+  {
+    id: 'fete',
+    label: 'Fête & Événement',
+    emoji: '🎉',
+    exemples: 'Guirlandes, tréteaux, chaises, sono légère, décoration',
+  },
+  { id: 'autre', label: 'Autre', emoji: '📦', exemples: 'Tout objet utile non listé ci-dessus' },
 ];
 
 const ETATS: { id: EtatObjet; label: string; color: string }[] = [
-  { id: 'tres_bon', label: 'Très bon état',  color: 'text-green-400' },
-  { id: 'bon',      label: 'Bon état',       color: 'text-blue-400' },
-  { id: 'correct',  label: 'État correct',   color: 'text-yellow-400' },
+  { id: 'tres_bon', label: 'Très bon état', color: 'text-green-400' },
+  { id: 'bon', label: 'Bon état', color: 'text-blue-400' },
+  { id: 'correct', label: 'État correct', color: 'text-yellow-400' },
 ];
 
 const DUREES: { id: DureePret; label: string }[] = [
-  { id: '1j',         label: '1 journée' },
-  { id: '2-3j',       label: '2 à 3 jours' },
-  { id: '1sem',       label: '1 semaine' },
-  { id: '2sem',       label: '2 semaines' },
+  { id: '1j', label: '1 journée' },
+  { id: '2-3j', label: '2 à 3 jours' },
+  { id: '1sem', label: '1 semaine' },
+  { id: '2sem', label: '2 semaines' },
   { id: 'a_convenir', label: 'À convenir' },
 ];
 
 const TERRITOIRES = [
-  'Guadeloupe', 'Martinique', 'Guyane', 'La Réunion',
-  'Mayotte', 'Saint-Martin', 'Saint-Barthélemy',
+  'Guadeloupe',
+  'Martinique',
+  'Guyane',
+  'La Réunion',
+  'Mayotte',
+  'Saint-Martin',
+  'Saint-Barthélemy',
 ];
 
 const SAMPLE_OBJETS: ObjetPret[] = [
@@ -94,7 +163,8 @@ const SAMPLE_OBJETS: ObjetPret[] = [
     id: 'pret-001',
     category: 'jardinage',
     nom: 'Tondeuse électrique Bosch',
-    description: 'Tondeuse électrique filaire, bac 40L, parfaite pour les petits jardins. Câble de 10m inclus.',
+    description:
+      'Tondeuse électrique filaire, bac 40L, parfaite pour les petits jardins. Câble de 10m inclus.',
     etat: 'tres_bon',
     dureePret: '1sem',
     conditions: 'Restituer nettoyée et rechargée',
@@ -108,7 +178,8 @@ const SAMPLE_OBJETS: ObjetPret[] = [
     id: 'pret-002',
     category: 'cuisine',
     nom: 'Robot pâtissier KitchenAid',
-    description: 'Robot pâtissier complet avec fouet, crochet et feuille. Parfait pour pâtisseries et gâteaux.',
+    description:
+      'Robot pâtissier complet avec fouet, crochet et feuille. Parfait pour pâtisseries et gâteaux.',
     etat: 'bon',
     dureePret: '2-3j',
     conditions: 'Restituer propre, caution 30€',
@@ -122,7 +193,8 @@ const SAMPLE_OBJETS: ObjetPret[] = [
     id: 'pret-003',
     category: 'jouets',
     nom: 'Vélo enfant 16 pouces',
-    description: 'Vélo enfant rose avec stabilisateurs amovibles, pour enfant de 4 à 7 ans. Très bon état.',
+    description:
+      'Vélo enfant rose avec stabilisateurs amovibles, pour enfant de 4 à 7 ans. Très bon état.',
     etat: 'tres_bon',
     dureePret: '1sem',
     territoire: 'La Réunion',
@@ -135,7 +207,8 @@ const SAMPLE_OBJETS: ObjetPret[] = [
     id: 'pret-004',
     category: 'bricolage',
     nom: 'Perceuse-visseuse Makita sans fil',
-    description: 'Perceuse-visseuse 18V avec 2 batteries et chargeur. Avec coffret de forets assortis.',
+    description:
+      'Perceuse-visseuse 18V avec 2 batteries et chargeur. Avec coffret de forets assortis.',
     etat: 'bon',
     dureePret: '2-3j',
     conditions: 'Restituer avec les batteries chargées',
@@ -149,7 +222,8 @@ const SAMPLE_OBJETS: ObjetPret[] = [
     id: 'pret-005',
     category: 'bebe',
     nom: 'Siège auto groupe 0+/1 Chicco',
-    description: 'Siège auto évolutif de 0 à 18 kg, couleur gris. Certifié ECE R44/04. Très bon état.',
+    description:
+      'Siège auto évolutif de 0 à 18 kg, couleur gris. Certifié ECE R44/04. Très bon état.',
     etat: 'tres_bon',
     dureePret: '2sem',
     territoire: 'Martinique',
@@ -162,7 +236,8 @@ const SAMPLE_OBJETS: ObjetPret[] = [
     id: 'pret-006',
     category: 'fete',
     nom: 'Pack fête : tables + chaises pliantes',
-    description: '4 tables pliantes 180cm et 20 chaises pliantes blanches. Idéal pour anniversaires et fêtes.',
+    description:
+      '4 tables pliantes 180cm et 20 chaises pliantes blanches. Idéal pour anniversaires et fêtes.',
     etat: 'bon',
     dureePret: 'a_convenir',
     conditions: 'Aide au chargement/déchargement appréciée',
@@ -176,10 +251,11 @@ const SAMPLE_OBJETS: ObjetPret[] = [
     id: 'pret-007',
     category: 'sport',
     nom: 'Kayak de mer biplace',
-    description: 'Kayak biplace avec pagaies et gilets de sauvetage. Idéal pour explorer les mangroves.',
+    description:
+      'Kayak biplace avec pagaies et gilets de sauvetage. Idéal pour explorer les mangroves.',
     etat: 'bon',
     dureePret: '1j',
-    conditions: 'Savoir nager obligatoire, restituer rincé à l\'eau douce',
+    conditions: "Savoir nager obligatoire, restituer rincé à l'eau douce",
     territoire: 'Guadeloupe',
     quartier: 'Sainte-Anne',
     createdAt: '2026-02-15T09:00:00Z',
@@ -190,7 +266,8 @@ const SAMPLE_OBJETS: ObjetPret[] = [
     id: 'pret-008',
     category: 'livres',
     nom: 'Collection livres Martinique & Caraïbes',
-    description: '15 livres sur l\'histoire et la culture des Antilles, romans créoles, guides touristiques.',
+    description:
+      "15 livres sur l'histoire et la culture des Antilles, romans créoles, guides touristiques.",
     etat: 'bon',
     dureePret: '2sem',
     territoire: 'Martinique',
@@ -203,26 +280,38 @@ const SAMPLE_OBJETS: ObjetPret[] = [
 
 // ─── Icône de catégorie ─────────────────────────────────────────────────────
 
-function CategoryIcon({ category, className = 'w-4 h-4' }: { category: PretCategory; className?: string }) {
+function CategoryIcon({
+  category,
+  className = 'w-4 h-4',
+}: {
+  category: PretCategory;
+  className?: string;
+}) {
   const map: Record<PretCategory, React.ReactNode> = {
-    jardinage:  <Leaf className={className} />,
-    cuisine:    <UtensilsCrossed className={className} />,
-    jouets:     <Baby className={className} />,
-    bricolage:  <Wrench className={className} />,
-    sport:      <Bike className={className} />,
-    musique:    <Music className={className} />,
-    bebe:       <Baby className={className} />,
+    jardinage: <Leaf className={className} />,
+    cuisine: <UtensilsCrossed className={className} />,
+    jouets: <Baby className={className} />,
+    bricolage: <Wrench className={className} />,
+    sport: <Bike className={className} />,
+    musique: <Music className={className} />,
+    bebe: <Baby className={className} />,
     multimedia: <Camera className={className} />,
-    livres:     <BookOpen className={className} />,
-    fete:       <Package className={className} />,
-    autre:      <HelpCircle className={className} />,
+    livres: <BookOpen className={className} />,
+    fete: <Package className={className} />,
+    autre: <HelpCircle className={className} />,
   };
   return <>{map[category]}</>;
 }
 
 // ─── Formulaire de dépôt ────────────────────────────────────────────────────
 
-function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void; onCancel: () => void }) {
+function DepotForm({
+  onDeposer,
+  onCancel,
+}: {
+  onDeposer: (o: ObjetPret) => void;
+  onCancel: () => void;
+}) {
   const [category, setCategory] = useState<PretCategory>('jardinage');
   const [nom, setNom] = useState('');
   const [description, setDescription] = useState('');
@@ -240,16 +329,20 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
       return;
     }
     if (nom.trim().length < 5) {
-      setError('Le nom de l\'objet doit faire au moins 5 caractères.');
+      setError("Le nom de l'objet doit faire au moins 5 caractères.");
       return;
     }
     setError('');
     onDeposer({
       id: `pret-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      category, nom: nom.trim(), description: description.trim(),
-      etat, dureePret,
+      category,
+      nom: nom.trim(),
+      description: description.trim(),
+      etat,
+      dureePret,
       conditions: conditions.trim() || undefined,
-      territoire, quartier: quartier.trim() || undefined,
+      territoire,
+      quartier: quartier.trim() || undefined,
       createdAt: new Date().toISOString(),
       disponible: true,
       contactHint: 'Demander par message',
@@ -262,71 +355,144 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {/* Catégorie */}
       <div>
-        <label htmlFor="pret-category" className="block text-sm font-medium text-gray-300 mb-1">Catégorie *</label>
-        <select id="pret-category" value={category} onChange={(e) => setCategory(e.target.value as PretCategory)}
-          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
-          {CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.emoji} {c.label}</option>)}
+        <label htmlFor="pret-category" className="block text-sm font-medium text-gray-300 mb-1">
+          Catégorie *
+        </label>
+        <select
+          id="pret-category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value as PretCategory)}
+          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        >
+          {CATEGORIES.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.emoji} {c.label}
+            </option>
+          ))}
         </select>
         {catInfo && <p className="text-xs text-gray-500 mt-1">Ex : {catInfo.exemples}</p>}
       </div>
 
       {/* Nom */}
       <div>
-        <label htmlFor="pret-nom" className="block text-sm font-medium text-gray-300 mb-1">Nom de l'objet *</label>
-        <input id="pret-nom" type="text" value={nom} onChange={(e) => setNom(e.target.value)} maxLength={80}
+        <label htmlFor="pret-nom" className="block text-sm font-medium text-gray-300 mb-1">
+          Nom de l'objet *
+        </label>
+        <input
+          id="pret-nom"
+          type="text"
+          value={nom}
+          onChange={(e) => setNom(e.target.value)}
+          maxLength={80}
           placeholder="Ex: Tondeuse électrique, Robot pâtissier, Vélo enfant…"
-          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
       </div>
 
       {/* Description */}
       <div>
-        <label htmlFor="pret-description" className="block text-sm font-medium text-gray-300 mb-1">Description *</label>
-        <textarea id="pret-description" name="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} maxLength={400}
+        <label htmlFor="pret-description" className="block text-sm font-medium text-gray-300 mb-1">
+          Description *
+        </label>
+        <textarea
+          id="pret-description"
+          name="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={3}
+          maxLength={400}
           placeholder="Décrivez l'objet : marque, caractéristiques, accessoires inclus…"
-          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none" />
+          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+        />
         <p className="text-xs text-gray-500 mt-0.5">{description.length}/400</p>
       </div>
 
       {/* État + Durée */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label htmlFor="pret-etat" className="block text-sm font-medium text-gray-300 mb-1">État de l'objet *</label>
-          <select id="pret-etat" value={etat} onChange={(e) => setEtat(e.target.value as EtatObjet)}
-            className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
-            {ETATS.map((e) => <option key={e.id} value={e.id}>{e.label}</option>)}
+          <label htmlFor="pret-etat" className="block text-sm font-medium text-gray-300 mb-1">
+            État de l'objet *
+          </label>
+          <select
+            id="pret-etat"
+            value={etat}
+            onChange={(e) => setEtat(e.target.value as EtatObjet)}
+            className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            {ETATS.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.label}
+              </option>
+            ))}
           </select>
         </div>
         <div>
-          <label htmlFor="pret-duree" className="block text-sm font-medium text-gray-300 mb-1">Durée de prêt *</label>
-          <select id="pret-duree" value={dureePret} onChange={(e) => setDureePret(e.target.value as DureePret)}
-            className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
-            {DUREES.map((d) => <option key={d.id} value={d.id}>{d.label}</option>)}
+          <label htmlFor="pret-duree" className="block text-sm font-medium text-gray-300 mb-1">
+            Durée de prêt *
+          </label>
+          <select
+            id="pret-duree"
+            value={dureePret}
+            onChange={(e) => setDureePret(e.target.value as DureePret)}
+            className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            {DUREES.map((d) => (
+              <option key={d.id} value={d.id}>
+                {d.label}
+              </option>
+            ))}
           </select>
         </div>
       </div>
 
       {/* Conditions */}
       <div>
-        <label htmlFor="pret-conditions" className="block text-sm font-medium text-gray-300 mb-1">Conditions de prêt</label>
-        <input id="pret-conditions" type="text" value={conditions} onChange={(e) => setConditions(e.target.value)} maxLength={120}
+        <label htmlFor="pret-conditions" className="block text-sm font-medium text-gray-300 mb-1">
+          Conditions de prêt
+        </label>
+        <input
+          id="pret-conditions"
+          type="text"
+          value={conditions}
+          onChange={(e) => setConditions(e.target.value)}
+          maxLength={120}
           placeholder="Ex: Restituer nettoyé, Caution 20€, Utilisation sur place…"
-          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
       </div>
 
       {/* Territoire + Quartier */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label htmlFor="pret-territoire" className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
-          <select id="pret-territoire" value={territoire} onChange={(e) => setTerritoire(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
-            {TERRITOIRES.map((t) => <option key={t} value={t}>{t}</option>)}
+          <label htmlFor="pret-territoire" className="block text-sm font-medium text-gray-300 mb-1">
+            Territoire *
+          </label>
+          <select
+            id="pret-territoire"
+            value={territoire}
+            onChange={(e) => setTerritoire(e.target.value)}
+            className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          >
+            {TERRITOIRES.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
           </select>
         </div>
         <div>
-          <label htmlFor="pret-quartier" className="block text-sm font-medium text-gray-300 mb-1">Quartier / Ville</label>
-          <input id="pret-quartier" type="text" value={quartier} onChange={(e) => setQuartier(e.target.value)} maxLength={60}
+          <label htmlFor="pret-quartier" className="block text-sm font-medium text-gray-300 mb-1">
+            Quartier / Ville
+          </label>
+          <input
+            id="pret-quartier"
+            type="text"
+            value={quartier}
+            onChange={(e) => setQuartier(e.target.value)}
+            maxLength={60}
             placeholder="Ex: Jarry, Lamentin…"
-            className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
+            className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
         </div>
       </div>
 
@@ -338,21 +504,34 @@ function DepotForm({ onDeposer, onCancel }: { onDeposer: (o: ObjetPret) => void;
       )}
 
       <div className="flex gap-3">
-        <button type="submit" className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition-colors">
+        <button
+          type="submit"
+          className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition-colors"
+        >
           Déposer l'annonce
         </button>
-        <button type="button" onClick={onCancel} className="px-5 bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-xl transition-colors">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-5 bg-slate-700 hover:bg-slate-600 text-gray-300 rounded-xl transition-colors"
+        >
           Annuler
         </button>
       </div>
-      <p className="text-xs text-gray-500 text-center">🔒 Stockage local uniquement — aucune donnée personnelle collectée</p>
+      <p className="text-xs text-gray-500 text-center">
+        🔒 Stockage local uniquement — aucune donnée personnelle collectée
+      </p>
     </form>
   );
 }
 
 // ─── Carte objet ────────────────────────────────────────────────────────────
 
-function ObjetCard({ objet, onDelete, onToggle }: {
+function ObjetCard({
+  objet,
+  onDelete,
+  onToggle,
+}: {
   objet: ObjetPret;
   onDelete?: (id: string) => void;
   onToggle?: (id: string) => void;
@@ -360,7 +539,11 @@ function ObjetCard({ objet, onDelete, onToggle }: {
   const cat = CATEGORIES.find((c) => c.id === objet.category);
   const etatInfo = ETATS.find((e) => e.id === objet.etat);
   const dureeInfo = DUREES.find((d) => d.id === objet.dureePret);
-  const dateStr = new Date(objet.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+  const dateStr = new Date(objet.createdAt).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
 
   return (
     <article
@@ -385,7 +568,9 @@ function ObjetCard({ objet, onDelete, onToggle }: {
               <span className={`text-xs font-medium ${etatInfo.color}`}>● {etatInfo.label}</span>
             )}
             {!objet.disponible && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-600/40 text-gray-500">Indisponible</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-600/40 text-gray-500">
+                Indisponible
+              </span>
             )}
           </div>
 
@@ -397,25 +582,38 @@ function ObjetCard({ objet, onDelete, onToggle }: {
           )}
 
           <div className="flex flex-wrap gap-3 text-xs text-gray-500">
-            {dureeInfo && <span className="flex items-center gap-1"><Clock className="w-3 h-3" />Prêt {dureeInfo.label}</span>}
-            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{objet.quartier ? `${objet.quartier}, ` : ''}{objet.territoire}</span>
+            {dureeInfo && (
+              <span className="flex items-center gap-1">
+                <Clock className="w-3 h-3" />
+                Prêt {dureeInfo.label}
+              </span>
+            )}
+            <span className="flex items-center gap-1">
+              <MapPin className="w-3 h-3" />
+              {objet.quartier ? `${objet.quartier}, ` : ''}
+              {objet.territoire}
+            </span>
             <span>{dateStr}</span>
           </div>
         </div>
 
         <div className="shrink-0 flex flex-col gap-1">
           {onToggle && (
-            <button onClick={() => onToggle(objet.id)}
+            <button
+              onClick={() => onToggle(objet.id)}
               className="text-gray-500 hover:text-green-400 transition-colors p-1"
               aria-label={objet.disponible ? 'Marquer indisponible' : 'Marquer disponible'}
-              title={objet.disponible ? 'Marquer indisponible' : 'Marquer disponible'}>
+              title={objet.disponible ? 'Marquer indisponible' : 'Marquer disponible'}
+            >
               <RefreshCw className="w-4 h-4" />
             </button>
           )}
           {onDelete && (
-            <button onClick={() => onDelete(objet.id)}
+            <button
+              onClick={() => onDelete(objet.id)}
               className="text-gray-600 hover:text-red-400 transition-colors p-1"
-              aria-label="Supprimer cette annonce">
+              aria-label="Supprimer cette annonce"
+            >
               <X className="w-4 h-4" />
             </button>
           )}
@@ -425,7 +623,8 @@ function ObjetCard({ objet, onDelete, onToggle }: {
       {objet.disponible && objet.contactHint && (
         <div className="mt-3 pt-3 border-t border-slate-700/50">
           <button className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 transition-colors">
-            <CheckCircle className="w-3 h-3" />{objet.contactHint}
+            <CheckCircle className="w-3 h-3" />
+            {objet.contactHint}
           </button>
         </div>
       )}
@@ -469,10 +668,10 @@ export default function PretMateriel() {
 
   const handleToggle = (id: string) => {
     const updatedUser = loadUserObjets().map((o) =>
-      o.id === id ? { ...o, disponible: !o.disponible } : o,
+      o.id === id ? { ...o, disponible: !o.disponible } : o
     );
     safeLocalStorage.setItem(STORAGE_KEY, JSON.stringify(updatedUser));
-    setObjets((prev) => prev.map((o) => o.id === id ? { ...o, disponible: !o.disponible } : o));
+    setObjets((prev) => prev.map((o) => (o.id === id ? { ...o, disponible: !o.disponible } : o)));
   };
 
   const isUserObjet = (id: string) => loadUserObjets().some((o) => o.id === id);
@@ -499,12 +698,16 @@ export default function PretMateriel() {
               Prêt de Matériel
             </h2>
             <p className="text-sm text-gray-400 mt-1">
-              Empruntez ou prêtez du matériel à votre communauté — jardinage, cuisine, jouets, bricolage…
+              Empruntez ou prêtez du matériel à votre communauté — jardinage, cuisine, jouets,
+              bricolage…
             </p>
           </div>
-          <button onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-xl transition-colors shrink-0">
-            <Plus className="w-4 h-4" />Proposer un objet
+          <button
+            onClick={() => setShowForm(true)}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-xl transition-colors shrink-0"
+          >
+            <Plus className="w-4 h-4" />
+            Proposer un objet
           </button>
         </div>
 
@@ -527,7 +730,9 @@ export default function PretMateriel() {
       {justDepose && (
         <div className="flex items-center gap-2 bg-green-900/30 border border-green-600/40 rounded-xl px-4 py-3">
           <CheckCircle className="w-5 h-5 text-green-400 shrink-0" />
-          <p className="text-sm text-green-300">Objet publié ! Il est maintenant visible par votre communauté.</p>
+          <p className="text-sm text-green-300">
+            Objet publié ! Il est maintenant visible par votre communauté.
+          </p>
         </div>
       )}
 
@@ -540,15 +745,25 @@ export default function PretMateriel() {
       )}
 
       {/* Filtres catégories */}
-      <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="Filtrer par catégorie">
-        <button onClick={() => setFilterCategory('all')}
-          className={`shrink-0 text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${filterCategory === 'all' ? 'bg-green-600 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+      <div
+        className="flex gap-2 overflow-x-auto pb-1"
+        role="group"
+        aria-label="Filtrer par catégorie"
+      >
+        <button
+          onClick={() => setFilterCategory('all')}
+          className={`shrink-0 text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${filterCategory === 'all' ? 'bg-green-600 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}
+        >
           Tout
         </button>
         {CATEGORIES.map((c) => (
-          <button key={c.id} onClick={() => setFilterCategory(filterCategory === c.id ? 'all' : c.id)}
-            className={`shrink-0 text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1 ${filterCategory === c.id ? 'bg-green-600 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
-            <span>{c.emoji}</span>{c.label}
+          <button
+            key={c.id}
+            onClick={() => setFilterCategory(filterCategory === c.id ? 'all' : c.id)}
+            className={`shrink-0 text-xs px-3 py-1.5 rounded-full font-medium transition-colors flex items-center gap-1 ${filterCategory === c.id ? 'bg-green-600 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}
+          >
+            <span>{c.emoji}</span>
+            {c.label}
           </button>
         ))}
       </div>
@@ -557,29 +772,57 @@ export default function PretMateriel() {
       <div className="grid sm:grid-cols-3 gap-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-          <input id="pret-search" name="q" type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Rechercher un objet…"
-            className="w-full bg-slate-800 border border-slate-600 rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500" />
+          <input
+            id="pret-search"
+            name="q"
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher un objet…"
+            className="w-full bg-slate-800 border border-slate-600 rounded-lg pl-9 pr-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
         </div>
-        <select id="pret-filter-territoire" name="filterTerritoire" value={filterTerritoire} onChange={(e) => setFilterTerritoire(e.target.value)}
-          className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+        <select
+          id="pret-filter-territoire"
+          name="filterTerritoire"
+          value={filterTerritoire}
+          onChange={(e) => setFilterTerritoire(e.target.value)}
+          className="bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        >
           <option value="all">Tous les territoires</option>
-          {TERRITOIRES.map((t) => <option key={t} value={t}>{t}</option>)}
+          {TERRITOIRES.map((t) => (
+            <option key={t} value={t}>
+              {t}
+            </option>
+          ))}
         </select>
         <label className="flex items-center gap-2 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 cursor-pointer">
-          <input id="pret-filter-dispo" name="filterDispo" type="checkbox" checked={filterDispo} onChange={(e) => setFilterDispo(e.target.checked)}
-            className="w-4 h-4 rounded accent-green-500" />
+          <input
+            id="pret-filter-dispo"
+            name="filterDispo"
+            type="checkbox"
+            checked={filterDispo}
+            onChange={(e) => setFilterDispo(e.target.checked)}
+            className="w-4 h-4 rounded accent-green-500"
+          />
           <span className="text-sm text-gray-300">Disponibles uniquement</span>
         </label>
       </div>
 
-      <p className="text-xs text-gray-500">{filtered.length} objet{filtered.length !== 1 ? 's' : ''} disponible{filtered.length !== 1 ? 's' : ''}</p>
+      <p className="text-xs text-gray-500">
+        {filtered.length} objet{filtered.length !== 1 ? 's' : ''} disponible
+        {filtered.length !== 1 ? 's' : ''}
+      </p>
 
       {/* Liste */}
       {filtered.length === 0 ? (
         <GlassCard className="py-12 text-center">
           <Package className="w-12 h-12 text-gray-600 mx-auto mb-3" />
           <p className="text-gray-400 mb-2">Aucun objet pour ces critères.</p>
-          <button onClick={() => setShowForm(true)} className="text-sm text-green-400 hover:text-green-300 underline">
+          <button
+            onClick={() => setShowForm(true)}
+            className="text-sm text-green-400 hover:text-green-300 underline"
+          >
             Proposez le premier objet !
           </button>
         </GlassCard>
@@ -598,11 +841,22 @@ export default function PretMateriel() {
 
       {/* Info */}
       <div className="bg-green-900/20 border border-green-700/30 rounded-xl p-4">
-        <p className="text-sm font-semibold text-green-300 mb-2">🌱 Pourquoi emprunter plutôt qu'acheter ?</p>
+        <p className="text-sm font-semibold text-green-300 mb-2">
+          🌱 Pourquoi emprunter plutôt qu'acheter ?
+        </p>
         <ul className="text-xs text-gray-400 space-y-1">
-          <li>• <strong className="text-gray-300">Économie</strong> : évitez d'acheter un objet utilisé 2 fois par an</li>
-          <li>• <strong className="text-gray-300">Écologie</strong> : moins de déchets, consommation responsable</li>
-          <li>• <strong className="text-gray-300">Solidarité</strong> : renforcer les liens dans votre quartier</li>
+          <li>
+            • <strong className="text-gray-300">Économie</strong> : évitez d'acheter un objet
+            utilisé 2 fois par an
+          </li>
+          <li>
+            • <strong className="text-gray-300">Écologie</strong> : moins de déchets, consommation
+            responsable
+          </li>
+          <li>
+            • <strong className="text-gray-300">Solidarité</strong> : renforcer les liens dans votre
+            quartier
+          </li>
           <li>• Données stockées sur votre appareil — aucune donnée personnelle collectée</li>
         </ul>
       </div>

@@ -48,13 +48,7 @@ const DEFAULT_CHAINS = [
   'Auchan',
 ];
 
-const DEFAULT_SERVICES = [
-  'parking',
-  'carte_bancaire',
-  'livraison',
-  'retrait_course',
-  'essence',
-];
+const DEFAULT_SERVICES = ['parking', 'carte_bancaire', 'livraison', 'retrait_course', 'essence'];
 
 /**
  * MapFilters component for filtering stores on the map
@@ -87,7 +81,7 @@ export function MapFilters({
 
   const handleServiceToggle = (service: string) => {
     if (!onServicesChange) return;
-    
+
     if (services.includes(service)) {
       onServicesChange(services.filter((s) => s !== service));
     } else {
@@ -118,9 +112,7 @@ export function MapFilters({
           <Filter className="w-5 h-5 text-blue-600" />
           <h3 className="font-semibold text-lg">Filtres</h3>
           {hasActiveFilters && (
-            <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full">
-              Actifs
-            </span>
+            <span className="bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full">Actifs</span>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -140,11 +132,7 @@ export function MapFilters({
             aria-label={isExpanded ? 'Réduire les filtres' : 'Développer les filtres'}
             aria-expanded={isExpanded}
           >
-            {isExpanded ? (
-              <ChevronUp className="w-5 h-5" />
-            ) : (
-              <ChevronDown className="w-5 h-5" />
-            )}
+            {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
           </button>
         </div>
       </div>
@@ -171,10 +159,7 @@ export function MapFilters({
       {/* Open Now Toggle - Always visible */}
       {onOpenOnlyChange && (
         <div className="mb-3">
-          <OpenNowFilter
-            enabled={openOnly}
-            onChange={onOpenOnlyChange}
-          />
+          <OpenNowFilter enabled={openOnly} onChange={onOpenOnlyChange} />
         </div>
       )}
 
@@ -184,9 +169,7 @@ export function MapFilters({
           {/* Price Category */}
           {onPriceCategoryChange && (
             <div>
-              <p className="block text-sm font-medium text-gray-700 mb-2">
-                Catégorie de prix
-              </p>
+              <p className="block text-sm font-medium text-gray-700 mb-2">Catégorie de prix</p>
               <div className="grid grid-cols-4 gap-2">
                 <button
                   onClick={() => onPriceCategoryChange('all')}

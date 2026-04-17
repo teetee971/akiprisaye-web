@@ -19,16 +19,16 @@ interface StreakCounterProps {
 const sizeConfig = {
   sm: { flame: 20, text: 'text-sm', subtext: 'text-xs' },
   md: { flame: 28, text: 'text-xl', subtext: 'text-sm' },
-  lg: { flame: 36, text: 'text-3xl', subtext: 'text-base' }
+  lg: { flame: 36, text: 'text-3xl', subtext: 'text-base' },
 };
 
-export function StreakCounter({ 
-  currentStreak, 
+export function StreakCounter({
+  currentStreak,
   longestStreak,
   todayCompleted = false,
   showLongest = false,
-  size = 'md', 
-  className = '' 
+  size = 'md',
+  className = '',
 }: StreakCounterProps) {
   const config = sizeConfig[size];
   const isActive = currentStreak > 0;
@@ -36,27 +36,24 @@ export function StreakCounter({
   return (
     <div className={`inline-flex items-center gap-3 ${className}`}>
       <div className="flex flex-col items-center">
-        <StreakFlame 
-          isActive={isActive} 
-          size={config.flame}
-        />
+        <StreakFlame isActive={isActive} size={config.flame} />
         {todayCompleted && (
-          <div className="text-xs text-green-600 font-medium mt-1">
-            Aujourd'hui ✓
-          </div>
+          <div className="text-xs text-green-600 font-medium mt-1">Aujourd'hui ✓</div>
         )}
       </div>
-      
+
       <div className="flex flex-col">
         <div className="flex items-baseline gap-2">
-          <span className={`${config.text} font-bold ${isActive ? 'text-orange-600' : 'text-gray-400'}`}>
+          <span
+            className={`${config.text} font-bold ${isActive ? 'text-orange-600' : 'text-gray-400'}`}
+          >
             {currentStreak}
           </span>
           <span className={`${config.subtext} text-gray-600`}>
             {currentStreak === 1 ? 'jour' : 'jours'}
           </span>
         </div>
-        
+
         {showLongest && longestStreak !== undefined && longestStreak > currentStreak && (
           <div className={`${config.subtext} text-gray-500 flex items-center gap-1`}>
             <Trophy size={12} className="text-yellow-600" />

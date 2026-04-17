@@ -12,10 +12,6 @@ const CATEGORY_STYLES = {
 
 export default function CivicBadge({ category, className }: CivicBadgeProps) {
   const styles = `inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium border backdrop-blur-sm ${CATEGORY_STYLES[category]} ${className || ''}`;
-  
-  return (
-    <span className={styles}>
-      {category}
-    </span>
-  );
+
+  return <span className={styles}>{category}</span>;
 }

@@ -206,7 +206,7 @@ export async function getStorageUsage(): Promise<{ used: number; quota: number }
       const estimate = await navigator.storage.estimate();
       return {
         used: estimate.usage || 0,
-        quota: estimate.quota || 0
+        quota: estimate.quota || 0,
       };
     } catch (error) {
       console.error('Error getting storage estimate:', error);

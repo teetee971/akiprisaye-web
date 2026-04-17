@@ -1,4 +1,3 @@
- 
 import { useState, useRef } from 'react';
 
 /**
@@ -19,7 +18,7 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
 
   const handleFileSelect = async (event) => {
     const file = event.target.files?.[0];
-    
+
     if (!file) {
       return;
     }
@@ -44,11 +43,11 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
 
       // Create preview
       const reader = new FileReader();
-      
+
       reader.onload = (e) => {
         const base64Data = e.target?.result;
         setPreview(base64Data);
-        
+
         // Pass data to parent
         onUpload({
           name: file.name,
@@ -57,7 +56,7 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
           data: base64Data, // Store as base64
           uploadedAt: new Date().toISOString(),
         });
-        
+
         setUploading(false);
       };
 
@@ -107,7 +106,7 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
             onChange={handleFileSelect}
             className="hidden"
           />
-          
+
           {uploading ? (
             <div className="flex flex-col items-center">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-3"></div>
@@ -128,12 +127,8 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <p className="text-sm font-medium text-gray-900 mb-1">
-                📷 Ajouter une photo
-              </p>
-              <p className="text-xs text-gray-500">
-                JPG, PNG ou WEBP • Max 5 Mo
-              </p>
+              <p className="text-sm font-medium text-gray-900 mb-1">📷 Ajouter une photo</p>
+              <p className="text-xs text-gray-500">JPG, PNG ou WEBP • Max 5 Mo</p>
             </div>
           )}
         </button>
@@ -157,7 +152,7 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
                 {currentProof?.name || 'Photo ajoutée'}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                {currentProof?.size 
+                {currentProof?.size
                   ? `${(currentProof.size / 1024).toFixed(1)} Ko`
                   : 'Taille inconnue'}
               </p>
@@ -193,15 +188,13 @@ export function UploadPreuve({ onUpload, currentProof = null }) {
 
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-          <p className="text-sm text-red-800">
-            ⚠️ {error}
-          </p>
+          <p className="text-sm text-red-800">⚠️ {error}</p>
         </div>
       )}
 
       <p className="text-xs text-gray-500">
-        <strong>Note :</strong> La photo est facultative mais renforce la crédibilité de votre observation.
-        Elle est stockée localement et ne sera pas publiée sans vérification.
+        <strong>Note :</strong> La photo est facultative mais renforce la crédibilité de votre
+        observation. Elle est stockée localement et ne sera pas publiée sans vérification.
       </p>
     </div>
   );

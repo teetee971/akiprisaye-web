@@ -48,15 +48,13 @@ export function useSearchSuggestions(query: string, territory?: TerritoryCode) {
         const results = await searchProducts({ query: trimmed, territory });
         if (token.cancelled) return;
 
-        const mapped: SearchSuggestion[] = results
-          .slice(0, MAX_SUGGESTIONS)
-          .map((r) => ({
-            id: r.product.canonicalId,
-            label: r.product.name,
-            brand: r.product.brand,
-            category: r.product.category,
-            ean: r.product.ean,
-          }));
+        const mapped: SearchSuggestion[] = results.slice(0, MAX_SUGGESTIONS).map((r) => ({
+          id: r.product.canonicalId,
+          label: r.product.name,
+          brand: r.product.brand,
+          category: r.product.category,
+          ean: r.product.ean,
+        }));
 
         setSuggestions(mapped);
       } catch {

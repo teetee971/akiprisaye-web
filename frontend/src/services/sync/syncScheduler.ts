@@ -4,12 +4,7 @@
  * utiliser un vrai scheduler backend avec node-cron ou Cloudflare Workers Cron
  */
 
-import type {
-  ScheduledJob,
-  JobDefinition,
-  SyncSchedulerConfig,
-  SyncResult,
-} from './types';
+import type { ScheduledJob, JobDefinition, SyncSchedulerConfig, SyncResult } from './types';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 import { openPricesService } from './openPricesService';
 import { syncLoggerService } from './syncLogger';
@@ -92,7 +87,9 @@ async function syncOpenFoodFactsProducts(): Promise<SyncResult> {
   aggregate.endTime = new Date();
   aggregate.duration = aggregate.endTime.getTime() - aggregate.startTime.getTime();
 
-  syncLoggerService.logMessage('sync-off-products', 'info',
+  syncLoggerService.logMessage(
+    'sync-off-products',
+    'info',
     `Completed: ${aggregate.itemsAdded} added, ${aggregate.itemsUpdated} updated, ${aggregate.errors.length} errors`
   );
 
@@ -108,13 +105,17 @@ async function syncOpenPrices(): Promise<SyncResult> {
   try {
     const result = await openPricesService.fullSync();
 
-    syncLoggerService.logMessage('sync-op-prices', 'info',
+    syncLoggerService.logMessage(
+      'sync-op-prices',
+      'info',
       `Completed: ${result.itemsAdded} prices added, ${result.errors.length} errors`
     );
 
     return result;
   } catch (error) {
-    syncLoggerService.logMessage('sync-op-prices', 'error', 
+    syncLoggerService.logMessage(
+      'sync-op-prices',
+      'error',
       `Failed: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
 
@@ -153,7 +154,9 @@ async function cleanupOldPrices(): Promise<SyncResult> {
     duration: 0,
   };
 
-  syncLoggerService.logMessage('cleanup-old-prices', 'info', 
+  syncLoggerService.logMessage(
+    'cleanup-old-prices',
+    'info',
     `Completed: ${removed} old logs removed`
   );
 
@@ -198,7 +201,7 @@ export function getScheduledJobs(): ScheduledJob[] {
     }
 
     // Initialiser avec les jobs par défaut
-    const defaultJobs: ScheduledJob[] = SYNC_JOBS.map(def => ({
+    const defaultJobs: ScheduledJob[] = SYNC_JOBS.map((def) => ({
       id: def.id,
       name: def.name,
       schedule: def.schedule,
@@ -228,12 +231,9 @@ function saveScheduledJobs(jobs: ScheduledJob[]): void {
 /**
  * Met à jour un job planifié
  */
-export function updateScheduledJob(
-  jobId: string,
-  updates: Partial<ScheduledJob>
-): void {
+export function updateScheduledJob(jobId: string, updates: Partial<ScheduledJob>): void {
   const jobs = getScheduledJobs();
-  const index = jobs.findIndex(job => job.id === jobId);
+  const index = jobs.findIndex((job) => job.id === jobId);
 
   if (index !== -1) {
     jobs[index] = {
@@ -255,14 +255,14 @@ export function toggleJob(jobId: string, enabled: boolean): void {
  * Exécute un job manuellement
  */
 export async function runJobManually(jobId: string): Promise<SyncResult> {
-  const job = getScheduledJobs().find(j => j.id === jobId);
-  
+  const job = getScheduledJobs().find((j) => j.id === jobId);
+
   if (!job) {
     throw new Error(`Job ${jobId} not found`);
   }
 
   // Trouver le handler
-  const jobDef = SYNC_JOBS.find(def => def.id === jobId);
+  const jobDef = SYNC_JOBS.find((def) => def.id === jobId);
   if (!jobDef) {
     throw new Error(`Job definition for ${jobId} not found`);
   }
@@ -285,18 +285,20 @@ export async function runJobManually(jobId: string): Promise<SyncResult> {
     for (let attempt = 0; attempt <= config.maxRetries; attempt++) {
       try {
         result = await jobDef.handler();
-        
+
         if (result.success) {
           break;
         }
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Unknown error');
-        
+
         if (attempt < config.maxRetries) {
-          syncLoggerService.logMessage(jobId, 'warn', 
+          syncLoggerService.logMessage(
+            jobId,
+            'warn',
             `Attempt ${attempt + 1} failed, retrying in ${config.retryDelayMs}ms...`
           );
-          await new Promise(resolve => setTimeout(resolve, config.retryDelayMs));
+          await new Promise((resolve) => setTimeout(resolve, config.retryDelayMs));
         }
       }
     }
@@ -355,7 +357,7 @@ export function getNextRunTime(_schedule: string): Date | null {
  * Réinitialise tous les jobs
  */
 export function resetAllJobs(): void {
-  const defaultJobs: ScheduledJob[] = SYNC_JOBS.map(def => ({
+  const defaultJobs: ScheduledJob[] = SYNC_JOBS.map((def) => ({
     id: def.id,
     name: def.name,
     schedule: def.schedule,

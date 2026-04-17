@@ -1,23 +1,21 @@
 // src/components/ScanResultCard.tsx
-import React from 'react'
-import type { PublicProduct } from '../services/eanPublicCatalog'
+import React from 'react';
+import type { PublicProduct } from '../services/eanPublicCatalog';
 
 type ScanResultCardProps = {
-  product: PublicProduct
-}
+  product: PublicProduct;
+};
 
 export default function ScanResultCard({ product }: ScanResultCardProps) {
-  const uniqueStores = new Set(product.observedPrices?.map((p) => p.store) || [])
-  const latestPrice = product.observedPrices?.[product.observedPrices.length - 1]
+  const uniqueStores = new Set(product.observedPrices?.map((p) => p.store) || []);
+  const latestPrice = product.observedPrices?.[product.observedPrices.length - 1];
 
   return (
     <div className="bg-white/[0.08] backdrop-blur-[14px] border border-white/[0.22] rounded-xl p-6 space-y-4">
       <div>
         <h3 className="text-xl font-semibold text-white mb-2">{product.name}</h3>
         <div className="flex items-center gap-2 text-sm text-white/60">
-          <span className="px-2 py-1 bg-blue-500/20 rounded text-blue-300">
-            {product.category}
-          </span>
+          <span className="px-2 py-1 bg-blue-500/20 rounded text-blue-300">{product.category}</span>
         </div>
       </div>
 
@@ -50,7 +48,9 @@ export default function ScanResultCard({ product }: ScanResultCardProps) {
       {latestPrice && (
         <div className="pt-4 border-t border-white/[0.12]">
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-blue-400">{latestPrice.price.toFixed(2)} €</span>
+            <span className="text-2xl font-bold text-blue-400">
+              {latestPrice.price.toFixed(2)} €
+            </span>
             <span className="text-sm text-white/60">
               chez {latestPrice.store} ({latestPrice.territory})
             </span>
@@ -61,5 +61,5 @@ export default function ScanResultCard({ product }: ScanResultCardProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

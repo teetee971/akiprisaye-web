@@ -18,7 +18,8 @@ export const ruleHighVariance: TipRule = {
     return [
       {
         id: 'tip.highVariance',
-        message: 'Écart important entre enseignes : vous pouvez économiser en changeant de magasin.',
+        message:
+          'Écart important entre enseignes : vous pouvez économiser en changeant de magasin.',
         severity: 'info',
         confidence: Math.min(1, spread * 2),
         tags: ['écart', 'enseignes'],

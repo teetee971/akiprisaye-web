@@ -80,11 +80,15 @@ export default function SyncHistory({ logs, onRefresh }: SyncHistoryProps) {
                         log.status === 'completed'
                           ? 'bg-green-100 text-green-800'
                           : log.status === 'failed'
-                          ? 'bg-red-100 text-red-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
                       }`}
                     >
-                      {log.status === 'completed' ? 'Terminé' : log.status === 'failed' ? 'Échec' : 'En cours'}
+                      {log.status === 'completed'
+                        ? 'Terminé'
+                        : log.status === 'failed'
+                          ? 'Échec'
+                          : 'En cours'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">

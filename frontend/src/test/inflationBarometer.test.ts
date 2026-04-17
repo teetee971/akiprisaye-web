@@ -15,10 +15,7 @@ import { readFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const DATA_DIR = resolve(
-  fileURLToPath(import.meta.url),
-  '../../../public/data/observatoire',
-);
+const DATA_DIR = resolve(fileURLToPath(import.meta.url), '../../../public/data/observatoire');
 
 const BASKET_PRODUCTS = [
   'Lait demi-écrémé UHT 1L',
@@ -110,7 +107,7 @@ describe('InflationBarometerWidget — basket computation', () => {
   it('all 6 basket products present in Hexagone Mar 2026', () => {
     const snap = loadSnapshot('hexagone_2026-03.json');
     const foundProducts = new Set(
-      snap.donnees.map((e) => e.produit).filter((p) => BASKET_PRODUCTS.includes(p)),
+      snap.donnees.map((e) => e.produit).filter((p) => BASKET_PRODUCTS.includes(p))
     );
     expect(foundProducts.size).toBe(6);
   });
@@ -118,7 +115,7 @@ describe('InflationBarometerWidget — basket computation', () => {
   it('all 6 basket products present in Guadeloupe Mar 2026', () => {
     const snap = loadSnapshot('guadeloupe_2026-03.json');
     const foundProducts = new Set(
-      snap.donnees.map((e) => e.produit).filter((p) => BASKET_PRODUCTS.includes(p)),
+      snap.donnees.map((e) => e.produit).filter((p) => BASKET_PRODUCTS.includes(p))
     );
     expect(foundProducts.size).toBe(6);
   });

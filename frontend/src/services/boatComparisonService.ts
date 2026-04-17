@@ -1,7 +1,6 @@
- 
 /**
  * Boat/Ferry Comparison Service v1.0.0
- * 
+ *
  * Implements citizen boat/ferry price comparison with:
  * - Read-only data access
  * - Route-based boat matching
@@ -83,10 +82,7 @@ export function compareBoatPricesByRoute(
 /**
  * Filter boat prices by route
  */
-export function filterPricesByRoute(
-  prices: BoatPricePoint[],
-  route: BoatRoute
-): BoatPricePoint[] {
+export function filterPricesByRoute(prices: BoatPricePoint[], route: BoatRoute): BoatPricePoint[] {
   return prices.filter(
     (price) =>
       price.route.origin.code === route.origin.code &&
@@ -111,7 +107,7 @@ export function calculateBoatRouteAggregation(
   const minPrice = Math.min(...passengerPrices);
   const maxPrice = Math.max(...passengerPrices);
   const averagePrice = passengerPrices.reduce((sum, p) => sum + p, 0) / passengerPrices.length;
-  
+
   // Calculate median
   const sortedPrices = [...passengerPrices].sort((a, b) => a - b);
   const medianPrice =
@@ -135,16 +131,19 @@ export function calculateBoatRouteAggregation(
   let vehiclePricing;
   if (vehiclePrices.length > 0) {
     vehiclePricing = {
-      carAverage: Math.round((vehiclePrices.reduce((sum, p) => sum + p, 0) / vehiclePrices.length) * 100) / 100,
+      carAverage:
+        Math.round((vehiclePrices.reduce((sum, p) => sum + p, 0) / vehiclePrices.length) * 100) /
+        100,
       carMin: Math.round(Math.min(...vehiclePrices) * 100) / 100,
       carMax: Math.round(Math.max(...vehiclePrices) * 100) / 100,
     };
   }
 
   // Analyze frequency
-  const dailyServices = prices.filter((p) => 
-    p.schedule.frequency.toLowerCase().includes('daily') || 
-    p.schedule.frequency.toLowerCase().includes('quotidien')
+  const dailyServices = prices.filter(
+    (p) =>
+      p.schedule.frequency.toLowerCase().includes('daily') ||
+      p.schedule.frequency.toLowerCase().includes('quotidien')
   ).length;
 
   const weeklyServiceCounts = prices.map((p) => {
@@ -154,7 +153,8 @@ export function calculateBoatRouteAggregation(
     return match ? parseInt(match[1]) : 1;
   });
 
-  const averageDailyFrequency = weeklyServiceCounts.reduce((sum, count) => sum + count, 0) / 7 / operators.size;
+  const averageDailyFrequency =
+    weeklyServiceCounts.reduce((sum, count) => sum + count, 0) / 7 / operators.size;
 
   return {
     route,
@@ -185,16 +185,15 @@ export function calculateBoatRouteAggregation(
 /**
  * Rank boat prices
  */
-export function rankBoatPrices(
-  prices: BoatPricePoint[],
-  averagePrice: number
-): BoatPriceRanking[] {
+export function rankBoatPrices(prices: BoatPricePoint[], averagePrice: number): BoatPriceRanking[] {
   if (prices.length === 0) {
     return [];
   }
 
   // Sort by passenger price ascending
-  const sortedPrices = [...prices].sort((a, b) => a.pricing.passengerPrice - b.pricing.passengerPrice);
+  const sortedPrices = [...prices].sort(
+    (a, b) => a.pricing.passengerPrice - b.pricing.passengerPrice
+  );
   const cheapestPrice = sortedPrices[0].pricing.passengerPrice;
 
   return sortedPrices.map((price, index) => {
@@ -213,7 +212,8 @@ export function rankBoatPrices(
     } else if (index === sortedPrices.length - 1) {
       priceCategory = 'most_expensive';
     } else if (
-      Math.abs(percentageDifferenceFromAverage) <= BOAT_COMPARISON_CONFIG.AVERAGE_PRICE_TOLERANCE_PERCENT
+      Math.abs(percentageDifferenceFromAverage) <=
+      BOAT_COMPARISON_CONFIG.AVERAGE_PRICE_TOLERANCE_PERCENT
     ) {
       priceCategory = 'average';
     } else if (price.pricing.passengerPrice < averagePrice) {
@@ -364,12 +364,14 @@ export function generateBoatMetadata(prices: BoatPricePoint[]): BoatComparisonMe
     sourceBucket.operators.add(price.operator);
   });
 
-  const sourceSummaries: BoatSourceSummary[] = Array.from(sources.entries()).map(([source, data]) => ({
-    source: source as any,
-    observationCount: data.count,
-    operatorCount: data.operators.size,
-    percentage: Math.round((data.count / prices.length) * 100 * 100) / 100,
-  }));
+  const sourceSummaries: BoatSourceSummary[] = Array.from(sources.entries()).map(
+    ([source, data]) => ({
+      source: source as any,
+      observationCount: data.count,
+      operatorCount: data.operators.size,
+      percentage: Math.round((data.count / prices.length) * 100 * 100) / 100,
+    })
+  );
 
   const observationDates = prices.map((p) => new Date(p.observationDate).getTime());
   const oldestObservation = new Date(Math.min(...observationDates)).toISOString();
@@ -393,7 +395,9 @@ export function generateBoatMetadata(prices: BoatPricePoint[]): BoatComparisonMe
   const oldestAgeMs = now - Math.min(...observationDates);
   const oldestAgeDays = oldestAgeMs / (1000 * 60 * 60 * 24);
   if (oldestAgeDays > BOAT_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS) {
-    warnings.push(`Certaines données datent de plus de ${BOAT_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS} jours`);
+    warnings.push(
+      `Certaines données datent de plus de ${BOAT_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS} jours`
+    );
   }
 
   return {
@@ -410,7 +414,7 @@ export function generateBoatMetadata(prices: BoatPricePoint[]): BoatComparisonMe
     warnings: warnings.length > 0 ? warnings : undefined,
     limitations,
     disclaimer:
-      'A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts, pas d\'affiliation opaque.',
+      "A KI PRI SA YÉ observe les prix, ne vend pas. Transparence sur les écarts, pas d'affiliation opaque.",
   };
 }
 
@@ -432,11 +436,15 @@ export function filterBoatPrices(
   }
 
   if (filter.destinationTerritory) {
-    filtered = filtered.filter((p) => p.route.destination.territory === filter.destinationTerritory);
+    filtered = filtered.filter(
+      (p) => p.route.destination.territory === filter.destinationTerritory
+    );
   }
 
   if (filter.operator) {
-    filtered = filtered.filter((p) => p.operator.toLowerCase().includes(filter.operator!.toLowerCase()));
+    filtered = filtered.filter((p) =>
+      p.operator.toLowerCase().includes(filter.operator!.toLowerCase())
+    );
   }
 
   if (filter.serviceClass) {
@@ -464,9 +472,10 @@ export function filterBoatPrices(
   }
 
   if (filter.dailyService) {
-    filtered = filtered.filter((p) => 
-      p.schedule.frequency.toLowerCase().includes('daily') || 
-      p.schedule.frequency.toLowerCase().includes('quotidien')
+    filtered = filtered.filter(
+      (p) =>
+        p.schedule.frequency.toLowerCase().includes('daily') ||
+        p.schedule.frequency.toLowerCase().includes('quotidien')
     );
   }
 
@@ -478,8 +487,8 @@ export function filterBoatPrices(
  */
 export function getCheapestBoat(prices: BoatPricePoint[]): BoatPricePoint | null {
   if (prices.length === 0) return null;
-  return prices.reduce((min, price) => 
-    (price.pricing.passengerPrice < min.pricing.passengerPrice ? price : min)
+  return prices.reduce((min, price) =>
+    price.pricing.passengerPrice < min.pricing.passengerPrice ? price : min
   );
 }
 
@@ -488,8 +497,8 @@ export function getCheapestBoat(prices: BoatPricePoint[]): BoatPricePoint | null
  */
 export function getMostExpensiveBoat(prices: BoatPricePoint[]): BoatPricePoint | null {
   if (prices.length === 0) return null;
-  return prices.reduce((max, price) => 
-    (price.pricing.passengerPrice > max.pricing.passengerPrice ? price : max)
+  return prices.reduce((max, price) =>
+    price.pricing.passengerPrice > max.pricing.passengerPrice ? price : max
   );
 }
 

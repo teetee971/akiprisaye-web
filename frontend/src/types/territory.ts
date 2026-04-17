@@ -39,8 +39,5 @@ export const ALL_TERRITORIES: readonly TerritoryCode[] = [
  * Type guard sécurisé
  */
 export function isTerritoryCode(value: unknown): value is TerritoryCode {
-  return (
-    typeof value === 'string' &&
-    (ALL_TERRITORIES as readonly string[]).includes(value)
-  );
+  return typeof value === 'string' && (ALL_TERRITORIES as readonly string[]).includes(value);
 }

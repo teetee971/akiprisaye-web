@@ -10,33 +10,39 @@
 
 /* ── Types ──────────────────────────────────────────────────────────────── */
 
-export type UserRole = "guest" | "citoyen" | "observateur" | "creator" | "admin";
+export type UserRole = 'guest' | 'citoyen' | 'observateur' | 'creator' | 'admin';
 
 export type Permission =
-  | "read:creator-space"
-  | "read:admin-space"
-  | "write:prices"
-  | "write:alerts"
-  | "read:analytics";
+  | 'read:creator-space'
+  | 'read:admin-space'
+  | 'write:prices'
+  | 'write:alerts'
+  | 'read:analytics';
 
 /* ── Role hierarchy ─────────────────────────────────────────────────────── */
 
 const ROLE_HIERARCHY: Record<UserRole, number> = {
-  guest:       0,
-  citoyen:     1,
+  guest: 0,
+  citoyen: 1,
   observateur: 2,
-  creator:     3,
-  admin:       4,
+  creator: 3,
+  admin: 4,
 };
 
 /* ── Permission matrix ──────────────────────────────────────────────────── */
 
 const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
-  guest:       [],
-  citoyen:     ["write:prices", "write:alerts"],
-  observateur: ["write:prices", "write:alerts"],
-  creator:     ["write:prices", "write:alerts", "read:creator-space", "read:analytics"],
-  admin:       ["write:prices", "write:alerts", "read:creator-space", "read:admin-space", "read:analytics"],
+  guest: [],
+  citoyen: ['write:prices', 'write:alerts'],
+  observateur: ['write:prices', 'write:alerts'],
+  creator: ['write:prices', 'write:alerts', 'read:creator-space', 'read:analytics'],
+  admin: [
+    'write:prices',
+    'write:alerts',
+    'read:creator-space',
+    'read:admin-space',
+    'read:analytics',
+  ],
 };
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
@@ -59,14 +65,14 @@ export function hasPermission(userRole: UserRole, permission: Permission): boole
  * Returns true when the user is a creator or admin (both can access creator space).
  */
 export function isCreator(userRole: UserRole): boolean {
-  return userRole === "creator" || userRole === "admin";
+  return userRole === 'creator' || userRole === 'admin';
 }
 
 /**
  * Returns true when the user has admin-level privileges.
  */
 export function isAdmin(userRole: UserRole): boolean {
-  return userRole === "admin";
+  return userRole === 'admin';
 }
 
 /**
@@ -82,13 +88,13 @@ export function isValidRole(role: string): role is UserRole {
  */
 export function roleFromClaims(
   claims: Record<string, unknown>,
-  defaultRole: UserRole = "citoyen",
+  defaultRole: UserRole = 'citoyen'
 ): UserRole {
   const claimRole = claims?.role;
-  if (typeof claimRole === "string" && isValidRole(claimRole)) {
+  if (typeof claimRole === 'string' && isValidRole(claimRole)) {
     return claimRole;
   }
-  if (claims?.admin === true) return "admin";
-  if (claims?.creator === true) return "creator";
+  if (claims?.admin === true) return 'admin';
+  if (claims?.creator === true) return 'creator';
   return defaultRole;
 }

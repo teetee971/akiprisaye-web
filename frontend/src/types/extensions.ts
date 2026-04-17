@@ -1,19 +1,19 @@
 /**
  * Core Type Definitions for Future Extensions
- * 
+ *
  * Version: v1.0.3
  * Purpose: Type-safe interfaces for platform extensibility
- * 
+ *
  * These types prepare the codebase for future features
  * WITHOUT activating any new functionality.
- * 
+ *
  * @module coreTypes
  */
 
 /**
  * Territory code following ISO 3166-2:FR
  */
-export type TerritoryCode = 
+export type TerritoryCode =
   | 'FR' // France métropolitaine
   | 'GP' // Guadeloupe
   | 'MQ' // Martinique

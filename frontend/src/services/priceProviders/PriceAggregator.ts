@@ -12,7 +12,10 @@ const normalizeKey = (value: string): string =>
     .trim();
 
 const getProductKey = (product: ProductPrice): string =>
-  [product.name, product.brand].filter((v): v is string => v !== undefined).map(normalizeKey).join('|');
+  [product.name, product.brand]
+    .filter((v): v is string => v !== undefined)
+    .map(normalizeKey)
+    .join('|');
 
 const confidenceRank: Record<ProductPrice['confidence'], number> = {
   high: 3,
@@ -38,11 +41,11 @@ export class PriceAggregator {
 
   async search(query: string): Promise<ProductPrice[]> {
     const results = await Promise.allSettled(
-      this.providers.map((provider) => provider.search(query)),
+      this.providers.map((provider) => provider.search(query))
     );
 
     const fulfilled = results.filter(
-      (result): result is PromiseFulfilledResult<ProductPrice[]> => result.status === 'fulfilled',
+      (result): result is PromiseFulfilledResult<ProductPrice[]> => result.status === 'fulfilled'
     );
 
     if (fulfilled.length === 0) {
@@ -51,13 +54,15 @@ export class PriceAggregator {
 
     const merged = new Map<string, ProductPrice>();
 
-    fulfilled.flatMap((result) => result.value).forEach((product) => {
-      const key = getProductKey(product);
-      const existing = merged.get(key);
-      if (!existing || shouldReplace(existing, product)) {
-        merged.set(key, product);
-      }
-    });
+    fulfilled
+      .flatMap((result) => result.value)
+      .forEach((product) => {
+        const key = getProductKey(product);
+        const existing = merged.get(key);
+        if (!existing || shouldReplace(existing, product)) {
+          merged.set(key, product);
+        }
+      });
 
     return Array.from(merged.values());
   }

@@ -1,10 +1,9 @@
- 
 /**
  * OCR Scanner Component
- * 
+ *
  * Universal OCR scanner for documents with intelligent parsing.
  * Uses DataUploadZone for file input and displays extracted results.
- * 
+ *
  * Features:
  * - Multiple document type support
  * - Real-time text extraction
@@ -82,7 +81,7 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
       invoice: 'Facture',
       list: 'Liste',
       receipt: 'Ticket de caisse',
-      id_card: 'Carte d\'identité',
+      id_card: "Carte d'identité",
       generic: 'Document générique',
     };
     return labels[type];
@@ -116,12 +115,8 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
               <FileText className="w-12 h-12 text-blue-400" />
             </div>
             <div className="text-center">
-              <p className="text-lg font-medium text-gray-200">
-                Extraction du texte en cours...
-              </p>
-              <p className="text-sm text-gray-400 mt-1">
-                Cela peut prendre quelques secondes
-              </p>
+              <p className="text-lg font-medium text-gray-200">Extraction du texte en cours...</p>
+              <p className="text-sm text-gray-400 mt-1">Cela peut prendre quelques secondes</p>
               {progress > 0 && (
                 <div className="mt-4 w-full max-w-xs">
                   <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -144,9 +139,7 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-medium text-red-300">
-                Erreur d'extraction
-              </p>
+              <p className="text-sm font-medium text-red-300">Erreur d'extraction</p>
               <p className="text-xs text-red-200 mt-1">{ocrError}</p>
             </div>
           </div>
@@ -160,9 +153,7 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-green-400" />
-              <h3 className="text-lg font-semibold text-gray-100">
-                Texte extrait
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-100">Texte extrait</h3>
               <span className="text-xs text-gray-400">
                 (Confiance : {result.confidence.toFixed(1)}%)
               </span>
@@ -225,7 +216,8 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({
           {result.confidence < 70 && (
             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
               <p className="text-xs text-yellow-200">
-                ⚠️ La qualité de l'extraction est moyenne. Vérifiez le texte extrait et corrigez si nécessaire.
+                ⚠️ La qualité de l'extraction est moyenne. Vérifiez le texte extrait et corrigez si
+                nécessaire.
               </p>
             </div>
           )}

@@ -46,20 +46,15 @@ describe('RouteMapVisualization', () => {
   };
 
   it('should render loading state initially', () => {
-    render(
-      <RouteMapVisualization 
-        route={mockRoute} 
-        userPosition={mockUserPosition} 
-      />
-    );
+    render(<RouteMapVisualization route={mockRoute} userPosition={mockUserPosition} />);
 
     expect(screen.getByText('Chargement de la carte...')).toBeInTheDocument();
   });
 
   it('should apply custom className', () => {
     const { container } = render(
-      <RouteMapVisualization 
-        route={mockRoute} 
+      <RouteMapVisualization
+        route={mockRoute}
         userPosition={mockUserPosition}
         className="custom-class"
       />

@@ -97,7 +97,7 @@ function renderWithRole(element: JSX.Element, initialPath = '/protected') {
         <Route path="/" element={<div data-testid="home-page">Accueil</div>} />
         <Route path="/login" element={<div data-testid="login-page">Connexion</div>} />
       </Routes>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 }
 
@@ -114,7 +114,7 @@ describe('RequireRole', () => {
     renderWithRole(
       <RequireRole role="creator">
         <div data-testid="protected-content">Contenu protégé</div>
-      </RequireRole>,
+      </RequireRole>
     );
 
     expect(screen.getByTestId('auth-loading-spinner')).toBeTruthy();
@@ -128,7 +128,7 @@ describe('RequireRole', () => {
     renderWithRole(
       <RequireRole role="creator">
         <div data-testid="protected-content">Contenu protégé</div>
-      </RequireRole>,
+      </RequireRole>
     );
 
     // Must NOT redirect prematurely — show spinner instead
@@ -143,7 +143,7 @@ describe('RequireRole', () => {
     renderWithRole(
       <RequireRole role="creator">
         <div data-testid="protected-content">Contenu protégé</div>
-      </RequireRole>,
+      </RequireRole>
     );
 
     expect(screen.getByTestId('login-page')).toBeTruthy();
@@ -162,7 +162,7 @@ describe('RequireRole', () => {
     renderWithRole(
       <RequireRole role="creator">
         <div data-testid="protected-content">Contenu protégé</div>
-      </RequireRole>,
+      </RequireRole>
     );
 
     expect(screen.getByTestId('home-page')).toBeTruthy();
@@ -181,7 +181,7 @@ describe('RequireRole', () => {
     renderWithRole(
       <RequireRole role="creator">
         <div data-testid="protected-content">Contenu protégé</div>
-      </RequireRole>,
+      </RequireRole>
     );
 
     expect(screen.getByTestId('protected-content')).toBeTruthy();
@@ -200,7 +200,7 @@ describe('RequireRole', () => {
     renderWithRole(
       <RequireRole role="creator">
         <div data-testid="protected-content">Contenu protégé</div>
-      </RequireRole>,
+      </RequireRole>
     );
 
     expect(screen.getByTestId('protected-content')).toBeTruthy();
@@ -228,7 +228,7 @@ describe('RequireRole', () => {
           />
           <Route path="/login" element={<div data-testid="login-page">Connexion</div>} />
         </Routes>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     expect(screen.getByTestId('login-page')).toBeTruthy();
@@ -254,7 +254,7 @@ describe('RequireCreator', () => {
     renderWithRole(
       <RequireCreator>
         <div data-testid="creator-content">Espace créateur</div>
-      </RequireCreator>,
+      </RequireCreator>
     );
 
     expect(screen.getByTestId('creator-content')).toBeTruthy();
@@ -272,7 +272,7 @@ describe('RequireCreator', () => {
     renderWithRole(
       <RequireCreator>
         <div data-testid="creator-content">Espace créateur</div>
-      </RequireCreator>,
+      </RequireCreator>
     );
 
     expect(screen.getByTestId('creator-content')).toBeTruthy();
@@ -290,7 +290,7 @@ describe('RequireCreator', () => {
     renderWithRole(
       <RequireCreator>
         <div data-testid="creator-content">Espace créateur</div>
-      </RequireCreator>,
+      </RequireCreator>
     );
 
     expect(screen.getByTestId('home-page')).toBeTruthy();
@@ -303,7 +303,7 @@ describe('RequireCreator', () => {
     renderWithRole(
       <RequireCreator>
         <div data-testid="creator-content">Espace créateur</div>
-      </RequireCreator>,
+      </RequireCreator>
     );
 
     expect(screen.getByTestId('login-page')).toBeTruthy();
@@ -330,7 +330,7 @@ describe('RequireAdmin', () => {
     renderWithRole(
       <RequireAdmin>
         <div data-testid="admin-content">Espace admin</div>
-      </RequireAdmin>,
+      </RequireAdmin>
     );
 
     expect(screen.getByTestId('admin-content')).toBeTruthy();
@@ -348,7 +348,7 @@ describe('RequireAdmin', () => {
     renderWithRole(
       <RequireAdmin>
         <div data-testid="admin-content">Espace admin</div>
-      </RequireAdmin>,
+      </RequireAdmin>
     );
 
     expect(screen.getByTestId('home-page')).toBeTruthy();
@@ -367,7 +367,7 @@ describe('RequireAdmin', () => {
     renderWithRole(
       <RequireAdmin>
         <div data-testid="admin-content">Espace admin</div>
-      </RequireAdmin>,
+      </RequireAdmin>
     );
 
     expect(screen.getByTestId('home-page')).toBeTruthy();
@@ -380,7 +380,7 @@ describe('RequireAdmin', () => {
     renderWithRole(
       <RequireAdmin>
         <div data-testid="admin-content">Espace admin</div>
-      </RequireAdmin>,
+      </RequireAdmin>
     );
 
     expect(screen.getByTestId('auth-loading-spinner')).toBeTruthy();

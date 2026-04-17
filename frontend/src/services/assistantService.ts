@@ -1,9 +1,8 @@
- 
 /**
  * Assistant Service - A KI PRI SA YÉ v1.6.0
  * Chatbot assistant lecture seule
  * Réponses basées sur: FAQ, Méthodologies, Données publiques observées
- * 
+ *
  * Contraintes:
  * - Sources toujours visibles
  * - Aucun conseil (achat, médical, financier, juridique)
@@ -31,12 +30,14 @@ export interface AssistantResponse {
 /**
  * Analyze user query and determine intent
  */
-const analyzeIntent = (query: string): {
+const analyzeIntent = (
+  query: string
+): {
   category: 'faq' | 'pricing' | 'data' | 'technical' | 'institutional' | 'general';
   keywords: string[];
 } => {
   const lowerQuery = query.toLowerCase();
-  
+
   // Pricing related
   if (
     lowerQuery.includes('prix') ||
@@ -52,7 +53,7 @@ const analyzeIntent = (query: string): {
   ) {
     return { category: 'pricing', keywords: ['prix', 'tarif', 'abonnement'] };
   }
-  
+
   // Data related
   if (
     lowerQuery.includes('données') ||
@@ -63,7 +64,7 @@ const analyzeIntent = (query: string): {
   ) {
     return { category: 'data', keywords: ['données', 'source', 'export'] };
   }
-  
+
   // Technical
   if (
     lowerQuery.includes('mobile') ||
@@ -74,7 +75,7 @@ const analyzeIntent = (query: string): {
   ) {
     return { category: 'technical', keywords: ['technique', 'mobile', 'support'] };
   }
-  
+
   // Institutional
   if (
     lowerQuery.includes('institution') ||
@@ -85,7 +86,7 @@ const analyzeIntent = (query: string): {
   ) {
     return { category: 'institutional', keywords: ['institution', 'licence'] };
   }
-  
+
   return { category: 'general', keywords: [] };
 };
 
@@ -95,23 +96,23 @@ const analyzeIntent = (query: string): {
 export const generateAssistantResponse = (query: string): AssistantResponse => {
   const intent = analyzeIntent(query);
   const relatedFAQ = searchFAQ(query).slice(0, 3); // Top 3 related FAQ
-  
+
   // Default disclaimers for sensitive topics
   const getDisclaimer = (): string | undefined => {
     const lowerQuery = query.toLowerCase();
-    
+
     if (lowerQuery.includes('acheter') || lowerQuery.includes('recommand')) {
-      return '⚠️ A KI PRI SA YÉ ne fournit aucune recommandation d\'achat. Le service est en lecture seule.';
+      return "⚠️ A KI PRI SA YÉ ne fournit aucune recommandation d'achat. Le service est en lecture seule.";
     }
-    
+
     if (lowerQuery.includes('santé') || lowerQuery.includes('médical')) {
       return '⚠️ A KI PRI SA YÉ ne fournit aucun conseil médical. Consultez un professionnel de santé.';
     }
-    
+
     if (lowerQuery.includes('juridique') || lowerQuery.includes('loi')) {
       return '⚠️ A KI PRI SA YÉ ne fournit aucun conseil juridique. Consultez un avocat.';
     }
-    
+
     if (
       lowerQuery.includes('investir') ||
       lowerQuery.includes('financier') ||
@@ -121,19 +122,19 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
     ) {
       return '⚠️ A KI PRI SA YÉ ne fournit aucun conseil financier. Consultez un conseiller agréé.';
     }
-    
+
     return undefined;
   };
-  
+
   // Generate response based on intent and FAQ matches
   let message = '';
   const sources: string[] = ['FAQ A KI PRI SA YÉ'];
-  
+
   if (relatedFAQ.length > 0) {
     // Use FAQ content
     const topFAQ = relatedFAQ[0];
     message = topFAQ.answer;
-    
+
     if (relatedFAQ.length > 1) {
       message += `\n\nVous pourriez également être intéressé par:\n`;
       relatedFAQ.slice(1).forEach((faq, idx) => {
@@ -144,7 +145,8 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
     // General fallback response
     switch (intent.category) {
       case 'pricing':
-        message = `A KI PRI SA YÉ propose plusieurs niveaux d'accès:\n\n` +
+        message =
+          `A KI PRI SA YÉ propose plusieurs niveaux d'accès:\n\n` +
           `• **Gratuit** : Comparateurs de base, lecture seule\n` +
           `• **Citoyen+** (2,99€/mois) : Alertes, historique étendu, exports basiques\n` +
           `• **Pro** (9,99€/mois) : Agrégations avancées, multi-territoires\n` +
@@ -155,9 +157,10 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
           `sans commission active par défaut. Consultez la page Tarifs pour plus d'informations.`;
         sources.push('Grille tarifaire v1.6.1');
         break;
-        
+
       case 'data':
-        message = `Toutes les données proviennent de sources officielles publiques :\n\n` +
+        message =
+          `Toutes les données proviennent de sources officielles publiques :\n\n` +
           `• INSEE (Institut national de la statistique)\n` +
           `• OPMR (Observatoire des prix et des marges)\n` +
           `• DGCCRF (Direction générale de la concurrence)\n` +
@@ -165,16 +168,18 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
           `Les données sont observées, datées et sourcées. Aucune estimation ou simulation.`;
         sources.push('Méthodologie A KI PRI SA YÉ', 'INSEE', 'OPMR', 'DGCCRF');
         break;
-        
+
       case 'technical':
-        message = `Le service A KI PRI SA YÉ est optimisé mobile-first et fonctionne sur tous les appareils.\n\n` +
+        message =
+          `Le service A KI PRI SA YÉ est optimisé mobile-first et fonctionne sur tous les appareils.\n\n` +
           `En cas de problème technique, contactez-nous via la page Contact. ` +
           `Un support technique dédié est disponible pour les partenaires institutionnels.`;
         sources.push('Support technique');
         break;
-        
+
       case 'institutional':
-        message = `Les licences institutionnelles sont destinées aux collectivités, universités, centres de recherche et administrations.\n\n` +
+        message =
+          `Les licences institutionnelles sont destinées aux collectivités, universités, centres de recherche et administrations.\n\n` +
           `Elles donnent accès à:\n` +
           `• API open-data\n` +
           `• Exports normalisés (INSEE / Eurostat)\n` +
@@ -183,9 +188,10 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
           `Contactez-nous pour établir une convention adaptée à vos besoins.`;
         sources.push('Licences institutionnelles', 'Contact');
         break;
-        
+
       default:
-        message = `Je suis l'assistant A KI PRI SA YÉ. Je peux vous aider avec des questions sur:\n\n` +
+        message =
+          `Je suis l'assistant A KI PRI SA YÉ. Je peux vous aider avec des questions sur:\n\n` +
           `• Le service et son fonctionnement\n` +
           `• Les tarifs et abonnements\n` +
           `• Les données et leur provenance\n` +
@@ -195,14 +201,14 @@ export const generateAssistantResponse = (query: string): AssistantResponse => {
         sources.push('FAQ complète');
     }
   }
-  
+
   const disclaimer = getDisclaimer();
-  
+
   return {
     message,
     sources,
     relatedFAQ,
-    disclaimer
+    disclaimer,
   };
 };
 
@@ -216,12 +222,12 @@ export const createAssistantMessage = (
   return {
     id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     role: 'assistant',
-    content: response.disclaimer 
+    content: response.disclaimer
       ? `${response.message}\n\n${response.disclaimer}`
       : response.message,
     timestamp: new Date(),
     sources: response.sources,
-    relatedFAQ: response.relatedFAQ
+    relatedFAQ: response.relatedFAQ,
   };
 };
 
@@ -233,7 +239,7 @@ export const createUserMessage = (content: string): AssistantMessage => {
     id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
     role: 'user',
     content,
-    timestamp: new Date()
+    timestamp: new Date(),
   };
 };
 
@@ -241,22 +247,15 @@ export const createUserMessage = (content: string): AssistantMessage => {
  * Check if query contains prohibited content
  */
 export const isProhibitedQuery = (query: string): boolean => {
-  const prohibited = [
-    'hack',
-    'exploit',
-    'crack',
-    'pirate',
-    'illegal',
-    'fraude'
-  ];
-  
+  const prohibited = ['hack', 'exploit', 'crack', 'pirate', 'illegal', 'fraude'];
+
   const lowerQuery = query.toLowerCase();
-  return prohibited.some(term => lowerQuery.includes(term));
+  return prohibited.some((term) => lowerQuery.includes(term));
 };
 
 export default {
   generateAssistantResponse,
   createAssistantMessage,
   createUserMessage,
-  isProhibitedQuery
+  isProhibitedQuery,
 };

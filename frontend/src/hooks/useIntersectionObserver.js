@@ -1,20 +1,16 @@
- 
 import { useEffect, useRef, useState } from 'react';
 
 /**
  * Custom hook for Intersection Observer
  * Detects when an element enters the viewport
- * 
+ *
  * @param {Object} options - Intersection Observer options
  * @param {number} options.threshold - Visibility threshold (0-1)
  * @param {string} options.rootMargin - Margin around root
  * @returns {[React.Ref, boolean]} - [ref to attach, isVisible state]
  */
 export function useIntersectionObserver(options = {}) {
-  const {
-    threshold = 0.1,
-    rootMargin = '50px',
-  } = options;
+  const { threshold = 0.1, rootMargin = '50px' } = options;
 
   const elementRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);

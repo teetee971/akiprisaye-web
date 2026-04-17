@@ -1,7 +1,6 @@
- 
 /**
  * BudgetReelMensuel Component
- * 
+ *
  * Calculates and displays the real monthly budget based on standardized data.
  * Uses budget_reference.json for calculations.
  */
@@ -37,7 +36,7 @@ export function BudgetReelMensuel() {
   const ievrScore = ievrRef.territoires[selectedTerritory];
 
   // Calculate total charges
-  const totalCharges = 
+  const totalCharges =
     territoire.panier_vital +
     territoire.logement +
     territoire.transport +
@@ -64,7 +63,7 @@ export function BudgetReelMensuel() {
     <div className="space-y-6">
       {/* Critical Data Warning */}
       {budgetRef.metadata.dataStatus !== 'OFFICIEL' && (
-        <DataSourceWarning 
+        <DataSourceWarning
           dataStatus={budgetRef.metadata.dataStatus}
           requiredSources={budgetRef.metadata.requiredSources}
         />
@@ -72,9 +71,7 @@ export function BudgetReelMensuel() {
 
       {/* Header */}
       <div className="bg-gradient-to-r from-green-600 to-green-800 rounded-lg p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">
-          💰 Budget Réel Mensuel
-        </h2>
+        <h2 className="text-2xl font-bold mb-2">💰 Budget Réel Mensuel</h2>
         <p className="text-green-50">
           Calculez votre budget selon votre situation et votre territoire
         </p>
@@ -82,10 +79,8 @@ export function BudgetReelMensuel() {
 
       {/* Configuration */}
       <Card className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-          📋 Votre situation
-        </h3>
-        
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">📋 Votre situation</h3>
+
         <div className="space-y-4">
           {/* Profile Selection */}
           <div>
@@ -104,9 +99,7 @@ export function BudgetReelMensuel() {
                   }`}
                 >
                   <div className="text-3xl mb-2">{p.icon}</div>
-                  <div className="text-sm font-medium text-gray-900 dark:text-white">
-                    {p.label}
-                  </div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">{p.label}</div>
                 </button>
               ))}
             </div>
@@ -114,7 +107,10 @@ export function BudgetReelMensuel() {
 
           {/* Territory Selection */}
           <div>
-            <label htmlFor="territory-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="territory-select"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Territoire
             </label>
             <select
@@ -137,12 +133,8 @@ export function BudgetReelMensuel() {
       <Card className="p-6 bg-blue-50 dark:bg-blue-900/20">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-              Revenu de référence
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-500">
-              Pour ce profil
-            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">Revenu de référence</div>
+            <div className="text-xs text-gray-500 dark:text-gray-500">Pour ce profil</div>
           </div>
           <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
             {revenuReference.toFixed(2)} €
@@ -157,7 +149,10 @@ export function BudgetReelMensuel() {
         </h3>
 
         <div className="space-y-3 mb-6">
-          <ChargeItem label="Panier vital (alimentation + hygiène)" amount={territoire.panier_vital} />
+          <ChargeItem
+            label="Panier vital (alimentation + hygiène)"
+            amount={territoire.panier_vital}
+          />
           <ChargeItem label="Logement" amount={territoire.logement} />
           <ChargeItem label="Transport" amount={territoire.transport} />
           <ChargeItem label="Énergie / Eau" amount={territoire.energie_eau} />
@@ -180,45 +175,49 @@ export function BudgetReelMensuel() {
       </Card>
 
       {/* Calculation Result */}
-      <Card className={`p-6 border-2 ${
-        isDeficit 
-          ? 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
-          : 'border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
-      }`}>
+      <Card
+        className={`p-6 border-2 ${
+          isDeficit
+            ? 'border-red-300 dark:border-red-800 bg-red-50 dark:bg-red-900/20'
+            : 'border-green-300 dark:border-green-800 bg-green-50 dark:bg-green-900/20'
+        }`}
+      >
         <div className="flex items-start gap-4">
-          <div className="text-5xl">
-            {isDeficit ? '⚠️' : '✅'}
-          </div>
+          <div className="text-5xl">{isDeficit ? '⚠️' : '✅'}</div>
           <div className="flex-1">
-            <h3 className={`text-2xl font-bold mb-2 ${
-              isDeficit ? 'text-red-800 dark:text-red-200' : 'text-green-800 dark:text-green-200'
-            }`}>
+            <h3
+              className={`text-2xl font-bold mb-2 ${
+                isDeficit ? 'text-red-800 dark:text-red-200' : 'text-green-800 dark:text-green-200'
+              }`}
+            >
               {isDeficit ? 'Déficit mensuel' : 'Reste à vivre'}
             </h3>
-            
-            <div className={`text-4xl font-bold mb-3 ${
-              isDeficit ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
-            }`}>
+
+            <div
+              className={`text-4xl font-bold mb-3 ${
+                isDeficit ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
+              }`}
+            >
               {Math.abs(resteAVivre).toFixed(2)} €
             </div>
 
             <div className="p-4 bg-white/50 dark:bg-black/20 rounded-lg mb-3">
               <p className="text-sm font-mono text-gray-700 dark:text-gray-300">
                 <strong>Calcul :</strong> Revenu - Total charges
-                <br />
-                = {revenuReference.toFixed(2)} € - {totalCharges.toFixed(2)} €
-                <br />
-                = {resteAVivre.toFixed(2)} €
+                <br />= {revenuReference.toFixed(2)} € - {totalCharges.toFixed(2)} €
+                <br />= {resteAVivre.toFixed(2)} €
               </p>
             </div>
 
-            <p className={`text-sm ${
-              isDeficit ? 'text-red-700 dark:text-red-300' : 'text-green-700 dark:text-green-300'
-            }`}>
+            <p
+              className={`text-sm ${
+                isDeficit ? 'text-red-700 dark:text-red-300' : 'text-green-700 dark:text-green-300'
+              }`}
+            >
               {isDeficit ? (
                 <>
-                  Le revenu de référence ne couvre pas les charges essentielles.
-                  Il manque <strong>{Math.abs(resteAVivre).toFixed(2)} €</strong> chaque mois.
+                  Le revenu de référence ne couvre pas les charges essentielles. Il manque{' '}
+                  <strong>{Math.abs(resteAVivre).toFixed(2)} €</strong> chaque mois.
                 </>
               ) : (
                 <>
@@ -241,13 +240,9 @@ export function BudgetReelMensuel() {
             <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
               Score IEVR de {territories[selectedTerritory].name}
             </div>
-            <div className={`font-semibold ${ievrColor} dark:${ievrColor}`}>
-              {ievrStatus}
-            </div>
+            <div className={`font-semibold ${ievrColor} dark:${ievrColor}`}>{ievrStatus}</div>
           </div>
-          <div className={`text-4xl font-bold ${ievrColor} dark:${ievrColor}`}>
-            {ievrScore}
-          </div>
+          <div className={`text-4xl font-bold ${ievrColor} dark:${ievrColor}`}>{ievrScore}</div>
         </div>
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
           Version {ievrRef.version} • Plus le score est bas, plus la vie est difficile
@@ -256,9 +251,7 @@ export function BudgetReelMensuel() {
 
       {/* Methodology */}
       <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-          📝 Méthodologie
-        </h4>
+        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">📝 Méthodologie</h4>
         <div className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
           <p>
             <strong>Total des charges :</strong> Somme de tous les postes de dépenses
@@ -278,22 +271,19 @@ export function BudgetReelMensuel() {
       {/* Legal Disclaimer */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-800 dark:text-blue-200">
-          ℹ️ Ces montants sont des estimations pédagogiques. Chaque situation est unique.
-          Cet outil ne constitue pas un conseil financier.
+          ℹ️ Ces montants sont des estimations pédagogiques. Chaque situation est unique. Cet outil
+          ne constitue pas un conseil financier.
         </p>
       </div>
     </div>
   );
 }
 
- 
 function ChargeItem({ label, amount }) {
   return (
     <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
       <span className="text-gray-700 dark:text-gray-300">{label}</span>
-      <span className="font-semibold text-gray-900 dark:text-white">
-        {amount.toFixed(2)} €
-      </span>
+      <span className="font-semibold text-gray-900 dark:text-white">{amount.toFixed(2)} €</span>
     </div>
   );
 }

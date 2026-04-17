@@ -110,8 +110,8 @@ export default function PalmaresWidget() {
   if (error) return null;
   if (!data) return null;
 
-  const currentData = data.territories.find((t) => t.territory === territory)
-    ?? data.territories[0];
+  const currentData =
+    data.territories.find((t) => t.territory === territory) ?? data.territories[0];
 
   if (!currentData) return null;
 
@@ -228,9 +228,7 @@ export default function PalmaresWidget() {
                 border: isActive
                   ? '1px solid rgba(99,179,237,0.5)'
                   : '1px solid rgba(255,255,255,0.1)',
-                background: isActive
-                  ? 'rgba(99,179,237,0.15)'
-                  : 'rgba(255,255,255,0.05)',
+                background: isActive ? 'rgba(99,179,237,0.15)' : 'rgba(255,255,255,0.05)',
                 color: isActive ? '#90cdf4' : '#94a3b8',
                 cursor: 'pointer',
                 transition: 'all 0.18s',
@@ -259,14 +257,9 @@ export default function PalmaresWidget() {
               gap: '0.65rem',
               padding: '0.6rem 0.75rem',
               borderRadius: '0.75rem',
-              background:
-                idx === 0
-                  ? 'rgba(251,191,36,0.08)'
-                  : 'rgba(255,255,255,0.04)',
+              background: idx === 0 ? 'rgba(251,191,36,0.08)' : 'rgba(255,255,255,0.04)',
               border:
-                idx === 0
-                  ? '1px solid rgba(251,191,36,0.2)'
-                  : '1px solid rgba(255,255,255,0.07)',
+                idx === 0 ? '1px solid rgba(251,191,36,0.2)' : '1px solid rgba(255,255,255,0.07)',
             }}
           >
             <span style={{ fontSize: '1.05rem', lineHeight: 1, flexShrink: 0 }}>
@@ -307,7 +300,9 @@ export default function PalmaresWidget() {
                 }}
               >
                 {entry.score}
-                <span style={{ fontSize: '0.6rem', color: '#64748b', marginLeft: '1px' }}>/100</span>
+                <span style={{ fontSize: '0.6rem', color: '#64748b', marginLeft: '1px' }}>
+                  /100
+                </span>
               </span>
               <ChangeIcon change={entry.change} />
             </div>

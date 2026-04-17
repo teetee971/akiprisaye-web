@@ -1,7 +1,7 @@
 /**
  * Vigilance Dashboard Service
  * "A KI PRI SA YÉ" - Public citizen vigilance based ONLY on real observed data
- * 
+ *
  * NO COMMERCIAL RATINGS, NO PUNITIVE RANKINGS, NO DECISION-MAKING AI
  * Transparent aggregation to make weak signals visible
  */
@@ -111,28 +111,29 @@ export interface TimeSeriesPoint {
  */
 function getPeriodDays(period: TimePeriod): number | null {
   switch (period) {
-    case '7j': return 7;
-    case '30j': return 30;
-    case '90j': return 90;
-    case 'tout': return null;
+    case '7j':
+      return 7;
+    case '30j':
+      return 30;
+    case '90j':
+      return 90;
+    case 'tout':
+      return null;
   }
 }
 
 /**
  * Filter data by time period
  */
-function filterByPeriod<T extends { date: string }>(
-  items: T[],
-  period: TimePeriod
-): T[] {
+function filterByPeriod<T extends { date: string }>(items: T[], period: TimePeriod): T[] {
   const days = getPeriodDays(period);
   if (days === null) return items;
-  
+
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - days);
   const cutoffStr = cutoff.toISOString().split('T')[0];
-  
-  return items.filter(item => item.date >= cutoffStr);
+
+  return items.filter((item) => item.date >= cutoffStr);
 }
 
 /**
@@ -146,42 +147,40 @@ function calculateGlobalVigilance(
 ): VigilanceGlobale {
   const filteredAnomalies = filterByPeriod(anomalies, period);
   const filteredAlerts = filterByPeriod(
-    alerts.map(a => ({ ...a, date: a.date_observation })),
+    alerts.map((a) => ({ ...a, date: a.date_observation })),
     period
   );
-  
+
   // Count products being monitored
   const productCounts = new Map<string, { anomalies: number; alertes: number }>();
-  
+
   for (const anomaly of filteredAnomalies) {
     const current = productCounts.get(anomaly.produit) || { anomalies: 0, alertes: 0 };
     productCounts.set(anomaly.produit, { ...current, anomalies: current.anomalies + 1 });
   }
-  
+
   for (const alert of filteredAlerts) {
     const current = productCounts.get(alert.produit) || { anomalies: 0, alertes: 0 };
     productCounts.set(alert.produit, { ...current, alertes: current.alertes + 1 });
   }
-  
+
   // Sort by total signals
   const produitsSurveilles = Array.from(productCounts.entries())
     .map(([produit, counts]) => ({
       produit,
       nb_alertes: counts.alertes,
-      nb_anomalies: counts.anomalies
+      nb_anomalies: counts.anomalies,
     }))
-    .sort((a, b) => 
-      (b.nb_alertes + b.nb_anomalies) - (a.nb_alertes + a.nb_anomalies)
-    )
+    .sort((a, b) => b.nb_alertes + b.nb_anomalies - (a.nb_alertes + a.nb_anomalies))
     .slice(0, 10); // Top 10
-  
+
   return {
     anomalies_actives: filteredAnomalies.length,
     alertes_actives: filteredAlerts.length,
     observations_totales: observations.length,
     produits_surveilles: produitsSurveilles,
     periode: period,
-    derniere_maj: new Date().toISOString()
+    derniere_maj: new Date().toISOString(),
   };
 }
 
@@ -194,20 +193,20 @@ function calculateTerritoireVigilance(
   alerts: Alert[],
   period: TimePeriod
 ): VigilanceTerritoire[] {
-  const territories = new Set(observations.map(obs => obs.territoire));
+  const territories = new Set(observations.map((obs) => obs.territoire));
   const result: VigilanceTerritoire[] = [];
-  
+
   const filteredAnomalies = filterByPeriod(anomalies, period);
   const filteredAlerts = filterByPeriod(
-    alerts.map(a => ({ ...a, date: a.date_observation })),
+    alerts.map((a) => ({ ...a, date: a.date_observation })),
     period
   );
-  
+
   for (const territoire of territories) {
-    const territoireObs = observations.filter(obs => obs.territoire === territoire);
-    const territoireAnomalies = filteredAnomalies.filter(a => a.territoire === territoire);
-    const territoireAlerts = filteredAlerts.filter(a => a.territoire === territoire);
-    
+    const territoireObs = observations.filter((obs) => obs.territoire === territoire);
+    const territoireAnomalies = filteredAnomalies.filter((a) => a.territoire === territoire);
+    const territoireAlerts = filteredAlerts.filter((a) => a.territoire === territoire);
+
     // Get affected categories
     const categories = new Set<string>();
     for (const obs of territoireObs) {
@@ -215,36 +214,41 @@ function calculateTerritoireVigilance(
         if (product.categorie) categories.add(product.categorie);
       }
     }
-    
+
     // Calculate evolution (compare to previous period)
     const prevPeriodDays = getPeriodDays(period);
     let variationAnomalies = 0;
     let variationAlertes = 0;
-    
+
     if (prevPeriodDays) {
       const prevCutoff = new Date();
       prevCutoff.setDate(prevCutoff.getDate() - prevPeriodDays * 2);
       const prevCutoffStr = prevCutoff.toISOString().split('T')[0];
-      
+
       const currentCutoff = new Date();
       currentCutoff.setDate(currentCutoff.getDate() - prevPeriodDays);
       const currentCutoffStr = currentCutoff.toISOString().split('T')[0];
-      
+
       const prevAnomalies = anomalies.filter(
-        a => a.territoire === territoire && a.date >= prevCutoffStr && a.date < currentCutoffStr
+        (a) => a.territoire === territoire && a.date >= prevCutoffStr && a.date < currentCutoffStr
       );
       const prevAlerts = alerts.filter(
-        a => a.territoire === territoire && a.date_observation >= prevCutoffStr && a.date_observation < currentCutoffStr
+        (a) =>
+          a.territoire === territoire &&
+          a.date_observation >= prevCutoffStr &&
+          a.date_observation < currentCutoffStr
       );
-      
+
       if (prevAnomalies.length > 0) {
-        variationAnomalies = ((territoireAnomalies.length - prevAnomalies.length) / prevAnomalies.length) * 100;
+        variationAnomalies =
+          ((territoireAnomalies.length - prevAnomalies.length) / prevAnomalies.length) * 100;
       }
       if (prevAlerts.length > 0) {
-        variationAlertes = ((territoireAlerts.length - prevAlerts.length) / prevAlerts.length) * 100;
+        variationAlertes =
+          ((territoireAlerts.length - prevAlerts.length) / prevAlerts.length) * 100;
       }
     }
-    
+
     result.push({
       territoire,
       nb_anomalies: territoireAnomalies.length,
@@ -253,15 +257,13 @@ function calculateTerritoireVigilance(
       evolution: {
         periode: period,
         variation_anomalies: variationAnomalies,
-        variation_alertes: variationAlertes
+        variation_alertes: variationAlertes,
       },
-      categories_concernees: Array.from(categories)
+      categories_concernees: Array.from(categories),
     });
   }
-  
-  return result.sort((a, b) => 
-    (b.nb_anomalies + b.nb_alertes) - (a.nb_anomalies + a.nb_alertes)
-  );
+
+  return result.sort((a, b) => b.nb_anomalies + b.nb_alertes - (a.nb_anomalies + a.nb_alertes));
 }
 
 /**
@@ -279,15 +281,15 @@ function calculateCategorieVigilance(
       if (product.categorie) categories.add(product.categorie);
     }
   }
-  
+
   const filteredAnomalies = filterByPeriod(anomalies, period);
   const filteredAlerts = filterByPeriod(
-    alerts.map(a => ({ ...a, date: a.date_observation })),
+    alerts.map((a) => ({ ...a, date: a.date_observation })),
     period
   );
-  
+
   const result: VigilanceCategorie[] = [];
-  
+
   for (const categorie of categories) {
     // Find products in this category
     const categoryProducts = new Set<string>();
@@ -298,9 +300,9 @@ function calculateCategorieVigilance(
         }
       }
     }
-    
+
     // Count signals
-    const categoryAnomalies = filteredAnomalies.filter(a => {
+    const categoryAnomalies = filteredAnomalies.filter((a) => {
       for (const obs of observations) {
         for (const product of obs.produits) {
           if (product.nom === a.produit && product.categorie === categorie) {
@@ -310,16 +312,15 @@ function calculateCategorieVigilance(
       }
       return false;
     });
-    
-    const categoryAlerts = filteredAlerts.filter(a => 
-      categoryProducts.has(a.produit)
-    );
-    
+
+    const categoryAlerts = filteredAlerts.filter((a) => categoryProducts.has(a.produit));
+
     // Get affected territories
-    const territoires = new Set(
-      [...categoryAnomalies.map(a => a.territoire), ...categoryAlerts.map(a => a.territoire)]
-    );
-    
+    const territoires = new Set([
+      ...categoryAnomalies.map((a) => a.territoire),
+      ...categoryAlerts.map((a) => a.territoire),
+    ]);
+
     // Count signals per product
     const productSignals = new Map<string, number>();
     for (const anomaly of categoryAnomalies) {
@@ -328,24 +329,22 @@ function calculateCategorieVigilance(
     for (const alert of categoryAlerts) {
       productSignals.set(alert.produit, (productSignals.get(alert.produit) || 0) + 1);
     }
-    
+
     const produitsConcernes = Array.from(productSignals.entries())
       .map(([produit, nb_signaux]) => ({ produit, nb_signaux }))
       .sort((a, b) => b.nb_signaux - a.nb_signaux)
       .slice(0, 5); // Top 5
-    
+
     result.push({
       categorie,
       nb_anomalies: categoryAnomalies.length,
       nb_alertes: categoryAlerts.length,
       territoires_concernes: Array.from(territoires),
-      produits_concernes: produitsConcernes
+      produits_concernes: produitsConcernes,
     });
   }
-  
-  return result.sort((a, b) => 
-    (b.nb_anomalies + b.nb_alertes) - (a.nb_anomalies + a.nb_alertes)
-  );
+
+  return result.sort((a, b) => b.nb_anomalies + b.nb_alertes - (a.nb_anomalies + a.nb_alertes));
 }
 
 /**
@@ -366,9 +365,10 @@ export function generateVigilanceDashboard(
       methode: 'agregation_transparente',
       periode_analyse: period,
       date_generation: new Date().toISOString(),
-      avertissement: 'Ces indicateurs sont basés exclusivement sur des données réelles observées. ' +
-        'Un signal ne constitue pas une preuve d\'abus et nécessite une analyse contextuelle.'
-    }
+      avertissement:
+        'Ces indicateurs sont basés exclusivement sur des données réelles observées. ' +
+        "Un signal ne constitue pas une preuve d'abus et nécessite une analyse contextuelle.",
+    },
   };
 }
 
@@ -380,14 +380,14 @@ export function generateAnomaliesTimeSeries(
   period: TimePeriod
 ): TimeSeriesPoint[] {
   const filtered = filterByPeriod(anomalies, period);
-  
+
   // Group by date
   const countByDate = new Map<string, number>();
   for (const anomaly of filtered) {
     const count = countByDate.get(anomaly.date) || 0;
     countByDate.set(anomaly.date, count + 1);
   }
-  
+
   // Convert to array and sort
   return Array.from(countByDate.entries())
     .map(([date, valeur]) => ({ date, valeur }))
@@ -397,22 +397,19 @@ export function generateAnomaliesTimeSeries(
 /**
  * Generate time series for alerts
  */
-export function generateAlertesTimeSeries(
-  alerts: Alert[],
-  period: TimePeriod
-): TimeSeriesPoint[] {
+export function generateAlertesTimeSeries(alerts: Alert[], period: TimePeriod): TimeSeriesPoint[] {
   const filtered = filterByPeriod(
-    alerts.map(a => ({ ...a, date: a.date_observation })),
+    alerts.map((a) => ({ ...a, date: a.date_observation })),
     period
   );
-  
+
   // Group by date
   const countByDate = new Map<string, number>();
   for (const alert of filtered) {
     const count = countByDate.get(alert.date_observation) || 0;
     countByDate.set(alert.date_observation, count + 1);
   }
-  
+
   // Convert to array and sort
   return Array.from(countByDate.entries())
     .map(([date, valeur]) => ({ date, valeur }))

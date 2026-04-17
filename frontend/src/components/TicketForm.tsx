@@ -1,11 +1,7 @@
- 
 import React, { useState } from 'react';
 import { Send, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import type { TicketType, CreateTicketData } from '../types/ticket';
-import {
-  TICKET_TYPE_LABELS,
-  TICKET_CATEGORY_OPTIONS,
-} from '../types/ticket';
+import { TICKET_TYPE_LABELS, TICKET_CATEGORY_OPTIONS } from '../types/ticket';
 import ticketService from '../services/ticketService';
 
 interface TicketFormProps {
@@ -34,12 +30,12 @@ export default function TicketForm({ onSuccess, onCancel, defaultType }: TicketF
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validation
     if (!formData.title.trim()) {
       setErrorMessage('Le titre est obligatoire');
@@ -57,7 +53,7 @@ export default function TicketForm({ onSuccess, onCancel, defaultType }: TicketF
       const ticket = await ticketService.createTicket(formData);
       setTicketNumber(ticket.ticketNumber);
       setSubmitStatus('success');
-      
+
       // Réinitialiser le formulaire après 2 secondes
       setTimeout(() => {
         setFormData({
@@ -87,12 +83,8 @@ export default function TicketForm({ onSuccess, onCancel, defaultType }: TicketF
     return (
       <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 text-center">
         <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-green-400 mb-2">
-          Demande envoyée avec succès !
-        </h3>
-        <p className="text-gray-300 mb-4">
-          Votre ticket a été enregistré avec le numéro :
-        </p>
+        <h3 className="text-lg font-semibold text-green-400 mb-2">Demande envoyée avec succès !</h3>
+        <p className="text-gray-300 mb-4">Votre ticket a été enregistré avec le numéro :</p>
         <div className="bg-slate-800 rounded-lg p-3 mb-4">
           <code className="text-xl font-mono text-blue-400">{ticketNumber}</code>
         </div>
@@ -139,7 +131,7 @@ export default function TicketForm({ onSuccess, onCancel, defaultType }: TicketF
           className="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Sélectionner une catégorie</option>
-          {TICKET_CATEGORY_OPTIONS.map(category => (
+          {TICKET_CATEGORY_OPTIONS.map((category) => (
             <option key={category} value={category}>
               {category}
             </option>
@@ -163,9 +155,7 @@ export default function TicketForm({ onSuccess, onCancel, defaultType }: TicketF
           required
           maxLength={200}
         />
-        <p className="text-xs text-gray-500 mt-1">
-          {formData.title.length}/200 caractères
-        </p>
+        <p className="text-xs text-gray-500 mt-1">{formData.title.length}/200 caractères</p>
       </div>
 
       {/* Description */}
@@ -184,9 +174,7 @@ export default function TicketForm({ onSuccess, onCancel, defaultType }: TicketF
           required
           maxLength={2000}
         />
-        <p className="text-xs text-gray-500 mt-1">
-          {formData.description.length}/2000 caractères
-        </p>
+        <p className="text-xs text-gray-500 mt-1">{formData.description.length}/2000 caractères</p>
       </div>
 
       {/* Nom (optionnel) */}
@@ -266,8 +254,8 @@ export default function TicketForm({ onSuccess, onCancel, defaultType }: TicketF
       <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
         <p className="text-xs text-gray-400">
           <strong className="text-blue-400">Confidentialité :</strong> Vos informations sont
-          utilisées uniquement pour le traitement de votre demande. L'email est optionnel et ne
-          sera pas partagé. Conforme RGPD.
+          utilisées uniquement pour le traitement de votre demande. L'email est optionnel et ne sera
+          pas partagé. Conforme RGPD.
         </p>
       </div>
     </form>

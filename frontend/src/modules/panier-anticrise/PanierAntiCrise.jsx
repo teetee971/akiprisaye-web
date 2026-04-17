@@ -1,4 +1,3 @@
- 
 import { useState, useEffect } from 'react';
 import { ScoreAntiCrise } from './ScoreAntiCrise.jsx';
 import { PanierTimeline } from './PanierTimeline.jsx';
@@ -79,9 +78,7 @@ export default function PanierAntiCrise({ territory = 'guadeloupe', mode = 'esse
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">
-              Panier Anti-Crise
-            </h2>
+            <h2 className="text-2xl font-bold text-gray-900">Panier Anti-Crise</h2>
             <p className="text-sm text-gray-600 mt-1">
               {territoryData.label} - Mode {mode}
             </p>
@@ -97,9 +94,7 @@ export default function PanierAntiCrise({ territory = 'guadeloupe', mode = 'esse
               <p className="text-3xl font-bold text-blue-700">
                 {potentialEconomy.toFixed(2)} {data.currency}
               </p>
-              <p className="text-sm text-blue-600">
-                Soit {economyPercentage}% d'économies
-              </p>
+              <p className="text-sm text-blue-600">Soit {economyPercentage}% d'économies</p>
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-700">Total panier optimisé</p>
@@ -112,9 +107,7 @@ export default function PanierAntiCrise({ territory = 'guadeloupe', mode = 'esse
 
         {/* Product List */}
         <div className="space-y-2">
-          <h3 className="font-semibold text-gray-900 mb-3">
-            Produits ({basket.length})
-          </h3>
+          <h3 className="font-semibold text-gray-900 mb-3">Produits ({basket.length})</h3>
           {basket.length === 0 ? (
             <p className="text-gray-500 italic">Aucun produit disponible pour ce mode</p>
           ) : (
@@ -144,9 +137,9 @@ export default function PanierAntiCrise({ territory = 'guadeloupe', mode = 'esse
       {/* Disclaimer */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-xs text-blue-800">
-          <strong>Note :</strong> Les prix indiqués sont des relevés à un instant donné et peuvent varier. 
-          Le panier anti-crise identifie les produits structurellement les moins chers, 
-          en excluant les promotions ponctuelles. Consultez notre méthodologie pour plus de détails.
+          <strong>Note :</strong> Les prix indiqués sont des relevés à un instant donné et peuvent
+          varier. Le panier anti-crise identifie les produits structurellement les moins chers, en
+          excluant les promotions ponctuelles. Consultez notre méthodologie pour plus de détails.
         </p>
       </div>
     </div>

@@ -72,10 +72,14 @@ vi.mock('../auth/authStorage', () => ({
         return null;
       }
       return data;
-    } catch { return null; }
+    } catch {
+      return null;
+    }
   },
   getAuthRetryCount: () => 0,
-  clearAuthTransientStorage: () => { sessionStorage.clear(); },
+  clearAuthTransientStorage: () => {
+    sessionStorage.clear();
+  },
 }));
 
 /* ── authLogger: mock isAuthDebugEnabled so we control visibility ──────── */
@@ -100,7 +104,7 @@ function renderPanel(route = '/') {
   return render(
     <MemoryRouter initialEntries={[route]}>
       <AuthDebugPanel />
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 }
 
@@ -185,9 +189,14 @@ describe('AuthDebugPanel — state display', () => {
   });
 
   it('shows provider name when auth:return:pending is set', async () => {
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     renderPanel();
 
@@ -303,9 +312,14 @@ describe('AuthDebugPanel — TTL expiry of redirect pending flag', () => {
   });
 
   it('treats a fresh flag as valid', async () => {
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     renderPanel();
 
@@ -317,9 +331,14 @@ describe('AuthDebugPanel — TTL expiry of redirect pending flag', () => {
   it('treats an expired flag as absent (ts older than TTL)', async () => {
     // Simulate a flag written more than 5 minutes ago
     const expiredTs = Date.now() - REDIRECT_PENDING_TTL_MS - 1000;
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: expiredTs,
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: expiredTs,
+      })
+    );
 
     renderPanel();
 
@@ -331,9 +350,14 @@ describe('AuthDebugPanel — TTL expiry of redirect pending flag', () => {
 
   it('clears the sessionStorage entry when the flag is expired', async () => {
     const expiredTs = Date.now() - REDIRECT_PENDING_TTL_MS - 1000;
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'facebook', next: '/', ts: expiredTs,
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'facebook',
+        next: '/',
+        ts: expiredTs,
+      })
+    );
 
     renderPanel();
 
@@ -372,9 +396,14 @@ describe('AuthDebugPanel — event-driven flag refresh', () => {
     await waitFor(() => expect(screen.getByTitle('✗ no flag')).toBeTruthy());
 
     // Simulate the redirect start: write the flag then fire the event
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     act(() => {
       authLog('AUTH_REDIRECT_START', { provider: 'google' });
@@ -387,9 +416,14 @@ describe('AuthDebugPanel — event-driven flag refresh', () => {
   });
 
   it('clears flag display when AUTH_REDIRECT_RESULT_RESOLVED event fires', async () => {
-    sessionStorage.setItem('auth:return:pending', JSON.stringify({
-      provider: 'google', next: '/mon-compte', ts: Date.now(),
-    }));
+    sessionStorage.setItem(
+      'auth:return:pending',
+      JSON.stringify({
+        provider: 'google',
+        next: '/mon-compte',
+        ts: Date.now(),
+      })
+    );
 
     renderPanel();
 

@@ -1,6 +1,6 @@
 /**
  * Type definitions for Housing Cost Observatory Feature v2.4.0
- * 
+ *
  * Principles:
  * - Read-only observation (no data modification)
  * - Rent and housing cost analysis by territory
@@ -16,7 +16,7 @@ import type { SourceReference } from './transportComparison';
 /**
  * Housing type classification
  */
-export type HousingType = 
+export type HousingType =
   | 'STUDIO'
   | 'T1'
   | 'T2'
@@ -31,16 +31,17 @@ export type HousingType =
  * Housing price point with observed data
  */
 export interface HousingPricePoint {
-  housingId?: string;             // Optional listing/record ID
+  housingId?: string; // Optional listing/record ID
   type: HousingType;
-  surface: number;                // Surface in m²
-  rent: number;                   // Monthly rent in euros
-  charges?: number;               // Monthly charges in euros
-  additionalCosts?: {             // Optional additional observed costs
-    agency?: number;              // Agency fees
-    deposit?: number;             // Security deposit
-    insurance?: number;           // Monthly insurance
-    utilities?: number;           // Monthly utilities estimate
+  surface: number; // Surface in m²
+  rent: number; // Monthly rent in euros
+  charges?: number; // Monthly charges in euros
+  additionalCosts?: {
+    // Optional additional observed costs
+    agency?: number; // Agency fees
+    deposit?: number; // Security deposit
+    insurance?: number; // Monthly insurance
+    utilities?: number; // Monthly utilities estimate
   };
   territory: Territory;
   location?: {
@@ -50,9 +51,9 @@ export interface HousingPricePoint {
     urbanRuralClassification?: 'urban' | 'suburban' | 'rural';
   };
   furnished?: boolean;
-  observationDate: string;        // ISO 8601 date
-  source: SourceReference;        // Mandatory source
-  volume: number;                 // Number of observations
+  observationDate: string; // ISO 8601 date
+  source: SourceReference; // Mandatory source
+  volume: number; // Number of observations
   confidence: 'high' | 'medium' | 'low';
   verified: boolean;
 }
@@ -63,7 +64,7 @@ export interface HousingPricePoint {
 export interface HousingCostPerM2 {
   pricePoint: HousingPricePoint;
   rentPerM2: number;
-  totalCostPerM2?: number;        // Including charges
+  totalCostPerM2?: number; // Including charges
 }
 
 /**
@@ -71,7 +72,7 @@ export interface HousingCostPerM2 {
  */
 export interface HousingTerritoryAggregation {
   territory: Territory;
-  housingType?: HousingType;      // Optional: filter by type
+  housingType?: HousingType; // Optional: filter by type
   statistics: {
     listingCount: number;
     averageRent: number;
@@ -91,15 +92,15 @@ export interface HousingTerritoryAggregation {
     percentile75: number;
   };
   urbanRuralBreakdown?: {
-    urban: number;                // Count of urban listings
+    urban: number; // Count of urban listings
     suburban: number;
     rural: number;
   };
   observationPeriod: {
-    from: string;                 // ISO 8601
-    to: string;                   // ISO 8601
+    from: string; // ISO 8601
+    to: string; // ISO 8601
   };
-  lastUpdate: string;             // ISO 8601
+  lastUpdate: string; // ISO 8601
 }
 
 /**
@@ -110,7 +111,7 @@ export interface HousingCostComparisonResult {
   housingType?: HousingType;
   pricePoints: HousingCostPerM2[];
   aggregation: HousingTerritoryAggregation;
-  comparisonDate: string;         // ISO 8601
+  comparisonDate: string; // ISO 8601
   metadata: HousingCostMetadata;
 }
 
@@ -118,14 +119,14 @@ export interface HousingCostComparisonResult {
  * Metadata for housing cost transparency
  */
 export interface HousingCostMetadata {
-  methodology: string;            // Methodology version (e.g., "v2.4.0")
+  methodology: string; // Methodology version (e.g., "v2.4.0")
   aggregationMethod: 'mean' | 'median' | 'weighted';
   dataQuality: {
     totalListings: number;
     listingsWithData: number;
     coveragePercentage: number;
-    oldestObservation: string;    // ISO 8601
-    newestObservation: string;    // ISO 8601
+    oldestObservation: string; // ISO 8601
+    newestObservation: string; // ISO 8601
   };
   sources: HousingSourceSummary[];
   warnings?: string[];
@@ -153,7 +154,7 @@ export interface HousingCostFilter {
   maxRent?: number;
   furnished?: boolean;
   urbanRuralClassification?: 'urban' | 'suburban' | 'rural';
-  maxPriceAge?: number;           // Max age in days
+  maxPriceAge?: number; // Max age in days
   minConfidence?: 'low' | 'medium' | 'high';
   verifiedOnly?: boolean;
 }
@@ -162,7 +163,7 @@ export interface HousingCostFilter {
  * Housing cost history point
  */
 export interface HousingCostHistory {
-  date: string;                   // ISO 8601 (month-level)
+  date: string; // ISO 8601 (month-level)
   territory: Territory;
   housingType?: HousingType;
   averageRent: number;
@@ -180,12 +181,12 @@ export interface HousingCostVariation {
   territory: Territory;
   housingType?: HousingType;
   period: {
-    from: string;                 // ISO 8601
-    to: string;                   // ISO 8601
+    from: string; // ISO 8601
+    to: string; // ISO 8601
   };
   variation: {
-    absoluteChange: number;       // Change in euros
-    percentageChange: number;     // Change in percentage
+    absoluteChange: number; // Change in euros
+    percentageChange: number; // Change in percentage
     direction: 'increase' | 'decrease' | 'stable';
   };
   confidence: 'high' | 'medium' | 'low';
@@ -199,7 +200,7 @@ export interface MultiTerritoryHousingComparison {
   housingType?: HousingType;
   territories: TerritoryHousingComparison[];
   baseTerritory?: Territory;
-  comparisonDate: string;         // ISO 8601
+  comparisonDate: string; // ISO 8601
 }
 
 /**
@@ -215,7 +216,7 @@ export interface TerritoryHousingComparison {
     absolute: number;
     percentage: number;
   };
-  affordabilityIndex?: number;    // Descriptive index (0-100)
+  affordabilityIndex?: number; // Descriptive index (0-100)
 }
 
 /**
@@ -226,7 +227,7 @@ export interface HousingCostConfig {
   maxPriceAgeDays: number;
   minObservationsPerTerritory: number;
   defaultTerritory: Territory;
-  cacheTimeout: number;           // Cache timeout in seconds
+  cacheTimeout: number; // Cache timeout in seconds
 }
 
 /**

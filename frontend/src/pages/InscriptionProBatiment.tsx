@@ -13,9 +13,24 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, Link } from 'react-router-dom';
 import {
-  HardHat, Building2, FileText, CheckCircle, ChevronRight, ChevronLeft,
-  Shield, Star, Phone, Mail, MapPin, Briefcase, AlertTriangle, Upload,
-  Euro, BadgeCheck, Zap, Lock,
+  HardHat,
+  Building2,
+  FileText,
+  CheckCircle,
+  ChevronRight,
+  ChevronLeft,
+  Shield,
+  Star,
+  Phone,
+  Mail,
+  MapPin,
+  Briefcase,
+  AlertTriangle,
+  Upload,
+  Euro,
+  BadgeCheck,
+  Zap,
+  Lock,
 } from 'lucide-react';
 import {
   registerProBatiment,
@@ -35,14 +50,14 @@ import { onAuthStateChanged } from 'firebase/auth';
 // ─── Données de référence ─────────────────────────────────────────────────────
 
 const FORMES_JURIDIQUES = [
-  { value: 'micro',  label: 'Micro-entreprise' },
-  { value: 'ei',     label: 'EI – Entreprise Individuelle' },
-  { value: 'eurl',   label: 'EURL' },
-  { value: 'sarl',   label: 'SARL' },
-  { value: 'sas',    label: 'SAS' },
-  { value: 'sasu',   label: 'SASU' },
-  { value: 'sa',     label: 'SA' },
-  { value: 'autre',  label: 'Autre' },
+  { value: 'micro', label: 'Micro-entreprise' },
+  { value: 'ei', label: 'EI – Entreprise Individuelle' },
+  { value: 'eurl', label: 'EURL' },
+  { value: 'sarl', label: 'SARL' },
+  { value: 'sas', label: 'SAS' },
+  { value: 'sasu', label: 'SASU' },
+  { value: 'sa', label: 'SA' },
+  { value: 'autre', label: 'Autre' },
 ];
 
 const TERRITOIRES = [
@@ -56,11 +71,30 @@ const TERRITOIRES = [
 const CERTIFICATIONS_OPTIONS = ['RGE', 'Qualibat', 'QualiPV', 'QualiEAU', 'Handibat', 'Aucune'];
 
 const DOCUMENTS_LIST: { type: string; label: string; obligatoire: boolean; note?: string }[] = [
-  { type: 'kbis_insee',          label: 'KBIS ou attestation INSEE',              obligatoire: true,  note: '⚠️ Upload disponible après validation' },
-  { type: 'identite',            label: "Pièce d'identité du gérant",              obligatoire: true },
-  { type: 'assurance_decennale', label: 'Assurance décennale en cours de validité', obligatoire: true },
-  { type: 'attestation_urssaf',  label: 'Attestation URSSAF',                       obligatoire: false, note: 'Recommandée' },
-  { type: 'rib',                 label: 'RIB professionnel',                        obligatoire: false, note: 'Pour facturation commission' },
+  {
+    type: 'kbis_insee',
+    label: 'KBIS ou attestation INSEE',
+    obligatoire: true,
+    note: '⚠️ Upload disponible après validation',
+  },
+  { type: 'identite', label: "Pièce d'identité du gérant", obligatoire: true },
+  {
+    type: 'assurance_decennale',
+    label: 'Assurance décennale en cours de validité',
+    obligatoire: true,
+  },
+  {
+    type: 'attestation_urssaf',
+    label: 'Attestation URSSAF',
+    obligatoire: false,
+    note: 'Recommandée',
+  },
+  {
+    type: 'rib',
+    label: 'RIB professionnel',
+    obligatoire: false,
+    note: 'Pour facturation commission',
+  },
 ];
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -116,11 +150,11 @@ const INITIAL_FORM: FormState = {
 };
 
 const STEPS = [
-  { label: 'Légal',      icon: Building2 },
-  { label: 'Gérant',     icon: HardHat },
-  { label: 'Métiers',    icon: Briefcase },
-  { label: 'Documents',  icon: FileText },
-  { label: 'Plan',       icon: Star },
+  { label: 'Légal', icon: Building2 },
+  { label: 'Gérant', icon: HardHat },
+  { label: 'Métiers', icon: Briefcase },
+  { label: 'Documents', icon: FileText },
+  { label: 'Plan', icon: Star },
 ];
 
 // ─── Barre de progression ─────────────────────────────────────────────────────
@@ -135,16 +169,24 @@ function StepBar({ step }: { step: number }) {
         return (
           <div key={i} className="flex items-center flex-1">
             <div className="flex flex-col items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${
-                isDone   ? 'bg-green-600 border-green-600' :
-                isActive ? 'bg-orange-600 border-orange-500' :
-                           'bg-slate-800 border-slate-600'
-              }`}>
-                {isDone
-                  ? <CheckCircle className="w-5 h-5 text-white" />
-                  : <Icon className="w-4 h-4 text-white" />}
+              <div
+                className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors ${
+                  isDone
+                    ? 'bg-green-600 border-green-600'
+                    : isActive
+                      ? 'bg-orange-600 border-orange-500'
+                      : 'bg-slate-800 border-slate-600'
+                }`}
+              >
+                {isDone ? (
+                  <CheckCircle className="w-5 h-5 text-white" />
+                ) : (
+                  <Icon className="w-4 h-4 text-white" />
+                )}
               </div>
-              <span className={`text-xs mt-1 hidden sm:block ${isActive ? 'text-white font-medium' : 'text-slate-500'}`}>
+              <span
+                className={`text-xs mt-1 hidden sm:block ${isActive ? 'text-white font-medium' : 'text-slate-500'}`}
+              >
                 {s.label}
               </span>
             </div>
@@ -160,7 +202,11 @@ function StepBar({ step }: { step: number }) {
 
 // ─── Étape 1 – Informations légales ──────────────────────────────────────────
 
-function Step1Legal({ form, onChange, onNext }: {
+function Step1Legal({
+  form,
+  onChange,
+  onNext,
+}: {
   form: FormState;
   onChange: (u: Partial<FormState>) => void;
   onNext: () => void;
@@ -168,7 +214,7 @@ function Step1Legal({ form, onChange, onNext }: {
   const rawSiret = form.siret.replace(/\s/g, '');
   const siretValid = validateSiretLuhn(rawSiret);
   const siren = siretValid ? sirenFromSiret(rawSiret) : '';
-  const tva   = siren ? tvaFromSiren(siren) : '';
+  const tva = siren ? tvaFromSiren(siren) : '';
 
   const canContinue =
     siretValid &&
@@ -200,7 +246,9 @@ function Step1Legal({ form, onChange, onNext }: {
             maxLength={17}
             className={`w-full bg-slate-800 border rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 pr-8 ${
               rawSiret.length === 14
-                ? siretValid ? 'border-green-500 focus:ring-green-500' : 'border-red-500 focus:ring-red-500'
+                ? siretValid
+                  ? 'border-green-500 focus:ring-green-500'
+                  : 'border-red-500 focus:ring-red-500'
                 : 'border-slate-600 focus:ring-orange-500'
             }`}
           />
@@ -225,7 +273,12 @@ function Step1Legal({ form, onChange, onNext }: {
 
       {/* Raison sociale */}
       <div>
-        <label htmlFor="ipb-raison-sociale" className="block text-sm font-medium text-slate-300 mb-1">Raison sociale *</label>
+        <label
+          htmlFor="ipb-raison-sociale"
+          className="block text-sm font-medium text-slate-300 mb-1"
+        >
+          Raison sociale *
+        </label>
         <input
           id="ipb-raison-sociale"
           type="text"
@@ -239,7 +292,12 @@ function Step1Legal({ form, onChange, onNext }: {
 
       {/* Forme juridique */}
       <div>
-        <label htmlFor="ipb-forme-juridique" className="block text-sm font-medium text-slate-300 mb-1">Forme juridique *</label>
+        <label
+          htmlFor="ipb-forme-juridique"
+          className="block text-sm font-medium text-slate-300 mb-1"
+        >
+          Forme juridique *
+        </label>
         <select
           id="ipb-forme-juridique"
           value={form.formeJuridique}
@@ -248,14 +306,21 @@ function Step1Legal({ form, onChange, onNext }: {
         >
           <option value="">— Sélectionner —</option>
           {FORMES_JURIDIQUES.map((f) => (
-            <option key={f.value} value={f.value}>{f.label}</option>
+            <option key={f.value} value={f.value}>
+              {f.label}
+            </option>
           ))}
         </select>
       </div>
 
       {/* Année de création */}
       <div>
-        <label htmlFor="ipb-annee-creation" className="block text-sm font-medium text-slate-300 mb-1">Année de création *</label>
+        <label
+          htmlFor="ipb-annee-creation"
+          className="block text-sm font-medium text-slate-300 mb-1"
+        >
+          Année de création *
+        </label>
         <input
           id="ipb-annee-creation"
           type="number"
@@ -281,7 +346,12 @@ function Step1Legal({ form, onChange, onNext }: {
 
 // ─── Étape 2 – Gérant & Contact ───────────────────────────────────────────────
 
-function Step2Contact({ form, onChange, onNext, onPrev }: {
+function Step2Contact({
+  form,
+  onChange,
+  onNext,
+  onPrev,
+}: {
   form: FormState;
   onChange: (u: Partial<FormState>) => void;
   onNext: () => void;
@@ -297,7 +367,8 @@ function Step2Contact({ form, onChange, onNext, onPrev }: {
     form.ville.trim().length >= 2 &&
     !!form.territoire;
 
-  const inputClass = 'w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500';
+  const inputClass =
+    'w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500';
 
   return (
     <div className="space-y-5">
@@ -308,75 +379,151 @@ function Step2Contact({ form, onChange, onNext, onPrev }: {
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div>
-          <label htmlFor="ipb-prenom-gerant" className="block text-sm font-medium text-slate-300 mb-1">Prénom du gérant *</label>
-          <input id="ipb-prenom-gerant"
-          type="text" value={form.gerantPrenom} onChange={(e) => onChange({ gerantPrenom: e.target.value })}
-            placeholder="Jean" maxLength={50} className={inputClass} />
+          <label
+            htmlFor="ipb-prenom-gerant"
+            className="block text-sm font-medium text-slate-300 mb-1"
+          >
+            Prénom du gérant *
+          </label>
+          <input
+            id="ipb-prenom-gerant"
+            type="text"
+            value={form.gerantPrenom}
+            onChange={(e) => onChange({ gerantPrenom: e.target.value })}
+            placeholder="Jean"
+            maxLength={50}
+            className={inputClass}
+          />
         </div>
         <div>
-          <label htmlFor="ipb-nom-gerant" className="block text-sm font-medium text-slate-300 mb-1">Nom du gérant *</label>
-          <input id="ipb-nom-gerant"
-          type="text" value={form.gerantNom} onChange={(e) => onChange({ gerantNom: e.target.value })}
-            placeholder="Dupont" maxLength={50} className={inputClass} />
+          <label htmlFor="ipb-nom-gerant" className="block text-sm font-medium text-slate-300 mb-1">
+            Nom du gérant *
+          </label>
+          <input
+            id="ipb-nom-gerant"
+            type="text"
+            value={form.gerantNom}
+            onChange={(e) => onChange({ gerantNom: e.target.value })}
+            placeholder="Dupont"
+            maxLength={50}
+            className={inputClass}
+          />
         </div>
       </div>
 
       <div>
         <label htmlFor="ipb-email" className="block text-sm font-medium text-slate-300 mb-1">
-          <Mail className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Email professionnel *
+          <Mail className="inline w-3.5 h-3.5 mr-1 text-slate-400" />
+          Email professionnel *
         </label>
-        <input id="ipb-email" type="email" value={form.email} onChange={(e) => onChange({ email: e.target.value })}
-          placeholder="contact@monentreprise.fr" className={inputClass} />
+        <input
+          id="ipb-email"
+          type="email"
+          value={form.email}
+          onChange={(e) => onChange({ email: e.target.value })}
+          placeholder="contact@monentreprise.fr"
+          className={inputClass}
+        />
       </div>
 
       <div>
         <label htmlFor="ipb-telephone" className="block text-sm font-medium text-slate-300 mb-1">
-          <Phone className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Téléphone *
+          <Phone className="inline w-3.5 h-3.5 mr-1 text-slate-400" />
+          Téléphone *
         </label>
-        <input id="ipb-telephone" type="tel" value={form.telephone} onChange={(e) => onChange({ telephone: e.target.value })}
-          placeholder="0590 XX XX XX" maxLength={20} className={inputClass} />
+        <input
+          id="ipb-telephone"
+          type="tel"
+          value={form.telephone}
+          onChange={(e) => onChange({ telephone: e.target.value })}
+          placeholder="0590 XX XX XX"
+          maxLength={20}
+          className={inputClass}
+        />
       </div>
 
       <div>
         <label htmlFor="ipb-adresse" className="block text-sm font-medium text-slate-300 mb-1">
-          <MapPin className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Adresse professionnelle *
+          <MapPin className="inline w-3.5 h-3.5 mr-1 text-slate-400" />
+          Adresse professionnelle *
         </label>
         <input
-            id="ipb-adresse" type="text" value={form.adresse} onChange={(e) => onChange({ adresse: e.target.value })}
-          placeholder="12 rue des Flamboyants" maxLength={120} className={inputClass} />
+          id="ipb-adresse"
+          type="text"
+          value={form.adresse}
+          onChange={(e) => onChange({ adresse: e.target.value })}
+          placeholder="12 rue des Flamboyants"
+          maxLength={120}
+          className={inputClass}
+        />
       </div>
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label htmlFor="ipb-code-postal" className="block text-sm font-medium text-slate-300 mb-1">Code postal *</label>
-          <input id="ipb-code-postal"
-          type="text" value={form.codePostal} onChange={(e) => onChange({ codePostal: e.target.value })}
-            placeholder="97100" maxLength={10} className={inputClass} />
+          <label
+            htmlFor="ipb-code-postal"
+            className="block text-sm font-medium text-slate-300 mb-1"
+          >
+            Code postal *
+          </label>
+          <input
+            id="ipb-code-postal"
+            type="text"
+            value={form.codePostal}
+            onChange={(e) => onChange({ codePostal: e.target.value })}
+            placeholder="97100"
+            maxLength={10}
+            className={inputClass}
+          />
         </div>
         <div className="col-span-2">
-          <label htmlFor="ipb-ville" className="block text-sm font-medium text-slate-300 mb-1">Ville *</label>
-          <input id="ipb-ville"
-          type="text" value={form.ville} onChange={(e) => onChange({ ville: e.target.value })}
-            placeholder="Pointe-à-Pitre" maxLength={80} className={inputClass} />
+          <label htmlFor="ipb-ville" className="block text-sm font-medium text-slate-300 mb-1">
+            Ville *
+          </label>
+          <input
+            id="ipb-ville"
+            type="text"
+            value={form.ville}
+            onChange={(e) => onChange({ ville: e.target.value })}
+            placeholder="Pointe-à-Pitre"
+            maxLength={80}
+            className={inputClass}
+          />
         </div>
       </div>
 
       <div>
-        <label htmlFor="ipb-territoire" className="block text-sm font-medium text-slate-300 mb-1">Territoire *</label>
-        <select id="ipb-territoire"
-          value={form.territoire} onChange={(e) => onChange({ territoire: e.target.value })}
-          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-orange-500">
+        <label htmlFor="ipb-territoire" className="block text-sm font-medium text-slate-300 mb-1">
+          Territoire *
+        </label>
+        <select
+          id="ipb-territoire"
+          value={form.territoire}
+          onChange={(e) => onChange({ territoire: e.target.value })}
+          className="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+        >
           <option value="">— Sélectionner —</option>
-          {TERRITOIRES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+          {TERRITOIRES.map((t) => (
+            <option key={t.value} value={t.value}>
+              {t.label}
+            </option>
+          ))}
         </select>
       </div>
 
       <div className="flex gap-3">
-        <button onClick={onPrev} className="px-5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors flex items-center gap-1">
-          <ChevronLeft className="w-4 h-4" />Retour
+        <button
+          onClick={onPrev}
+          className="px-5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors flex items-center gap-1"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Retour
         </button>
-        <button onClick={onNext} disabled={!canContinue}
-          className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors">
+        <button
+          onClick={onNext}
+          disabled={!canContinue}
+          className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors"
+        >
           Continuer <ChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -386,7 +533,12 @@ function Step2Contact({ form, onChange, onNext, onPrev }: {
 
 // ─── Étape 3 – Métiers & Services ─────────────────────────────────────────────
 
-function Step3Metiers({ form, onChange, onNext, onPrev }: {
+function Step3Metiers({
+  form,
+  onChange,
+  onNext,
+  onPrev,
+}: {
   form: FormState;
   onChange: (u: Partial<FormState>) => void;
   onNext: () => void;
@@ -400,7 +552,10 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
   };
 
   const toggleCertif = (c: string) => {
-    if (c === 'Aucune') { onChange({ certifications: ['Aucune'] }); return; }
+    if (c === 'Aucune') {
+      onChange({ certifications: ['Aucune'] });
+      return;
+    }
     const filtered = form.certifications.filter((x) => x !== 'Aucune');
     const next = filtered.includes(c) ? filtered.filter((x) => x !== c) : [...filtered, c];
     onChange({ certifications: next });
@@ -418,7 +573,8 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
       {/* Corps de métier */}
       <div>
         <span className="block text-sm font-medium text-slate-300 mb-2">
-          Corps de métier * <span className="text-slate-500 font-normal text-xs">(sélectionnez au moins 1)</span>
+          Corps de métier *{' '}
+          <span className="text-slate-500 font-normal text-xs">(sélectionnez au moins 1)</span>
         </span>
         <div className="flex flex-wrap gap-2">
           {(Object.entries(METIER_LABELS) as [MetierBatiment, string][]).map(([key, label]) => (
@@ -440,7 +596,12 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
       {/* Zone d'intervention */}
       <div>
-        <label htmlFor="ipb-zone-intervention" className="block text-sm font-medium text-slate-300 mb-1">Zone d'intervention *</label>
+        <label
+          htmlFor="ipb-zone-intervention"
+          className="block text-sm font-medium text-slate-300 mb-1"
+        >
+          Zone d'intervention *
+        </label>
         <input
           id="ipb-zone-intervention"
           type="text"
@@ -454,8 +615,12 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
       {/* Tarif horaire */}
       <div>
-        <label htmlFor="ipb-tarif-horaire" className="block text-sm font-medium text-slate-300 mb-1">
-          <Euro className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Tarif horaire HT (€/h)
+        <label
+          htmlFor="ipb-tarif-horaire"
+          className="block text-sm font-medium text-slate-300 mb-1"
+        >
+          <Euro className="inline w-3.5 h-3.5 mr-1 text-slate-400" />
+          Tarif horaire HT (€/h)
           <span className="text-slate-500 text-xs font-normal ml-1">(optionnel)</span>
         </label>
         <input
@@ -472,7 +637,8 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
       {/* Description */}
       <div>
         <label htmlFor="ipb-description" className="block text-sm font-medium text-slate-300 mb-1">
-          Présentation libre <span className="text-slate-500 text-xs font-normal">(max 500 caractères)</span>
+          Présentation libre{' '}
+          <span className="text-slate-500 text-xs font-normal">(max 500 caractères)</span>
         </label>
         <textarea
           id="ipb-description"
@@ -489,7 +655,8 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
       {/* Certifications */}
       <div>
         <p className="block text-sm font-medium text-slate-300 mb-2">
-          <Shield className="inline w-3.5 h-3.5 mr-1 text-slate-400" />Certifications &amp; labels
+          <Shield className="inline w-3.5 h-3.5 mr-1 text-slate-400" />
+          Certifications &amp; labels
         </p>
         <div className="flex flex-wrap gap-2">
           {CERTIFICATIONS_OPTIONS.map((c) => (
@@ -507,11 +674,18 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
       </div>
 
       <div className="flex gap-3">
-        <button onClick={onPrev} className="px-5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors flex items-center gap-1">
-          <ChevronLeft className="w-4 h-4" />Retour
+        <button
+          onClick={onPrev}
+          className="px-5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors flex items-center gap-1"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Retour
         </button>
-        <button onClick={onNext} disabled={!canContinue}
-          className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors">
+        <button
+          onClick={onNext}
+          disabled={!canContinue}
+          className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors"
+        >
           Continuer <ChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -521,7 +695,12 @@ function Step3Metiers({ form, onChange, onNext, onPrev }: {
 
 // ─── Étape 4 – Documents obligatoires ────────────────────────────────────────
 
-function Step4Documents({ form, onChange, onNext, onPrev }: {
+function Step4Documents({
+  form,
+  onChange,
+  onNext,
+  onPrev,
+}: {
   form: FormState;
   onChange: (u: Partial<FormState>) => void;
   onNext: () => void;
@@ -531,9 +710,9 @@ function Step4Documents({ form, onChange, onNext, onPrev }: {
     onChange({ docsConfirmed: { ...form.docsConfirmed, [type]: checked } });
   };
 
-  const allObligatoryConfirmed = DOCUMENTS_LIST
-    .filter((d) => d.obligatoire)
-    .every((d) => form.docsConfirmed[d.type]);
+  const allObligatoryConfirmed = DOCUMENTS_LIST.filter((d) => d.obligatoire).every(
+    (d) => form.docsConfirmed[d.type]
+  );
 
   const canContinue = allObligatoryConfirmed && form.accepteCGU && form.honnetete;
 
@@ -550,14 +729,17 @@ function Step4Documents({ form, onChange, onNext, onPrev }: {
           <p className="text-sm text-amber-300 font-medium">Phase MVP — engagement sur l'honneur</p>
         </div>
         <p className="text-xs text-slate-400">
-          L'upload direct sera disponible après validation initiale. Cochez chaque document que vous certifiez détenir.
-          Notre équipe vous contactera pour en prendre copie.
+          L'upload direct sera disponible après validation initiale. Cochez chaque document que vous
+          certifiez détenir. Notre équipe vous contactera pour en prendre copie.
         </p>
       </div>
 
       <div className="space-y-3">
         {DOCUMENTS_LIST.map((doc) => (
-          <label key={doc.type} className="flex items-start gap-3 p-3 bg-slate-800/60 border border-slate-700 rounded-xl cursor-pointer hover:border-slate-600 transition-colors">
+          <label
+            key={doc.type}
+            className="flex items-start gap-3 p-3 bg-slate-800/60 border border-slate-700 rounded-xl cursor-pointer hover:border-slate-600 transition-colors"
+          >
             <input
               type="checkbox"
               checked={!!form.docsConfirmed[doc.type]}
@@ -567,17 +749,20 @@ function Step4Documents({ form, onChange, onNext, onPrev }: {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm font-medium text-white">{doc.label}</span>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                  doc.obligatoire ? 'bg-red-600/30 text-red-300' : 'bg-slate-600/50 text-slate-400'
-                }`}>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                    doc.obligatoire
+                      ? 'bg-red-600/30 text-red-300'
+                      : 'bg-slate-600/50 text-slate-400'
+                  }`}
+                >
                   {doc.obligatoire ? 'Obligatoire' : 'Recommandé'}
                 </span>
               </div>
-              {doc.note && (
-                <p className="text-xs text-slate-500 mt-0.5">{doc.note}</p>
-              )}
+              {doc.note && <p className="text-xs text-slate-500 mt-0.5">{doc.note}</p>}
               <p className="text-xs text-slate-500 mt-1">
-                Je certifie disposer de ce document et m'engage à le transmettre à la demande de l'équipe A KI PRI SA YÉ.
+                Je certifie disposer de ce document et m'engage à le transmettre à la demande de
+                l'équipe A KI PRI SA YÉ.
               </p>
             </div>
           </label>
@@ -587,31 +772,52 @@ function Step4Documents({ form, onChange, onNext, onPrev }: {
       {/* Engagements */}
       <div className="space-y-3 pt-1">
         <label className="flex items-start gap-3 cursor-pointer">
-          <input type="checkbox" checked={form.accepteCGU} onChange={(e) => onChange({ accepteCGU: e.target.checked })}
-            className="mt-0.5 w-4 h-4 rounded accent-orange-500 shrink-0" />
+          <input
+            type="checkbox"
+            checked={form.accepteCGU}
+            onChange={(e) => onChange({ accepteCGU: e.target.checked })}
+            className="mt-0.5 w-4 h-4 rounded accent-orange-500 shrink-0"
+          />
           <span className="text-sm text-slate-300">
             J'accepte les{' '}
-            <Link to="/mentions-legales" target="_blank" rel="noopener noreferrer" className="text-orange-400 underline">
+            <Link
+              to="/mentions-legales"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-orange-400 underline"
+            >
               Conditions Générales d'Utilisation
-            </Link>
-            {' '}de la plateforme A KI PRI SA YÉ. *
+            </Link>{' '}
+            de la plateforme A KI PRI SA YÉ. *
           </span>
         </label>
         <label className="flex items-start gap-3 cursor-pointer">
-          <input type="checkbox" checked={form.honnetete} onChange={(e) => onChange({ honnetete: e.target.checked })}
-            className="mt-0.5 w-4 h-4 rounded accent-orange-500 shrink-0" />
+          <input
+            type="checkbox"
+            checked={form.honnetete}
+            onChange={(e) => onChange({ honnetete: e.target.checked })}
+            className="mt-0.5 w-4 h-4 rounded accent-orange-500 shrink-0"
+          />
           <span className="text-sm text-slate-300">
-            Je certifie sur l'honneur que toutes les informations fournies sont exactes et complètes. *
+            Je certifie sur l'honneur que toutes les informations fournies sont exactes et
+            complètes. *
           </span>
         </label>
       </div>
 
       <div className="flex gap-3">
-        <button onClick={onPrev} className="px-5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors flex items-center gap-1">
-          <ChevronLeft className="w-4 h-4" />Retour
+        <button
+          onClick={onPrev}
+          className="px-5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors flex items-center gap-1"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Retour
         </button>
-        <button onClick={onNext} disabled={!canContinue}
-          className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors">
+        <button
+          onClick={onNext}
+          disabled={!canContinue}
+          className="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors"
+        >
           Continuer <ChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -621,17 +827,47 @@ function Step4Documents({ form, onChange, onNext, onPrev }: {
 
 // ─── Étape 5 – Plan tarifaire & Validation ────────────────────────────────────
 
-function Step5Plan({ form, onChange, onSubmit, onPrev, submitting }: {
+function Step5Plan({
+  form,
+  onChange,
+  onSubmit,
+  onPrev,
+  submitting,
+}: {
   form: FormState;
   onChange: (u: Partial<FormState>) => void;
   onSubmit: () => void;
   onPrev: () => void;
   submitting: boolean;
 }) {
-  const PLANS: { id: ProBatPlan; price: string; icon: React.ReactNode; badge: string; badgeColor: string }[] = [
-    { id: 'free',      price: 'Gratuit',      icon: <Lock className="w-5 h-5" />,     badge: 'En attente de vérif.',  badgeColor: 'text-yellow-300 bg-yellow-900/30 border-yellow-600/30' },
-    { id: 'essentiel', price: '14,90 €/mois', icon: <BadgeCheck className="w-5 h-5" />, badge: 'Pro Vérifié ✅',      badgeColor: 'text-green-300 bg-green-900/30 border-green-600/30' },
-    { id: 'premium',   price: '29,90 €/mois', icon: <Zap className="w-5 h-5" />,       badge: '💎 Premium Prioritaire', badgeColor: 'text-orange-300 bg-orange-900/30 border-orange-600/30' },
+  const PLANS: {
+    id: ProBatPlan;
+    price: string;
+    icon: React.ReactNode;
+    badge: string;
+    badgeColor: string;
+  }[] = [
+    {
+      id: 'free',
+      price: 'Gratuit',
+      icon: <Lock className="w-5 h-5" />,
+      badge: 'En attente de vérif.',
+      badgeColor: 'text-yellow-300 bg-yellow-900/30 border-yellow-600/30',
+    },
+    {
+      id: 'essentiel',
+      price: '14,90 €/mois',
+      icon: <BadgeCheck className="w-5 h-5" />,
+      badge: 'Pro Vérifié ✅',
+      badgeColor: 'text-green-300 bg-green-900/30 border-green-600/30',
+    },
+    {
+      id: 'premium',
+      price: '29,90 €/mois',
+      icon: <Zap className="w-5 h-5" />,
+      badge: '💎 Premium Prioritaire',
+      badgeColor: 'text-orange-300 bg-orange-900/30 border-orange-600/30',
+    },
   ];
 
   return (
@@ -658,18 +894,24 @@ function Step5Plan({ form, onChange, onSubmit, onPrev, submitting }: {
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${isSelected ? 'bg-orange-600/30 text-orange-300' : 'bg-slate-700/50 text-slate-400'}`}>
+                  <div
+                    className={`p-2 rounded-lg ${isSelected ? 'bg-orange-600/30 text-orange-300' : 'bg-slate-700/50 text-slate-400'}`}
+                  >
                     {p.icon}
                   </div>
                   <div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-semibold text-white">{PLAN_LABELS[p.id]}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${p.badgeColor}`}>
+                      <span
+                        className={`text-xs px-2 py-0.5 rounded-full border font-medium ${p.badgeColor}`}
+                      >
                         {p.badge}
                       </span>
                     </div>
                     {rate > 0 && (
-                      <p className="text-xs text-slate-400 mt-0.5">Commission {rate}% sur devis accepté</p>
+                      <p className="text-xs text-slate-400 mt-0.5">
+                        Commission {rate}% sur devis accepté
+                      </p>
                     )}
                   </div>
                 </div>
@@ -678,7 +920,8 @@ function Step5Plan({ form, onChange, onSubmit, onPrev, submitting }: {
               <ul className="mt-3 space-y-1">
                 {PLAN_FEATURES[p.id].map((f, i) => (
                   <li key={i} className="text-xs text-slate-400 flex items-center gap-1.5">
-                    <CheckCircle className="w-3 h-3 text-green-500 shrink-0" />{f}
+                    <CheckCircle className="w-3 h-3 text-green-500 shrink-0" />
+                    {f}
                   </li>
                 ))}
               </ul>
@@ -689,19 +932,33 @@ function Step5Plan({ form, onChange, onSubmit, onPrev, submitting }: {
 
       <div className="bg-slate-800/60 border border-slate-700 rounded-xl p-4">
         <p className="text-xs text-slate-400">
-          <strong className="text-orange-300">Modèle de commission :</strong>{' '}
-          La commission s'applique uniquement sur les devis acceptés et signalés sur la plateforme.
-          Gratuit si aucun devis confirmé. Aucun prélèvement automatique.
+          <strong className="text-orange-300">Modèle de commission :</strong> La commission
+          s'applique uniquement sur les devis acceptés et signalés sur la plateforme. Gratuit si
+          aucun devis confirmé. Aucun prélèvement automatique.
         </p>
       </div>
 
       <div className="flex gap-3">
-        <button onClick={onPrev} className="px-5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors flex items-center gap-1">
-          <ChevronLeft className="w-4 h-4" />Retour
+        <button
+          onClick={onPrev}
+          className="px-5 bg-slate-700 hover:bg-slate-600 text-slate-300 rounded-xl font-medium transition-colors flex items-center gap-1"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Retour
         </button>
-        <button onClick={onSubmit} disabled={submitting}
-          className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors">
-          {submitting ? 'Envoi en cours…' : <><CheckCircle className="w-5 h-5" />Soumettre mon dossier</>}
+        <button
+          onClick={onSubmit}
+          disabled={submitting}
+          className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors"
+        >
+          {submitting ? (
+            'Envoi en cours…'
+          ) : (
+            <>
+              <CheckCircle className="w-5 h-5" />
+              Soumettre mon dossier
+            </>
+          )}
         </button>
       </div>
     </div>
@@ -732,7 +989,10 @@ export default function InscriptionProBatiment() {
 
       let uid = 'anonymous';
       await new Promise<void>((resolve) => {
-        if (!auth) { resolve(); return; }
+        if (!auth) {
+          resolve();
+          return;
+        }
         const unsub = onAuthStateChanged(auth, (user) => {
           if (user) uid = user.uid;
           unsub();
@@ -742,29 +1002,29 @@ export default function InscriptionProBatiment() {
 
       const payload: NewProPayload = {
         uid,
-        siret:          rawSiret,
+        siret: rawSiret,
         siren,
         tva,
-        raisonSociale:  form.raisonSociale.trim(),
+        raisonSociale: form.raisonSociale.trim(),
         formeJuridique: form.formeJuridique,
-        gerantPrenom:   form.gerantPrenom.trim(),
-        gerantNom:      form.gerantNom.trim(),
-        email:          form.email.trim(),
-        telephone:      form.telephone.trim(),
-        adresse:        form.adresse.trim(),
-        codePostal:     form.codePostal.trim(),
-        ville:          form.ville.trim(),
-        territoire:     form.territoire,
-        metiers:        form.metiers,
-        specialites:    [],
-        description:    form.description.trim(),
+        gerantPrenom: form.gerantPrenom.trim(),
+        gerantNom: form.gerantNom.trim(),
+        email: form.email.trim(),
+        telephone: form.telephone.trim(),
+        adresse: form.adresse.trim(),
+        codePostal: form.codePostal.trim(),
+        ville: form.ville.trim(),
+        territoire: form.territoire,
+        metiers: form.metiers,
+        specialites: [],
+        description: form.description.trim(),
         zoneIntervention: form.zoneIntervention.trim(),
-        tarifHoraire:   form.tarifHoraire ? Number(form.tarifHoraire) : null,
+        tarifHoraire: form.tarifHoraire ? Number(form.tarifHoraire) : null,
         certifications: form.certifications,
         assuranceDecen: !!form.docsConfirmed['assurance_decennale'],
-        anneeCreation:  form.anneeCreation ? Number(form.anneeCreation) : null,
-        documents:      [],
-        plan:           form.plan,
+        anneeCreation: form.anneeCreation ? Number(form.anneeCreation) : null,
+        documents: [],
+        plan: form.plan,
       };
 
       const res = await registerProBatiment(payload);
@@ -785,10 +1045,18 @@ export default function InscriptionProBatiment() {
       <>
         <Helmet>
           <title>Dossier soumis – Pro Bâtiment – A KI PRI SA YÉ</title>
-                <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/inscription-pro" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/inscription-pro" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/inscription-pro" />
-      </Helmet>
+          <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/inscription-pro" />
+          <link
+            rel="alternate"
+            hrefLang="fr"
+            href="https://teetee971.github.io/akiprisaye-web/inscription-pro"
+          />
+          <link
+            rel="alternate"
+            hrefLang="x-default"
+            href="https://teetee971.github.io/akiprisaye-web/inscription-pro"
+          />
+        </Helmet>
         <div className="min-h-screen bg-slate-950 flex items-center justify-center py-6 px-4">
           <div className="max-w-lg w-full bg-slate-900 border border-slate-700 rounded-2xl p-8 text-center space-y-5">
             <div className="text-5xl">✅</div>
@@ -798,15 +1066,16 @@ export default function InscriptionProBatiment() {
               <p className="font-mono text-orange-400 text-sm font-semibold">{result.id}</p>
             </div>
             <p className="text-slate-300 text-sm">
-              Notre équipe vérifiera votre dossier sous <strong className="text-white">48 à 72h</strong>.
-              Vous recevrez un email de confirmation à l'adresse indiquée.
+              Notre équipe vérifiera votre dossier sous{' '}
+              <strong className="text-white">48 à 72h</strong>. Vous recevrez un email de
+              confirmation à l'adresse indiquée.
             </p>
             <div className="bg-amber-900/20 border border-amber-700/30 rounded-xl p-4 text-left">
               <div className="flex items-start gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <p className="text-sm text-amber-300">
-                  Votre profil sera publié <strong>uniquement après vérification</strong> de vos documents
-                  par l'équipe A KI PRI SA YÉ.
+                  Votre profil sera publié <strong>uniquement après vérification</strong> de vos
+                  documents par l'équipe A KI PRI SA YÉ.
                 </p>
               </div>
             </div>
@@ -838,7 +1107,9 @@ export default function InscriptionProBatiment() {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 bg-orange-600/20 border border-orange-500/30 rounded-full px-4 py-1.5 mb-4">
               <HardHat className="w-4 h-4 text-orange-400" />
-              <span className="text-sm text-orange-300 font-medium">Espace Pro Bâtiment DOM-TOM</span>
+              <span className="text-sm text-orange-300 font-medium">
+                Espace Pro Bâtiment DOM-TOM
+              </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-white">
               Référencer votre entreprise
@@ -857,16 +1128,37 @@ export default function InscriptionProBatiment() {
               <Step1Legal form={form} onChange={handleChange} onNext={() => setStep(1)} />
             )}
             {step === 1 && (
-              <Step2Contact form={form} onChange={handleChange} onNext={() => setStep(2)} onPrev={() => setStep(0)} />
+              <Step2Contact
+                form={form}
+                onChange={handleChange}
+                onNext={() => setStep(2)}
+                onPrev={() => setStep(0)}
+              />
             )}
             {step === 2 && (
-              <Step3Metiers form={form} onChange={handleChange} onNext={() => setStep(3)} onPrev={() => setStep(1)} />
+              <Step3Metiers
+                form={form}
+                onChange={handleChange}
+                onNext={() => setStep(3)}
+                onPrev={() => setStep(1)}
+              />
             )}
             {step === 3 && (
-              <Step4Documents form={form} onChange={handleChange} onNext={() => setStep(4)} onPrev={() => setStep(2)} />
+              <Step4Documents
+                form={form}
+                onChange={handleChange}
+                onNext={() => setStep(4)}
+                onPrev={() => setStep(2)}
+              />
             )}
             {step === 4 && (
-              <Step5Plan form={form} onChange={handleChange} onSubmit={handleSubmit} onPrev={() => setStep(3)} submitting={submitting} />
+              <Step5Plan
+                form={form}
+                onChange={handleChange}
+                onSubmit={handleSubmit}
+                onPrev={() => setStep(3)}
+                submitting={submitting}
+              />
             )}
 
             {submitError && (
@@ -879,7 +1171,9 @@ export default function InscriptionProBatiment() {
 
           <p className="text-xs text-slate-500 text-center mt-4">
             Déjà inscrit ?{' '}
-            <Link to="/espace-pro-batiment" className="text-orange-400 underline">Accéder à mon espace</Link>
+            <Link to="/espace-pro-batiment" className="text-orange-400 underline">
+              Accéder à mon espace
+            </Link>
           </p>
         </div>
       </div>

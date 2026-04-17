@@ -5,12 +5,12 @@
 
 import { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Store, 
-  Package, 
-  Upload, 
-  Menu, 
+import {
+  LayoutDashboard,
+  Store,
+  Package,
+  Upload,
+  Menu,
   X,
   BarChart3,
   Flag,
@@ -23,18 +23,18 @@ import {
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard',      href: '/admin',             icon: LayoutDashboard },
-  { name: 'Automatisation', href: '/admin/automation',  icon: Bot },
-  { name: 'Utilisateurs',   href: '/admin/users',       icon: Users },
-  { name: 'Audience',       href: '/admin/audience',    icon: Globe },
-  { name: 'Enseignes',      href: '/admin/stores',      icon: Store },
-  { name: 'Articles',       href: '/admin/products',    icon: Package },
-  { name: 'Import',         href: '/admin/import',      icon: Upload },
-  { name: 'Tickets',        href: '/admin/ticket-import', icon: ReceiptText },
-  { name: 'Catalogues',     href: '/admin/catalogs',    icon: BookOpen },
-  { name: 'Synchronisation',href: '/admin/sync',        icon: RefreshCw },
-  { name: 'Modération',     href: '/admin/moderation',  icon: Flag },
-  { name: 'Statistiques',   href: '/admin/stats',       icon: BarChart3 },
+  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { name: 'Automatisation', href: '/admin/automation', icon: Bot },
+  { name: 'Utilisateurs', href: '/admin/users', icon: Users },
+  { name: 'Audience', href: '/admin/audience', icon: Globe },
+  { name: 'Enseignes', href: '/admin/stores', icon: Store },
+  { name: 'Articles', href: '/admin/products', icon: Package },
+  { name: 'Import', href: '/admin/import', icon: Upload },
+  { name: 'Tickets', href: '/admin/ticket-import', icon: ReceiptText },
+  { name: 'Catalogues', href: '/admin/catalogs', icon: BookOpen },
+  { name: 'Synchronisation', href: '/admin/sync', icon: RefreshCw },
+  { name: 'Modération', href: '/admin/moderation', icon: Flag },
+  { name: 'Statistiques', href: '/admin/stats', icon: BarChart3 },
 ];
 
 export default function AdminLayout() {
@@ -64,7 +64,7 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <div
         className={`
-          fixed inset-y-0 left-0 z-50 w-64 transform bg-slate-900/80 backdrop-blur-[14px] 
+          fixed inset-y-0 left-0 z-50 w-64 transform bg-slate-900/80 backdrop-blur-[14px]
           border-r border-white/10 transition-transform duration-300 ease-in-out
           lg:translate-x-0 lg:static lg:inset-0
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -97,7 +97,7 @@ export default function AdminLayout() {
           {navigation.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
-            
+
             return (
               <Link
                 key={item.name}
@@ -105,9 +105,10 @@ export default function AdminLayout() {
                 onClick={() => setSidebarOpen(false)}
                 className={`
                   flex items-center gap-3 px-4 py-3 rounded-lg transition-all
-                  ${active
-                    ? 'bg-white/20 text-white shadow-lg'
-                    : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  ${
+                    active
+                      ? 'bg-white/20 text-white shadow-lg'
+                      : 'text-white/70 hover:bg-white/10 hover:text-white'
                   }
                 `}
               >
@@ -125,7 +126,12 @@ export default function AdminLayout() {
             className="flex items-center gap-2 px-4 py-2 text-sm text-white/70 hover:text-white transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
             </svg>
             Retour au site
           </Link>

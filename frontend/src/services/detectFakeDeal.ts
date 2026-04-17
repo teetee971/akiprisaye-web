@@ -21,12 +21,12 @@ export interface PriceHistory {
 
 /**
  * Détecte si un prix "promotionnel" est suspect
- * 
+ *
  * Logique :
  * 1. Calculer moyenne 30 derniers jours
  * 2. Trouver prix le plus bas observé
  * 3. Si prix actuel > moyenne → faux bon plan probable
- * 
+ *
  * @param currentPrice - Prix actuel affiché
  * @param priceHistory - Historique des prix
  * @param isPromotion - Si une promotion est affichée
@@ -46,15 +46,15 @@ export function detectFakeDeal(
       currentPrice,
       avg30Days: currentPrice,
       lowestPrice: currentPrice,
-      percentAboveAverage: 0
+      percentAboveAverage: 0,
     };
   }
 
   // Filtrer les 30 derniers jours
   const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
   const recentPrices = priceHistory
-    .filter(p => new Date(p.date).getTime() >= thirtyDaysAgo)
-    .map(p => p.price);
+    .filter((p) => new Date(p.date).getTime() >= thirtyDaysAgo)
+    .map((p) => p.price);
 
   if (recentPrices.length === 0) {
     return {
@@ -64,7 +64,7 @@ export function detectFakeDeal(
       currentPrice,
       avg30Days: currentPrice,
       lowestPrice: currentPrice,
-      percentAboveAverage: 0
+      percentAboveAverage: 0,
     };
   }
 
@@ -72,7 +72,7 @@ export function detectFakeDeal(
   const avg30Days = recentPrices.reduce((sum, p) => sum + p, 0) / recentPrices.length;
 
   // Prix le plus bas observé
-  const lowestPrice = Math.min(...priceHistory.map(p => p.price));
+  const lowestPrice = Math.min(...priceHistory.map((p) => p.price));
 
   // Différence vs moyenne
   const percentAboveAverage = ((currentPrice - avg30Days) / avg30Days) * 100;
@@ -107,7 +107,7 @@ export function detectFakeDeal(
     currentPrice,
     avg30Days,
     lowestPrice,
-    percentAboveAverage
+    percentAboveAverage,
   };
 }
 
@@ -116,22 +116,20 @@ export function detectFakeDeal(
  */
 export function getFakeDealMessage(result: FakeDealResult): string {
   if (!result.isFakeDeal) {
-    return 'Prix cohérent avec l\'historique récent';
+    return "Prix cohérent avec l'historique récent";
   }
 
   const messages = {
     high: [
       `⚠️ Attention : ce prix est ${result.percentAboveAverage.toFixed(0)}% plus élevé que la moyenne des 30 derniers jours.`,
       `Moyenne observée : ${result.avg30Days.toFixed(2)} €`,
-      `Prix le plus bas : ${result.lowestPrice.toFixed(2)} €`
+      `Prix le plus bas : ${result.lowestPrice.toFixed(2)} €`,
     ],
     medium: [
       `🤔 Ce prix semble élevé par rapport à l'historique récent.`,
-      `Moyenne 30 jours : ${result.avg30Days.toFixed(2)} €`
+      `Moyenne 30 jours : ${result.avg30Days.toFixed(2)} €`,
     ],
-    low: [
-      `Prix dans la moyenne, mais vérifiez l'historique.`
-    ]
+    low: [`Prix dans la moyenne, mais vérifiez l'historique.`],
   };
 
   return messages[result.confidence].join('\n');
@@ -152,10 +150,10 @@ export function analyzeFakeDeals(
   result: FakeDealResult;
 }> {
   return products
-    .map(p => ({
+    .map((p) => ({
       product: p.name,
-      result: detectFakeDeal(p.currentPrice, p.priceHistory, p.isPromotion)
+      result: detectFakeDeal(p.currentPrice, p.priceHistory, p.isPromotion),
     }))
-    .filter(p => p.result.isFakeDeal)
+    .filter((p) => p.result.isFakeDeal)
     .sort((a, b) => b.result.percentAboveAverage - a.result.percentAboveAverage);
 }

@@ -1,21 +1,16 @@
- 
 /**
  * Data Validator
- * 
+ *
  * Validation utilities for citizen contributions and form data.
  * Provides reusable validation functions for different data types.
  */
 
-import type { 
-  ValidationResult, 
-  ValidationRule, 
-  Territory 
-} from '../types/comparatorCommon';
+import type { ValidationResult, ValidationRule, Territory } from '../types/comparatorCommon';
 import { isValidTerritory } from './territoryMapper';
 
 /**
  * Validate data against a set of rules
- * 
+ *
  * @param data - Data to validate
  * @param rules - Array of validation rules
  * @returns Validation result with errors if any
@@ -38,10 +33,7 @@ export function validateContribution(
         isValid = validateFormat(value, rule.params as string);
         break;
       case 'range':
-        isValid = validateRange(
-          value as number,
-          rule.params as { min?: number; max?: number }
-        );
+        isValid = validateRange(value as number, rule.params as { min?: number; max?: number });
         break;
       case 'custom':
         isValid = (rule.params as (value: unknown) => boolean)(value);
@@ -64,7 +56,7 @@ export function validateContribution(
 
 /**
  * Validate required field
- * 
+ *
  * @param value - Value to check
  * @returns true if value is not null/undefined/empty
  */
@@ -77,7 +69,7 @@ function validateRequired(value: unknown): boolean {
 
 /**
  * Validate format using regex or format type
- * 
+ *
  * @param value - Value to validate
  * @param format - Format type or regex pattern
  * @returns true if format is valid
@@ -111,15 +103,12 @@ function validateFormat(value: unknown, format: string): boolean {
 
 /**
  * Validate numeric range
- * 
+ *
  * @param value - Number to validate
  * @param params - Range parameters (min/max)
  * @returns true if value is within range
  */
-function validateRange(
-  value: number,
-  params: { min?: number; max?: number }
-): boolean {
+function validateRange(value: number, params: { min?: number; max?: number }): boolean {
   if (typeof value !== 'number' || !Number.isFinite(value)) return false;
 
   if (params.min !== undefined && value < params.min) return false;
@@ -130,7 +119,7 @@ function validateRange(
 
 /**
  * Validate price value
- * 
+ *
  * @param price - Price to validate
  * @returns true if price is valid (positive finite number)
  */
@@ -140,7 +129,7 @@ export function validatePrice(price: number): boolean {
 
 /**
  * Validate date string (ISO 8601 format)
- * 
+ *
  * @param date - Date string to validate
  * @returns true if date is valid
  */
@@ -153,7 +142,7 @@ export function validateDate(date: string): boolean {
 
 /**
  * Validate territory code
- * 
+ *
  * @param territory - Territory code to validate
  * @returns true if territory code is valid
  */
@@ -163,7 +152,7 @@ export function validateTerritory(territory: string): boolean {
 
 /**
  * Validate file upload
- * 
+ *
  * @param file - File to validate
  * @param maxSizeMB - Maximum file size in megabytes
  * @param allowedTypes - Array of allowed MIME types
@@ -209,7 +198,7 @@ export function validateFile(
 
 /**
  * Sanitize user input to prevent XSS
- * 
+ *
  * @param input - Input string to sanitize
  * @returns Sanitized string
  */
@@ -227,7 +216,7 @@ export function sanitizeInput(input: string): string {
 
 /**
  * Validate email address
- * 
+ *
  * @param email - Email to validate
  * @returns true if email is valid
  */
@@ -237,7 +226,7 @@ export function validateEmail(email: string): boolean {
 
 /**
  * Validate phone number
- * 
+ *
  * @param phone - Phone number to validate
  * @returns true if phone is valid
  */
@@ -247,7 +236,7 @@ export function validatePhone(phone: string): boolean {
 
 /**
  * Validate URL
- * 
+ *
  * @param url - URL to validate
  * @returns true if URL is valid
  */
@@ -257,7 +246,7 @@ export function validateUrl(url: string): boolean {
 
 /**
  * Validate postal code (French format)
- * 
+ *
  * @param postalCode - Postal code to validate
  * @returns true if postal code is valid
  */
@@ -268,7 +257,7 @@ export function validatePostalCode(postalCode: string): boolean {
 /**
  * Validate SIRET number (French business identifier)
  * Uses the Luhn algorithm adapted for SIRET (alternating 2 and 1 from right to left)
- * 
+ *
  * @param siret - SIRET to validate
  * @returns true if SIRET is valid
  */
@@ -295,7 +284,7 @@ export function validateSiret(siret: string): boolean {
 
 /**
  * Create validation rules for a contribution form
- * 
+ *
  * @param fields - Array of field definitions
  * @returns Array of validation rules
  */

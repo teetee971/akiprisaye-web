@@ -17,7 +17,9 @@ export function FavoritesSection({ favorites = [], onRemove }: FavoritesSectionP
     return (
       <section className="rounded-xl bg-gray-900 border border-gray-700 p-4">
         <h2 className="text-lg font-semibold text-white mb-2">❤️ Mes favoris</h2>
-        <p className="text-gray-400 text-sm">Ajoutez des produits ou enseignes à vos favoris pour les retrouver ici.</p>
+        <p className="text-gray-400 text-sm">
+          Ajoutez des produits ou enseignes à vos favoris pour les retrouver ici.
+        </p>
       </section>
     );
   }
@@ -33,14 +35,19 @@ export function FavoritesSection({ favorites = [], onRemove }: FavoritesSectionP
       <h2 className="text-lg font-semibold text-white mb-3">❤️ Mes favoris ({favorites.length})</h2>
       <ul className="space-y-2">
         {favorites.map((fav) => (
-          <li key={`${fav.type}-${fav.id}`} className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2">
+          <li
+            key={`${fav.type}-${fav.id}`}
+            className="flex items-center justify-between bg-gray-800 rounded-lg px-3 py-2"
+          >
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-white truncate">{fav.name}</p>
               <p className="text-xs text-gray-500">{typeLabel[fav.type]}</p>
             </div>
             <div className="flex items-center gap-2 ml-3 shrink-0">
               {fav.price != null && (
-                <span className="text-sm text-green-400 font-semibold">{fav.price.toFixed(2)} €</span>
+                <span className="text-sm text-green-400 font-semibold">
+                  {fav.price.toFixed(2)} €
+                </span>
               )}
               {onRemove && (
                 <button

@@ -1,4 +1,3 @@
-
 // firebase_log_service.js
 
 import { db } from './firebase_config';

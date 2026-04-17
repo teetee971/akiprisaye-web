@@ -1,47 +1,46 @@
- 
 /**
  * Photo Contribution Modal
  *
  * Modal for citizens to contribute product photos with GDPR compliance
  */
 
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef } from 'react';
 import {
   compressWithPreset,
   validateImageFile,
   formatFileSize,
   type CompressionResult,
-} from '../utils/imageCompression'
-import type { TerritoryCode } from '../types/extensions'
+} from '../utils/imageCompression';
+import type { TerritoryCode } from '../types/extensions';
 
 interface PhotoContributionModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
   productContext?: {
-    name: string
-    barcode?: string
-    category?: string
-  }
-  onSubmit?: (data: PhotoContribution) => Promise<void>
+    name: string;
+    barcode?: string;
+    category?: string;
+  };
+  onSubmit?: (data: PhotoContribution) => Promise<void>;
 }
 
 export interface PhotoContribution {
-  image: Blob
-  imageDataUrl: string
-  productName: string
-  barcode?: string
-  territory: TerritoryCode
-  storeName?: string
-  consentGiven: boolean
+  image: Blob;
+  imageDataUrl: string;
+  productName: string;
+  barcode?: string;
+  territory: TerritoryCode;
+  storeName?: string;
+  consentGiven: boolean;
   location?: {
-    latitude: number
-    longitude: number
-  }
+    latitude: number;
+    longitude: number;
+  };
   metadata: {
-    originalSize: number
-    compressedSize: number
-    compressionRatio: number
-  }
+    originalSize: number;
+    compressedSize: number;
+    compressionRatio: number;
+  };
 }
 
 /**
@@ -60,7 +59,7 @@ const TERRITORIES: { code: TerritoryCode; label: string }[] = [
   { code: 'WF', label: 'Wallis-et-Futuna (986)' },
   { code: 'PF', label: 'Polynésie française (987)' },
   { code: 'NC', label: 'Nouvelle-Calédonie (988)' },
-]
+];
 
 export default function PhotoContributionModal({
   isOpen,
@@ -68,98 +67,92 @@ export default function PhotoContributionModal({
   productContext,
   onSubmit,
 }: PhotoContributionModalProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [image, setImage] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [compressionResult, setCompressionResult] =
-    useState<CompressionResult | null>(null)
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [compressionResult, setCompressionResult] = useState<CompressionResult | null>(null);
 
-  const [productName, setProductName] = useState(productContext?.name || '')
-  const [barcode, setBarcode] = useState(productContext?.barcode || '')
-  const [territory, setTerritory] = useState<TerritoryCode>('GP')
-  const [storeName, setStoreName] = useState('')
-  const [consentGiven, setConsentGiven] = useState(false)
-  const [useGeolocation, setUseGeolocation] = useState(false)
+  const [productName, setProductName] = useState(productContext?.name || '');
+  const [barcode, setBarcode] = useState(productContext?.barcode || '');
+  const [territory, setTerritory] = useState<TerritoryCode>('GP');
+  const [storeName, setStoreName] = useState('');
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [useGeolocation, setUseGeolocation] = useState(false);
 
-  const [isCompressing, setIsCompressing] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
-  const handleImageSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0]
-    if (!file) return
+  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-    const validation = validateImageFile(file, 10)
+    const validation = validateImageFile(file, 10);
     if (!validation.valid) {
-      setError(validation.error || 'Fichier invalide')
-      return
+      setError(validation.error || 'Fichier invalide');
+      return;
     }
 
-    setError(null)
-    setImage(file)
-    setIsCompressing(true)
+    setError(null);
+    setImage(file);
+    setIsCompressing(true);
 
     try {
-      const result = await compressWithPreset(file, 'upload')
-      setCompressionResult(result)
-      setImagePreview(result.dataUrl)
+      const result = await compressWithPreset(file, 'upload');
+      setCompressionResult(result);
+      setImagePreview(result.dataUrl);
     } catch (err) {
-      console.error(err)
-      setError("Erreur lors de la compression de l'image")
+      console.error(err);
+      setError("Erreur lors de la compression de l'image");
     } finally {
-      setIsCompressing(false)
+      setIsCompressing(false);
     }
-  }
+  };
 
   const handleRemoveImage = () => {
-    setImage(null)
-    setImagePreview(null)
-    setCompressionResult(null)
-    if (fileInputRef.current) fileInputRef.current.value = ''
-  }
+    setImage(null);
+    setImagePreview(null);
+    setCompressionResult(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!image || !compressionResult) {
-      setError('Veuillez sélectionner une photo')
-      return
+      setError('Veuillez sélectionner une photo');
+      return;
     }
 
     if (!productName.trim()) {
-      setError('Veuillez indiquer le nom du produit')
-      return
+      setError('Veuillez indiquer le nom du produit');
+      return;
     }
 
     if (!consentGiven) {
-      setError('Vous devez accepter les conditions de contribution')
-      return
+      setError('Vous devez accepter les conditions de contribution');
+      return;
     }
 
-    setIsSubmitting(true)
-    setError(null)
+    setIsSubmitting(true);
+    setError(null);
 
     try {
-      let location:
-        | { latitude: number; longitude: number }
-        | undefined
+      let location: { latitude: number; longitude: number } | undefined;
 
       if (useGeolocation && navigator.geolocation) {
         try {
-          const position = await new Promise<GeolocationPosition>(
-            (resolve, reject) =>
-              navigator.geolocation.getCurrentPosition(resolve, reject),
-          )
+          const position = await new Promise<GeolocationPosition>((resolve, reject) =>
+            navigator.geolocation.getCurrentPosition(resolve, reject)
+          );
           location = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-          }
+          };
         } catch {
           // geolocation is optional → silent fail
         }
@@ -179,41 +172,41 @@ export default function PhotoContributionModal({
           compressedSize: compressionResult.compressedSize,
           compressionRatio: compressionResult.compressionRatio,
         },
-      }
+      };
 
-      await onSubmit?.(contribution)
-      setSubmitted(true)
+      await onSubmit?.(contribution);
+      setSubmitted(true);
 
       setTimeout(() => {
-        resetForm()
-        onClose()
-      }, 2000)
+        resetForm();
+        onClose();
+      }, 2000);
     } catch (err) {
-      console.error(err)
-      setError("Erreur lors de l'envoi de la contribution")
+      console.error(err);
+      setError("Erreur lors de l'envoi de la contribution");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const resetForm = () => {
-    setImage(null)
-    setImagePreview(null)
-    setCompressionResult(null)
-    setProductName(productContext?.name || '')
-    setBarcode(productContext?.barcode || '')
-    setTerritory('GP')
-    setStoreName('')
-    setConsentGiven(false)
-    setUseGeolocation(false)
-    setSubmitted(false)
-    setError(null)
-    if (fileInputRef.current) fileInputRef.current.value = ''
-  }
+    setImage(null);
+    setImagePreview(null);
+    setCompressionResult(null);
+    setProductName(productContext?.name || '');
+    setBarcode(productContext?.barcode || '');
+    setTerritory('GP');
+    setStoreName('');
+    setConsentGiven(false);
+    setUseGeolocation(false);
+    setSubmitted(false);
+    setError(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   /* JSX inchangé en dessous */
   return (
     /* … aucun changement structurel nécessaire … */
     <div />
-  )
+  );
 }

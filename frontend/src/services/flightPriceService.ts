@@ -1,9 +1,9 @@
 /**
  * Flight Price Service
- * 
+ *
  * Service de comparaison des prix de billets d'avion
  * Données simulées structurées pour démonstration
- * 
+ *
  * IMPORTANT:
  * - Données publiques uniquement
  * - Aucun tracking utilisateur
@@ -41,7 +41,8 @@ const SIMULATED_DATA: FlightPrice[] = [
     dateReleve: '2026-03-01',
     depart: 'Guadeloupe',
     arrivee: 'Paris',
-    bookingUrl: 'https://www.airfrance.fr/search/offer?origin=PTP&destination=ORY&cabin=ECONOMY&adults=1',
+    bookingUrl:
+      'https://www.airfrance.fr/search/offer?origin=PTP&destination=ORY&cabin=ECONOMY&adults=1',
     duree: '8h30',
     bagagesInclus: true,
     modifiable: true,
@@ -93,7 +94,8 @@ const SIMULATED_DATA: FlightPrice[] = [
     dateReleve: '2026-03-05',
     depart: 'Guadeloupe',
     arrivee: 'Paris',
-    bookingUrl: 'https://www.airfrance.fr/search/offer?origin=PTP&destination=ORY&cabin=ECONOMY&adults=1',
+    bookingUrl:
+      'https://www.airfrance.fr/search/offer?origin=PTP&destination=ORY&cabin=ECONOMY&adults=1',
     duree: '8h30',
     bagagesInclus: true,
     modifiable: true,
@@ -120,7 +122,8 @@ const SIMULATED_DATA: FlightPrice[] = [
     dateReleve: '2026-03-01',
     depart: 'Martinique',
     arrivee: 'Paris',
-    bookingUrl: 'https://www.airfrance.fr/search/offer?origin=FDF&destination=ORY&cabin=ECONOMY&adults=1',
+    bookingUrl:
+      'https://www.airfrance.fr/search/offer?origin=FDF&destination=ORY&cabin=ECONOMY&adults=1',
     duree: '8h30',
     bagagesInclus: true,
     modifiable: true,
@@ -160,7 +163,8 @@ const SIMULATED_DATA: FlightPrice[] = [
     dateReleve: '2026-03-02',
     depart: 'La Réunion',
     arrivee: 'Paris',
-    bookingUrl: 'https://www.airfrance.fr/search/offer?origin=RUN&destination=CDG&cabin=ECONOMY&adults=1',
+    bookingUrl:
+      'https://www.airfrance.fr/search/offer?origin=RUN&destination=CDG&cabin=ECONOMY&adults=1',
     duree: '11h00',
     bagagesInclus: true,
     modifiable: true,
@@ -186,9 +190,7 @@ const SIMULATED_DATA: FlightPrice[] = [
  */
 export function searchFlightPrices(params: FlightSearchParams): FlightPrice[] {
   let results = SIMULATED_DATA.filter(
-    (flight) =>
-      flight.depart === params.depart &&
-      flight.arrivee === params.arrivee
+    (flight) => flight.depart === params.depart && flight.arrivee === params.arrivee
   );
 
   // Filtrer par mois si spécifié
@@ -212,10 +214,10 @@ export function searchFlightPrices(params: FlightSearchParams): FlightPrice[] {
  */
 export function getAvailableMonths(depart: string, arrivee: string): string[] {
   const months = new Set<string>();
-  SIMULATED_DATA.filter(
-    (flight) => flight.depart === depart && flight.arrivee === arrivee
-  ).forEach((flight) => months.add(flight.mois));
-  
+  SIMULATED_DATA.filter((flight) => flight.depart === depart && flight.arrivee === arrivee).forEach(
+    (flight) => months.add(flight.mois)
+  );
+
   return Array.from(months).sort();
 }
 
@@ -240,22 +242,25 @@ export function getArrivalLocations(): string[] {
 /**
  * Calculer les données pour le graphique de prix par mois
  */
-export function getPricesByMonth(depart: string, arrivee: string): {
+export function getPricesByMonth(
+  depart: string,
+  arrivee: string
+): {
   mois: string;
   prixMoyen: number;
   prixMin: number;
   prixMax: number;
 }[] {
   const pricesByMonth = new Map<string, number[]>();
-  
-  SIMULATED_DATA.filter(
-    (flight) => flight.depart === depart && flight.arrivee === arrivee
-  ).forEach((flight) => {
-    if (!pricesByMonth.has(flight.mois)) {
-      pricesByMonth.set(flight.mois, []);
+
+  SIMULATED_DATA.filter((flight) => flight.depart === depart && flight.arrivee === arrivee).forEach(
+    (flight) => {
+      if (!pricesByMonth.has(flight.mois)) {
+        pricesByMonth.set(flight.mois, []);
+      }
+      pricesByMonth.get(flight.mois)!.push(flight.prix);
     }
-    pricesByMonth.get(flight.mois)!.push(flight.prix);
-  });
+  );
 
   return Array.from(pricesByMonth.entries())
     .map(([mois, prices]) => ({

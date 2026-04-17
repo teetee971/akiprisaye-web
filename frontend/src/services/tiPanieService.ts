@@ -1,11 +1,4 @@
-import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  type DocumentData,
-} from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, type DocumentData } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { logError } from '../utils/logger';
 import { activateIncidentMode, clearIncidentMode } from './incidentMode';
@@ -68,7 +61,7 @@ function applyFilters(baskets: TiPanieBasket[], filters: BasketFilters): TiPanie
       typeof b.name === 'string' &&
       typeof b.store === 'string' &&
       typeof b.price === 'number' &&
-      b.price >= 0,
+      b.price >= 0
   );
 }
 
@@ -115,7 +108,9 @@ export const getBaskets = async (filters: BasketFilters = {}): Promise<TiPanieBa
 /**
  * Returns real Firestore data only.
  */
-export const getBasketsFirestoreOnly = async (filters: BasketFilters = {}): Promise<TiPanieBasket[]> => {
+export const getBasketsFirestoreOnly = async (
+  filters: BasketFilters = {}
+): Promise<TiPanieBasket[]> => {
   try {
     if (db) {
       const basketsRef = collection(db, 'ti_panie');
@@ -140,10 +135,7 @@ export const getBasketsFirestoreOnly = async (filters: BasketFilters = {}): Prom
 /**
  * Save basket view to user history (Firestore).
  */
-export const saveBasketToHistory = async (
-  userId: string,
-  basket: TiPanieBasket,
-): Promise<void> => {
+export const saveBasketToHistory = async (userId: string, basket: TiPanieBasket): Promise<void> => {
   if (!userId || !db) return;
 
   try {
@@ -169,7 +161,10 @@ export const getUserBasketHistory = async (userId: string): Promise<BasketHistor
   try {
     const q = query(collection(db, 'basket_history'), where('userId', '==', userId));
     const docs = await getDocs(q);
-    return docs.docs.map((d) => ({ id: d.id, ...(d.data() as DocumentData) })) as BasketHistoryEntry[];
+    return docs.docs.map((d) => ({
+      id: d.id,
+      ...(d.data() as DocumentData),
+    })) as BasketHistoryEntry[];
   } catch (error) {
     logError('Error fetching basket history', error);
     return [];

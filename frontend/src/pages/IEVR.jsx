@@ -19,8 +19,16 @@ export default function IEVRPage() {
           content="Indice d'Écart de Vie Réelle (IEVR) — Mesurez l'écart du coût de la vie dans les territoires ultramarins par rapport à la France métropolitaine."
         />
         <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/ievr" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/ievr" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/ievr" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/ievr"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/ievr"
+        />
       </Helmet>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <IEVR />

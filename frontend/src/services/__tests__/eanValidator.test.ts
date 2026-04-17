@@ -11,7 +11,7 @@ import {
   isEan8,
   isEan13,
   isValidEan,
-  normalizeEan
+  normalizeEan,
 } from '../eanValidator';
 
 describe('EAN Validator', () => {
@@ -72,7 +72,7 @@ describe('EAN Validator', () => {
         '3038350555557', // Lu Petit Écolier
       ];
 
-      validEans.forEach(ean => {
+      validEans.forEach((ean) => {
         const result = validateEan(ean);
         expect(result.valid).toBe(true);
         expect(result.format).toBe('EAN-13');
@@ -196,7 +196,7 @@ describe('EAN Validator', () => {
         '3228857000166', // Orangina
       ];
 
-      glassBottleEans.forEach(ean => {
+      glassBottleEans.forEach((ean) => {
         const result = validateEan(ean);
         expect(result.valid).toBe(true);
         expect(result.format).toBe('EAN-13');
@@ -213,7 +213,7 @@ describe('EAN Validator', () => {
         '3290370050129',
       ];
 
-      invalidCodes.forEach(ean => {
+      invalidCodes.forEach((ean) => {
         const result = validateEan(ean);
         expect(result.valid).toBe(false);
       });

@@ -1,12 +1,11 @@
- 
 /**
  * Eurostat Interoperability Service - v4.2.0
- * 
+ *
  * Read-only connection to Eurostat official datasets
  * - Timestamped local cache
  * - Fallback mechanism
  * - No data alteration
- * 
+ *
  * @module eurostatService
  */
 
@@ -15,13 +14,15 @@ import type {
   EurostatIndicator,
   InteropStatus,
   CacheEntry,
-  DataMapping
+  DataMapping,
 } from '../types/eurostatInterop';
 
 /**
  * Get interop status
  */
-export async function getInteropStatus(service: 'eurostat' | 'insee' | 'oecd'): Promise<InteropStatus> {
+export async function getInteropStatus(
+  service: 'eurostat' | 'insee' | 'oecd'
+): Promise<InteropStatus> {
   // Mock implementation - checks service availability
   return {
     service,
@@ -29,7 +30,7 @@ export async function getInteropStatus(service: 'eurostat' | 'insee' | 'oecd'): 
     lastCheck: new Date().toISOString(),
     lastSuccessfulSync: new Date(Date.now() - 3600000).toISOString(),
     cacheAvailable: true,
-    cacheAge: 3600000
+    cacheAge: 3600000,
   };
 }
 
@@ -64,7 +65,7 @@ export async function getEurostatDataset(code: string): Promise<EurostatDataset>
     description: 'Harmonised Index of Consumer Prices',
     lastUpdate: new Date().toISOString(),
     dimensions: [],
-    url: `https://ec.europa.eu/eurostat/databrowser/view/${code}`
+    url: `https://ec.europa.eu/eurostat/databrowser/view/${code}`,
   };
 }
 
@@ -77,6 +78,6 @@ export async function getDataMapping(externalCode: string): Promise<DataMapping 
     externalCode,
     externalLabel: 'HICP',
     internalCode: 'price-index',
-    internalLabel: 'Price Index'
+    internalLabel: 'Price Index',
   };
 }

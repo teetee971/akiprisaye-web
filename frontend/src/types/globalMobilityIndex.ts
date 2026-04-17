@@ -1,6 +1,6 @@
 /**
  * Type definitions for Global Mobility Cost Index v3.0.0
- * 
+ *
  * Principles:
  * - Descriptive index ONLY (not prescriptive)
  * - Aggregates v2.2 (transport) + v2.3 (land mobility)
@@ -23,8 +23,8 @@ export interface MobilityCostComponent {
   mode?: TransportMode | LandMobilityCategory;
   averageCost: number;
   observationCount: number;
-  weight: number;                 // Explicit weight in index (0-1)
-  weightRationale: string;        // Why this weight was chosen
+  weight: number; // Explicit weight in index (0-1)
+  weightRationale: string; // Why this weight was chosen
   sources: SourceReference[];
 }
 
@@ -39,14 +39,14 @@ export interface TerritoryMobilityProfile {
     hasMaritimeTransport: boolean;
     hasPublicTransit: boolean;
     hasTaxiVTC: boolean;
-    isIsolated: boolean;          // Geographically isolated
+    isIsolated: boolean; // Geographically isolated
   };
   components: MobilityCostComponent[];
   observationPeriod: {
-    from: string;                 // ISO 8601
-    to: string;                   // ISO 8601
+    from: string; // ISO 8601
+    to: string; // ISO 8601
   };
-  lastUpdate: string;             // ISO 8601
+  lastUpdate: string; // ISO 8601
 }
 
 /**
@@ -54,20 +54,20 @@ export interface TerritoryMobilityProfile {
  */
 export interface GlobalMobilityIndex {
   territory: Territory;
-  indexValue: number;             // Composite index value
+  indexValue: number; // Composite index value
   indexScale: {
     min: number;
     max: number;
-    unit: string;                 // Description of scale
+    unit: string; // Description of scale
   };
   profile: TerritoryMobilityProfile;
   breakdown: {
-    transportCost: number;        // Average transport cost
-    transportWeight: number;      // Weight in index
-    landMobilityCost: number;     // Average land mobility cost
-    landMobilityWeight: number;   // Weight in index
+    transportCost: number; // Average transport cost
+    transportWeight: number; // Weight in index
+    landMobilityCost: number; // Average land mobility cost
+    landMobilityWeight: number; // Weight in index
   };
-  calculationDate: string;        // ISO 8601
+  calculationDate: string; // ISO 8601
   metadata: GlobalMobilityIndexMetadata;
 }
 
@@ -75,15 +75,15 @@ export interface GlobalMobilityIndex {
  * Metadata for global mobility index transparency
  */
 export interface GlobalMobilityIndexMetadata {
-  version: string;                // Index version (e.g., "v3.0.0")
+  version: string; // Index version (e.g., "v3.0.0")
   methodology: GlobalMobilityIndexMethodology;
   dataQuality: {
     transportDataPoints: number;
     landMobilityDataPoints: number;
     totalDataPoints: number;
     coveragePercentage: number;
-    oldestObservation: string;    // ISO 8601
-    newestObservation: string;    // ISO 8601
+    oldestObservation: string; // ISO 8601
+    newestObservation: string; // ISO 8601
   };
   sources: MobilitySourceSummary[];
   warnings?: string[];
@@ -104,10 +104,10 @@ export interface GlobalMobilityIndexMethodology {
     weight: number;
     rationale: string;
   }[];
-  calculationFormula: string;     // Mathematical formula used
-  normalizationMethod?: string;   // How values are normalized
-  assumptions: string[];          // Explicit assumptions made
-  references?: string[];          // Academic or official references
+  calculationFormula: string; // Mathematical formula used
+  normalizationMethod?: string; // How values are normalized
+  assumptions: string[]; // Explicit assumptions made
+  references?: string[]; // Academic or official references
 }
 
 /**
@@ -138,7 +138,7 @@ export interface MobilityIndexComparison {
  * Mobility index for a specific period
  */
 export interface MobilityIndexPeriod {
-  period: string;                 // ISO 8601 date or period identifier
+  period: string; // ISO 8601 date or period identifier
   indexValue: number;
   transportCost: number;
   landMobilityCost: number;
@@ -148,7 +148,7 @@ export interface MobilityIndexPeriod {
  * Component-level variation
  */
 export interface MobilityComponentVariation {
-  component: string;              // Component name
+  component: string; // Component name
   absoluteChange: number;
   percentageChange: number;
   direction: 'increase' | 'decrease' | 'stable';
@@ -161,7 +161,7 @@ export interface MobilityComponentVariation {
 export interface MultiTerritoryMobilityComparison {
   territories: TerritoryMobilityIndexComparison[];
   baseTerritory?: Territory;
-  comparisonDate: string;         // ISO 8601
+  comparisonDate: string; // ISO 8601
   methodology: GlobalMobilityIndexMethodology;
 }
 
@@ -193,8 +193,8 @@ export interface MobilityIndexFilter {
   territory?: Territory;
   classification?: 'ISLAND' | 'CONTINENTAL' | 'ARCHIPELAGO';
   minCoveragePercent?: number;
-  maxPriceAge?: number;           // Max age in days
-  includePartialData?: boolean;   // Include territories with incomplete data
+  maxPriceAge?: number; // Max age in days
+  includePartialData?: boolean; // Include territories with incomplete data
 }
 
 /**
@@ -205,7 +205,7 @@ export interface MobilityIndexConfig {
   defaultWeightingApproach: 'EQUAL' | 'USAGE_BASED' | 'TERRITORY_SPECIFIC';
   minCoveragePercent: number;
   maxPriceAgeDays: number;
-  cacheTimeout: number;           // Cache timeout in seconds
+  cacheTimeout: number; // Cache timeout in seconds
 }
 
 /**
@@ -239,8 +239,8 @@ export interface MobilityIndexHistory {
   history: MobilityIndexHistoryPoint[];
   trend: {
     direction: 'increasing' | 'decreasing' | 'stable' | 'volatile';
-    averageChange: number;        // Average change per period
-    volatility: number;           // Standard deviation
+    averageChange: number; // Average change per period
+    volatility: number; // Standard deviation
   };
 }
 
@@ -248,10 +248,10 @@ export interface MobilityIndexHistory {
  * Mobility index history point
  */
 export interface MobilityIndexHistoryPoint {
-  date: string;                   // ISO 8601
+  date: string; // ISO 8601
   indexValue: number;
   transportCost: number;
   landMobilityCost: number;
   observationCount: number;
-  dataQuality: number;            // Coverage percentage
+  dataQuality: number; // Coverage percentage
 }

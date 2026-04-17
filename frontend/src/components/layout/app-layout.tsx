@@ -1,5 +1,5 @@
-import { cn } from "../../lib/utils";
-import BackgroundMapBlur from "../BackgroundMapBlur";
+import { cn } from '../../lib/utils';
+import BackgroundMapBlur from '../BackgroundMapBlur';
 
 /**
  * AppLayout - Main application layout
@@ -9,23 +9,23 @@ import BackgroundMapBlur from "../BackgroundMapBlur";
 export interface AppLayoutProps {
   children: React.ReactNode;
   className?: string;
-  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "full";
+  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
   withBackground?: boolean;
 }
 
 export function AppLayout({
   children,
   className,
-  maxWidth = "xl",
+  maxWidth = 'xl',
   withBackground = true,
 }: AppLayoutProps) {
   const maxWidthClasses = {
-    sm: "max-w-2xl",
-    md: "max-w-4xl",
-    lg: "max-w-5xl",
-    xl: "max-w-6xl",
-    "2xl": "max-w-7xl",
-    full: "max-w-full",
+    sm: 'max-w-2xl',
+    md: 'max-w-4xl',
+    lg: 'max-w-5xl',
+    xl: 'max-w-6xl',
+    '2xl': 'max-w-7xl',
+    full: 'max-w-full',
   };
 
   return (
@@ -36,9 +36,9 @@ export function AppLayout({
       {/* Main content with z-index above background */}
       <main
         className={cn(
-          "relative z-10",
-          "p-4 sm:p-6 lg:p-8",
-          "mx-auto",
+          'relative z-10',
+          'p-4 sm:p-6 lg:p-8',
+          'mx-auto',
           maxWidthClasses[maxWidth],
           className
         )}
@@ -56,7 +56,7 @@ export function AppLayout({
 export function AppLayoutWithNav({
   children,
   className,
-  maxWidth = "xl",
+  maxWidth = 'xl',
   header,
   footer,
 }: AppLayoutProps & {
@@ -64,12 +64,12 @@ export function AppLayoutWithNav({
   footer?: React.ReactNode;
 }) {
   const maxWidthClasses = {
-    sm: "max-w-2xl",
-    md: "max-w-4xl",
-    lg: "max-w-5xl",
-    xl: "max-w-6xl",
-    "2xl": "max-w-7xl",
-    full: "max-w-full",
+    sm: 'max-w-2xl',
+    md: 'max-w-4xl',
+    lg: 'max-w-5xl',
+    xl: 'max-w-6xl',
+    '2xl': 'max-w-7xl',
+    full: 'max-w-full',
   };
 
   return (
@@ -83,9 +83,9 @@ export function AppLayoutWithNav({
       {/* Main content */}
       <main
         className={cn(
-          "relative z-10 flex-grow",
-          "p-4 sm:p-6 lg:p-8",
-          "mx-auto w-full",
+          'relative z-10 flex-grow',
+          'p-4 sm:p-6 lg:p-8',
+          'mx-auto w-full',
           maxWidthClasses[maxWidth],
           className
         )}
@@ -115,7 +115,7 @@ export function AppLayoutFullWidth({
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       {withBackground && <BackgroundMapBlur />}
-      <main className={cn("relative z-10", className)}>{children}</main>
+      <main className={cn('relative z-10', className)}>{children}</main>
     </div>
   );
 }

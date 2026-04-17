@@ -17,7 +17,7 @@ export default function BasketCard({ basket, selectedTerritories }) {
     if (basket && basket.id && basket.price) {
       // Save snapshot for each selected territory
       if (selectedTerritories && selectedTerritories.length > 0) {
-        selectedTerritories.forEach(territoryId => {
+        selectedTerritories.forEach((territoryId) => {
           const price = basket.prices?.[territoryId] || basket.price;
           saveBasketSnapshot(String(basket.id), territoryId, price);
         });
@@ -47,7 +47,7 @@ export default function BasketCard({ basket, selectedTerritories }) {
     // Build price map from basket data
     // Assuming basket has prices per territory or we use the same price for all
     const priceMap = {};
-    selectedTerritories.forEach(territoryId => {
+    selectedTerritories.forEach((territoryId) => {
       // If basket has territory-specific prices, use them
       // Otherwise use the base price (same for all territories)
       priceMap[territoryId] = basket.prices?.[territoryId] || basket.price || 0;
@@ -86,7 +86,8 @@ export default function BasketCard({ basket, selectedTerritories }) {
           height={192}
           className="w-full h-full object-cover"
           onError={(e) => {
-            e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23334155" width="100" height="100"/%3E%3Ctext fill="%2394a3b8" x="50" y="50" text-anchor="middle" dy=".3em"%3E🧺%3C/text%3E%3C/svg%3E';
+            e.target.src =
+              'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23334155" width="100" height="100"/%3E%3Ctext fill="%2394a3b8" x="50" y="50" text-anchor="middle" dy=".3em"%3E🧺%3C/text%3E%3C/svg%3E';
           }}
         />
         {/* Savings Badge */}
@@ -108,13 +109,9 @@ export default function BasketCard({ basket, selectedTerritories }) {
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="text-lg font-semibold text-slate-100 mb-2">
-          {basket.name}
-        </h3>
-        
-        <p className="text-slate-400 text-sm mb-3">
-          {basket.description}
-        </p>
+        <h3 className="text-lg font-semibold text-slate-100 mb-2">{basket.name}</h3>
+
+        <p className="text-slate-400 text-sm mb-3">{basket.description}</p>
 
         {/* Store Info */}
         <div className="flex items-center text-slate-300 text-sm mb-2">

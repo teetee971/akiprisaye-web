@@ -1,4 +1,3 @@
- 
 /**
  * Price Alerts Page
  * Manage price alerts for products — with real observatoire check
@@ -8,13 +7,19 @@ import { useState, useEffect, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { AlertForm } from '../components/AlertForm';
 import { UpgradeGate } from '../components/billing/UpgradeGate';
-import { Bell, CheckCircle, Info, Trash2, TrendingDown, TrendingUp, Package, RefreshCw, AlertTriangle } from 'lucide-react';
-import { HeroImage } from '../components/ui/HeroImage';
 import {
-  type SavedAlert,
-  loadAlerts,
-  persistAlerts,
-} from '../services/priceAlertsStorage';
+  Bell,
+  CheckCircle,
+  Info,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Package,
+  RefreshCw,
+  AlertTriangle,
+} from 'lucide-react';
+import { HeroImage } from '../components/ui/HeroImage';
+import { type SavedAlert, loadAlerts, persistAlerts } from '../services/priceAlertsStorage';
 import {
   isValidSmsPhoneNumber,
   loadSmsUpdatePreferences,
@@ -24,12 +29,20 @@ import {
 import { getLatestSnapshotStats } from '../services/observatoirePriceSeries';
 
 // Real Unsplash photo: shopping price tags
-const HERO_IMG = 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1600&q=80';
+const HERO_IMG =
+  'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1600&q=80';
 
 /** Map uppercase territory codes to lowercase stems used by observatoire */
 const TERRITORY_MAP: Record<string, string> = {
-  GP: 'gp', MQ: 'mq', GF: 'gf', RE: 're', YT: 'yt',
-  FR: 'fr', PM: 'pm', MF: 'mf', BL: 'bl',
+  GP: 'gp',
+  MQ: 'mq',
+  GF: 'gf',
+  RE: 're',
+  YT: 'yt',
+  FR: 'fr',
+  PM: 'pm',
+  MF: 'mf',
+  BL: 'bl',
 };
 
 /** Result of checking a saved alert against latest observatoire data */
@@ -62,9 +75,10 @@ async function checkAlertAgainstObservatoire(alert: SavedAlert): Promise<AlertCh
 
   if (alert.alertType === 'price_drop') {
     if (alert.thresholdMode === 'absolute') {
-      const absTarget = typeof alert.absolutePrice === 'number'
-        ? alert.absolutePrice
-        : parseFloat(String(alert.absolutePrice));
+      const absTarget =
+        typeof alert.absolutePrice === 'number'
+          ? alert.absolutePrice
+          : parseFloat(String(alert.absolutePrice));
       if (Number.isFinite(absTarget) && min <= absTarget) {
         triggered = true;
         message = `Prix minimum observé (${min.toFixed(2)} €) ≤ seuil (${absTarget.toFixed(2)} €)`;
@@ -94,7 +108,9 @@ async function checkAlertAgainstObservatoire(alert: SavedAlert): Promise<AlertCh
     maxPrice: stats.max,
     storeCount,
     snapshotDate: date,
-    message: triggered ? message : `Aucune variation significative détectée (moy. ${avg.toFixed(2)} €)`,
+    message: triggered
+      ? message
+      : `Aucune variation significative détectée (moy. ${avg.toFixed(2)} €)`,
   };
 }
 
@@ -128,7 +144,7 @@ export default function PriceAlertsPage() {
         } catch {
           results[alert.id] = { alertId: alert.id, triggered: false };
         }
-      }),
+      })
     );
     setCheckResults(results);
     setLastChecked(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
@@ -154,7 +170,7 @@ export default function PriceAlertsPage() {
       territory: alertData.territory,
       createdAt: new Date().toISOString(),
     };
-    setAlerts(prev => {
+    setAlerts((prev) => {
       const updated = [newAlert, ...prev];
       persistAlerts(updated);
       // run checks for the new alert too
@@ -168,10 +184,14 @@ export default function PriceAlertsPage() {
   const handleCancel = () => {};
 
   const handleRemoveAlert = (id: string) => {
-    setAlerts(prev => {
-      const updated = prev.filter(a => a.id !== id);
+    setAlerts((prev) => {
+      const updated = prev.filter((a) => a.id !== id);
       persistAlerts(updated);
-      setCheckResults(prev2 => { const r = { ...prev2 }; delete r[id]; return r; });
+      setCheckResults((prev2) => {
+        const r = { ...prev2 };
+        delete r[id];
+        return r;
+      });
       return updated;
     });
   };
@@ -195,8 +215,11 @@ export default function PriceAlertsPage() {
   };
 
   const territoryLabel: Record<string, string> = {
-    GP: '🏝️ Guadeloupe', MQ: '🏝️ Martinique', GF: '🌴 Guyane',
-    RE: '🌋 La Réunion', YT: '🏖️ Mayotte',
+    GP: '🏝️ Guadeloupe',
+    MQ: '🏝️ Martinique',
+    GF: '🌴 Guyane',
+    RE: '🌋 La Réunion',
+    YT: '🏖️ Mayotte',
   };
 
   const triggeredCount = Object.values(checkResults).filter((r) => r.triggered).length;
@@ -209,9 +232,17 @@ export default function PriceAlertsPage() {
           name="description"
           content="Recevez une alerte lorsqu'un prix évolue significativement dans votre territoire"
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/alertes-prix" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/alertes-prix" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/alertes-prix" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/alertes-prix" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/alertes-prix"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/alertes-prix"
+        />
       </Helmet>
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4 max-w-2xl">
@@ -243,7 +274,8 @@ export default function PriceAlertsPage() {
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                Les alertes sont vérifiées en temps réel contre les snapshots mensuels de l'Observatoire citoyen.
+                Les alertes sont vérifiées en temps réel contre les snapshots mensuels de
+                l'Observatoire citoyen.
               </p>
             </div>
           </div>
@@ -265,7 +297,10 @@ export default function PriceAlertsPage() {
                 Activer les notifications SMS
               </label>
               <div>
-                <label htmlFor="alerts-sms-phone" className="block text-sm text-slate-600 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="alerts-sms-phone"
+                  className="block text-sm text-slate-600 dark:text-slate-300 mb-1"
+                >
                   Numéro de téléphone
                 </label>
                 <input
@@ -292,14 +327,20 @@ export default function PriceAlertsPage() {
                   if (ok) {
                     setSmsPhoneNumber(normalized);
                   }
-                  setSmsStatus(ok ? 'Préférences SMS enregistrées.' : 'Impossible d’enregistrer les préférences SMS.');
+                  setSmsStatus(
+                    ok
+                      ? 'Préférences SMS enregistrées.'
+                      : 'Impossible d’enregistrer les préférences SMS.'
+                  );
                 }}
                 className="inline-flex items-center rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2"
               >
                 Enregistrer les notifications SMS
               </button>
               {smsStatus && (
-                <p className={`text-sm ${smsStatus.includes('invalide') || smsStatus.includes('Impossible') ? 'text-amber-600 dark:text-amber-300' : 'text-emerald-600 dark:text-emerald-300'}`}>
+                <p
+                  className={`text-sm ${smsStatus.includes('invalide') || smsStatus.includes('Impossible') ? 'text-amber-600 dark:text-amber-300' : 'text-emerald-600 dark:text-emerald-300'}`}
+                >
                   {smsStatus}
                 </p>
               )}
@@ -346,7 +387,11 @@ export default function PriceAlertsPage() {
                   className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 disabled:opacity-50"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${checking ? 'animate-spin' : ''}`} />
-                  {checking ? 'Vérification…' : lastChecked ? `Mis à jour ${lastChecked}` : 'Vérifier'}
+                  {checking
+                    ? 'Vérification…'
+                    : lastChecked
+                      ? `Mis à jour ${lastChecked}`
+                      : 'Vérifier'}
                 </button>
               )}
             </div>
@@ -378,9 +423,11 @@ export default function PriceAlertsPage() {
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex items-start gap-3 min-w-0">
-                          {isTriggered
-                            ? <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-                            : alertTypeIcon(alert.alertType)}
+                          {isTriggered ? (
+                            <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                          ) : (
+                            alertTypeIcon(alert.alertType)
+                          )}
                           <div className="min-w-0">
                             <p className="font-semibold text-slate-900 dark:text-white truncate">
                               {alert.productName}
@@ -403,25 +450,34 @@ export default function PriceAlertsPage() {
                             </div>
                             {/* Observatoire check result */}
                             {check && (
-                              <div className={`mt-2 text-xs rounded-lg px-2 py-1.5 ${
-                                isTriggered
-                                  ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
-                                  : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400'
-                              }`}>
+                              <div
+                                className={`mt-2 text-xs rounded-lg px-2 py-1.5 ${
+                                  isTriggered
+                                    ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300'
+                                    : 'bg-slate-100 dark:bg-slate-700/50 text-slate-600 dark:text-slate-400'
+                                }`}
+                              >
                                 {check.message && <p>{check.message}</p>}
                                 {check.currentAvgPrice !== undefined && (
                                   <p className="mt-0.5">
-                                    Min : {check.minPrice?.toFixed(2)} € · Moy : {check.currentAvgPrice.toFixed(2)} € · Max : {check.maxPrice?.toFixed(2)} €
-                                    {check.storeCount !== undefined && ` (${check.storeCount} enseignes)`}
+                                    Min : {check.minPrice?.toFixed(2)} € · Moy :{' '}
+                                    {check.currentAvgPrice.toFixed(2)} € · Max :{' '}
+                                    {check.maxPrice?.toFixed(2)} €
+                                    {check.storeCount !== undefined &&
+                                      ` (${check.storeCount} enseignes)`}
                                   </p>
                                 )}
                                 {check.snapshotDate && (
-                                  <p className="text-slate-400 mt-0.5">Snapshot : {check.snapshotDate}</p>
+                                  <p className="text-slate-400 mt-0.5">
+                                    Snapshot : {check.snapshotDate}
+                                  </p>
                                 )}
                               </div>
                             )}
                             {checking && !check && (
-                              <p className="mt-1.5 text-xs text-slate-400">Vérification en cours…</p>
+                              <p className="mt-1.5 text-xs text-slate-400">
+                                Vérification en cours…
+                              </p>
                             )}
                           </div>
                         </div>

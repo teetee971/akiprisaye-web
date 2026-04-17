@@ -23,26 +23,26 @@ import { trackClickToFirestore } from './firestoreClickTracker';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const KEY_VIEWS    = 'akp:price:views:v1';
-const KEY_CLICKS   = 'akp:price:clicks:v1';
-const MAX_ENTRIES  = 500;
-const TTL_MS       = 30 * 24 * 60 * 60 * 1000; // 30 days
+const KEY_VIEWS = 'akp:price:views:v1';
+const KEY_CLICKS = 'akp:price:clicks:v1';
+const MAX_ENTRIES = 500;
+const TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface ProductViewEntry {
-  barcode:  string;
-  name:     string;
+  barcode: string;
+  name: string;
   territory: string;
   viewedAt: number; // epoch ms
-  count:    number;
+  count: number;
 }
 
 export interface RetailerClickEntry {
-  barcode:  string;
+  barcode: string;
   retailer: string;
   territory: string;
-  price:    number;
+  price: number;
   clickedAt: number; // epoch ms
 }
 
@@ -65,13 +65,9 @@ function writeJson<T>(key: string, value: T): void {
   }
 }
 
-function prune<T extends { viewedAt?: number; clickedAt?: number }>(
-  entries: T[],
-): T[] {
+function prune<T extends { viewedAt?: number; clickedAt?: number }>(entries: T[]): T[] {
   const cutoff = Date.now() - TTL_MS;
-  return entries
-    .filter((e) => (e.viewedAt ?? e.clickedAt ?? 0) > cutoff)
-    .slice(-MAX_ENTRIES);
+  return entries.filter((e) => (e.viewedAt ?? e.clickedAt ?? 0) > cutoff).slice(-MAX_ENTRIES);
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -80,19 +76,13 @@ function prune<T extends { viewedAt?: number; clickedAt?: number }>(
  * Record a product page view.
  * If the barcode was already viewed in this session, increments the counter.
  */
-export function trackProductView(
-  barcode: string,
-  name: string,
-  territory: string,
-): void {
+export function trackProductView(barcode: string, name: string, territory: string): void {
   const views = readJson<ProductViewEntry[]>(KEY_VIEWS, []);
-  const existing = views.find(
-    (v) => v.barcode === barcode && v.territory === territory,
-  );
+  const existing = views.find((v) => v.barcode === barcode && v.territory === territory);
 
   if (existing) {
-    existing.count    += 1;
-    existing.viewedAt  = Date.now();
+    existing.count += 1;
+    existing.viewedAt = Date.now();
   } else {
     views.push({ barcode, name, territory, viewedAt: Date.now(), count: 1 });
   }
@@ -108,7 +98,7 @@ export function trackRetailerClick(
   barcode: string,
   retailer: string,
   territory: string,
-  price: number,
+  price: number
 ): void {
   const clicks = readJson<RetailerClickEntry[]>(KEY_CLICKS, []);
   clicks.push({ barcode, retailer, territory, price, clickedAt: Date.now() });
@@ -197,35 +187,39 @@ export interface ConversionStats {
 export function getConversionStats(periodDays = 30): ConversionStats {
   const views = readJson<ProductViewEntry[]>(KEY_VIEWS, []);
   const clicks = readJson<RetailerClickEntry[]>(KEY_CLICKS, []);
-  
-  const cutoff = Date.now() - (periodDays * 24 * 60 * 60 * 1000);
-  
+
+  const cutoff = Date.now() - periodDays * 24 * 60 * 60 * 1000;
+
   // Filter to period
   const periodViews = views.filter((v) => v.viewedAt > cutoff);
   const periodClicks = clicks.filter((c) => c.clickedAt > cutoff);
-  
+
   // Total counts
   const totalViews = periodViews.reduce((sum, v) => sum + v.count, 0);
   const totalClicks = periodClicks.length;
-  
+
   // CTR
   const clickThroughRate = totalViews > 0 ? totalClicks / totalViews : 0;
-  
+
   // Estimated revenue (clicks × average cart value × commission rate)
   // Average cart value estimated from click prices
-  const avgClickPrice = periodClicks.length > 0
-    ? periodClicks.reduce((sum, c) => sum + c.price, 0) / periodClicks.length
-    : 0;
+  const avgClickPrice =
+    periodClicks.length > 0
+      ? periodClicks.reduce((sum, c) => sum + c.price, 0) / periodClicks.length
+      : 0;
   const estimatedRevenue = totalClicks * avgClickPrice * AVG_COMMISSION_RATE;
-  
+
   // Top products by views with their conversion data
-  const productStats = new Map<string, {
-    barcode: string;
-    name: string;
-    views: number;
-    clicks: number;
-  }>();
-  
+  const productStats = new Map<
+    string,
+    {
+      barcode: string;
+      name: string;
+      views: number;
+      clicks: number;
+    }
+  >();
+
   for (const view of periodViews) {
     const key = view.barcode;
     const existing = productStats.get(key) || {
@@ -237,14 +231,14 @@ export function getConversionStats(periodDays = 30): ConversionStats {
     existing.views += view.count;
     productStats.set(key, existing);
   }
-  
+
   for (const click of periodClicks) {
     const existing = productStats.get(click.barcode);
     if (existing) {
       existing.clicks += 1;
     }
   }
-  
+
   const topProducts = Array.from(productStats.values())
     .map((p) => ({
       ...p,
@@ -253,14 +247,17 @@ export function getConversionStats(periodDays = 30): ConversionStats {
     }))
     .sort((a, b) => b.views - a.views)
     .slice(0, 10);
-  
+
   // Top retailers by clicks
-  const retailerStats = new Map<string, {
-    retailer: string;
-    clicks: number;
-    totalPrice: number;
-  }>();
-  
+  const retailerStats = new Map<
+    string,
+    {
+      retailer: string;
+      clicks: number;
+      totalPrice: number;
+    }
+  >();
+
   for (const click of periodClicks) {
     const existing = retailerStats.get(click.retailer) || {
       retailer: click.retailer,
@@ -271,7 +268,7 @@ export function getConversionStats(periodDays = 30): ConversionStats {
     existing.totalPrice += click.price;
     retailerStats.set(click.retailer, existing);
   }
-  
+
   const topRetailers = Array.from(retailerStats.values())
     .map((r) => ({
       retailer: r.retailer,
@@ -281,7 +278,7 @@ export function getConversionStats(periodDays = 30): ConversionStats {
     }))
     .sort((a, b) => b.clicks - a.clicks)
     .slice(0, 10);
-  
+
   return {
     totalViews,
     totalClicks,
@@ -307,27 +304,26 @@ export interface DailyStats {
 export function getDailyStats(days = 30): DailyStats[] {
   const views = readJson<ProductViewEntry[]>(KEY_VIEWS, []);
   const clicks = readJson<RetailerClickEntry[]>(KEY_CLICKS, []);
-  
+
   const result: DailyStats[] = [];
   const now = Date.now();
-  
+
   for (let i = days - 1; i >= 0; i--) {
     const dayStart = new Date(now - i * 24 * 60 * 60 * 1000);
     dayStart.setHours(0, 0, 0, 0);
     const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
-    
+
     const dayViews = views
       .filter((v) => v.viewedAt >= dayStart.getTime() && v.viewedAt < dayEnd.getTime())
       .reduce((sum, v) => sum + v.count, 0);
-    
+
     const dayClicks = clicks.filter(
-      (c) => c.clickedAt >= dayStart.getTime() && c.clickedAt < dayEnd.getTime(),
+      (c) => c.clickedAt >= dayStart.getTime() && c.clickedAt < dayEnd.getTime()
     );
-    
-    const avgPrice = dayClicks.length > 0
-      ? dayClicks.reduce((sum, c) => sum + c.price, 0) / dayClicks.length
-      : 0;
-    
+
+    const avgPrice =
+      dayClicks.length > 0 ? dayClicks.reduce((sum, c) => sum + c.price, 0) / dayClicks.length : 0;
+
     result.push({
       date: dayStart.toISOString().split('T')[0],
       views: dayViews,
@@ -335,7 +331,7 @@ export function getDailyStats(days = 30): DailyStats[] {
       estimatedRevenue: dayClicks.length * avgPrice * AVG_COMMISSION_RATE,
     });
   }
-  
+
   return result;
 }
 
@@ -354,14 +350,17 @@ export function getTrendingProducts(limit = 5): Array<{
   const now = Date.now();
   const recentCutoff = now - 7 * 24 * 60 * 60 * 1000; // Last 7 days
   const previousCutoff = now - 14 * 24 * 60 * 60 * 1000; // Previous 7 days
-  
-  const productGrowth = new Map<string, {
-    barcode: string;
-    name: string;
-    recentViews: number;
-    previousViews: number;
-  }>();
-  
+
+  const productGrowth = new Map<
+    string,
+    {
+      barcode: string;
+      name: string;
+      recentViews: number;
+      previousViews: number;
+    }
+  >();
+
   for (const view of views) {
     const existing = productGrowth.get(view.barcode) || {
       barcode: view.barcode,
@@ -369,22 +368,25 @@ export function getTrendingProducts(limit = 5): Array<{
       recentViews: 0,
       previousViews: 0,
     };
-    
+
     if (view.viewedAt >= recentCutoff) {
       existing.recentViews += view.count;
     } else if (view.viewedAt >= previousCutoff) {
       existing.previousViews += view.count;
     }
-    
+
     productGrowth.set(view.barcode, existing);
   }
-  
+
   return Array.from(productGrowth.values())
     .map((p) => ({
       ...p,
-      growth: p.previousViews > 0
-        ? ((p.recentViews - p.previousViews) / p.previousViews) * 100
-        : p.recentViews > 0 ? 100 : 0,
+      growth:
+        p.previousViews > 0
+          ? ((p.recentViews - p.previousViews) / p.previousViews) * 100
+          : p.recentViews > 0
+            ? 100
+            : 0,
     }))
     .filter((p) => p.recentViews > 0)
     .sort((a, b) => b.growth - a.growth)
@@ -394,13 +396,13 @@ export function getTrendingProducts(limit = 5): Array<{
 // ── SEO Product Tracking ───────────────────────────────────────────────────────
 
 const KEY_SEO_PRODUCTS = 'akp:seo:products:v1';
-const MAX_SEO_ENTRIES  = 200;
+const MAX_SEO_ENTRIES = 200;
 
 export interface SEOProductEntry {
-  productSlug:  string;
-  territory:    string;
-  pageType:     string;
-  views:        number;
+  productSlug: string;
+  territory: string;
+  pageType: string;
+  views: number;
   lastViewedAt: number;
 }
 
@@ -418,15 +420,15 @@ function pruneSEOProducts(entries: SEOProductEntry[]): SEOProductEntry[] {
 export function trackSEOProductView(
   productSlug: string,
   territory: string,
-  pageType: string,
+  pageType: string
 ): void {
   const entries = readJson<SEOProductEntry[]>(KEY_SEO_PRODUCTS, []);
   const existing = entries.find(
-    (e) => e.productSlug === productSlug && e.territory === territory && e.pageType === pageType,
+    (e) => e.productSlug === productSlug && e.territory === territory && e.pageType === pageType
   );
 
   if (existing) {
-    existing.views       += 1;
+    existing.views += 1;
     existing.lastViewedAt = Date.now();
   } else {
     entries.push({ productSlug, territory, pageType, views: 1, lastViewedAt: Date.now() });

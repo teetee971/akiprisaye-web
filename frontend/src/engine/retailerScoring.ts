@@ -44,9 +44,9 @@ export interface ScoredRetailer {
 
 // ── Normalisation caps ────────────────────────────────────────────────────────
 
-const MAX_CLICKS           = 500;   // clicks → 100
-const MAX_CONVERSIONS      = 100;   // conversions → 100
-const MAX_AVG_BASKET       = 50;    // EUR → 100
+const MAX_CLICKS = 500; // clicks → 100
+const MAX_CONVERSIONS = 100; // conversions → 100
+const MAX_AVG_BASKET = 50; // EUR → 100
 
 // ── Core scoring ──────────────────────────────────────────────────────────────
 
@@ -56,20 +56,16 @@ const MAX_AVG_BASKET       = 50;    // EUR → 100
  * @param retailer  Retailer name
  * @param stats     Aggregated behavioural and commercial stats
  */
-export function computeRetailerScore(
-  retailer: string,
-  stats: RetailerStats,
-): number {
+export function computeRetailerScore(retailer: string, stats: RetailerStats): number {
   void retailer; // name is used for identification, not scoring
-  const clickScore   = Math.min(100, ((stats.clicks          ?? 0) / MAX_CLICKS)      * 100);
-  const convScore    = Math.min(100, ((stats.conversions     ?? 0) / MAX_CONVERSIONS)  * 100);
-  const basketScore  = Math.min(100, ((stats.avgBasketValue  ?? 0) / MAX_AVG_BASKET)   * 100);
+  const clickScore = Math.min(100, ((stats.clicks ?? 0) / MAX_CLICKS) * 100);
+  const convScore = Math.min(100, ((stats.conversions ?? 0) / MAX_CONVERSIONS) * 100);
+  const basketScore = Math.min(100, ((stats.avgBasketValue ?? 0) / MAX_AVG_BASKET) * 100);
 
-  return Math.min(100, Math.max(0, Math.round(
-    clickScore  * 0.40 +
-    convScore   * 0.40 +
-    basketScore * 0.20,
-  )));
+  return Math.min(
+    100,
+    Math.max(0, Math.round(clickScore * 0.4 + convScore * 0.4 + basketScore * 0.2))
+  );
 }
 
 /**
@@ -90,9 +86,7 @@ export function classifyRetailerTier(score: number): ScoredRetailer['tier'] {
  *
  * @param retailers  Map of retailer name → RetailerStats
  */
-export function rankRetailers(
-  retailers: Map<string, RetailerStats>,
-): ScoredRetailer[] {
+export function rankRetailers(retailers: Map<string, RetailerStats>): ScoredRetailer[] {
   return [...retailers.entries()]
     .map(([name, stats]) => {
       const score = computeRetailerScore(name, stats);
@@ -107,7 +101,7 @@ export function rankRetailers(
  * @param events  { type, retailer, price?, ts }[]
  */
 export function buildRetailerStatsMap(
-  events: { type: string; retailer?: string; price?: number; ts: number }[],
+  events: { type: string; retailer?: string; price?: number; ts: number }[]
 ): Map<string, RetailerStats> {
   const map = new Map<string, RetailerStats>();
 
@@ -125,7 +119,7 @@ export function buildRetailerStatsMap(
       // Running average of basket value
       if (e.price) {
         const prev = s.avgBasketValue ?? 0;
-        const n    = s.conversions;
+        const n = s.conversions;
         s.avgBasketValue = prev + (e.price - prev) / n;
       }
     }

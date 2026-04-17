@@ -1,4 +1,3 @@
- 
 /**
  * Alert Form Component
  * Create and edit price alerts with support for % or absolute price threshold
@@ -27,7 +26,7 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
     absolutePrice: '' as string | number,
     territory: 'GP',
     emailEnabled: true,
-    pushEnabled: false
+    pushEnabled: false,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -51,7 +50,10 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Product Selection */}
         <div>
-          <label htmlFor="alert-product-name" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <label
+            htmlFor="alert-product-name"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+          >
             Nom du produit <span className="text-red-500">*</span>
           </label>
           <input
@@ -70,7 +72,10 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
         </div>
 
         <div>
-          <label htmlFor="alert-product-ean" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <label
+            htmlFor="alert-product-ean"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+          >
             Code-barres EAN (facultatif)
           </label>
           <input
@@ -89,14 +94,23 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
 
         {/* Alert Type */}
         <div>
-          <label htmlFor="alert-type" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <label
+            htmlFor="alert-type"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+          >
             Type d'alerte <span className="text-red-500">*</span>
           </label>
           <select
             id="alert-type"
             name="alertType"
             value={formData.alertType}
-            onChange={(e) => setFormData({ ...formData, alertType: e.target.value as AlertType, thresholdMode: 'percentage' })}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                alertType: e.target.value as AlertType,
+                thresholdMode: 'percentage',
+              })
+            }
             required
             className="w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
@@ -149,24 +163,28 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
               {formData.thresholdMode === 'absolute'
-                ? 'Recevoir l\'alerte si le prix passe sous (ou dépasse) ce montant exact en euros'
-                : 'Recevoir l\'alerte si le prix varie de plus de ce pourcentage'}
+                ? "Recevoir l'alerte si le prix passe sous (ou dépasse) ce montant exact en euros"
+                : "Recevoir l'alerte si le prix varie de plus de ce pourcentage"}
             </p>
           </div>
         )}
 
         {/* Threshold */}
         <div>
-          <label htmlFor="alert-threshold-value" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
-            Seuil de déclenchement ({isShrinkflation ? 'g/ml' : isAbsolute ? '€' : '%'}) <span className="text-red-500">*</span>
+          <label
+            htmlFor="alert-threshold-value"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2"
+          >
+            Seuil de déclenchement ({isShrinkflation ? 'g/ml' : isAbsolute ? '€' : '%'}){' '}
+            <span className="text-red-500">*</span>
             <div className="relative group">
               <HelpCircle className="w-4 h-4 text-slate-400 cursor-help" />
               <div className="absolute left-0 top-6 hidden group-hover:block w-64 bg-slate-900 text-white text-xs rounded-lg p-3 shadow-xl z-10">
                 {isShrinkflation
-                  ? 'Quantité minimale de réduction pour déclencher l\'alerte'
+                  ? "Quantité minimale de réduction pour déclencher l'alerte"
                   : isAbsolute
-                  ? 'Prix absolu en euros pour déclencher l\'alerte (ex: 1,89 = alerter si prix < 1,89 €)'
-                  : 'Pourcentage minimum de variation pour déclencher l\'alerte'}
+                    ? "Prix absolu en euros pour déclencher l'alerte (ex: 1,89 = alerter si prix < 1,89 €)"
+                    : "Pourcentage minimum de variation pour déclencher l'alerte"}
               </div>
             </div>
           </label>
@@ -183,7 +201,9 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
                 required
                 className="w-full px-4 py-2 pr-10 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-medium">€</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 font-medium">
+                €
+              </span>
             </div>
           ) : (
             <input
@@ -198,17 +218,29 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
             />
           )}
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            {formData.alertType === 'price_drop' && !isAbsolute && '✓ Vous serez notifié si le prix baisse de plus de ce pourcentage'}
-            {formData.alertType === 'price_drop' && isAbsolute && `✓ Vous serez notifié si le prix passe sous ${formData.absolutePrice || '…'} €`}
-            {formData.alertType === 'price_increase' && !isAbsolute && '⚠️ Vous serez notifié si le prix augmente de plus de ce pourcentage'}
-            {formData.alertType === 'price_increase' && isAbsolute && `⚠️ Vous serez notifié si le prix dépasse ${formData.absolutePrice || '…'} €`}
-            {formData.alertType === 'shrinkflation' && '📉 Vous serez notifié si la quantité diminue (même prix, moins de produit)'}
+            {formData.alertType === 'price_drop' &&
+              !isAbsolute &&
+              '✓ Vous serez notifié si le prix baisse de plus de ce pourcentage'}
+            {formData.alertType === 'price_drop' &&
+              isAbsolute &&
+              `✓ Vous serez notifié si le prix passe sous ${formData.absolutePrice || '…'} €`}
+            {formData.alertType === 'price_increase' &&
+              !isAbsolute &&
+              '⚠️ Vous serez notifié si le prix augmente de plus de ce pourcentage'}
+            {formData.alertType === 'price_increase' &&
+              isAbsolute &&
+              `⚠️ Vous serez notifié si le prix dépasse ${formData.absolutePrice || '…'} €`}
+            {formData.alertType === 'shrinkflation' &&
+              '📉 Vous serez notifié si la quantité diminue (même prix, moins de produit)'}
           </p>
         </div>
 
         {/* Territory */}
         <div>
-          <label htmlFor="alert-territory" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+          <label
+            htmlFor="alert-territory"
+            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+          >
             Votre territoire <span className="text-red-500">*</span>
           </label>
           <select
@@ -242,7 +274,10 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
               onChange={(e) => setFormData({ ...formData, emailEnabled: e.target.checked })}
               className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
             />
-            <label htmlFor="alert-notif-email" className="text-sm text-slate-700 dark:text-slate-300 flex-1">
+            <label
+              htmlFor="alert-notif-email"
+              className="text-sm text-slate-700 dark:text-slate-300 flex-1"
+            >
               📧 Recevoir par email
             </label>
           </div>
@@ -254,7 +289,10 @@ export function AlertForm({ productEAN = '', productName = '', onSave, onCancel 
               onChange={(e) => setFormData({ ...formData, pushEnabled: e.target.checked })}
               className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
             />
-            <label htmlFor="alert-notif-push" className="text-sm text-slate-700 dark:text-slate-300 flex-1">
+            <label
+              htmlFor="alert-notif-push"
+              className="text-sm text-slate-700 dark:text-slate-300 flex-1"
+            >
               📱 Notifications push (sur mobile)
             </label>
           </div>

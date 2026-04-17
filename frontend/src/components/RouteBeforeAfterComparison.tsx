@@ -1,6 +1,6 @@
 /**
  * Route Before/After Comparison Component
- * 
+ *
  * Displays a side-by-side comparison of unoptimized vs optimized routes
  * Shows savings in distance, time, fuel, and CO2 emissions
  */
@@ -13,12 +13,12 @@ interface RouteBeforeAfterComparisonProps {
   className?: string;
 }
 
-export default function RouteBeforeAfterComparison({ 
-  route, 
-  className = '' 
+export default function RouteBeforeAfterComparison({
+  route,
+  className = '',
 }: RouteBeforeAfterComparisonProps) {
   // Calculate unoptimized metrics (each store visited individually)
-  const unoptimizedDistance = route.stores.reduce((sum, store) => sum + (store.distance * 2), 0);
+  const unoptimizedDistance = route.stores.reduce((sum, store) => sum + store.distance * 2, 0);
   const unoptimizedTime = Math.round((unoptimizedDistance / 30) * 60); // 30 km/h average
   const unoptimizedFuel = (unoptimizedDistance * 6) / 100; // 6L/100km
   const unoptimizedCO2 = unoptimizedFuel * 2.3; // 2.3 kg CO2/L
@@ -30,21 +30,27 @@ export default function RouteBeforeAfterComparison({
   const optimizedCO2 = optimizedFuel * 2.3;
 
   // Calculate percentage savings (guard against division by zero)
-  const distanceSavingsPercent = unoptimizedDistance > 0 
-    ? ((unoptimizedDistance - optimizedDistance) / unoptimizedDistance * 100).toFixed(0)
-    : '0';
-  const timeSavingsPercent = unoptimizedTime > 0
-    ? ((unoptimizedTime - optimizedTime) / unoptimizedTime * 100).toFixed(0)
-    : '0';
-  const fuelSavingsPercent = unoptimizedFuel > 0
-    ? ((unoptimizedFuel - optimizedFuel) / unoptimizedFuel * 100).toFixed(0)
-    : '0';
-  const co2SavingsPercent = unoptimizedCO2 > 0
-    ? ((unoptimizedCO2 - optimizedCO2) / unoptimizedCO2 * 100).toFixed(0)
-    : '0';
+  const distanceSavingsPercent =
+    unoptimizedDistance > 0
+      ? (((unoptimizedDistance - optimizedDistance) / unoptimizedDistance) * 100).toFixed(0)
+      : '0';
+  const timeSavingsPercent =
+    unoptimizedTime > 0
+      ? (((unoptimizedTime - optimizedTime) / unoptimizedTime) * 100).toFixed(0)
+      : '0';
+  const fuelSavingsPercent =
+    unoptimizedFuel > 0
+      ? (((unoptimizedFuel - optimizedFuel) / unoptimizedFuel) * 100).toFixed(0)
+      : '0';
+  const co2SavingsPercent =
+    unoptimizedCO2 > 0
+      ? (((unoptimizedCO2 - optimizedCO2) / unoptimizedCO2) * 100).toFixed(0)
+      : '0';
 
   return (
-    <div className={`bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700 rounded-lg p-5 ${className}`}>
+    <div
+      className={`bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700 rounded-lg p-5 ${className}`}
+    >
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
         <TrendingDown className="w-5 h-5 text-emerald-400" />
@@ -108,9 +114,7 @@ export default function RouteBeforeAfterComparison({
             <p className="text-xs text-emerald-400/80">En optimisant votre itinéraire</p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-emerald-300">
-              {distanceSavingsPercent}%
-            </p>
+            <p className="text-2xl font-bold text-emerald-300">{distanceSavingsPercent}%</p>
             <p className="text-xs text-emerald-400/80">de distance en moins</p>
           </div>
         </div>
@@ -119,8 +123,9 @@ export default function RouteBeforeAfterComparison({
       {/* Methodology note */}
       <div className="mt-4 p-3 bg-blue-900/20 border border-blue-700/30 rounded-lg">
         <p className="text-xs text-blue-200">
-          <strong>Méthode :</strong> L'itinéraire "avant" correspond à des allers-retours séparés vers chaque magasin. 
-          L'itinéraire "après" utilise l'algorithme du voyageur de commerce pour minimiser la distance totale.
+          <strong>Méthode :</strong> L'itinéraire "avant" correspond à des allers-retours séparés
+          vers chaque magasin. L'itinéraire "après" utilise l'algorithme du voyageur de commerce
+          pour minimiser la distance totale.
         </p>
       </div>
     </div>
@@ -140,14 +145,14 @@ interface ComparisonRowProps {
   savings: string;
 }
 
-function ComparisonRow({ 
-  icon, 
-  label, 
-  before, 
-  after, 
-  unit, 
-  savingsPercent, 
-  savings 
+function ComparisonRow({
+  icon,
+  label,
+  before,
+  after,
+  unit,
+  savingsPercent,
+  savings,
 }: ComparisonRowProps) {
   return (
     <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">

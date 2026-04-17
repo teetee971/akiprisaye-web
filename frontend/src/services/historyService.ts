@@ -17,11 +17,16 @@ const DEFAULT_TERRITORY = 'gp';
 
 function timeframeToDays(timeframe: Timeframe): number {
   switch (timeframe) {
-    case '7d': return 7;
-    case '30d': return 30;
-    case '90d': return 90;
-    case '365d': return 365;
-    default: return 30;
+    case '7d':
+      return 7;
+    case '30d':
+      return 30;
+    case '90d':
+      return 90;
+    case '365d':
+      return 365;
+    default:
+      return 30;
   }
 }
 
@@ -54,7 +59,7 @@ export class HistoryService {
   private async fetchTimeseries(
     ean: string,
     territory: string,
-    days: number,
+    days: number
   ): Promise<PriceHistoryPoint[]> {
     this._lastProductName = null;
 
@@ -65,10 +70,16 @@ export class HistoryService {
         headers: { Accept: 'application/json' },
       });
       if (res.ok) {
-        const payload = await res.json() as {
+        const payload = (await res.json()) as {
           ok?: boolean;
           product?: { name?: string };
-          timeseries?: Array<{ date: string; median?: number | null; min?: number | null; max?: number | null; sampleCount?: number }>;
+          timeseries?: Array<{
+            date: string;
+            median?: number | null;
+            min?: number | null;
+            max?: number | null;
+            sampleCount?: number;
+          }>;
         };
         if (payload.ok && Array.isArray(payload.timeseries) && payload.timeseries.length > 0) {
           if (payload.product?.name) this._lastProductName = payload.product.name;
@@ -90,7 +101,12 @@ export class HistoryService {
 
     // --- Fallback: observatoire JSON snapshots ---
     const TERRITORY_NAMES: Record<string, string> = {
-      gp: 'Guadeloupe', mq: 'Martinique', gf: 'Guyane', re: 'La Réunion', yt: 'Mayotte', fr: 'Hexagone',
+      gp: 'Guadeloupe',
+      mq: 'Martinique',
+      gf: 'Guyane',
+      re: 'La Réunion',
+      yt: 'Mayotte',
+      fr: 'Hexagone',
     };
     const territoryName = TERRITORY_NAMES[territory] ?? 'Guadeloupe';
     try {
@@ -126,7 +142,10 @@ export class HistoryService {
   /**
    * Get price history for multiple stores.
    */
-  async getMultiStoreHistory(ean: string, storeIds: string[]): Promise<Map<string, PriceHistoryPoint[]>> {
+  async getMultiStoreHistory(
+    ean: string,
+    storeIds: string[]
+  ): Promise<Map<string, PriceHistoryPoint[]>> {
     const result = new Map<string, PriceHistoryPoint[]>();
     const all = await this.fetchTimeseries(ean, DEFAULT_TERRITORY, 90);
     for (const storeId of storeIds) {

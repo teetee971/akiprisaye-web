@@ -9,11 +9,7 @@ type SpecialHours = {
   close: string;
 };
 
-export function isStoreOpen(
-  hours: Hours[],
-  currentTime: string,
-  specialHours?: SpecialHours
-) {
+export function isStoreOpen(hours: Hours[], currentTime: string, specialHours?: SpecialHours) {
   const parse = (t: string) => {
     const [h, m] = t.split(':').map(Number);
     return h * 60 + m;

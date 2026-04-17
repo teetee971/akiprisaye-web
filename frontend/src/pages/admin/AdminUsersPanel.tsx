@@ -16,40 +16,38 @@
  * ou en se reconnectant.
  */
 
-import { useState } from "react";
-import { Search, ShieldCheck, User, UserCog, RefreshCw } from "lucide-react";
+import { useState } from 'react';
+import { Search, ShieldCheck, User, UserCog, RefreshCw } from 'lucide-react';
 import {
   findUserAdmin,
   setUserRoleAdmin,
   type AppRole,
   type AdminUserResult,
-} from "../../services/adminUsersService";
+} from '../../services/adminUsersService';
 
 const ROLES: { value: AppRole; label: string; color: string }[] = [
-  { value: "citoyen",     label: "Citoyen",     color: "text-emerald-400" },
-  { value: "observateur", label: "Observateur",  color: "text-sky-400"     },
-  { value: "creator",     label: "Créateur",     color: "text-amber-400"   },
-  { value: "admin",       label: "Admin",        color: "text-purple-400"  },
+  { value: 'citoyen', label: 'Citoyen', color: 'text-emerald-400' },
+  { value: 'observateur', label: 'Observateur', color: 'text-sky-400' },
+  { value: 'creator', label: 'Créateur', color: 'text-amber-400' },
+  { value: 'admin', label: 'Admin', color: 'text-purple-400' },
 ];
 
 function RoleBadge({ role }: { role: AppRole | null }) {
   if (!role) return <span className="text-slate-500">—</span>;
   const def = ROLES.find((r) => r.value === role);
   return (
-    <span className={`font-medium ${def?.color ?? "text-slate-300"}`}>
-      {def?.label ?? role}
-    </span>
+    <span className={`font-medium ${def?.color ?? 'text-slate-300'}`}>{def?.label ?? role}</span>
   );
 }
 
 export default function AdminUsersPanel() {
-  const [query,        setQuery]        = useState("");
-  const [loading,      setLoading]      = useState(false);
-  const [saving,       setSaving]       = useState(false);
-  const [error,        setError]        = useState<string | null>(null);
-  const [success,      setSuccess]      = useState<string | null>(null);
-  const [user,         setUser]         = useState<AdminUserResult | null>(null);
-  const [selectedRole, setSelectedRole] = useState<AppRole>("citoyen");
+  const [query, setQuery] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [user, setUser] = useState<AdminUserResult | null>(null);
+  const [selectedRole, setSelectedRole] = useState<AppRole>('citoyen');
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -64,7 +62,7 @@ export default function AdminUsersPanel() {
       setUser(result);
       setSelectedRole(result.role);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Recherche impossible.";
+      const msg = err instanceof Error ? err.message : 'Recherche impossible.';
       setError(msg);
     } finally {
       setLoading(false);
@@ -81,16 +79,16 @@ export default function AdminUsersPanel() {
       const result = await setUserRoleAdmin(user.uid, selectedRole);
       setUser({
         ...user,
-        role:          result.newRole,
+        role: result.newRole,
         firestoreRole: result.newRole,
-        claimRole:     result.newRole,
+        claimRole: result.newRole,
       });
       setSuccess(
         `✅ Rôle mis à jour : ${result.oldRole} → ${result.newRole}. ` +
-        `Le changement sera effectif pour l'utilisateur à son prochain retour sur l'application.`,
+          `Le changement sera effectif pour l'utilisateur à son prochain retour sur l'application.`
       );
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Mise à jour impossible.";
+      const msg = err instanceof Error ? err.message : 'Mise à jour impossible.';
       setError(msg);
     } finally {
       setSaving(false);
@@ -101,14 +99,11 @@ export default function AdminUsersPanel() {
 
   return (
     <div className="p-6 space-y-6 max-w-2xl">
-
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-3">
         <UserCog className="w-6 h-6 text-amber-400 shrink-0" />
         <div>
-          <h1 className="text-xl font-semibold text-white">
-            Gestion des utilisateurs
-          </h1>
+          <h1 className="text-xl font-semibold text-white">Gestion des utilisateurs</h1>
           <p className="text-sm text-slate-400 mt-0.5">
             Recherche par email ou UID — changement de rôle sécurisé via Cloud Function
           </p>
@@ -133,11 +128,7 @@ export default function AdminUsersPanel() {
           disabled={loading || query.trim().length < 2}
           className="rounded-xl px-5 py-3 bg-slate-100 text-slate-900 text-sm font-medium hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? (
-            <RefreshCw className="w-4 h-4 animate-spin" />
-          ) : (
-            "Rechercher"
-          )}
+          {loading ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Rechercher'}
         </button>
       </form>
 
@@ -156,7 +147,6 @@ export default function AdminUsersPanel() {
       {/* ── User card ──────────────────────────────────────────────────── */}
       {user && (
         <div className="rounded-2xl border border-slate-800 bg-slate-950 p-5 space-y-5">
-
           {/* Identity */}
           <div className="flex items-center gap-3 pb-4 border-b border-slate-800">
             <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center shrink-0">
@@ -164,9 +154,9 @@ export default function AdminUsersPanel() {
             </div>
             <div className="min-w-0">
               <div className="text-sm font-medium text-white truncate">
-                {user.displayName ?? user.email ?? "Utilisateur sans nom"}
+                {user.displayName ?? user.email ?? 'Utilisateur sans nom'}
               </div>
-              <div className="text-xs text-slate-400 truncate">{user.email ?? "—"}</div>
+              <div className="text-xs text-slate-400 truncate">{user.email ?? '—'}</div>
             </div>
             {user.disabled && (
               <span className="ml-auto text-xs bg-red-900/40 text-red-300 border border-red-800 rounded-full px-2.5 py-0.5 shrink-0">
@@ -230,7 +220,7 @@ export default function AdminUsersPanel() {
               className="rounded-xl px-5 py-3 bg-amber-400 text-slate-950 text-sm font-semibold hover:bg-amber-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center gap-2 sm:self-end"
             >
               {saving && <RefreshCw className="w-4 h-4 animate-spin" />}
-              {saving ? "Enregistrement…" : "Mettre à jour le rôle"}
+              {saving ? 'Enregistrement…' : 'Mettre à jour le rôle'}
             </button>
           </div>
         </div>
@@ -238,9 +228,9 @@ export default function AdminUsersPanel() {
 
       {/* ── Usage note ─────────────────────────────────────────────────── */}
       <p className="text-xs text-slate-600">
-        Chaque changement de rôle est journalisé dans <code className="text-slate-500">auditLogs</code>.
-        L'utilisateur ciblé devra retourner sur l'application ou se reconnecter pour que le nouveau
-        rôle soit actif côté client.
+        Chaque changement de rôle est journalisé dans{' '}
+        <code className="text-slate-500">auditLogs</code>. L'utilisateur ciblé devra retourner sur
+        l'application ou se reconnecter pour que le nouveau rôle soit actif côté client.
       </p>
     </div>
   );

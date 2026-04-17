@@ -1,4 +1,3 @@
- 
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -171,13 +170,13 @@ export default function ObservatoireVivant() {
 
         if (points.length === 0) {
           setError(
-            "Aucune donnée horodatée disponible pour cette sélection. Les flux se mettront à jour dès la première collecte."
+            'Aucune donnée horodatée disponible pour cette sélection. Les flux se mettront à jour dès la première collecte.'
           );
         }
       } catch (err) {
         if (controller.signal.aborted) return;
         console.error('Erreur chargement observatoire vivant', err);
-        setError("Données momentanément indisponibles. Merci de réessayer ultérieurement.");
+        setError('Données momentanément indisponibles. Merci de réessayer ultérieurement.');
         setData([]);
       } finally {
         if (!controller.signal.aborted) {
@@ -283,7 +282,9 @@ export default function ObservatoireVivant() {
 
   const isInstitutionalSource = sourceCategory === 'institutionnelle';
   const lineStrokeDasharray = isInstitutionalSource ? undefined : '5 4';
-  const lineDot = isInstitutionalSource ? false : { r: 3, strokeWidth: 1, stroke: '#34d399', fill: '#34d399' };
+  const lineDot = isInstitutionalSource
+    ? false
+    : { r: 3, strokeWidth: 1, stroke: '#34d399', fill: '#34d399' };
 
   return (
     <>
@@ -292,262 +293,270 @@ export default function ObservatoireVivant() {
         description="Suivez les prix en temps réel dans les supermarchés et marchés des territoires d'Outre-mer. Flux de données citoyennes actualisé."
         canonical="https://teetee971.github.io/akiprisaye-web/observatoire-vivant"
       />
-    <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-6">
-        {/* Hero banner */}
-        <div className="animate-fade-in">
-          <HeroImage
-            src={PAGE_HERO_IMAGES.coverage}
-            alt="Observatoire vivant — données temps réel"
-            gradient="from-blue-950 to-slate-900"
-            height="h-40 sm:h-52"
-          >
-            <p className="text-xs uppercase tracking-[0.2em] text-blue-300 font-semibold">Observatoire vivant</p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">
-              Prix réels — courbes temps réel
-            </h1>
-            <div
-              className={`mt-1 inline-flex items-center gap-2 px-2 py-1 rounded-full border text-xs ${STATUS_STYLES[realtimeState.state].classes}`}
-              role="status"
-              aria-live="polite"
+      <div className="min-h-screen bg-slate-950 text-slate-100">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-8 space-y-6">
+          {/* Hero banner */}
+          <div className="animate-fade-in">
+            <HeroImage
+              src={PAGE_HERO_IMAGES.coverage}
+              alt="Observatoire vivant — données temps réel"
+              gradient="from-blue-950 to-slate-900"
+              height="h-40 sm:h-52"
             >
-              <span>{STATUS_STYLES[realtimeState.state].icon}</span>
-              <span className="font-semibold">{STATUS_STYLES[realtimeState.state].label}</span>
-              <span className="opacity-75">· {realtimeUpdated}</span>
-            </div>
-          </HeroImage>
-        </div>
-        <header className="space-y-4">
-          <div className="flex flex-wrap gap-2 text-sm text-slate-400">
-            <span className="px-2 py-1 rounded-full bg-slate-900 border border-slate-800">
-              D1: historique sécurisé
-            </span>
-            <span className="px-2 py-1 rounded-full bg-slate-900 border border-slate-800">
-              KV: cache agrégé (perf/coûts)
-            </span>
-            <span className="px-2 py-1 rounded-full bg-slate-900 border border-slate-800">
-              Cloudflare Workers temps réel
-            </span>
-          </div>
-        </header>
-
-        <section className="bg-slate-900/70 border border-slate-800 rounded-2xl shadow-xl p-5 space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="space-y-2">
-              <label htmlFor="obs-territoire" className="text-sm text-slate-400">Territoire</label>
-              <select
-                id="obs-territoire"
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={territoire}
-                onChange={(e) => setTerritoire(e.target.value)}
+              <p className="text-xs uppercase tracking-[0.2em] text-blue-300 font-semibold">
+                Observatoire vivant
+              </p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow">
+                Prix réels — courbes temps réel
+              </h1>
+              <div
+                className={`mt-1 inline-flex items-center gap-2 px-2 py-1 rounded-full border text-xs ${STATUS_STYLES[realtimeState.state].classes}`}
+                role="status"
+                aria-live="polite"
               >
-                {TERRITORIES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="obs-produit" className="text-sm text-slate-400">Produit</label>
-              <select
-                id="obs-produit"
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={produit}
-                onChange={(e) => setProduit(e.target.value)}
-              >
-                {PRODUCTS.map((p) => (
-                  <option key={p} value={p}>
-                    {p}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <span className="text-sm text-slate-400">Période</span>
-              <div className="grid grid-cols-2 gap-2">
-                {PERIOD_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    onClick={() => setPeriod(option.value)}
-                    className={`text-left rounded-xl border px-3 py-2 transition-colors ${
-                      period === option.value
-                        ? 'border-blue-500 bg-blue-500/10 text-blue-100'
-                        : 'border-slate-800 bg-slate-950 text-slate-200 hover:border-blue-500/40'
-                    }`}
-                  >
-                    <div className="text-sm font-semibold">{option.label}</div>
-                    <div className="text-xs text-slate-400">{option.subtitle}</div>
-                  </button>
-                ))}
+                <span>{STATUS_STYLES[realtimeState.state].icon}</span>
+                <span className="font-semibold">{STATUS_STYLES[realtimeState.state].label}</span>
+                <span className="opacity-75">· {realtimeUpdated}</span>
               </div>
-            </div>
+            </HeroImage>
           </div>
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
-              <p className="text-xs text-slate-400 uppercase">Dernière mise à jour</p>
-              <p className="text-lg font-semibold text-white">{latestUpdate}</p>
-            </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
-              <p className="text-xs text-slate-400 uppercase">Source</p>
-              <p className="text-lg font-semibold text-white">
-                {meta?.source_name || '—'}
-              </p>
-              <p className="text-xs text-slate-400">
-                {meta?.source_type ? `Type: ${meta.source_type}` : 'Type non renseigné'}
-              </p>
-            </div>
-            <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
-              <p className="text-xs text-slate-400 uppercase">Période sélectionnée</p>
-              <p className="text-lg font-semibold text-white">
-                {PERIOD_OPTIONS.find((p) => p.value === period)?.label}
-              </p>
-              {meta?.cache && (
-                <p className="text-xs text-emerald-300">Cache: {meta.cache}</p>
-              )}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-slate-900/80 border border-slate-800 rounded-2xl shadow-xl p-5 space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-2 text-xs text-slate-200">
-            <span className="font-semibold">Granularité : heure / jour / semaine / mois</span>
-            <span className="text-slate-300">
-              Les données horaires reflètent les dernières observations disponibles.
-            </span>
-          </div>
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <div>
-              <h2 className="text-xl font-semibold text-white">
-                Courbe dynamique ({currency})
-              </h2>
-              <p className="text-sm text-slate-400">
-                Visualisation temps réel sans rafraîchissement agressif. Fallback clair si données absentes.
-              </p>
-            </div>
-            <Link
-              to="/observatoire"
-              className="text-sm px-3 py-2 rounded-lg border border-slate-700 text-slate-200 hover:border-blue-500 hover:text-blue-200 transition-colors"
-            >
-              Voir l’observatoire statique
-            </Link>
-          </div>
-
-          {loading && (
-            <div className="text-slate-300 text-sm">Chargement des courbes en cours…</div>
-          )}
-
-          {error && !loading && (
-            <div
-              role="alert"
-              className="bg-amber-900/30 border border-amber-500 text-amber-100 px-4 py-3 rounded-xl text-sm"
-            >
-              {error}
-            </div>
-          )}
-
-          {!loading && data.length > 0 && (
-            <div className="space-y-3">
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data} margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
-                    <XAxis
-                      dataKey="timestamp"
-                      tickFormatter={formatTick}
-                      stroke="#94a3b8"
-                      style={{ fontSize: '12px' }}
-                    />
-                    <YAxis
-                      stroke="#94a3b8"
-                      style={{ fontSize: '12px' }}
-                      tickFormatter={(value) => `${value.toFixed(2)}`}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#0f172a',
-                        border: '1px solid #1e293b',
-                        borderRadius: '12px',
-                        color: '#e2e8f0',
-                      }}
-                      formatter={(value) => {
-                        const numericValue = typeof value === 'number' ? value : Number(value ?? 0);
-                        return [`${numericValue.toFixed(2)} ${currency}`, 'Prix'];
-                      }}
-                      labelFormatter={(label) => formatDate(label)}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="prix"
-                      stroke={isInstitutionalSource ? '#60a5fa' : '#34d399'}
-                      strokeWidth={2}
-                      strokeDasharray={lineStrokeDasharray}
-                      dot={lineDot}
-                      activeDot={{ r: 5 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-200">
-                <div className="flex items-center gap-2">
-                  <span className="h-[2px] w-8 rounded-full bg-blue-400" aria-hidden="true" />
-                  <span>● Données institutionnelles</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-8 border-t border-dashed border-emerald-300 relative">
-                    <span className="absolute -top-1 left-1 h-2 w-2 rounded-full bg-emerald-300" aria-hidden="true" />
-                    <span className="absolute -bottom-1 right-1 h-2 w-2 rounded-full bg-emerald-300" aria-hidden="true" />
-                  </span>
-                  <span>○ Données observées (terrain / partenaires)</span>
-                </div>
-              </div>
-              <div className="rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-xs text-slate-200">
-                <p>Dernière observation : {formatObservationTimestamp(latestTimestamp)}</p>
-                <p>Source : {sourceCategory}</p>
-              </div>
-            </div>
-          )}
-        </section>
-
-        {chartData.length > 0 && (
-          <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-3">
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <div>
-                <h3 className="text-lg font-semibold text-white">Observations publiques</h3>
-                <p className="text-sm text-slate-300">
-                  Données versionnables (Cloudflare Pages) filtrées sur la période sélectionnée.
-                </p>
-              </div>
-              <span className="text-xs text-slate-400">
-                {chartData.length} relevé(s) • dernière heure/jour/semaine/mois
+          <header className="space-y-4">
+            <div className="flex flex-wrap gap-2 text-sm text-slate-400">
+              <span className="px-2 py-1 rounded-full bg-slate-900 border border-slate-800">
+                D1: historique sécurisé
+              </span>
+              <span className="px-2 py-1 rounded-full bg-slate-900 border border-slate-800">
+                KV: cache agrégé (perf/coûts)
+              </span>
+              <span className="px-2 py-1 rounded-full bg-slate-900 border border-slate-800">
+                Cloudflare Workers temps réel
               </span>
             </div>
-            <div className="h-72">
-              <PriceChart data={chartData} />
+          </header>
+
+          <section className="bg-slate-900/70 border border-slate-800 rounded-2xl shadow-xl p-5 space-y-4">
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <label htmlFor="obs-territoire" className="text-sm text-slate-400">
+                  Territoire
+                </label>
+                <select
+                  id="obs-territoire"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={territoire}
+                  onChange={(e) => setTerritoire(e.target.value)}
+                >
+                  {TERRITORIES.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="obs-produit" className="text-sm text-slate-400">
+                  Produit
+                </label>
+                <select
+                  id="obs-produit"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={produit}
+                  onChange={(e) => setProduit(e.target.value)}
+                >
+                  {PRODUCTS.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <span className="text-sm text-slate-400">Période</span>
+                <div className="grid grid-cols-2 gap-2">
+                  {PERIOD_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setPeriod(option.value)}
+                      className={`text-left rounded-xl border px-3 py-2 transition-colors ${
+                        period === option.value
+                          ? 'border-blue-500 bg-blue-500/10 text-blue-100'
+                          : 'border-slate-800 bg-slate-950 text-slate-200 hover:border-blue-500/40'
+                      }`}
+                    >
+                      <div className="text-sm font-semibold">{option.label}</div>
+                      <div className="text-xs text-slate-400">{option.subtitle}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
+                <p className="text-xs text-slate-400 uppercase">Dernière mise à jour</p>
+                <p className="text-lg font-semibold text-white">{latestUpdate}</p>
+              </div>
+              <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
+                <p className="text-xs text-slate-400 uppercase">Source</p>
+                <p className="text-lg font-semibold text-white">{meta?.source_name || '—'}</p>
+                <p className="text-xs text-slate-400">
+                  {meta?.source_type ? `Type: ${meta.source_type}` : 'Type non renseigné'}
+                </p>
+              </div>
+              <div className="rounded-xl border border-slate-800 bg-slate-950/70 p-3">
+                <p className="text-xs text-slate-400 uppercase">Période sélectionnée</p>
+                <p className="text-lg font-semibold text-white">
+                  {PERIOD_OPTIONS.find((p) => p.value === period)?.label}
+                </p>
+                {meta?.cache && <p className="text-xs text-emerald-300">Cache: {meta.cache}</p>}
+              </div>
             </div>
           </section>
-        )}
 
-        <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-3">
-          <h3 className="text-lg font-semibold text-white">Transparence & mentions</h3>
-          <ul className="space-y-2 text-sm text-slate-300">
-            <li>
-              Source : {meta?.source_name ?? '—'} ({meta?.source_type ?? 'non renseigné'})
-            </li>
-            <li>Horodatage : {latestUpdate}</li>
-            <li className="text-amber-200">
-              Les prix commerciaux sont indicatifs et dépendent des sources partenaires.
-            </li>
-            <li>
-              Données réelles, aucune simulation. Les caches sont rafraîchis par KV et les historiques
-              sont stockés dans D1.
-            </li>
-          </ul>
-        </section>
+          <section className="bg-slate-900/80 border border-slate-800 rounded-2xl shadow-xl p-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/70 px-3 py-2 text-xs text-slate-200">
+              <span className="font-semibold">Granularité : heure / jour / semaine / mois</span>
+              <span className="text-slate-300">
+                Les données horaires reflètent les dernières observations disponibles.
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div>
+                <h2 className="text-xl font-semibold text-white">Courbe dynamique ({currency})</h2>
+                <p className="text-sm text-slate-400">
+                  Visualisation temps réel sans rafraîchissement agressif. Fallback clair si données
+                  absentes.
+                </p>
+              </div>
+              <Link
+                to="/observatoire"
+                className="text-sm px-3 py-2 rounded-lg border border-slate-700 text-slate-200 hover:border-blue-500 hover:text-blue-200 transition-colors"
+              >
+                Voir l’observatoire statique
+              </Link>
+            </div>
+
+            {loading && (
+              <div className="text-slate-300 text-sm">Chargement des courbes en cours…</div>
+            )}
+
+            {error && !loading && (
+              <div
+                role="alert"
+                className="bg-amber-900/30 border border-amber-500 text-amber-100 px-4 py-3 rounded-xl text-sm"
+              >
+                {error}
+              </div>
+            )}
+
+            {!loading && data.length > 0 && (
+              <div className="space-y-3">
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data} margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                      <XAxis
+                        dataKey="timestamp"
+                        tickFormatter={formatTick}
+                        stroke="#94a3b8"
+                        style={{ fontSize: '12px' }}
+                      />
+                      <YAxis
+                        stroke="#94a3b8"
+                        style={{ fontSize: '12px' }}
+                        tickFormatter={(value) => `${value.toFixed(2)}`}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: '#0f172a',
+                          border: '1px solid #1e293b',
+                          borderRadius: '12px',
+                          color: '#e2e8f0',
+                        }}
+                        formatter={(value) => {
+                          const numericValue =
+                            typeof value === 'number' ? value : Number(value ?? 0);
+                          return [`${numericValue.toFixed(2)} ${currency}`, 'Prix'];
+                        }}
+                        labelFormatter={(label) => formatDate(label)}
+                      />
+                      <Line
+                        type="monotone"
+                        dataKey="prix"
+                        stroke={isInstitutionalSource ? '#60a5fa' : '#34d399'}
+                        strokeWidth={2}
+                        strokeDasharray={lineStrokeDasharray}
+                        dot={lineDot}
+                        activeDot={{ r: 5 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-200">
+                  <div className="flex items-center gap-2">
+                    <span className="h-[2px] w-8 rounded-full bg-blue-400" aria-hidden="true" />
+                    <span>● Données institutionnelles</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 border-t border-dashed border-emerald-300 relative">
+                      <span
+                        className="absolute -top-1 left-1 h-2 w-2 rounded-full bg-emerald-300"
+                        aria-hidden="true"
+                      />
+                      <span
+                        className="absolute -bottom-1 right-1 h-2 w-2 rounded-full bg-emerald-300"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    <span>○ Données observées (terrain / partenaires)</span>
+                  </div>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-xs text-slate-200">
+                  <p>Dernière observation : {formatObservationTimestamp(latestTimestamp)}</p>
+                  <p>Source : {sourceCategory}</p>
+                </div>
+              </div>
+            )}
+          </section>
+
+          {chartData.length > 0 && (
+            <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-3">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Observations publiques</h3>
+                  <p className="text-sm text-slate-300">
+                    Données versionnables (Cloudflare Pages) filtrées sur la période sélectionnée.
+                  </p>
+                </div>
+                <span className="text-xs text-slate-400">
+                  {chartData.length} relevé(s) • dernière heure/jour/semaine/mois
+                </span>
+              </div>
+              <div className="h-72">
+                <PriceChart data={chartData} />
+              </div>
+            </section>
+          )}
+
+          <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 space-y-3">
+            <h3 className="text-lg font-semibold text-white">Transparence & mentions</h3>
+            <ul className="space-y-2 text-sm text-slate-300">
+              <li>
+                Source : {meta?.source_name ?? '—'} ({meta?.source_type ?? 'non renseigné'})
+              </li>
+              <li>Horodatage : {latestUpdate}</li>
+              <li className="text-amber-200">
+                Les prix commerciaux sont indicatifs et dépendent des sources partenaires.
+              </li>
+              <li>
+                Données réelles, aucune simulation. Les caches sont rafraîchis par KV et les
+                historiques sont stockés dans D1.
+              </li>
+            </ul>
+          </section>
+        </div>
       </div>
-    </div>
     </>
   );
 }

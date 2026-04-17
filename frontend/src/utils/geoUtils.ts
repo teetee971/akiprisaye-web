@@ -11,22 +11,14 @@
  * @param lon2 Longitude of second point
  * @returns Distance in kilometers
  */
-export function calculateDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
+export function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371; // Earth's radius in km
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
 
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
@@ -71,8 +63,8 @@ export function getBounds(
 ): [[number, number], [number, number]] | null {
   if (coordinates.length === 0) return null;
 
-  const lats = coordinates.map(c => c.lat);
-  const lons = coordinates.map(c => c.lon);
+  const lats = coordinates.map((c) => c.lat);
+  const lons = coordinates.map((c) => c.lon);
 
   return [
     [Math.min(...lats), Math.min(...lons)],
@@ -88,10 +80,8 @@ export function getCenterPoint(
 ): { lat: number; lon: number } | null {
   if (coordinates.length === 0) return null;
 
-  const avgLat =
-    coordinates.reduce((sum, c) => sum + c.lat, 0) / coordinates.length;
-  const avgLon =
-    coordinates.reduce((sum, c) => sum + c.lon, 0) / coordinates.length;
+  const avgLat = coordinates.reduce((sum, c) => sum + c.lat, 0) / coordinates.length;
+  const avgLon = coordinates.reduce((sum, c) => sum + c.lon, 0) / coordinates.length;
 
   return { lat: avgLat, lon: avgLon };
 }

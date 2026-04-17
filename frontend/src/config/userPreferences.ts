@@ -1,11 +1,11 @@
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 /**
  * userPreferences.ts — User preferences and settings
- * 
+ *
  * Purpose: Centralized user preferences for Anti-Crisis features
  * Storage: safeLocalStorage
  * RGPD compliant: All data stored locally, user controlled
- * 
+ *
  * @module userPreferences
  */
 
@@ -18,13 +18,13 @@ const PREFERENCES_VERSION = 1;
 export interface UserPreferences {
   /** Enable Anti-Crisis alerts (opt-in, disabled by default) */
   antiCrisisAlerts: boolean;
-  
+
   /** Show Anti-Crisis badges in UI (enabled by default) */
   showAntiCrisisBadges: boolean;
-  
+
   /** Enable Anti-Crisis filter option (enabled by default) */
   enableAntiCrisisFilter: boolean;
-  
+
   /** Minimum score to show alerts (2 = Anti-Crisis, 3 = Strong only) */
   minAlertScore: 2 | 3;
 }
@@ -34,10 +34,10 @@ export interface UserPreferences {
  * Conservative defaults: badges visible, but alerts disabled (opt-in)
  */
 export const DEFAULT_PREFERENCES: UserPreferences = {
-  antiCrisisAlerts: false,           // Opt-in for notifications
-  showAntiCrisisBadges: true,        // Informational badges shown by default
-  enableAntiCrisisFilter: true,      // Filter option available by default
-  minAlertScore: 2,                  // Alert on Anti-Crisis (score ≥ 2)
+  antiCrisisAlerts: false, // Opt-in for notifications
+  showAntiCrisisBadges: true, // Informational badges shown by default
+  enableAntiCrisisFilter: true, // Filter option available by default
+  minAlertScore: 2, // Alert on Anti-Crisis (score ≥ 2)
 };
 
 /**
@@ -62,7 +62,7 @@ function getStoredPreferences(): PreferencesData {
     }
 
     const data: PreferencesData = JSON.parse(stored);
-    
+
     // Version migration if needed
     if (data.version !== PREFERENCES_VERSION) {
       console.warn('Preferences version mismatch, using defaults');
@@ -103,7 +103,7 @@ function savePreferences(preferences: UserPreferences): void {
 
 /**
  * Get current user preferences
- * 
+ *
  * @returns Current preferences or defaults if not set
  */
 export function getUserPreferences(): UserPreferences {
@@ -113,9 +113,9 @@ export function getUserPreferences(): UserPreferences {
 
 /**
  * Update one or more user preferences
- * 
+ *
  * @param updates - Partial preferences to update
- * 
+ *
  * @example
  * updateUserPreferences({ antiCrisisAlerts: true });
  */
@@ -127,20 +127,18 @@ export function updateUserPreferences(updates: Partial<UserPreferences>): void {
 
 /**
  * Get a specific preference value
- * 
+ *
  * @param key - Preference key
  * @returns Preference value
  */
-export function getPreference<K extends keyof UserPreferences>(
-  key: K
-): UserPreferences[K] {
+export function getPreference<K extends keyof UserPreferences>(key: K): UserPreferences[K] {
   const preferences = getUserPreferences();
   return preferences[key];
 }
 
 /**
  * Set a specific preference value
- * 
+ *
  * @param key - Preference key
  * @param value - New value
  */

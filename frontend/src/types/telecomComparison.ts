@@ -1,6 +1,6 @@
 /**
  * Mobile & Internet Comparison Types v1.0.0
- * 
+ *
  * Principles:
  * - Observer, not sell: Transparent comparison without affiliate links
  * - Read-only comparison (no data modification)
@@ -24,7 +24,7 @@ export type TelecomServiceType = 'internet' | 'mobile' | 'bundle';
 export interface TelecomSourceReference {
   type: DataSource;
   url?: string;
-  observedAt: string;          // ISO 8601
+  observedAt: string; // ISO 8601
   observedBy?: string;
   verificationMethod: 'automated' | 'manual' | 'official' | 'speed_test';
   reliability: 'high' | 'medium' | 'low';
@@ -35,20 +35,20 @@ export interface TelecomSourceReference {
  */
 export interface SpeedMeasurement {
   advertised: {
-    download: number;          // Mbps
-    upload: number;            // Mbps
+    download: number; // Mbps
+    upload: number; // Mbps
   };
   actual: {
-    download: number;          // Mbps measured
-    upload: number;            // Mbps measured
-    latency?: number;          // ms
-    jitter?: number;           // ms
+    download: number; // Mbps measured
+    upload: number; // Mbps measured
+    latency?: number; // ms
+    jitter?: number; // ms
   };
   achievementRate: {
-    download: number;          // Percentage of advertised speed achieved
-    upload: number;            // Percentage of advertised speed achieved
+    download: number; // Percentage of advertised speed achieved
+    upload: number; // Percentage of advertised speed achieved
   };
-  measurementDate: string;     // ISO 8601
+  measurementDate: string; // ISO 8601
   measurementLocation: string; // City/area where measured
 }
 
@@ -58,10 +58,10 @@ export interface SpeedMeasurement {
 export interface CoverageInfo {
   territory: Territory;
   coverageType: '4G' | '5G' | 'fiber' | 'adsl' | 'satellite';
-  populationCoverage: number;  // Percentage of population covered
-  geographicCoverage: number;  // Percentage of territory covered
-  qualityScore: number;        // 0-100 based on user reports
-  lastUpdate: string;          // ISO 8601
+  populationCoverage: number; // Percentage of population covered
+  geographicCoverage: number; // Percentage of territory covered
+  qualityScore: number; // 0-100 based on user reports
+  lastUpdate: string; // ISO 8601
 }
 
 /**
@@ -69,25 +69,26 @@ export interface CoverageInfo {
  */
 export interface PriceComparison {
   advertised: {
-    monthly: number;           // Price shown in ads
-    installation?: number;     // Installation fee
-    router?: number;           // Router/modem cost
+    monthly: number; // Price shown in ads
+    installation?: number; // Installation fee
+    router?: number; // Router/modem cost
   };
   actual: {
-    monthly: number;           // Real price paid (including hidden fees)
-    installation?: number;     // Actual installation cost
-    router?: number;           // Actual router cost
-    otherFees?: {              // Other fees not advertised
+    monthly: number; // Real price paid (including hidden fees)
+    installation?: number; // Actual installation cost
+    router?: number; // Actual router cost
+    otherFees?: {
+      // Other fees not advertised
       name: string;
       amount: number;
     }[];
-    totalFirstYear: number;    // Total cost for first year
-    totalFirstMonth: number;   // Total first month (including setup)
+    totalFirstYear: number; // Total cost for first year
+    totalFirstMonth: number; // Total first month (including setup)
   };
   hiddenCosts: {
     total: number;
-    percentage: number;        // % difference from advertised price
-    breakdown: string[];       // List of hidden costs
+    percentage: number; // % difference from advertised price
+    breakdown: string[]; // List of hidden costs
   };
 }
 
@@ -104,9 +105,10 @@ export interface InternetSubscriptionPoint {
   speed: SpeedMeasurement;
   pricing: PriceComparison;
   commitment: {
-    duration: number;          // Months (0 = no commitment)
+    duration: number; // Months (0 = no commitment)
     earlyTerminationFee: number;
-    promotionalPeriod?: {      // If promotional pricing
+    promotionalPeriod?: {
+      // If promotional pricing
       months: number;
       monthlyPrice: number;
       priceAfterPromo: number;
@@ -115,14 +117,14 @@ export interface InternetSubscriptionPoint {
   features: {
     tvIncluded: boolean;
     phoneIncluded: boolean;
-    mobileData?: number;       // GB if included
+    mobileData?: number; // GB if included
     staticIP: boolean;
     publicIP: boolean;
   };
   coverage: CoverageInfo;
   source: TelecomSourceReference;
-  observationDate: string;     // ISO 8601
-  volume: number;              // Number of user reports
+  observationDate: string; // ISO 8601
+  volume: number; // Number of user reports
   confidence: 'high' | 'medium' | 'low';
   verified: boolean;
 }
@@ -138,14 +140,14 @@ export interface MobileSubscriptionPoint {
   offerName: string;
   network: '4G' | '5G' | '3G';
   data: {
-    advertised: number;        // GB per month advertised
-    actual: number;            // GB actually usable
-    throttled: boolean;        // Speed throttled after limit
-    throttledSpeed?: number;   // Mbps after throttling
+    advertised: number; // GB per month advertised
+    actual: number; // GB actually usable
+    throttled: boolean; // Speed throttled after limit
+    throttledSpeed?: number; // Mbps after throttling
   };
   pricing: PriceComparison;
   commitment: {
-    duration: number;          // Months (0 = no commitment)
+    duration: number; // Months (0 = no commitment)
     earlyTerminationFee: number;
     promotionalPeriod?: {
       months: number;
@@ -156,7 +158,7 @@ export interface MobileSubscriptionPoint {
   features: {
     unlimitedCalls: boolean;
     unlimitedSMS: boolean;
-    internationalCalls?: string[];  // List of included countries
+    internationalCalls?: string[]; // List of included countries
     roaming: {
       europe: boolean;
       dom: boolean;
@@ -165,7 +167,7 @@ export interface MobileSubscriptionPoint {
   };
   coverage: CoverageInfo;
   source: TelecomSourceReference;
-  observationDate: string;     // ISO 8601
+  observationDate: string; // ISO 8601
   volume: number;
   confidence: 'high' | 'medium' | 'low';
   verified: boolean;
@@ -177,13 +179,13 @@ export interface MobileSubscriptionPoint {
 export interface TelecomOfferRanking {
   rank: number;
   offer: InternetSubscriptionPoint | MobileSubscriptionPoint;
-  realMonthlyPrice: number;    // Actual monthly price
+  realMonthlyPrice: number; // Actual monthly price
   absoluteDifferenceFromCheapest: number;
   percentageDifferenceFromCheapest: number;
   absoluteDifferenceFromAverage: number;
   percentageDifferenceFromAverage: number;
   priceCategory: 'cheapest' | 'below_average' | 'average' | 'above_average' | 'most_expensive';
-  valueScore: number;          // 0-100 value for money score
+  valueScore: number; // 0-100 value for money score
 }
 
 /**
@@ -203,7 +205,7 @@ export interface TelecomAggregation {
     spread: number;
     spreadPercentage: number;
   };
-  speedAchievementAverage?: number;  // For internet only
+  speedAchievementAverage?: number; // For internet only
   coverageAverage: number;
   observationPeriod: {
     from: string;
@@ -227,13 +229,14 @@ export interface TelecomComparisonResult {
     providersWithHiddenCosts: number;
     commonHiddenCosts: {
       cost: string;
-      frequency: number;        // How many providers charge this
+      frequency: number; // How many providers charge this
       averageAmount: number;
     }[];
   };
-  speedAnalysis?: {             // For internet only
+  speedAnalysis?: {
+    // For internet only
     averageAchievementRate: number;
-    providersWithGoodSpeed: number;  // Speed achievement > 80%
+    providersWithGoodSpeed: number; // Speed achievement > 80%
     technologiesComparison: {
       technology: string;
       averageSpeedAchievement: number;
@@ -289,14 +292,14 @@ export interface TelecomComparisonFilter {
   serviceType?: TelecomServiceType;
   territory?: Territory;
   provider?: string;
-  minSpeed?: number;           // Mbps for internet
-  minData?: number;            // GB for mobile
+  minSpeed?: number; // Mbps for internet
+  minData?: number; // GB for mobile
   maxPrice?: number;
   noCommitmentOnly?: boolean;
-  fiberOnly?: boolean;         // For internet
-  fiveGOnly?: boolean;         // For mobile
+  fiberOnly?: boolean; // For internet
+  fiveGOnly?: boolean; // For mobile
   verifiedOnly?: boolean;
-  goodCoverageOnly?: boolean;  // Coverage > 80%
+  goodCoverageOnly?: boolean; // Coverage > 80%
 }
 
 /**
@@ -313,7 +316,7 @@ export interface TerritoryTelecomStatistics {
     features: string;
   };
   coverageQuality: {
-    fiber: number;             // % coverage
+    fiber: number; // % coverage
     fourG: number;
     fiveG: number;
   };
@@ -337,13 +340,12 @@ export interface SpeedTestResult {
   provider: string;
   territory: Territory;
   technology: string;
-  download: number;            // Mbps
-  upload: number;              // Mbps
-  latency: number;             // ms
-  jitter: number;              // ms
-  testDate: string;            // ISO 8601
+  download: number; // Mbps
+  upload: number; // Mbps
+  latency: number; // ms
+  jitter: number; // ms
+  testDate: string; // ISO 8601
   location: string;
   testServer: string;
   source: TelecomSourceReference;
 }
-

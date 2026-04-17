@@ -62,9 +62,7 @@ TOTAL                        1,88 €
 
 const EMPTY_BLOCKS: OCRRawBlock[] = [];
 
-const BLOCKS_WITH_CONFIDENCE: OCRRawBlock[] = [
-  { text: SAMPLE_OCR_FULL, confidenceScore: 85 },
-];
+const BLOCKS_WITH_CONFIDENCE: OCRRawBlock[] = [{ text: SAMPLE_OCR_FULL, confidenceScore: 85 }];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // normalizeProductLabel
@@ -110,7 +108,7 @@ describe('buildChecksum', () => {
 
   it('differs for different totals', () => {
     const c1 = buildChecksum('Carrefour', '2025-03-15', 9.87);
-    const c2 = buildChecksum('Carrefour', '2025-03-15', 10.00);
+    const c2 = buildChecksum('Carrefour', '2025-03-15', 10.0);
     expect(c1).not.toBe(c2);
   });
 
@@ -269,9 +267,7 @@ describe('normalizeReceipt', () => {
   it('normalizes product labels', () => {
     const parsed = parseReceiptFromOcr(SAMPLE_OCR_FULL, EMPTY_BLOCKS, 'gp');
     const normalized = normalizeReceipt(parsed);
-    const lait = normalized.items.find((it) =>
-      it.rawLabel.toUpperCase().includes('LAIT'),
-    );
+    const lait = normalized.items.find((it) => it.rawLabel.toUpperCase().includes('LAIT'));
     expect(lait?.normalizedLabel).toBeDefined();
     expect(lait?.normalizedLabel).not.toBe('');
   });
@@ -279,18 +275,14 @@ describe('normalizeReceipt', () => {
   it('assigns categories to products', () => {
     const parsed = parseReceiptFromOcr(SAMPLE_OCR_FULL, EMPTY_BLOCKS, 'gp');
     const normalized = normalizeReceipt(parsed);
-    const lait = normalized.items.find((it) =>
-      it.rawLabel.toUpperCase().includes('LAIT'),
-    );
+    const lait = normalized.items.find((it) => it.rawLabel.toUpperCase().includes('LAIT'));
     expect(lait?.category).toBe('Produits laitiers');
   });
 
   it('extracts package size from label (litres)', () => {
     const parsed = parseReceiptFromOcr(SAMPLE_OCR_FULL, EMPTY_BLOCKS, 'gp');
     const normalized = normalizeReceipt(parsed);
-    const lait = normalized.items.find((it) =>
-      it.rawLabel.toUpperCase().includes('LAIT'),
-    );
+    const lait = normalized.items.find((it) => it.rawLabel.toUpperCase().includes('LAIT'));
     // "LAIT DEMI ECREME 1L" → packageSizeValue=1, packageSizeUnit='l'
     expect(lait?.packageSizeValue).toBeCloseTo(1, 1);
     expect(lait?.packageSizeUnit).toBe('l');
@@ -327,9 +319,7 @@ describe('validateReceipt', () => {
     const parsed = parseReceiptFromOcr(SAMPLE_OCR_FULL, EMPTY_BLOCKS, 'gp');
     const badItems = {
       ...parsed,
-      items: parsed.items.map((it, idx) =>
-        idx === 0 ? { ...it, totalPrice: 0 } : it,
-      ),
+      items: parsed.items.map((it, idx) => (idx === 0 ? { ...it, totalPrice: 0 } : it)),
     };
     const validated = validateReceipt(badItems);
     expect(validated.items[0].needsReview).toBe(true);
@@ -337,9 +327,7 @@ describe('validateReceipt', () => {
   });
 
   it('marks future dates as suspicious', () => {
-    const futureDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 10);
+    const futureDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const parsed = parseReceiptFromOcr(SAMPLE_OCR_FULL, EMPTY_BLOCKS, 'gp');
     const futureReceipt = { ...parsed, receiptDate: futureDate };
     const validated = validateReceipt(futureReceipt);
@@ -408,9 +396,7 @@ describe('createPriceObservationsFromReceipt', () => {
     const receipt = buildReceipt();
     const withZeroItem: ReceiptRecord = {
       ...receipt,
-      items: receipt.items.map((it, idx) =>
-        idx === 0 ? { ...it, totalPrice: 0 } : it,
-      ),
+      items: receipt.items.map((it, idx) => (idx === 0 ? { ...it, totalPrice: 0 } : it)),
     };
     const obs = await createPriceObservationsFromReceipt(withZeroItem);
     const validItems = withZeroItem.items.filter((it) => it.totalPrice > 0);
@@ -422,7 +408,7 @@ describe('createPriceObservationsFromReceipt', () => {
     const withReviewItem: ReceiptRecord = {
       ...receipt,
       items: receipt.items.map((it, idx) =>
-        idx === 0 ? { ...it, needsReview: true, totalPrice: 1.99 } : it,
+        idx === 0 ? { ...it, needsReview: true, totalPrice: 1.99 } : it
       ),
     };
     const obs = await createPriceObservationsFromReceipt(withReviewItem);

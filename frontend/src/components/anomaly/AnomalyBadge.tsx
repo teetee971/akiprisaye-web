@@ -1,9 +1,9 @@
 /**
  * AnomalyBadge Component - v1.0.0
- * 
+ *
  * Displays a warning badge for price anomalies with citizen-friendly explanation
  * No "AI" marketing - transparent statistical methods only
- * 
+ *
  * @module AnomalyBadge
  */
 
@@ -164,9 +164,7 @@ export function AnomalyBadge({ anomaly, showTooltip = true }: AnomalyBadgeProps)
               {typeLabel}
             </div>
 
-            <div style={{ marginBottom: '8px', color: '#cbd5e1' }}>
-              {anomaly.description}
-            </div>
+            <div style={{ marginBottom: '8px', color: '#cbd5e1' }}>{anomaly.description}</div>
 
             {/* Details */}
             {(anomaly.details.currentPrice || anomaly.details.referencePrice) && (
@@ -234,7 +232,10 @@ export function AnomalyList({ anomalies, maxVisible = 2 }: AnomalyListProps) {
       }}
     >
       {visibleAnomalies.map((anomaly, index) => (
-        <AnomalyBadge key={`${anomaly.type}-${anomaly.severity}-${anomaly.description.slice(0, 30)}`} anomaly={anomaly} />
+        <AnomalyBadge
+          key={`${anomaly.type}-${anomaly.severity}-${anomaly.description.slice(0, 30)}`}
+          anomaly={anomaly}
+        />
       ))}
 
       {hasMore && !showAll && (

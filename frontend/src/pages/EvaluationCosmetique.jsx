@@ -18,9 +18,20 @@ export default function EvaluationCosmetiquePage() {
           name="description"
           content="Évaluez la sécurité des produits cosmétiques vendus dans les DOM à partir des sources officielles (CosIng, ANSES, ECHA, Règlement CE 1223/2009)."
         />
-        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/evaluation-cosmetique" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/evaluation-cosmetique" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/evaluation-cosmetique" />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/evaluation-cosmetique"
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/evaluation-cosmetique"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/evaluation-cosmetique"
+        />
       </Helmet>
       <HeroImage
         src={PAGE_HERO_IMAGES.evaluationCosmetique}
@@ -28,8 +39,12 @@ export default function EvaluationCosmetiquePage() {
         gradient="from-slate-950 to-pink-900"
         height="h-40 sm:h-52"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>💄 Évaluation cosmétique</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Analysez les produits cosmétiques vendus dans les DOM</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          💄 Évaluation cosmétique
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Analysez les produits cosmétiques vendus dans les DOM
+        </p>
       </HeroImage>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <CosmeticEvaluation />

@@ -54,10 +54,7 @@ const readCache = (): (CachedDiscovery & { expiry: number }) | null => {
 
 const writeCache = (data: CachedDiscovery): void => {
   try {
-    localStorage.setItem(
-      CACHE_KEY,
-      JSON.stringify({ ...data, expiry: Date.now() + CACHE_TTL_MS }),
-    );
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ...data, expiry: Date.now() + CACHE_TTL_MS }));
   } catch {
     // localStorage peut être indisponible (mode privé, quota, etc.)
   }
@@ -67,10 +64,7 @@ const isCacheValid = (cache: ReturnType<typeof readCache>): cache is NonNullable
   cache !== null && Date.now() < cache.expiry;
 
 /** Identifie les catalogues apparus depuis le dernier cache. */
-const detectNew = (
-  fresh: DiscoveredCatalog[],
-  previousBkcodes: string[],
-): DiscoveredCatalog[] => {
+const detectNew = (fresh: DiscoveredCatalog[], previousBkcodes: string[]): DiscoveredCatalog[] => {
   const prev = new Set(previousBkcodes);
   return fresh.filter((c) => !prev.has(c.bkcode));
 };
@@ -95,15 +89,11 @@ export async function getCatalogs(forceRefresh = false): Promise<DiscoveredCatal
   _inFlight = (async () => {
     try {
       const base = (
-        typeof import.meta !== 'undefined'
-          ? (import.meta.env?.VITE_PRICE_API_BASE ?? '')
-          : ''
+        typeof import.meta !== 'undefined' ? (import.meta.env?.VITE_PRICE_API_BASE ?? '') : ''
       ).replace(/\/$/, '');
 
       const rawAccounts =
-        typeof import.meta !== 'undefined'
-          ? (import.meta.env?.VITE_CALAMEO_ACCOUNTS ?? '')
-          : '';
+        typeof import.meta !== 'undefined' ? (import.meta.env?.VITE_CALAMEO_ACCOUNTS ?? '') : '';
       const params = new URLSearchParams({ per_page: '20' });
       if (rawAccounts) params.set('accounts', rawAccounts);
 
@@ -133,7 +123,7 @@ export async function getCatalogs(forceRefresh = false): Promise<DiscoveredCatal
         // Émet un événement personnalisé pour que l'UI puisse réagir
         try {
           window.dispatchEvent(
-            new CustomEvent('calameo:new-catalogs', { detail: { catalogs: newCatalogs } }),
+            new CustomEvent('calameo:new-catalogs', { detail: { catalogs: newCatalogs } })
           );
         } catch {
           // Environnement non-browser (tests, SSR)

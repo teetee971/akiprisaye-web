@@ -37,11 +37,7 @@ export const PRO_PLANS: ProPlanDetails[] = [
     badgePro: false,
     highlight: false,
     description: 'Testez gratuitement avec une annonce pendant 7 jours.',
-    features: [
-      '1 annonce active (7 jours)',
-      'Fiche établissement de base',
-      'Visible sur la carte',
-    ],
+    features: ['1 annonce active (7 jours)', 'Fiche établissement de base', 'Visible sur la carte'],
   },
   {
     id: 'essentiel',
@@ -79,8 +75,8 @@ export const PRO_PLANS: ProPlanDetails[] = [
       '50 annonces actives / mois',
       'Badge "Professionnel Vérifié"',
       'Statistiques de consultation',
-      'Priorité d\'affichage dans la catégorie',
-      'Logo de l\'entreprise affiché',
+      "Priorité d'affichage dans la catégorie",
+      "Logo de l'entreprise affiché",
       'Support prioritaire',
     ],
   },
@@ -98,10 +94,10 @@ export const PRO_PLANS: ProPlanDetails[] = [
     description: 'Pour les grandes enseignes et franchises multi-sites.',
     features: [
       'Annonces illimitées',
-      'Priorité d\'affichage globale',
+      "Priorité d'affichage globale",
       'Statistiques avancées',
       'Multi-établissements',
-      'API d\'import des prix (CSV)',
+      "API d'import des prix (CSV)",
       'Account manager dédié',
     ],
   },
@@ -116,11 +112,11 @@ export const PRO_PLANS: ProPlanDetails[] = [
     analytics: false,
     badgePro: true,
     highlight: false,
-    description: 'Payez uniquement à l\'annonce, sans abonnement.',
+    description: "Payez uniquement à l'annonce, sans abonnement.",
     features: [
       '2,99 € par annonce (30 jours)',
       'Badge "Professionnel Vérifié"',
-      'Pas d\'engagement',
+      "Pas d'engagement",
       'Recharge possible à tout moment',
     ],
   },
@@ -129,41 +125,41 @@ export const PRO_PLANS: ProPlanDetails[] = [
 // ─── Libellés ────────────────────────────────────────────────────────────────
 
 export const FORME_JURIDIQUE_LABELS: Record<FormeJuridique, string> = {
-  eurl:         'EURL',
-  sarl:         'SARL',
-  sas:          'SAS',
-  sasu:         'SASU',
-  sa:           'SA',
-  ei:           'Entreprise Individuelle (EI)',
-  micro:        'Micro-entreprise / Auto-entrepreneur',
-  association:  'Association (loi 1901)',
+  eurl: 'EURL',
+  sarl: 'SARL',
+  sas: 'SAS',
+  sasu: 'SASU',
+  sa: 'SA',
+  ei: 'Entreprise Individuelle (EI)',
+  micro: 'Micro-entreprise / Auto-entrepreneur',
+  association: 'Association (loi 1901)',
   collectivite: 'Collectivité territoriale',
-  sci:          'SCI',
-  snc:          'SNC',
-  autre:        'Autre forme juridique',
+  sci: 'SCI',
+  snc: 'SNC',
+  autre: 'Autre forme juridique',
 };
 
 export const SECTEUR_LABELS: Record<SecteurActivite, string> = {
   alimentation_grande_surface: 'Grande surface alimentaire',
-  alimentation_epicerie:       'Épicerie / Commerce de proximité',
-  boulangerie_patisserie:      'Boulangerie / Pâtisserie',
-  boucherie_charcuterie:       'Boucherie / Charcuterie',
-  fruits_legumes:              'Fruits & Légumes',
-  poissonnerie:                'Poissonnerie',
-  restauration:                'Restauration',
-  pharmacie_parapharmacie:     'Pharmacie / Parapharmacie',
-  materiel_bricolage:          'Matériaux / Bricolage',
-  jardinerie:                  'Jardinerie / Horticulture',
-  habillement_textile:         'Habillement / Textile',
-  electronique_informatique:   'Électronique / Informatique',
-  automobile_transport:        'Automobile / Transport',
-  location_vehicules:          'Location de véhicules',
-  services_domicile:           'Services à domicile',
-  sante_bien_etre:             'Santé / Bien-être',
-  education_formation:         'Éducation / Formation',
-  tourisme_loisirs:            'Tourisme / Loisirs',
-  immobilier:                  'Immobilier',
-  autre:                       'Autre secteur',
+  alimentation_epicerie: 'Épicerie / Commerce de proximité',
+  boulangerie_patisserie: 'Boulangerie / Pâtisserie',
+  boucherie_charcuterie: 'Boucherie / Charcuterie',
+  fruits_legumes: 'Fruits & Légumes',
+  poissonnerie: 'Poissonnerie',
+  restauration: 'Restauration',
+  pharmacie_parapharmacie: 'Pharmacie / Parapharmacie',
+  materiel_bricolage: 'Matériaux / Bricolage',
+  jardinerie: 'Jardinerie / Horticulture',
+  habillement_textile: 'Habillement / Textile',
+  electronique_informatique: 'Électronique / Informatique',
+  automobile_transport: 'Automobile / Transport',
+  location_vehicules: 'Location de véhicules',
+  services_domicile: 'Services à domicile',
+  sante_bien_etre: 'Santé / Bien-être',
+  education_formation: 'Éducation / Formation',
+  tourisme_loisirs: 'Tourisme / Loisirs',
+  immobilier: 'Immobilier',
+  autre: 'Autre secteur',
 };
 
 // ─── Validation SIRET ────────────────────────────────────────────────────────
@@ -282,8 +278,11 @@ export function getRemainingQuota(profile: ProProfile): {
 /** Créer une nouvelle annonce */
 export function createAnnonce(
   proId: string,
-  data: Omit<ProPriceAnnonce, 'id' | 'proId' | 'createdAt' | 'updatedAt' | 'expiresAt' | 'vues' | 'statut'>,
-  plan: ProPlan,
+  data: Omit<
+    ProPriceAnnonce,
+    'id' | 'proId' | 'createdAt' | 'updatedAt' | 'expiresAt' | 'vues' | 'statut'
+  >,
+  plan: ProPlan
 ): ProPriceAnnonce {
   const planDetails = PRO_PLANS.find((p) => p.id === plan);
   const durationDays = planDetails?.durationDays ?? 30;

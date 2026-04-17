@@ -43,10 +43,13 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
 
     const loadStores = async () => {
       try {
-        const payload = await liveApiFetchJson<{ stores?: Store[] }>(`/stores?territory=${encodeURIComponent(territory)}`, {
-          incidentReason: 'stores_api_unavailable',
-          timeoutMs: 10000,
-        });
+        const payload = await liveApiFetchJson<{ stores?: Store[] }>(
+          `/stores?territory=${encodeURIComponent(territory)}`,
+          {
+            incidentReason: 'stores_api_unavailable',
+            timeoutMs: 10000,
+          }
+        );
         const apiStores = Array.isArray(payload?.stores) ? payload.stores : [];
         if (!cancelled && apiStores.length > 0) {
           setStoresData(apiStores);
@@ -73,7 +76,11 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
       .filter((store) => store.territory === territory)
       .filter((store) => {
         if (!queryLower) return true;
-        return [store.name, store.city, store.postalCode].filter(Boolean).join(' ').toLowerCase().includes(queryLower);
+        return [store.name, store.city, store.postalCode]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase()
+          .includes(queryLower);
       })
       .map((store) => ({
         store,
@@ -91,11 +98,19 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
-      <button type="button" className="absolute inset-0 bg-black/60 cursor-default" onClick={onClose} tabIndex={-1} aria-label="Fermer" />
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/60 cursor-default"
+        onClick={onClose}
+        tabIndex={-1}
+        aria-label="Fermer"
+      />
       <div className="relative z-10 w-full md:max-w-2xl bg-slate-900 border border-slate-700 rounded-t-2xl md:rounded-2xl p-4 max-h-[85vh] overflow-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">Choisir un magasin</h2>
-          <button className="text-sm text-slate-300" onClick={onClose}>Fermer</button>
+          <button className="text-sm text-slate-300" onClick={onClose}>
+            Fermer
+          </button>
         </div>
 
         <div className="space-y-3 mb-4">
@@ -121,7 +136,7 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
                 () => {
                   setGeoError('Accès à la géolocalisation refusé.');
                 },
-                { enableHighAccuracy: false, timeout: 6000 },
+                { enableHighAccuracy: false, timeout: 6000 }
               );
             }}
           >
@@ -134,15 +149,25 @@ export default function StoreSelectorModal({ open, territory, onClose, onSelect 
           {stores.map(({ store, distance }) => {
             const isModeAvailable = store.services[serviceMode];
             return (
-              <article key={store.id} className="border border-slate-700 rounded-xl p-3 bg-slate-800">
+              <article
+                key={store.id}
+                className="border border-slate-700 rounded-xl p-3 bg-slate-800"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h3 className="text-sm font-semibold text-white">{store.name}</h3>
-                    <p className="text-xs text-slate-400">{store.city} {store.postalCode ? `• ${store.postalCode}` : ''}</p>
-                    {distance !== null && <p className="text-xs text-slate-400">{distance.toFixed(1)} km</p>}
+                    <p className="text-xs text-slate-400">
+                      {store.city} {store.postalCode ? `• ${store.postalCode}` : ''}
+                    </p>
+                    {distance !== null && (
+                      <p className="text-xs text-slate-400">{distance.toFixed(1)} km</p>
+                    )}
                     <div className="mt-2 flex gap-2 flex-wrap text-xs">
                       {(['inStore', 'drive', 'delivery'] as ServiceMode[]).map((mode) => (
-                        <span key={mode} className={`px-2 py-0.5 rounded border ${store.services[mode] ? 'border-slate-500 text-slate-200' : 'border-slate-700 text-slate-500'}`}>
+                        <span
+                          key={mode}
+                          className={`px-2 py-0.5 rounded border ${store.services[mode] ? 'border-slate-500 text-slate-200' : 'border-slate-700 text-slate-500'}`}
+                        >
                           {SERVICE_LABELS[mode]}
                         </span>
                       ))}

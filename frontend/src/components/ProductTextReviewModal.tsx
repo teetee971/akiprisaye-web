@@ -1,13 +1,12 @@
- 
 /**
  * Product Text Review Modal
  * Part of PR D - Text-based Product Recognition
- * 
+ *
  * MANDATORY user validation before any action
  * - Shows suggested products with confidence scores
  * - User must explicitly confirm selection
  * - User can cancel/correct at any time
- * 
+ *
  * UX Principles:
  * - ❌ NO automatic selection
  * - ✅ Clear "Suggestion" messaging
@@ -44,9 +43,7 @@ export function ProductTextReviewModal({ suggestions, onConfirm, onCancel }: Pro
     const handleTab = (e: KeyboardEvent) => {
       if (e.key !== 'Tab' || !modalRef.current) return;
 
-      const focusableElements = modalRef.current.querySelectorAll(
-        'button:not([disabled])'
-      );
+      const focusableElements = modalRef.current.querySelectorAll('button:not([disabled])');
       const firstElement = focusableElements[0] as HTMLElement;
       const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
 
@@ -69,14 +66,14 @@ export function ProductTextReviewModal({ suggestions, onConfirm, onCancel }: Pro
   }, [onCancel]);
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       role="dialog"
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
       aria-modal="true"
     >
-      <div 
+      <div
         ref={modalRef}
         className="w-full max-w-md bg-gradient-to-br from-purple-900/90 to-blue-900/90 backdrop-blur-md rounded-2xl shadow-2xl border border-white/10 overflow-hidden"
       >
@@ -99,9 +96,7 @@ export function ProductTextReviewModal({ suggestions, onConfirm, onCancel }: Pro
             </div>
           ) : (
             <div className="space-y-2">
-              <p className="text-xs text-white/60 mb-3">
-                Sélectionnez le produit correspondant :
-              </p>
+              <p className="text-xs text-white/60 mb-3">Sélectionnez le produit correspondant :</p>
               {suggestions.map((s, index) => (
                 <button
                   key={`${s.label}-${index}`}
@@ -114,13 +109,13 @@ export function ProductTextReviewModal({ suggestions, onConfirm, onCancel }: Pro
                     <span className="text-white font-medium group-hover:text-blue-300 transition-colors">
                       {s.label}
                     </span>
-                    <span 
+                    <span
                       className={`text-xs px-2 py-1 rounded-full ${
-                        s.score >= 0.7 
-                          ? 'bg-green-500/20 text-green-300' 
+                        s.score >= 0.7
+                          ? 'bg-green-500/20 text-green-300'
                           : s.score >= 0.5
-                          ? 'bg-yellow-500/20 text-yellow-300'
-                          : 'bg-red-500/20 text-red-300'
+                            ? 'bg-yellow-500/20 text-yellow-300'
+                            : 'bg-red-500/20 text-red-300'
                       }`}
                     >
                       {Math.round(s.score * 100)}%

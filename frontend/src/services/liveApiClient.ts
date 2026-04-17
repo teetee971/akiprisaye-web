@@ -37,4 +37,3 @@ export async function liveApiFetchJson<T>(path: string, options: LiveApiOptions 
     window.clearTimeout(timeout);
   }
 }
-

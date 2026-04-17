@@ -1,7 +1,6 @@
- 
 /**
  * Enhanced Geolocation Utility
- * 
+ *
  * Provides geolocation with improved error handling and user-friendly messages.
  * Detects common issues like Permissions-Policy blocks, iframe restrictions,
  * WebView limitations, and user denials.
@@ -83,7 +82,7 @@ function isWebView(): boolean {
 
 /**
  * Map GeolocationPositionError to user-friendly message
- * 
+ *
  * Note: Error messages are currently in French to match the application's language.
  * In a future update, consider extracting these messages to a localization/i18n system
  * for multi-language support.
@@ -103,12 +102,12 @@ function mapGeolocationError(error: GeolocationPositionError): GeolocationResult
       suggestions: isInFrame
         ? [
             'Le site doit ajouter l\'attribut allow="geolocation" à l\'iframe',
-            'Ouvrez cette page directement (hors iframe) si possible'
+            'Ouvrez cette page directement (hors iframe) si possible',
           ]
         : [
-            'Le site doit configurer l\'en-tête HTTP Permissions-Policy',
-            'Voir DEPLOYMENT_NOTES.md pour les instructions'
-          ]
+            "Le site doit configurer l'en-tête HTTP Permissions-Policy",
+            'Voir DEPLOYMENT_NOTES.md pour les instructions',
+          ],
     };
   }
 
@@ -119,7 +118,7 @@ function mapGeolocationError(error: GeolocationPositionError): GeolocationResult
       : '';
 
     const webViewMessage = isWebViewContext
-      ? ' Dans une application mobile, l\'app doit avoir la permission de localisation.'
+      ? " Dans une application mobile, l'app doit avoir la permission de localisation."
       : '';
 
     return {
@@ -127,11 +126,13 @@ function mapGeolocationError(error: GeolocationPositionError): GeolocationResult
       message: error.message,
       userMessage: `Vous avez refusé l'accès à votre position.${inFrameMessage}${webViewMessage}`,
       suggestions: [
-        'Cliquez sur l\'icône de localisation dans la barre d\'adresse de votre navigateur',
-        'Autorisez l\'accès à la localisation pour ce site',
-        ...(isWebViewContext ? ['Vérifiez les permissions de l\'application dans les paramètres de votre téléphone'] : []),
-        ...(isInFrame ? ['Essayez d\'ouvrir la page directement (hors iframe)'] : [])
-      ]
+        "Cliquez sur l'icône de localisation dans la barre d'adresse de votre navigateur",
+        "Autorisez l'accès à la localisation pour ce site",
+        ...(isWebViewContext
+          ? ["Vérifiez les permissions de l'application dans les paramètres de votre téléphone"]
+          : []),
+        ...(isInFrame ? ["Essayez d'ouvrir la page directement (hors iframe)"] : []),
+      ],
     };
   }
 
@@ -144,8 +145,8 @@ function mapGeolocationError(error: GeolocationPositionError): GeolocationResult
       suggestions: [
         'Activez le GPS sur votre appareil',
         'Vérifiez votre connexion internet (pour le géoréférencement WiFi)',
-        'Essayez de vous placer à l\'extérieur pour un meilleur signal GPS'
-      ]
+        "Essayez de vous placer à l'extérieur pour un meilleur signal GPS",
+      ],
     };
   }
 
@@ -158,8 +159,8 @@ function mapGeolocationError(error: GeolocationPositionError): GeolocationResult
       suggestions: [
         'Réessayez dans quelques instants',
         'Vérifiez que le GPS est activé',
-        'Placez-vous dans un endroit avec une meilleure réception'
-      ]
+        'Placez-vous dans un endroit avec une meilleure réception',
+      ],
     };
   }
 
@@ -167,14 +168,14 @@ function mapGeolocationError(error: GeolocationPositionError): GeolocationResult
   return {
     code: 'UNKNOWN_ERROR',
     message: error.message,
-    userMessage: 'Une erreur inconnue s\'est produite lors de la géolocalisation.',
-    suggestions: ['Réessayez plus tard', 'Vérifiez les paramètres de votre navigateur']
+    userMessage: "Une erreur inconnue s'est produite lors de la géolocalisation.",
+    suggestions: ['Réessayez plus tard', 'Vérifiez les paramètres de votre navigateur'],
   };
 }
 
 /**
  * Request user's geolocation with enhanced error handling
- * 
+ *
  * @param showMessage - Optional callback to display messages to the user
  * @returns Promise with GeolocationResult
  */
@@ -189,49 +190,49 @@ export async function requestGeolocation(
         code: 'NOT_SUPPORTED',
         message: 'Geolocation API not available',
         userMessage: 'Votre navigateur ne supporte pas la géolocalisation.',
-        suggestions: ['Utilisez un navigateur récent (Chrome, Firefox, Safari, Edge)']
-      }
+        suggestions: ['Utilisez un navigateur récent (Chrome, Firefox, Safari, Edge)'],
+      },
     };
-    
+
     if (showMessage) {
       showMessage(result.error!.userMessage, 'error');
     }
-    
+
     return result;
   }
 
   // Check permission state if available
   const permissionState = await checkPermissionState();
-  
+
   // PROMPT 4: Monitor geolocation request
   uxMonitor.geolocationRequested();
-  
+
   if (permissionState === 'denied') {
     const result: GeolocationResult = {
       success: false,
       error: {
         code: 'PERMISSION_DENIED',
         message: 'Geolocation permission denied',
-        userMessage: 'L\'accès à votre position a été refusé précédemment.',
+        userMessage: "L'accès à votre position a été refusé précédemment.",
         suggestions: [
-          'Cliquez sur l\'icône de localisation dans la barre d\'adresse',
-          'Réinitialisez les permissions pour ce site dans les paramètres de votre navigateur'
-        ]
-      }
+          "Cliquez sur l'icône de localisation dans la barre d'adresse",
+          'Réinitialisez les permissions pour ce site dans les paramètres de votre navigateur',
+        ],
+      },
     };
-    
+
     if (showMessage) {
       showMessage(result.error!.userMessage, 'error');
     }
-    
+
     // PROMPT 4: Monitor geolocation denied
     uxMonitor.geolocationDenied('denied_previously');
-    
+
     return result;
   }
 
   if (permissionState === 'prompt' && showMessage) {
-    showMessage('Veuillez autoriser l\'accès à votre position...', 'info');
+    showMessage("Veuillez autoriser l'accès à votre position...", 'info');
   }
 
   // Request geolocation
@@ -243,45 +244,45 @@ export async function requestGeolocation(
           position: {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy
-          }
+            accuracy: position.coords.accuracy,
+          },
         };
-        
+
         if (showMessage) {
           showMessage('Position obtenue avec succès !', 'success');
         }
-        
+
         // PROMPT 4: Monitor geolocation success
         uxMonitor.geolocationGranted();
-        
+
         resolve(result);
       },
       (error) => {
         const result: GeolocationResult = {
           success: false,
-          error: mapGeolocationError(error)
+          error: mapGeolocationError(error),
         };
-        
+
         if (showMessage) {
           const errorInfo = result.error!;
           let message = errorInfo.userMessage;
-          
+
           if (errorInfo.suggestions && errorInfo.suggestions.length > 0) {
-            message += '\n\nSuggestions:\n' + errorInfo.suggestions.map(s => `• ${s}`).join('\n');
+            message += '\n\nSuggestions:\n' + errorInfo.suggestions.map((s) => `• ${s}`).join('\n');
           }
-          
+
           showMessage(message, 'error');
         }
-        
+
         // PROMPT 4: Monitor geolocation denied
         uxMonitor.geolocationDenied(result.error?.code || 'unknown');
-        
+
         resolve(result);
       },
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 300000 // Cache for 5 minutes
+        maximumAge: 300000, // Cache for 5 minutes
       }
     );
   });
@@ -297,16 +298,16 @@ export async function isGeolocationAvailable(): Promise<{
   if (!('geolocation' in navigator)) {
     return {
       available: false,
-      reason: 'Geolocation API not supported by browser'
+      reason: 'Geolocation API not supported by browser',
     };
   }
 
   const permissionState = await checkPermissionState();
-  
+
   if (permissionState === 'denied') {
     return {
       available: false,
-      reason: 'Geolocation permission denied'
+      reason: 'Geolocation permission denied',
     };
   }
 
@@ -331,6 +332,6 @@ export async function getGeolocationDiagnostics(): Promise<{
     permissionState: await checkPermissionState(),
     isInIframe: isInIframe(),
     isWebView: isWebView(),
-    userAgent: navigator.userAgent
+    userAgent: navigator.userAgent,
   };
 }

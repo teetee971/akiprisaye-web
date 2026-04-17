@@ -23,7 +23,7 @@ describe('Actualites page', () => {
         observe() {}
         disconnect() {}
         unobserve() {}
-      },
+      }
     );
   });
 
@@ -35,11 +35,19 @@ describe('Actualites page', () => {
   });
 
   it('builds /api/news query params from filters', async () => {
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ items: [], mode: 'mock' }) });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue({ ok: true, json: async () => ({ items: [], mode: 'mock' }) });
     vi.stubGlobal('fetch', fetchMock);
 
     await act(async () => {
-      root.render(<MemoryRouter><HelmetProvider><Actualites /></HelmetProvider></MemoryRouter>);
+      root.render(
+        <MemoryRouter>
+          <HelmetProvider>
+            <Actualites />
+          </HelmetProvider>
+        </MemoryRouter>
+      );
     });
 
     const territorySelect = container.querySelector('select');
@@ -48,8 +56,12 @@ describe('Actualites page', () => {
       territorySelect.value = 'gp';
       territorySelect.dispatchEvent(new Event('change', { bubbles: true }));
       const buttons = Array.from(container.querySelectorAll('button'));
-      buttons.find((b) => b.textContent === 'Bons plans')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-      buttons.find((b) => b.textContent === 'Fort')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      buttons
+        .find((b) => b.textContent === 'Bons plans')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      buttons
+        .find((b) => b.textContent === 'Fort')
+        ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
     const urls = fetchMock.mock.calls.map((call) => String(call[0] ?? ''));
@@ -67,7 +79,13 @@ describe('Actualites page', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
 
     await act(async () => {
-      root.render(<MemoryRouter><HelmetProvider><Actualites /></HelmetProvider></MemoryRouter>);
+      root.render(
+        <MemoryRouter>
+          <HelmetProvider>
+            <Actualites />
+          </HelmetProvider>
+        </MemoryRouter>
+      );
     });
 
     await act(async () => {
@@ -85,24 +103,32 @@ describe('Actualites page', () => {
         ok: true,
         json: async () => ({
           mode: 'live',
-          items: [{
-            id: 'item-janvier',
-            type: 'reglementaire',
-            territory: 'fr',
-            title: 'Ancienne publication',
-            summary: 'Résumé test',
-            source_name: 'Source test',
-            source_url: 'https://example.com',
-            published_at: '2026-01-20T10:00:00.000Z',
-            impact: 'info',
-            verified: true,
-          }],
+          items: [
+            {
+              id: 'item-janvier',
+              type: 'reglementaire',
+              territory: 'fr',
+              title: 'Ancienne publication',
+              summary: 'Résumé test',
+              source_name: 'Source test',
+              source_url: 'https://example.com',
+              published_at: '2026-01-20T10:00:00.000Z',
+              impact: 'info',
+              verified: true,
+            },
+          ],
         }),
-      }),
+      })
     );
 
     await act(async () => {
-      root.render(<MemoryRouter><HelmetProvider><Actualites /></HelmetProvider></MemoryRouter>);
+      root.render(
+        <MemoryRouter>
+          <HelmetProvider>
+            <Actualites />
+          </HelmetProvider>
+        </MemoryRouter>
+      );
     });
 
     await act(async () => {

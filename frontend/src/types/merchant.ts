@@ -15,10 +15,10 @@ import type { TerritoryCode } from '../constants/territories';
 // ─── Statut d'approbation enseigne ───────────────────────────────────────────
 
 export type MerchantStatus =
-  | 'PENDING'    // En attente de validation admin
-  | 'APPROVED'   // Compte approuvé et actif
-  | 'SUSPENDED'  // Compte suspendu par la plateforme
-  | 'REJECTED';  // Dossier rejeté (à recompléter)
+  | 'PENDING' // En attente de validation admin
+  | 'APPROVED' // Compte approuvé et actif
+  | 'SUSPENDED' // Compte suspendu par la plateforme
+  | 'REJECTED'; // Dossier rejeté (à recompléter)
 
 // ─── Statut d'activité légale ────────────────────────────────────────────────
 
@@ -27,11 +27,11 @@ export type ActivityStatus = 'ACTIVE' | 'CEASED';
 // ─── Type d'enseigne ─────────────────────────────────────────────────────────
 
 export type MerchantType =
-  | 'grande_enseigne'    // Grande enseigne nationale
-  | 'franchise'          // Franchise
-  | 'independant'        // Commerce indépendant
-  | 'marche_local'       // Marché local
-  | 'producteur_local';  // Producteur local
+  | 'grande_enseigne' // Grande enseigne nationale
+  | 'franchise' // Franchise
+  | 'independant' // Commerce indépendant
+  | 'marche_local' // Marché local
+  | 'producteur_local'; // Producteur local
 
 // ─── Catégories de produits ──────────────────────────────────────────────────
 
@@ -55,22 +55,22 @@ export type ProductCategory =
 // ─── Plans d'abonnement (pas de freemium) ────────────────────────────────────
 
 export type MarketplacePlan =
-  | 'essentiel'   // Plan de base payant
-  | 'pro'         // Plan professionnel
-  | 'groupe';     // Plan franchise / groupe multi-sites
+  | 'essentiel' // Plan de base payant
+  | 'pro' // Plan professionnel
+  | 'groupe'; // Plan franchise / groupe multi-sites
 
 export interface MarketplacePlanDetails {
   id: MarketplacePlan;
   label: string;
-  priceMonthly: number;        // Prix mensuel en €
-  priceAnnual: number;         // Prix annuel en € (remise incluse)
-  storesMax: number | null;    // Nb de magasins (null = illimité)
-  productsMax: number | null;  // Nb de produits (null = illimité)
-  analytics: boolean;          // Accès aux statistiques avancées
-  exportCsv: boolean;          // Export CSV/PDF
-  boostVisibility: boolean;    // Options de mise en avant
-  partnerBadge: boolean;       // Badge "Enseigne Partenaire"
-  prioritySearch: boolean;     // Priorité dans les résultats
+  priceMonthly: number; // Prix mensuel en €
+  priceAnnual: number; // Prix annuel en € (remise incluse)
+  storesMax: number | null; // Nb de magasins (null = illimité)
+  productsMax: number | null; // Nb de produits (null = illimité)
+  analytics: boolean; // Accès aux statistiques avancées
+  exportCsv: boolean; // Export CSV/PDF
+  boostVisibility: boolean; // Options de mise en avant
+  partnerBadge: boolean; // Badge "Enseigne Partenaire"
+  prioritySearch: boolean; // Priorité dans les résultats
   description: string;
   features: string[];
 }
@@ -81,11 +81,11 @@ export interface MerchantProfile {
   id: string;
 
   // Données légales obligatoires
-  nomLegal: string;           // Raison sociale légale
-  nomCommercial: string;      // Nom commercial affiché
-  siret: string;              // 14 chiffres — obligatoire
-  siren: string;              // 9 premiers chiffres du SIRET
-  tva: string;                // Numéro TVA intracommunautaire
+  nomLegal: string; // Raison sociale légale
+  nomCommercial: string; // Nom commercial affiché
+  siret: string; // 14 chiffres — obligatoire
+  siren: string; // 9 premiers chiffres du SIRET
+  tva: string; // Numéro TVA intracommunautaire
   activityStatus: ActivityStatus;
 
   // Type et catégories
@@ -106,19 +106,19 @@ export interface MerchantProfile {
 
   // Abonnement marketplace
   plan: MarketplacePlan;
-  planStartDate: string;   // ISO date
-  planEndDate?: string;    // ISO date (null = actif)
+  planStartDate: string; // ISO date
+  planEndDate?: string; // ISO date (null = actif)
   billingCycle: 'monthly' | 'annual';
 
   // Statut validation
   status: MerchantStatus;
   rejectionReason?: string;
-  validatedAt?: string;    // ISO date
-  validatedBy?: string;    // admin UID
+  validatedAt?: string; // ISO date
+  validatedBy?: string; // admin UID
 
   // Métadonnées
-  createdAt: string;       // ISO date
-  updatedAt: string;       // ISO date
+  createdAt: string; // ISO date
+  updatedAt: string; // ISO date
 }
 
 // ─── Magasin (StoreManager) ───────────────────────────────────────────────────
@@ -161,10 +161,10 @@ export interface StoreHours {
 
 export interface DayHours {
   ouvert: boolean;
-  ouverture?: string;   // ex: "08:00"
-  fermeture?: string;   // ex: "20:00"
-  pauseDebut?: string;  // ex: "12:00"
-  pauseFin?: string;    // ex: "14:00"
+  ouverture?: string; // ex: "08:00"
+  fermeture?: string; // ex: "20:00"
+  pauseDebut?: string; // ex: "12:00"
+  pauseFin?: string; // ex: "14:00"
 }
 
 // ─── Produit (Product & Price Manager) ───────────────────────────────────────
@@ -175,7 +175,7 @@ export interface MerchantProduct {
   storeId: string;
 
   // Identifiant produit
-  ean: string;          // Code EAN/GTIN (obligatoire)
+  ean: string; // Code EAN/GTIN (obligatoire)
   nomProduit: string;
   marque?: string;
   categorie: ProductCategory;
@@ -185,11 +185,11 @@ export interface MerchantProduct {
   // Prix actuel
   prix: number;
   prixPromo?: number;
-  promoDateDebut?: string;  // ISO date
-  promoDateFin?: string;    // ISO date
+  promoDateDebut?: string; // ISO date
+  promoDateFin?: string; // ISO date
 
   // Unité
-  unite: string;            // ex: "kg", "L", "pièce"
+  unite: string; // ex: "kg", "L", "pièce"
 
   // Disponibilité
   disponible: boolean;
@@ -213,32 +213,32 @@ export interface PriceHistoryEntry {
   prixPromo?: number;
 
   // Source obligatoire pour transparence utilisateurs
-  source: string;      // ex: "Carrefour Gosier"
+  source: string; // ex: "Carrefour Gosier"
   territoire: TerritoryCode;
-  date: string;        // ISO date — quand le prix a été enregistré
+  date: string; // ISO date — quand le prix a été enregistré
 
   // Traçabilité
-  modifiedBy: string;  // UID merchant
+  modifiedBy: string; // UID merchant
   createdAt: string;
 }
 
 // ─── Promotions & Boost de visibilité ────────────────────────────────────────
 
 export type BoostType =
-  | 'mise_en_avant_locale'  // Mise en avant locale
-  | 'boost_carte'           // Boost sur la carte
-  | 'badge_partenaire'      // Badge "Enseigne Partenaire"
-  | 'priorite_resultats';   // Priorité dans les résultats
+  | 'mise_en_avant_locale' // Mise en avant locale
+  | 'boost_carte' // Boost sur la carte
+  | 'badge_partenaire' // Badge "Enseigne Partenaire"
+  | 'priorite_resultats'; // Priorité dans les résultats
 
 export interface VisibilityBoost {
   id: string;
   merchantId: string;
-  storeId?: string;   // Optionnel : boost pour un magasin spécifique
+  storeId?: string; // Optionnel : boost pour un magasin spécifique
   type: BoostType;
   actif: boolean;
   dateDebut: string;
   dateFin: string;
-  prix: number;       // Prix de cette option
+  prix: number; // Prix de cette option
   createdAt: string;
 }
 
@@ -249,15 +249,15 @@ export type InvoiceStatus = 'pending' | 'paid' | 'failed' | 'cancelled';
 export interface MerchantInvoice {
   id: string;
   merchantId: string;
-  numero: string;          // Numéro de facture
+  numero: string; // Numéro de facture
   montantHT: number;
-  tvaRate: number;         // Ex: 8.5 pour DOM
+  tvaRate: number; // Ex: 8.5 pour DOM
   montantTTC: number;
   description: string;
   status: InvoiceStatus;
-  dateEmission: string;    // ISO date
-  dateEcheance: string;    // ISO date
-  datePaiement?: string;   // ISO date
+  dateEmission: string; // ISO date
+  dateEcheance: string; // ISO date
+  datePaiement?: string; // ISO date
   createdAt: string;
 }
 
@@ -267,14 +267,14 @@ export interface MerchantAnalytics {
   merchantId: string;
   storeId?: string;
   period: 'day' | 'week' | 'month';
-  periodStart: string;  // ISO date
-  periodEnd: string;    // ISO date
+  periodStart: string; // ISO date
+  periodEnd: string; // ISO date
 
-  vuesMagasin: number;       // Vues de la fiche magasin
-  clics: number;             // Clics vers le magasin
+  vuesMagasin: number; // Vues de la fiche magasin
+  clics: number; // Clics vers le magasin
   comparaisonsGagnees: number; // Comparaisons où ce magasin est le moins cher
   comparaisonsPerdues: number; // Comparaisons où ce magasin est plus cher
-  positionnementPrix: number;  // Score de positionnement (0-100)
+  positionnementPrix: number; // Score de positionnement (0-100)
 }
 
 // ─── Formulaire d'onboarding enseigne ────────────────────────────────────────
@@ -330,5 +330,5 @@ export interface AdminAuditLog {
   reason?: string;
   previousStatus: MerchantStatus;
   newStatus: MerchantStatus;
-  createdAt: string;  // ISO date — log immuable
+  createdAt: string; // ISO date — log immuable
 }

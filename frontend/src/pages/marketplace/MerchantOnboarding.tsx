@@ -15,9 +15,18 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, Link } from 'react-router-dom';
 import {
-  Building2, FileText, MapPin, CreditCard,
-  CheckCircle, AlertCircle, ChevronRight, ChevronLeft,
-  Store, Globe, Phone, Mail,
+  Building2,
+  FileText,
+  MapPin,
+  CreditCard,
+  CheckCircle,
+  AlertCircle,
+  ChevronRight,
+  ChevronLeft,
+  Store,
+  Globe,
+  Phone,
+  Mail,
 } from 'lucide-react';
 import {
   validateSiret,
@@ -40,29 +49,29 @@ import { TERRITORIES } from '../../constants/territories';
 // ─── Labels ──────────────────────────────────────────────────────────────────
 
 const MERCHANT_TYPE_LABELS: Record<MerchantType, string> = {
-  grande_enseigne:  'Grande enseigne nationale',
-  franchise:        'Franchise',
-  independant:      'Commerce indépendant',
-  marche_local:     'Marché local',
+  grande_enseigne: 'Grande enseigne nationale',
+  franchise: 'Franchise',
+  independant: 'Commerce indépendant',
+  marche_local: 'Marché local',
   producteur_local: 'Producteur local',
 };
 
 const CATEGORY_LABELS: Record<ProductCategory, string> = {
-  alimentation_generale:  'Alimentation générale',
-  fruits_legumes:         'Fruits & légumes',
-  boucherie_charcuterie:  'Boucherie / charcuterie',
-  poissonnerie:           'Poissonnerie',
+  alimentation_generale: 'Alimentation générale',
+  fruits_legumes: 'Fruits & légumes',
+  boucherie_charcuterie: 'Boucherie / charcuterie',
+  poissonnerie: 'Poissonnerie',
   boulangerie_patisserie: 'Boulangerie / pâtisserie',
-  epicerie_fine:          'Épicerie fine',
-  boissons:               'Boissons',
-  hygiene_beaute:         'Hygiène & beauté',
-  entretien_maison:       'Entretien maison',
-  bricolage_jardinage:    'Bricolage / jardinage',
-  electronique:           'Électronique',
-  habillement:            'Habillement',
-  pharmacie:              'Pharmacie / parapharmacie',
-  carburant:              'Carburant',
-  autre:                  'Autre',
+  epicerie_fine: 'Épicerie fine',
+  boissons: 'Boissons',
+  hygiene_beaute: 'Hygiène & beauté',
+  entretien_maison: 'Entretien maison',
+  bricolage_jardinage: 'Bricolage / jardinage',
+  electronique: 'Électronique',
+  habillement: 'Habillement',
+  pharmacie: 'Pharmacie / parapharmacie',
+  carburant: 'Carburant',
+  autre: 'Autre',
 };
 
 const TERRITORY_OPTIONS = Object.values(TERRITORIES)
@@ -183,9 +192,11 @@ export default function MerchantOnboarding() {
       if (!form.nomLegal.trim()) errs.nomLegal = 'Raison sociale obligatoire';
       if (!form.nomCommercial.trim()) errs.nomCommercial = 'Nom commercial obligatoire';
       if (!form.siret || form.siret.length !== 14) errs.siret = 'SIRET à 14 chiffres obligatoire';
-      else if (!validateSiret(form.siret)) errs.siret = 'SIRET invalide (vérification Luhn échouée)';
+      else if (!validateSiret(form.siret))
+        errs.siret = 'SIRET invalide (vérification Luhn échouée)';
       if (!form.tva.trim()) errs.tva = 'Numéro TVA obligatoire';
-      if (form.productCategories.length === 0) errs.productCategories = 'Au moins une catégorie requise' as any;
+      if (form.productCategories.length === 0)
+        errs.productCategories = 'Au moins une catégorie requise' as any;
     }
 
     if (step === 1) {
@@ -199,8 +210,10 @@ export default function MerchantOnboarding() {
 
     if (step === 2) {
       if (!form.premierMagasinNom.trim()) errs.premierMagasinNom = 'Nom du magasin obligatoire';
-      if (!form.premierMagasinAdresse.trim()) errs.premierMagasinAdresse = 'Adresse du magasin obligatoire';
-      if (!form.premierMagasinVille.trim()) errs.premierMagasinVille = 'Ville du magasin obligatoire';
+      if (!form.premierMagasinAdresse.trim())
+        errs.premierMagasinAdresse = 'Adresse du magasin obligatoire';
+      if (!form.premierMagasinVille.trim())
+        errs.premierMagasinVille = 'Ville du magasin obligatoire';
       if (!form.premierMagasinLatitude || form.premierMagasinLatitude === 0)
         errs.premierMagasinLatitude = 'Latitude GPS obligatoire';
       if (!form.premierMagasinLongitude || form.premierMagasinLongitude === 0)
@@ -209,14 +222,17 @@ export default function MerchantOnboarding() {
 
     if (step === 3) {
       if (!form.acceptesCGU) errs.acceptesCGU = 'Vous devez accepter les CGU' as any;
-      if (!form.acceptesConfidentialite) errs.acceptesConfidentialite = 'Vous devez accepter la politique de confidentialité' as any;
+      if (!form.acceptesConfidentialite)
+        errs.acceptesConfidentialite = 'Vous devez accepter la politique de confidentialité' as any;
     }
 
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
-  const nextStep = () => { if (validateStep()) setStep((s) => s + 1); };
+  const nextStep = () => {
+    if (validateStep()) setStep((s) => s + 1);
+  };
   const prevStep = () => setStep((s) => s - 1);
 
   // ─── Soumission finale ────────────────────────────────────────────────────
@@ -241,12 +257,11 @@ export default function MerchantOnboarding() {
         <div className="max-w-md w-full text-center">
           <CheckCircle className="w-20 h-20 text-green-400 mx-auto mb-6" />
           <h1 className="text-3xl font-bold text-white mb-4">Dossier soumis !</h1>
-          <p className="text-gray-300 mb-2">
-            Votre demande d'inscription a bien été transmise.
-          </p>
+          <p className="text-gray-300 mb-2">Votre demande d'inscription a bien été transmise.</p>
           <p className="text-gray-400 text-sm mb-8">
-            Statut initial : <span className="text-yellow-400 font-semibold">En attente de validation</span>.
-            Notre équipe examinera votre dossier dans les 48h ouvrées.
+            Statut initial :{' '}
+            <span className="text-yellow-400 font-semibold">En attente de validation</span>. Notre
+            équipe examinera votre dossier dans les 48h ouvrées.
           </p>
           <div className="space-y-3">
             <button
@@ -273,7 +288,10 @@ export default function MerchantOnboarding() {
     <>
       <Helmet>
         <title>Inscription Enseigne — Marketplace A KI PRI SA YÉ</title>
-        <meta name="description" content="Référencez votre enseigne sur la marketplace A KI PRI SA YÉ et accédez à tous les territoires ultramarins." />
+        <meta
+          name="description"
+          content="Référencez votre enseigne sur la marketplace A KI PRI SA YÉ et accédez à tous les territoires ultramarins."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 py-6 px-4">
@@ -295,7 +313,6 @@ export default function MerchantOnboarding() {
 
           {/* Carte formulaire */}
           <div className="bg-white/[0.08] backdrop-blur-xl border border-white/[0.15] rounded-2xl p-8">
-
             {/* ── Étape 1 : Identification légale ── */}
             {step === 0 && (
               <div>
@@ -305,9 +322,13 @@ export default function MerchantOnboarding() {
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="mo-raison-sociale" className="block text-sm font-medium text-gray-300 mb-1">Raison sociale *</label>
+                    <label
+                      htmlFor="mo-raison-sociale"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Raison sociale *
+                    </label>
                     <input
-                      
                       id="mo-raison-sociale"
                       type="text"
                       value={form.nomLegal}
@@ -319,9 +340,13 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-nom-commercial" className="block text-sm font-medium text-gray-300 mb-1">Nom commercial *</label>
+                    <label
+                      htmlFor="mo-nom-commercial"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Nom commercial *
+                    </label>
                     <input
-                      
                       id="mo-nom-commercial"
                       type="text"
                       value={form.nomCommercial}
@@ -333,9 +358,13 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-siret" className="block text-sm font-medium text-gray-300 mb-1">Numéro SIRET * (14 chiffres)</label>
+                    <label
+                      htmlFor="mo-siret"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Numéro SIRET * (14 chiffres)
+                    </label>
                     <input
-                      
                       id="mo-siret"
                       type="text"
                       value={formatSiret(form.siret)}
@@ -346,16 +375,21 @@ export default function MerchantOnboarding() {
                     />
                     {form.siret.length === 14 && (
                       <p className="mt-1 text-xs text-gray-400">
-                        SIREN : <span className="text-white font-mono">{sirenFromSiret(form.siret)}</span>
+                        SIREN :{' '}
+                        <span className="text-white font-mono">{sirenFromSiret(form.siret)}</span>
                       </p>
                     )}
                     <FieldError msg={errors.siret} />
                   </div>
 
                   <div>
-                    <label htmlFor="mo-tva" className="block text-sm font-medium text-gray-300 mb-1">Numéro TVA intracommunautaire *</label>
+                    <label
+                      htmlFor="mo-tva"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Numéro TVA intracommunautaire *
+                    </label>
                     <input
-                      
                       id="mo-tva"
                       type="text"
                       value={form.tva}
@@ -367,36 +401,51 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-type-enseigne" className="block text-sm font-medium text-gray-300 mb-1">Type d'enseigne *</label>
+                    <label
+                      htmlFor="mo-type-enseigne"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Type d'enseigne *
+                    </label>
                     <select
-                      
                       id="mo-type-enseigne"
                       value={form.merchantType}
                       onChange={(e) => set('merchantType', e.target.value as MerchantType)}
                       className="w-full bg-slate-800 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                     >
                       {Object.entries(MERCHANT_TYPE_LABELS).map(([v, l]) => (
-                        <option key={v} value={v}>{l}</option>
+                        <option key={v} value={v}>
+                          {l}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <span className="block text-sm font-medium text-gray-300 mb-2">Catégories de produits * (au moins une)</span>
+                    <span className="block text-sm font-medium text-gray-300 mb-2">
+                      Catégories de produits * (au moins une)
+                    </span>
                     <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
-                      {(Object.entries(CATEGORY_LABELS) as [ProductCategory, string][]).map(([cat, label]) => (
-                        <label key={cat} className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={form.productCategories.includes(cat)}
-                            onChange={() => toggleCategory(cat)}
-                            className="w-4 h-4 rounded accent-blue-500"
-                          />
-                          {label}
-                        </label>
-                      ))}
+                      {(Object.entries(CATEGORY_LABELS) as [ProductCategory, string][]).map(
+                        ([cat, label]) => (
+                          <label
+                            key={cat}
+                            className="flex items-center gap-2 text-sm text-gray-300 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={form.productCategories.includes(cat)}
+                              onChange={() => toggleCategory(cat)}
+                              className="w-4 h-4 rounded accent-blue-500"
+                            />
+                            {label}
+                          </label>
+                        )
+                      )}
                     </div>
-                    {errors.productCategories && <FieldError msg={errors.productCategories as any} />}
+                    {errors.productCategories && (
+                      <FieldError msg={errors.productCategories as any} />
+                    )}
                   </div>
                 </div>
               </div>
@@ -411,9 +460,13 @@ export default function MerchantOnboarding() {
                 </h2>
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="mo-adresse-siege" className="block text-sm font-medium text-gray-300 mb-1">Adresse du siège social *</label>
+                    <label
+                      htmlFor="mo-adresse-siege"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Adresse du siège social *
+                    </label>
                     <input
-                      
                       id="mo-adresse-siege"
                       type="text"
                       value={form.adresseSiege}
@@ -426,11 +479,15 @@ export default function MerchantOnboarding() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="mo-code-postal" className="block text-sm font-medium text-gray-300 mb-1">Code postal *</label>
+                      <label
+                        htmlFor="mo-code-postal"
+                        className="block text-sm font-medium text-gray-300 mb-1"
+                      >
+                        Code postal *
+                      </label>
                       <input
-                        
-                      id="mo-code-postal"
-                      type="text"
+                        id="mo-code-postal"
+                        type="text"
                         value={form.codePostal}
                         onChange={(e) => set('codePostal', e.target.value)}
                         placeholder="97100"
@@ -439,11 +496,15 @@ export default function MerchantOnboarding() {
                       <FieldError msg={errors.codePostal} />
                     </div>
                     <div>
-                      <label htmlFor="mo-ville" className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
+                      <label
+                        htmlFor="mo-ville"
+                        className="block text-sm font-medium text-gray-300 mb-1"
+                      >
+                        Ville *
+                      </label>
                       <input
-                        
-                      id="mo-ville"
-                      type="text"
+                        id="mo-ville"
+                        type="text"
                         value={form.ville}
                         onChange={(e) => set('ville', e.target.value)}
                         placeholder="Basse-Terre"
@@ -454,24 +515,34 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-territoire" className="block text-sm font-medium text-gray-300 mb-1">Territoire *</label>
+                    <label
+                      htmlFor="mo-territoire"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Territoire *
+                    </label>
                     <select
-                      
                       id="mo-territoire"
                       value={form.territoire}
                       onChange={(e) => set('territoire', e.target.value as TerritoryCode)}
                       className="w-full bg-slate-800 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500"
                     >
                       {TERRITORY_OPTIONS.map((t) => (
-                        <option key={t.code} value={t.code}>{t.label}</option>
+                        <option key={t.code} value={t.code}>
+                          {t.label}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="mo-email" className="block text-sm font-medium text-gray-300 mb-1">Email de contact *</label>
+                    <label
+                      htmlFor="mo-email"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Email de contact *
+                    </label>
                     <input
-                      
                       id="mo-email"
                       type="email"
                       value={form.emailContact}
@@ -483,12 +554,13 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-telephone" className="block text-sm font-medium text-gray-300 mb-1">
-                      Téléphone *
-                      Téléphone *
+                    <label
+                      htmlFor="mo-telephone"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Téléphone * Téléphone *
                     </label>
                     <input
-                      
                       id="mo-telephone"
                       type="tel"
                       value={form.telephone}
@@ -500,12 +572,13 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-site-web" className="block text-sm font-medium text-gray-300 mb-1">
-                      Site web (optionnel)
-                      Site web (optionnel)
+                    <label
+                      htmlFor="mo-site-web"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Site web (optionnel) Site web (optionnel)
                     </label>
                     <input
-                      
                       id="mo-site-web"
                       type="url"
                       value={form.siteWeb}
@@ -526,13 +599,18 @@ export default function MerchantOnboarding() {
                   Premier magasin
                 </h2>
                 <p className="text-gray-400 text-sm mb-6">
-                  Enregistrez votre premier point de vente. Les coordonnées GPS sont obligatoires pour l'affichage sur la carte interactive.
+                  Enregistrez votre premier point de vente. Les coordonnées GPS sont obligatoires
+                  pour l'affichage sur la carte interactive.
                 </p>
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="mo-nom-magasin" className="block text-sm font-medium text-gray-300 mb-1">Nom du magasin *</label>
+                    <label
+                      htmlFor="mo-nom-magasin"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Nom du magasin *
+                    </label>
                     <input
-                      
                       id="mo-nom-magasin"
                       type="text"
                       value={form.premierMagasinNom}
@@ -544,9 +622,13 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-adresse-magasin" className="block text-sm font-medium text-gray-300 mb-1">Adresse du magasin *</label>
+                    <label
+                      htmlFor="mo-adresse-magasin"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Adresse du magasin *
+                    </label>
                     <input
-                      
                       id="mo-adresse-magasin"
                       type="text"
                       value={form.premierMagasinAdresse}
@@ -558,9 +640,13 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div>
-                    <label htmlFor="mo-ville-magasin" className="block text-sm font-medium text-gray-300 mb-1">Ville *</label>
+                    <label
+                      htmlFor="mo-ville-magasin"
+                      className="block text-sm font-medium text-gray-300 mb-1"
+                    >
+                      Ville *
+                    </label>
                     <input
-                      
                       id="mo-ville-magasin"
                       type="text"
                       value={form.premierMagasinVille}
@@ -573,28 +659,40 @@ export default function MerchantOnboarding() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="mo-latitude" className="block text-sm font-medium text-gray-300 mb-1">Latitude GPS *</label>
+                      <label
+                        htmlFor="mo-latitude"
+                        className="block text-sm font-medium text-gray-300 mb-1"
+                      >
+                        Latitude GPS *
+                      </label>
                       <input
-                        
-                      id="mo-latitude"
-                      type="number"
+                        id="mo-latitude"
+                        type="number"
                         step="0.000001"
                         value={form.premierMagasinLatitude || ''}
-                        onChange={(e) => set('premierMagasinLatitude', parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>
+                          set('premierMagasinLatitude', parseFloat(e.target.value) || 0)
+                        }
                         placeholder="16.2650"
                         className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-mono"
                       />
                       <FieldError msg={errors.premierMagasinLatitude} />
                     </div>
                     <div>
-                      <label htmlFor="mo-longitude" className="block text-sm font-medium text-gray-300 mb-1">Longitude GPS *</label>
+                      <label
+                        htmlFor="mo-longitude"
+                        className="block text-sm font-medium text-gray-300 mb-1"
+                      >
+                        Longitude GPS *
+                      </label>
                       <input
-                        
-                      id="mo-longitude"
-                      type="number"
+                        id="mo-longitude"
+                        type="number"
                         step="0.000001"
                         value={form.premierMagasinLongitude || ''}
-                        onChange={(e) => set('premierMagasinLongitude', parseFloat(e.target.value) || 0)}
+                        onChange={(e) =>
+                          set('premierMagasinLongitude', parseFloat(e.target.value) || 0)
+                        }
                         placeholder="-61.5514"
                         className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 font-mono"
                       />
@@ -603,8 +701,10 @@ export default function MerchantOnboarding() {
                   </div>
 
                   <div className="bg-blue-900/30 border border-blue-500/30 rounded-xl p-4 text-sm text-blue-300">
-                    <strong>Comment obtenir les coordonnées GPS ?</strong><br />
-                    Ouvrez Google Maps, faites un clic droit sur l'emplacement exact de votre magasin, puis copiez les coordonnées affichées.
+                    <strong>Comment obtenir les coordonnées GPS ?</strong>
+                    <br />
+                    Ouvrez Google Maps, faites un clic droit sur l'emplacement exact de votre
+                    magasin, puis copiez les coordonnées affichées.
                   </div>
                 </div>
               </div>
@@ -668,18 +768,38 @@ export default function MerchantOnboarding() {
                 <div className="mb-6">
                   <span className="block text-sm font-medium text-gray-300 mb-2">Facturation</span>
                   <div className="flex gap-3">
-                    <label className={`flex-1 p-3 rounded-xl border cursor-pointer text-center text-sm font-medium transition-all ${
-                      form.billingCycle === 'monthly' ? 'border-blue-500 bg-blue-900/30 text-white' : 'border-white/15 text-gray-400'
-                    }`}>
-                      <input type="radio" name="billing" value="monthly" checked={form.billingCycle === 'monthly'}
-                        onChange={() => set('billingCycle', 'monthly')} className="sr-only" />
+                    <label
+                      className={`flex-1 p-3 rounded-xl border cursor-pointer text-center text-sm font-medium transition-all ${
+                        form.billingCycle === 'monthly'
+                          ? 'border-blue-500 bg-blue-900/30 text-white'
+                          : 'border-white/15 text-gray-400'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="billing"
+                        value="monthly"
+                        checked={form.billingCycle === 'monthly'}
+                        onChange={() => set('billingCycle', 'monthly')}
+                        className="sr-only"
+                      />
                       Mensuelle
                     </label>
-                    <label className={`flex-1 p-3 rounded-xl border cursor-pointer text-center text-sm font-medium transition-all ${
-                      form.billingCycle === 'annual' ? 'border-blue-500 bg-blue-900/30 text-white' : 'border-white/15 text-gray-400'
-                    }`}>
-                      <input type="radio" name="billing" value="annual" checked={form.billingCycle === 'annual'}
-                        onChange={() => set('billingCycle', 'annual')} className="sr-only" />
+                    <label
+                      className={`flex-1 p-3 rounded-xl border cursor-pointer text-center text-sm font-medium transition-all ${
+                        form.billingCycle === 'annual'
+                          ? 'border-blue-500 bg-blue-900/30 text-white'
+                          : 'border-white/15 text-gray-400'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="billing"
+                        value="annual"
+                        checked={form.billingCycle === 'annual'}
+                        onChange={() => set('billingCycle', 'annual')}
+                        className="sr-only"
+                      />
                       Annuelle <span className="text-green-400 text-xs">(~2 mois offerts)</span>
                     </label>
                   </div>
@@ -694,7 +814,16 @@ export default function MerchantOnboarding() {
                       className="mt-0.5 w-4 h-4 accent-blue-500"
                     />
                     <span className="text-sm text-gray-300">
-                      J'accepte les <Link to="/mentions-legales" className="text-blue-400 underline" target="_blank" rel="noreferrer">Conditions Générales d'Utilisation</Link> de la Marketplace.
+                      J'accepte les{' '}
+                      <Link
+                        to="/mentions-legales"
+                        className="text-blue-400 underline"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Conditions Générales d'Utilisation
+                      </Link>{' '}
+                      de la Marketplace.
                     </span>
                   </label>
                   {errors.acceptesCGU && <FieldError msg={errors.acceptesCGU as any} />}
@@ -707,15 +836,28 @@ export default function MerchantOnboarding() {
                       className="mt-0.5 w-4 h-4 accent-blue-500"
                     />
                     <span className="text-sm text-gray-300">
-                      J'accepte la <Link to="/privacy" className="text-blue-400 underline" target="_blank" rel="noreferrer">Politique de confidentialité</Link> et la collecte des données de facturation.
+                      J'accepte la{' '}
+                      <Link
+                        to="/privacy"
+                        className="text-blue-400 underline"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Politique de confidentialité
+                      </Link>{' '}
+                      et la collecte des données de facturation.
                     </span>
                   </label>
-                  {errors.acceptesConfidentialite && <FieldError msg={errors.acceptesConfidentialite as any} />}
+                  {errors.acceptesConfidentialite && (
+                    <FieldError msg={errors.acceptesConfidentialite as any} />
+                  )}
                 </div>
 
                 <div className="bg-yellow-900/30 border border-yellow-600/30 rounded-xl p-4 text-sm text-yellow-300">
-                  <strong>Validation manuelle requise</strong><br />
-                  Votre dossier sera examiné par notre équipe dans les 48h ouvrées. Aucun prélèvement ne sera effectué avant validation.
+                  <strong>Validation manuelle requise</strong>
+                  <br />
+                  Votre dossier sera examiné par notre équipe dans les 48h ouvrées. Aucun
+                  prélèvement ne sera effectué avant validation.
                 </div>
               </div>
             )}
@@ -755,7 +897,10 @@ export default function MerchantOnboarding() {
           {/* Lien déjà inscrit */}
           <p className="text-center text-gray-400 text-sm mt-6">
             Déjà inscrit ?{' '}
-            <button onClick={() => navigate('/marketplace/dashboard')} className="text-blue-400 underline">
+            <button
+              onClick={() => navigate('/marketplace/dashboard')}
+              className="text-blue-400 underline"
+            >
               Accéder à mon tableau de bord
             </button>
           </p>

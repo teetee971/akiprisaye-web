@@ -11,7 +11,8 @@ const APP_PATH = path.resolve(SRC_ROOT, 'App.tsx');
 const SOURCE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 const INTERNAL_REFERENCE_PATTERN = /(?:to|href|path)\s*[:=]\s*["'`]([^"'`]+)["'`]/g;
 const DYNAMIC_SEGMENT_PATTERN = /:[^/]+/g;
-const ASSET_OR_NON_ROUTE_PATTERN = /\.(?:avif|gif|ico|jpeg|jpg|json|png|svg|txt|webmanifest|webp|xml)$/i;
+const ASSET_OR_NON_ROUTE_PATTERN =
+  /\.(?:avif|gif|ico|jpeg|jpg|json|png|svg|txt|webmanifest|webp|xml)$/i;
 
 function listSourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((entry) => {
@@ -55,10 +56,10 @@ function normalizeReference(rawValue: string): string | null {
   }
 
   if (
-    pathname.startsWith('/api/')
-    || pathname.startsWith('/assets/')
-    || pathname.startsWith('/data/')
-    || ASSET_OR_NON_ROUTE_PATTERN.test(pathname)
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/assets/') ||
+    pathname.startsWith('/data/') ||
+    ASSET_OR_NON_ROUTE_PATTERN.test(pathname)
   ) {
     return null;
   }
@@ -68,10 +69,7 @@ function normalizeReference(rawValue: string): string | null {
 
 const appSource = readFileSync(APP_PATH, 'utf8');
 const appRouteRegexes = Array.from(
-  new Set(
-    [...appSource.matchAll(/<Route path="([^"]+)"/g)]
-      .map(([, routePath]) => routePath),
-  ),
+  new Set([...appSource.matchAll(/<Route path="([^"]+)"/g)].map(([, routePath]) => routePath))
 ).map(toRouteRegex);
 
 const navigationReferences = Array.from(
@@ -89,20 +87,23 @@ const navigationReferences = Array.from(
             pathname,
           }));
       })
-      .map(({ filePath, pathname }) => `${pathname} <- ${filePath}`),
-  ),
+      .map(({ filePath, pathname }) => `${pathname} <- ${filePath}`)
+  )
 )
   .map((entry) => {
     const [pathname, filePath] = entry.split(' <- ');
     return { pathname, filePath };
   })
-  .sort((left, right) => left.pathname.localeCompare(right.pathname) || left.filePath.localeCompare(right.filePath));
+  .sort(
+    (left, right) =>
+      left.pathname.localeCompare(right.pathname) || left.filePath.localeCompare(right.filePath)
+  );
 
 describe('internal navigation references', () => {
   test('every literal internal route reference resolves to a live App.tsx route', () => {
-    const missingReferences = navigationReferences.filter(({ pathname }) => (
-      !appRouteRegexes.some((routeRegex) => routeRegex.test(pathname))
-    ));
+    const missingReferences = navigationReferences.filter(
+      ({ pathname }) => !appRouteRegexes.some((routeRegex) => routeRegex.test(pathname))
+    );
 
     expect(missingReferences).toEqual([]);
   });

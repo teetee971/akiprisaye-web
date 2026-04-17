@@ -40,7 +40,10 @@ export default function ComparateurFilters({
       <div className="grid gap-6 md:grid-cols-2">
         {/* Product Filter */}
         <div>
-          <label htmlFor="product-filter" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+          <label
+            htmlFor="product-filter"
+            className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3"
+          >
             Produit
           </label>
           <select
@@ -60,7 +63,10 @@ export default function ComparateurFilters({
 
         {/* Commune Filter */}
         <div>
-          <label htmlFor="commune-filter" className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
+          <label
+            htmlFor="commune-filter"
+            className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3"
+          >
             Commune (optionnel)
           </label>
           <select

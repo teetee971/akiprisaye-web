@@ -24,9 +24,7 @@ export default function ErrorState({ error, onRetry, debugInfo }: ErrorStateProp
         <h3 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-3">
           Erreur de chargement
         </h3>
-        <p className="text-lg text-slate-700 dark:text-slate-300 mb-6 max-w-2xl mx-auto">
-          {error}
-        </p>
+        <p className="text-lg text-slate-700 dark:text-slate-300 mb-6 max-w-2xl mx-auto">{error}</p>
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
@@ -37,7 +35,7 @@ export default function ErrorState({ error, onRetry, debugInfo }: ErrorStateProp
             <span className="text-xl">🔄</span>
             <span>Réessayer</span>
           </button>
-          
+
           <Link
             to="/"
             className="flex items-center gap-2 px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-semibold rounded-xl transition-colors"
@@ -54,19 +52,20 @@ export default function ErrorState({ error, onRetry, debugInfo }: ErrorStateProp
           </p>
           <p className="text-sm text-blue-700 dark:text-blue-400">
             Contactez notre équipe support à{' '}
-            <a 
+            <a
               href={`mailto:${SUPPORT_EMAIL}`}
               className="font-semibold underline hover:text-blue-900 dark:hover:text-blue-200"
             >
               {SUPPORT_EMAIL}
-            </a>
-            {' '}ou consultez notre{' '}
-            <Link 
-              to="/faq" 
+            </a>{' '}
+            ou consultez notre{' '}
+            <Link
+              to="/faq"
               className="font-semibold underline hover:text-blue-900 dark:hover:text-blue-200"
             >
               FAQ
-            </Link>.
+            </Link>
+            .
           </p>
         </div>
 

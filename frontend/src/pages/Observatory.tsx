@@ -1,6 +1,6 @@
 /**
  * Observatory Page Component
- * 
+ *
  * Page principale de l'observatoire des prix
  * Point d'entrée pour l'accès public aux données
  */

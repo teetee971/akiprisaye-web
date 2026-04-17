@@ -12,10 +12,10 @@ import { TERRITORY_NAMES } from '../../utils/seoHelpers';
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface InternalLinksSectionProps {
-  productSlug:          string;
-  productName:          string;
-  territory:            string;
-  category:             string;
+  productSlug: string;
+  productName: string;
+  territory: string;
+  category: string;
   similarProductSlugs?: string[];
 }
 
@@ -49,9 +49,7 @@ function LinkBadge({ to, children }: { to: string; children: React.ReactNode }) 
 function LinkSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
-      <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-zinc-500">
-        {title}
-      </h3>
+      <h3 className="mb-3 text-xs font-bold uppercase tracking-widest text-zinc-500">{title}</h3>
       <div className="flex flex-wrap gap-2">{children}</div>
     </div>
   );
@@ -66,25 +64,25 @@ export default function InternalLinksSection({
   category,
   similarProductSlugs,
 }: InternalLinksSectionProps) {
-  const territoryName   = TERRITORY_NAMES[territory] ?? territory;
-  const territorySlug   = TERRITORY_SLUG_NAMES[territory] ?? 'guadeloupe';
+  const territoryName = TERRITORY_NAMES[territory] ?? territory;
+  const territorySlug = TERRITORY_SLUG_NAMES[territory] ?? 'guadeloupe';
   const otherTerritories = ALL_TERRITORIES.filter((t) => t !== territory);
 
   // Compute similar product slugs if not pre-supplied
   const similarSlugs =
-    similarProductSlugs ??
-    getSimilarProductSlugs(productSlug, category, territory);
+    similarProductSlugs ?? getSimilarProductSlugs(productSlug, category, territory);
 
   return (
     <div className="space-y-3">
-      <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-600">
-        Liens utiles
-      </h2>
+      <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-600">Liens utiles</h2>
 
       {/* 1 — Other territories */}
       <LinkSection title={`Prix ${productName} dans d'autres territoires`}>
         {otherTerritories.map((t) => (
-          <LinkBadge key={t} to={`/prix/${productSlug}-${TERRITORY_SLUG_NAMES[t] ?? t.toLowerCase()}`}>
+          <LinkBadge
+            key={t}
+            to={`/prix/${productSlug}-${TERRITORY_SLUG_NAMES[t] ?? t.toLowerCase()}`}
+          >
             {TERRITORY_NAMES[t] ?? t}
           </LinkBadge>
         ))}
@@ -144,18 +142,10 @@ export default function InternalLinksSection({
 
       {/* 6 — Pillar pages */}
       <LinkSection title="Pages guides">
-        <LinkBadge to="/guide-prix-alimentaire-dom">
-          🍽️ Guide prix alimentaire DOM
-        </LinkBadge>
-        <LinkBadge to="/comparateur-supermarches-dom">
-          🏪 Comparateur supermarchés DOM
-        </LinkBadge>
-        <LinkBadge to="/inflation-alimentaire-dom">
-          📊 Analyse inflation DOM
-        </LinkBadge>
-        <LinkBadge to="/ou-faire-courses-dom">
-          🛒 Où faire ses courses en DOM ?
-        </LinkBadge>
+        <LinkBadge to="/guide-prix-alimentaire-dom">🍽️ Guide prix alimentaire DOM</LinkBadge>
+        <LinkBadge to="/comparateur-supermarches-dom">🏪 Comparateur supermarchés DOM</LinkBadge>
+        <LinkBadge to="/inflation-alimentaire-dom">📊 Analyse inflation DOM</LinkBadge>
+        <LinkBadge to="/ou-faire-courses-dom">🛒 Où faire ses courses en DOM ?</LinkBadge>
       </LinkSection>
     </div>
   );

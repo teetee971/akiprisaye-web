@@ -25,26 +25,22 @@
 
 import { useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { SEOHead }           from '../components/ui/SEOHead';
-import { formatEur }         from '../utils/currency';
-import { buildRetailerUrl }  from '../utils/retailerLinks';
+import { SEOHead } from '../components/ui/SEOHead';
+import { formatEur } from '../utils/currency';
+import { buildRetailerUrl } from '../utils/retailerLinks';
 import { trackRetailerClick } from '../utils/priceClickTracker';
-import {
-  getTerritoryName,
-  TERRITORY_SLUG_MAP,
-  SITE_URL,
-} from '../utils/seoHelpers';
+import { getTerritoryName, TERRITORY_SLUG_MAP, SITE_URL } from '../utils/seoHelpers';
 import {
   getPageAngle,
   generatePageIntro,
   generatePriceTip,
   generateFaqItems,
 } from '../utils/seoContentEngine';
-import ConversionStickyBar    from '../components/business/ConversionStickyBar';
-import TopDealsSection        from '../components/ui/TopDealsSection';
-import { trackEvent }         from '../utils/eventTracker';
-import { useEffect }          from 'react';
-import type { Deal }          from '../modules/topDealsEngine';
+import ConversionStickyBar from '../components/business/ConversionStickyBar';
+import TopDealsSection from '../components/ui/TopDealsSection';
+import { trackEvent } from '../utils/eventTracker';
+import { useEffect } from 'react';
+import type { Deal } from '../modules/topDealsEngine';
 import { liveApiFetchJson } from '../services/liveApiClient';
 
 // ── Price coefficients per territory ─────────────────────────────────────────
@@ -66,18 +62,22 @@ const LOCAL_RETAILERS: Record<string, string[]> = {
 };
 
 const LOCAL_ENSEIGNE_NOTES: Record<string, string> = {
-  GP: 'En Guadeloupe, les enseignes principales sont Carrefour, E.Leclerc et Super U. Les écarts de prix peuvent dépasser 20 % selon l\'enseigne.',
+  GP: "En Guadeloupe, les enseignes principales sont Carrefour, E.Leclerc et Super U. Les écarts de prix peuvent dépasser 20 % selon l'enseigne.",
   MQ: 'En Martinique, Carrefour et E.Leclerc dominent le marché. Leader Price propose souvent les tarifs les plus compétitifs sur les produits du quotidien.',
   GF: 'En Guyane, le coût de la vie est parmi les plus élevés de France. Carrefour et Super U sont les principaux points de vente.',
   RE: 'À La Réunion, la concurrence entre E.Leclerc et Carrefour bénéficie aux consommateurs. Jumbo Score propose également des offres régulières.',
-  YT: 'À Mayotte, l\'offre commerciale est plus limitée. Carrefour reste la référence principale pour la grande distribution.',
+  YT: "À Mayotte, l'offre commerciale est plus limitée. Carrefour reste la référence principale pour la grande distribution.",
 };
 
 type RetailerPrice = { retailer: string; price: number; isBest?: boolean };
 
 // ── Slug parser: "coca-cola-guadeloupe" → { product, territory } ─────────────
 
-function parseSlug(slug: string): { productSlug: string; territory: string; territoryName: string } {
+function parseSlug(slug: string): {
+  productSlug: string;
+  territory: string;
+  territoryName: string;
+} {
   const territories = Object.entries(TERRITORY_SLUG_MAP);
   for (const [tSlug, tCode] of territories) {
     if (slug.endsWith(`-${tSlug}`)) {
@@ -120,18 +120,18 @@ export default function SEOComparateurSlugPage() {
   const { productSlug, territory, territoryName } = useMemo(() => parseSlug(slug), [slug]);
   const productName = humanise(productSlug);
   const prices = livePrices;
-  const bestPrice   = prices[0] ?? { retailer: 'N/A', price: 0 };
-  const worstPrice  = prices[prices.length - 1] ?? bestPrice;
-  const saving      = +(worstPrice.price - bestPrice.price).toFixed(2);
+  const bestPrice = prices[0] ?? { retailer: 'N/A', price: 0 };
+  const worstPrice = prices[prices.length - 1] ?? bestPrice;
+  const saving = +(worstPrice.price - bestPrice.price).toFixed(2);
 
-  const angle  = getPageAngle(slug);
-  const intro  = generatePageIntro(productName, territory, angle);
-  const tip    = generatePriceTip(productName, territory, angle);
-  const faqs   = generateFaqItems(productName, territory, angle);
-  const deals  = useMemo(() => makeSeedDeals(productSlug, territory), [productSlug, territory]);
+  const angle = getPageAngle(slug);
+  const intro = generatePageIntro(productName, territory, angle);
+  const tip = generatePriceTip(productName, territory, angle);
+  const faqs = generateFaqItems(productName, territory, angle);
+  const deals = useMemo(() => makeSeedDeals(productSlug, territory), [productSlug, territory]);
 
   const enseigneNote = LOCAL_ENSEIGNE_NOTES[territory] ?? LOCAL_ENSEIGNE_NOTES.GP;
-  const pageUrl      = `${SITE_URL}/comparateur/${slug}`;
+  const pageUrl = `${SITE_URL}/comparateur/${slug}`;
 
   useEffect(() => {
     trackEvent('page_view', { page: `/comparateur/${slug}`, product: productName });
@@ -142,13 +142,12 @@ export default function SEOComparateurSlugPage() {
 
     const loadLivePrices = async () => {
       try {
-        const payload = await liveApiFetchJson<{ prices?: Array<{ retailer: string; price: number }> }>(
-          `/comparateur/${encodeURIComponent(slug)}/prices`,
-          {
-            incidentReason: 'seo_comparator_api_unavailable',
-            timeoutMs: 8000,
-          },
-        );
+        const payload = await liveApiFetchJson<{
+          prices?: Array<{ retailer: string; price: number }>;
+        }>(`/comparateur/${encodeURIComponent(slug)}/prices`, {
+          incidentReason: 'seo_comparator_api_unavailable',
+          timeoutMs: 8000,
+        });
         const rows = Array.isArray(payload?.prices) ? payload.prices : [];
         const normalized = rows
           .filter((row) => typeof row?.retailer === 'string' && typeof row?.price === 'number')
@@ -172,22 +171,22 @@ export default function SEOComparateurSlugPage() {
 
   // JSON-LD
   const jsonLd = JSON.stringify({
-    '@context':  'https://schema.org',
-    '@type':     'Product',
-    name:        sanitizeJsonLdString(productName),
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: sanitizeJsonLdString(productName),
     description: `Comparateur de prix ${sanitizeJsonLdString(productName)} en ${territoryName}`,
     offers: {
-      '@type':      'AggregateOffer',
+      '@type': 'AggregateOffer',
       priceCurrency: 'EUR',
-      lowPrice:      bestPrice.price,
-      highPrice:     worstPrice.price,
-      offerCount:    prices.length,
-      offers:        prices.map((p) => ({
-        '@type':       'Offer',
-        seller:        { '@type': 'Organization', name: p.retailer },
-        price:         p.price,
+      lowPrice: bestPrice.price,
+      highPrice: worstPrice.price,
+      offerCount: prices.length,
+      offers: prices.map((p) => ({
+        '@type': 'Offer',
+        seller: { '@type': 'Organization', name: p.retailer },
+        price: p.price,
         priceCurrency: 'EUR',
-        availability:  'https://schema.org/InStock',
+        availability: 'https://schema.org/InStock',
       })),
     },
   });
@@ -206,14 +205,19 @@ export default function SEOComparateurSlugPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
 
       <div className="mx-auto max-w-2xl px-4 pb-24 pt-6">
-
         {/* ── Breadcrumb ─────────────────────────────────────────── */}
         <nav aria-label="Fil d'Ariane" className="mb-4 text-xs text-zinc-500">
-          <Link to="/" className="hover:text-zinc-300">Accueil</Link>
+          <Link to="/" className="hover:text-zinc-300">
+            Accueil
+          </Link>
           {' / '}
-          <Link to="/comparateur" className="hover:text-zinc-300">Comparateur</Link>
+          <Link to="/comparateur" className="hover:text-zinc-300">
+            Comparateur
+          </Link>
           {' / '}
-          <span className="text-zinc-400">{productName} — {territoryName}</span>
+          <span className="text-zinc-400">
+            {productName} — {territoryName}
+          </span>
         </nav>
 
         {/* ── H1 unique ──────────────────────────────────────────── */}
@@ -221,7 +225,8 @@ export default function SEOComparateurSlugPage() {
           Prix {productName} en {territoryName}
         </h1>
         <p className="mb-6 text-sm text-zinc-400">
-          Comparez les prix entre {prices.map((p) => p.retailer).join(', ')} — données locales mises à jour régulièrement.
+          Comparez les prix entre {prices.map((p) => p.retailer).join(', ')} — données locales mises
+          à jour régulièrement.
         </p>
 
         {/* ── Urgency + proof ────────────────────────────────────── */}
@@ -252,9 +257,12 @@ export default function SEOComparateurSlugPage() {
               <tbody>
                 {prices.map((p, i) => {
                   const diff = +(p.price - bestPrice.price).toFixed(2);
-                  const url  = buildRetailerUrl(p.retailer, undefined);
+                  const url = buildRetailerUrl(p.retailer, undefined);
                   return (
-                    <tr key={p.retailer} className={`border-b border-white/5 ${p.isBest ? 'bg-emerald-400/[0.06]' : ''}`}>
+                    <tr
+                      key={p.retailer}
+                      className={`border-b border-white/5 ${p.isBest ? 'bg-emerald-400/[0.06]' : ''}`}
+                    >
                       <td className="px-4 py-3 font-medium text-white">
                         <span className="mr-2 text-zinc-600">{i + 1}.</span>
                         {p.retailer}
@@ -264,7 +272,9 @@ export default function SEOComparateurSlugPage() {
                           </span>
                         )}
                       </td>
-                      <td className={`px-4 py-3 text-right font-bold tabular-nums ${p.isBest ? 'text-emerald-400' : 'text-white'}`}>
+                      <td
+                        className={`px-4 py-3 text-right font-bold tabular-nums ${p.isBest ? 'text-emerald-400' : 'text-white'}`}
+                      >
                         {formatEur(p.price)}
                       </td>
                       <td className="px-4 py-3 text-right tabular-nums">
@@ -282,7 +292,11 @@ export default function SEOComparateurSlugPage() {
                             rel="noopener noreferrer"
                             onClick={() => {
                               trackRetailerClick(slug, p.retailer, territory, p.price);
-                              trackEvent('affiliate_click', { product: productName, retailer: p.retailer, price: p.price });
+                              trackEvent('affiliate_click', {
+                                product: productName,
+                                retailer: p.retailer,
+                                price: p.price,
+                              });
                             }}
                             className="rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-300 transition hover:bg-white/10"
                             aria-label={`🔥 Voir le meilleur prix pour ${productName} chez ${p.retailer}`}
@@ -298,26 +312,25 @@ export default function SEOComparateurSlugPage() {
             </table>
           </div>
           <p className="mt-2 text-right text-xs text-zinc-600">
-            Économisez jusqu'à <span className="font-bold text-emerald-400">{formatEur(saving)}</span> sur ce produit
+            Économisez jusqu'à{' '}
+            <span className="font-bold text-emerald-400">{formatEur(saving)}</span> sur ce produit
           </p>
         </section>
 
         {/* ── Territory context paragraphs ───────────────────────── */}
-        <section className="mb-8 space-y-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5" aria-label="Contexte local">
+        <section
+          className="mb-8 space-y-4 rounded-2xl border border-white/10 bg-white/[0.02] p-5"
+          aria-label="Contexte local"
+        >
           <h2 className="text-base font-bold text-white">
             {productName} en {territoryName} : ce qu'il faut savoir
           </h2>
           <p className="text-sm leading-relaxed text-zinc-400">
-            {intro ?? `${productName} fait partie des produits les plus achetés en ${territoryName}. Les prix varient selon l'enseigne et la période.`}
+            {intro ??
+              `${productName} fait partie des produits les plus achetés en ${territoryName}. Les prix varient selon l'enseigne et la période.`}
           </p>
-          <p className="text-sm leading-relaxed text-zinc-400">
-            {enseigneNote}
-          </p>
-          {tip && (
-            <p className="text-sm leading-relaxed text-emerald-400/80">
-              💡 {tip}
-            </p>
-          )}
+          <p className="text-sm leading-relaxed text-zinc-400">{enseigneNote}</p>
+          {tip && <p className="text-sm leading-relaxed text-emerald-400/80">💡 {tip}</p>}
           {angle === 0 && saving > 0 && (
             <p className="text-sm leading-relaxed text-zinc-400">
               Sur ce seul produit, vous pouvez économiser{' '}
@@ -353,9 +366,21 @@ export default function SEOComparateurSlugPage() {
         <section className="text-sm text-zinc-500" aria-label="Voir aussi">
           <p className="mb-2 font-semibold text-zinc-400">Voir aussi</p>
           <ul className="space-y-1">
-            <li><Link to={`/prix/${slug}`} className="text-emerald-400/80 hover:text-emerald-400">Prix {productName} en {territoryName} →</Link></li>
-            <li><Link to="/comparateur" className="hover:text-zinc-300">Comparateur de prix →</Link></li>
-            <li><Link to={`/moins-cher/${territory.toLowerCase()}`} className="hover:text-zinc-300">Produits les moins chers en {territoryName} →</Link></li>
+            <li>
+              <Link to={`/prix/${slug}`} className="text-emerald-400/80 hover:text-emerald-400">
+                Prix {productName} en {territoryName} →
+              </Link>
+            </li>
+            <li>
+              <Link to="/comparateur" className="hover:text-zinc-300">
+                Comparateur de prix →
+              </Link>
+            </li>
+            <li>
+              <Link to={`/moins-cher/${territory.toLowerCase()}`} className="hover:text-zinc-300">
+                Produits les moins chers en {territoryName} →
+              </Link>
+            </li>
           </ul>
         </section>
       </div>
@@ -371,7 +396,11 @@ export default function SEOComparateurSlugPage() {
           territory={territory}
           onCTAClick={() => {
             trackRetailerClick(slug, bestPrice.retailer, territory, bestPrice.price);
-            trackEvent('affiliate_click', { product: productName, retailer: bestPrice.retailer, price: bestPrice.price });
+            trackEvent('affiliate_click', {
+              product: productName,
+              retailer: bestPrice.retailer,
+              price: bestPrice.price,
+            });
           }}
         />
       )}

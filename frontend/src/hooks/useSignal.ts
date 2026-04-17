@@ -4,7 +4,7 @@ import type { SignalResult } from '../types/api';
 
 export function useSignal(
   productId: string,
-  territory: string,
+  territory: string
 ): { data: SignalResult | null; loading: boolean } {
   const [data, setData] = useState<SignalResult | null>(null);
   const [loading, setLoading] = useState(false);

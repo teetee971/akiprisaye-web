@@ -1,6 +1,6 @@
 /**
  * Comparison Components Exports
- * 
+ *
  * Centralized exports for all basket comparison components
  */
 

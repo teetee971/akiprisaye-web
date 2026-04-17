@@ -1,4 +1,8 @@
-import type { PriceObservation, PriceSearchInput, TerritoryCode } from '../services/priceSearch/price.types';
+import type {
+  PriceObservation,
+  PriceSearchInput,
+  TerritoryCode,
+} from '../services/priceSearch/price.types';
 import { normalizePriceObservation } from './normalize';
 import type { PriceProvider, ProviderResult } from './types';
 
@@ -42,7 +46,19 @@ type LeclercCatalogResponse = {
 };
 
 const VALID_TERRITORIES: ReadonlySet<TerritoryCode> = new Set<TerritoryCode>([
-  'fr', 'gp', 'mq', 'gf', 're', 'yt', 'pm', 'bl', 'mf', 'wf', 'pf', 'nc', 'tf',
+  'fr',
+  'gp',
+  'mq',
+  'gf',
+  're',
+  'yt',
+  'pm',
+  'bl',
+  'mf',
+  'wf',
+  'pf',
+  'nc',
+  'tf',
 ]);
 
 const isValidTerritory = (value: unknown): value is TerritoryCode =>
@@ -56,20 +72,14 @@ const withTimeoutSignal = (signal: AbortSignal, timeoutMs: number): AbortSignal 
   return controller.signal;
 };
 
-const mapItem = (
-  item: LeclercCatalogItem,
-  input: PriceSearchInput,
-): PriceObservation | null => {
+const mapItem = (item: LeclercCatalogItem, input: PriceSearchInput): PriceObservation | null => {
   const price = safeNumber(item.price);
   if (price === null || price <= 0) return null;
 
   const rawUnit = safeString(item.unit);
-  const unit: PriceObservation['unit'] =
-    rawUnit === 'kg' || rawUnit === 'l' ? rawUnit : 'unit';
+  const unit: PriceObservation['unit'] = rawUnit === 'kg' || rawUnit === 'l' ? rawUnit : 'unit';
 
-  const territory = isValidTerritory(item.territory)
-    ? item.territory
-    : input.territory;
+  const territory = isValidTerritory(item.territory) ? item.territory : input.territory;
 
   return normalizePriceObservation({
     source: 'leclerc_catalog',
@@ -87,8 +97,7 @@ const mapItem = (
 
 export const leclercCatalogProvider: PriceProvider = {
   source: 'leclerc_catalog',
-  isEnabled: () =>
-    parseFlag(import.meta.env.VITE_PRICE_PROVIDER_LECLERC_CATALOG, false),
+  isEnabled: () => parseFlag(import.meta.env.VITE_PRICE_PROVIDER_LECLERC_CATALOG, false),
 
   async search(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult> {
     if (!input.barcode && !input.query) {
@@ -146,9 +155,7 @@ export const leclercCatalogProvider: PriceProvider = {
         status: observations.length > 0 ? 'OK' : 'NO_DATA',
         observations,
         warnings:
-          observations.length === 0
-            ? ['Aucun prix E.Leclerc trouvé pour cette recherche.']
-            : [],
+          observations.length === 0 ? ['Aucun prix E.Leclerc trouvé pour cette recherche.'] : [],
       };
     } catch {
       return {

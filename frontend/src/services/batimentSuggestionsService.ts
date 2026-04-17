@@ -40,12 +40,7 @@ export type SuggestionCategory =
   | 'magasin'
   | 'autre';
 
-export type SuggestionStatus =
-  | 'new'
-  | 'in_review'
-  | 'accepted'
-  | 'rejected'
-  | 'done';
+export type SuggestionStatus = 'new' | 'in_review' | 'accepted' | 'rejected' | 'done';
 
 export interface BatimentSuggestion {
   id: string;
@@ -73,26 +68,26 @@ export interface NewSuggestionPayload {
 
 export const SUGGESTION_CATEGORY_LABELS: Record<SuggestionCategory, string> = {
   nouveau_calculateur: '🧱 Nouveau calculateur',
-  amelioration:        '🔧 Amélioration',
-  materiau:            '📦 Nouveau matériau / produit',
-  magasin:             '🏪 Magasin manquant',
-  autre:               '💬 Autre',
+  amelioration: '🔧 Amélioration',
+  materiau: '📦 Nouveau matériau / produit',
+  magasin: '🏪 Magasin manquant',
+  autre: '💬 Autre',
 };
 
 export const SUGGESTION_STATUS_LABELS: Record<SuggestionStatus, string> = {
-  new:       '🆕 Nouveau',
+  new: '🆕 Nouveau',
   in_review: '🔍 En examen',
-  accepted:  '✅ Accepté',
-  rejected:  '❌ Refusé',
-  done:      '🚀 Intégré',
+  accepted: '✅ Accepté',
+  rejected: '❌ Refusé',
+  done: '🚀 Intégré',
 };
 
 export const SUGGESTION_STATUS_COLORS: Record<SuggestionStatus, string> = {
-  new:       'bg-blue-900/30 text-blue-300 border-blue-500/30',
+  new: 'bg-blue-900/30 text-blue-300 border-blue-500/30',
   in_review: 'bg-yellow-900/30 text-yellow-300 border-yellow-500/30',
-  accepted:  'bg-green-900/30 text-green-300 border-green-500/30',
-  rejected:  'bg-red-900/30 text-red-300 border-red-500/30',
-  done:      'bg-indigo-900/30 text-indigo-300 border-indigo-500/30',
+  accepted: 'bg-green-900/30 text-green-300 border-green-500/30',
+  rejected: 'bg-red-900/30 text-red-300 border-red-500/30',
+  done: 'bg-indigo-900/30 text-indigo-300 border-indigo-500/30',
 };
 
 // ── Current user (lazy) ───────────────────────────────────────────────────────
@@ -110,7 +105,7 @@ function getCurrentUserId(): string {
 // ── Write ─────────────────────────────────────────────────────────────────────
 
 export async function submitBatimentSuggestion(
-  payload: NewSuggestionPayload,
+  payload: NewSuggestionPayload
 ): Promise<{ success: boolean; id?: string; error?: string }> {
   if (!db) return { success: false, error: 'Firebase non disponible' };
   try {
@@ -133,7 +128,7 @@ export async function submitBatimentSuggestion(
 export async function updateSuggestionStatus(
   id: string,
   status: SuggestionStatus,
-  adminNote?: string,
+  adminNote?: string
 ): Promise<void> {
   if (!db) return;
   await updateDoc(doc(db, COLLECTION, id), {
@@ -150,7 +145,7 @@ export async function getAllBatimentSuggestions(): Promise<BatimentSuggestion[]>
   try {
     const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
     const snap = await getDocs(q);
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as BatimentSuggestion));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as BatimentSuggestion);
   } catch {
     return [];
   }

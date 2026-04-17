@@ -17,7 +17,12 @@ import {
 
 describe('getPageAngle', () => {
   it('returns a value between 0 and 4 inclusive', () => {
-    const samples = ['coca-cola-1-5l-guadeloupe', 'riz-basmati-1kg-martinique', 'nutella-400g-reunion', ''];
+    const samples = [
+      'coca-cola-1-5l-guadeloupe',
+      'riz-basmati-1kg-martinique',
+      'nutella-400g-reunion',
+      '',
+    ];
     for (const slug of samples) {
       const angle = getPageAngle(slug);
       expect(angle).toBeGreaterThanOrEqual(0);

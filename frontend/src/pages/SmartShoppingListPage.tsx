@@ -13,13 +13,24 @@ export default function SmartShoppingListPage() {
     <>
       <Helmet>
         <title>Liste de Courses Intelligente - A KI PRI SA YÉ</title>
-        <meta 
-          name="description" 
-          content="Créez et optimisez vos listes de courses pour économiser sur vos achats" 
+        <meta
+          name="description"
+          content="Créez et optimisez vos listes de courses pour économiser sur vos achats"
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/liste-intelligente" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/liste-intelligente" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/liste-intelligente" />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/liste-intelligente"
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/liste-intelligente"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/liste-intelligente"
+        />
       </Helmet>
       <div className="space-y-4 pb-24 px-4 pt-4">
         <div className="animate-fade-in">
@@ -29,10 +40,10 @@ export default function SmartShoppingListPage() {
             gradient="from-teal-950 to-slate-900"
             height="h-36 sm:h-48"
           >
-            <h1 className="text-2xl font-bold text-white drop-shadow">
-              🛒 Ma Liste Intelligente
-            </h1>
-            <p className="text-slate-200 text-sm drop-shadow">Optimisez vos achats et faites des économies</p>
+            <h1 className="text-2xl font-bold text-white drop-shadow">🛒 Ma Liste Intelligente</h1>
+            <p className="text-slate-200 text-sm drop-shadow">
+              Optimisez vos achats et faites des économies
+            </p>
           </HeroImage>
         </div>
         <ShoppingListManager />

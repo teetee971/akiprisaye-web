@@ -46,12 +46,14 @@ const normalizeForSearch = (text: string): string =>
  */
 const filterCatalogs = (
   catalogs: DiscoveredCatalog[],
-  input: PriceSearchInput,
+  input: PriceSearchInput
 ): DiscoveredCatalog[] => {
   const term = normalizeForSearch(input.query ?? input.barcode ?? '');
   if (!term) return catalogs;
   return catalogs.filter((c) =>
-    normalizeForSearch(c.title).split(/\s+/).some((word) => term.includes(word) || word.includes(term.split(/\s+/)[0] ?? term)),
+    normalizeForSearch(c.title)
+      .split(/\s+/)
+      .some((word) => term.includes(word) || word.includes(term.split(/\s+/)[0] ?? term))
   );
 };
 
@@ -65,8 +67,7 @@ const buildWarnings = (catalogs: DiscoveredCatalog[]): string[] => {
 
 export const calameoDynamicProvider: PriceProvider = {
   source: 'calameo_catalog',
-  isEnabled: () =>
-    parseFlag(import.meta.env.VITE_PRICE_PROVIDER_CALAMEO_DYNAMIC, false),
+  isEnabled: () => parseFlag(import.meta.env.VITE_PRICE_PROVIDER_CALAMEO_DYNAMIC, false),
 
   async search(input: PriceSearchInput, signal: AbortSignal): Promise<ProviderResult> {
     let catalogs: DiscoveredCatalog[];
@@ -82,7 +83,14 @@ export const calameoDynamicProvider: PriceProvider = {
         // Premier appel : attend la réponse réseau (avec timeout via AbortSignal)
         const raceTimeout = new Promise<DiscoveredCatalog[]>((resolve) => {
           const id = setTimeout(() => resolve([]), 7000);
-          signal.addEventListener('abort', () => { clearTimeout(id); resolve([]); }, { once: true });
+          signal.addEventListener(
+            'abort',
+            () => {
+              clearTimeout(id);
+              resolve([]);
+            },
+            { once: true }
+          );
         });
         catalogs = await Promise.race([getCatalogs(), raceTimeout]);
       }

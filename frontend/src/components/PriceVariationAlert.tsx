@@ -1,12 +1,12 @@
 // src/components/PriceVariationAlert.tsx
 // Price Variation Alert Component - visual indicator for significant price changes
-import React from 'react'
-import { usePriceVariationAlert, type PricePoint } from '../hooks/usePriceVariationAlert'
+import React from 'react';
+import { usePriceVariationAlert, type PricePoint } from '../hooks/usePriceVariationAlert';
 
 type PriceVariationAlertProps = {
-  prices: PricePoint[]
-  className?: string
-}
+  prices: PricePoint[];
+  className?: string;
+};
 
 /**
  * Get alert color based on direction
@@ -14,11 +14,11 @@ type PriceVariationAlertProps = {
 function getAlertColor(direction: 'up' | 'down' | null): string {
   switch (direction) {
     case 'up':
-      return '#dc2626' // Red-600 (subdued)
+      return '#dc2626'; // Red-600 (subdued)
     case 'down':
-      return '#059669' // Green-600 (subdued)
+      return '#059669'; // Green-600 (subdued)
     default:
-      return '#6b7280' // Gray-500
+      return '#6b7280'; // Gray-500
   }
 }
 
@@ -28,11 +28,11 @@ function getAlertColor(direction: 'up' | 'down' | null): string {
 function getAlertIcon(direction: 'up' | 'down' | null): string {
   switch (direction) {
     case 'up':
-      return '🔺'
+      return '🔺';
     case 'down':
-      return '🔻'
+      return '🔻';
     default:
-      return 'ℹ️'
+      return 'ℹ️';
   }
 }
 
@@ -40,29 +40,29 @@ function getAlertIcon(direction: 'up' | 'down' | null): string {
  * Get alert message based on direction and variation
  */
 function getAlertMessage(direction: 'up' | 'down' | null, variation: number): string {
-  const absVariation = Math.abs(variation)
-  const sign = variation >= 0 ? '+' : '−'
-  
+  const absVariation = Math.abs(variation);
+  const sign = variation >= 0 ? '+' : '−';
+
   if (direction === 'up') {
-    return `Hausse significative observée (${sign}${absVariation} %)`
+    return `Hausse significative observée (${sign}${absVariation} %)`;
   } else if (direction === 'down') {
-    return `Baisse significative observée (${sign}${absVariation} %)`
+    return `Baisse significative observée (${sign}${absVariation} %)`;
   }
-  
-  return `Variation observée (${sign}${absVariation} %)`
+
+  return `Variation observée (${sign}${absVariation} %)`;
 }
 
 export default function PriceVariationAlert({ prices, className = '' }: PriceVariationAlertProps) {
-  const alert = usePriceVariationAlert(prices)
+  const alert = usePriceVariationAlert(prices);
 
   // Don't show if alert is not triggered
   if (!alert.showAlert) {
-    return null
+    return null;
   }
 
-  const color = getAlertColor(alert.direction)
-  const icon = getAlertIcon(alert.direction)
-  const message = getAlertMessage(alert.direction, alert.variation)
+  const color = getAlertColor(alert.direction);
+  const icon = getAlertIcon(alert.direction);
+  const message = getAlertMessage(alert.direction, alert.variation);
 
   return (
     <div
@@ -91,11 +91,12 @@ export default function PriceVariationAlert({ prices, className = '' }: PriceVar
           {/* Institutional disclaimer (mandatory) */}
           <div className="pt-3 border-t border-white/10">
             <p className="text-xs text-white/60 italic">
-              Cette indication est fournie à titre informatif, à partir des données publiques observées.
+              Cette indication est fournie à titre informatif, à partir des données publiques
+              observées.
             </p>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

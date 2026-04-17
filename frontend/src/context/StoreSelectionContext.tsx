@@ -20,30 +20,29 @@ export function StoreSelectionProvider({ children }: { children: React.ReactNode
     return storesMock.find((store) => store.id === selection.storeId) ?? null;
   }, [selection]);
 
-  const value = useMemo<StoreSelectionContextValue>(() => ({
-    selection,
-    selectedStore,
-    updateSelection: (store, mode) => {
-      const next: StoreSelection = {
-        storeId: store.id,
-        territory: store.territory,
-        serviceMode: mode,
-        updatedAt: new Date().toISOString(),
-      };
-      setSelection(next);
-      setState(next);
-    },
-    resetSelection: () => {
-      clearSelection();
-      setState(null);
-    },
-  }), [selection, selectedStore]);
-
-  return (
-    <StoreSelectionContext.Provider value={value}>
-      {children}
-    </StoreSelectionContext.Provider>
+  const value = useMemo<StoreSelectionContextValue>(
+    () => ({
+      selection,
+      selectedStore,
+      updateSelection: (store, mode) => {
+        const next: StoreSelection = {
+          storeId: store.id,
+          territory: store.territory,
+          serviceMode: mode,
+          updatedAt: new Date().toISOString(),
+        };
+        setSelection(next);
+        setState(next);
+      },
+      resetSelection: () => {
+        clearSelection();
+        setState(null);
+      },
+    }),
+    [selection, selectedStore]
   );
+
+  return <StoreSelectionContext.Provider value={value}>{children}</StoreSelectionContext.Provider>;
 }
 
 export function useStoreSelection() {

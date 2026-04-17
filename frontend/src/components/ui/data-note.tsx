@@ -1,4 +1,4 @@
-import { cn } from "../../lib/utils";
+import { cn } from '../../lib/utils';
 
 /**
  * DataNote - Transparency & Trust Panel
@@ -6,35 +6,21 @@ import { cn } from "../../lib/utils";
  * NO marketing promises, ONLY real data attribution
  */
 export interface DataNoteProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "info" | "warning" | "source";
+  variant?: 'info' | 'warning' | 'source';
 }
 
-export function DataNote({
-  children,
-  variant = "info",
-  className,
-  ...props
-}: DataNoteProps) {
+export function DataNote({ children, variant = 'info', className, ...props }: DataNoteProps) {
   return (
     <div
       className={cn(
-        "rounded-xl border p-3",
-        "text-xs leading-relaxed",
-        "backdrop-blur-glass",
-        
-        variant === "info" && [
-          "bg-info/10 border-info/30",
-          "text-muted",
-        ],
-        variant === "warning" && [
-          "bg-warning/10 border-warning/30",
-          "text-muted",
-        ],
-        variant === "source" && [
-          "bg-glass border-glass-border",
-          "text-muted",
-        ],
-        
+        'rounded-xl border p-3',
+        'text-xs leading-relaxed',
+        'backdrop-blur-glass',
+
+        variant === 'info' && ['bg-info/10 border-info/30', 'text-muted'],
+        variant === 'warning' && ['bg-warning/10 border-warning/30', 'text-muted'],
+        variant === 'source' && ['bg-glass border-glass-border', 'text-muted'],
+
         className
       )}
       {...props}
@@ -63,7 +49,7 @@ export function SourceAttribution({
       {source}
       {description && (
         <>
-          {" — "}
+          {' — '}
           {description}
         </>
       )}

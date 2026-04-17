@@ -188,9 +188,7 @@ export default function AdminDashboard() {
           <header className="mb-8 flex items-center gap-3">
             <ShieldCheck className="w-9 h-9 text-blue-400 flex-shrink-0" />
             <div>
-              <h1 className="text-3xl font-bold text-blue-400">
-                Admin — Ti-Panié Solidaire
-              </h1>
+              <h1 className="text-3xl font-bold text-blue-400">Admin — Ti-Panié Solidaire</h1>
               <p className="text-slate-400 text-sm mt-0.5">
                 Gérez les paniers solidaires en temps réel
               </p>
@@ -240,30 +238,50 @@ export default function AdminDashboard() {
               </h2>
               <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="admin-titre" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-titre"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Titre *
                   </label>
-                  <input id="admin-titre" type="text" required className={inputClass}
+                  <input
+                    id="admin-titre"
+                    type="text"
+                    required
+                    className={inputClass}
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="admin-magasin" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-magasin"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Magasin *
                   </label>
-                  <input id="admin-magasin" type="text" required className={inputClass}
+                  <input
+                    id="admin-magasin"
+                    type="text"
+                    required
+                    className={inputClass}
                     value={formData.store}
                     onChange={(e) => setFormData({ ...formData, store: e.target.value })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="admin-territoire" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-territoire"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Territoire *
                   </label>
-                  <select id="admin-territoire" required className={inputClass}
+                  <select
+                    id="admin-territoire"
+                    required
+                    className={inputClass}
                     value={formData.territory}
                     onChange={(e) => setFormData({ ...formData, territory: e.target.value })}
                   >
@@ -274,92 +292,163 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label htmlFor="admin-creneau" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-creneau"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Créneau de retrait *
                   </label>
-                  <input id="admin-creneau" type="text" required placeholder="17:00–19:00" className={inputClass}
+                  <input
+                    id="admin-creneau"
+                    type="text"
+                    required
+                    placeholder="17:00–19:00"
+                    className={inputClass}
                     value={formData.pickupWindow}
                     onChange={(e) => setFormData({ ...formData, pickupWindow: e.target.value })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="admin-latitude" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-latitude"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Latitude *
                   </label>
-                  <input id="admin-latitude" type="number" step="any" required className={inputClass}
+                  <input
+                    id="admin-latitude"
+                    type="number"
+                    step="any"
+                    required
+                    className={inputClass}
                     value={formData.lat}
                     onChange={(e) => setFormData({ ...formData, lat: e.target.value })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="admin-longitude" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-longitude"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Longitude *
                   </label>
-                  <input id="admin-longitude" type="number" step="any" required className={inputClass}
+                  <input
+                    id="admin-longitude"
+                    type="number"
+                    step="any"
+                    required
+                    className={inputClass}
                     value={formData.lon}
                     onChange={(e) => setFormData({ ...formData, lon: e.target.value })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="admin-stock" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-stock"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Stock *
                   </label>
-                  <input id="admin-stock" type="number" required min="0" className={inputClass}
+                  <input
+                    id="admin-stock"
+                    type="number"
+                    required
+                    min="0"
+                    className={inputClass}
                     value={formData.stock}
                     onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="admin-prix" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-prix"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Prix (€) *
                   </label>
-                  <input id="admin-prix" type="number" step="0.01" required min="0" className={inputClass}
+                  <input
+                    id="admin-prix"
+                    type="number"
+                    step="0.01"
+                    required
+                    min="0"
+                    className={inputClass}
                     value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, price: parseFloat(e.target.value) })
+                    }
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="admin-valeur-estimee" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-valeur-estimee"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Valeur estimée (€) *
                   </label>
-                  <input id="admin-valeur-estimee" type="number" step="0.01" required min="0" className={inputClass}
+                  <input
+                    id="admin-valeur-estimee"
+                    type="number"
+                    step="0.01"
+                    required
+                    min="0"
+                    className={inputClass}
                     value={formData.estimatedValue}
-                    onChange={(e) => setFormData({ ...formData, estimatedValue: parseFloat(e.target.value) })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, estimatedValue: parseFloat(e.target.value) })
+                    }
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="admin-image-url" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-image-url"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Image URL
                   </label>
-                  <input id="admin-image-url" type="text" placeholder="/img/panie-fruits.jpg" className={inputClass}
+                  <input
+                    id="admin-image-url"
+                    type="text"
+                    placeholder="/img/panie-fruits.jpg"
+                    className={inputClass}
                     value={formData.img}
                     onChange={(e) => setFormData({ ...formData, img: e.target.value })}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label htmlFor="admin-articles" className="block text-sm font-medium mb-2 text-slate-300">
+                  <label
+                    htmlFor="admin-articles"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
                     Articles (séparés par des virgules)
                   </label>
-                  <input id="admin-articles" type="text" placeholder="Bananes, Tomates, Salade" className={inputClass}
+                  <input
+                    id="admin-articles"
+                    type="text"
+                    placeholder="Bananes, Tomates, Salade"
+                    className={inputClass}
                     value={formData.items}
                     onChange={(e) => setFormData({ ...formData, items: e.target.value })}
                   />
                 </div>
 
                 <div className="md:col-span-2 flex gap-4">
-                  <button type="submit"
+                  <button
+                    type="submit"
                     className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition"
                   >
                     {editingBasket ? 'Mettre à jour' : 'Ajouter'}
                   </button>
-                  <button type="button" onClick={resetForm}
+                  <button
+                    type="button"
+                    onClick={resetForm}
                     className="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-medium transition"
                   >
                     Annuler
@@ -376,13 +465,18 @@ export default function AdminDashboard() {
               <p className="text-slate-400">Chargement des paniers...</p>
             </div>
           ) : (
-            <section aria-label="Liste des paniers solidaires" className="bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden">
+            <section
+              aria-label="Liste des paniers solidaires"
+              className="bg-slate-900/50 border border-slate-800 rounded-lg overflow-hidden"
+            >
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-slate-800">
                     <tr>
                       {['Titre', 'Magasin', 'Territoire', 'Stock', 'Prix', 'Actions'].map((h) => (
-                        <th key={h} scope="col"
+                        <th
+                          key={h}
+                          scope="col"
                           className="px-4 py-3 text-left text-sm font-semibold text-slate-300"
                         >
                           {h}
@@ -393,9 +487,15 @@ export default function AdminDashboard() {
                   <tbody className="divide-y divide-slate-800">
                     {baskets.map((basket) => (
                       <tr key={String(basket.id)} className="hover:bg-slate-800/50">
-                        <td className="px-4 py-3 text-sm text-slate-200">{String(basket.title ?? '')}</td>
-                        <td className="px-4 py-3 text-sm text-slate-300">{String(basket.store ?? '')}</td>
-                        <td className="px-4 py-3 text-sm text-slate-300">{String(basket.territory ?? '')}</td>
+                        <td className="px-4 py-3 text-sm text-slate-200">
+                          {String(basket.title ?? '')}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-slate-300">
+                          {String(basket.store ?? '')}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-slate-300">
+                          {String(basket.territory ?? '')}
+                        </td>
                         <td className="px-4 py-3 text-sm text-slate-300">
                           <span
                             className={`px-2 py-1 rounded text-xs ${

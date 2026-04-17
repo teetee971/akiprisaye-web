@@ -183,8 +183,8 @@ PRODUIT B                    1,50 €
 TOTAL TTC                    5,00 €
     `.trim();
     const result = parseReceipt(text);
-    expect(result.checksum.declared).toBe(5.00);
-    expect(result.checksum.computed).toBeCloseTo(5.00, 2);
+    expect(result.checksum.declared).toBe(5.0);
+    expect(result.checksum.computed).toBeCloseTo(5.0, 2);
     expect(result.checksum.matches).toBe(true);
   });
 

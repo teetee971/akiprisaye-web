@@ -1,4 +1,3 @@
- 
 /**
  * Excel Exporter Utility
  * Export price comparisons, shopping lists, and inflation reports to Excel
@@ -22,7 +21,7 @@ export class ExcelExporter {
    */
   async exportPriceComparison(products: Product[]): Promise<Blob> {
     const workbook = new ExcelJS.Workbook();
-    
+
     // Price comparison sheet
     const worksheet = workbook.addWorksheet('Comparaison Prix');
     worksheet.columns = [
@@ -30,16 +29,16 @@ export class ExcelExporter {
       { header: 'Produit', key: 'name', width: 30 },
       { header: 'Prix (€)', key: 'price', width: 12 },
       { header: 'Magasin', key: 'store', width: 25 },
-      { header: 'Territoire', key: 'territory', width: 15 }
+      { header: 'Territoire', key: 'territory', width: 15 },
     ];
 
-    products.forEach(p => {
+    products.forEach((p) => {
       worksheet.addRow({
         ean: p.ean || 'N/A',
         name: p.name,
         price: p.price.toFixed(2),
         store: p.store || 'N/A',
-        territory: p.territory || 'N/A'
+        territory: p.territory || 'N/A',
       });
     });
 
@@ -48,31 +47,33 @@ export class ExcelExporter {
     worksheet.getRow(1).fill = {
       type: 'pattern',
       pattern: 'solid',
-      fgColor: { argb: 'FF4472C4' }
+      fgColor: { argb: 'FF4472C4' },
     };
 
     // Summary statistics sheet
     const avgPrice = products.reduce((sum, p) => sum + p.price, 0) / products.length;
-    const minPrice = Math.min(...products.map(p => p.price));
-    const maxPrice = Math.max(...products.map(p => p.price));
+    const minPrice = Math.min(...products.map((p) => p.price));
+    const maxPrice = Math.max(...products.map((p) => p.price));
 
     const summarySheet = workbook.addWorksheet('Statistiques');
     summarySheet.columns = [
       { header: 'Statistique', key: 'stat', width: 20 },
-      { header: 'Valeur', key: 'value', width: 15 }
+      { header: 'Valeur', key: 'value', width: 15 },
     ];
 
     summarySheet.addRows([
       { stat: 'Prix Minimum', value: `${minPrice.toFixed(2)}€` },
       { stat: 'Prix Maximum', value: `${maxPrice.toFixed(2)}€` },
       { stat: 'Prix Moyen', value: `${avgPrice.toFixed(2)}€` },
-      { stat: 'Écart', value: `${(maxPrice - minPrice).toFixed(2)}€` }
+      { stat: 'Écart', value: `${(maxPrice - minPrice).toFixed(2)}€` },
     ]);
 
     summarySheet.getRow(1).font = { bold: true };
 
     const buffer = await workbook.xlsx.writeBuffer();
-    return new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    return new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
   }
 
   /**
@@ -80,7 +81,7 @@ export class ExcelExporter {
    */
   async exportShoppingList(list: any): Promise<Blob> {
     const workbook = new ExcelJS.Workbook();
-    
+
     const worksheet = workbook.addWorksheet('Liste de Courses');
     worksheet.columns = [
       { header: 'Produit', key: 'name', width: 30 },
@@ -88,7 +89,7 @@ export class ExcelExporter {
       { header: 'Quantité', key: 'quantity', width: 12 },
       { header: 'Catégorie', key: 'category', width: 20 },
       { header: 'Priorité', key: 'priority', width: 12 },
-      { header: 'Notes', key: 'notes', width: 40 }
+      { header: 'Notes', key: 'notes', width: 40 },
     ];
 
     list.items.forEach((item: any) => {
@@ -98,7 +99,7 @@ export class ExcelExporter {
         quantity: item.quantity,
         category: item.category,
         priority: item.priority,
-        notes: item.notes || ''
+        notes: item.notes || '',
       });
     });
 
@@ -110,15 +111,15 @@ export class ExcelExporter {
       const optSheet = workbook.addWorksheet('Optimisation');
       optSheet.columns = [
         { header: 'Magasin', key: 'store', width: 30 },
-        { header: 'Nombre d\'articles', key: 'count', width: 20 },
-        { header: 'Sous-total (€)', key: 'subtotal', width: 15 }
+        { header: "Nombre d'articles", key: 'count', width: 20 },
+        { header: 'Sous-total (€)', key: 'subtotal', width: 15 },
       ];
 
       opt.stores.forEach((store: any) => {
         optSheet.addRow({
           store: store.storeName,
           count: store.items.length,
-          subtotal: store.subtotal.toFixed(2)
+          subtotal: store.subtotal.toFixed(2),
         });
       });
 
@@ -126,7 +127,9 @@ export class ExcelExporter {
     }
 
     const buffer = await workbook.xlsx.writeBuffer();
-    return new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    return new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
   }
 
   /**
@@ -136,12 +139,12 @@ export class ExcelExporter {
     const workbook = new ExcelJS.Workbook();
 
     // Overview sheet
-    const overviewSheet = workbook.addWorksheet('Vue d\'ensemble');
+    const overviewSheet = workbook.addWorksheet("Vue d'ensemble");
     overviewSheet.columns = [
       { header: 'Territoire', key: 'territory', width: 20 },
-      { header: 'Taux d\'inflation (%)', key: 'rate', width: 20 },
+      { header: "Taux d'inflation (%)", key: 'rate', width: 20 },
       { header: 'Écart métropole (%)', key: 'gap', width: 20 },
-      { header: 'Dernière mise à jour', key: 'updated', width: 20 }
+      { header: 'Dernière mise à jour', key: 'updated', width: 20 },
     ];
 
     data.territories.forEach((t: any) => {
@@ -149,7 +152,7 @@ export class ExcelExporter {
         territory: t.territoryName,
         rate: t.overallInflationRate.toFixed(2),
         gap: t.comparedToMetropole?.toFixed(2) || 'N/A',
-        updated: new Date(t.lastUpdated).toLocaleDateString('fr-FR')
+        updated: new Date(t.lastUpdated).toLocaleDateString('fr-FR'),
       });
     });
 
@@ -159,13 +162,13 @@ export class ExcelExporter {
     data.territories.forEach((territory: any) => {
       const sheetName = territory.territoryName.substring(0, 31); // Excel limit
       const categorySheet = workbook.addWorksheet(sheetName);
-      
+
       categorySheet.columns = [
         { header: 'Catégorie', key: 'category', width: 20 },
         { header: 'Prix Moyen Actuel (€)', key: 'current', width: 22 },
         { header: 'Prix Moyen Précédent (€)', key: 'previous', width: 25 },
-        { header: 'Taux d\'inflation (%)', key: 'rate', width: 20 },
-        { header: 'Changement (€)', key: 'change', width: 18 }
+        { header: "Taux d'inflation (%)", key: 'rate', width: 20 },
+        { header: 'Changement (€)', key: 'change', width: 18 },
       ];
 
       territory.categories.forEach((cat: any) => {
@@ -174,7 +177,7 @@ export class ExcelExporter {
           current: cat.currentAverage.toFixed(2),
           previous: cat.previousAverage.toFixed(2),
           rate: cat.inflationRate.toFixed(2),
-          change: cat.priceChange.toFixed(2)
+          change: cat.priceChange.toFixed(2),
         });
       });
 
@@ -182,7 +185,9 @@ export class ExcelExporter {
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
-    return new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    return new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
   }
 
   /**
@@ -208,7 +213,7 @@ export class ExcelExporter {
     filename: string
   ): Promise<void> {
     let blob: Blob;
-    
+
     switch (type) {
       case 'priceComparison':
         blob = await this.exportPriceComparison(data);
@@ -220,7 +225,7 @@ export class ExcelExporter {
         blob = await this.exportInflationReport(data);
         break;
     }
-    
+
     this.downloadBlob(blob, filename);
   }
 }

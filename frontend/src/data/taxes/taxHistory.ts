@@ -6,17 +6,17 @@
  */
 
 export interface HistoricalTaxRate {
-  taxType: 'tva' | 'octroi_de_mer' | 'taxe_soda' | 'taxe_alcool' | 'contribution_audiovisuel'
-  taxName: string
-  territory: string
-  territoryCode: string
-  rate: number
-  unit: 'percentage' | 'euro_fixed' | 'euro_per_hectoliter'
-  scope: string
-  validFrom: string // ISO date
-  validUntil: string // ISO date
-  changeReason: string // Why the rate changed
-  sourceId: string
+  taxType: 'tva' | 'octroi_de_mer' | 'taxe_soda' | 'taxe_alcool' | 'contribution_audiovisuel';
+  taxName: string;
+  territory: string;
+  territoryCode: string;
+  rate: number;
+  unit: 'percentage' | 'euro_fixed' | 'euro_per_hectoliter';
+  scope: string;
+  validFrom: string; // ISO date
+  validUntil: string; // ISO date
+  changeReason: string; // Why the rate changed
+  sourceId: string;
 }
 
 /**
@@ -127,7 +127,7 @@ export const HISTORICAL_TAX_RATES: HistoricalTaxRate[] = [
     taxName: 'Redevance Audiovisuelle',
     territory: 'Métropole',
     territoryCode: 'FR-MET',
-    rate: 116.50,
+    rate: 116.5,
     unit: 'euro_fixed',
     scope: 'Redevance TV couleur',
     validFrom: '2005-01-01',
@@ -142,7 +142,7 @@ export const HISTORICAL_TAX_RATES: HistoricalTaxRate[] = [
     territoryCode: 'FR-MET',
     rate: 138,
     unit: 'euro_fixed',
-    scope: 'Contribution à l\'audiovisuel public',
+    scope: "Contribution à l'audiovisuel public",
     validFrom: '2015-01-01',
     validUntil: '2022-12-31',
     changeReason: 'Indexation et changement de dénomination. Supprimée fin 2022.',
@@ -189,29 +189,27 @@ export const HISTORICAL_TAX_RATES: HistoricalTaxRate[] = [
     changeReason: 'Régime stabilisé avec exonération partielle maintenue',
     sourceId: 'dgddi',
   },
-]
+];
 
 /**
  * Get historical rates for a specific tax type
  */
-export function getHistoricalRates(
-  taxType: HistoricalTaxRate['taxType']
-): HistoricalTaxRate[] {
+export function getHistoricalRates(taxType: HistoricalTaxRate['taxType']): HistoricalTaxRate[] {
   return HISTORICAL_TAX_RATES.filter((rate) => rate.taxType === taxType).sort(
     (a, b) => new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime()
-  )
+  );
 }
 
 /**
  * Get historical rates for a territory
  */
-export function getHistoricalRatesByTerritory(
-  territoryCode: string
-): HistoricalTaxRate[] {
-  return HISTORICAL_TAX_RATES.filter((rate) =>
-    rate.territoryCode === territoryCode || rate.territoryCode === 'FR-ALL' || 
-    (territoryCode.startsWith('FR-97') && rate.territoryCode === 'FR-DOM')
-  ).sort((a, b) => new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime())
+export function getHistoricalRatesByTerritory(territoryCode: string): HistoricalTaxRate[] {
+  return HISTORICAL_TAX_RATES.filter(
+    (rate) =>
+      rate.territoryCode === territoryCode ||
+      rate.territoryCode === 'FR-ALL' ||
+      (territoryCode.startsWith('FR-97') && rate.territoryCode === 'FR-DOM')
+  ).sort((a, b) => new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime());
 }
 
 /**
@@ -222,15 +220,15 @@ export function getRateAtDate(
   territoryCode: string,
   date: string // ISO date
 ): HistoricalTaxRate | undefined {
-  const targetDate = new Date(date)
+  const targetDate = new Date(date);
   return HISTORICAL_TAX_RATES.find(
     (rate) =>
       rate.taxType === taxType &&
-      (rate.territoryCode === territoryCode || 
-       (territoryCode.startsWith('FR-97') && rate.territoryCode === 'FR-DOM')) &&
+      (rate.territoryCode === territoryCode ||
+        (territoryCode.startsWith('FR-97') && rate.territoryCode === 'FR-DOM')) &&
       new Date(rate.validFrom) <= targetDate &&
       new Date(rate.validUntil) >= targetDate
-  )
+  );
 }
 
 /**
@@ -242,13 +240,13 @@ export function calculateRateEvolution(
   startDate: string,
   endDate: string
 ): {
-  startRate: number | null
-  endRate: number | null
-  evolutionAmount: number | null
-  evolutionPercentage: number | null
+  startRate: number | null;
+  endRate: number | null;
+  evolutionAmount: number | null;
+  evolutionPercentage: number | null;
 } {
-  const startRate = getRateAtDate(taxType, territoryCode, startDate)
-  const endRate = getRateAtDate(taxType, territoryCode, endDate)
+  const startRate = getRateAtDate(taxType, territoryCode, startDate);
+  const endRate = getRateAtDate(taxType, territoryCode, endDate);
 
   if (!startRate || !endRate) {
     return {
@@ -256,18 +254,18 @@ export function calculateRateEvolution(
       endRate: endRate?.rate ?? null,
       evolutionAmount: null,
       evolutionPercentage: null,
-    }
+    };
   }
 
-  const evolutionAmount = endRate.rate - startRate.rate
-  const evolutionPercentage = (evolutionAmount / startRate.rate) * 100
+  const evolutionAmount = endRate.rate - startRate.rate;
+  const evolutionPercentage = (evolutionAmount / startRate.rate) * 100;
 
   return {
     startRate: startRate.rate,
     endRate: endRate.rate,
     evolutionAmount,
     evolutionPercentage,
-  }
+  };
 }
 
 /**
@@ -277,18 +275,16 @@ export function getTaxTimeline(
   taxType: HistoricalTaxRate['taxType'],
   territoryCode?: string
 ): HistoricalTaxRate[] {
-  let rates = HISTORICAL_TAX_RATES.filter((rate) => rate.taxType === taxType)
-  
+  let rates = HISTORICAL_TAX_RATES.filter((rate) => rate.taxType === taxType);
+
   if (territoryCode) {
     rates = rates.filter(
       (rate) =>
         rate.territoryCode === territoryCode ||
         rate.territoryCode === 'FR-ALL' ||
         (territoryCode.startsWith('FR-97') && rate.territoryCode === 'FR-DOM')
-    )
+    );
   }
 
-  return rates.sort(
-    (a, b) => new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime()
-  )
+  return rates.sort((a, b) => new Date(a.validFrom).getTime() - new Date(b.validFrom).getTime());
 }

@@ -23,9 +23,9 @@ describe('IEVR Calculations', () => {
         energie: 70,
         autres: 67,
       };
-      
+
       const weights = {
-        alimentation: 0.40,
+        alimentation: 0.4,
         hygiene: 0.15,
         transport: 0.15,
         energie: 0.15,
@@ -33,7 +33,7 @@ describe('IEVR Calculations', () => {
       };
 
       const score = calculateIEVRScore(categories, weights);
-      
+
       // Expected: 65*0.4 + 68*0.15 + 72*0.15 + 70*0.15 + 67*0.15
       // = 26 + 10.2 + 10.8 + 10.5 + 10.05 = 67.55 ≈ 68
       expect(score).toBe(68);
@@ -55,9 +55,9 @@ describe('IEVR Calculations', () => {
         energie: 100,
         autres: 100,
       };
-      
+
       const weights = {
-        alimentation: 0.40,
+        alimentation: 0.4,
         hygiene: 0.15,
         transport: 0.15,
         energie: 0.15,
@@ -72,7 +72,7 @@ describe('IEVR Calculations', () => {
   describe('compareToReference', () => {
     it('should calculate correct difference for lower score', () => {
       const result = compareToReference(68, 100);
-      
+
       expect(result.difference).toBe(-32);
       expect(result.percentDiff).toBe(-32);
       expect(result.interpretation).toBe('plus difficile');
@@ -80,7 +80,7 @@ describe('IEVR Calculations', () => {
 
     it('should calculate correct difference for higher score', () => {
       const result = compareToReference(110, 100);
-      
+
       expect(result.difference).toBe(10);
       expect(result.percentDiff).toBe(10);
       expect(result.interpretation).toBe('plus facile');
@@ -88,13 +88,13 @@ describe('IEVR Calculations', () => {
 
     it('should identify similar scores', () => {
       const result = compareToReference(102, 100);
-      
+
       expect(result.interpretation).toBe('similaire');
     });
 
     it('should use default reference of 100', () => {
       const result = compareToReference(68);
-      
+
       expect(result.difference).toBe(-32);
     });
   });
@@ -102,7 +102,7 @@ describe('IEVR Calculations', () => {
   describe('calculateEvolution', () => {
     it('should calculate positive evolution', () => {
       const result = calculateEvolution(70, 68);
-      
+
       expect(result.change).toBe(2);
       expect(result.percentChange).toBeCloseTo(2.9, 1);
       expect(result.trend).toBe('amélioration');
@@ -110,7 +110,7 @@ describe('IEVR Calculations', () => {
 
     it('should calculate negative evolution', () => {
       const result = calculateEvolution(68, 70);
-      
+
       expect(result.change).toBe(-2);
       expect(result.percentChange).toBeCloseTo(-2.9, 1);
       expect(result.trend).toBe('dégradation');
@@ -118,13 +118,13 @@ describe('IEVR Calculations', () => {
 
     it('should identify stable trend', () => {
       const result = calculateEvolution(68, 68);
-      
+
       expect(result.trend).toBe('stable');
     });
 
     it('should handle missing previous score', () => {
       const result = calculateEvolution(68, null);
-      
+
       expect(result.change).toBe(0);
       expect(result.trend).toBe('stable');
     });
@@ -133,7 +133,7 @@ describe('IEVR Calculations', () => {
   describe('generateExplanation', () => {
     it('should generate explanation for lower score', () => {
       const text = generateExplanation('Guadeloupe', 68, 100);
-      
+
       expect(text).toContain('Guadeloupe');
       expect(text).toContain('plus difficile');
       expect(text).toContain('32%');
@@ -141,13 +141,13 @@ describe('IEVR Calculations', () => {
 
     it('should generate explanation for similar score', () => {
       const text = generateExplanation('Test', 102, 100);
-      
+
       expect(text).toContain('similaire');
     });
 
     it('should generate explanation for higher score', () => {
       const text = generateExplanation('Test', 110, 100);
-      
+
       expect(text).toContain('plus facile');
     });
   });
@@ -191,7 +191,7 @@ describe('IEVR Calculations', () => {
         reference: 'Hexagone',
       },
       categories: {
-        alimentation: { weight: 0.40 },
+        alimentation: { weight: 0.4 },
         hygiene: { weight: 0.15 },
         transport: { weight: 0.15 },
         energie: { weight: 0.15 },
@@ -209,21 +209,21 @@ describe('IEVR Calculations', () => {
     it('should throw error if metadata missing', () => {
       const invalidData = { ...validData };
       delete invalidData.metadata;
-      
+
       expect(() => validateIEVRData(invalidData)).toThrow('Missing metadata');
     });
 
     it('should throw error if categories missing', () => {
       const invalidData = { ...validData };
       delete invalidData.categories;
-      
+
       expect(() => validateIEVRData(invalidData)).toThrow('Missing categories');
     });
 
     it('should throw error if territories missing', () => {
       const invalidData = { ...validData };
       delete invalidData.territories;
-      
+
       expect(() => validateIEVRData(invalidData)).toThrow('Missing territories');
     });
 
@@ -231,12 +231,12 @@ describe('IEVR Calculations', () => {
       const invalidData = {
         metadata: { version: '1.0.0' },
         categories: {
-          alimentation: { weight: 0.40 },
-          hygiene: { weight: 0.20 },
+          alimentation: { weight: 0.4 },
+          hygiene: { weight: 0.2 },
         },
         territories: { FR: { name: 'France' } },
       };
-      
+
       expect(() => validateIEVRData(invalidData)).toThrow('Category weights sum to');
     });
   });

@@ -15,10 +15,17 @@ export function PriceInsightsPanel({ reliability }: PriceInsightsPanelProps) {
     'Les estimations sont calculées à partir de données publiques et déclaratives. Fiabilité basée sur fraîcheur, volume et cohérence.';
 
   return (
-    <aside className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4" aria-label="Indicateurs de fiabilité">
+    <aside
+      className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4"
+      aria-label="Indicateurs de fiabilité"
+    >
       <div className="mb-3 flex items-center justify-between gap-2">
         <h3 className="text-sm font-semibold text-slate-800">Insights observatoire</h3>
-        <span className="cursor-help text-xs text-slate-600" title={tooltipText} aria-label={tooltipText}>
+        <span
+          className="cursor-help text-xs text-slate-600"
+          title={tooltipText}
+          aria-label={tooltipText}
+        >
           ℹ️ Méthodologie
         </span>
       </div>

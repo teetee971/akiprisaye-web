@@ -18,7 +18,9 @@ export const receiptSchema = z.object({
   transaction: z.object({
     date: z.union([
       z.string().datetime(),
-      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Format attendu: YYYY-MM-DD ou YYYY-MM-DDTHH:mm:ssZ" }),
+      z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
+        message: 'Format attendu: YYYY-MM-DD ou YYYY-MM-DDTHH:mm:ssZ',
+      }),
     ]),
     ticket_id: z.string().trim().min(1),
     total_amount: z.number().finite().nonnegative(),
@@ -41,8 +43,12 @@ export const catalogSchema = z.object({
   campaign: z.object({
     name: z.string().trim().min(1),
     retailers: z.array(z.string().trim().min(1)).min(1),
-    validity_start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date format, expected YYYY-MM-DD" }),
-    validity_end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, { message: "Invalid date format, expected YYYY-MM-DD" }),
+    validity_start: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Invalid date format, expected YYYY-MM-DD' }),
+    validity_end: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Invalid date format, expected YYYY-MM-DD' }),
     territory: z.string().trim().min(1),
   }),
   stores_applicable: z.array(z.string().trim().min(1)).min(1),

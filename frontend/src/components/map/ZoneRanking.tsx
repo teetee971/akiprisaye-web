@@ -58,9 +58,7 @@ export function ZoneRanking({
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
-      <h3 className="font-semibold text-lg mb-4">
-        Classement - {zoneName}
-      </h3>
+      <h3 className="font-semibold text-lg mb-4">Classement - {zoneName}</h3>
 
       <div className="space-y-2">
         {displayStores.map((store) => (
@@ -75,10 +73,10 @@ export function ZoneRanking({
                   store.rank === 1
                     ? 'bg-yellow-400 text-yellow-900'
                     : store.rank === 2
-                    ? 'bg-gray-300 text-gray-800'
-                    : store.rank === 3
-                    ? 'bg-orange-300 text-orange-900'
-                    : 'bg-gray-100 text-gray-700'
+                      ? 'bg-gray-300 text-gray-800'
+                      : store.rank === 3
+                        ? 'bg-orange-300 text-orange-900'
+                        : 'bg-gray-100 text-gray-700'
                 }`}
               >
                 {store.rank}
@@ -88,9 +86,7 @@ export function ZoneRanking({
             {/* Store Info */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <p className="font-medium text-gray-900 truncate">
-                  {store.name}
-                </p>
+                <p className="font-medium text-gray-900 truncate">{store.name}</p>
                 {showTrends && (
                   <span className="flex-shrink-0">
                     {store.priceIndex < 40 ? (
@@ -104,9 +100,7 @@ export function ZoneRanking({
                 )}
               </div>
               <p className="text-sm text-gray-600">{store.chain}</p>
-              {store.city && (
-                <p className="text-xs text-gray-500">{store.city}</p>
-              )}
+              {store.city && <p className="text-xs text-gray-500">{store.city}</p>}
             </div>
 
             {/* Price Category */}
@@ -118,9 +112,7 @@ export function ZoneRanking({
               >
                 {CATEGORY_LABELS[store.category]}
               </span>
-              <p className="text-xs text-gray-500 mt-1">
-                {store.priceIndex}/100
-              </p>
+              <p className="text-xs text-gray-500 mt-1">{store.priceIndex}/100</p>
             </div>
           </div>
         ))}

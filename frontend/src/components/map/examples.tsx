@@ -12,10 +12,7 @@ import { StoreMap } from '@/components/map';
 export function BasicMapExample() {
   return (
     <div className="h-screen">
-      <StoreMap
-        initialTerritory="GP"
-        showFilters={false}
-      />
+      <StoreMap initialTerritory="GP" showFilters={false} />
     </div>
   );
 }
@@ -24,10 +21,7 @@ export function BasicMapExample() {
 export function FilteredMapExample() {
   return (
     <div className="h-screen">
-      <StoreMap
-        initialTerritory="MQ"
-        enableClustering={true}
-      />
+      <StoreMap initialTerritory="MQ" enableClustering={true} />
     </div>
   );
 }
@@ -76,10 +70,7 @@ export function MapModalExample() {
 
   return (
     <>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="px-4 py-2 bg-blue-500 text-white rounded"
-      >
+      <button onClick={() => setIsOpen(true)} className="px-4 py-2 bg-blue-500 text-white rounded">
         Voir la carte
       </button>
 

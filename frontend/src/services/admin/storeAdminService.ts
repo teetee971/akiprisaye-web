@@ -45,10 +45,10 @@ export async function getStoresStatic(): Promise<Store[]> {
   try {
     const res = await fetch('/data/stores-database.json');
     if (!res.ok) throw new Error('stores-database.json not found');
-    const json = await res.json() as { stores?: RawStaticStore[] } | RawStaticStore[];
+    const json = (await res.json()) as { stores?: RawStaticStore[] } | RawStaticStore[];
     const raw: RawStaticStore[] = Array.isArray(json)
       ? json
-      : (json as { stores?: RawStaticStore[] }).stores ?? [];
+      : ((json as { stores?: RawStaticStore[] }).stores ?? []);
     _staticStoresCache = raw.map(mapStaticStore);
     return _staticStoresCache;
   } catch {

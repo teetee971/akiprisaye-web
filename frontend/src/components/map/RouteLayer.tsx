@@ -16,7 +16,7 @@ interface RouteLayerProps {
 export function RouteLayer({ route, onClear }: RouteLayerProps) {
   // Convert GeoJSON LineString to Leaflet LatLng array
   const positions: [number, number][] = route.geometry.coordinates.map(
-    coord => [coord[1], coord[0]] // GeoJSON is [lon, lat], Leaflet is [lat, lon]
+    (coord) => [coord[1], coord[0]] // GeoJSON is [lon, lat], Leaflet is [lat, lon]
   );
 
   // Start and end markers

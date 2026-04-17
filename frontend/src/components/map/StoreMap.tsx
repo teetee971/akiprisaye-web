@@ -101,11 +101,10 @@ function MarkerClusterLayer({
 
     stores.forEach((store) => {
       const marker = L.marker([store.lat, store.lon]);
-      const label = store.priceIndex != null
-        ? `${store.name} — indice ${store.priceIndex}`
-        : store.name;
+      const label =
+        store.priceIndex != null ? `${store.name} — indice ${store.priceIndex}` : store.name;
       marker.bindPopup(
-        `<strong>${escapeHtml(store.name)}</strong><br/>${escapeHtml(store.address ?? '')}<br/>${escapeHtml(label)}`,
+        `<strong>${escapeHtml(store.name)}</strong><br/>${escapeHtml(store.address ?? '')}<br/>${escapeHtml(label)}`
       );
       marker.on('click', () => onStoreClick(store));
       group.addLayer(marker);
@@ -133,13 +132,7 @@ function MarkerClusterLayer({
 /**
  * MapController - handles map interactions
  */
-function MapController({
-  center,
-  zoom,
-}: {
-  center: [number, number];
-  zoom: number;
-}) {
+function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap();
 
   useEffect(() => {
@@ -163,9 +156,9 @@ export function StoreMap({
 }: StoreMapProps) {
   const [territory, setTerritory] = useState(initialTerritory);
   const [selectedChains, setSelectedChains] = useState<string[]>([]);
-  const [priceCategory, setPriceCategory] = useState<
-    'all' | 'cheap' | 'medium' | 'expensive'
-  >('all');
+  const [priceCategory, setPriceCategory] = useState<'all' | 'cheap' | 'medium' | 'expensive'>(
+    'all'
+  );
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [radius, setRadius] = useState(10);
   const [openOnly, setOpenOnly] = useState(false);
@@ -283,10 +276,7 @@ export function StoreMap({
 
             {/* Marker Cluster Layer */}
             {displayedStores.length > 0 && (
-              <MarkerClusterLayer
-                stores={displayedStores}
-                onStoreClick={handleStoreClick}
-              />
+              <MarkerClusterLayer stores={displayedStores} onStoreClick={handleStoreClick} />
             )}
           </MapContainer>
 
@@ -337,7 +327,11 @@ export function StoreMap({
               Magasins à proximité
               {displayedStores.length > 0 && (
                 <span className="ml-2 text-sm font-normal text-gray-600">
-                  ({displayedStores.length}{openOnly && nearbyStores.length !== displayedStores.length ? ` ouverts sur ${nearbyStores.length}` : ''})
+                  ({displayedStores.length}
+                  {openOnly && nearbyStores.length !== displayedStores.length
+                    ? ` ouverts sur ${nearbyStores.length}`
+                    : ''}
+                  )
                 </span>
               )}
             </h2>

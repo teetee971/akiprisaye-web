@@ -1,22 +1,20 @@
-
-
 /**
  * TrendIndicator - Display price trend with icon and color
- * 
+ *
  * Shows trend direction for basket prices over time
  * Only displays if trend data is available
- * 
+ *
  * @param {Object} props
  * @param {'up'|'down'|'stable'|'unknown'} props.direction - Trend direction ('up', 'down', 'stable', 'unknown')
  * @param {number} props.percentageChange - Percentage change value
  * @param {string} props.period - Time period analyzed ('day', 'week', 'month')
  * @param {boolean} props.showPercentage - Whether to show percentage (default: false)
  */
-export default function TrendIndicator({ 
-  direction, 
-  percentageChange, 
-  period, 
-  showPercentage = false 
+export default function TrendIndicator({
+  direction,
+  percentageChange,
+  period,
+  showPercentage = false,
 }) {
   // Don't render if no valid trend data
   if (!direction || direction === 'unknown') {
@@ -57,16 +55,17 @@ export default function TrendIndicator({
   const config = getTrendConfig();
   if (!config) return null;
 
-  const periodLabel = {
-    day: '24h',
-    week: '7j',
-    month: '30j',
-  }[period] || period;
+  const periodLabel =
+    {
+      day: '24h',
+      week: '7j',
+      month: '30j',
+    }[period] || period;
 
   const absPercentage = Math.abs(percentageChange).toFixed(1);
 
   return (
-    <div 
+    <div
       className={`
         inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium
         ${config.bg} ${config.border} ${config.color} border
@@ -76,9 +75,7 @@ export default function TrendIndicator({
       <span className="text-sm font-bold">{config.icon}</span>
       <span>{config.label}</span>
       {showPercentage && percentageChange !== 0 && (
-        <span className="font-semibold">
-          {absPercentage}%
-        </span>
+        <span className="font-semibold">{absPercentage}%</span>
       )}
       <span className="opacity-70">({periodLabel})</span>
     </div>

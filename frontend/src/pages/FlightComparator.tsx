@@ -34,7 +34,10 @@ import ComparisonSummary from '../components/comparateur/ComparisonSummary';
 import LoadingSkeleton from '../components/comparateur/LoadingSkeleton';
 import SortControl from '../components/comparateur/SortControl';
 import ShareButton from '../components/comparateur/ShareButton';
-import { exportFlightComparisonToCSV, exportFlightComparisonToText } from '../utils/exportComparison';
+import {
+  exportFlightComparisonToCSV,
+  exportFlightComparisonToText,
+} from '../utils/exportComparison';
 import { HeroImage } from '../components/ui/HeroImage';
 import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 import { buildBookingUrl } from '../utils/bookingLinks';
@@ -66,9 +69,10 @@ const getAirlineBookingUrl = (
   } else {
     const fallback = AIRLINE_BOOKING_URLS[airlineCode];
     if (!fallback) return '#';
-    base = airlineCode === 'AF'
-      ? `${fallback}?origin=${originCode}&destination=${destCode}&cabin=ECONOMY&adults=1`
-      : fallback;
+    base =
+      airlineCode === 'AF'
+        ? `${fallback}?origin=${originCode}&destination=${destCode}&cabin=ECONOMY&adults=1`
+        : fallback;
   }
   return buildBookingUrl(base, 'comparateur-vols');
 };
@@ -151,8 +155,8 @@ const FlightComparator: React.FC = () => {
         originAirport.region === 'DOM' && destinationAirport.region === 'Métropole'
           ? 'dom_metropole'
           : originAirport.region === 'DOM' && destinationAirport.region === 'DOM'
-          ? 'inter_dom'
-          : 'regional',
+            ? 'inter_dom'
+            : 'regional',
     };
 
     // Apply filters
@@ -221,9 +225,11 @@ const FlightComparator: React.FC = () => {
   const priceComparisonChartData = useMemo(() => {
     if (!comparisonResult) return null;
 
-    const labels = comparisonResult.airlines.map(r => r.flightPrice.airline);
-    const prices = comparisonResult.airlines.map(r => r.flightPrice.price);
-    const additionalFees = comparisonResult.airlines.map(r => r.flightPrice.additionalFees?.total || 0);
+    const labels = comparisonResult.airlines.map((r) => r.flightPrice.airline);
+    const prices = comparisonResult.airlines.map((r) => r.flightPrice.price);
+    const additionalFees = comparisonResult.airlines.map(
+      (r) => r.flightPrice.additionalFees?.total || 0
+    );
 
     return {
       labels,
@@ -250,11 +256,13 @@ const FlightComparator: React.FC = () => {
   const timingAnalysisChartData = useMemo(() => {
     if (!comparisonResult?.purchaseTimingAnalysis) return null;
 
-    const buckets = comparisonResult.purchaseTimingAnalysis.timingBuckets.filter(b => b.observationCount > 0);
-    const labels = buckets.map(b => b.label);
-    const avgPrices = buckets.map(b => b.averagePrice);
-    const minPrices = buckets.map(b => b.minPrice);
-    const maxPrices = buckets.map(b => b.maxPrice);
+    const buckets = comparisonResult.purchaseTimingAnalysis.timingBuckets.filter(
+      (b) => b.observationCount > 0
+    );
+    const labels = buckets.map((b) => b.label);
+    const avgPrices = buckets.map((b) => b.averagePrice);
+    const minPrices = buckets.map((b) => b.minPrice);
+    const maxPrices = buckets.map((b) => b.maxPrice);
 
     return {
       labels,
@@ -287,10 +295,10 @@ const FlightComparator: React.FC = () => {
   // Sorted airlines for display
   const sortedAirlines = useMemo(() => {
     if (!comparisonResult) return [];
-    
+
     const sorted = [...comparisonResult.airlines].sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortBy) {
         case 'price':
           comparison = a.flightPrice.price - b.flightPrice.price;
@@ -305,17 +313,19 @@ const FlightComparator: React.FC = () => {
           comparison = a.flightPrice.airline.localeCompare(b.flightPrice.airline);
           break;
       }
-      
+
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-    
+
     return sorted;
   }, [comparisonResult, sortBy, sortDirection]);
 
   // ── Profile-based recommendations ──────────────────────────────────────────
   const cheapestAirline = useMemo(() => {
     if (!comparisonResult || comparisonResult.airlines.length === 0) return null;
-    return [...comparisonResult.airlines].sort((a, b) => a.flightPrice.price - b.flightPrice.price)[0];
+    return [...comparisonResult.airlines].sort(
+      (a, b) => a.flightPrice.price - b.flightPrice.price
+    )[0];
   }, [comparisonResult]);
 
   const bestWithBaggage = useMemo(() => {
@@ -392,7 +402,12 @@ const FlightComparator: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3 mt-2">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-500/20 border border-green-500/40 rounded-full text-xs text-green-300 drop-shadow">
             <RefreshCw className="w-3 h-3" />
-            Données du {lastRefreshed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+            Données du{' '}
+            {lastRefreshed.toLocaleDateString('fr-FR', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
           </span>
           <BookingLinkBadge />
         </div>
@@ -405,11 +420,25 @@ const FlightComparator: React.FC = () => {
       <div className="min-h-screen bg-slate-950">
         <Helmet>
           <title>Comparateur Vols DOM-Métropole — A KI PRI SA YÉ</title>
-          <meta name="description" content="Comparez les prix des billets d'avion entre les DOM, la Métropole et les liaisons inter-îles." />
-                <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/comparateur-vols" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/comparateur-vols" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/comparateur-vols" />
-      </Helmet>
+          <meta
+            name="description"
+            content="Comparez les prix des billets d'avion entre les DOM, la Métropole et les liaisons inter-îles."
+          />
+          <link
+            rel="canonical"
+            href="https://teetee971.github.io/akiprisaye-web/comparateur-vols"
+          />
+          <link
+            rel="alternate"
+            hrefLang="fr"
+            href="https://teetee971.github.io/akiprisaye-web/comparateur-vols"
+          />
+          <link
+            rel="alternate"
+            hrefLang="x-default"
+            href="https://teetee971.github.io/akiprisaye-web/comparateur-vols"
+          />
+        </Helmet>
         {heroSection}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="space-y-6">
@@ -443,7 +472,10 @@ const FlightComparator: React.FC = () => {
     <div className="min-h-screen bg-slate-950">
       <Helmet>
         <title>Comparateur Vols DOM-Métropole — A KI PRI SA YÉ</title>
-        <meta name="description" content="Comparez les prix des billets d'avion entre les DOM, la Métropole et les liaisons inter-îles. Données observatoire citoyennes." />
+        <meta
+          name="description"
+          content="Comparez les prix des billets d'avion entre les DOM, la Métropole et les liaisons inter-îles. Données observatoire citoyennes."
+        />
       </Helmet>
       {heroSection}
       {/* Main Content */}
@@ -455,7 +487,10 @@ const FlightComparator: React.FC = () => {
             <div className="grid md:grid-cols-2 gap-4">
               {/* Origin */}
               <div>
-                <label htmlFor="vol-origine" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="vol-origine"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Origine
                 </label>
                 <select
@@ -483,7 +518,10 @@ const FlightComparator: React.FC = () => {
 
               {/* Destination */}
               <div>
-                <label htmlFor="vol-destination" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="vol-destination"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Destination
                 </label>
                 <select
@@ -511,7 +549,10 @@ const FlightComparator: React.FC = () => {
 
               {/* Season Filter */}
               <div>
-                <label htmlFor="vol-periode" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="vol-periode"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Période
                 </label>
                 <select
@@ -529,7 +570,10 @@ const FlightComparator: React.FC = () => {
 
               {/* Price Type Filter */}
               <div>
-                <label htmlFor="vol-classe" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="vol-classe"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Classe
                 </label>
                 <select
@@ -612,7 +656,9 @@ const FlightComparator: React.FC = () => {
                     <p className="text-2xl font-bold text-sky-400">
                       {comparisonResult.aggregation.airlineCount}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">{comparisonResult.aggregation.totalObservations} observations</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {comparisonResult.aggregation.totalObservations} observations
+                    </p>
                   </div>
                 </div>
 
@@ -626,22 +672,33 @@ const FlightComparator: React.FC = () => {
                       <div>
                         <p className="text-xs text-gray-400">Haute saison</p>
                         <p className="text-lg font-semibold text-red-300">
-                          {formatPrice(comparisonResult.aggregation.seasonalVariation.highSeasonAverage)}
+                          {formatPrice(
+                            comparisonResult.aggregation.seasonalVariation.highSeasonAverage
+                          )}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-400">Basse saison</p>
                         <p className="text-lg font-semibold text-green-300">
-                          {formatPrice(comparisonResult.aggregation.seasonalVariation.lowSeasonAverage)}
+                          {formatPrice(
+                            comparisonResult.aggregation.seasonalVariation.lowSeasonAverage
+                          )}
                         </p>
                       </div>
                       <div>
                         <p className="text-xs text-gray-400">Surcoût été</p>
                         <p className="text-lg font-semibold text-orange-300">
-                          +{comparisonResult.aggregation.seasonalVariation.seasonalDifferencePercentage.toFixed(1)}%
+                          +
+                          {comparisonResult.aggregation.seasonalVariation.seasonalDifferencePercentage.toFixed(
+                            1
+                          )}
+                          %
                         </p>
                         <p className="text-xs text-gray-500">
-                          +{formatPrice(comparisonResult.aggregation.seasonalVariation.seasonalDifference)}
+                          +
+                          {formatPrice(
+                            comparisonResult.aggregation.seasonalVariation.seasonalDifference
+                          )}
                         </p>
                       </div>
                     </div>
@@ -688,7 +745,8 @@ const FlightComparator: React.FC = () => {
                   Tableau comparatif complet
                 </h2>
                 <p className="text-xs text-gray-400 mb-4">
-                  Comparaison détaillée de toutes les compagnies — cliquez sur « Voir l'offre » pour vérifier le prix actuel sur le site de la compagnie.
+                  Comparaison détaillée de toutes les compagnies — cliquez sur « Voir l'offre » pour
+                  vérifier le prix actuel sur le site de la compagnie.
                 </p>
                 <div className="overflow-x-auto -mx-5 px-5">
                   <table className="w-full text-sm min-w-[760px]">
@@ -696,15 +754,21 @@ const FlightComparator: React.FC = () => {
                       <tr className="border-b border-slate-700 text-left">
                         <th className="py-3 px-3 text-gray-400 font-medium">#</th>
                         <th className="py-3 px-3 text-gray-400 font-medium">Compagnie</th>
-                        <th className="py-3 px-3 text-gray-400 font-medium text-right">Prix obs.</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-right">
+                          Prix obs.
+                        </th>
                         <th className="py-3 px-3 text-gray-400 font-medium text-center">
-                          <span title="Bagages inclus"><Luggage className="w-4 h-4 inline" /></span>
+                          <span title="Bagages inclus">
+                            <Luggage className="w-4 h-4 inline" />
+                          </span>
                         </th>
                         <th className="py-3 px-3 text-gray-400 font-medium text-center">Modif.</th>
                         <th className="py-3 px-3 text-gray-400 font-medium text-center">Remb.</th>
                         <th className="py-3 px-3 text-gray-400 font-medium text-right">Durée</th>
                         <th className="py-3 px-3 text-gray-400 font-medium text-center">Escales</th>
-                        <th className="py-3 px-3 text-gray-400 font-medium text-right">Frais sup.</th>
+                        <th className="py-3 px-3 text-gray-400 font-medium text-right">
+                          Frais sup.
+                        </th>
                         <th className="py-3 px-3 text-gray-400 font-medium text-right">Total</th>
                         <th className="py-3 px-3 text-gray-400 font-medium text-center">Score</th>
                         <th className="py-3 px-3 text-gray-400 font-medium text-center">Action</th>
@@ -729,7 +793,13 @@ const FlightComparator: React.FC = () => {
                           comparisonResult.aggregation.maxPrice
                         );
                         const rankEmoji =
-                          ranking.rank === 1 ? '🥇' : ranking.rank === 2 ? '🥈' : ranking.rank === 3 ? '🥉' : `#${ranking.rank}`;
+                          ranking.rank === 1
+                            ? '🥇'
+                            : ranking.rank === 2
+                              ? '🥈'
+                              : ranking.rank === 3
+                                ? '🥉'
+                                : `#${ranking.rank}`;
                         return (
                           <tr
                             key={ranking.flightPrice.id}
@@ -744,14 +814,16 @@ const FlightComparator: React.FC = () => {
                                   ranking.rank === 1
                                     ? 'text-green-300'
                                     : ranking.priceCategory === 'most_expensive'
-                                    ? 'text-red-300'
-                                    : 'text-gray-200'
+                                      ? 'text-red-300'
+                                      : 'text-gray-200'
                                 }`}
                               >
                                 {ranking.flightPrice.airline}
                               </span>
                               {!ranking.flightPrice.verified && (
-                                <span className="ml-1 text-xs text-yellow-500/80">(non vérifié)</span>
+                                <span className="ml-1 text-xs text-yellow-500/80">
+                                  (non vérifié)
+                                </span>
                               )}
                             </td>
                             <td className="py-3 px-3 text-right">
@@ -760,8 +832,8 @@ const FlightComparator: React.FC = () => {
                                   ranking.rank === 1
                                     ? 'text-green-400'
                                     : ranking.priceCategory === 'most_expensive'
-                                    ? 'text-red-400'
-                                    : 'text-gray-100'
+                                      ? 'text-red-400'
+                                      : 'text-gray-100'
                                 }`}
                               >
                                 {formatPrice(ranking.flightPrice.price)}
@@ -824,10 +896,10 @@ const FlightComparator: React.FC = () => {
                                     score >= 80
                                       ? 'bg-green-500/20 text-green-300'
                                       : score >= 60
-                                      ? 'bg-blue-500/20 text-blue-300'
-                                      : score >= 40
-                                      ? 'bg-yellow-500/20 text-yellow-300'
-                                      : 'bg-red-500/20 text-red-300'
+                                        ? 'bg-blue-500/20 text-blue-300'
+                                        : score >= 40
+                                          ? 'bg-yellow-500/20 text-yellow-300'
+                                          : 'bg-red-500/20 text-red-300'
                                   }`}
                                 >
                                   {score}/100
@@ -855,7 +927,8 @@ const FlightComparator: React.FC = () => {
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   <p className="text-xs text-gray-500 flex items-center gap-1.5">
                     <Info className="w-3.5 h-3.5 flex-shrink-0" />
-                    Prix observés à titre indicatif. Vérifiez le tarif exact en cliquant sur « Voir l'offre ».
+                    Prix observés à titre indicatif. Vérifiez le tarif exact en cliquant sur « Voir
+                    l'offre ».
                   </p>
                   <BookingLinkBadge showTooltip={true} size="sm" />
                 </div>
@@ -917,7 +990,9 @@ const FlightComparator: React.FC = () => {
                       </div>
                       <p className="text-xs text-gray-400 mb-3">
                         ✅ Bagage inclus
-                        {bestWithBaggage.flightPrice.fareConditions.changeable ? ' · ✅ Modifiable' : ''}
+                        {bestWithBaggage.flightPrice.fareConditions.changeable
+                          ? ' · ✅ Modifiable'
+                          : ''}
                       </p>
                       <a
                         href={getAirlineBookingUrl(
@@ -949,8 +1024,12 @@ const FlightComparator: React.FC = () => {
                       </div>
                       <p className="text-xs text-gray-400 mb-3">
                         {mostFlexible.flightPrice.fareConditions.changeable ? '✅ Modifiable' : ''}
-                        {mostFlexible.flightPrice.fareConditions.refundable ? ' · ✅ Remboursable' : ''}
-                        {mostFlexible.flightPrice.fareConditions.baggageIncluded ? ' · ✅ Bagages' : ''}
+                        {mostFlexible.flightPrice.fareConditions.refundable
+                          ? ' · ✅ Remboursable'
+                          : ''}
+                        {mostFlexible.flightPrice.fareConditions.baggageIncluded
+                          ? ' · ✅ Bagages'
+                          : ''}
                       </p>
                       <a
                         href={getAirlineBookingUrl(
@@ -1014,8 +1093,6 @@ const FlightComparator: React.FC = () => {
                 </div>
               </section>
 
-
-
               {/* Airlines Comparison */}
               <section className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
@@ -1036,8 +1113,7 @@ const FlightComparator: React.FC = () => {
                 <div className="space-y-3">
                   {sortedAirlines.map((ranking) => {
                     const totalWithFees =
-                      ranking.flightPrice.price +
-                      (ranking.flightPrice.additionalFees?.total || 0);
+                      ranking.flightPrice.price + (ranking.flightPrice.additionalFees?.total || 0);
                     const bookingUrl = getAirlineBookingUrl(
                       ranking.flightPrice.airlineCode,
                       ranking.flightPrice.route.origin.code,
@@ -1052,7 +1128,13 @@ const FlightComparator: React.FC = () => {
                       comparisonResult.aggregation.maxPrice
                     );
                     const rankEmoji =
-                      ranking.rank === 1 ? '🥇' : ranking.rank === 2 ? '🥈' : ranking.rank === 3 ? '🥉' : `#${ranking.rank}`;
+                      ranking.rank === 1
+                        ? '🥇'
+                        : ranking.rank === 2
+                          ? '🥈'
+                          : ranking.rank === 3
+                            ? '🥉'
+                            : `#${ranking.rank}`;
                     return (
                       <div
                         key={ranking.flightPrice.id}
@@ -1073,10 +1155,10 @@ const FlightComparator: React.FC = () => {
                                 score >= 80
                                   ? 'bg-green-500/20 text-green-300'
                                   : score >= 60
-                                  ? 'bg-blue-500/20 text-blue-300'
-                                  : score >= 40
-                                  ? 'bg-yellow-500/20 text-yellow-300'
-                                  : 'bg-red-500/20 text-red-300'
+                                    ? 'bg-blue-500/20 text-blue-300'
+                                    : score >= 40
+                                      ? 'bg-yellow-500/20 text-yellow-300'
+                                      : 'bg-red-500/20 text-red-300'
                               }`}
                             >
                               Score {score}/100
@@ -1125,55 +1207,90 @@ const FlightComparator: React.FC = () => {
                           </div>
                           <div>
                             <p className="text-gray-400 text-xs mb-0.5">Escales</p>
-                            <p className={`font-semibold ${ranking.flightPrice.stops === 0 ? 'text-green-400' : 'text-orange-400'}`}>
-                              {ranking.flightPrice.stops === 0 ? 'Direct' : `${ranking.flightPrice.stops} escale(s)`}
+                            <p
+                              className={`font-semibold ${ranking.flightPrice.stops === 0 ? 'text-green-400' : 'text-orange-400'}`}
+                            >
+                              {ranking.flightPrice.stops === 0
+                                ? 'Direct'
+                                : `${ranking.flightPrice.stops} escale(s)`}
                             </p>
                           </div>
                           <div>
                             <p className="text-gray-400 text-xs mb-0.5">Vs. moyenne</p>
-                            <p className={`font-semibold text-sm ${ranking.absoluteDifferenceFromAverage < 0 ? 'text-green-400' : 'text-orange-400'}`}>
+                            <p
+                              className={`font-semibold text-sm ${ranking.absoluteDifferenceFromAverage < 0 ? 'text-green-400' : 'text-orange-400'}`}
+                            >
                               {ranking.absoluteDifferenceFromAverage > 0 ? '+' : ''}
                               {ranking.percentageDifferenceFromAverage.toFixed(1)}%
                               <span className="text-xs ml-1 text-gray-400">
-                                ({ranking.absoluteDifferenceFromAverage > 0 ? '+' : ''}{formatPrice(ranking.absoluteDifferenceFromAverage)})
+                                ({ranking.absoluteDifferenceFromAverage > 0 ? '+' : ''}
+                                {formatPrice(ranking.absoluteDifferenceFromAverage)})
                               </span>
                             </p>
                           </div>
                           <div>
                             <p className="text-gray-400 text-xs mb-0.5">Confiance</p>
-                            <p className={`font-semibold text-xs ${ranking.flightPrice.confidence === 'high' ? 'text-green-400' : ranking.flightPrice.confidence === 'medium' ? 'text-yellow-400' : 'text-red-400'}`}>
-                              {ranking.flightPrice.confidence === 'high' ? '✅ Élevée' : ranking.flightPrice.confidence === 'medium' ? '⚠️ Moyenne' : '❌ Faible'}
+                            <p
+                              className={`font-semibold text-xs ${ranking.flightPrice.confidence === 'high' ? 'text-green-400' : ranking.flightPrice.confidence === 'medium' ? 'text-yellow-400' : 'text-red-400'}`}
+                            >
+                              {ranking.flightPrice.confidence === 'high'
+                                ? '✅ Élevée'
+                                : ranking.flightPrice.confidence === 'medium'
+                                  ? '⚠️ Moyenne'
+                                  : '❌ Faible'}
                             </p>
                           </div>
                           <div>
                             <p className="text-gray-400 text-xs mb-0.5">Observations</p>
-                            <p className="font-semibold text-xs text-gray-300">{ranking.flightPrice.volume} obs.</p>
+                            <p className="font-semibold text-xs text-gray-300">
+                              {ranking.flightPrice.volume} obs.
+                            </p>
                           </div>
                           <div>
                             <p className="text-gray-400 text-xs mb-0.5">Saison</p>
                             <p className="font-semibold text-xs text-gray-300">
-                              {ranking.flightPrice.timing.season === 'high' ? '🔴 Haute' : ranking.flightPrice.timing.season === 'low' ? '🟢 Basse' : '🟡 Interméd.'}
+                              {ranking.flightPrice.timing.season === 'high'
+                                ? '🔴 Haute'
+                                : ranking.flightPrice.timing.season === 'low'
+                                  ? '🟢 Basse'
+                                  : '🟡 Interméd.'}
                             </p>
                           </div>
                         </div>
 
                         {/* Fare Conditions */}
                         <div className="flex flex-wrap gap-2 mb-3">
-                          <span className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.baggageIncluded ? 'bg-green-500/20 text-green-300' : 'bg-slate-800 text-gray-500'}`}>
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.baggageIncluded ? 'bg-green-500/20 text-green-300' : 'bg-slate-800 text-gray-500'}`}
+                          >
                             <Luggage className="w-3 h-3" />
-                            {ranking.flightPrice.fareConditions.baggageIncluded ? 'Bagages inclus' : 'Bagages payants'}
+                            {ranking.flightPrice.fareConditions.baggageIncluded
+                              ? 'Bagages inclus'
+                              : 'Bagages payants'}
                           </span>
-                          <span className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.changeable ? 'bg-purple-500/20 text-purple-300' : 'bg-slate-800 text-gray-500'}`}>
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.changeable ? 'bg-purple-500/20 text-purple-300' : 'bg-slate-800 text-gray-500'}`}
+                          >
                             <RefreshCw className="w-3 h-3" />
-                            {ranking.flightPrice.fareConditions.changeable ? 'Modifiable' : 'Non modifiable'}
+                            {ranking.flightPrice.fareConditions.changeable
+                              ? 'Modifiable'
+                              : 'Non modifiable'}
                           </span>
-                          <span className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.refundable ? 'bg-blue-500/20 text-blue-300' : 'bg-slate-800 text-gray-500'}`}>
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.refundable ? 'bg-blue-500/20 text-blue-300' : 'bg-slate-800 text-gray-500'}`}
+                          >
                             <ShieldCheck className="w-3 h-3" />
-                            {ranking.flightPrice.fareConditions.refundable ? 'Remboursable' : 'Non remboursable'}
+                            {ranking.flightPrice.fareConditions.refundable
+                              ? 'Remboursable'
+                              : 'Non remboursable'}
                           </span>
-                          <span className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.seatSelection ? 'bg-sky-500/20 text-sky-300' : 'bg-slate-800 text-gray-500'}`}>
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full flex items-center gap-1 ${ranking.flightPrice.fareConditions.seatSelection ? 'bg-sky-500/20 text-sky-300' : 'bg-slate-800 text-gray-500'}`}
+                          >
                             <Tag className="w-3 h-3" />
-                            {ranking.flightPrice.fareConditions.seatSelection ? 'Siège choisi' : 'Siège aléatoire'}
+                            {ranking.flightPrice.fareConditions.seatSelection
+                              ? 'Siège choisi'
+                              : 'Siège aléatoire'}
                           </span>
                         </div>
 
@@ -1182,25 +1299,40 @@ const FlightComparator: React.FC = () => {
                           <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-2 mb-3 text-xs text-orange-300 flex flex-wrap gap-3">
                             <span>⚠️ Frais supplémentaires :</span>
                             {ranking.flightPrice.additionalFees.baggage != null && (
-                              <span>Bagage : {formatPrice(ranking.flightPrice.additionalFees.baggage)}</span>
+                              <span>
+                                Bagage : {formatPrice(ranking.flightPrice.additionalFees.baggage)}
+                              </span>
                             )}
                             {ranking.flightPrice.additionalFees.seat != null && (
-                              <span>Siège : {formatPrice(ranking.flightPrice.additionalFees.seat)}</span>
+                              <span>
+                                Siège : {formatPrice(ranking.flightPrice.additionalFees.seat)}
+                              </span>
                             )}
-                            {ranking.flightPrice.additionalFees.booking != null && ranking.flightPrice.additionalFees.booking > 0 && (
-                              <span>Réservation : {formatPrice(ranking.flightPrice.additionalFees.booking)}</span>
-                            )}
-                            <span className="font-bold">Total : {formatPrice(ranking.flightPrice.additionalFees.total)}</span>
+                            {ranking.flightPrice.additionalFees.booking != null &&
+                              ranking.flightPrice.additionalFees.booking > 0 && (
+                                <span>
+                                  Réservation :{' '}
+                                  {formatPrice(ranking.flightPrice.additionalFees.booking)}
+                                </span>
+                              )}
+                            <span className="font-bold">
+                              Total : {formatPrice(ranking.flightPrice.additionalFees.total)}
+                            </span>
                           </div>
                         )}
 
                         {/* Timing Info */}
                         <div className="text-xs text-gray-500 flex flex-wrap gap-x-4 gap-y-1">
-                          <span>📅 Observé le {formatDate(ranking.flightPrice.timing.purchaseDate)}</span>
-                          <span>✈️ {ranking.flightPrice.timing.daysBeforeDeparture} j avant départ</span>
-                          {ranking.flightPrice.timing.isHoliday && ranking.flightPrice.timing.holidayName && (
-                            <span>🗓 {ranking.flightPrice.timing.holidayName}</span>
-                          )}
+                          <span>
+                            📅 Observé le {formatDate(ranking.flightPrice.timing.purchaseDate)}
+                          </span>
+                          <span>
+                            ✈️ {ranking.flightPrice.timing.daysBeforeDeparture} j avant départ
+                          </span>
+                          {ranking.flightPrice.timing.isHoliday &&
+                            ranking.flightPrice.timing.holidayName && (
+                              <span>🗓 {ranking.flightPrice.timing.holidayName}</span>
+                            )}
                           {!ranking.flightPrice.verified && (
                             <span className="text-yellow-600">⚠️ Non vérifié</span>
                           )}
@@ -1277,15 +1409,27 @@ const FlightComparator: React.FC = () => {
                         💡 Fenêtre d'achat optimale observée
                       </h3>
                       <p className="text-sm text-gray-300">
-                        {comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.daysBeforeDeparture.min} à{' '}
-                        {comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.daysBeforeDeparture.max} jours
-                        avant le départ
+                        {
+                          comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow
+                            .daysBeforeDeparture.min
+                        }{' '}
+                        à{' '}
+                        {
+                          comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow
+                            .daysBeforeDeparture.max
+                        }{' '}
+                        jours avant le départ
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
                         Prix moyen :{' '}
-                        {formatPrice(comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.averagePrice)} —
-                        Économie potentielle :{' '}
-                        {comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.savingsPercentage.toFixed(1)}%
+                        {formatPrice(
+                          comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.averagePrice
+                        )}{' '}
+                        — Économie potentielle :{' '}
+                        {comparisonResult.purchaseTimingAnalysis.optimalPurchaseWindow.savingsPercentage.toFixed(
+                          1
+                        )}
+                        %
                       </p>
                     </div>
                   )}
@@ -1327,7 +1471,8 @@ const FlightComparator: React.FC = () => {
             <div className="bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-8 text-center">
               <AlertCircle className="w-12 h-12 text-gray-500 mx-auto mb-4" />
               <p className="text-gray-400">
-                Aucune donnée disponible pour cette route. Veuillez sélectionner une autre combinaison.
+                Aucune donnée disponible pour cette route. Veuillez sélectionner une autre
+                combinaison.
               </p>
             </div>
           )}

@@ -1,10 +1,9 @@
- 
 /**
  * Route Map Visualization Component
- * 
+ *
  * Displays an interactive map with the optimized shopping route
  * Shows user position, store markers, and route polylines
- * 
+ *
  * Note: Uses Leaflet.js loaded from npm package.
  */
 
@@ -19,10 +18,10 @@ interface RouteMapVisualizationProps {
   className?: string;
 }
 
-export default function RouteMapVisualization({ 
-  route, 
-  userPosition, 
-  className = '' 
+export default function RouteMapVisualization({
+  route,
+  userPosition,
+  className = '',
 }: RouteMapVisualizationProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   // Using any for mapInstanceRef since Leaflet is loaded dynamically
@@ -33,7 +32,7 @@ export default function RouteMapVisualization({
 
   useEffect(() => {
     loadLeafletAndInitMap();
-    
+
     return () => {
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
@@ -76,14 +75,12 @@ export default function RouteMapVisualization({
     if (!mapRef.current || !window.L || !userPosition) return;
 
     // Create map centered on user position
-    const map = window.L.map(mapRef.current).setView(
-      [userPosition.lat, userPosition.lon],
-      12
-    );
+    const map = window.L.map(mapRef.current).setView([userPosition.lat, userPosition.lon], 12);
 
     // Add CartoDB dark tiles for consistency with existing maps
     window.L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 20,
     }).addTo(map);
@@ -117,12 +114,13 @@ export default function RouteMapVisualization({
       iconAnchor: [16, 16],
     });
 
-    const storeIcon = (index: number) => window.L.divIcon({
-      html: `<div style="background: #10b981; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${index + 1}</div>`,
-      className: 'custom-div-icon',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16],
-    });
+    const storeIcon = (index: number) =>
+      window.L.divIcon({
+        html: `<div style="background: #10b981; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${index + 1}</div>`,
+        className: 'custom-div-icon',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      });
 
     // Add user position marker
     const homeMarker = window.L.marker([userPosition.lat, userPosition.lon], { icon: homeIcon });
@@ -142,10 +140,10 @@ export default function RouteMapVisualization({
     // Add store markers
     route.stores.forEach((store, index) => {
       const storeMarker = window.L.marker([store.lat, store.lon], { icon: storeIcon(index) });
-      
+
       const storeName = store.enseigne || store.name || `Magasin ${index + 1}`;
       const storeType = store.type_magasin || 'Magasin';
-      
+
       storeMarker.bindPopup(`
         <div style="min-width: 200px;">
           <h3 style="margin: 0 0 8px 0; color: #10b981; font-size: 16px; font-weight: bold;">
@@ -155,7 +153,7 @@ export default function RouteMapVisualization({
           <p style="margin: 4px 0; font-size: 14px;">📏 ${store.distance.toFixed(1)} km du départ</p>
         </div>
       `);
-      
+
       storeMarker.addTo(map);
       allCoords.push([store.lat, store.lon]);
     });
@@ -163,7 +161,7 @@ export default function RouteMapVisualization({
     // Draw route polyline
     const routeCoords: [number, number][] = [
       [userPosition.lat, userPosition.lon],
-      ...route.stores.map(store => [store.lat, store.lon] as [number, number]),
+      ...route.stores.map((store) => [store.lat, store.lon] as [number, number]),
       [userPosition.lat, userPosition.lon], // Return to start
     ];
 
@@ -174,7 +172,7 @@ export default function RouteMapVisualization({
       smoothFactor: 1,
       dashArray: '10, 10',
     });
-    
+
     routeLine.addTo(map);
 
     // Add arrow decorations to show direction
@@ -187,10 +185,10 @@ export default function RouteMapVisualization({
             symbol: window.L.Symbol.arrowHead({
               pixelSize: 12,
               polygon: false,
-              pathOptions: { stroke: true, color: '#10b981', weight: 2 }
-            })
-          }
-        ]
+              pathOptions: { stroke: true, color: '#10b981', weight: 2 },
+            }),
+          },
+        ],
       });
       decorator.addTo(map);
     }
@@ -204,7 +202,9 @@ export default function RouteMapVisualization({
 
   if (isLoading) {
     return (
-      <div className={`flex items-center justify-center p-8 bg-slate-800/50 rounded-lg ${className}`}>
+      <div
+        className={`flex items-center justify-center p-8 bg-slate-800/50 rounded-lg ${className}`}
+      >
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
           <p className="text-gray-400">Chargement de la carte...</p>
@@ -228,7 +228,7 @@ export default function RouteMapVisualization({
         className="w-full rounded-lg overflow-hidden shadow-lg border border-slate-700"
         style={{ height: '400px', minHeight: '300px' }}
       />
-      
+
       {/* Legend */}
       <div className="mt-3 flex flex-wrap gap-4 text-xs text-gray-400">
         <div className="flex items-center gap-2">
@@ -240,7 +240,13 @@ export default function RouteMapVisualization({
           <span>Magasins (ordre de visite)</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-1 bg-emerald-500" style={{ backgroundImage: 'repeating-linear-gradient(90deg, #10b981, #10b981 10px, transparent 10px, transparent 20px)' }}></div>
+          <div
+            className="w-8 h-1 bg-emerald-500"
+            style={{
+              backgroundImage:
+                'repeating-linear-gradient(90deg, #10b981, #10b981 10px, transparent 10px, transparent 20px)',
+            }}
+          ></div>
           <span>Itinéraire optimisé</span>
         </div>
       </div>

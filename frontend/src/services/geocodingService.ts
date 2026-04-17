@@ -1,6 +1,6 @@
 /**
  * Geocoding Service
- * 
+ *
  * Phase 7: Provides address-to-coordinates conversion using Nominatim (OpenStreetMap)
  * Supports batch geocoding, caching, and rate limiting
  */
@@ -35,26 +35,23 @@ const geocodingCache = new Map<string, GeocodingResult>();
 async function waitForRateLimit(): Promise<void> {
   const now = Date.now();
   const timeSinceLastRequest = now - lastRequestTime;
-  
+
   if (timeSinceLastRequest < RATE_LIMIT_MS) {
     const waitTime = RATE_LIMIT_MS - timeSinceLastRequest;
-    await new Promise(resolve => setTimeout(resolve, waitTime));
+    await new Promise((resolve) => setTimeout(resolve, waitTime));
   }
-  
+
   lastRequestTime = Date.now();
 }
 
 /**
  * Geocode a single address using Nominatim API
- * 
+ *
  * @param address - Full address string to geocode
  * @param useCache - Whether to use cached results (default: true)
  * @returns GeocodingResult with coordinates or error
  */
-export async function geocodeAddress(
-  address: string,
-  useCache = true
-): Promise<GeocodingResult> {
+export async function geocodeAddress(address: string, useCache = true): Promise<GeocodingResult> {
   // Check cache first
   if (useCache && geocodingCache.has(address)) {
     return geocodingCache.get(address)!;
@@ -87,11 +84,11 @@ export async function geocodeAddress(
         address,
         error: 'Adresse introuvable',
       };
-      
+
       if (useCache) {
         geocodingCache.set(address, result);
       }
-      
+
       return result;
     }
 
@@ -128,7 +125,7 @@ export async function geocodeAddress(
 
 /**
  * Geocode multiple addresses in batch with rate limiting
- * 
+ *
  * @param addresses - Array of addresses to geocode
  * @param onProgress - Optional callback for progress updates
  * @returns BatchGeocodingResult with all results and statistics
@@ -144,9 +141,9 @@ export async function geocodeBatch(
   for (let i = 0; i < addresses.length; i++) {
     const address = addresses[i];
     const result = await geocodeAddress(address);
-    
+
     results.push(result);
-    
+
     if (result.success) {
       successful++;
     } else {
@@ -167,15 +164,12 @@ export async function geocodeBatch(
 
 /**
  * Reverse geocode: convert coordinates to address
- * 
+ *
  * @param lat - Latitude
  * @param lon - Longitude
  * @returns Address string or null if not found
  */
-export async function reverseGeocode(
-  lat: number,
-  lon: number
-): Promise<string | null> {
+export async function reverseGeocode(lat: number, lon: number): Promise<string | null> {
   await waitForRateLimit();
 
   const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;

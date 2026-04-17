@@ -16,8 +16,14 @@ function formatPrice(price: number, currency = 'EUR') {
 function formatDate(dateStr: string) {
   if (!dateStr) return '';
   try {
-    return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(dateStr));
-  } catch { return dateStr; }
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(dateStr));
+  } catch {
+    return dateStr;
+  }
 }
 
 /* ── Haversine distance in km ──────────────────────────────────────────── */
@@ -45,7 +51,10 @@ function resizeImageToDataUrl(file: File, maxPx = 600, quality = 0.55): Promise<
       canvas.width = w;
       canvas.height = h;
       const ctx = canvas.getContext('2d');
-      if (!ctx) { reject(new Error('no canvas')); return; }
+      if (!ctx) {
+        reject(new Error('no canvas'));
+        return;
+      }
       ctx.drawImage(img, 0, 0, w, h);
       resolve(canvas.toDataURL('image/jpeg', quality));
     };
@@ -79,11 +88,11 @@ function StoresSection({ territory }: StoresSectionProps) {
 
   useEffect(() => {
     fetch('/data/stores-database.json')
-      .then((r) => r.ok ? (r.json() as Promise<{ stores?: DbStore[] }>) : null)
+      .then((r) => (r.ok ? (r.json() as Promise<{ stores?: DbStore[] }>) : null))
       .then((data) => {
         if (!data?.stores) return;
         const filtered = data.stores.filter(
-          (s) => s.territory.toLowerCase() === territory.toLowerCase(),
+          (s) => s.territory.toLowerCase() === territory.toLowerCase()
         );
         setStores(filtered);
       })
@@ -96,7 +105,7 @@ function StoresSection({ territory }: StoresSectionProps) {
     navigator.geolocation.getCurrentPosition(
       (pos) => setUserPos({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
       () => {},
-      { enableHighAccuracy: false, timeout: 8000 },
+      { enableHighAccuracy: false, timeout: 8000 }
     );
   };
 
@@ -104,9 +113,10 @@ function StoresSection({ territory }: StoresSectionProps) {
     ? [...stores]
         .map((s) => ({
           ...s,
-          distKm: s.lat != null && s.lon != null
-            ? haversineKm(userPos.lat, userPos.lon, s.lat, s.lon)
-            : undefined,
+          distKm:
+            s.lat != null && s.lon != null
+              ? haversineKm(userPos.lat, userPos.lon, s.lat, s.lon)
+              : undefined,
         }))
         .sort((a, b) => (a.distKm ?? 9999) - (b.distKm ?? 9999))
     : stores;
@@ -132,12 +142,14 @@ function StoresSection({ territory }: StoresSectionProps) {
 
       <ul className="space-y-2">
         {visible.map((s) => {
-          const gmapsUrl = s.lat != null && s.lon != null
-            ? `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}`
-            : `https://www.google.com/maps/search/${encodeURIComponent(s.name + ' ' + (s.commune ?? ''))}`;
-          const wazeUrl = s.lat != null && s.lon != null
-            ? `https://waze.com/ul?ll=${s.lat},${s.lon}&navigate=yes`
-            : null;
+          const gmapsUrl =
+            s.lat != null && s.lon != null
+              ? `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lon}`
+              : `https://www.google.com/maps/search/${encodeURIComponent(s.name + ' ' + (s.commune ?? ''))}`;
+          const wazeUrl =
+            s.lat != null && s.lon != null
+              ? `https://waze.com/ul?ll=${s.lat},${s.lon}&navigate=yes`
+              : null;
 
           return (
             <li key={s.id} className="rounded-lg border border-slate-700 p-3 text-sm">
@@ -192,7 +204,9 @@ function StoresSection({ territory }: StoresSectionProps) {
           onClick={() => setExpanded((p) => !p)}
           className="mt-2 w-full text-xs text-slate-400 hover:text-white py-1"
         >
-          {expanded ? '▲ Moins de magasins' : `▼ Voir les ${displayStores.length - 4} autres magasins`}
+          {expanded
+            ? '▲ Moins de magasins'
+            : `▼ Voir les ${displayStores.length - 4} autres magasins`}
         </button>
       )}
     </section>
@@ -231,17 +245,20 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
   const fileRef = useRef<HTMLInputElement>(null);
 
   /* Apply OCR suggestion to form fields (only if field is still empty) */
-  const applySuggestion = useCallback((ocr: OcrExtracted) => {
-    if (!price && ocr.detectedPrices && ocr.detectedPrices.length > 0) {
-      setPrice(String(ocr.detectedPrices[0]));
-    }
-    if (!store && ocr.detectedStore) {
-      setStore(ocr.detectedStore);
-    }
-    if (observedAt === today && ocr.detectedDate) {
-      setObservedAt(ocr.detectedDate);
-    }
-  }, [price, store, observedAt, today]);
+  const applySuggestion = useCallback(
+    (ocr: OcrExtracted) => {
+      if (!price && ocr.detectedPrices && ocr.detectedPrices.length > 0) {
+        setPrice(String(ocr.detectedPrices[0]));
+      }
+      if (!store && ocr.detectedStore) {
+        setStore(ocr.detectedStore);
+      }
+      if (observedAt === today && ocr.detectedDate) {
+        setObservedAt(ocr.detectedDate);
+      }
+    },
+    [price, store, observedAt, today]
+  );
 
   const handlePhotos = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
@@ -279,19 +296,21 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
 
   const runOcrOnPhoto = async (dataUrl: string, idx: number, _total: number) => {
     // Mark as running
-    setPhotos((prev) => prev.map((p, i) => i === idx ? { ...p, ocrStatus: 'running' } : p));
+    setPhotos((prev) => prev.map((p, i) => (i === idx ? { ...p, ocrStatus: 'running' } : p)));
     try {
       const { extractFromPhoto } = await import('../services/photoOcrExtractor');
       const ocrData = await extractFromPhoto(dataUrl, 25000);
       setPhotos((prev) => {
         const updated = prev.map((p, i) =>
-          i === idx ? { ...p, ocrStatus: 'done' as const, ocrData } : p,
+          i === idx ? { ...p, ocrStatus: 'done' as const, ocrData } : p
         );
         return updated;
       });
       applySuggestion(ocrData);
     } catch {
-      setPhotos((prev) => prev.map((p, i) => i === idx ? { ...p, ocrStatus: 'error' as const } : p));
+      setPhotos((prev) =>
+        prev.map((p, i) => (i === idx ? { ...p, ocrStatus: 'error' as const } : p))
+      );
     }
   };
 
@@ -302,8 +321,14 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const val = parseFloat(price.replace(',', '.'));
-    if (isNaN(val) || val <= 0) { setError('Prix invalide'); return; }
-    if (!store.trim()) { setError('Indiquer le magasin'); return; }
+    if (isNaN(val) || val <= 0) {
+      setError('Prix invalide');
+      return;
+    }
+    if (!store.trim()) {
+      setError('Indiquer le magasin');
+      return;
+    }
     setError(null);
 
     const proofPhotos = photos.map((p) => p.dataUrl);
@@ -331,11 +356,21 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
       <div className="rounded-xl border border-green-700 bg-green-500/10 p-4 text-center space-y-2">
         <p className="text-green-300 font-semibold">✅ Prix enregistré localement, merci !</p>
         {photos.length > 0 && (
-          <p className="text-xs text-green-400">{photos.length} photo{photos.length > 1 ? 's' : ''} · {photos.filter(p => p.ocrData).length} analysée{photos.filter(p => p.ocrData).length > 1 ? 's' : ''} par OCR</p>
+          <p className="text-xs text-green-400">
+            {photos.length} photo{photos.length > 1 ? 's' : ''} ·{' '}
+            {photos.filter((p) => p.ocrData).length} analysée
+            {photos.filter((p) => p.ocrData).length > 1 ? 's' : ''} par OCR
+          </p>
         )}
         <button
           type="button"
-          onClick={() => { setSaved(false); setPrice(''); setStore(''); setNote(''); setPhotos([]); }}
+          onClick={() => {
+            setSaved(false);
+            setPrice('');
+            setStore('');
+            setNote('');
+            setPhotos([]);
+          }}
           className="text-xs px-3 py-1.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white"
         >
           Signaler un autre prix
@@ -344,7 +379,7 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
     );
   }
 
-  const anyOcrRunning = photos.some(p => p.ocrStatus === 'running');
+  const anyOcrRunning = photos.some((p) => p.ocrStatus === 'running');
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 text-sm">
@@ -373,21 +408,26 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
           <div className="flex flex-wrap gap-2">
             {photos.map((p, i) => (
               <div key={i} className="relative group">
-                <img
-                  src={p.dataUrl}
-                  alt={`Miniature ${i + 1}`}
-                />
+                <img src={p.dataUrl} alt={`Miniature ${i + 1}`} />
                 {/* OCR status badge */}
-                <span className={`absolute top-0.5 left-0.5 text-[9px] px-1 rounded font-bold ${
-                  p.ocrStatus === 'running' ? 'bg-yellow-500 text-black animate-pulse' :
-                  p.ocrStatus === 'done'    ? 'bg-green-500 text-white' :
-                  p.ocrStatus === 'error'   ? 'bg-red-500 text-white' :
-                  'bg-slate-600 text-white'
-                }`}>
-                  {p.ocrStatus === 'running' ? 'OCR…' :
-                   p.ocrStatus === 'done'    ? '✓ OCR' :
-                   p.ocrStatus === 'error'   ? '✗' :
-                   `#${i + 1}`}
+                <span
+                  className={`absolute top-0.5 left-0.5 text-[9px] px-1 rounded font-bold ${
+                    p.ocrStatus === 'running'
+                      ? 'bg-yellow-500 text-black animate-pulse'
+                      : p.ocrStatus === 'done'
+                        ? 'bg-green-500 text-white'
+                        : p.ocrStatus === 'error'
+                          ? 'bg-red-500 text-white'
+                          : 'bg-slate-600 text-white'
+                  }`}
+                >
+                  {p.ocrStatus === 'running'
+                    ? 'OCR…'
+                    : p.ocrStatus === 'done'
+                      ? '✓ OCR'
+                      : p.ocrStatus === 'error'
+                        ? '✗'
+                        : `#${i + 1}`}
                 </span>
                 {/* Remove button */}
                 <button
@@ -403,13 +443,21 @@ function InlineReportForm({ barcode, productName, territory, onSaved }: ReportFo
                   <div className="absolute bottom-full left-0 mb-1 z-10 hidden group-hover:block w-48 rounded-lg bg-slate-900 border border-slate-600 p-2 text-[10px] text-slate-300 shadow-xl">
                     {p.ocrData.detectedStore && <p>🏪 {p.ocrData.detectedStore}</p>}
                     {p.ocrData.detectedPrices && p.ocrData.detectedPrices.length > 0 && (
-                      <p>💶 {p.ocrData.detectedPrices.slice(0, 3).map(v => `${v}€`).join(', ')}</p>
+                      <p>
+                        💶{' '}
+                        {p.ocrData.detectedPrices
+                          .slice(0, 3)
+                          .map((v) => `${v}€`)
+                          .join(', ')}
+                      </p>
                     )}
                     {p.ocrData.detectedDate && <p>📅 {p.ocrData.detectedDate}</p>}
                     {p.ocrData.detectedProducts && p.ocrData.detectedProducts.length > 0 && (
                       <p className="truncate">📦 {p.ocrData.detectedProducts[0]}</p>
                     )}
-                    <p className="text-slate-500 mt-0.5">Confiance: {Math.round(p.ocrData.confidence)}%</p>
+                    <p className="text-slate-500 mt-0.5">
+                      Confiance: {Math.round(p.ocrData.confidence)}%
+                    </p>
                   </div>
                 )}
               </div>
@@ -560,17 +608,16 @@ function CommunityPrices({ barcode, refreshKey }: CommunityPricesProps) {
           const hasOcr = r.ocrData && r.ocrData.length > 0;
           const isExpanded = expandedId === r.id;
           return (
-            <li key={r.id} className="rounded-lg border border-slate-700 bg-slate-800/40 p-3 text-sm">
+            <li
+              key={r.id}
+              className="rounded-lg border border-slate-700 bg-slate-800/40 p-3 text-sm"
+            >
               <div className="flex gap-3 items-start">
                 {/* Thumbnails */}
                 {photos.length > 0 && (
                   <div className="flex gap-1 flex-shrink-0">
                     {photos.slice(0, 3).map((src, i) => (
-                      <img
-                        key={i}
-                        src={src}
-                        alt={`Miniature ${i + 1}`}
-                      />
+                      <img key={i} src={src} alt={`Miniature ${i + 1}`} />
                     ))}
                     {photos.length > 3 && (
                       <div className="w-12 h-12 rounded-lg border border-slate-600 bg-slate-700 flex items-center justify-center text-xs text-slate-300">
@@ -618,10 +665,16 @@ function CommunityPrices({ barcode, refreshKey }: CommunityPricesProps) {
                 <div className="mt-2 pt-2 border-t border-slate-700 space-y-2">
                   {r.ocrData.map((ocr, i) => (
                     <div key={i} className="rounded-lg bg-slate-900 p-2 text-xs space-y-0.5">
-                      <p className="font-semibold text-slate-400">📷 Photo {i + 1} — Confiance {Math.round(ocr.confidence)}%</p>
-                      {ocr.detectedStore && <p className="text-slate-300">🏪 {ocr.detectedStore}</p>}
+                      <p className="font-semibold text-slate-400">
+                        📷 Photo {i + 1} — Confiance {Math.round(ocr.confidence)}%
+                      </p>
+                      {ocr.detectedStore && (
+                        <p className="text-slate-300">🏪 {ocr.detectedStore}</p>
+                      )}
                       {ocr.detectedPrices && ocr.detectedPrices.length > 0 && (
-                        <p className="text-slate-300">💶 {ocr.detectedPrices.map(p => `${p}€`).join(', ')}</p>
+                        <p className="text-slate-300">
+                          💶 {ocr.detectedPrices.map((p) => `${p}€`).join(', ')}
+                        </p>
                       )}
                       {ocr.detectedDate && <p className="text-slate-300">📅 {ocr.detectedDate}</p>}
                       {ocr.detectedProducts && ocr.detectedProducts.length > 0 && (
@@ -629,16 +682,21 @@ function CommunityPrices({ barcode, refreshKey }: CommunityPricesProps) {
                           <p className="text-slate-400">📦 Produits détectés:</p>
                           <ul className="list-disc list-inside text-slate-300 ml-2">
                             {ocr.detectedProducts.slice(0, 5).map((name, j) => (
-                              <li key={j} className="truncate">{name}</li>
+                              <li key={j} className="truncate">
+                                {name}
+                              </li>
                             ))}
                           </ul>
                         </div>
                       )}
                       {ocr.rawText && (
                         <details className="mt-1">
-                          <summary className="text-slate-500 cursor-pointer">Texte brut OCR</summary>
+                          <summary className="text-slate-500 cursor-pointer">
+                            Texte brut OCR
+                          </summary>
                           <pre className="mt-1 text-[9px] text-slate-400 whitespace-pre-wrap break-words max-h-32 overflow-y-auto">
-                            {ocr.rawText.slice(0, 500)}{ocr.rawText.length > 500 ? '…' : ''}
+                            {ocr.rawText.slice(0, 500)}
+                            {ocr.rawText.length > 500 ? '…' : ''}
                           </pre>
                         </details>
                       )}
@@ -661,7 +719,9 @@ export default function ProductScanResult() {
   const navigate = useNavigate();
   const [state, setState] = useState<LoadState>('loading');
   const [product, setProduct] = useState<OffProductUiModel | null>(null);
-  const [productSource, setProductSource] = useState<'openfoodfacts' | 'local_override' | null>(null);
+  const [productSource, setProductSource] = useState<'openfoodfacts' | 'local_override' | null>(
+    null
+  );
   const [prices, setPrices] = useState<PriceListing[]>([]);
   const [pricesLoading, setPricesLoading] = useState(false);
   const [reportRefreshKey, setReportRefreshKey] = useState(0);
@@ -704,25 +764,48 @@ export default function ProductScanResult() {
       <div className="mx-auto w-full max-w-3xl rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Fiche produit</h1>
-          <span className="rounded-full border border-slate-600 px-3 py-1 text-xs text-slate-300">EAN {barcode}</span>
+          <span className="rounded-full border border-slate-600 px-3 py-1 text-xs text-slate-300">
+            EAN {barcode}
+          </span>
         </div>
 
-        {state === 'loading' && <p className="text-slate-300">Chargement des données OpenFoodFacts…</p>}
+        {state === 'loading' && (
+          <p className="text-slate-300">Chargement des données OpenFoodFacts…</p>
+        )}
 
         {state === 'notFound' && (
           <div className="space-y-4 rounded-xl border border-orange-700 bg-orange-500/10 p-4">
             <p className="font-semibold text-orange-200">Produit introuvable sur OpenFoodFacts.</p>
             <div className="flex flex-wrap gap-3">
-              <button onClick={() => navigate('/scanner')} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold hover:bg-blue-700">Rescanner</button>
-              <a href={`https://world.openfoodfacts.org/product/${barcode}`} target="_blank" rel="noreferrer" className="rounded-lg border border-orange-500 px-4 py-2 text-sm text-orange-100 hover:bg-orange-500/10">Voir sur OpenFoodFacts</a>
+              <button
+                onClick={() => navigate('/scanner')}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold hover:bg-blue-700"
+              >
+                Rescanner
+              </button>
+              <a
+                href={`https://world.openfoodfacts.org/product/${barcode}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-lg border border-orange-500 px-4 py-2 text-sm text-orange-100 hover:bg-orange-500/10"
+              >
+                Voir sur OpenFoodFacts
+              </a>
             </div>
           </div>
         )}
 
         {state === 'errorNetwork' && (
           <div className="space-y-4 rounded-xl border border-red-700 bg-red-500/10 p-4">
-            <p className="font-semibold text-red-200">Erreur réseau lors de la récupération du produit.</p>
-            <button onClick={() => void loadProduct()} className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold hover:bg-red-700">Réessayer</button>
+            <p className="font-semibold text-red-200">
+              Erreur réseau lors de la récupération du produit.
+            </p>
+            <button
+              onClick={() => void loadProduct()}
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold hover:bg-red-700"
+            >
+              Réessayer
+            </button>
           </div>
         )}
 
@@ -730,24 +813,43 @@ export default function ProductScanResult() {
           <div className="space-y-6">
             <header>
               <h2 className="text-2xl font-semibold">{product.name ?? 'Produit sans nom'}</h2>
-              <p className="text-slate-300">{product.brand ?? 'Marque non renseignée'}{product.quantity ? ` · ${product.quantity}` : ''}</p>
+              <p className="text-slate-300">
+                {product.brand ?? 'Marque non renseignée'}
+                {product.quantity ? ` · ${product.quantity}` : ''}
+              </p>
               {productSource === 'local_override' && (
                 <p className="mt-1 text-xs text-slate-400">Source: Catalogue interne</p>
               )}
             </header>
 
-            {product.image && <img src={product.image} alt={product.name ?? 'Produit'} width={400} height={256} loading="lazy" className="max-h-64 w-full rounded-xl object-contain bg-white p-2" />}
+            {product.image && (
+              <img
+                src={product.image}
+                alt={product.name ?? 'Produit'}
+                width={400}
+                height={256}
+                loading="lazy"
+                className="max-h-64 w-full rounded-xl object-contain bg-white p-2"
+              />
+            )}
 
             {/* ── Tendance des prix (données observatoire réelles) ── */}
-            <PriceTrendWidget
-              productName={product.name}
-              territory={territory}
-            />
+            <PriceTrendWidget productName={product.name} territory={territory} />
 
             <div className="flex flex-wrap gap-2 text-sm">
-              {product.nutriScore && <span className="rounded-full bg-green-500/20 px-3 py-1">Nutri-Score {product.nutriScore}</span>}
-              {product.nova && <span className="rounded-full bg-purple-500/20 px-3 py-1">NOVA {product.nova}</span>}
-              {product.ecoScore && <span className="rounded-full bg-emerald-500/20 px-3 py-1">EcoScore {product.ecoScore}</span>}
+              {product.nutriScore && (
+                <span className="rounded-full bg-green-500/20 px-3 py-1">
+                  Nutri-Score {product.nutriScore}
+                </span>
+              )}
+              {product.nova && (
+                <span className="rounded-full bg-purple-500/20 px-3 py-1">NOVA {product.nova}</span>
+              )}
+              {product.ecoScore && (
+                <span className="rounded-full bg-emerald-500/20 px-3 py-1">
+                  EcoScore {product.ecoScore}
+                </span>
+              )}
             </div>
 
             {/* ── CTA : comparaison prix DOM-TOM ── */}
@@ -757,9 +859,23 @@ export default function ProductScanResult() {
             >
               <div>
                 <p className="font-bold text-sm">🏷️ Comparer les prix en DOM-TOM</p>
-                <p className="text-xs text-blue-100 mt-0.5">Enseignes locales, prix en temps réel</p>
+                <p className="text-xs text-blue-100 mt-0.5">
+                  Enseignes locales, prix en temps réel
+                </p>
               </div>
-              <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
             </Link>
 
             {/* ── Prix observés (Open Prices) ── */}
@@ -777,7 +893,9 @@ export default function ProductScanResult() {
               </div>
               {pricesLoading ? (
                 <div className="space-y-2">
-                  {[1,2,3].map(i => <div key={i} className="h-14 rounded-lg bg-slate-800 animate-pulse" />)}
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-14 rounded-lg bg-slate-800 animate-pulse" />
+                  ))}
                 </div>
               ) : prices.length === 0 ? (
                 <p className="text-sm text-slate-400">Aucun prix relevé pour ce produit.</p>
@@ -794,7 +912,9 @@ export default function ProductScanResult() {
                     {latestPrice !== null && (
                       <div className="rounded-lg bg-blue-500/10 border border-blue-600/40 p-2.5 text-center">
                         <p className="text-xs text-blue-300 font-medium">Dernier relevé</p>
-                        <p className="text-xl font-bold text-blue-400">{formatPrice(latestPrice)}</p>
+                        <p className="text-xl font-bold text-blue-400">
+                          {formatPrice(latestPrice)}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -805,11 +925,17 @@ export default function ProductScanResult() {
                     const worst = sorted[sorted.length - 1]?.price ?? null;
                     return sorted.map((listing, i) => {
                       const isBest = listing.price === bestPrice;
-                      const savingVsWorst = worst && worst > listing.price
-                        ? Math.round(((worst - listing.price) / worst) * 100)
-                        : 0;
-                      const storeLine = [listing.locationName, listing.locationCity, listing.locationCountry]
-                        .filter(Boolean).join(' · ');
+                      const savingVsWorst =
+                        worst && worst > listing.price
+                          ? Math.round(((worst - listing.price) / worst) * 100)
+                          : 0;
+                      const storeLine = [
+                        listing.locationName,
+                        listing.locationCity,
+                        listing.locationCountry,
+                      ]
+                        .filter(Boolean)
+                        .join(' · ');
                       return (
                         <div
                           key={i}
@@ -817,18 +943,24 @@ export default function ProductScanResult() {
                         >
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2 min-w-0">
-                              <span className="text-xs font-bold text-slate-500 w-5 flex-shrink-0">#{i + 1}</span>
+                              <span className="text-xs font-bold text-slate-500 w-5 flex-shrink-0">
+                                #{i + 1}
+                              </span>
                               <div className="min-w-0">
                                 {storeLine && (
                                   <p className="font-medium text-white truncate">🏪 {storeLine}</p>
                                 )}
                                 {listing.date && (
-                                  <p className="text-xs text-slate-500">{formatDate(listing.date)}</p>
+                                  <p className="text-xs text-slate-500">
+                                    {formatDate(listing.date)}
+                                  </p>
                                 )}
                               </div>
                             </div>
                             <div className="flex-shrink-0 text-right">
-                              <span className={`text-lg font-bold ${isBest ? 'text-green-400' : 'text-white'}`}>
+                              <span
+                                className={`text-lg font-bold ${isBest ? 'text-green-400' : 'text-white'}`}
+                              >
                                 {formatPrice(listing.price, listing.currency)}
                               </span>
                               {isBest && (
@@ -837,7 +969,9 @@ export default function ProductScanResult() {
                                 </span>
                               )}
                               {savingVsWorst > 0 && isBest && (
-                                <span className="block text-xs text-green-400 font-medium">-{savingVsWorst}%</span>
+                                <span className="block text-xs text-green-400 font-medium">
+                                  -{savingVsWorst}%
+                                </span>
                               )}
                             </div>
                           </div>
@@ -847,7 +981,17 @@ export default function ProductScanResult() {
                   })()}
 
                   <p className="text-xs text-slate-500">
-                    Source: <a href="https://prices.openfoodfacts.org" target="_blank" rel="noreferrer" className="underline">Open Prices</a> · {prices.length} relevé{prices.length > 1 ? 's' : ''} citoyen{prices.length > 1 ? 's' : ''}
+                    Source:{' '}
+                    <a
+                      href="https://prices.openfoodfacts.org"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="underline"
+                    >
+                      Open Prices
+                    </a>{' '}
+                    · {prices.length} relevé{prices.length > 1 ? 's' : ''} citoyen
+                    {prices.length > 1 ? 's' : ''}
                   </p>
                 </div>
               )}
@@ -870,8 +1014,12 @@ export default function ProductScanResult() {
 
             <section className="rounded-xl border border-slate-700 p-4">
               <h3 className="mb-2 text-lg font-semibold">Ingrédients / Allergènes</h3>
-              <p className="text-sm text-slate-200">{product.ingredients ?? 'Ingrédients non disponibles.'}</p>
-              <p className="mt-2 text-sm text-slate-300"><strong>Allergènes:</strong> {product.allergens ?? 'Non renseignés'}</p>
+              <p className="text-sm text-slate-200">
+                {product.ingredients ?? 'Ingrédients non disponibles.'}
+              </p>
+              <p className="mt-2 text-sm text-slate-300">
+                <strong>Allergènes:</strong> {product.allergens ?? 'Non renseignés'}
+              </p>
             </section>
 
             {/* ── Stores section ── */}
@@ -907,15 +1055,28 @@ export default function ProductScanResult() {
               )}
               {!showReportForm && (
                 <p className="text-xs text-slate-500">
-                  Vous avez vu ce produit en magasin ? Indiquez le prix avec preuve photo pour enrichir l'observatoire citoyen.
+                  Vous avez vu ce produit en magasin ? Indiquez le prix avec preuve photo pour
+                  enrichir l'observatoire citoyen.
                 </p>
               )}
             </section>
 
             <div className="flex flex-wrap gap-3">
-              <button onClick={() => navigate('/scanner')} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold hover:bg-blue-700">Rescanner</button>
-              <button onClick={() => navigate('/scan-photo')} className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold hover:bg-purple-700">📷 Par photo</button>
-              <Link to="/scanner" className="rounded-lg border border-slate-500 px-4 py-2 text-sm">Autre code</Link>
+              <button
+                onClick={() => navigate('/scanner')}
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold hover:bg-blue-700"
+              >
+                Rescanner
+              </button>
+              <button
+                onClick={() => navigate('/scan-photo')}
+                className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold hover:bg-purple-700"
+              >
+                📷 Par photo
+              </button>
+              <Link to="/scanner" className="rounded-lg border border-slate-500 px-4 py-2 text-sm">
+                Autre code
+              </Link>
               <ShareButton
                 title={product.name ?? `Produit EAN ${barcode}`}
                 description={`Comparez les prix de ce produit dans les supermarchés DOM-TOM sur A KI PRI SA YÉ`}
@@ -929,4 +1090,3 @@ export default function ProductScanResult() {
     </div>
   );
 }
-

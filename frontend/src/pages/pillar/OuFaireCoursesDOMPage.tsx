@@ -14,7 +14,8 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline: 'Où faire ses courses dans les DOM ? Guide pratique 2026',
-  description: 'Guide pratique pour optimiser ses courses dans les DOM-TOM. Quel supermarché choisir, pour quelle catégorie de produits, et comment économiser au maximum.',
+  description:
+    'Guide pratique pour optimiser ses courses dans les DOM-TOM. Quel supermarché choisir, pour quelle catégorie de produits, et comment économiser au maximum.',
   author: { '@type': 'Organization', name: 'A KI PRI SA YÉ' },
   url: `${SITE_URL}/ou-faire-courses-dom`,
 };
@@ -41,7 +42,7 @@ const CATEGORY_TIPS = [
     category: 'Épicerie sèche (riz, pâtes, conserves)',
     best: 'E.Leclerc',
     alt: 'Leader Price',
-    tip: 'E.Leclerc est systématiquement le moins cher sur les produits d\'épicerie sèche dans les DOM. En quantité, Leader Price est très compétitif sur les basiques.',
+    tip: "E.Leclerc est systématiquement le moins cher sur les produits d'épicerie sèche dans les DOM. En quantité, Leader Price est très compétitif sur les basiques.",
     saving: '10-20%',
   },
   {
@@ -57,15 +58,15 @@ const CATEGORY_TIPS = [
     category: 'Hygiène et cosmétiques',
     best: 'Leader Price',
     alt: 'Carrefour',
-    tip: 'Leader Price casse les prix sur les produits d\'hygiène de base. Pour les marques premium, Carrefour propose souvent des promotions régulières.',
+    tip: "Leader Price casse les prix sur les produits d'hygiène de base. Pour les marques premium, Carrefour propose souvent des promotions régulières.",
     saving: '15-30%',
   },
   {
     icon: '🧹',
-    category: 'Produits d\'entretien',
+    category: "Produits d'entretien",
     best: 'Leader Price',
     alt: 'E.Leclerc',
-    tip: 'Les marques distributeur Leader Price sur les produits d\'entretien sont très compétitives. Acheter en grands formats permet des économies supplémentaires.',
+    tip: "Les marques distributeur Leader Price sur les produits d'entretien sont très compétitives. Acheter en grands formats permet des économies supplémentaires.",
     saving: '20-40%',
   },
   {
@@ -87,8 +88,14 @@ const CATEGORY_TIPS = [
 ];
 
 const WEEKLY_STRATEGY = [
-  { day: 'Lundi', tip: 'Jour de réassort dans la plupart des enseignes. Meilleur choix pour les produits frais.' },
-  { day: 'Mercredi', tip: 'Début des nouvelles promotions hebdomadaires. Consultez les catalogues en ligne avant.' },
+  {
+    day: 'Lundi',
+    tip: 'Jour de réassort dans la plupart des enseignes. Meilleur choix pour les produits frais.',
+  },
+  {
+    day: 'Mercredi',
+    tip: 'Début des nouvelles promotions hebdomadaires. Consultez les catalogues en ligne avant.',
+  },
   { day: 'Jeudi', tip: 'Souvent le meilleur jour pour les soldes de la semaine précédente.' },
   { day: 'Week-end', tip: 'Évitez si possible : affluence maximale et rayons parfois dévalisés.' },
 ];
@@ -104,12 +111,17 @@ export default function OuFaireCoursesDOMPage() {
       />
 
       <div className="mx-auto max-w-2xl space-y-6">
-
         {/* Breadcrumb */}
         <nav aria-label="Fil d'Ariane" className="text-xs text-zinc-500">
           <ol className="flex flex-wrap items-center gap-1.5">
-            <li><Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
+            <li>
+              <Link to="/" className="hover:text-emerald-400 transition-colors">
+                Accueil
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
             <li className="text-zinc-300">Où faire ses courses dans les DOM ?</li>
           </ol>
         </nav>
@@ -136,7 +148,10 @@ export default function OuFaireCoursesDOMPage() {
           </h2>
           <div className="space-y-3">
             {CATEGORY_TIPS.map(({ icon, category, best, alt, tip, saving }) => (
-              <details key={category} className="group rounded-lg border border-white/8 bg-white/[0.02] p-3">
+              <details
+                key={category}
+                className="group rounded-lg border border-white/8 bg-white/[0.02] p-3"
+              >
                 <summary className="cursor-pointer list-none">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -155,7 +170,9 @@ export default function OuFaireCoursesDOMPage() {
                 </summary>
                 <div className="mt-3 space-y-2 text-xs text-zinc-500">
                   <p>{tip}</p>
-                  <p className="text-zinc-600">Alternative : <strong className="text-zinc-400">{alt}</strong></p>
+                  <p className="text-zinc-600">
+                    Alternative : <strong className="text-zinc-400">{alt}</strong>
+                  </p>
                 </div>
               </details>
             ))}
@@ -169,7 +186,10 @@ export default function OuFaireCoursesDOMPage() {
           </h2>
           <div className="space-y-2">
             {WEEKLY_STRATEGY.map(({ day, tip }) => (
-              <div key={day} className="flex gap-3 rounded-lg border border-white/5 bg-white/[0.01] p-3">
+              <div
+                key={day}
+                className="flex gap-3 rounded-lg border border-white/5 bg-white/[0.01] p-3"
+              >
                 <span className="w-20 shrink-0 text-xs font-bold text-emerald-400">{day}</span>
                 <p className="text-xs text-zinc-500">{tip}</p>
               </div>
@@ -230,12 +250,11 @@ export default function OuFaireCoursesDOMPage() {
             ))}
           </div>
         </div>
-
       </div>
 
       <ConversionStickyBar
-        bestPrice={87.40}
-        savings={25.80}
+        bestPrice={87.4}
+        savings={25.8}
         retailer="E.Leclerc"
         retailerUrl="https://www.e.leclerc/"
         productName="panier alimentaire DOM"

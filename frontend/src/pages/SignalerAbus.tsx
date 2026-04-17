@@ -1,51 +1,51 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from "@/context/AuthContext";
-import { db, auth } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { AlertTriangle, MapPin, Package, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { HeroImage } from "@/components/ui/HeroImage";
-import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
+import { useAuth } from '@/context/AuthContext';
+import { db, auth } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { AlertTriangle, MapPin, Package, FileText } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { HeroImage } from '@/components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 
 export default function SignalerAbus() {
   const { user, isGuest } = useAuth();
   const [formData, setFormData] = useState({
-    type: "",
-    productName: "",
-    store: "",
-    territory: "",
-    commune: "",
-    observedPrice: "",
-    expectedPrice: "",
-    description: "",
+    type: '',
+    productName: '',
+    store: '',
+    territory: '',
+    commune: '',
+    observedPrice: '',
+    expectedPrice: '',
+    description: '',
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const reportTypes = [
-    { value: "prix_anormal", label: "Prix anormalement élevé" },
-    { value: "prix_trompeur", label: "Prix trompeur ou fausse promotion" },
-    { value: "etiquetage_manquant", label: "Étiquetage manquant ou incorrect" },
-    { value: "rupture_stock", label: "Rupture de stock fréquente" },
-    { value: "pratique_commerciale", label: "Pratique commerciale douteuse" },
-    { value: "autre", label: "Autre signalement" },
+    { value: 'prix_anormal', label: 'Prix anormalement élevé' },
+    { value: 'prix_trompeur', label: 'Prix trompeur ou fausse promotion' },
+    { value: 'etiquetage_manquant', label: 'Étiquetage manquant ou incorrect' },
+    { value: 'rupture_stock', label: 'Rupture de stock fréquente' },
+    { value: 'pratique_commerciale', label: 'Pratique commerciale douteuse' },
+    { value: 'autre', label: 'Autre signalement' },
   ];
 
   const territories = [
-    { value: "guadeloupe", label: "🇬🇵 Guadeloupe" },
-    { value: "martinique", label: "🇲🇶 Martinique" },
-    { value: "guyane", label: "🇬🇫 Guyane" },
-    { value: "reunion", label: "🇷🇪 La Réunion" },
-    { value: "mayotte", label: "🇾🇹 Mayotte" },
-    { value: "saint-martin", label: "🇲🇫 Saint-Martin" },
-    { value: "saint-barthelemy", label: "🇧🇱 Saint-Barthélemy" },
-    { value: "saint-pierre-miquelon", label: "🇵🇲 Saint-Pierre-et-Miquelon" },
-    { value: "wallis-futuna", label: "🇼🇫 Wallis-et-Futuna" },
-    { value: "polynesie", label: "🇵🇫 Polynésie française" },
-    { value: "nouvelle-caledonie", label: "🇳🇨 Nouvelle-Calédonie" },
-    { value: "hexagone", label: "🇫🇷 France métropolitaine" },
+    { value: 'guadeloupe', label: '🇬🇵 Guadeloupe' },
+    { value: 'martinique', label: '🇲🇶 Martinique' },
+    { value: 'guyane', label: '🇬🇫 Guyane' },
+    { value: 'reunion', label: '🇷🇪 La Réunion' },
+    { value: 'mayotte', label: '🇾🇹 Mayotte' },
+    { value: 'saint-martin', label: '🇲🇫 Saint-Martin' },
+    { value: 'saint-barthelemy', label: '🇧🇱 Saint-Barthélemy' },
+    { value: 'saint-pierre-miquelon', label: '🇵🇲 Saint-Pierre-et-Miquelon' },
+    { value: 'wallis-futuna', label: '🇼🇫 Wallis-et-Futuna' },
+    { value: 'polynesie', label: '🇵🇫 Polynésie française' },
+    { value: 'nouvelle-caledonie', label: '🇳🇨 Nouvelle-Calédonie' },
+    { value: 'hexagone', label: '🇫🇷 France métropolitaine' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -55,18 +55,18 @@ export default function SignalerAbus() {
 
     // Validate form
     if (!formData.type || !formData.store || !formData.territory || !formData.description) {
-      setError("Veuillez remplir tous les champs obligatoires.");
+      setError('Veuillez remplir tous les champs obligatoires.');
       return;
     }
 
     // Check if user is authenticated
     if (!user || !auth || !auth.currentUser) {
-      setError("Vous devez être connecté pour effectuer un signalement.");
+      setError('Vous devez être connecté pour effectuer un signalement.');
       return;
     }
 
     if (!db) {
-      setError("Service non disponible. Veuillez réessayer plus tard.");
+      setError('Service non disponible. Veuillez réessayer plus tard.');
       return;
     }
 
@@ -76,22 +76,22 @@ export default function SignalerAbus() {
       // Validate and parse prices
       const observedPriceNum = formData.observedPrice ? parseFloat(formData.observedPrice) : null;
       const expectedPriceNum = formData.expectedPrice ? parseFloat(formData.expectedPrice) : null;
-      
+
       // Check for invalid numbers
       if (observedPriceNum !== null && (isNaN(observedPriceNum) || observedPriceNum < 0)) {
-        setError("Le prix observé doit être un nombre positif valide.");
+        setError('Le prix observé doit être un nombre positif valide.');
         setLoading(false);
         return;
       }
-      
+
       if (expectedPriceNum !== null && (isNaN(expectedPriceNum) || expectedPriceNum < 0)) {
-        setError("Le prix attendu doit être un nombre positif valide.");
+        setError('Le prix attendu doit être un nombre positif valide.');
         setLoading(false);
         return;
       }
 
       // Submit to Firestore
-      await addDoc(collection(db, "price_abuse_reports"), {
+      await addDoc(collection(db, 'price_abuse_reports'), {
         userId: auth.currentUser.uid,
         userEmail: auth.currentUser.email,
         type: formData.type,
@@ -102,31 +102,33 @@ export default function SignalerAbus() {
         observedPrice: observedPriceNum,
         expectedPrice: expectedPriceNum,
         description: formData.description.trim(),
-        status: "pending", // pending, investigating, resolved, dismissed
+        status: 'pending', // pending, investigating, resolved, dismissed
         createdAt: serverTimestamp(),
       });
 
       setSuccess(true);
       // Reset form
       setFormData({
-        type: "",
-        productName: "",
-        store: "",
-        territory: "",
-        commune: "",
-        observedPrice: "",
-        expectedPrice: "",
-        description: "",
+        type: '',
+        productName: '',
+        store: '',
+        territory: '',
+        commune: '',
+        observedPrice: '',
+        expectedPrice: '',
+        description: '',
       });
     } catch (err: any) {
-      console.error("Error submitting report:", err);
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      console.error('Error submitting report:', err);
+      setError('Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -158,14 +160,14 @@ export default function SignalerAbus() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="text-red-400 flex-shrink-0" size={24} />
             <div>
-              <h3 className="text-lg font-semibold text-red-200 mb-2">
-                Important
-              </h3>
+              <h3 className="text-lg font-semibold text-red-200 mb-2">Important</h3>
               <ul className="space-y-2 text-red-200 text-sm">
                 <li>• Les signalements sont vérifiés avant transmission aux autorités</li>
                 <li>• Fournissez le maximum de détails pour faciliter l'investigation</li>
                 <li>• Les faux signalements peuvent faire l'objet de sanctions</li>
-                <li>• En cas d'urgence, contactez directement la DGCCRF ou les autorités locales</li>
+                <li>
+                  • En cas d'urgence, contactez directement la DGCCRF ou les autorités locales
+                </li>
               </ul>
             </div>
           </div>
@@ -193,8 +195,8 @@ export default function SignalerAbus() {
                   <div>
                     <p className="text-green-200 font-medium mb-1">Signalement enregistré !</p>
                     <p className="text-green-200 text-sm">
-                      Votre signalement sera examiné dans les meilleurs délais. Nous vous
-                      tiendrons informé de son traitement.
+                      Votre signalement sera examiné dans les meilleurs délais. Nous vous tiendrons
+                      informé de son traitement.
                     </p>
                   </div>
                 </div>
@@ -236,7 +238,10 @@ export default function SignalerAbus() {
 
               {/* Product Name */}
               <div>
-                <label htmlFor="productName" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="productName"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   <Package className="inline mr-2" size={16} />
                   Nom du produit (si applicable)
                 </label>
@@ -310,7 +315,10 @@ export default function SignalerAbus() {
               {/* Observed Price */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="observedPrice" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="observedPrice"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Prix observé (€)
                   </label>
                   <input
@@ -327,7 +335,10 @@ export default function SignalerAbus() {
                 </div>
 
                 <div>
-                  <label htmlFor="expectedPrice" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label
+                    htmlFor="expectedPrice"
+                    className="block text-sm font-medium text-gray-300 mb-2"
+                  >
                     Prix attendu / habituel (€)
                   </label>
                   <input
@@ -346,7 +357,10 @@ export default function SignalerAbus() {
 
               {/* Description */}
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   Description détaillée <span className="text-red-400">*</span>
                 </label>
                 <textarea
@@ -360,7 +374,8 @@ export default function SignalerAbus() {
                   className="w-full p-3 rounded-lg bg-slate-800 text-white border border-gray-700 focus:border-blue-500 focus:outline-none resize-none"
                 />
                 <p className="text-xs text-gray-400 mt-1">
-                  Plus votre description est détaillée, mieux nous pourrons traiter votre signalement
+                  Plus votre description est détaillée, mieux nous pourrons traiter votre
+                  signalement
                 </p>
               </div>
 
@@ -370,15 +385,15 @@ export default function SignalerAbus() {
                 disabled={loading}
                 className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-3 disabled:bg-gray-600 disabled:cursor-not-allowed"
               >
-                {loading ? "Envoi en cours..." : "Envoyer le signalement"}
+                {loading ? 'Envoi en cours...' : 'Envoyer le signalement'}
               </Button>
             </form>
 
             {/* Disclaimer */}
             <div className="mt-6 p-4 bg-slate-800/50 rounded-lg">
               <p className="text-xs text-gray-400">
-                Les signalements sont traités de manière confidentielle et peuvent être transmis
-                aux autorités compétentes (DGCCRF, DAAF) si nécessaire. Vos coordonnées ne seront
+                Les signalements sont traités de manière confidentielle et peuvent être transmis aux
+                autorités compétentes (DGCCRF, DAAF) si nécessaire. Vos coordonnées ne seront
                 communiquées qu'en cas d'enquête officielle.
               </p>
             </div>

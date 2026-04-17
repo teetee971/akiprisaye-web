@@ -1,7 +1,6 @@
- 
 /**
  * Enhanced Camera Component - v1.0.0
- * 
+ *
  * Composant caméra amélioré avec:
  * - Guide visuel intelligent en temps réel
  * - Feedback haptique et audio
@@ -29,19 +28,16 @@ export default function EnhancedCamera({
 }: EnhancedCameraProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  
+
   const [isActive, setIsActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [flashEnabled, setFlashEnabled] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const [showTips, setShowTips] = useState(true);
-  
+
   // Services
-  const { quality, tips } = useCameraQualityAnalyzer(
-    videoRef,
-    enableQualityAnalysis ? 1000 : 0
-  );
+  const { quality, tips } = useCameraQualityAnalyzer(videoRef, enableQualityAnalysis ? 1000 : 0);
   const feedback = useFeedback();
 
   /**
@@ -73,8 +69,8 @@ export default function EnhancedCamera({
       }
     } catch (err) {
       console.error('Camera error:', err);
-      setError('Impossible d\'accéder à la caméra. Vérifiez les permissions.');
-      
+      setError("Impossible d'accéder à la caméra. Vérifiez les permissions.");
+
       if (enableFeedback) {
         feedback.onError();
       }
@@ -86,7 +82,7 @@ export default function EnhancedCamera({
    */
   const stopCamera = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
     setIsActive(false);
@@ -107,7 +103,7 @@ export default function EnhancedCamera({
           advanced: [{ torch: !flashEnabled } as any],
         });
         setFlashEnabled(!flashEnabled);
-        
+
         if (enableFeedback) {
           feedback.onClick();
         }
@@ -139,7 +135,7 @@ export default function EnhancedCamera({
           advanced: [{ zoom: newZoom } as any],
         });
         setZoomLevel(newZoom);
-        
+
         if (enableFeedback) {
           feedback.onClick();
         }
@@ -154,8 +150,8 @@ export default function EnhancedCamera({
    */
   const switchCamera = async () => {
     stopCamera();
-    setFacingMode(prev => (prev === 'user' ? 'environment' : 'user'));
-    
+    setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
+
     if (enableFeedback) {
       feedback.onClick();
     }
@@ -204,8 +200,8 @@ export default function EnhancedCamera({
     ? quality.overall === 'excellent'
       ? 'green'
       : quality.overall === 'good'
-      ? 'yellow'
-      : 'red'
+        ? 'yellow'
+        : 'red'
     : 'gray';
 
   return (
@@ -229,7 +225,7 @@ export default function EnhancedCamera({
             <div className="relative w-3/4 max-w-md aspect-[4/3] border-4 border-white/50 rounded-lg">
               {/* Ligne de scan animée */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent animate-scan" />
-              
+
               {/* Coins */}
               <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white rounded-tl-lg" />
               <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white rounded-tr-lg" />
@@ -245,10 +241,10 @@ export default function EnhancedCamera({
                     qualityColor === 'green'
                       ? 'bg-green-500/20 border border-green-500/50'
                       : qualityColor === 'yellow'
-                      ? 'bg-yellow-500/20 border border-yellow-500/50'
-                      : qualityColor === 'red'
-                      ? 'bg-red-500/20 border border-red-500/50'
-                      : 'bg-gray-500/20 border border-gray-500/50'
+                        ? 'bg-yellow-500/20 border border-yellow-500/50'
+                        : qualityColor === 'red'
+                          ? 'bg-red-500/20 border border-red-500/50'
+                          : 'bg-gray-500/20 border border-gray-500/50'
                   }`}
                 >
                   <div className="flex items-center justify-between text-white">
@@ -258,13 +254,11 @@ export default function EnhancedCamera({
                           qualityColor === 'green'
                             ? 'bg-green-500'
                             : qualityColor === 'yellow'
-                            ? 'bg-yellow-500'
-                            : 'bg-red-500'
+                              ? 'bg-yellow-500'
+                              : 'bg-red-500'
                         } animate-pulse`}
                       />
-                      <span className="text-sm font-medium">
-                        Qualité: {quality.score}%
-                      </span>
+                      <span className="text-sm font-medium">Qualité: {quality.score}%</span>
                     </div>
                     <button
                       onClick={() => setShowTips(false)}
@@ -273,7 +267,7 @@ export default function EnhancedCamera({
                       Masquer
                     </button>
                   </div>
-                  
+
                   {primaryTip && (
                     <div className="mt-2 text-sm text-white">
                       <span className="mr-2">{primaryTip.icon}</span>
@@ -346,11 +340,11 @@ export default function EnhancedCamera({
             >
               <ZoomOut className="w-5 h-5" />
             </button>
-            
+
             <span className="text-white text-sm font-medium min-w-[3rem] text-center">
               {zoomLevel.toFixed(1)}x
             </span>
-            
+
             <button
               onClick={() => adjustZoom(0.5)}
               disabled={!isActive}

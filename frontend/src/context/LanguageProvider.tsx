@@ -12,8 +12,8 @@ import { Language } from '../i18n/languages';
 // LanguageSuggestionModal is only shown when the user's detected territory
 // suggests a different language — lazy-loaded so its dependency on useTranslation
 // and lucide icons doesn't inflate the LanguageProvider chunk itself.
-const LanguageSuggestionModal = lazy(
-  () => import('../components/i18n/LanguageSuggestionModal').then((m) => ({
+const LanguageSuggestionModal = lazy(() =>
+  import('../components/i18n/LanguageSuggestionModal').then((m) => ({
     default: m.LanguageSuggestionModal,
   }))
 );
@@ -30,9 +30,7 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <LanguageInitializer>
-        {children}
-      </LanguageInitializer>
+      <LanguageInitializer>{children}</LanguageInitializer>
     </I18nextProvider>
   );
 }
@@ -41,11 +39,11 @@ function LanguageInitializer({ children }: { children: ReactNode }) {
   const { suggestLanguageFromTerritory, changeLanguage } = useLanguage();
   const [showSuggestion, setShowSuggestion] = useState(false);
   const [suggestedLanguage, setSuggestedLanguage] = useState<Language | null>(null);
-  
+
   useEffect(() => {
     // Détecter le territoire de l'utilisateur et suggérer la langue
     const userTerritory = localStorage.getItem('akiprisaye-territory');
-    
+
     if (userTerritory) {
       const suggestion = suggestLanguageFromTerritory(userTerritory);
       if (suggestion) {
@@ -54,19 +52,19 @@ function LanguageInitializer({ children }: { children: ReactNode }) {
       }
     }
   }, [suggestLanguageFromTerritory]);
-  
+
   const handleAcceptSuggestion = () => {
     if (suggestedLanguage) {
       changeLanguage(suggestedLanguage.code);
     }
     setShowSuggestion(false);
   };
-  
+
   const handleDeclineSuggestion = () => {
     localStorage.setItem('akiprisaye-language', 'fr');
     setShowSuggestion(false);
   };
-  
+
   return (
     <>
       {children}

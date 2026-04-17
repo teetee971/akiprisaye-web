@@ -7,13 +7,9 @@ export function PanierTimeline({ history = [] }) {
   if (!history || history.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Évolution du panier
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Évolution du panier</h3>
         <div className="bg-gray-50 rounded-lg p-8 text-center">
-          <p className="text-gray-500">
-            Données d'évolution non encore disponibles
-          </p>
+          <p className="text-gray-500">Données d'évolution non encore disponibles</p>
           <p className="text-sm text-gray-400 mt-2">
             L'historique des prix sera affiché ici prochainement
           </p>
@@ -46,9 +42,7 @@ export function PanierTimeline({ history = [] }) {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        Évolution du panier
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Évolution du panier</h3>
 
       {/* Period selector */}
       <div className="flex space-x-2 mb-4">

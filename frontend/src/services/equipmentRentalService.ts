@@ -23,13 +23,11 @@ import type { Territory } from '../types/priceAlerts';
 export function compareEquipmentRentals(
   territory: Territory,
   category: EquipmentCategory,
-  prices: EquipmentRentalPricePoint[],
+  prices: EquipmentRentalPricePoint[]
 ): EquipmentRentalComparisonResult | null {
   if (!prices || prices.length === 0) return null;
 
-  const filtered = prices.filter(
-    (p) => p.territory === territory && p.category === category,
-  );
+  const filtered = prices.filter((p) => p.territory === territory && p.category === category);
   if (filtered.length === 0) return null;
 
   const aggregation = calculateAggregation(filtered, territory, category);
@@ -49,12 +47,13 @@ export function compareEquipmentRentals(
 /** Filtre les prix selon les critères fournis */
 export function filterEquipmentRentals(
   prices: EquipmentRentalPricePoint[],
-  filter: EquipmentRentalFilter,
+  filter: EquipmentRentalFilter
 ): EquipmentRentalPricePoint[] {
   let result = [...prices];
   if (filter.territory) result = result.filter((p) => p.territory === filter.territory);
   if (filter.category) result = result.filter((p) => p.category === filter.category);
-  if (filter.maxDailyRate != null) result = result.filter((p) => p.pricing.dailyRate <= filter.maxDailyRate!);
+  if (filter.maxDailyRate != null)
+    result = result.filter((p) => p.pricing.dailyRate <= filter.maxDailyRate!);
   if (filter.deliveryRequired) result = result.filter((p) => p.conditions.deliveryAvailable);
   if (filter.localAgencyOnly) result = result.filter((p) => p.isLocalAgency);
   if (filter.verifiedOnly) result = result.filter((p) => p.verified);
@@ -66,7 +65,7 @@ export function filterEquipmentRentals(
 function calculateAggregation(
   prices: EquipmentRentalPricePoint[],
   territory: Territory,
-  category: EquipmentCategory,
+  category: EquipmentCategory
 ): EquipmentRentalAggregation {
   const rates = prices.map((p) => p.pricing.dailyRate).sort((a, b) => a - b);
   const min = rates[0];
@@ -103,7 +102,7 @@ function calculateAggregation(
 
 function rankAgencies(
   prices: EquipmentRentalPricePoint[],
-  average: number,
+  average: number
 ): EquipmentRentalRanking[] {
   const sorted = [...prices].sort((a, b) => a.pricing.dailyRate - b.pricing.dailyRate);
   const cheapest = sorted[0]?.pricing.dailyRate ?? 0;
@@ -154,16 +153,19 @@ function buildMetadata(prices: EquipmentRentalPricePoint[]): EquipmentRentalMeta
     limitations: [
       'Prix indicatifs — peuvent varier selon la saison et la disponibilité du matériel',
       'Vérifiez les tarifs directement auprès du loueur',
-      'Des frais de livraison, de carburant ou de caution peuvent s\'ajouter',
+      "Des frais de livraison, de carburant ou de caution peuvent s'ajouter",
     ],
     disclaimer:
       'Observer, pas vendre : Ces données sont fournies à titre informatif et citoyen. ' +
-      'Aucun lien d\'affiliation. Contactez directement les loueurs pour confirmer les tarifs.',
+      "Aucun lien d'affiliation. Contactez directement les loueurs pour confirmer les tarifs.",
   };
 }
 
 /** Catégories avec leur libellé et emoji français */
-export const EQUIPMENT_CATEGORY_LABELS: Record<EquipmentCategory, { label: string; emoji: string }> = {
+export const EQUIPMENT_CATEGORY_LABELS: Record<
+  EquipmentCategory,
+  { label: string; emoji: string }
+> = {
   btp: { label: 'BTP & Construction', emoji: '🏗️' },
   outillage: { label: 'Outillage électroportatif', emoji: '🔧' },
   levage: { label: 'Levage & Manutention', emoji: '🏋️' },

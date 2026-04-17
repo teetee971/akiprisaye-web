@@ -1,4 +1,10 @@
-export type { CompareProduct, PriceObservationRow, CompareSummary, CompareResponse, CompareParams } from './compare';
+export type {
+  CompareProduct,
+  PriceObservationRow,
+  CompareSummary,
+  CompareResponse,
+  CompareParams,
+} from './compare';
 
 export type SignalStatus = 'buy' | 'wait' | 'neutral';
 

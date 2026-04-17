@@ -1,9 +1,9 @@
 /**
  * OCRCard Component
- * 
+ *
  * Reusable card UI for OCR Hub navigation
  * NO business logic - pure presentation component
- * 
+ *
  * Props:
  * - icon: Emoji or icon character
  * - title: Card title
@@ -34,9 +34,12 @@ export default function OCRCard({
 }: OCRCardProps) {
   const colorClasses = {
     blue: 'from-blue-900/40 to-blue-950/40 hover:from-blue-800/50 hover:to-blue-900/50 border-blue-500/20',
-    green: 'from-green-900/40 to-green-950/40 hover:from-green-800/50 hover:to-green-900/50 border-green-500/20',
-    purple: 'from-purple-900/40 to-purple-950/40 hover:from-purple-800/50 hover:to-purple-900/50 border-purple-500/20',
-    orange: 'from-orange-900/40 to-orange-950/40 hover:from-orange-800/50 hover:to-orange-900/50 border-orange-500/20',
+    green:
+      'from-green-900/40 to-green-950/40 hover:from-green-800/50 hover:to-green-900/50 border-green-500/20',
+    purple:
+      'from-purple-900/40 to-purple-950/40 hover:from-purple-800/50 hover:to-purple-900/50 border-purple-500/20',
+    orange:
+      'from-orange-900/40 to-orange-950/40 hover:from-orange-800/50 hover:to-orange-900/50 border-orange-500/20',
   };
 
   return (
@@ -65,7 +68,12 @@ export default function OCRCard({
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             )}
           </h3>

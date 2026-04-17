@@ -13,7 +13,10 @@ import { safeToText } from './utils/safeToText';
 import { installRuntimeCrashProbe } from './monitoring/runtimeCrashProbe';
 import { initErrorTracker } from './monitoring/errorTracker';
 import { logDebug } from './utils/logger';
-import { enforceBuildVersionSyncAsync, registerAppServiceWorker } from './utils/buildVersionGuard.client';
+import {
+  enforceBuildVersionSyncAsync,
+  registerAppServiceWorker,
+} from './utils/buildVersionGuard.client';
 
 declare global {
   interface Window {
@@ -28,7 +31,8 @@ declare global {
  */
 const VITE_APP_BUILD_ID = import.meta.env.VITE_APP_BUILD_ID as string | undefined;
 
-const BUILD_ID = VITE_APP_BUILD_ID || (import.meta.env.VITE_BUILD_SHA as string | undefined) || 'unknown';
+const BUILD_ID =
+  VITE_APP_BUILD_ID || (import.meta.env.VITE_BUILD_SHA as string | undefined) || 'unknown';
 window.__BUILD_SHA__ = BUILD_ID;
 
 logDebug(`[build] A KI PRI SA YÉ boot id=${BUILD_ID}`);
@@ -67,8 +71,11 @@ function renderFallbackError(title: unknown, message: unknown) {
   `;
   // Attach the reload handler imperatively — avoids inline onclick which is
   // blocked by strict-dynamic CSP and flagged by Lighthouse Best Practices.
-  fallback.querySelector<HTMLButtonElement>('[data-action="reload"]')
-    ?.addEventListener('click', () => { window.location.reload(); });
+  fallback
+    .querySelector<HTMLButtonElement>('[data-action="reload"]')
+    ?.addEventListener('click', () => {
+      window.location.reload();
+    });
 }
 
 function hideHtmlFallback() {
@@ -84,13 +91,19 @@ function isFallbackVisible() {
 window.addEventListener('error', (event) => {
   // Affiche le fallback HTML uniquement si React n'a pas encore monté
   if (isFallbackVisible()) {
-    renderFallbackError('A KI PRI SA YÉ', (event as ErrorEvent).error || (event as ErrorEvent).message || 'Erreur inattendue');
+    renderFallbackError(
+      'A KI PRI SA YÉ',
+      (event as ErrorEvent).error || (event as ErrorEvent).message || 'Erreur inattendue'
+    );
   }
 });
 
 window.addEventListener('unhandledrejection', (event) => {
   if (isFallbackVisible()) {
-    renderFallbackError('A KI PRI SA YÉ', (event as PromiseRejectionEvent).reason || 'Promesse rejetée');
+    renderFallbackError(
+      'A KI PRI SA YÉ',
+      (event as PromiseRejectionEvent).reason || 'Promesse rejetée'
+    );
   }
 });
 
@@ -125,20 +138,17 @@ async function githubPagesSelfHeal(): Promise<boolean> {
 
   try {
     const baseUrl = import.meta.env.BASE_URL;
-    const probePaths = [
-      `${baseUrl}manifest.webmanifest`,
-      `${baseUrl}icon-192.png`,
-    ];
+    const probePaths = [`${baseUrl}manifest.webmanifest`, `${baseUrl}icon-192.png`];
 
     const probeResults = await Promise.allSettled(
       probePaths.map(async (path) => {
         const response = await fetch(path, { method: 'GET', cache: 'no-store' });
         return { path, status: response.status };
-      }),
+      })
     );
 
     const has404 = probeResults.some(
-      (result) => result.status === 'fulfilled' && result.value.status === 404,
+      (result) => result.status === 'fulfilled' && result.value.status === 404
     );
 
     if (!has404) return false;
@@ -183,7 +193,6 @@ async function bootstrap() {
   // 1) Anti “mismatch de build” (peut reload/redirect)
 
   if (import.meta.env.PROD) {
-
     const versionChanged = await enforceBuildVersionSyncAsync(BUILD_ID);
 
     if (versionChanged) return;
@@ -191,11 +200,10 @@ async function bootstrap() {
     if (!isGitHubPagesHost(window.location.hostname)) {
       registerAppServiceWorker();
     }
-
   }
   // 3) Render React
   const rootElement = document.getElementById('root');
-if (!rootElement) {
+  if (!rootElement) {
     if (isFallbackVisible()) {
       renderFallbackError('A KI PRI SA YÉ', 'Élément racine introuvable (#root).');
     }

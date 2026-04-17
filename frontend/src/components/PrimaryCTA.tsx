@@ -39,8 +39,8 @@ export interface PrimaryCTAProps {
 
 const LABELS: Record<CTAVariant, string> = {
   'best-price': 'VOIR LE MEILLEUR PRIX',
-  compare:      'COMPARER LES PRIX',
-  buy:          'ACHETER AU MEILLEUR PRIX',
+  compare: 'COMPARER LES PRIX',
+  buy: 'ACHETER AU MEILLEUR PRIX',
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -59,11 +59,11 @@ export function PrimaryCTA({
 
   const handleClick = useCallback(() => {
     trackConversionEvent({
-      pageUrl:     typeof window !== 'undefined' ? window.location.pathname : '',
+      pageUrl: typeof window !== 'undefined' ? window.location.pathname : '',
       retailer,
       productName,
-      variant:     getVariantForPage(typeof window !== 'undefined' ? window.location.pathname : ''),
-      clickedAt:   new Date().toISOString(),
+      variant: getVariantForPage(typeof window !== 'undefined' ? window.location.pathname : ''),
+      clickedAt: new Date().toISOString(),
       territory,
     });
     onClick?.();

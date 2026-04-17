@@ -1,6 +1,6 @@
 /**
  * useOCR Hook
- * 
+ *
  * Custom hook for OCR text extraction and processing.
  * Provides functions to process images and documents with OCR.
  */
@@ -24,7 +24,7 @@ interface UseOCRReturn {
 
 /**
  * Hook for OCR text extraction
- * 
+ *
  * @returns OCR processing functions and state
  */
 export function useOCR(): UseOCRReturn {
@@ -69,7 +69,7 @@ export function useOCR(): UseOCRReturn {
         // Validate result
         if (!validateOCRResult(ocrResult, 50)) {
           throw new Error(
-            'La qualité de l\'extraction est trop faible. Veuillez utiliser une image de meilleure qualité.'
+            "La qualité de l'extraction est trop faible. Veuillez utiliser une image de meilleure qualité."
           );
         }
 
@@ -79,9 +79,7 @@ export function useOCR(): UseOCRReturn {
         return ocrResult;
       } catch (err) {
         const message =
-          err instanceof Error
-            ? err.message
-            : 'Erreur lors du traitement du document';
+          err instanceof Error ? err.message : 'Erreur lors du traitement du document';
         setError(message);
         throw err;
       } finally {

@@ -116,7 +116,7 @@ describe('computeEstimation — moteur IA explicable', () => {
         niveauProfondeur: 'standard',
         delai: 'flexible',
         territoire: 'France métropolitaine',
-      }),
+      })
     ).toThrow();
   });
 
@@ -132,7 +132,7 @@ describe('computeEstimation — moteur IA explicable', () => {
     expect(joined).toContain('TTC');
   });
 
-  it('le disclaimer est non vide et mentionne l\'IA', () => {
+  it("le disclaimer est non vide et mentionne l'IA", () => {
     const est = computeEstimation({
       typesBesoin: ['etude_territoriale'],
       niveauProfondeur: 'approfondi',
@@ -160,7 +160,13 @@ describe('Labels & couleurs — cohérence des constantes', () => {
   });
 
   it('TYPE_BESOIN_LABELS couvre les 5 types', () => {
-    const expected = ['analyse_prix', 'etude_territoriale', 'audit_vie_chere', 'rapport_institutionnel', 'acces_donnees'];
+    const expected = [
+      'analyse_prix',
+      'etude_territoriale',
+      'audit_vie_chere',
+      'rapport_institutionnel',
+      'acces_donnees',
+    ];
     for (const t of expected) {
       expect(TYPE_BESOIN_LABELS[t as keyof typeof TYPE_BESOIN_LABELS]).toBeTruthy();
     }

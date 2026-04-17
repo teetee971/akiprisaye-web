@@ -58,12 +58,13 @@ export default function SearchCompareHub() {
         currency: 'EUR',
         maximumFractionDigits: 2,
       }),
-    [],
+    []
   );
 
-  const [options, setOptions] = useState<{ territories: string[]; stores: string[] }>(
-    { territories: [], stores: [] },
-  );
+  const [options, setOptions] = useState<{ territories: string[]; stores: string[] }>({
+    territories: [],
+    stores: [],
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -75,7 +76,9 @@ export default function SearchCompareHub() {
           return;
         }
         const territories = Array.from(new Set(items.map((item) => item.territory))).sort();
-        const stores = Array.from(new Set(items.map((item) => item.storeLabel).filter((s): s is string => s !== undefined))).sort();
+        const stores = Array.from(
+          new Set(items.map((item) => item.storeLabel).filter((s): s is string => s !== undefined))
+        ).sort();
         setOptions({ territories, stores });
       })
       .catch(() => {
@@ -244,7 +247,9 @@ export default function SearchCompareHub() {
               id="search-source"
               className={styles.select}
               value={source}
-              onChange={(event) => setSource(event.target.value as PriceObservation['sourceType'] | 'all')}
+              onChange={(event) =>
+                setSource(event.target.value as PriceObservation['sourceType'] | 'all')
+              }
             >
               {SOURCE_OPTIONS.map((option) => (
                 <option key={option.label} value={option.value}>
@@ -286,7 +291,9 @@ export default function SearchCompareHub() {
                       </p>
                     </div>
                     <div className={styles.resultPriceRow}>
-                      <span className={styles.resultPrice}>{currencyFormatter.format(item.price)}</span>
+                      <span className={styles.resultPrice}>
+                        {currencyFormatter.format(item.price)}
+                      </span>
                       <span className={styles.resultBadge}>Confiance : {confidenceLabel}</span>
                     </div>
                     <p className={styles.resultDetails}>
@@ -314,8 +321,9 @@ export default function SearchCompareHub() {
                       className={isExpanded ? styles.tooltip : styles.tooltipHidden}
                     >
                       <p className={styles.tooltipText}>
-                        Ce prix est calculé à partir des observations disponibles (tickets citoyens ou
-                        données ouvertes), en tenant compte de la récence et du nombre de relevés.
+                        Ce prix est calculé à partir des observations disponibles (tickets citoyens
+                        ou données ouvertes), en tenant compte de la récence et du nombre de
+                        relevés.
                       </p>
                     </div>
                   </article>
@@ -328,8 +336,8 @@ export default function SearchCompareHub() {
 
       <section className={styles.note} aria-label="Transparence">
         <p>
-          Les prix affichés sont issus de sources citoyennes et de données ouvertes. Aucun site marchand
-          n’est interrogé et les partenariats restent désactivés par défaut.
+          Les prix affichés sont issus de sources citoyennes et de données ouvertes. Aucun site
+          marchand n’est interrogé et les partenariats restent désactivés par défaut.
         </p>
       </section>
     </main>

@@ -1,9 +1,9 @@
 /**
  * OCR Routes Test
- * 
+ *
  * Validates that OCR Hub and OCR History routes are properly configured
  * and accessible in the application.
- * 
+ *
  * TODO: Complete test implementation with proper imports and setup
  */
 

@@ -35,11 +35,11 @@ export function ARShelfScanner() {
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } },
       });
-      
+
       streamRef.current = stream;
-      
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
@@ -47,14 +47,14 @@ export function ARShelfScanner() {
       }
     } catch (error) {
       console.error('Camera access denied:', error);
-      setError('Impossible d\'accéder à la caméra. Veuillez autoriser l\'accès.');
+      setError("Impossible d'accéder à la caméra. Veuillez autoriser l'accès.");
       setIsScanning(false);
     }
   };
 
   const stopCamera = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
     setDetections([]);
@@ -95,20 +95,14 @@ export function ARShelfScanner() {
         </button>
       ) : (
         <div className="fixed inset-0 z-50 bg-black">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            playsInline
-            muted
-            autoPlay
-          >
+          <video ref={videoRef} className="w-full h-full object-cover" playsInline muted autoPlay>
             <track kind="captions" src="" srcLang="fr" label="Captions" default />
           </video>
           <canvas
             ref={canvasRef}
             className="absolute top-0 left-0 w-full h-full pointer-events-none"
           />
-          
+
           {/* Overlays for detected products */}
           {detections.map((detection, i) => (
             <div
@@ -118,7 +112,7 @@ export function ARShelfScanner() {
                 left: `${detection.x}px`,
                 top: `${detection.y}px`,
                 width: `${detection.width}px`,
-                height: `${detection.height}px`
+                height: `${detection.height}px`,
               }}
             >
               <div className="absolute -top-20 left-0 bg-green-500 text-white px-3 py-2 rounded-lg text-sm shadow-lg min-w-max">

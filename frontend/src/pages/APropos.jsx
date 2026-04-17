@@ -15,10 +15,7 @@ export default function APropos() {
         >
           <div className="flex items-center justify-between w-full">
             <h1 className="text-3xl font-bold text-white drop-shadow">À Propos</h1>
-            <Link
-              to="/"
-              className="text-white/80 hover:text-white transition-colors text-sm"
-            >
+            <Link to="/" className="text-white/80 hover:text-white transition-colors text-sm">
               ← Accueil
             </Link>
           </div>
@@ -28,7 +25,6 @@ export default function APropos() {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto p-6">
         <div className="space-y-5">
-          
           {/* Mission */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
             <h2 className="text-2xl font-semibold mb-4 text-blue-400">🎯 Notre Mission</h2>
@@ -60,24 +56,37 @@ export default function APropos() {
                 "Faire peu, mais faire VRAI."
               </blockquote>
               <p>
-                A KI PRI SA YÉ n'est pas un gadget. C'est un outil citoyen basé sur des principes clairs :
+                A KI PRI SA YÉ n'est pas un gadget. C'est un outil citoyen basé sur des principes
+                clairs :
               </p>
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 font-bold">✓</span>
-                  <span><strong>Transparence totale</strong> : Sources clairement identifiées, méthodologie publique</span>
+                  <span>
+                    <strong>Transparence totale</strong> : Sources clairement identifiées,
+                    méthodologie publique
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 font-bold">✓</span>
-                  <span><strong>Données réelles</strong> : Aucun prix inventé, aucune simulation présentée comme réelle</span>
+                  <span>
+                    <strong>Données réelles</strong> : Aucun prix inventé, aucune simulation
+                    présentée comme réelle
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 font-bold">✓</span>
-                  <span><strong>Honnêteté</strong> : Les modules en développement sont clairement identifiés</span>
+                  <span>
+                    <strong>Honnêteté</strong> : Les modules en développement sont clairement
+                    identifiés
+                  </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-green-400 font-bold">✓</span>
-                  <span><strong>Indépendance</strong> : Aucun lien avec des enseignes ou marques commerciales</span>
+                  <span>
+                    <strong>Indépendance</strong> : Aucun lien avec des enseignes ou marques
+                    commerciales
+                  </span>
                 </li>
               </ul>
             </div>
@@ -90,8 +99,8 @@ export default function APropos() {
               <div>
                 <h3 className="font-semibold text-lg mb-2">Comparateur de prix</h3>
                 <p className="text-gray-400">
-                  Comparez les prix des produits du quotidien entre différentes enseignes et territoires.
-                  Date de mise à jour et source affichées pour chaque prix.
+                  Comparez les prix des produits du quotidien entre différentes enseignes et
+                  territoires. Date de mise à jour et source affichées pour chaque prix.
                 </p>
               </div>
               <div>
@@ -103,15 +112,16 @@ export default function APropos() {
               <div>
                 <h3 className="font-semibold text-lg mb-2">Alertes consommateurs</h3>
                 <p className="text-gray-400">
-                  Recevez des alertes sur les prix anormalement élevés, les pénuries et les variations brutales.
+                  Recevez des alertes sur les prix anormalement élevés, les pénuries et les
+                  variations brutales.
                   <span className="text-yellow-500 ml-2">(En développement)</span>
                 </p>
               </div>
               <div>
                 <h3 className="font-semibold text-lg mb-2">Fil d'actualité</h3>
                 <p className="text-gray-400">
-                  Suivez l'actualité de l'inflation et de la vie chère, basée uniquement sur des sources publiques
-                  (INSEE, DGCCRF, etc.).
+                  Suivez l'actualité de l'inflation et de la vie chère, basée uniquement sur des
+                  sources publiques (INSEE, DGCCRF, etc.).
                 </p>
               </div>
             </div>
@@ -119,7 +129,9 @@ export default function APropos() {
 
           {/* What we don't do */}
           <section className="bg-red-900/20 border border-red-700 rounded-xl p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-red-400">❌ Ce que nous ne faisons PAS</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-red-400">
+              ❌ Ce que nous ne faisons PAS
+            </h2>
             <div className="text-gray-300 space-y-2">
               <p className="flex items-start gap-2">
                 <span className="text-red-400">✗</span>
@@ -149,26 +161,28 @@ export default function APropos() {
             <h2 className="text-2xl font-semibold mb-4 text-blue-400">👥 L'Équipe</h2>
             <div className="text-gray-300 space-y-3">
               <p>
-                A KI PRI SA YÉ est développé par une équipe citoyenne bénévole,
-                sans but lucratif, avec pour seul objectif d'aider les consommateurs
-                ultramarins à mieux gérer leur budget.
+                A KI PRI SA YÉ est développé par une équipe citoyenne bénévole, sans but lucratif,
+                avec pour seul objectif d'aider les consommateurs ultramarins à mieux gérer leur
+                budget.
               </p>
               <p className="text-sm text-gray-400">
-                Nous sommes ouverts aux contributions et aux partenariats avec des
-                associations de consommateurs, collectivités locales et institutions
-                publiques partageant nos valeurs de transparence et d'indépendance.
+                Nous sommes ouverts aux contributions et aux partenariats avec des associations de
+                consommateurs, collectivités locales et institutions publiques partageant nos
+                valeurs de transparence et d'indépendance.
               </p>
             </div>
           </section>
 
           {/* Comparatif concurrence */}
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
-            <h2 className="text-2xl font-semibold mb-4 text-blue-400">⚖️ Comparatif avec la concurrence</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-blue-400">
+              ⚖️ Comparatif avec la concurrence
+            </h2>
             <div className="text-gray-300 space-y-3">
               <p>
                 Vous souhaitez comprendre en quoi A KI PRI SA YÉ se distingue des autres
-                comparateurs de prix disponibles ? Consultez notre tableau comparatif
-                des fonctionnalités.
+                comparateurs de prix disponibles ? Consultez notre tableau comparatif des
+                fonctionnalités.
               </p>
               <Link
                 to="/comparatif-concurrence"
@@ -183,18 +197,15 @@ export default function APropos() {
           <section className="bg-[#1e1e1e] rounded-xl border border-gray-700 p-8">
             <h2 className="text-2xl font-semibold mb-4 text-blue-400">📧 Contact</h2>
             <div className="text-gray-300 space-y-3">
-              <p>
-                Pour toute question, suggestion ou partenariat :
-              </p>
-              <Link 
-                to="/contact" 
+              <p>Pour toute question, suggestion ou partenariat :</p>
+              <Link
+                to="/contact"
                 className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-all"
               >
                 Nous contacter
               </Link>
             </div>
           </section>
-
         </div>
       </main>
     </div>

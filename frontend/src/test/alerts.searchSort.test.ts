@@ -14,14 +14,20 @@ describe('alertsService search and sort', () => {
 
     const gpCritical = alerts.filter((a) => a.severity === 'critical');
     expect(new Date(gpCritical[0].publishedAt ?? 0).getTime()).toBeGreaterThanOrEqual(
-      new Date(gpCritical[1].publishedAt ?? 0).getTime(),
+      new Date(gpCritical[1].publishedAt ?? 0).getTime()
     );
   });
 
   it('matches q against title, brand, productName, ean and lot', async () => {
-    expect((await getAlerts({ territory: 'gp', q: 'omega croissance' })).alerts.length).toBeGreaterThan(0);
-    expect((await getAlerts({ territory: 'gp', q: 'Omega Baby' })).alerts.length).toBeGreaterThan(0);
-    expect((await getAlerts({ territory: 'gp', q: '3760123456789' })).alerts.length).toBeGreaterThan(0);
+    expect(
+      (await getAlerts({ territory: 'gp', q: 'omega croissance' })).alerts.length
+    ).toBeGreaterThan(0);
+    expect((await getAlerts({ territory: 'gp', q: 'Omega Baby' })).alerts.length).toBeGreaterThan(
+      0
+    );
+    expect(
+      (await getAlerts({ territory: 'gp', q: '3760123456789' })).alerts.length
+    ).toBeGreaterThan(0);
     expect((await getAlerts({ territory: 'gp', q: 'L24011A' })).alerts.length).toBeGreaterThan(0);
   });
 });

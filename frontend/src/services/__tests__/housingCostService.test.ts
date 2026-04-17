@@ -1,4 +1,3 @@
- 
 /**
  * Unit Tests for Housing Cost Observatory Service v2.4.0
  */
@@ -138,7 +137,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
 
     it('should successfully analyze housing costs', () => {
       const result = analyzeHousingCosts(mockUrbanHousing, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.territory).toBe('MQ');
       expect(result!.pricePoints.length).toBe(3);
@@ -147,7 +146,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
 
     it('should filter by housing type', () => {
       const result = analyzeHousingCosts(mockUrbanHousing, 'MQ', 'T2');
-      
+
       expect(result).not.toBeNull();
       expect(result!.pricePoints.length).toBe(2);
       expect(result!.housingType).toBe('T2');
@@ -155,7 +154,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
 
     it('should calculate rent per m²', () => {
       const result = analyzeHousingCosts(mockUrbanHousing, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.pricePoints[0].rentPerM2).toBeGreaterThan(0);
       expect(result!.pricePoints[0].rentPerM2).toBe(Math.round((650 / 50) * 100) / 100);
@@ -165,7 +164,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
   describe('calculateHousingAggregation', () => {
     it('should calculate aggregation correctly', () => {
       const aggregation = calculateHousingAggregation(mockUrbanHousing, 'MQ');
-      
+
       expect(aggregation.territory).toBe('MQ');
       expect(aggregation.statistics.listingCount).toBe(3);
       expect(aggregation.statistics.averageRent).toBeCloseTo(716.67, 2);
@@ -180,7 +179,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
 
     it('should calculate dispersion metrics', () => {
       const aggregation = calculateHousingAggregation(mockUrbanHousing, 'MQ');
-      
+
       expect(aggregation.dispersion.standardDeviation).toBeGreaterThan(0);
       expect(aggregation.dispersion.coefficientOfVariation).toBeGreaterThan(0);
       expect(aggregation.dispersion.interquartileRange).toBeGreaterThanOrEqual(0);
@@ -189,7 +188,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
     it('should calculate urban/rural breakdown', () => {
       const allHousing = [...mockUrbanHousing, ...mockRuralHousing];
       const aggregation = calculateHousingAggregation(allHousing, 'MQ');
-      
+
       expect(aggregation.urbanRuralBreakdown).toBeDefined();
       expect(aggregation.urbanRuralBreakdown!.urban).toBe(3);
       expect(aggregation.urbanRuralBreakdown!.rural).toBe(1);
@@ -207,19 +206,19 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
     it('should filter by housing type', () => {
       const filtered = applyHousingFilters(allHousing, { housingType: 'T2' });
       expect(filtered.length).toBe(2);
-      expect(filtered.every(h => h.type === 'T2')).toBe(true);
+      expect(filtered.every((h) => h.type === 'T2')).toBe(true);
     });
 
     it('should filter by surface range', () => {
       const filtered = applyHousingFilters(allHousing, { minSurface: 50, maxSurface: 80 });
       expect(filtered.length).toBe(2);
-      expect(filtered.every(h => h.surface >= 50 && h.surface <= 80)).toBe(true);
+      expect(filtered.every((h) => h.surface >= 50 && h.surface <= 80)).toBe(true);
     });
 
     it('should filter by rent range', () => {
       const filtered = applyHousingFilters(allHousing, { minRent: 650, maxRent: 900 });
       expect(filtered.length).toBe(2);
-      expect(filtered.every(h => h.rent >= 650 && h.rent <= 900)).toBe(true);
+      expect(filtered.every((h) => h.rent >= 650 && h.rent <= 900)).toBe(true);
     });
 
     it('should filter by furnished status', () => {
@@ -236,7 +235,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
 
     it('should filter by verified only', () => {
       const filtered = applyHousingFilters(allHousing, { verifiedOnly: true });
-      expect(filtered.every(h => h.verified)).toBe(true);
+      expect(filtered.every((h) => h.verified)).toBe(true);
       expect(filtered.length).toBe(3);
     });
 
@@ -255,7 +254,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
   describe('generateHousingMetadata', () => {
     it('should generate metadata with correct structure', () => {
       const metadata = generateHousingMetadata(mockUrbanHousing);
-      
+
       expect(metadata.methodology).toBe('v2.4.0');
       expect(metadata.aggregationMethod).toBe('median');
       expect(metadata.dataQuality.totalListings).toBe(3);
@@ -265,7 +264,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
 
     it('should calculate source summary', () => {
       const metadata = generateHousingMetadata(mockUrbanHousing);
-      
+
       expect(metadata.sources.length).toBeGreaterThan(0);
       const totalPercentage = metadata.sources.reduce((sum, s) => sum + s.percentage, 0);
       expect(totalPercentage).toBeCloseTo(100, 0);
@@ -275,7 +274,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
   describe('buildHousingHistory', () => {
     it('should build housing history', () => {
       const history = buildHousingHistory(mockUrbanHousing, 'MQ');
-      
+
       expect(history.length).toBeGreaterThan(0);
       expect(history[0].territory).toBe('MQ');
       expect(history[0].averageRent).toBeGreaterThan(0);
@@ -288,7 +287,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
 
     it('should filter by housing type', () => {
       const history = buildHousingHistory(mockUrbanHousing, 'MQ', 'T2');
-      
+
       expect(history.length).toBeGreaterThan(0);
       expect(history[0].housingType).toBe('T2');
     });
@@ -300,7 +299,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
         { ...mockUrbanHousing[1], observationDate: '2025-02-15T10:00:00Z' },
         { ...mockUrbanHousing[2], observationDate: '2025-03-15T10:00:00Z' },
       ];
-      
+
       const history = buildHousingHistory(multiMonthData, 'MQ');
       expect(history.length).toBe(3);
     });
@@ -330,9 +329,9 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
           sources: [],
         },
       ];
-      
+
       const variation = calculateHousingVariation(history);
-      
+
       expect(variation).not.toBeNull();
       expect(variation!.variation.absoluteChange).toBe(60);
       expect(variation!.variation.percentageChange).toBe(10);
@@ -352,7 +351,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
           sources: [],
         },
       ];
-      
+
       const variation = calculateHousingVariation(history);
       expect(variation).toBeNull();
     });
@@ -380,9 +379,9 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
           sources: [],
         },
       ];
-      
+
       const variation = calculateHousingVariation(history);
-      
+
       expect(variation).not.toBeNull();
       expect(variation!.variation.direction).toBe('stable');
     });
@@ -392,7 +391,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
     it('should rank housing by rent per m²', () => {
       const medianRentPerM2 = 13;
       const ranked = rankHousingByRentPerM2(mockUrbanHousing, medianRentPerM2);
-      
+
       expect(ranked.length).toBe(3);
       expect(ranked[0].rank).toBe(1);
       expect(ranked[0].rentPerM2).toBeLessThanOrEqual(ranked[1].rentPerM2);
@@ -401,8 +400,8 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
     it('should categorize prices correctly', () => {
       const medianRentPerM2 = 13;
       const ranked = rankHousingByRentPerM2(mockUrbanHousing, medianRentPerM2);
-      
-      expect(ranked.every(r => r.priceCategory)).toBeDefined();
+
+      expect(ranked.every((r) => r.priceCategory)).toBeDefined();
     });
 
     it('should return empty for empty input', () => {
@@ -415,7 +414,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
     it('should handle single listing', () => {
       const singleListing = [mockUrbanHousing[0]];
       const result = analyzeHousingCosts(singleListing, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.pricePoints.length).toBe(1);
       expect(result!.aggregation.statistics.minRent).toBe(result!.aggregation.statistics.maxRent);
@@ -439,9 +438,9 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
         confidence: 'high',
         verified: true,
       };
-      
+
       const result = analyzeHousingCosts([atypicalHousing], 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.pricePoints[0].rentPerM2).toBeGreaterThan(20); // High per m² due to small surface
     });
@@ -449,7 +448,7 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
     it('should handle low volume data', () => {
       const lowVolume = [mockUrbanHousing[0], mockUrbanHousing[1]];
       const result = analyzeHousingCosts(lowVolume, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.aggregation.statistics.listingCount).toBe(2);
     });
@@ -472,9 +471,9 @@ describe('Housing Cost Observatory Service v2.4.0', () => {
         confidence: 'medium',
         verified: false,
       };
-      
+
       const result = analyzeHousingCosts([incomplete], 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.pricePoints[0].totalCostPerM2).toBeUndefined();
     });

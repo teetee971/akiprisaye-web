@@ -1,12 +1,12 @@
 /**
  * OCR Quality Score Service
- * 
+ *
  * Calculates a PURELY INFORMATIONAL quality score for OCR results
  * - NOT decisive
  * - NOT comparative between users
  * - NOT used for rankings
  * - Purely technical readability indicator
- * 
+ *
  * Factors (weighted):
  * - OCR confidence from Tesseract          (40 pts)
  * - Word count / text density              (25 pts)
@@ -63,12 +63,12 @@ export function calculateOCRQuality(
   ocrConfidence: number,
   textLength: number,
   wordCount?: number,
-  lineCount?: number,
+  lineCount?: number
 ): OCRQualityScore {
   const normConf = Math.max(0, Math.min(100, ocrConfidence));
 
   // --- Factor 1: OCR confidence (40 pts max) ---
-  const confScore = normConf * 0.40;
+  const confScore = normConf * 0.4;
 
   // --- Factor 2: Word density (25 pts max) ---
   const estWords = wordCount ?? Math.max(0, Math.round(textLength / 6));
@@ -93,9 +93,11 @@ export function calculateOCRQuality(
 
   // --- Factor 5: Character diversity (10 pts max) ---
   const dummyText = estWords > 0 ? 'Aa1€.' : '';
-  const diversityScore = textLength > 0 ? charDiversityScore(dummyText) * 0.10 : 0;
+  const diversityScore = textLength > 0 ? charDiversityScore(dummyText) * 0.1 : 0;
 
-  const overall = Math.round(Math.min(100, confScore + wordScore + lineScore + priceDensity + diversityScore));
+  const overall = Math.round(
+    Math.min(100, confScore + wordScore + lineScore + priceDensity + diversityScore)
+  );
 
   // --- Quality level ---
   let level: QualityLevel;
@@ -135,9 +137,10 @@ function buildTips(level: QualityLevel, conf: number, words: number, lines: numb
   if (level === 'high') return [];
   const tips: string[] = [];
   if (conf < 60) tips.push('Photographiez sous une lumière directe, évitez les reflets');
-  if (words < 10) tips.push('Cadrez l\'image pour inclure plus de texte');
-  if (lines < 3) tips.push('Tenez l\'appareil bien droit, parallèle au document');
-  if (level === 'low') tips.push('Mode reçu : activez l\'option "Ticket de caisse" pour un meilleur résultat');
+  if (words < 10) tips.push("Cadrez l'image pour inclure plus de texte");
+  if (lines < 3) tips.push("Tenez l'appareil bien droit, parallèle au document");
+  if (level === 'low')
+    tips.push('Mode reçu : activez l\'option "Ticket de caisse" pour un meilleur résultat');
   return tips;
 }
 
@@ -172,6 +175,6 @@ export function getQualityIcon(level: QualityLevel): string {
 /**
  * Legal disclaimer text for quality score
  */
-export const QUALITY_SCORE_DISCLAIMER = 
-  'Ce score indique uniquement la lisibilité technique de l\'image. ' +
-  'Il ne constitue pas une garantie de l\'exactitude du texte extrait.';
+export const QUALITY_SCORE_DISCLAIMER =
+  "Ce score indique uniquement la lisibilité technique de l'image. " +
+  "Il ne constitue pas une garantie de l'exactitude du texte extrait.";

@@ -34,14 +34,17 @@ type Step = 1 | 2 | 3;
  * 6 plan definitions aligned with backend SubscriptionTier enum
  * and updated to reflect actual SumUp pricing from subscriptionPlans.ts
  */
-const plans: Record<string, {
-  name: string;
-  monthly?: number;
-  yearly?: number;
-  yearlyRange?: string;
-  tagline?: string;
-  features?: string[];
-}> = {
+const plans: Record<
+  string,
+  {
+    name: string;
+    monthly?: number;
+    yearly?: number;
+    yearlyRange?: string;
+    tagline?: string;
+    features?: string[];
+  }
+> = {
   free: {
     name: 'Gratuit',
     monthly: 0,
@@ -52,16 +55,26 @@ const plans: Record<string, {
   citizen_premium: {
     name: 'Citoyen Premium ⭐',
     monthly: 4.99,
-    yearly: 49.90,
+    yearly: 49.9,
     tagline: 'Alertes SMS, API access',
-    features: ['Tout Gratuit +', '20 alertes + SMS', 'API 1 000 req/j', 'Exports illimités (50/mois)'],
+    features: [
+      'Tout Gratuit +',
+      '20 alertes + SMS',
+      'API 1 000 req/j',
+      'Exports illimités (50/mois)',
+    ],
   },
   sme_freemium: {
     name: 'PME Locale',
     monthly: 29,
     yearly: 290,
     tagline: 'Profil entreprise, analytics',
-    features: ['Tout Citoyen +', 'Profil entreprise', 'Suivi concurrence', 'Support prioritaire 4h'],
+    features: [
+      'Tout Citoyen +',
+      'Profil entreprise',
+      'Suivi concurrence',
+      'Support prioritaire 4h',
+    ],
   },
   business_pro: {
     name: 'Business Pro',
@@ -83,7 +96,7 @@ const plans: Record<string, {
     features: ['API 100 000 req/j', 'Exports open data', 'Analytics avancés'],
   },
   // Legacy plan IDs for backward-compatibility
-  CITIZEN_PREMIUM: { name: 'Citoyen Premium ⭐', monthly: 4.99, yearly: 49.90 },
+  CITIZEN_PREMIUM: { name: 'Citoyen Premium ⭐', monthly: 4.99, yearly: 49.9 },
   PRO: { name: 'PME Locale', monthly: 29, yearly: 290 },
   BUSINESS: { name: 'Business Pro', monthly: 79, yearly: 790 },
   ENTERPRISE: { name: 'Institutionnel 🏛️', yearlyRange: 'Sur devis' },
@@ -159,15 +172,18 @@ export default function Subscribe() {
   const price = isCustomPricing
     ? null
     : cycle === 'yearly'
-    ? currentPlan?.yearly
-    : currentPlan?.monthly;
+      ? currentPlan?.yearly
+      : currentPlan?.monthly;
 
   const domPrice = isCustomPricing
     ? null
     : isDOMTerritory &&
-      (planId === 'sme_freemium' || planId === 'business_pro' || planId === 'PRO' || planId === 'BUSINESS')
-    ? (price ?? 0) * 0.7
-    : price;
+        (planId === 'sme_freemium' ||
+          planId === 'business_pro' ||
+          planId === 'PRO' ||
+          planId === 'BUSINESS')
+      ? (price ?? 0) * 0.7
+      : price;
   const finalPrice = isCustomPricing
     ? null
     : applyPromoDiscount(domPrice ?? 0, appliedPromo?.discountPct ?? 0);
@@ -244,7 +260,7 @@ export default function Subscribe() {
         }),
       });
 
-      const data = await response.json() as {
+      const data = (await response.json()) as {
         success: boolean;
         checkoutId?: string;
         subscription?: { id: string };
@@ -315,7 +331,9 @@ export default function Subscribe() {
           Accédez à toutes les fonctionnalités de la plateforme
         </p>
         {affiliateSource && (
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: 'rgba(134,239,172,0.85)' }}>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.75rem', color: 'rgba(134,239,172,0.85)' }}
+          >
             🤝 Offre partenaire active
           </p>
         )}
@@ -332,8 +350,8 @@ export default function Subscribe() {
                   s === step
                     ? 'bg-blue-600 text-white'
                     : s < step
-                    ? 'bg-green-600 text-white'
-                    : 'bg-white/[0.08] text-gray-400'
+                      ? 'bg-green-600 text-white'
+                      : 'bg-white/[0.08] text-gray-400'
                 }`}
               >
                 {s < step ? '✓' : s}
@@ -392,14 +410,11 @@ export default function Subscribe() {
                       </span>
                     </p>
                     {cycle === 'yearly' && (
-                      <p className="text-green-400 text-sm mt-1">
-                        💰 2 mois offerts vs mensuel
-                      </p>
+                      <p className="text-green-400 text-sm mt-1">💰 2 mois offerts vs mensuel</p>
                     )}
-                    {isDOMTerritory &&
-                      (planId === 'sme_freemium' || planId === 'business_pro') && (
-                        <p className="text-green-400 text-sm mt-1">Prix DOM-ROM-COM (-30%)</p>
-                      )}
+                    {isDOMTerritory && (planId === 'sme_freemium' || planId === 'business_pro') && (
+                      <p className="text-green-400 text-sm mt-1">Prix DOM-ROM-COM (-30%)</p>
+                    )}
                   </>
                 )}
               </div>
@@ -439,7 +454,6 @@ export default function Subscribe() {
               )}
 
               <DataBadge source="INSEE · OPMR · data.gouv.fr" />
-
             </GlassCard>
 
             {/* Promo code input */}
@@ -457,23 +471,17 @@ export default function Subscribe() {
                     className="flex-1 px-4 py-3 bg-white/[0.08] border border-white/[0.22] rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none text-sm"
                     aria-label="Code promo"
                   />
-                  <CivicButton
-                    variant="secondary"
-                    onClick={handleApplyPromo}
-                    className="shrink-0"
-                  >
+                  <CivicButton variant="secondary" onClick={handleApplyPromo} className="shrink-0">
                     Appliquer
                   </CivicButton>
                 </div>
-                {promoError && (
-                  <p className="text-red-400 text-sm mt-1">{promoError}</p>
-                )}
+                {promoError && <p className="text-red-400 text-sm mt-1">{promoError}</p>}
                 {appliedPromo && (
                   <div className="mt-2 flex items-center gap-2 text-green-400 text-sm">
                     <span>🎉</span>
                     <span>
-                      <strong>{appliedPromo.label}</strong> appliqué —{' '}
-                      {appliedPromo.discountPct}% de réduction
+                      <strong>{appliedPromo.label}</strong> appliqué — {appliedPromo.discountPct}%
+                      de réduction
                     </span>
                   </div>
                 )}
@@ -490,7 +498,11 @@ export default function Subscribe() {
             </div>
 
             <div className="flex gap-4">
-              <CivicButton variant="secondary" className="flex-1" onClick={() => navigate('/pricing')}>
+              <CivicButton
+                variant="secondary"
+                className="flex-1"
+                onClick={() => navigate('/pricing')}
+              >
                 Retour
               </CivicButton>
               <CivicButton variant="primary" className="flex-1" onClick={handleStep1Next}>
@@ -631,7 +643,8 @@ export default function Subscribe() {
                   </div>
                   {appliedPromo && !isCustomPricing && (
                     <p className="text-green-400 text-xs mt-1 text-right">
-                      🎉 Code <strong>{appliedPromo.code}</strong> appliqué — {appliedPromo.discountPct}% de réduction
+                      🎉 Code <strong>{appliedPromo.code}</strong> appliqué —{' '}
+                      {appliedPromo.discountPct}% de réduction
                     </p>
                   )}
                 </div>
@@ -692,7 +705,11 @@ export default function Subscribe() {
                   <p className="text-indigo-200 text-sm mb-3">
                     Ce plan est sur devis. Notre équipe vous contactera sous 24h.
                   </p>
-                  <CivicButton variant="primary" className="w-full" onClick={handleCustomPricingContact}>
+                  <CivicButton
+                    variant="primary"
+                    className="w-full"
+                    onClick={handleCustomPricingContact}
+                  >
                     Demander un devis
                   </CivicButton>
                 </div>

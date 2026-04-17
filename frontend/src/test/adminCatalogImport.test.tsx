@@ -40,7 +40,7 @@ describe('AdminCatalogImport', () => {
     render(
       <HelmetProvider>
         <AdminCatalogImport />
-      </HelmetProvider>,
+      </HelmetProvider>
     );
 
     fireEvent.change(screen.getByLabelText(/JSON brut du catalogue/i), {
@@ -56,7 +56,7 @@ describe('AdminCatalogImport', () => {
     render(
       <HelmetProvider>
         <AdminCatalogImport />
-      </HelmetProvider>,
+      </HelmetProvider>
     );
 
     fireEvent.click(screen.getByRole('button', { name: /Analyser le catalogue/i }));

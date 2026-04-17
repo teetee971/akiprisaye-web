@@ -32,7 +32,7 @@ const FACTORS: Factor[] = [
     title: 'Fret maritime',
     badge: '+6 % à +18 %',
     detail:
-      'Les produits arrivent par bateau depuis l\'Hexagone (10 à 22 jours de traversée). Plus la distance est grande, plus le coût de transport pèse sur le prix final.',
+      "Les produits arrivent par bateau depuis l'Hexagone (10 à 22 jours de traversée). Plus la distance est grande, plus le coût de transport pèse sur le prix final.",
     accentColor: '#60a5fa',
     bg: 'rgba(59,130,246,0.08)',
     border: 'rgba(59,130,246,0.25)',
@@ -61,14 +61,15 @@ const FACTORS: Factor[] = [
     bg: 'rgba(245,158,11,0.08)',
     border: 'rgba(245,158,11,0.25)',
     sourceLabel: 'Autorité de la concurrence — Avis 09-A-45',
-    sourceUrl: 'https://www.autoritedelaconcurrence.fr/fr/decision/relatif-au-fonctionnement-de-la-grande-distribution-dans-les-departements-doutre-mer',
+    sourceUrl:
+      'https://www.autoritedelaconcurrence.fr/fr/decision/relatif-au-fonctionnement-de-la-grande-distribution-dans-les-departements-doutre-mer',
   },
   {
     emoji: '💸',
     title: 'Revenus plus faibles',
     badge: 'Double impact',
     detail:
-      'Le revenu médian disponible en Martinique est de 15 000 €/an contre 23 300 €/an en métropole (INSEE 2023). Des prix plus élevés avec des revenus inférieurs amplifient le décrochage du pouvoir d\'achat.',
+      "Le revenu médian disponible en Martinique est de 15 000 €/an contre 23 300 €/an en métropole (INSEE 2023). Des prix plus élevés avec des revenus inférieurs amplifient le décrochage du pouvoir d'achat.",
     accentColor: '#f87171',
     bg: 'rgba(239,68,68,0.08)',
     border: 'rgba(239,68,68,0.25)',
@@ -79,12 +80,12 @@ const FACTORS: Factor[] = [
 
 // Surcoût alimentaire vs métropole — source INSEE / IEDOM rapports annuels 2023
 const OVERCOSTS = [
-  { territory: 'France métro.', flag: '🇫🇷', pct: 0,  color: '#22c55e' },
-  { territory: 'Martinique',    flag: '🇲🇶', pct: 11, color: '#fbbf24' },
-  { territory: 'Guadeloupe',    flag: '🇬🇵', pct: 13, color: '#fbbf24' },
-  { territory: 'La Réunion',    flag: '🇷🇪', pct: 12, color: '#fbbf24' },
-  { territory: 'Mayotte',       flag: '🇾🇹', pct: 14, color: '#f97316' },
-  { territory: 'Guyane',        flag: '🇬🇫', pct: 17, color: '#ef4444' },
+  { territory: 'France métro.', flag: '🇫🇷', pct: 0, color: '#22c55e' },
+  { territory: 'Martinique', flag: '🇲🇶', pct: 11, color: '#fbbf24' },
+  { territory: 'Guadeloupe', flag: '🇬🇵', pct: 13, color: '#fbbf24' },
+  { territory: 'La Réunion', flag: '🇷🇪', pct: 12, color: '#fbbf24' },
+  { territory: 'Mayotte', flag: '🇾🇹', pct: 14, color: '#f97316' },
+  { territory: 'Guyane', flag: '🇬🇫', pct: 17, color: '#ef4444' },
 ];
 
 // ─── Images ────────────────────────────────────────────────────────────────────
@@ -100,8 +101,8 @@ const IMAGES = {
   },
   port: {
     src: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fm=webp&fit=crop&w=640&q=75',
-    alt: 'Vue panoramique d\'un port tropical — chef-lieu et principale zone commerciale',
-    caption: 'Port tropical — centre commercial et portuaire des îles d\'Outre-mer.',
+    alt: "Vue panoramique d'un port tropical — chef-lieu et principale zone commerciale",
+    caption: "Port tropical — centre commercial et portuaire des îles d'Outre-mer.",
     credit: 'Unsplash',
     creditUrl: 'https://unsplash.com/',
   },
@@ -153,12 +154,7 @@ function ImageCard({
         }}
       >
         {caption}{' '}
-        <a
-          href={creditUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: '#60a5fa' }}
-        >
+        <a href={creditUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa' }}>
           {credit}
         </a>
       </figcaption>
@@ -193,10 +189,9 @@ export default function PriceExplainerBanner() {
           }}
         >
           En Guadeloupe, Martinique, Guyane, La Réunion et Mayotte, les prix alimentaires sont en
-          moyenne{' '}
-          <strong style={{ color: '#fbbf24' }}>11 à 17 % plus élevés</strong> qu'en France
-          métropolitaine — et jusqu'à <strong style={{ color: '#ef4444' }}>40 % de plus</strong>{' '}
-          sur certains produits transformés. Quatre mécanismes cumulatifs expliquent ces écarts.
+          moyenne <strong style={{ color: '#fbbf24' }}>11 à 17 % plus élevés</strong> qu'en France
+          métropolitaine — et jusqu'à <strong style={{ color: '#ef4444' }}>40 % de plus</strong> sur
+          certains produits transformés. Quatre mécanismes cumulatifs expliquent ces écarts.
         </p>
 
         {/* Hero image — container ship */}
@@ -205,10 +200,7 @@ export default function PriceExplainerBanner() {
         </div>
 
         {/* Factor cards */}
-        <div
-          className="explainer-grid"
-          style={{ marginBottom: '1.5rem' }}
-        >
+        <div className="explainer-grid" style={{ marginBottom: '1.5rem' }}>
           {FACTORS.map((f) => (
             <div
               key={f.title}
@@ -229,9 +221,7 @@ export default function PriceExplainerBanner() {
                 }}
               >
                 <span style={{ fontSize: '1.15rem' }}>{f.emoji}</span>
-                <span
-                  style={{ fontWeight: 700, color: '#e2e8f0', fontSize: '0.88rem', flex: 1 }}
-                >
+                <span style={{ fontWeight: 700, color: '#e2e8f0', fontSize: '0.88rem', flex: 1 }}>
                   {f.title}
                 </span>
                 <span
@@ -375,10 +365,16 @@ export default function PriceExplainerBanner() {
           <Link
             to="/conference-prix"
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-              padding: '0.55rem 1.15rem', borderRadius: 8,
-              background: 'rgba(99,102,241,0.75)', color: '#fff',
-              fontSize: '0.82rem', fontWeight: 700, textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.55rem 1.15rem',
+              borderRadius: 8,
+              background: 'rgba(99,102,241,0.75)',
+              color: '#fff',
+              fontSize: '0.82rem',
+              fontWeight: 700,
+              textDecoration: 'none',
             }}
           >
             🎙️ Voir la présentation →
@@ -386,10 +382,17 @@ export default function PriceExplainerBanner() {
           <Link
             to="/comprendre-prix"
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-              padding: '0.55rem 1.15rem', borderRadius: 8,
-              background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.35)',
-              color: '#a5b4fc', fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.55rem 1.15rem',
+              borderRadius: 8,
+              background: 'rgba(99,102,241,0.1)',
+              border: '1px solid rgba(99,102,241,0.35)',
+              color: '#a5b4fc',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              textDecoration: 'none',
             }}
           >
             📖 Analyse complète →
@@ -397,10 +400,17 @@ export default function PriceExplainerBanner() {
           <Link
             to="/comparaison-territoires"
             style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-              padding: '0.55rem 1.15rem', borderRadius: 8,
-              background: 'rgba(30,41,59,0.6)', border: '1px solid rgba(148,163,184,0.2)',
-              color: '#94a3b8', fontSize: '0.82rem', fontWeight: 600, textDecoration: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              padding: '0.55rem 1.15rem',
+              borderRadius: 8,
+              background: 'rgba(30,41,59,0.6)',
+              border: '1px solid rgba(148,163,184,0.2)',
+              color: '#94a3b8',
+              fontSize: '0.82rem',
+              fontWeight: 600,
+              textDecoration: 'none',
             }}
           >
             📊 Tableau économique →

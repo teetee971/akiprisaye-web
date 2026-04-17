@@ -32,7 +32,7 @@ export type TerritoryCode =
  */
 export interface Territory {
   code: TerritoryCode; // technical code (lowercase)
-  label: string;       // UI label (uppercase)
+  label: string; // UI label (uppercase)
   name: string;
   fullName: string;
   type: 'DROM' | 'COM' | 'Autres' | 'Metro';
@@ -42,7 +42,7 @@ export interface Territory {
   flag: string;
   active: boolean;
   currency: string; // ISO currency code
-  locale: string;   // Locale for formatting
+  locale: string; // Locale for formatting
   timezone: string; // IANA timezone
   meta?: {
     country?: string;
@@ -285,14 +285,13 @@ export function getTerritoryByCode(code: string): Territory | undefined {
 }
 
 export function getActiveTerritories(): Territory[] {
-  return Object.values(TERRITORIES).filter(t => t.active);
+  return Object.values(TERRITORIES).filter((t) => t.active);
 }
 
 // Export all territories as array for compatibility
 export const ALL_TERRITORIES = Object.values(TERRITORIES);
 
-export const DEFAULT_TERRITORY: TerritoryCode =
-  getActiveTerritories()[0]?.code ?? 'gp';
+export const DEFAULT_TERRITORY: TerritoryCode = getActiveTerritories()[0]?.code ?? 'gp';
 
 export function formatPriceForTerritory(value: number, territoryCode: TerritoryCode): string {
   const territory = getTerritory(territoryCode);

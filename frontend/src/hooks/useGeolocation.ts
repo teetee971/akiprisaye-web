@@ -1,4 +1,3 @@
- 
 /**
  * useGeolocation Hook
  * Manages geolocation permissions and provides position tracking
@@ -40,9 +39,7 @@ interface UseGeolocationReturn {
  * @param options Geolocation options
  * @returns Geolocation state and controls
  */
-export function useGeolocation(
-  options: UseGeolocationOptions = {}
-): UseGeolocationReturn {
+export function useGeolocation(options: UseGeolocationOptions = {}): UseGeolocationReturn {
   const {
     enableHighAccuracy = true,
     timeout = 10000,
@@ -53,9 +50,9 @@ export function useGeolocation(
   const [position, setPosition] = useState<UserPosition | null>(null);
   const [error, setError] = useState<GeolocationError | null>(null);
   const [loading, setLoading] = useState(false);
-  const [permission, setPermission] = useState<
-    'granted' | 'denied' | 'prompt' | 'unknown'
-  >('unknown');
+  const [permission, setPermission] = useState<'granted' | 'denied' | 'prompt' | 'unknown'>(
+    'unknown'
+  );
   const [watchId, setWatchId] = useState<number | null>(null);
 
   // Check if geolocation is supported
@@ -74,7 +71,7 @@ export function useGeolocation(
         .query({ name: 'geolocation' })
         .then((result) => {
           setPermission(result.state as 'granted' | 'denied' | 'prompt');
-          
+
           // Listen for permission changes
           result.addEventListener('change', () => {
             setPermission(result.state as 'granted' | 'denied' | 'prompt');
@@ -135,15 +132,11 @@ export function useGeolocation(
     setError(null);
 
     try {
-      navigator.geolocation.getCurrentPosition(
-        handleSuccess,
-        handleError,
-        {
-          enableHighAccuracy,
-          timeout,
-          maximumAge,
-        }
-      );
+      navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+        enableHighAccuracy,
+        timeout,
+        maximumAge,
+      });
     } catch (_err) {
       setError({
         code: 0,
@@ -166,15 +159,11 @@ export function useGeolocation(
     setLoading(true);
     setError(null);
 
-    navigator.geolocation.getCurrentPosition(
-      handleSuccess,
-      handleError,
-      {
-        enableHighAccuracy,
-        timeout,
-        maximumAge,
-      }
-    );
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError, {
+      enableHighAccuracy,
+      timeout,
+      maximumAge,
+    });
   }, [isSupported, enableHighAccuracy, timeout, maximumAge, handleSuccess, handleError]);
 
   // Clear position
@@ -196,15 +185,11 @@ export function useGeolocation(
       return;
     }
 
-    const id = navigator.geolocation.watchPosition(
-      handleSuccess,
-      handleError,
-      {
-        enableHighAccuracy,
-        timeout,
-        maximumAge,
-      }
-    );
+    const id = navigator.geolocation.watchPosition(handleSuccess, handleError, {
+      enableHighAccuracy,
+      timeout,
+      maximumAge,
+    });
 
     setWatchId(id);
 

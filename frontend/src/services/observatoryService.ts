@@ -43,7 +43,7 @@ function getTerritoryName(code: TerritoryCode): string {
  */
 export async function detectInflation(
   territory: TerritoryCode,
-  period: '7d' | '30d' | '90d' | '1y' = '30d',
+  period: '7d' | '30d' | '90d' | '1y' = '30d'
 ): Promise<InflationAnalysis> {
   const endDate = new Date();
   const startDate = new Date();
@@ -88,7 +88,8 @@ export async function detectInflation(
   }
 
   const totalProducts = latest ? latest.donnees.length : 0;
-  const affectedProducts = snapshots.length >= 2 ? Math.max(1, Math.round(totalProducts * 0.65)) : 0;
+  const affectedProducts =
+    snapshots.length >= 2 ? Math.max(1, Math.round(totalProducts * 0.65)) : 0;
 
   const categoriesImpacted: Array<{ category: ProductCategory; rate: number }> = [];
   categoryMap.forEach((prices, cat) => {
@@ -97,7 +98,13 @@ export async function detectInflation(
   });
 
   const severity: InflationAnalysis['severity'] =
-    inflationRate < 2 ? 'low' : inflationRate < 4 ? 'moderate' : inflationRate < 6 ? 'high' : 'critical';
+    inflationRate < 2
+      ? 'low'
+      : inflationRate < 4
+        ? 'moderate'
+        : inflationRate < 6
+          ? 'high'
+          : 'critical';
 
   return {
     period,
@@ -174,7 +181,7 @@ export async function detectShrinkflation(
     },
     {
       productId: 'prod-shrink-005',
-      productName: 'Jus d\'orange pur jus 1L',
+      productName: "Jus d'orange pur jus 1L",
       oldContenance: 1000,
       newContenance: 900,
       reductionPercentage: 10,
@@ -235,7 +242,7 @@ export async function detectShrinkflation(
  */
 export async function getPriceHistory(
   productId: string,
-  days: number = 90,
+  days: number = 90
 ): Promise<PriceHistoryPoint[]> {
   // Try each territory and collect price points for this product
   const territories = Object.keys(TERRITORY_NAME_MAP) as TerritoryCode[];
@@ -247,14 +254,16 @@ export async function getPriceHistory(
       const snapshots = await loadObservatoireData(name);
       for (const snap of snapshots) {
         const obs = snap.donnees.filter(
-          (o) => o.ean === productId || o.produit.toLowerCase().includes(productId.toLowerCase()),
+          (o) => o.ean === productId || o.produit.toLowerCase().includes(productId.toLowerCase())
         );
         for (const o of obs) {
           history.push({
             date: snap.date_snapshot,
             price: o.prix,
             pricePerUnit: o.prix,
-            source: (snap.source === 'api' || snap.source === 'user' ? snap.source : 'historical') as 'api' | 'user' | 'historical',
+            source: (snap.source === 'api' || snap.source === 'user'
+              ? snap.source
+              : 'historical') as 'api' | 'user' | 'historical',
             enseigne: o.enseigne ?? '',
           });
         }
@@ -266,9 +275,7 @@ export async function getPriceHistory(
 
   // Deduplicate and sort by date, limit to requested days
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-  return history
-    .filter((h) => h.date >= cutoff)
-    .sort((a, b) => a.date.localeCompare(b.date));
+  return history.filter((h) => h.date >= cutoff).sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /**
@@ -338,24 +345,28 @@ export async function getCollectivityDashboard(
     shrinkflationCases: shrinkflation.length,
     averagePriceLevel,
     comparisonToMetropole,
-    topImpactedCategories: inflation.categoriesImpacted.map(c => ({
+    topImpactedCategories: inflation.categoriesImpacted.map((c) => ({
       category: c.category,
-      impact: c.rate
+      impact: c.rate,
     })),
     alerts: [
       {
         type: 'inflation',
         severity: inflation.severity,
         message: `Inflation de ${inflation.inflationRate.toFixed(1)}% détectée sur ${inflation.affectedProducts} produits`,
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
       },
-      ...(shrinkflation.length > 0 ? [{
-        type: 'shrinkflation' as const,
-        severity: 'moderate' as const,
-        message: `${shrinkflation.length} cas de shrinkflation documentés`,
-        date: new Date().toISOString()
-      }] : [])
-    ]
+      ...(shrinkflation.length > 0
+        ? [
+            {
+              type: 'shrinkflation' as const,
+              severity: 'moderate' as const,
+              message: `${shrinkflation.length} cas de shrinkflation documentés`,
+              date: new Date().toISOString(),
+            },
+          ]
+        : []),
+    ],
   };
 }
 
@@ -420,10 +431,14 @@ export function formatInflationRate(rate: number): string {
  */
 export function getSeverityColor(severity: 'low' | 'moderate' | 'high' | 'critical'): string {
   switch (severity) {
-    case 'low': return '#10b981'; // green
-    case 'moderate': return '#f59e0b'; // orange
-    case 'high': return '#ef4444'; // red
-    case 'critical': return '#dc2626'; // dark red
+    case 'low':
+      return '#10b981'; // green
+    case 'moderate':
+      return '#f59e0b'; // orange
+    case 'high':
+      return '#ef4444'; // red
+    case 'critical':
+      return '#dc2626'; // dark red
   }
 }
 
@@ -432,8 +447,11 @@ export function getSeverityColor(severity: 'low' | 'moderate' | 'high' | 'critic
  */
 export function getTrendIcon(trend: 'up' | 'down' | 'stable'): string {
   switch (trend) {
-    case 'up': return '📈';
-    case 'down': return '📉';
-    case 'stable': return '➡️';
+    case 'up':
+      return '📈';
+    case 'down':
+      return '📉';
+    case 'stable':
+      return '➡️';
   }
 }

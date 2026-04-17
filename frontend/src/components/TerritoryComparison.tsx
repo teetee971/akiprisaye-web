@@ -16,7 +16,7 @@ export default function TerritoryComparison({ territoryA, territoryB }: Props) {
   useEffect(() => {
     let mounted = true;
     compareTerritories(territoryA, territoryB)
-      .then(res => mounted && setData(res))
+      .then((res) => mounted && setData(res))
       .catch(() => mounted && setError('Comparaison indisponible'));
     return () => {
       mounted = false;
@@ -44,15 +44,12 @@ export default function TerritoryComparison({ territoryA, territoryB }: Props) {
           isMoreExpensive ? 'bg-red-900/30' : 'bg-green-900/30'
         }`}
       >
-        <strong>{territoryA}</strong>{' '}
-        {isMoreExpensive ? 'est plus cher' : 'est moins cher'} que{' '}
-        <strong>{territoryB}</strong> de{' '}
-        <strong>{Math.abs(data.deltaPercent).toFixed(1)} %</strong>
+        <strong>{territoryA}</strong> {isMoreExpensive ? 'est plus cher' : 'est moins cher'} que{' '}
+        <strong>{territoryB}</strong> de <strong>{Math.abs(data.deltaPercent).toFixed(1)} %</strong>
       </div>
 
       <div className="text-xs opacity-70">
-        Territoire le moins cher :{' '}
-        <strong>{data.cheaperTerritory}</strong>
+        Territoire le moins cher : <strong>{data.cheaperTerritory}</strong>
       </div>
     </section>
   );

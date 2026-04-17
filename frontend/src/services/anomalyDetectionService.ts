@@ -1,17 +1,20 @@
- 
 /**
  * Anomaly Detection Service
- * 
+ *
  * Detects price anomalies using transparent statistical methods
  * - Sudden price increases
  * - Excessive territorial gaps
  * - Shrinkflation
  * - Data series breaks
- * 
+ *
  * NO OPAQUE AI - All methods are explainable and auditable
  */
 
-export type AnomalyType = 'hausse_brutale' | 'ecart_territorial' | 'shrinkflation' | 'rupture_serie';
+export type AnomalyType =
+  | 'hausse_brutale'
+  | 'ecart_territorial'
+  | 'shrinkflation'
+  | 'rupture_serie';
 
 export type AnomalySeverity = 'low' | 'medium' | 'high';
 
@@ -34,7 +37,7 @@ export interface PriceDataPoint {
 
 /**
  * Detect sudden price increase over a time period
- * 
+ *
  * @param data - Array of price data points (chronologically sorted)
  * @param productName - Name of the product
  * @param windowDays - Time window to check (default: 7 days)
@@ -54,7 +57,7 @@ export function detectSuddenIncrease(
   windowStart.setDate(windowStart.getDate() - windowDays);
 
   const previousInWindow = data
-    .filter(d => new Date(d.date) >= windowStart && new Date(d.date) < new Date(recent.date))
+    .filter((d) => new Date(d.date) >= windowStart && new Date(d.date) < new Date(recent.date))
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   if (previousInWindow.length === 0) return null;
@@ -90,7 +93,7 @@ export function detectSuddenIncrease(
 
 /**
  * Detect excessive territorial price gap compared to mainland France
- * 
+ *
  * @param territorialPrice - Price in the territory
  * @param mainlandPrice - Price in mainland France
  * @param productName - Name of the product
@@ -134,7 +137,7 @@ export function detectTerritorialGap(
 
 /**
  * Detect shrinkflation (price stable but quantity decreased)
- * 
+ *
  * @param oldQuantity - Previous product quantity
  * @param newQuantity - Current product quantity
  * @param oldPrice - Previous price
@@ -190,7 +193,7 @@ export function detectShrinkflation(
 
 /**
  * Detect data series break (significant gap in observations)
- * 
+ *
  * @param data - Array of price data points (chronologically sorted)
  * @param productName - Name of the product
  * @param maxGapDays - Maximum acceptable gap between observations (default: 60 days)
@@ -232,7 +235,7 @@ export function detectSeriesBreak(
 
 /**
  * Get all anomalies for a product
- * 
+ *
  * @param data - Price data for the product
  * @param productName - Name of the product
  * @param ean - EAN code
@@ -268,7 +271,9 @@ export function getAllAnomalies(
   } = options || {};
 
   // Sort data chronologically
-  const sortedData = [...data].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedData = [...data].sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 
   // Detect sudden increase
   if (enableSuddenIncrease && sortedData.length >= 2) {
@@ -287,7 +292,14 @@ export function getAllAnomalies(
   if (enableShrinkflation && oldQuantity && newQuantity && sortedData.length >= 2) {
     const oldPrice = sortedData[0].price;
     const newPrice = sortedData[sortedData.length - 1].price;
-    const anomaly = detectShrinkflation(oldQuantity, newQuantity, oldPrice, newPrice, productName, ean);
+    const anomaly = detectShrinkflation(
+      oldQuantity,
+      newQuantity,
+      oldPrice,
+      newPrice,
+      productName,
+      ean
+    );
     if (anomaly) anomalies.push(anomaly);
   }
 

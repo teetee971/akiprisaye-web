@@ -15,9 +15,9 @@ import { TERRITORIES } from '../constants/territories';
 
 // ── Build-time metadata ───────────────────────────────────────────────────────
 
-const BUILD_SHA: string  = import.meta.env.VITE_BUILD_SHA  ?? 'dev';
+const BUILD_SHA: string = import.meta.env.VITE_BUILD_SHA ?? 'dev';
 const BUILD_DATE: string = import.meta.env.VITE_BUILD_DATE ?? '';
-const BUILD_ENV: string  = import.meta.env.VITE_BUILD_ENV  ?? 'development';
+const BUILD_ENV: string = import.meta.env.VITE_BUILD_ENV ?? 'development';
 
 // ── Deployment workflows ──────────────────────────────────────────────────────
 
@@ -27,7 +27,8 @@ const WORKFLOWS = [
     name: 'GitHub Pages',
     emoji: '🌐',
     url: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/deploy-pages.yml',
-    badge: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/deploy-pages.yml/badge.svg',
+    badge:
+      'https://github.com/teetee971/akiprisaye-web/actions/workflows/deploy-pages.yml/badge.svg',
     site: 'https://teetee971.github.io/akiprisaye-web/',
   },
   {
@@ -35,7 +36,8 @@ const WORKFLOWS = [
     name: 'Cloudflare Pages',
     emoji: '🔶',
     url: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/deploy-cloudflare-pages.yml',
-    badge: 'https://github.com/teetee971/akiprisaye-web/actions/workflows/deploy-cloudflare-pages.yml/badge.svg',
+    badge:
+      'https://github.com/teetee971/akiprisaye-web/actions/workflows/deploy-cloudflare-pages.yml/badge.svg',
     site: 'https://akiprisaye-web.pages.dev/',
   },
   {
@@ -52,9 +54,18 @@ const WORKFLOWS = [
 
 // DROM first, then COM, then France métro — exclude TAAF (no population clock interest)
 const DISPLAY_ORDER: string[] = [
-  'gp', 'mq', 'gf', 're', 'yt',       // DROM (Antilles → Océan Indien)
-  'pf', 'nc', 'wf', 'mf', 'bl', 'pm', // COM (Pacifique → Atlantique)
-  'fr',                                  // France métropolitaine (référence)
+  'gp',
+  'mq',
+  'gf',
+  're',
+  'yt', // DROM (Antilles → Océan Indien)
+  'pf',
+  'nc',
+  'wf',
+  'mf',
+  'bl',
+  'pm', // COM (Pacifique → Atlantique)
+  'fr', // France métropolitaine (référence)
 ];
 
 // ── Time helpers ──────────────────────────────────────────────────────────────
@@ -92,7 +103,7 @@ function getUtcOffset(date: Date, tz: string): string {
 function getHour(date: Date, tz: string): number {
   const h = parseInt(
     date.toLocaleTimeString('fr-FR', { timeZone: tz, hour: '2-digit', hour12: false }),
-    10,
+    10
   );
   return isNaN(h) ? 12 : h;
 }
@@ -103,31 +114,24 @@ function isDaytime(hour: number): boolean {
 
 // ── Territory Clock Card ──────────────────────────────────────────────────────
 
-function TerritoryClockCard({
-  code,
-  now,
-  isMe,
-}: {
-  code: string;
-  now: Date;
-  isMe: boolean;
-}) {
+function TerritoryClockCard({ code, now, isMe }: { code: string; now: Date; isMe: boolean }) {
   const territory = TERRITORIES[code as keyof typeof TERRITORIES];
   if (!territory) return null;
 
   const tz = territory.timezone;
   const timeStr = formatTime(now, tz);
   const dateStr = formatDate(now, tz);
-  const offset  = getUtcOffset(now, tz);
-  const hour    = getHour(now, tz);
-  const day     = isDaytime(hour);
+  const offset = getUtcOffset(now, tz);
+  const hour = getHour(now, tz);
+  const day = isDaytime(hour);
 
   return (
     <div
       className={`relative flex flex-col gap-2 rounded-2xl border p-4 transition-all
-        ${isMe
-          ? 'border-blue-500/60 bg-blue-900/10 ring-1 ring-blue-500/30'
-          : 'border-slate-800 bg-slate-900 hover:border-slate-700'
+        ${
+          isMe
+            ? 'border-blue-500/60 bg-blue-900/10 ring-1 ring-blue-500/30'
+            : 'border-slate-800 bg-slate-900 hover:border-slate-700'
         }
         ${day ? '' : 'opacity-90'}`}
     >
@@ -169,11 +173,7 @@ function TerritoryClockCard({
 
 // ── Deployment card ───────────────────────────────────────────────────────────
 
-function DeploymentCard({
-  workflow,
-}: {
-  workflow: typeof WORKFLOWS[number];
-}) {
+function DeploymentCard({ workflow }: { workflow: (typeof WORKFLOWS)[number] }) {
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900 p-5">
       <div className="flex items-center justify-between gap-3">
@@ -231,7 +231,11 @@ export default function StatutPage() {
 
   // Detect user's territory from timezone
   const myTz = useMemo(() => {
-    try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return ''; }
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      return '';
+    }
   }, []);
 
   const myCode = useMemo(() => {
@@ -254,12 +258,19 @@ export default function StatutPage() {
           content="Horloges en direct des territoires ultramarins français et statut du déploiement de la plateforme A KI PRI SA YÉ."
         />
         <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/statut" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/statut" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/statut" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/statut"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/statut"
+        />
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-5 space-y-6">
-
         {/* ── Hero ── */}
         <HeroImage
           src={PAGE_HERO_IMAGES.statut}
@@ -283,14 +294,22 @@ export default function StatutPage() {
         ══════════════════════════════════════════════════════════════════════ */}
         <section aria-labelledby="section-clocks">
           <div className="flex items-center justify-between mb-6">
-            <h2 id="section-clocks" className="text-xl font-bold text-white flex items-center gap-2">
+            <h2
+              id="section-clocks"
+              className="text-xl font-bold text-white flex items-center gap-2"
+            >
               <Clock size={20} className="text-cyan-400" />
               Horloges des territoires ultramarins
             </h2>
             <div className="flex items-center gap-1.5 text-xs text-slate-500">
               <RefreshCw size={11} className="animate-spin" style={{ animationDuration: '1s' }} />
               <span className="font-mono tabular-nums">
-                {now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })} UTC
+                {now.toLocaleTimeString('fr-FR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit',
+                })}{' '}
+                UTC
               </span>
             </div>
           </div>
@@ -304,12 +323,7 @@ export default function StatutPage() {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {['gp', 'mq', 'gf', 're', 'yt'].map((code) => (
-                <TerritoryClockCard
-                  key={code}
-                  code={code}
-                  now={now}
-                  isMe={myCode === code}
-                />
+                <TerritoryClockCard key={code} code={code} now={now} isMe={myCode === code} />
               ))}
             </div>
           </div>
@@ -323,12 +337,7 @@ export default function StatutPage() {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {['pf', 'nc', 'wf', 'mf', 'bl', 'pm'].map((code) => (
-                <TerritoryClockCard
-                  key={code}
-                  code={code}
-                  now={now}
-                  isMe={myCode === code}
-                />
+                <TerritoryClockCard key={code} code={code} now={now} isMe={myCode === code} />
               ))}
             </div>
           </div>
@@ -341,11 +350,7 @@ export default function StatutPage() {
               <span className="flex-1 h-px bg-slate-700 inline-block" />
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              <TerritoryClockCard
-                code="fr"
-                now={now}
-                isMe={myCode === 'fr'}
-              />
+              <TerritoryClockCard code="fr" now={now} isMe={myCode === 'fr'} />
             </div>
           </div>
         </section>
@@ -354,7 +359,10 @@ export default function StatutPage() {
             SECTION 2 — Deployment Status
         ══════════════════════════════════════════════════════════════════════ */}
         <section aria-labelledby="section-deploy">
-          <h2 id="section-deploy" className="text-xl font-bold text-white flex items-center gap-2 mb-6">
+          <h2
+            id="section-deploy"
+            className="text-xl font-bold text-white flex items-center gap-2 mb-6"
+          >
             <GitBranch size={20} className="text-emerald-400" />
             Statut du déploiement en direct
           </h2>
@@ -391,12 +399,17 @@ export default function StatutPage() {
                 <p className="text-white font-medium">{BUILD_DATE || '—'}</p>
               </div>
               <div>
-                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Environnement</p>
-                <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-semibold border
-                  ${isProduction
-                    ? 'bg-emerald-900/30 text-emerald-300 border-emerald-700/40'
-                    : 'bg-amber-900/30 text-amber-300 border-amber-700/40'
-                  }`}>
+                <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+                  Environnement
+                </p>
+                <span
+                  className={`inline-block text-xs px-2 py-0.5 rounded-full font-semibold border
+                  ${
+                    isProduction
+                      ? 'bg-emerald-900/30 text-emerald-300 border-emerald-700/40'
+                      : 'bg-amber-900/30 text-amber-300 border-amber-700/40'
+                  }`}
+                >
                   {BUILD_ENV}
                 </span>
               </div>
@@ -414,9 +427,7 @@ export default function StatutPage() {
               </div>
             </div>
 
-            <p className="text-xs text-slate-600 border-t border-slate-800 pt-3">
-              {buildInfo}
-            </p>
+            <p className="text-xs text-slate-600 border-t border-slate-800 pt-3">{buildInfo}</p>
           </div>
 
           {/* Timeline legend */}
@@ -424,24 +435,31 @@ export default function StatutPage() {
             <p className="text-slate-400 font-medium mb-2">Légende des badges de déploiement</p>
             <div className="grid sm:grid-cols-3 gap-2">
               <span className="flex items-center gap-2">
-                <span className="inline-block w-12 h-4 rounded bg-emerald-700/60 text-center text-white text-[10px] leading-4">passing</span>
+                <span className="inline-block w-12 h-4 rounded bg-emerald-700/60 text-center text-white text-[10px] leading-4">
+                  passing
+                </span>
                 Déploiement réussi
               </span>
               <span className="flex items-center gap-2">
-                <span className="inline-block w-12 h-4 rounded bg-red-700/60 text-center text-white text-[10px] leading-4">failing</span>
+                <span className="inline-block w-12 h-4 rounded bg-red-700/60 text-center text-white text-[10px] leading-4">
+                  failing
+                </span>
                 Déploiement en erreur
               </span>
               <span className="flex items-center gap-2">
-                <span className="inline-block w-14 h-4 rounded bg-slate-600/60 text-center text-white text-[10px] leading-4">no status</span>
+                <span className="inline-block w-14 h-4 rounded bg-slate-600/60 text-center text-white text-[10px] leading-4">
+                  no status
+                </span>
                 Pas encore exécuté
               </span>
             </div>
             <p className="pt-1">
-              Les badges sont chargés en direct depuis GitHub — ils reflètent l'état réel du dernier workflow exécuté sur la branche <code className="bg-slate-800 px-1 rounded">main</code>.
+              Les badges sont chargés en direct depuis GitHub — ils reflètent l'état réel du dernier
+              workflow exécuté sur la branche{' '}
+              <code className="bg-slate-800 px-1 rounded">main</code>.
             </p>
           </div>
         </section>
-
       </div>
     </div>
   );

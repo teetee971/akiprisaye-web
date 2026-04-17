@@ -30,7 +30,7 @@ export interface MapStore {
  */
 export const getStoresByTerritory = async (
   territory: string,
-  includeReceiptStores = true,
+  includeReceiptStores = true
 ): Promise<MapStore[]> => {
   const seedStores = getStoresFromSeed(territory) as Array<Record<string, unknown>>;
 
@@ -61,9 +61,7 @@ export const getStoresByTerritory = async (
       const territoryReceiptStores: MapStore[] = matchedReceiptStores
         .filter(
           (store: ReceiptStore) =>
-            store.territory === territory &&
-            store.coordinates &&
-            !store.needsGeocoding,
+            store.territory === territory && store.coordinates && !store.needsGeocoding
         )
         .map((store: ReceiptStore) => ({
           id: store.id,

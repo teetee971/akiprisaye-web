@@ -1,11 +1,14 @@
- 
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import FavoritesPanel from '../components/search/FavoritesPanel';
 import SearchHistoryPanel from '../components/search/SearchHistoryPanel';
 import { useFavorites, type FavoriteItem } from '../hooks/useFavorites';
-import { useSearchHistory, type SearchHistoryEntry, type SearchHistoryType } from '../hooks/useSearchHistory';
+import {
+  useSearchHistory,
+  type SearchHistoryEntry,
+  type SearchHistoryType,
+} from '../hooks/useSearchHistory';
 import { searchProductPrices } from '../services/priceSearch/priceSearch.service';
 import type { PriceSearchResult, TerritoryCode } from '../services/priceSearch/price.types';
 import type { ScanData, ScanHubResult } from '../types/scanHubResult';
@@ -72,7 +75,10 @@ const shareProduct = async (title: string, barcode?: string) => {
     : window.location.href;
   if ('share' in navigator && typeof navigator.share === 'function') {
     try {
-      await (navigator as Navigator & { share: (data: object) => Promise<void> }).share({ title: `AkiPriSaYé — ${title}`, url });
+      await (navigator as Navigator & { share: (data: object) => Promise<void> }).share({
+        title: `AkiPriSaYé — ${title}`,
+        url,
+      });
     } catch {
       // user cancelled or browser denied — silent
     }
@@ -358,9 +364,10 @@ export function PriceResults({
     query: searchQuery,
     productName: result.productName,
   });
-  const favoriteLabel = searchQuery?.trim() || searchBarcode?.trim()
-    ? buildSearchLabel(searchQuery?.trim() ?? '', searchBarcode?.trim() ?? '')
-    : result.productName || 'Produit favori';
+  const favoriteLabel =
+    searchQuery?.trim() || searchBarcode?.trim()
+      ? buildSearchLabel(searchQuery?.trim() ?? '', searchBarcode?.trim() ?? '')
+      : result.productName || 'Produit favori';
   const favoriteActive = isFavorite(favoriteId);
   const [productCard, setProductCard] = useState<ProductCard | null>(null);
   // Resolved image URL from product-image worker (text query fallback)
@@ -396,7 +403,9 @@ export function PriceResults({
     try {
       const stale = sessionStorage.getItem(cardCacheKey);
       if (stale) setProductCard(JSON.parse(stale) as ProductCard);
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
 
     const loadProductCard = async () => {
       try {
@@ -409,7 +418,11 @@ export function PriceResults({
         const card = payload.product ?? null;
         setProductCard(card);
         if (card) {
-          try { sessionStorage.setItem(cardCacheKey, JSON.stringify(card)); } catch { /* ignore */ }
+          try {
+            sessionStorage.setItem(cardCacheKey, JSON.stringify(card));
+          } catch {
+            /* ignore */
+          }
         }
       } catch {
         // Keep stale card if already shown; clear only for barcode searches where null is explicit
@@ -422,7 +435,7 @@ export function PriceResults({
       try {
         const response = await fetch(
           `/api/prices?barcode=${encodeURIComponent(barcode)}&territory=${encodeURIComponent(territory)}`,
-          { signal: controller.signal },
+          { signal: controller.signal }
         );
         if (!response.ok) return;
         const payload = (await response.json()) as ApiPricesResponse;
@@ -442,18 +455,31 @@ export function PriceResults({
       const imgCacheKey = `product-img:${label.toLowerCase()}`;
       try {
         const cached = sessionStorage.getItem(imgCacheKey);
-        if (cached) { setResolvedImageUrl(cached); return; }
-      } catch { /* ignore */ }
+        if (cached) {
+          setResolvedImageUrl(cached);
+          return;
+        }
+      } catch {
+        /* ignore */
+      }
       try {
         const params = new URLSearchParams({ q: label, lang: 'fr', limit: '1' });
-        const resp = await fetch(`/api/product-image?${params.toString()}`, { signal: controller.signal });
+        const resp = await fetch(`/api/product-image?${params.toString()}`, {
+          signal: controller.signal,
+        });
         if (!resp.ok) return;
         const data = (await resp.json()) as { imageUrl?: string | null };
         if (data.imageUrl) {
           setResolvedImageUrl(data.imageUrl);
-          try { sessionStorage.setItem(imgCacheKey, data.imageUrl); } catch { /* ignore */ }
+          try {
+            sessionStorage.setItem(imgCacheKey, data.imageUrl);
+          } catch {
+            /* ignore */
+          }
         }
-      } catch { /* non-critical */ }
+      } catch {
+        /* non-critical */
+      }
     };
 
     void Promise.all([loadProductCard(), loadPrices(), loadProductImage()]);
@@ -473,9 +499,9 @@ export function PriceResults({
     () =>
       apiPrices.filter(
         (item): item is ApiPriceObservation & { price: number } =>
-          typeof item.price === 'number' && Number.isFinite(item.price) && item.price > 0,
+          typeof item.price === 'number' && Number.isFinite(item.price) && item.price > 0
       ),
-    [apiPrices],
+    [apiPrices]
   );
 
   const baselineMedian = useMemo(() => {
@@ -546,7 +572,10 @@ export function PriceResults({
     const latest = latestObservation.price;
 
     if (latest <= priceSummary.median * 0.95) {
-      return { label: 'Prix bas', className: 'text-emerald-200 bg-emerald-500/10 border-emerald-500/30' };
+      return {
+        label: 'Prix bas',
+        className: 'text-emerald-200 bg-emerald-500/10 border-emerald-500/30',
+      };
     }
 
     if (latest >= priceSummary.median * 1.05) {
@@ -607,9 +636,7 @@ export function PriceResults({
       <div className="bg-slate-900/70 border border-slate-700 rounded-2xl p-6 space-y-3">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-semibold">
-              {productTitle}
-            </h2>
+            <h2 className="text-2xl font-semibold">{productTitle}</h2>
             <p className="text-sm text-slate-400">
               Confiance: {confidence}/100 • Sources: {result.sourcesUsed?.length ?? 0}
             </p>
@@ -668,7 +695,10 @@ export function PriceResults({
               </span>
             )}
             {productCard?.categories?.slice(0, 3).map((cat) => (
-              <span key={cat} className="bg-indigo-900/40 border border-indigo-700/40 rounded-full px-3 py-1 text-indigo-300">
+              <span
+                key={cat}
+                className="bg-indigo-900/40 border border-indigo-700/40 rounded-full px-3 py-1 text-indigo-300"
+              >
                 {cat}
               </span>
             ))}
@@ -678,49 +708,64 @@ export function PriceResults({
         {/* Nutri-Score + Éco-Score + NOVA badges + Share */}
         {(productCard?.nutriscore || productCard?.ecoscore || productCard?.novaGroup) && (
           <div className="flex flex-wrap gap-2 items-center">
-            {productCard?.nutriscore && (() => {
-              const g = productCard.nutriscore.toUpperCase();
-              const colorMap: Record<string, string> = {
-                A: 'bg-green-500 text-white',
-                B: 'bg-lime-400 text-black',
-                C: 'bg-yellow-400 text-black',
-                D: 'bg-orange-500 text-white',
-                E: 'bg-red-600 text-white',
-              };
-              const cls = colorMap[g] ?? 'bg-slate-600 text-white';
-              return (
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cls}`} title="Nutri-Score">
-                  🥗 Nutri-Score <strong>{g}</strong>
-                </span>
-              );
-            })()}
-            {productCard?.ecoscore && (() => {
-              const g = productCard.ecoscore.toUpperCase();
-              const colorMap: Record<string, string> = {
-                A: 'bg-green-700 text-white',
-                B: 'bg-green-500 text-white',
-                C: 'bg-yellow-500 text-black',
-                D: 'bg-orange-600 text-white',
-                E: 'bg-red-700 text-white',
-              };
-              const cls = colorMap[g] ?? 'bg-slate-600 text-white';
-              return (
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cls}`} title="Éco-Score">
-                  🌿 Éco-Score <strong>{g}</strong>
-                </span>
-              );
-            })()}
-            {productCard?.novaGroup && NOVA_META[productCard.novaGroup] && (() => {
-              const meta = NOVA_META[productCard.novaGroup as number];
-              return (
-                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${meta.color}`} title={meta.desc}>
-                  🏭 {meta.label}
-                </span>
-              );
-            })()}
+            {productCard?.nutriscore &&
+              (() => {
+                const g = productCard.nutriscore.toUpperCase();
+                const colorMap: Record<string, string> = {
+                  A: 'bg-green-500 text-white',
+                  B: 'bg-lime-400 text-black',
+                  C: 'bg-yellow-400 text-black',
+                  D: 'bg-orange-500 text-white',
+                  E: 'bg-red-600 text-white',
+                };
+                const cls = colorMap[g] ?? 'bg-slate-600 text-white';
+                return (
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cls}`}
+                    title="Nutri-Score"
+                  >
+                    🥗 Nutri-Score <strong>{g}</strong>
+                  </span>
+                );
+              })()}
+            {productCard?.ecoscore &&
+              (() => {
+                const g = productCard.ecoscore.toUpperCase();
+                const colorMap: Record<string, string> = {
+                  A: 'bg-green-700 text-white',
+                  B: 'bg-green-500 text-white',
+                  C: 'bg-yellow-500 text-black',
+                  D: 'bg-orange-600 text-white',
+                  E: 'bg-red-700 text-white',
+                };
+                const cls = colorMap[g] ?? 'bg-slate-600 text-white';
+                return (
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${cls}`}
+                    title="Éco-Score"
+                  >
+                    🌿 Éco-Score <strong>{g}</strong>
+                  </span>
+                );
+              })()}
+            {productCard?.novaGroup &&
+              NOVA_META[productCard.novaGroup] &&
+              (() => {
+                const meta = NOVA_META[productCard.novaGroup as number];
+                return (
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${meta.color}`}
+                    title={meta.desc}
+                  >
+                    🏭 {meta.label}
+                  </span>
+                );
+              })()}
             <button
               type="button"
-              onClick={() => void shareProduct(productTitle, productCard?.barcode ?? searchBarcode ?? undefined)}
+              onClick={() =>
+                void shareProduct(productTitle, productCard?.barcode ?? searchBarcode ?? undefined)
+              }
               className="ml-auto inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
               aria-label="Partager ce produit"
               title={'share' in navigator ? 'Partager' : 'Copier le lien'}
@@ -733,7 +778,12 @@ export function PriceResults({
         {productImages.length > 0 ? (
           <div className={productImages.length === 1 ? '' : 'grid grid-cols-2 gap-2'}>
             {productImages.map((img) => {
-              const alt = img.type === 'ingredients' ? `Ingrédients — ${productTitle}` : img.type === 'nutrition' ? `Tableau nutritionnel — ${productTitle}` : productTitle;
+              const alt =
+                img.type === 'ingredients'
+                  ? `Ingrédients — ${productTitle}`
+                  : img.type === 'nutrition'
+                    ? `Tableau nutritionnel — ${productTitle}`
+                    : productTitle;
               return (
                 <div key={img.url} className="relative">
                   <button
@@ -748,7 +798,9 @@ export function PriceResults({
                       className={`rounded-xl object-contain w-full bg-slate-800 ${productImages.length === 1 ? 'h-40' : 'h-32'}`}
                       loading="lazy"
                       onError={(event) => {
-                        event.currentTarget.src = getProductImageFallback({ productName: productTitle });
+                        event.currentTarget.src = getProductImageFallback({
+                          productName: productTitle,
+                        });
                       }}
                     />
                   </button>
@@ -757,7 +809,12 @@ export function PriceResults({
                       {img.type === 'ingredients' ? 'Ingrédients' : 'Nutrition'}
                     </span>
                   )}
-                  <span className="absolute top-1 right-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none" aria-hidden="true">🔍</span>
+                  <span
+                    className="absolute top-1 right-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none"
+                    aria-hidden="true"
+                  >
+                    🔍
+                  </span>
                 </div>
               );
             })}
@@ -768,7 +825,8 @@ export function PriceResults({
             className="block w-full rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-blue-500"
             aria-label={`Agrandir l'image : ${productTitle}`}
             onClick={() => {
-              const src = resolvedImageUrl ?? getProductImageFallback({ productName: productTitle });
+              const src =
+                resolvedImageUrl ?? getProductImageFallback({ productName: productTitle });
               setLightboxImg({ url: src, alt: productTitle });
             }}
           >
@@ -794,7 +852,9 @@ export function PriceResults({
               onClick={() => setIngredientsOpen((o) => !o)}
             >
               <span>🧪 Ingrédients</span>
-              <span className="text-slate-400 text-xs" aria-hidden="true">{ingredientsOpen ? '▲' : '▼'}</span>
+              <span className="text-slate-400 text-xs" aria-hidden="true">
+                {ingredientsOpen ? '▲' : '▼'}
+              </span>
             </button>
             {ingredientsOpen && (
               <div className="px-4 py-3 bg-slate-900 text-xs text-slate-300 leading-relaxed">
@@ -805,47 +865,66 @@ export function PriceResults({
         )}
 
         {/* Tableau nutritionnel (accordéon) */}
-        {productCard?.nutriments && (() => {
-          const n = productCard.nutriments as ProductNutriments;
-          const rows: Array<{ label: string; value: number | null; unit: string }> = [
-            { label: 'Énergie', value: n.energy_100g, unit: 'kcal' },
-            { label: 'Matières grasses', value: n.fat_100g, unit: 'g' },
-            { label: 'dont saturées', value: n.saturatedFat_100g, unit: 'g' },
-            { label: 'Glucides', value: n.carbohydrates_100g, unit: 'g' },
-            { label: 'dont sucres', value: n.sugars_100g, unit: 'g' },
-            { label: 'Fibres', value: n.fiber_100g, unit: 'g' },
-            { label: 'Protéines', value: n.proteins_100g, unit: 'g' },
-            { label: 'Sel', value: n.salt_100g, unit: 'g' },
-          ].filter((row) => row.value !== null && row.value !== undefined);
-          if (rows.length === 0) return null;
-          return (
-            <div className="border border-slate-700 rounded-xl overflow-hidden">
-              <button
-                type="button"
-                className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 hover:bg-slate-700 transition-colors text-sm font-medium text-left"
-                aria-expanded={nutritionOpen}
-                onClick={() => setNutritionOpen((o) => !o)}
-              >
-                <span>📊 Valeurs nutritionnelles <span className="text-slate-400 text-xs font-normal">pour 100 g</span></span>
-                <span className="text-slate-400 text-xs" aria-hidden="true">{nutritionOpen ? '▲' : '▼'}</span>
-              </button>
-              {nutritionOpen && (
-                <table className="w-full text-xs bg-slate-900" role="table" aria-label="Valeurs nutritionnelles pour 100 g">
-                  <tbody>
-                    {rows.map((row, i) => (
-                      <tr key={row.label} className={i % 2 === 0 ? 'bg-slate-900' : 'bg-slate-800/50'}>
-                        <td className={`px-4 py-2 text-slate-300 ${row.label.startsWith('dont') ? 'pl-7' : ''}`}>{row.label}</td>
-                        <td className="px-4 py-2 text-right font-medium text-white">
-                          {typeof row.value === 'number' ? `${row.value.toFixed(1)} ${row.unit}` : '—'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          );
-        })()}
+        {productCard?.nutriments &&
+          (() => {
+            const n = productCard.nutriments as ProductNutriments;
+            const rows: Array<{ label: string; value: number | null; unit: string }> = [
+              { label: 'Énergie', value: n.energy_100g, unit: 'kcal' },
+              { label: 'Matières grasses', value: n.fat_100g, unit: 'g' },
+              { label: 'dont saturées', value: n.saturatedFat_100g, unit: 'g' },
+              { label: 'Glucides', value: n.carbohydrates_100g, unit: 'g' },
+              { label: 'dont sucres', value: n.sugars_100g, unit: 'g' },
+              { label: 'Fibres', value: n.fiber_100g, unit: 'g' },
+              { label: 'Protéines', value: n.proteins_100g, unit: 'g' },
+              { label: 'Sel', value: n.salt_100g, unit: 'g' },
+            ].filter((row) => row.value !== null && row.value !== undefined);
+            if (rows.length === 0) return null;
+            return (
+              <div className="border border-slate-700 rounded-xl overflow-hidden">
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between px-4 py-3 bg-slate-800 hover:bg-slate-700 transition-colors text-sm font-medium text-left"
+                  aria-expanded={nutritionOpen}
+                  onClick={() => setNutritionOpen((o) => !o)}
+                >
+                  <span>
+                    📊 Valeurs nutritionnelles{' '}
+                    <span className="text-slate-400 text-xs font-normal">pour 100 g</span>
+                  </span>
+                  <span className="text-slate-400 text-xs" aria-hidden="true">
+                    {nutritionOpen ? '▲' : '▼'}
+                  </span>
+                </button>
+                {nutritionOpen && (
+                  <table
+                    className="w-full text-xs bg-slate-900"
+                    role="table"
+                    aria-label="Valeurs nutritionnelles pour 100 g"
+                  >
+                    <tbody>
+                      {rows.map((row, i) => (
+                        <tr
+                          key={row.label}
+                          className={i % 2 === 0 ? 'bg-slate-900' : 'bg-slate-800/50'}
+                        >
+                          <td
+                            className={`px-4 py-2 text-slate-300 ${row.label.startsWith('dont') ? 'pl-7' : ''}`}
+                          >
+                            {row.label}
+                          </td>
+                          <td className="px-4 py-2 text-right font-medium text-white">
+                            {typeof row.value === 'number'
+                              ? `${row.value.toFixed(1)} ${row.unit}`
+                              : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            );
+          })()}
 
         {/* Image lightbox */}
         {lightboxImg && (
@@ -856,16 +935,24 @@ export function PriceResults({
             aria-modal="true"
             aria-label={lightboxImg.alt}
             onClick={() => setLightboxImg(null)}
-            onKeyDown={(e) => { if (e.key === 'Escape') setLightboxImg(null); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setLightboxImg(null);
+            }}
             tabIndex={-1}
           >
-            <div className="relative max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()} role="presentation">
+            <div
+              className="relative max-w-lg w-full mx-4"
+              onClick={(e) => e.stopPropagation()}
+              role="presentation"
+            >
               <button
                 type="button"
                 onClick={() => setLightboxImg(null)}
                 className="absolute -top-10 right-0 text-white text-2xl leading-none p-2 hover:text-slate-300"
                 aria-label="Fermer l'image"
-              >✕</button>
+              >
+                ✕
+              </button>
               <img
                 src={lightboxImg.url}
                 alt={lightboxImg.alt}
@@ -966,13 +1053,13 @@ export function PriceResults({
             </div>
 
             {chartPoints && (
-              <svg viewBox="0 0 320 80" className="w-full h-20" role="img" aria-label="Historique des prix observés">
-                <polyline
-                  fill="none"
-                  stroke="#22d3ee"
-                  strokeWidth="2.5"
-                  points={chartPoints}
-                />
+              <svg
+                viewBox="0 0 320 80"
+                className="w-full h-20"
+                role="img"
+                aria-label="Historique des prix observés"
+              >
+                <polyline fill="none" stroke="#22d3ee" strokeWidth="2.5" points={chartPoints} />
               </svg>
             )}
 
@@ -988,10 +1075,15 @@ export function PriceResults({
                 : null;
               const freshness = getFreshnessLabel(price.observedAt);
               const freshnessColor =
-                freshness === 'Récent' ? 'text-emerald-400' :
-                freshness === 'À vérifier' ? 'text-amber-400' : 'text-slate-500';
-              const storeName = (price as ApiPriceObservation & { store?: string; city?: string }).store;
-              const cityName = (price as ApiPriceObservation & { store?: string; city?: string }).city;
+                freshness === 'Récent'
+                  ? 'text-emerald-400'
+                  : freshness === 'À vérifier'
+                    ? 'text-amber-400'
+                    : 'text-slate-500';
+              const storeName = (price as ApiPriceObservation & { store?: string; city?: string })
+                .store;
+              const cityName = (price as ApiPriceObservation & { store?: string; city?: string })
+                .city;
 
               return (
                 <div
@@ -1005,9 +1097,7 @@ export function PriceResults({
                     <span className="text-xs text-slate-500">
                       {[cityName, dateLabel].filter(Boolean).join(' · ')}
                       {dateLabel && (
-                        <span className={`ml-1.5 font-medium ${freshnessColor}`}>
-                          {freshness}
-                        </span>
+                        <span className={`ml-1.5 font-medium ${freshnessColor}`}>{freshness}</span>
                       )}
                     </span>
                   </div>
@@ -1019,7 +1109,9 @@ export function PriceResults({
             })}
           </div>
         ) : (
-          <p className="text-sm text-slate-500 italic">Aucun prix encore relevé ici. Contribuez en ajoutant un relevé !</p>
+          <p className="text-sm text-slate-500 italic">
+            Aucun prix encore relevé ici. Contribuez en ajoutant un relevé !
+          </p>
         )}
       </div>
 
@@ -1073,11 +1165,7 @@ export function PriceSearchResults({
       return <PriceUnavailableState onRetry={onReset} onReturnToHub={onReturnToHub} />;
     case 'PARTIAL':
       return (
-        <PartialPriceState
-          result={result.data}
-          onRetry={onReset}
-          onReturnToHub={onReturnToHub}
-        />
+        <PartialPriceState result={result.data} onRetry={onReset} onReturnToHub={onReturnToHub} />
       );
     case 'OK':
       return (
@@ -1117,7 +1205,10 @@ function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) 
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'environment' },
         });
-        if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
+        if (cancelled) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -1139,16 +1230,28 @@ function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) 
 
       // Native BarcodeDetector API (Chromium 83+, Android Chrome)
       if ('BarcodeDetector' in window) {
-        type BarcodeDetectorLike = { detect: (src: HTMLVideoElement) => Promise<Array<{ rawValue: string }>> };
-        const detector = new (window as unknown as { BarcodeDetector: new (opts: object) => BarcodeDetectorLike }).BarcodeDetector({
+        type BarcodeDetectorLike = {
+          detect: (src: HTMLVideoElement) => Promise<Array<{ rawValue: string }>>;
+        };
+        const detector = new (
+          window as unknown as { BarcodeDetector: new (opts: object) => BarcodeDetectorLike }
+        ).BarcodeDetector({
           formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'],
         });
         const tick = async () => {
-          if (cancelled || video.readyState < 2) { rafRef.current = requestAnimationFrame(tick); return; }
+          if (cancelled || video.readyState < 2) {
+            rafRef.current = requestAnimationFrame(tick);
+            return;
+          }
           try {
             const codes = await detector.detect(video);
-            if (codes.length > 0) { onDetected(codes[0].rawValue); return; }
-          } catch { /* ignore */ }
+            if (codes.length > 0) {
+              onDetected(codes[0].rawValue);
+              return;
+            }
+          } catch {
+            /* ignore */
+          }
           rafRef.current = requestAnimationFrame(tick);
         };
         rafRef.current = requestAnimationFrame(tick);
@@ -1160,12 +1263,15 @@ function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) 
         const { BrowserMultiFormatReader } = await import('@zxing/browser');
         const reader = new BrowserMultiFormatReader();
         if (videoRef.current && streamRef.current) {
-          const result = await reader.decodeOnceFromStream(streamRef.current, videoRef.current ?? undefined);
+          const result = await reader.decodeOnceFromStream(
+            streamRef.current,
+            videoRef.current ?? undefined
+          );
           if (!cancelled) onDetected(result.getText());
         }
       } catch {
         if (!cancelled) {
-          setErrorMsg("Scan impossible sur ce navigateur. Saisissez le code-barres manuellement.");
+          setErrorMsg('Scan impossible sur ce navigateur. Saisissez le code-barres manuellement.');
           setStatus('error');
         }
       }
@@ -1195,7 +1301,9 @@ function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) 
             onClick={onClose}
             className="text-slate-400 hover:text-white text-xl leading-none"
             aria-label="Fermer le scanner"
-          >✕</button>
+          >
+            ✕
+          </button>
         </div>
         {status === 'error' ? (
           <div className="p-6 text-center text-sm text-red-400 space-y-3">
@@ -1204,7 +1312,9 @@ function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) 
               type="button"
               onClick={onClose}
               className="px-4 py-2 bg-slate-800 rounded-xl text-slate-200 text-xs hover:bg-slate-700"
-            >Fermer</button>
+            >
+              Fermer
+            </button>
           </div>
         ) : (
           <div className="relative aspect-[4/3] bg-black">
@@ -1217,7 +1327,10 @@ function BarcodeScannerModal({ onDetected, onClose }: BarcodeScannerModalProps) 
             />
             {status === 'scanning' && (
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-48 h-24 border-2 border-blue-400 rounded-lg opacity-70" aria-hidden="true" />
+                <div
+                  className="w-48 h-24 border-2 border-blue-400 rounded-lg opacity-70"
+                  aria-hidden="true"
+                />
               </div>
             )}
             {status === 'requesting' && (
@@ -1247,7 +1360,11 @@ export default function RechercheProduits() {
   );
   const handleTerritoryChange = (code: TerritoryCode) => {
     setTerritory(code);
-    try { localStorage.setItem('akiprisaye-territory', code); } catch { /* */ }
+    try {
+      localStorage.setItem('akiprisaye-territory', code);
+    } catch {
+      /* */
+    }
   };
   const [result, setResult] = useState<ScanHubResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -1256,7 +1373,10 @@ export default function RechercheProduits() {
   const [cachedAt, setCachedAt] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [scannerOpen, setScannerOpen] = useState(false);
-  const [premiumVisualRef, premiumVisualVisible] = useIntersectionObserver({ rootMargin: '200px', threshold: 0.01 });
+  const [premiumVisualRef, premiumVisualVisible] = useIntersectionObserver({
+    rootMargin: '200px',
+    threshold: 0.01,
+  });
   const hasSearchInput = Boolean(barcode.trim() || query.trim());
   const canSearch = hasSearchInput && !loading;
   const shouldShowReset = hasSearchInput || Boolean(result) || Boolean(error);
@@ -1281,31 +1401,36 @@ export default function RechercheProduits() {
     setHasAutoSearched(false);
   }, [searchParams]);
 
-  const buildCacheKey = useCallback((input?: {
-    query?: string;
-    barcode?: string;
-    territory?: TerritoryCode;
-  }) => {
-    const normalizedQuery = (input?.query ?? query).trim().toLowerCase();
-    const normalizedBarcode = (input?.barcode ?? barcode).trim();
-    const normalizedTerritory = input?.territory ?? territory;
-    return `scanhub:price-search:${normalizedTerritory}:${normalizedBarcode || 'no-barcode'}:${normalizedQuery || 'no-query'}`;
-  }, [barcode, query, territory]);
+  const buildCacheKey = useCallback(
+    (input?: { query?: string; barcode?: string; territory?: TerritoryCode }) => {
+      const normalizedQuery = (input?.query ?? query).trim().toLowerCase();
+      const normalizedBarcode = (input?.barcode ?? barcode).trim();
+      const normalizedTerritory = input?.territory ?? territory;
+      return `scanhub:price-search:${normalizedTerritory}:${normalizedBarcode || 'no-barcode'}:${normalizedQuery || 'no-query'}`;
+    },
+    [barcode, query, territory]
+  );
 
-  const readCache = useCallback((input?: { query?: string; barcode?: string; territory?: TerritoryCode }) => {
-    const key = buildCacheKey(input);
-    const raw = safeLocalStorage.getItem(key);
-    if (!raw) return null;
-    try {
-      const parsed = JSON.parse(raw) as { cachedAt: string; payload: ScanHubResult };
-      return parsed;
-    } catch {
-      return null;
-    }
-  }, [buildCacheKey]);
+  const readCache = useCallback(
+    (input?: { query?: string; barcode?: string; territory?: TerritoryCode }) => {
+      const key = buildCacheKey(input);
+      const raw = safeLocalStorage.getItem(key);
+      if (!raw) return null;
+      try {
+        const parsed = JSON.parse(raw) as { cachedAt: string; payload: ScanHubResult };
+        return parsed;
+      } catch {
+        return null;
+      }
+    },
+    [buildCacheKey]
+  );
 
   const writeCache = useCallback(
-    (payload: ScanHubResult, input?: { query?: string; barcode?: string; territory?: TerritoryCode }) => {
+    (
+      payload: ScanHubResult,
+      input?: { query?: string; barcode?: string; territory?: TerritoryCode }
+    ) => {
       const key = buildCacheKey(input);
       const cachedPayload = JSON.stringify({
         cachedAt: new Date().toISOString(),
@@ -1316,65 +1441,80 @@ export default function RechercheProduits() {
     [buildCacheKey]
   );
 
-  const runSearch = useCallback(async (input?: {
-    query?: string;
-    barcode?: string;
-    territory?: TerritoryCode;
-    source?: SearchHistoryType;
-    label?: string;
-    recordHistory?: boolean;
-  }) => {
-    const nextQuery = input?.query ?? query;
-    const nextBarcode = input?.barcode ?? barcode;
-    const nextTerritory = input?.territory ?? territory;
-    const trimmedQuery = nextQuery.trim();
-    const trimmedBarcode = nextBarcode.trim();
-    const hasInput = Boolean(trimmedQuery || trimmedBarcode);
+  const runSearch = useCallback(
+    async (input?: {
+      query?: string;
+      barcode?: string;
+      territory?: TerritoryCode;
+      source?: SearchHistoryType;
+      label?: string;
+      recordHistory?: boolean;
+    }) => {
+      const nextQuery = input?.query ?? query;
+      const nextBarcode = input?.barcode ?? barcode;
+      const nextTerritory = input?.territory ?? territory;
+      const trimmedQuery = nextQuery.trim();
+      const trimmedBarcode = nextBarcode.trim();
+      const hasInput = Boolean(trimmedQuery || trimmedBarcode);
 
-    if (input?.source && hasInput && input.recordHistory !== false) {
-      addEntry({
-        label: input.label ?? buildSearchLabel(trimmedQuery, trimmedBarcode),
-        type: input.source,
-        query: trimmedQuery || undefined,
-        barcode: trimmedBarcode || undefined,
-      });
-    }
+      if (input?.source && hasInput && input.recordHistory !== false) {
+        addEntry({
+          label: input.label ?? buildSearchLabel(trimmedQuery, trimmedBarcode),
+          type: input.source,
+          query: trimmedQuery || undefined,
+          barcode: trimmedBarcode || undefined,
+        });
+      }
 
-    setQuery(nextQuery);
-    setBarcode(nextBarcode);
-    setTerritory(nextTerritory);
-    try { localStorage.setItem('akiprisaye-territory', nextTerritory); } catch { /* */ }
+      setQuery(nextQuery);
+      setBarcode(nextBarcode);
+      setTerritory(nextTerritory);
+      try {
+        localStorage.setItem('akiprisaye-territory', nextTerritory);
+      } catch {
+        /* */
+      }
 
-    setLoading(true);
-    setError(null);
-    setCachedAt(null);
+      setLoading(true);
+      setError(null);
+      setCachedAt(null);
 
-    // SWR: show stale cached result immediately so the UI isn't blank while fetching
-    const staleCache = readCache({ query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
-    if (staleCache?.payload) {
-      setResult(staleCache.payload);
-      setCachedAt(staleCache.cachedAt);
-    } else {
-      setResult(null);
-    }
-
-    try {
-      const response = await searchProductPrices({
-        barcode: trimmedBarcode || undefined,
-        query: trimmedQuery || undefined,
+      // SWR: show stale cached result immediately so the UI isn't blank while fetching
+      const staleCache = readCache({
+        query: trimmedQuery,
+        barcode: trimmedBarcode,
         territory: nextTerritory,
       });
-      const mapped = mapPriceSearchResult(response);
-      setResult(mapped);
-      setCachedAt(null);
-      writeCache(mapped, { query: trimmedQuery, barcode: trimmedBarcode, territory: nextTerritory });
-    } catch (err: any) {
-      console.error('Price search error:', err);
-      setError('Impossible de récupérer les prix pour le moment.');
-    } finally {
-      setLoading(false);
-    }
-  }, [addEntry, barcode, query, readCache, territory, writeCache]);
+      if (staleCache?.payload) {
+        setResult(staleCache.payload);
+        setCachedAt(staleCache.cachedAt);
+      } else {
+        setResult(null);
+      }
+
+      try {
+        const response = await searchProductPrices({
+          barcode: trimmedBarcode || undefined,
+          query: trimmedQuery || undefined,
+          territory: nextTerritory,
+        });
+        const mapped = mapPriceSearchResult(response);
+        setResult(mapped);
+        setCachedAt(null);
+        writeCache(mapped, {
+          query: trimmedQuery,
+          barcode: trimmedBarcode,
+          territory: nextTerritory,
+        });
+      } catch (err: any) {
+        console.error('Price search error:', err);
+        setError('Impossible de récupérer les prix pour le moment.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [addEntry, barcode, query, readCache, territory, writeCache]
+  );
 
   const handleSearch = useCallback(async () => {
     const searchType = barcode.trim() ? 'barcode' : 'text';
@@ -1472,9 +1612,20 @@ export default function RechercheProduits() {
           name="description"
           content="Recherche multi-sources de prix observés, normalisés et contextualisés pour la France et les DOM."
         />
-        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/recherche-produits" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/recherche-produits" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/recherche-produits" />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/recherche-produits"
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/recherche-produits"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/recherche-produits"
+        />
         <link rel="preload" as="image" href={PAGE_HERO_IMAGES.heroRecherche} />
       </Helmet>
 
@@ -1489,8 +1640,12 @@ export default function RechercheProduits() {
         heightPx={624}
         sizes="100vw"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>Recherche de produits</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Trouvez et comparez les prix de vos produits</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          Recherche de produits
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Trouvez et comparez les prix de vos produits
+        </p>
       </HeroImage>
 
       <section ref={premiumVisualRef} className="max-w-4xl mx-auto mt-4">
@@ -1523,13 +1678,23 @@ export default function RechercheProduits() {
           >
             {/* Unified search bar */}
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none" aria-hidden="true">🔍</span>
+              <span
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none"
+                aria-hidden="true"
+              >
+                🔍
+              </span>
               <input
                 value={query || barcode}
                 onChange={(event) => {
                   const v = event.target.value;
-                  if (/^\d+$/.test(v.trim())) { setBarcode(v); setQuery(''); }
-                  else { setQuery(v); setBarcode(''); }
+                  if (/^\d+$/.test(v.trim())) {
+                    setBarcode(v);
+                    setQuery('');
+                  } else {
+                    setQuery(v);
+                    setBarcode('');
+                  }
                 }}
                 placeholder="Nom produit ou code-barres (EAN)…"
                 className="w-full rounded-xl bg-slate-950 border border-slate-600 focus:border-blue-500 outline-none pl-10 pr-20 py-3 text-white text-base"
@@ -1541,10 +1706,15 @@ export default function RechercheProduits() {
                 {(query || barcode) && (
                   <button
                     type="button"
-                    onClick={() => { setQuery(''); setBarcode(''); }}
+                    onClick={() => {
+                      setQuery('');
+                      setBarcode('');
+                    }}
                     className="text-slate-400 hover:text-white text-lg leading-none p-1"
                     aria-label="Effacer la recherche"
-                  >✕</button>
+                  >
+                    ✕
+                  </button>
                 )}
                 <button
                   type="button"
@@ -1552,7 +1722,9 @@ export default function RechercheProduits() {
                   className="text-slate-400 hover:text-blue-400 text-xl leading-none p-1"
                   aria-label="Scanner un code-barres avec la caméra"
                   title="Scanner un code-barres"
-                >📷</button>
+                >
+                  📷
+                </button>
               </div>
             </div>
 
@@ -1565,13 +1737,20 @@ export default function RechercheProduits() {
                     key={item.label}
                     type="button"
                     onClick={() => {
-                      if (item.ean) { setBarcode(item.ean); setQuery(''); }
-                      else { setQuery(item.query ?? item.label); setBarcode(''); }
+                      if (item.ean) {
+                        setBarcode(item.ean);
+                        setQuery('');
+                      } else {
+                        setQuery(item.query ?? item.label);
+                        setBarcode('');
+                      }
                     }}
                     className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors
-                      ${(query === item.query || barcode === item.ean)
-                        ? 'bg-blue-600 border-blue-500 text-white'
-                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white'}`}
+                      ${
+                        query === item.query || barcode === item.ean
+                          ? 'bg-blue-600 border-blue-500 text-white'
+                          : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white'
+                      }`}
                   >
                     <span aria-hidden="true">{item.emoji}</span> {item.label}
                   </button>
@@ -1582,7 +1761,11 @@ export default function RechercheProduits() {
             {/* Territory flag chips */}
             <div>
               <p className="text-xs text-slate-500 mb-2">Territoire</p>
-              <div className="flex flex-wrap gap-2" role="group" aria-label="Sélectionner un territoire">
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label="Sélectionner un territoire"
+              >
                 {TERRITORIES.map((t) => (
                   <button
                     key={t.code}
@@ -1590,9 +1773,11 @@ export default function RechercheProduits() {
                     onClick={() => handleTerritoryChange(t.code)}
                     aria-pressed={territory === t.code}
                     className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors
-                      ${territory === t.code
-                        ? 'bg-emerald-700 border-emerald-500 text-white'
-                        : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white'}`}
+                      ${
+                        territory === t.code
+                          ? 'bg-emerald-700 border-emerald-500 text-white'
+                          : 'bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white'
+                      }`}
                   >
                     <span aria-hidden="true">{t.flag}</span> {t.label}
                   </button>
@@ -1615,11 +1800,11 @@ export default function RechercheProduits() {
                   onClick={handleReset}
                   className="px-4 py-3 bg-slate-800 hover:bg-slate-700 rounded-xl font-semibold text-sm transition-colors"
                   aria-label="Effacer tout"
-                >✕</button>
+                >
+                  ✕
+                </button>
               )}
             </div>
-
-
           </form>
         </section>
 
@@ -1675,7 +1860,11 @@ export default function RechercheProduits() {
               />
             )}
             {favorites.length > 0 && (
-              <FavoritesPanel favorites={favorites} onView={handleViewFavorite} onRemove={handleRemoveFavorite} />
+              <FavoritesPanel
+                favorites={favorites}
+                onView={handleViewFavorite}
+                onRemove={handleRemoveFavorite}
+              />
             )}
           </div>
         )}

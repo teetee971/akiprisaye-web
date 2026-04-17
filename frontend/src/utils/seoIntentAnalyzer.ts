@@ -11,8 +11,8 @@ export interface SearchMetric {
   title: string;
   impressions: number;
   clicks: number;
-  ctr: number;           // decimal, e.g. 0.025 for 2.5%
-  position: number;      // avg position (1=best)
+  ctr: number; // decimal, e.g. 0.025 for 2.5%
+  position: number; // avg position (1=best)
   pageType: 'product' | 'category' | 'comparison' | 'inflation' | 'pillar' | 'other';
 }
 
@@ -95,7 +95,9 @@ export const SAMPLE_METRICS: SearchMetric[] = [
 
 // ── Core logic ────────────────────────────────────────────────────────────────
 
-function classifyMetric(metric: SearchMetric): Pick<PageRecommendation, 'action' | 'reason' | 'priority'> {
+function classifyMetric(
+  metric: SearchMetric
+): Pick<PageRecommendation, 'action' | 'reason' | 'priority'> {
   const { impressions, clicks, ctr, position } = metric;
 
   if (impressions > 50 && ctr < 0.015) {
@@ -182,10 +184,7 @@ const PRIORITY_ORDER: Record<PageRecommendation['priority'], number> = {
 /**
  * Return the top N opportunities sorted by priority then impressions.
  */
-export function getTopOpportunities(
-  metrics: SearchMetric[],
-  limit = 10
-): PageRecommendation[] {
+export function getTopOpportunities(metrics: SearchMetric[], limit = 10): PageRecommendation[] {
   return analyzeMetrics(metrics)
     .sort((a, b) => {
       const pd = PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];

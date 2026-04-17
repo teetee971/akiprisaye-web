@@ -25,17 +25,23 @@ export default function AlerteDetail() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-4 text-slate-100">
         <h1 className="text-2xl font-bold mb-4">Alerte introuvable</h1>
-        <Link to="/alertes" className="text-blue-300 underline">Retour aux alertes</Link>
+        <Link to="/alertes" className="text-blue-300 underline">
+          Retour aux alertes
+        </Link>
       </div>
     );
   }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-4 text-slate-100">
-      <Link to="/alertes" className="text-sm text-blue-300 underline">← Retour aux alertes</Link>
+      <Link to="/alertes" className="text-sm text-blue-300 underline">
+        ← Retour aux alertes
+      </Link>
       <h1 className="text-2xl font-bold mt-3">{alert.title}</h1>
       <p className="text-sm text-slate-400 mt-2">
-        {alert.publishedAt ? `Publié le ${new Date(alert.publishedAt).toLocaleDateString('fr-FR')}` : 'Date non renseignée'}
+        {alert.publishedAt
+          ? `Publié le ${new Date(alert.publishedAt).toLocaleDateString('fr-FR')}`
+          : 'Date non renseignée'}
         {` • ${alert.status}`}
       </p>
 
@@ -47,15 +53,33 @@ export default function AlerteDetail() {
           size={220}
           className="mx-auto"
         />
-        <p><strong>Produit:</strong> {alert.productName ?? 'Non précisé'}</p>
-        <p><strong>Marque:</strong> {alert.brand ?? 'Non précisée'}</p>
-        <p><strong>Catégorie:</strong> {alert.category ?? 'Non précisée'}</p>
-        <p><strong>EAN:</strong> {alert.ean ?? 'Non précisé'}</p>
-        <p><strong>Lot:</strong> {alert.lot ?? 'Non précisé'}</p>
-        <p><strong>Motif:</strong> {alert.reason ?? 'Non communiqué'}</p>
-        <p><strong>Risque:</strong> {alert.risk ?? 'Non communiqué'}</p>
-        <p><strong>Consignes:</strong> {alert.instructions ?? 'Non communiqué'}</p>
-        <p><strong>Source:</strong> {alert.sourceName}</p>
+        <p>
+          <strong>Produit:</strong> {alert.productName ?? 'Non précisé'}
+        </p>
+        <p>
+          <strong>Marque:</strong> {alert.brand ?? 'Non précisée'}
+        </p>
+        <p>
+          <strong>Catégorie:</strong> {alert.category ?? 'Non précisée'}
+        </p>
+        <p>
+          <strong>EAN:</strong> {alert.ean ?? 'Non précisé'}
+        </p>
+        <p>
+          <strong>Lot:</strong> {alert.lot ?? 'Non précisé'}
+        </p>
+        <p>
+          <strong>Motif:</strong> {alert.reason ?? 'Non communiqué'}
+        </p>
+        <p>
+          <strong>Risque:</strong> {alert.risk ?? 'Non communiqué'}
+        </p>
+        <p>
+          <strong>Consignes:</strong> {alert.instructions ?? 'Non communiqué'}
+        </p>
+        <p>
+          <strong>Source:</strong> {alert.sourceName}
+        </p>
         {alert.sourceUrl && (
           <a
             href={alert.sourceUrl}

@@ -44,7 +44,7 @@ function StatCard({ label, value, subValue, icon, color }: StatCardProps) {
     amber: 'border-amber-400/30 bg-amber-400/10 text-amber-400',
     rose: 'border-rose-400/30 bg-rose-400/10 text-rose-400',
   };
-  
+
   return (
     <div className={`rounded-xl border p-4 ${colors[color]}`}>
       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider opacity-80">
@@ -52,9 +52,7 @@ function StatCard({ label, value, subValue, icon, color }: StatCardProps) {
         {label}
       </div>
       <div className="mt-2 text-3xl font-extrabold tabular-nums">{value}</div>
-      {subValue && (
-        <div className="mt-1 text-xs opacity-70">{subValue}</div>
-      )}
+      {subValue && <div className="mt-1 text-xs opacity-70">{subValue}</div>}
     </div>
   );
 }
@@ -69,10 +67,10 @@ interface DailyChartProps {
 
 function DailyChart({ data, metric, label, color }: DailyChartProps) {
   const maxValue = Math.max(...data.map((d) => d[metric]), 1);
-  
+
   // Show last 14 days for mobile-friendly display
   const displayData = data.slice(-14);
-  
+
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
       <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-3">
@@ -82,7 +80,7 @@ function DailyChart({ data, metric, label, color }: DailyChartProps) {
         {displayData.map((day, i) => {
           const height = (day[metric] / maxValue) * 100;
           const isToday = i === displayData.length - 1;
-          
+
           return (
             <div
               key={day.date}
@@ -180,9 +178,7 @@ function RetailerListItem({ retailer, rank }: RetailerListItemProps) {
             <ExternalLink className="w-3 h-3 opacity-60 flex-shrink-0" />
           </a>
         ) : (
-          <div className="text-sm font-medium text-white truncate">
-            {retailer.retailer}
-          </div>
+          <div className="text-sm font-medium text-white truncate">{retailer.retailer}</div>
         )}
         <div className="flex gap-3 text-xs text-zinc-500">
           <span>{retailer.clicks} clics</span>
@@ -211,22 +207,19 @@ interface TrendingItemProps {
 
 function TrendingItem({ product }: TrendingItemProps) {
   const isPositive = product.growth >= 0;
-  
+
   return (
     <Link
       to={`/produit/${product.barcode}`}
       className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-3 hover:border-emerald-400/30 transition-all"
     >
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-white truncate">
-          {product.name}
-        </div>
-        <div className="text-xs text-zinc-500">
-          {product.recentViews} vues cette semaine
-        </div>
+        <div className="text-sm font-medium text-white truncate">{product.name}</div>
+        <div className="text-xs text-zinc-500">{product.recentViews} vues cette semaine</div>
       </div>
       <div className={`text-sm font-bold ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
-        {isPositive ? '+' : ''}{product.growth.toFixed(0)}%
+        {isPositive ? '+' : ''}
+        {product.growth.toFixed(0)}%
       </div>
     </Link>
   );
@@ -270,7 +263,7 @@ export default function StatsDashboard() {
   const [seoPages, setSEOPages] = useState<ReturnType<typeof getSEOTopPages>>([]);
   const [seoProducts, setSEOProducts] = useState<ReturnType<typeof getTopSEOProducts>>([]);
   const [period, setPeriod] = useState<7 | 30>(30);
-  
+
   useEffect(() => {
     setStats(getConversionStats(period));
     setDailyStats(getDailyStats(period));
@@ -278,7 +271,7 @@ export default function StatsDashboard() {
     setSEOPages(getSEOTopPages(10));
     setSEOProducts(getTopSEOProducts(10));
   }, [period]);
-  
+
   if (!stats) {
     return (
       <div className="min-h-screen bg-slate-950 px-4 py-8">
@@ -295,7 +288,7 @@ export default function StatsDashboard() {
       </div>
     );
   }
-  
+
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8">
       <SEOHead
@@ -303,7 +296,7 @@ export default function StatsDashboard() {
         description="Analysez vos statistiques de conversion et revenus estimés"
         noIndex
       />
-      
+
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
@@ -313,15 +306,16 @@ export default function StatsDashboard() {
               Statistiques de conversion et revenus estimés
             </p>
           </div>
-          
+
           {/* Period selector */}
           <div className="flex gap-2">
             <button
               onClick={() => setPeriod(7)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
-                ${period === 7
-                  ? 'bg-emerald-400/20 text-emerald-400 border border-emerald-400/50'
-                  : 'bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10'
+                ${
+                  period === 7
+                    ? 'bg-emerald-400/20 text-emerald-400 border border-emerald-400/50'
+                    : 'bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10'
                 }`}
             >
               7 jours
@@ -329,16 +323,17 @@ export default function StatsDashboard() {
             <button
               onClick={() => setPeriod(30)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-all
-                ${period === 30
-                  ? 'bg-emerald-400/20 text-emerald-400 border border-emerald-400/50'
-                  : 'bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10'
+                ${
+                  period === 30
+                    ? 'bg-emerald-400/20 text-emerald-400 border border-emerald-400/50'
+                    : 'bg-white/5 text-zinc-400 border border-white/10 hover:bg-white/10'
                 }`}
             >
               30 jours
             </button>
           </div>
         </div>
-        
+
         {/* KPI Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
           <StatCard
@@ -370,7 +365,7 @@ export default function StatsDashboard() {
             color="emerald"
           />
         </div>
-        
+
         {/* Charts */}
         <div className="grid gap-4 lg:grid-cols-2 mb-6">
           <DailyChart
@@ -386,7 +381,7 @@ export default function StatsDashboard() {
             color="bg-amber-400"
           />
         </div>
-        
+
         {/* Trending products */}
         {trending.length > 0 && (
           <div className="mb-6">
@@ -400,7 +395,7 @@ export default function StatsDashboard() {
             </div>
           </div>
         )}
-        
+
         {/* Top lists */}
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Top products */}
@@ -409,9 +404,7 @@ export default function StatsDashboard() {
               🏆 Top produits par vues
             </h2>
             {stats.topProducts.length === 0 ? (
-              <p className="text-sm text-zinc-500 py-4 text-center">
-                Aucune donnée disponible
-              </p>
+              <p className="text-sm text-zinc-500 py-4 text-center">Aucune donnée disponible</p>
             ) : (
               <div>
                 {stats.topProducts.map((product, i) => (
@@ -420,16 +413,14 @@ export default function StatsDashboard() {
               </div>
             )}
           </div>
-          
+
           {/* Top retailers */}
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
             <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-3">
               🏪 Top enseignes par clics
             </h2>
             {stats.topRetailers.length === 0 ? (
-              <p className="text-sm text-zinc-500 py-4 text-center">
-                Aucune donnée disponible
-              </p>
+              <p className="text-sm text-zinc-500 py-4 text-center">Aucune donnée disponible</p>
             ) : (
               <div>
                 {stats.topRetailers.map((retailer, i) => (
@@ -439,11 +430,11 @@ export default function StatsDashboard() {
             )}
           </div>
         </div>
-        
+
         {/* ── Enseignes & Liens affiliés ──────────────────────────────────── */}
         {(() => {
           const clicksByRetailer = Object.fromEntries(
-            stats.topRetailers.map((r) => [r.retailer, r.clicks]),
+            stats.topRetailers.map((r) => [r.retailer, r.clicks])
           );
           const retailers = knownRetailers();
           return (
@@ -453,11 +444,7 @@ export default function StatsDashboard() {
               </h2>
               <div className="space-y-1.5">
                 {retailers.map((name) => (
-                  <RetailerConfigCard
-                    key={name}
-                    name={name}
-                    clicks={clicksByRetailer[name] ?? 0}
-                  />
+                  <RetailerConfigCard key={name} name={name} clicks={clicksByRetailer[name] ?? 0} />
                 ))}
               </div>
             </div>
@@ -474,11 +461,18 @@ export default function StatsDashboard() {
           ) : (
             <div className="space-y-1.5">
               {seoPages.map((page, i) => (
-                <div key={`${page.slug}-${page.pageType}`} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.01] px-3 py-2">
+                <div
+                  key={`${page.slug}-${page.pageType}`}
+                  className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.01] px-3 py-2"
+                >
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-zinc-600">{i + 1}.</span>
-                    <span className="max-w-[200px] truncate text-xs text-zinc-400">{page.slug}</span>
-                    <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-zinc-600">{page.pageType}</span>
+                    <span className="max-w-[200px] truncate text-xs text-zinc-400">
+                      {page.slug}
+                    </span>
+                    <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-zinc-600">
+                      {page.pageType}
+                    </span>
                   </div>
                   <span className="text-xs font-bold text-emerald-400">{page.views} vues</span>
                 </div>
@@ -500,11 +494,18 @@ export default function StatsDashboard() {
           ) : (
             <div className="space-y-1.5">
               {seoProducts.map((product, i) => (
-                <div key={`${product.productSlug}-${product.territory}`} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.01] px-3 py-2">
+                <div
+                  key={`${product.productSlug}-${product.territory}`}
+                  className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.01] px-3 py-2"
+                >
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-zinc-600">{i + 1}.</span>
-                    <span className="max-w-[180px] truncate text-xs text-zinc-400">{product.productSlug}</span>
-                    <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-zinc-600">{product.territory}</span>
+                    <span className="max-w-[180px] truncate text-xs text-zinc-400">
+                      {product.productSlug}
+                    </span>
+                    <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-zinc-600">
+                      {product.territory}
+                    </span>
                   </div>
                   <span className="text-xs font-bold text-emerald-400">{product.views} vues</span>
                 </div>
@@ -517,12 +518,12 @@ export default function StatsDashboard() {
         <div className="mt-6 rounded-xl border border-white/5 bg-white/[0.01] p-4">
           <h3 className="text-xs font-bold text-zinc-400 mb-2">ℹ️ À propos de ces statistiques</h3>
           <p className="text-xs text-zinc-500 leading-relaxed">
-            Toutes les données sont stockées localement sur votre appareil (conformité RGPD).
-            Les revenus sont estimés sur la base d'un taux de commission moyen de 2% des clics affiliés.
+            Toutes les données sont stockées localement sur votre appareil (conformité RGPD). Les
+            revenus sont estimés sur la base d'un taux de commission moyen de 2% des clics affiliés.
             Les statistiques sont conservées pendant 30 jours maximum.
           </p>
         </div>
-        
+
         {/* Quick links */}
         <div className="mt-6 flex flex-wrap gap-3">
           <Link

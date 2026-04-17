@@ -26,12 +26,15 @@ export function BadgeVariation({ value = 0 }) {
   };
 
   return (
-    <div className={`inline-flex items-center rounded-lg border px-3 py-1 ${getVariationColor(value)}`}>
+    <div
+      className={`inline-flex items-center rounded-lg border px-3 py-1 ${getVariationColor(value)}`}
+    >
       <span className="text-xl mr-2">{getVariationIcon(value)}</span>
       <div className="text-center">
         <p className="text-xs font-medium">Variation</p>
         <p className="text-lg font-bold">
-          {value > 0 ? '+' : ''}{value.toFixed(1)}%
+          {value > 0 ? '+' : ''}
+          {value.toFixed(1)}%
         </p>
         <p className="text-xs font-semibold">{getVariationLabel(value)}</p>
       </div>

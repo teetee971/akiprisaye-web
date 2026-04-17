@@ -20,7 +20,7 @@ export function computeAlerts(item: AlertInput): string[] {
   if (!Number.isFinite(item.price)) return alerts;
 
   const now = Date.now();
-  const cutoff = now - (30 * 24 * 60 * 60 * 1000);
+  const cutoff = now - 30 * 24 * 60 * 60 * 1000;
   const values30d = (item.priceHistory ?? [])
     .filter((point) => {
       const ts = new Date(point.observedAt).getTime();

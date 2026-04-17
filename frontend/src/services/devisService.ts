@@ -49,13 +49,7 @@ import { db } from '@/lib/firebase';
 
 // ── Enumerations ──────────────────────────────────────────────────────────────
 
-export type DevisStatus =
-  | 'DRAFT'
-  | 'VALIDATED'
-  | 'SENT'
-  | 'ACCEPTED'
-  | 'PAID'
-  | 'CANCELLED';
+export type DevisStatus = 'DRAFT' | 'VALIDATED' | 'SENT' | 'ACCEPTED' | 'PAID' | 'CANCELLED';
 
 export type ClientType =
   | 'collectivite'
@@ -85,9 +79,9 @@ export interface DevisEstimation {
   joursCharge: number;
   tauxJournalier: number;
   prixHT: number;
-  tvaRate: number;        // e.g. 0.085 for DOM 8.5%
+  tvaRate: number; // e.g. 0.085 for DOM 8.5%
   prixTTC: number;
-  justification: string[];  // explainable AI: list of cost factors
+  justification: string[]; // explainable AI: list of cost factors
   generatedAt: Timestamp | null;
   /** Explicit disclaimer — IA n'engage pas juridiquement la plateforme */
   disclaimer: string;
@@ -130,7 +124,7 @@ export interface DevisPaiement {
 
 export interface DevisAuditEntry {
   action: string;
-  by: string;         // uid or "system"
+  by: string; // uid or "system"
   at: Timestamp | null;
   details?: string;
 }
@@ -212,7 +206,19 @@ function generateRef(index: number): string {
  * No legal commitment is created at this stage.
  */
 export async function createDevisRequest(
-  payload: Omit<DevisRequest, 'id' | 'ref' | 'status' | 'quote' | 'paiement' | 'createdAt' | 'updatedAt' | 'validatedBy' | 'validatedAt' | 'auditTrail'>,
+  payload: Omit<
+    DevisRequest,
+    | 'id'
+    | 'ref'
+    | 'status'
+    | 'quote'
+    | 'paiement'
+    | 'createdAt'
+    | 'updatedAt'
+    | 'validatedBy'
+    | 'validatedAt'
+    | 'auditTrail'
+  >
 ): Promise<string> {
   if (!db) throw new Error('Firebase non initialisé');
 
@@ -257,7 +263,7 @@ export async function getDevisByUser(uid: string): Promise<DevisRequest[]> {
   const q = query(
     collection(db, COLLECTION),
     where('createdBy', '==', uid),
-    orderBy('createdAt', 'desc'),
+    orderBy('createdAt', 'desc')
   );
   const snap = await getDocs(q);
   return snap.docs.map((d) => mapDoc(d.id, d.data() as Record<string, any>));
@@ -266,7 +272,7 @@ export async function getDevisByUser(uid: string): Promise<DevisRequest[]> {
 /** Real-time subscription to a user's devis list */
 export function subscribeToUserDevis(
   uid: string,
-  onUpdate: (devis: DevisRequest[]) => void,
+  onUpdate: (devis: DevisRequest[]) => void
 ): Unsubscribe {
   if (!db) {
     onUpdate([]);
@@ -275,7 +281,7 @@ export function subscribeToUserDevis(
   const q = query(
     collection(db, COLLECTION),
     where('createdBy', '==', uid),
-    orderBy('createdAt', 'desc'),
+    orderBy('createdAt', 'desc')
   );
   return onSnapshot(q, (snap) => {
     onUpdate(snap.docs.map((d) => mapDoc(d.id, d.data() as Record<string, any>)));
@@ -283,9 +289,7 @@ export function subscribeToUserDevis(
 }
 
 /** Real-time subscription to ALL devis (admin view) */
-export function subscribeToAllDevis(
-  onUpdate: (devis: DevisRequest[]) => void,
-): Unsubscribe {
+export function subscribeToAllDevis(onUpdate: (devis: DevisRequest[]) => void): Unsubscribe {
   if (!db) {
     onUpdate([]);
     return () => {};
@@ -301,7 +305,7 @@ export async function updateDevisStatus(
   devisId: string,
   newStatus: DevisStatus,
   adminUid: string,
-  details?: string,
+  details?: string
 ): Promise<void> {
   if (!db) throw new Error('Firebase non initialisé');
   const entry: DevisAuditEntry = {
@@ -326,7 +330,7 @@ export async function updateDevisStatus(
 export async function attachQuote(
   devisId: string,
   quote: Omit<DevisQuote, 'buildAt'>,
-  adminUid: string,
+  adminUid: string
 ): Promise<void> {
   if (!db) throw new Error('Firebase non initialisé');
   const entry: DevisAuditEntry = {
@@ -346,10 +350,7 @@ export async function attachQuote(
 }
 
 /** Client: accept a sent devis (legal acceptance) */
-export async function acceptDevis(
-  devisId: string,
-  clientUid: string,
-): Promise<void> {
+export async function acceptDevis(devisId: string, clientUid: string): Promise<void> {
   if (!db) throw new Error('Firebase non initialisé');
   const entry: DevisAuditEntry = {
     action: 'ACCEPTED',
@@ -368,7 +369,7 @@ export async function acceptDevis(
 export async function recordPayment(
   devisId: string,
   paiement: Omit<DevisPaiement, 'paidAt'>,
-  actorUid: string,
+  actorUid: string
 ): Promise<void> {
   if (!db) throw new Error('Firebase non initialisé');
   const entry: DevisAuditEntry = {
@@ -386,11 +387,7 @@ export async function recordPayment(
 }
 
 /** Cancel a devis */
-export async function cancelDevis(
-  devisId: string,
-  actorUid: string,
-  motif: string,
-): Promise<void> {
+export async function cancelDevis(devisId: string, actorUid: string, motif: string): Promise<void> {
   if (!db) throw new Error('Firebase non initialisé');
   const entry: DevisAuditEntry = {
     action: 'CANCELLED',

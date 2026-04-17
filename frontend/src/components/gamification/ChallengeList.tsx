@@ -18,16 +18,16 @@ interface ChallengeListProps {
 
 type FilterType = 'all' | 'daily' | 'weekly' | 'monthly' | 'special' | 'active' | 'completed';
 
-export function ChallengeList({ 
-  challenges, 
+export function ChallengeList({
+  challenges,
   title = 'Défis',
   showFilters = true,
   compact = false,
-  className = '' 
+  className = '',
 }: ChallengeListProps) {
   const [filter, setFilter] = useState<FilterType>('active');
 
-  const filteredChallenges = challenges.filter(challenge => {
+  const filteredChallenges = challenges.filter((challenge) => {
     if (filter === 'all') return true;
     if (filter === 'active') return !challenge.isCompleted && challenge.isActive;
     if (filter === 'completed') return challenge.isCompleted;
@@ -36,8 +36,8 @@ export function ChallengeList({
 
   const stats = {
     total: challenges.length,
-    active: challenges.filter(c => !c.isCompleted && c.isActive).length,
-    completed: challenges.filter(c => c.isCompleted).length
+    active: challenges.filter((c) => !c.isCompleted && c.isActive).length,
+    completed: challenges.filter((c) => c.isCompleted).length,
   };
 
   const filters: { value: FilterType; label: string }[] = [
@@ -47,7 +47,7 @@ export function ChallengeList({
     { value: 'daily', label: 'Quotidiens' },
     { value: 'weekly', label: 'Hebdomadaires' },
     { value: 'monthly', label: 'Mensuels' },
-    { value: 'special', label: 'Spéciaux' }
+    { value: 'special', label: 'Spéciaux' },
   ];
 
   return (
@@ -88,12 +88,8 @@ export function ChallengeList({
       {/* Challenge List */}
       {filteredChallenges.length > 0 ? (
         <div className="space-y-3">
-          {filteredChallenges.map(challenge => (
-            <ChallengeCard
-              key={challenge.id}
-              challenge={challenge}
-              compact={compact}
-            />
+          {filteredChallenges.map((challenge) => (
+            <ChallengeCard key={challenge.id} challenge={challenge} compact={compact} />
           ))}
         </div>
       ) : (

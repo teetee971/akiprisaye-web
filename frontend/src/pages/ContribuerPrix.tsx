@@ -1,44 +1,42 @@
- 
- 
 // src/pages/ContribuerPrix.tsx
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from "@/context/AuthContext";
-import { db, auth } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { Camera, MapPin, Package } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { HeroImage } from "@/components/ui/HeroImage";
-import { PAGE_HERO_IMAGES } from "@/config/imageAssets";
+import { useAuth } from '@/context/AuthContext';
+import { db, auth } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { Camera, MapPin, Package } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { HeroImage } from '@/components/ui/HeroImage';
+import { PAGE_HERO_IMAGES } from '@/config/imageAssets';
 
 export default function ContribuerPrix() {
   const { user, isGuest } = useAuth();
   const [formData, setFormData] = useState({
-    productName: "",
-    ean: "",
-    price: "",
-    store: "",
-    territory: "",
-    commune: "",
-    notes: "",
+    productName: '',
+    ean: '',
+    price: '',
+    store: '',
+    territory: '',
+    commune: '',
+    notes: '',
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const territories = [
-    { value: "guadeloupe", label: "🇬🇵 Guadeloupe" },
-    { value: "martinique", label: "🇲🇶 Martinique" },
-    { value: "guyane", label: "🇬🇫 Guyane" },
-    { value: "reunion", label: "🇷🇪 La Réunion" },
-    { value: "mayotte", label: "🇾🇹 Mayotte" },
-    { value: "saint-martin", label: "🇲🇫 Saint-Martin" },
-    { value: "saint-barthelemy", label: "🇧🇱 Saint-Barthélemy" },
-    { value: "saint-pierre-miquelon", label: "🇵🇲 Saint-Pierre-et-Miquelon" },
-    { value: "wallis-futuna", label: "🇼🇫 Wallis-et-Futuna" },
-    { value: "polynesie", label: "🇵🇫 Polynésie française" },
-    { value: "nouvelle-caledonie", label: "🇳🇨 Nouvelle-Calédonie" },
-    { value: "hexagone", label: "🇫🇷 France métropolitaine" },
+    { value: 'guadeloupe', label: '🇬🇵 Guadeloupe' },
+    { value: 'martinique', label: '🇲🇶 Martinique' },
+    { value: 'guyane', label: '🇬🇫 Guyane' },
+    { value: 'reunion', label: '🇷🇪 La Réunion' },
+    { value: 'mayotte', label: '🇾🇹 Mayotte' },
+    { value: 'saint-martin', label: '🇲🇫 Saint-Martin' },
+    { value: 'saint-barthelemy', label: '🇧🇱 Saint-Barthélemy' },
+    { value: 'saint-pierre-miquelon', label: '🇵🇲 Saint-Pierre-et-Miquelon' },
+    { value: 'wallis-futuna', label: '🇼🇫 Wallis-et-Futuna' },
+    { value: 'polynesie', label: '🇵🇫 Polynésie française' },
+    { value: 'nouvelle-caledonie', label: '🇳🇨 Nouvelle-Calédonie' },
+    { value: 'hexagone', label: '🇫🇷 France métropolitaine' },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,25 +46,25 @@ export default function ContribuerPrix() {
 
     // Validate form
     if (!formData.productName || !formData.price || !formData.store || !formData.territory) {
-      setError("Veuillez remplir tous les champs obligatoires.");
+      setError('Veuillez remplir tous les champs obligatoires.');
       return;
     }
 
     // Validate price
     const priceNum = parseFloat(formData.price);
     if (isNaN(priceNum) || priceNum <= 0) {
-      setError("Le prix doit être un nombre positif.");
+      setError('Le prix doit être un nombre positif.');
       return;
     }
 
     // Check if user is authenticated
     if (!user || !auth || !auth.currentUser) {
-      setError("Vous devez être connecté pour contribuer.");
+      setError('Vous devez être connecté pour contribuer.');
       return;
     }
 
     if (!db) {
-      setError("Service non disponible. Veuillez réessayer plus tard.");
+      setError('Service non disponible. Veuillez réessayer plus tard.');
       return;
     }
 
@@ -74,7 +72,7 @@ export default function ContribuerPrix() {
 
     try {
       // Submit to Firestore
-      await addDoc(collection(db, "price_contributions"), {
+      await addDoc(collection(db, 'price_contributions'), {
         userId: auth.currentUser.uid,
         userEmail: auth.currentUser.email,
         productName: formData.productName.trim(),
@@ -84,30 +82,32 @@ export default function ContribuerPrix() {
         territory: formData.territory,
         commune: formData.commune.trim() || null,
         notes: formData.notes.trim() || null,
-        status: "pending", // pending, validated, rejected
+        status: 'pending', // pending, validated, rejected
         createdAt: serverTimestamp(),
       });
 
       setSuccess(true);
       // Reset form
       setFormData({
-        productName: "",
-        ean: "",
-        price: "",
-        store: "",
-        territory: "",
-        commune: "",
-        notes: "",
+        productName: '',
+        ean: '',
+        price: '',
+        store: '',
+        territory: '',
+        commune: '',
+        notes: '',
       });
     } catch (err: any) {
-      console.error("Error submitting price:", err);
-      setError("Une erreur est survenue. Veuillez réessayer.");
+      console.error('Error submitting price:', err);
+      setError('Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -123,15 +123,19 @@ export default function ContribuerPrix() {
           gradient="from-slate-950 to-emerald-900"
           height="h-40 sm:h-52"
         >
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🤝 Contribuer</h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Aidez à construire la base de données de prix la plus complète des DOM</p>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🤝 Contribuer
+          </h1>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Aidez à construire la base de données de prix la plus complète des DOM
+          </p>
         </HeroImage>
 
         {/* Info Banner */}
         <div className="bg-blue-900/30 border border-blue-700 rounded-xl p-6 mb-8">
-          <h3 className="text-lg font-semibold text-blue-200 mb-2">
-            Pourquoi contribuer ?
-          </h3>
+          <h3 className="text-lg font-semibold text-blue-200 mb-2">Pourquoi contribuer ?</h3>
           <ul className="space-y-2 text-blue-200 text-sm">
             <li>• Améliorer la transparence des prix dans votre territoire</li>
             <li>• Aider d'autres citoyens à mieux comparer</li>
@@ -160,7 +164,9 @@ export default function ContribuerPrix() {
                 <div className="flex items-start gap-2">
                   <span className="text-xl">✅</span>
                   <div>
-                    <p className="text-green-200 font-medium mb-1">Merci pour votre contribution !</p>
+                    <p className="text-green-200 font-medium mb-1">
+                      Merci pour votre contribution !
+                    </p>
                     <p className="text-green-200 text-sm">
                       Votre relevé de prix sera vérifié et publié sous peu. Vous pouvez soumettre
                       d'autres prix si vous le souhaitez.
@@ -182,7 +188,10 @@ export default function ContribuerPrix() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Product Name */}
               <div>
-                <label htmlFor="productName" className="block text-sm font-medium text-gray-300 mb-2">
+                <label
+                  htmlFor="productName"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
                   <Package className="inline mr-2" size={16} />
                   Nom du produit <span className="text-red-400">*</span>
                 </label>
@@ -315,7 +324,7 @@ export default function ContribuerPrix() {
                 disabled={loading}
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 disabled:bg-gray-600 disabled:cursor-not-allowed"
               >
-                {loading ? "Envoi en cours..." : "Soumettre le relevé de prix"}
+                {loading ? 'Envoi en cours...' : 'Soumettre le relevé de prix'}
               </Button>
             </form>
 

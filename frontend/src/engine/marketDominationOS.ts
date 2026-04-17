@@ -47,11 +47,11 @@ export interface ScoredDominationEntity extends DominationEntity {
 
 // ── Weights ───────────────────────────────────────────────────────────────────
 
-const W_SEO_GAP    = 0.30;
-const W_REVENUE    = 0.25;
-const W_COMPETITION = 0.20;
-const W_TERRITORY  = 0.15;
-const W_RETAILER   = 0.10;
+const W_SEO_GAP = 0.3;
+const W_REVENUE = 0.25;
+const W_COMPETITION = 0.2;
+const W_TERRITORY = 0.15;
+const W_RETAILER = 0.1;
 
 // ── Core scoring ──────────────────────────────────────────────────────────────
 
@@ -60,16 +60,13 @@ const W_RETAILER   = 0.10;
  *
  * All inputs are 0–100. Output is capped at 100.
  */
-export function computeDominationScore(
-  entity: DominationEntity,
-  stats: DominationStats,
-): number {
+export function computeDominationScore(entity: DominationEntity, stats: DominationStats): number {
   void entity; // id/label used for identification only
   const raw =
-    (stats.seoGap              ?? 0) * W_SEO_GAP     +
-    (stats.revenuePotential    ?? 0) * W_REVENUE      +
-    (stats.lowCompetition      ?? 0) * W_COMPETITION  +
-    (stats.territoryPriority   ?? 0) * W_TERRITORY    +
+    (stats.seoGap ?? 0) * W_SEO_GAP +
+    (stats.revenuePotential ?? 0) * W_REVENUE +
+    (stats.lowCompetition ?? 0) * W_COMPETITION +
+    (stats.territoryPriority ?? 0) * W_TERRITORY +
     (stats.retailerStrategicValue ?? 0) * W_RETAILER;
 
   return Math.min(100, Math.max(0, Math.round(raw)));
@@ -83,9 +80,7 @@ export function computeDominationScore(
  *   medium   ≥ 40 → backlog with target date
  *   low       < 40 → monitor only
  */
-export function classifyDominationPriority(
-  score: number,
-): ScoredDominationEntity['priority'] {
+export function classifyDominationPriority(score: number): ScoredDominationEntity['priority'] {
   if (score >= 80) return 'critical';
   if (score >= 60) return 'high';
   if (score >= 40) return 'medium';
@@ -97,7 +92,7 @@ export function classifyDominationPriority(
  */
 export function rankDominationEntities(
   entities: DominationEntity[],
-  statsMap: Map<string, DominationStats>,
+  statsMap: Map<string, DominationStats>
 ): ScoredDominationEntity[] {
   return entities
     .map((e) => {

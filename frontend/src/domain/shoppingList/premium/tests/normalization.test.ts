@@ -9,7 +9,12 @@ describe('normalizePrice', () => {
   });
 
   it('normalizes liters from ml', () => {
-    const result = normalizePrice({ price: 2.4, unit: 'l', quantityValue: 750, quantityUnit: 'ml' });
+    const result = normalizePrice({
+      price: 2.4,
+      unit: 'l',
+      quantityValue: 750,
+      quantityUnit: 'ml',
+    });
     expect(result.pricePerUnit).toBeCloseTo(3.2, 4);
     expect(result.normalizedLabel).toContain('€/L');
   });

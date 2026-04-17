@@ -22,31 +22,31 @@ import { buildBookingUrl } from './bookingLinks';
 // Key must match the output of normalizeRetailer() in compare.service.ts.
 
 const RETAILER_URLS: Record<string, string> = {
-  'Carrefour':        'https://www.carrefour.fr/',
+  Carrefour: 'https://www.carrefour.fr/',
   'Carrefour Market': 'https://www.carrefour.fr/',
-  'Leader Price':     'https://www.leaderprice.fr/',
-  'Super U':          'https://www.coursesu.com/',
-  'E.Leclerc':        'https://www.e.leclerc/',
-  'Intermarché':      'https://www.intermarche.com/',
-  'Match':            'https://www.match.fr/',
-  'Simply Market':    'https://www.auchan.fr/',  // Simply Market → Auchan
-  'Casino':           'https://www.supercasino.fr/',
-  'Aldi':             'https://www.aldi.fr/',
-  'Lidl':             'https://www.lidl.fr/',
-  'Spar':             'https://www.spar.fr/',
-  'Écomax':           'https://www.ecomax.fr/',
+  'Leader Price': 'https://www.leaderprice.fr/',
+  'Super U': 'https://www.coursesu.com/',
+  'E.Leclerc': 'https://www.e.leclerc/',
+  Intermarché: 'https://www.intermarche.com/',
+  Match: 'https://www.match.fr/',
+  'Simply Market': 'https://www.auchan.fr/', // Simply Market → Auchan
+  Casino: 'https://www.supercasino.fr/',
+  Aldi: 'https://www.aldi.fr/',
+  Lidl: 'https://www.lidl.fr/',
+  Spar: 'https://www.spar.fr/',
+  Écomax: 'https://www.ecomax.fr/',
   // ── DOM-TOM retailers ──────────────────────────────────────────────────────
-  'Super U / Hyper U':               'https://www.coursesu.com/',
-  'Cora':                            'https://www.cora.fr/',
-  'Score Réunion':                   'https://www.score.re/',
-  'Auchan Réunion':                  'https://www.auchan.fr/',
-  'Monoprix Martinique':             'https://www.monoprix.fr/',
+  'Super U / Hyper U': 'https://www.coursesu.com/',
+  Cora: 'https://www.cora.fr/',
+  'Score Réunion': 'https://www.score.re/',
+  'Auchan Réunion': 'https://www.auchan.fr/',
+  'Monoprix Martinique': 'https://www.monoprix.fr/',
   'E.Leclerc Drive DOM (123.click)': 'https://www.123.click/',
   // ── Métropole aliases used by scrapers ─────────────────────────────────────
-  'E.Leclerc (métropole)':           'https://www.e.leclerc/',
-  'Intermarché (métropole)':         'https://www.intermarche.com/',
-  'Super U (métropole)':             'https://www.coursesu.com/',
-  'Carrefour (métropole)':           'https://www.carrefour.fr/',
+  'E.Leclerc (métropole)': 'https://www.e.leclerc/',
+  'Intermarché (métropole)': 'https://www.intermarche.com/',
+  'Super U (métropole)': 'https://www.coursesu.com/',
+  'Carrefour (métropole)': 'https://www.carrefour.fr/',
 };
 
 // ── Public API ────────────────────────────────────────────────────────────────
@@ -67,10 +67,7 @@ export function getRetailerBaseUrl(retailer: string): string | null {
  *                  when the retailer supports barcode search in their URL.
  * @returns         UTM URL string, or null when the retailer has no known URL.
  */
-export function buildRetailerUrl(
-  retailer: string,
-  barcode?: string,
-): string | null {
+export function buildRetailerUrl(retailer: string, barcode?: string): string | null {
   const base = getRetailerBaseUrl(retailer);
   if (!base) return null;
 
@@ -82,11 +79,7 @@ export function buildRetailerUrl(
 }
 
 /** Build retailer-specific deep link when the retailer supports it. */
-function buildDeepLink(
-  retailer: string,
-  base: string,
-  barcode: string | undefined,
-): string {
+function buildDeepLink(retailer: string, base: string, barcode: string | undefined): string {
   if (!barcode) return base;
 
   const encoded = encodeURIComponent(barcode);
@@ -174,7 +167,7 @@ export function safeRetailerUrl(url: string | null | undefined): string {
   try {
     const { hostname } = new URL(url);
     const safe = ALLOWED_RETAILER_HOSTNAMES.some(
-      (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
     );
     return safe ? url : '/comparateur';
   } catch {
@@ -199,7 +192,7 @@ export function isValidRetailerUrl(url: string | null | undefined): boolean {
   try {
     const { hostname } = new URL(url);
     return ALLOWED_RETAILER_HOSTNAMES.some(
-      (domain) => hostname === domain || hostname.endsWith(`.${domain}`),
+      (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
     );
   } catch {
     return false;

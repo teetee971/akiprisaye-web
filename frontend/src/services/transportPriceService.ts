@@ -1,6 +1,6 @@
 /**
  * Transport Price Service v2.2.0
- * 
+ *
  * Implements citizen transport price comparison with:
  * - Read-only data access (no data modification)
  * - Route-based transport matching (plane, boat, inter-island)
@@ -30,9 +30,9 @@ import { logRuntimeIssueOnce } from '../utils/runtimeDiagnostics';
  * Configuration constants for transport comparison service
  */
 const TRANSPORT_COMPARISON_CONFIG = {
-  AVERAGE_PRICE_TOLERANCE_PERCENT: 5,  // Tolerance for 'average' category (±5%)
-  MIN_COVERAGE_WARNING_PERCENT: 50,    // Warn if coverage below 50%
-  MAX_PRICE_AGE_WARNING_DAYS: 30,      // Warn if prices older than 30 days
+  AVERAGE_PRICE_TOLERANCE_PERCENT: 5, // Tolerance for 'average' category (±5%)
+  MIN_COVERAGE_WARNING_PERCENT: 50, // Warn if coverage below 50%
+  MAX_PRICE_AGE_WARNING_DAYS: 30, // Warn if prices older than 30 days
 } as const;
 
 /**
@@ -148,17 +148,13 @@ export function applyTransportFilters(
   if (filter.maxPriceAge) {
     const maxDate = new Date();
     maxDate.setDate(maxDate.getDate() - filter.maxPriceAge);
-    filtered = filtered.filter(
-      (p) => new Date(p.observationDate) >= maxDate
-    );
+    filtered = filtered.filter((p) => new Date(p.observationDate) >= maxDate);
   }
 
   if (filter.minConfidence) {
     const confidenceLevels = { low: 1, medium: 2, high: 3 };
     const minLevel = confidenceLevels[filter.minConfidence];
-    filtered = filtered.filter(
-      (p) => confidenceLevels[p.confidence] >= minLevel
-    );
+    filtered = filtered.filter((p) => confidenceLevels[p.confidence] >= minLevel);
   }
 
   if (filter.verifiedOnly) {
@@ -286,7 +282,7 @@ export function generateTransportMetadata(
     if (!sourceType) {
       logRuntimeIssueOnce(
         'transport-metadata-missing-source',
-        'Missing source type while aggregating transport metadata. Entry ignored.',
+        'Missing source type while aggregating transport metadata. Entry ignored.'
       );
       return;
     }
@@ -297,14 +293,12 @@ export function generateTransportMetadata(
     sourceCounts.set(sourceType, sourceData);
   });
 
-  const sources: SourceSummary[] = Array.from(sourceCounts.entries()).map(
-    ([source, data]) => ({
-      source,
-      observationCount: data.count,
-      operatorCount: data.operators.size,
-      percentage: Math.round((data.count / prices.length) * 100 * 100) / 100,
-    })
-  );
+  const sources: SourceSummary[] = Array.from(sourceCounts.entries()).map(([source, data]) => ({
+    source,
+    observationCount: data.count,
+    operatorCount: data.operators.size,
+    percentage: Math.round((data.count / prices.length) * 100 * 100) / 100,
+  }));
 
   // Generate warnings
   const warnings: string[] = [];
@@ -315,9 +309,7 @@ export function generateTransportMetadata(
 
   const now = Date.now();
   const maxAgeMs = TRANSPORT_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS * 24 * 60 * 60 * 1000;
-  const hasOldData = prices.some(
-    (p) => now - new Date(p.observationDate).getTime() > maxAgeMs
-  );
+  const hasOldData = prices.some((p) => now - new Date(p.observationDate).getTime() > maxAgeMs);
   if (hasOldData) {
     warnings.push(
       `Some prices are older than ${TRANSPORT_COMPARISON_CONFIG.MAX_PRICE_AGE_WARNING_DAYS} days`
@@ -348,10 +340,7 @@ export function generateTransportMetadata(
 /**
  * Calculate percentage difference between two prices
  */
-export function calculatePercentageDifference(
-  price1: number,
-  price2: number
-): number {
+export function calculatePercentageDifference(price1: number, price2: number): number {
   if (price2 === 0) {
     return 0;
   }
@@ -361,9 +350,7 @@ export function calculatePercentageDifference(
 /**
  * Get cheapest operator for a route
  */
-export function getCheapestOperator(
-  prices: TransportPricePoint[]
-): TransportPricePoint | null {
+export function getCheapestOperator(prices: TransportPricePoint[]): TransportPricePoint | null {
   if (prices.length === 0) {
     return null;
   }
@@ -464,9 +451,7 @@ export function hasPricesForRoute(
 /**
  * Get unique routes from transport prices
  */
-export function getUniqueRoutes(
-  prices: TransportPricePoint[]
-): TransportRouteIdentifier[] {
+export function getUniqueRoutes(prices: TransportPricePoint[]): TransportRouteIdentifier[] {
   const routeMap = new Map<string, TransportRouteIdentifier>();
 
   prices.forEach((price) => {

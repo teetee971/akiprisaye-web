@@ -6,22 +6,22 @@ export function safeJsonParse<T>(raw: string | null, fallback: T): T {
   if (raw === null || raw === undefined || raw === '') {
     return fallback;
   }
-  
+
   try {
     const parsed = JSON.parse(raw);
-    
+
     // Type validation for arrays
     if (Array.isArray(fallback) && !Array.isArray(parsed)) {
       return fallback;
     }
-    
+
     // Type validation for objects (non-array)
     if (fallback !== null && typeof fallback === 'object' && !Array.isArray(fallback)) {
       if (typeof parsed !== 'object' || Array.isArray(parsed) || parsed === null) {
         return fallback;
       }
     }
-    
+
     return parsed as T;
   } catch {
     return fallback;
@@ -78,7 +78,7 @@ export const safeLocalStorage = {
     } catch {
       return false;
     }
-  }
+  },
 };
 
 // Default export for backwards compatibility

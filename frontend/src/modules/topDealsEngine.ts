@@ -52,11 +52,7 @@ export type Deal = DealProduct & { delta: number };
  * const deals = getTopDeals(products);
  * const urgentDeals = getTopDeals(products, 0.30, 5);
  */
-export function getTopDeals(
-  products: DealProduct[],
-  minDelta = 0.15,
-  limit = 20,
-): Deal[] {
+export function getTopDeals(products: DealProduct[], minDelta = 0.15, limit = 20): Deal[] {
   return products
     .filter((p) => p.delta >= minDelta)
     .sort((a, b) => b.score - a.score)
@@ -81,5 +77,8 @@ export function classifyDealHeat(delta: number): 'hot' | 'warm' | 'normal' {
  * Format a delta value as a human-readable string, e.g. "0,36 €".
  */
 export function formatDelta(delta: number): string {
-  return delta.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00a0€';
+  return (
+    delta.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +
+    '\u00a0€'
+  );
 }

@@ -52,99 +52,306 @@ const CHECKLIST: ChecklistSection[] = [
     key: 'securite',
     title: '🔐 Sécurité',
     tasks: [
-      { label: 'Règles Firestore séparant citoyen / pro / admin', status: 'done', priority: 'haute' },
+      {
+        label: 'Règles Firestore séparant citoyen / pro / admin',
+        status: 'done',
+        priority: 'haute',
+      },
       { label: 'Aucune clé API Firebase exposée côté client', status: 'done', priority: 'haute' },
-      { label: 'Content Security Policy (CSP) configurée via Cloudflare', status: 'done', priority: 'haute' },
-      { label: 'Variables d\'environnement VITE_* sensibles hors du dépôt', status: 'done', priority: 'haute' },
-      { label: 'Authentification Firebase avec règles de rôle (citizen/pro/admin)', status: 'done', priority: 'haute' },
-      { label: 'Rollback instantané activé sur Cloudflare Pages', status: 'done', priority: 'haute' },
-      { label: 'Audit des dépendances npm (vulnerabilités critiques)', status: 'in-progress', priority: 'haute' },
-      { label: 'HTTPS enforced — pas de contenu mixte HTTP/HTTPS', status: 'done', priority: 'haute' },
+      {
+        label: 'Content Security Policy (CSP) configurée via Cloudflare',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: "Variables d'environnement VITE_* sensibles hors du dépôt",
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Authentification Firebase avec règles de rôle (citizen/pro/admin)',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Rollback instantané activé sur Cloudflare Pages',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Audit des dépendances npm (vulnerabilités critiques)',
+        status: 'in-progress',
+        priority: 'haute',
+      },
+      {
+        label: 'HTTPS enforced — pas de contenu mixte HTTP/HTTPS',
+        status: 'done',
+        priority: 'haute',
+      },
     ],
   },
   {
     key: 'frontend',
     title: '🖥️ Frontend & UX',
     tasks: [
-      { label: 'Build de production sans erreur TypeScript (0 TS errors)', status: 'done', priority: 'haute' },
-      { label: 'Code splitting par route (lazyPage + Suspense)', status: 'done', priority: 'moyenne' },
-      { label: 'Gestion des erreurs — ErrorBoundary global en place', status: 'done', priority: 'haute' },
+      {
+        label: 'Build de production sans erreur TypeScript (0 TS errors)',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Code splitting par route (lazyPage + Suspense)',
+        status: 'done',
+        priority: 'moyenne',
+      },
+      {
+        label: 'Gestion des erreurs — ErrorBoundary global en place',
+        status: 'done',
+        priority: 'haute',
+      },
       { label: 'Fallback 404 (NotFound.tsx) routé sur /*', status: 'done', priority: 'moyenne' },
-      { label: 'Timeout Suspense (10 s) avec fallback visible', status: 'done', priority: 'moyenne' },
-      { label: 'Icônes Lucide React — cohérence sur toutes les pages', status: 'done', priority: 'basse' },
-      { label: 'Routes legacy aliases en place (backward compatibility)', status: 'done', priority: 'haute' },
-      { label: 'BASE_URL Vite correct selon l\'env (Cloudflare vs GitHub Pages)', status: 'done', priority: 'haute' },
-      { label: 'Suppression des fichiers obsolètes et @ts-nocheck', status: 'done', priority: 'moyenne' },
-      { label: 'Indicateur DOM / métropole pour les comparateurs de prix', status: 'done', priority: 'moyenne', note: 'EcartHexagone + DomMetroGapIndicator intégrés dans Comparateur, CatalogueItem, ComparaisonEnseignes, PaniersTypes' },
-      { label: 'Optimisation GPS liste de courses (meilleur compromis prix/distance)', status: 'done', priority: 'basse', note: 'SmartShoppingList : solveShoppingRoute + 4 modes (cheapest/distance/balanced/single)' },
-      { label: 'Export PDF de la liste de courses optimisée', status: 'done', priority: 'basse', note: 'SmartShoppingList : exportToPDF via jsPDF (dynamique)' },
+      {
+        label: 'Timeout Suspense (10 s) avec fallback visible',
+        status: 'done',
+        priority: 'moyenne',
+      },
+      {
+        label: 'Icônes Lucide React — cohérence sur toutes les pages',
+        status: 'done',
+        priority: 'basse',
+      },
+      {
+        label: 'Routes legacy aliases en place (backward compatibility)',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: "BASE_URL Vite correct selon l'env (Cloudflare vs GitHub Pages)",
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Suppression des fichiers obsolètes et @ts-nocheck',
+        status: 'done',
+        priority: 'moyenne',
+      },
+      {
+        label: 'Indicateur DOM / métropole pour les comparateurs de prix',
+        status: 'done',
+        priority: 'moyenne',
+        note: 'EcartHexagone + DomMetroGapIndicator intégrés dans Comparateur, CatalogueItem, ComparaisonEnseignes, PaniersTypes',
+      },
+      {
+        label: 'Optimisation GPS liste de courses (meilleur compromis prix/distance)',
+        status: 'done',
+        priority: 'basse',
+        note: 'SmartShoppingList : solveShoppingRoute + 4 modes (cheapest/distance/balanced/single)',
+      },
+      {
+        label: 'Export PDF de la liste de courses optimisée',
+        status: 'done',
+        priority: 'basse',
+        note: 'SmartShoppingList : exportToPDF via jsPDF (dynamique)',
+      },
     ],
   },
   {
     key: 'performance',
     title: '⚡ Performance',
     tasks: [
-      { label: 'PageSpeed 99/100 Desktop — Core Web Vitals excellent', status: 'done', priority: 'haute' },
+      {
+        label: 'PageSpeed 99/100 Desktop — Core Web Vitals excellent',
+        status: 'done',
+        priority: 'haute',
+      },
       { label: 'Bundler Vite avec tree-shaking activé', status: 'done', priority: 'moyenne' },
-      { label: 'Images Unsplash avec paramètres de compression (auto=format&fit=crop)', status: 'done', priority: 'basse' },
-      { label: 'Lazy loading des pages (React.lazy + lazyPage helper)', status: 'done', priority: 'haute' },
+      {
+        label: 'Images Unsplash avec paramètres de compression (auto=format&fit=crop)',
+        status: 'done',
+        priority: 'basse',
+      },
+      {
+        label: 'Lazy loading des pages (React.lazy + lazyPage helper)',
+        status: 'done',
+        priority: 'haute',
+      },
       { label: 'Cache des requêtes prix (priceCacheService)', status: 'done', priority: 'moyenne' },
-      { label: 'Fonctions Cloudflare Workers optimisées (<50ms cold start)', status: 'in-progress', priority: 'moyenne' },
-      { label: 'Mode hors-ligne étendu (PWA) pour les territoires à connectivité faible', status: 'in-progress', priority: 'moyenne', note: 'SW SWR sur data JSON + bannière offline V2' },
+      {
+        label: 'Fonctions Cloudflare Workers optimisées (<50ms cold start)',
+        status: 'in-progress',
+        priority: 'moyenne',
+      },
+      {
+        label: 'Mode hors-ligne étendu (PWA) pour les territoires à connectivité faible',
+        status: 'in-progress',
+        priority: 'moyenne',
+        note: 'SW SWR sur data JSON + bannière offline V2',
+      },
     ],
   },
   {
     key: 'tests',
     title: '🧪 Tests & CI/CD',
     tasks: [
-      { label: 'Pipeline CI/CD Cloudflare Pages opérationnel (npm ci && npm run build)', status: 'done', priority: 'haute' },
+      {
+        label: 'Pipeline CI/CD Cloudflare Pages opérationnel (npm ci && npm run build)',
+        status: 'done',
+        priority: 'haute',
+      },
       { label: 'Étapes lint et type-check bloquantes en CI', status: 'done', priority: 'haute' },
-      { label: 'Node.js épinglé à 20.19.0 (.nvmrc / .node-version)', status: 'done', priority: 'haute' },
-      { label: 'Tests CI des routes alias (vérification littérale dans le code source)', status: 'done', priority: 'haute' },
-      { label: 'Tests unitaires sur les services critiques (devis, prix, EAN)', status: 'in-progress', priority: 'haute' },
-      { label: 'Tests E2E sur les parcours principaux (scan, comparaison, inscription)', status: 'todo', priority: 'haute', note: 'Priorité avant V1 publique' },
-      { label: 'Monitoring des erreurs front-end en production (Sentry ou équivalent)', status: 'todo', priority: 'haute', note: 'À planifier' },
+      {
+        label: 'Node.js épinglé à 20.19.0 (.nvmrc / .node-version)',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Tests CI des routes alias (vérification littérale dans le code source)',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Tests unitaires sur les services critiques (devis, prix, EAN)',
+        status: 'in-progress',
+        priority: 'haute',
+      },
+      {
+        label: 'Tests E2E sur les parcours principaux (scan, comparaison, inscription)',
+        status: 'todo',
+        priority: 'haute',
+        note: 'Priorité avant V1 publique',
+      },
+      {
+        label: 'Monitoring des erreurs front-end en production (Sentry ou équivalent)',
+        status: 'todo',
+        priority: 'haute',
+        note: 'À planifier',
+      },
     ],
   },
   {
     key: 'conformite',
     title: '⚖️ Conformité & RGPD',
     tasks: [
-      { label: 'Consentement cookie explicite à l\'inscription', status: 'done', priority: 'haute' },
-      { label: 'Droit d\'accès et de suppression des données implémentés', status: 'done', priority: 'haute' },
+      { label: "Consentement cookie explicite à l'inscription", status: 'done', priority: 'haute' },
+      {
+        label: "Droit d'accès et de suppression des données implémentés",
+        status: 'done',
+        priority: 'haute',
+      },
       { label: 'Minimisation des données collectées (RGPD)', status: 'done', priority: 'haute' },
       { label: 'Aucune revente de données personnelles', status: 'done', priority: 'haute' },
-      { label: 'Mentions légales accessibles (MentionsLegales.tsx)', status: 'done', priority: 'haute' },
-      { label: 'Piste d\'audit immuable pour les devis (Firestore arrayUnion)', status: 'done', priority: 'haute' },
-      { label: 'Identité légale (SIRET/SIREN) obligatoire pour devis B2G/B2B', status: 'done', priority: 'haute' },
-      { label: 'Durée de conservation des données documentée', status: 'done', priority: 'haute', note: 'Section RGPD ajoutée dans Transparence.tsx' },
-      { label: 'DPO désigné ou procédure de contact RGPD documentée', status: 'done', priority: 'haute', note: 'Contact DPO (contact@akiprisaye.re) + lien CNIL dans Transparence.tsx' },
+      {
+        label: 'Mentions légales accessibles (MentionsLegales.tsx)',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: "Piste d'audit immuable pour les devis (Firestore arrayUnion)",
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Identité légale (SIRET/SIREN) obligatoire pour devis B2G/B2B',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Durée de conservation des données documentée',
+        status: 'done',
+        priority: 'haute',
+        note: 'Section RGPD ajoutée dans Transparence.tsx',
+      },
+      {
+        label: 'DPO désigné ou procédure de contact RGPD documentée',
+        status: 'done',
+        priority: 'haute',
+        note: 'Contact DPO (contact@akiprisaye.re) + lien CNIL dans Transparence.tsx',
+      },
     ],
   },
   {
     key: 'accessibilite',
     title: '♿ Accessibilité',
     tasks: [
-      { label: 'WCAG AA minimum visé sur toutes les pages actives', status: 'done', priority: 'haute', note: 'a11y.css : focus-visible, skip-links, contraste, reduced-motion, min-tap 44px' },
-      { label: 'Aria-labels sur les éléments interactifs (boutons, icônes)', status: 'done', priority: 'haute', note: 'aria-label/aria-expanded/aria-controls ajoutés sur boutons clés' },
-      { label: 'Navigation clavier supportée', status: 'done', priority: 'haute', note: 'Skip-links + focus-visible global via a11y.css' },
-      { label: 'Contrastes de couleur ≥ 4,5:1 sur les composants actifs', status: 'done', priority: 'haute' },
-      { label: 'Focus visible sur tous les éléments focusables', status: 'done', priority: 'haute', note: '*:focus-visible + button/a:focus-visible dans a11y.css' },
-      { label: 'Textes alternatifs (alt) sur toutes les images fonctionnelles', status: 'done', priority: 'moyenne', note: 'HeroImage + img tags avec alt explicites' },
+      {
+        label: 'WCAG AA minimum visé sur toutes les pages actives',
+        status: 'done',
+        priority: 'haute',
+        note: 'a11y.css : focus-visible, skip-links, contraste, reduced-motion, min-tap 44px',
+      },
+      {
+        label: 'Aria-labels sur les éléments interactifs (boutons, icônes)',
+        status: 'done',
+        priority: 'haute',
+        note: 'aria-label/aria-expanded/aria-controls ajoutés sur boutons clés',
+      },
+      {
+        label: 'Navigation clavier supportée',
+        status: 'done',
+        priority: 'haute',
+        note: 'Skip-links + focus-visible global via a11y.css',
+      },
+      {
+        label: 'Contrastes de couleur ≥ 4,5:1 sur les composants actifs',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Focus visible sur tous les éléments focusables',
+        status: 'done',
+        priority: 'haute',
+        note: '*:focus-visible + button/a:focus-visible dans a11y.css',
+      },
+      {
+        label: 'Textes alternatifs (alt) sur toutes les images fonctionnelles',
+        status: 'done',
+        priority: 'moyenne',
+        note: 'HeroImage + img tags avec alt explicites',
+      },
     ],
   },
   {
     key: 'infrastructure',
     title: '🚀 Infrastructure & Déploiement',
     tasks: [
-      { label: 'Déploiement Cloudflare Pages configuré (root_directory=frontend)', status: 'done', priority: 'haute' },
-      { label: 'Variables d\'environnement de production configurées dans Cloudflare', status: 'done', priority: 'haute' },
+      {
+        label: 'Déploiement Cloudflare Pages configuré (root_directory=frontend)',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: "Variables d'environnement de production configurées dans Cloudflare",
+        status: 'done',
+        priority: 'haute',
+      },
       { label: 'Domaine personnalisé et certificat TLS actif', status: 'done', priority: 'haute' },
-      { label: 'VITE_BUILD_SHA / VITE_BUILD_DATE injectés par Vite en CI', status: 'done', priority: 'basse' },
-      { label: 'Règles de cache Cloudflare sur les assets statiques', status: 'in-progress', priority: 'moyenne' },
-      { label: 'Firebase auth et Firestore configurés en projet de production (hors émulateur)', status: 'done', priority: 'haute' },
-      { label: 'Backup automatique Firestore activé', status: 'todo', priority: 'haute', note: 'À configurer dans Firebase Console' },
-      { label: 'Alertes de quota Firebase (Spark → Blaze) configurées', status: 'todo', priority: 'haute', note: 'Prévenir les coupures inattendues' },
+      {
+        label: 'VITE_BUILD_SHA / VITE_BUILD_DATE injectés par Vite en CI',
+        status: 'done',
+        priority: 'basse',
+      },
+      {
+        label: 'Règles de cache Cloudflare sur les assets statiques',
+        status: 'in-progress',
+        priority: 'moyenne',
+      },
+      {
+        label: 'Firebase auth et Firestore configurés en projet de production (hors émulateur)',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Backup automatique Firestore activé',
+        status: 'todo',
+        priority: 'haute',
+        note: 'À configurer dans Firebase Console',
+      },
+      {
+        label: 'Alertes de quota Firebase (Spark → Blaze) configurées',
+        status: 'todo',
+        priority: 'haute',
+        note: 'Prévenir les coupures inattendues',
+      },
     ],
   },
   {
@@ -153,10 +360,22 @@ const CHECKLIST: ChecklistSection[] = [
     tasks: [
       { label: 'CHANGELOG.md maintenu et à jour', status: 'done', priority: 'moyenne' },
       { label: 'Roadmap publique accessible (/roadmap)', status: 'done', priority: 'moyenne' },
-      { label: 'Dossier investisseurs structuré (/dossier-investisseurs)', status: 'done', priority: 'moyenne' },
+      {
+        label: 'Dossier investisseurs structuré (/dossier-investisseurs)',
+        status: 'done',
+        priority: 'moyenne',
+      },
       { label: 'Page Versions accessible (/versions)', status: 'done', priority: 'basse' },
-      { label: 'API interne (Cloudflare Functions) documentée', status: 'done', priority: 'moyenne' },
-      { label: 'README.md monorepo à jour avec instructions de setup', status: 'done', priority: 'moyenne' },
+      {
+        label: 'API interne (Cloudflare Functions) documentée',
+        status: 'done',
+        priority: 'moyenne',
+      },
+      {
+        label: 'README.md monorepo à jour avec instructions de setup',
+        status: 'done',
+        priority: 'moyenne',
+      },
       { label: 'Guide contributeur (CONTRIBUTING.md)', status: 'done', priority: 'basse' },
     ],
   },
@@ -164,12 +383,34 @@ const CHECKLIST: ChecklistSection[] = [
     key: 'ia',
     title: '🤖 IA Responsable',
     tasks: [
-      { label: 'Disclaimer IA systématique sur chaque sortie IA', status: 'done', priority: 'haute' },
-      { label: 'Validation humaine obligatoire sur les devis B2G/B2B', status: 'done', priority: 'haute' },
-      { label: 'Affichage des hypothèses et limites pour les prédictions', status: 'done', priority: 'haute', note: 'Intervalles de confiance implémentés V2' },
+      {
+        label: 'Disclaimer IA systématique sur chaque sortie IA',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Validation humaine obligatoire sur les devis B2G/B2B',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Affichage des hypothèses et limites pour les prédictions',
+        status: 'done',
+        priority: 'haute',
+        note: 'Intervalles de confiance implémentés V2',
+      },
       { label: 'Aucun LLM opaque non auditable en production', status: 'done', priority: 'haute' },
-      { label: 'Données uniquement réelles pour les modèles de prédiction', status: 'done', priority: 'haute' },
-      { label: 'Intervalles de confiance affichés sur les prédictions', status: 'done', priority: 'haute', note: 'PriceTrendWidget V2 : fourchette ±1σ (confidenceLow/High) depuis predictionService' },
+      {
+        label: 'Données uniquement réelles pour les modèles de prédiction',
+        status: 'done',
+        priority: 'haute',
+      },
+      {
+        label: 'Intervalles de confiance affichés sur les prédictions',
+        status: 'done',
+        priority: 'haute',
+        note: 'PriceTrendWidget V2 : fourchette ±1σ (confidenceLow/High) depuis predictionService',
+      },
     ],
   },
 ];
@@ -177,9 +418,12 @@ const CHECKLIST: ChecklistSection[] = [
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function statusIcon(status: TaskStatus) {
-  if (status === 'done') return <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />;
-  if (status === 'in-progress') return <Clock className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />;
-  if (status === 'critical') return <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />;
+  if (status === 'done')
+    return <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />;
+  if (status === 'in-progress')
+    return <Clock className="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" />;
+  if (status === 'critical')
+    return <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />;
   return <Circle className="w-4 h-4 text-gray-300 flex-shrink-0 mt-0.5" />;
 }
 
@@ -218,9 +462,15 @@ export default function ChecklistProduction() {
 
   const totalTasks = CHECKLIST.flatMap((s) => s.tasks).length;
   const doneTasks = CHECKLIST.flatMap((s) => s.tasks).filter((t) => t.status === 'done').length;
-  const inProgressTasks = CHECKLIST.flatMap((s) => s.tasks).filter((t) => t.status === 'in-progress').length;
-  const criticalTasks = CHECKLIST.flatMap((s) => s.tasks).filter((t) => t.status === 'critical').length;
-  const todoTasks = CHECKLIST.flatMap((s) => s.tasks).filter((t) => t.status === 'todo' || t.status === 'critical').length;
+  const inProgressTasks = CHECKLIST.flatMap((s) => s.tasks).filter(
+    (t) => t.status === 'in-progress'
+  ).length;
+  const criticalTasks = CHECKLIST.flatMap((s) => s.tasks).filter(
+    (t) => t.status === 'critical'
+  ).length;
+  const todoTasks = CHECKLIST.flatMap((s) => s.tasks).filter(
+    (t) => t.status === 'todo' || t.status === 'critical'
+  ).length;
   const remainingTasks = totalTasks - doneTasks;
   const progressPct = Math.round((doneTasks / totalTasks) * 100);
 
@@ -232,9 +482,17 @@ export default function ChecklistProduction() {
           name="description"
           content="Liste de vérification des tâches avant mise en production — sécurité, performance, conformité, accessibilité et déploiement."
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/checklist-prod" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/checklist-prod" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/checklist-prod" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/checklist-prod" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/checklist-prod"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/checklist-prod"
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -250,7 +508,13 @@ export default function ChecklistProduction() {
               <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
                 ✅ Checklist Production
               </h1>
-              <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+              <p
+                style={{
+                  margin: '0.25rem 0 0',
+                  fontSize: '0.85rem',
+                  color: 'rgba(255,255,255,0.75)',
+                }}
+              >
                 Liste à faire pour mettre le logiciel en production
               </p>
             </HeroImage>
@@ -267,10 +531,12 @@ export default function ChecklistProduction() {
                   <span className="text-sm font-bold text-indigo-700">{progressPct}%</span>
                 </div>
                 <p className="text-xs text-gray-600 mb-2">
-                  Il reste <strong>{remainingTasks}</strong> tâche{remainingTasks > 1 ? 's' : ''} à intégrer pour finir le site :{' '}
-                  <strong>{todoTasks}</strong> prévue{todoTasks > 1 ? 's' : ''} non démarrée{todoTasks > 1 ? 's' : ''} et{' '}
-                  <strong>{inProgressTasks}</strong> non finie{inProgressTasks > 1 ? 's' : ''} (en cours), dont{' '}
-                  <strong>{criticalTasks}</strong> critique{criticalTasks > 1 ? 's' : ''}.
+                  Il reste <strong>{remainingTasks}</strong> tâche{remainingTasks > 1 ? 's' : ''} à
+                  intégrer pour finir le site : <strong>{todoTasks}</strong> prévue
+                  {todoTasks > 1 ? 's' : ''} non démarrée{todoTasks > 1 ? 's' : ''} et{' '}
+                  <strong>{inProgressTasks}</strong> non finie{inProgressTasks > 1 ? 's' : ''} (en
+                  cours), dont <strong>{criticalTasks}</strong> critique
+                  {criticalTasks > 1 ? 's' : ''}.
                 </p>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -310,15 +576,19 @@ export default function ChecklistProduction() {
                   key={s.key}
                   onClick={() => setActiveSection(s.key)}
                   className={`flex items-center gap-1.5 px-4 py-3.5 text-sm font-medium border-b-2 transition whitespace-nowrap
-                    ${activeSection === s.key
-                      ? 'border-indigo-600 text-indigo-700'
-                      : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+                    ${
+                      activeSection === s.key
+                        ? 'border-indigo-600 text-indigo-700'
+                        : 'border-transparent text-gray-500 hover:text-gray-900'
+                    }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">{s.title.split(' ').slice(1).join(' ')}</span>
                   <span className="sm:hidden">{s.title.split(' ')[0]}</span>
-                  <span className={`text-xs rounded-full px-1.5 py-0 ml-0.5 font-mono
-                    ${done === total ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                  <span
+                    className={`text-xs rounded-full px-1.5 py-0 ml-0.5 font-mono
+                    ${done === total ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}
+                  >
                     {done}/{total}
                   </span>
                 </button>
@@ -358,18 +628,22 @@ export default function ChecklistProduction() {
                     >
                       {statusIcon(task.status)}
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium ${task.status === 'done' ? 'text-gray-700' : task.status === 'todo' ? 'text-gray-500' : 'text-gray-900'}`}>
+                        <p
+                          className={`text-sm font-medium ${task.status === 'done' ? 'text-gray-700' : task.status === 'todo' ? 'text-gray-500' : 'text-gray-900'}`}
+                        >
                           {task.label}
                         </p>
-                        {task.note && (
-                          <p className="text-xs text-gray-400 mt-0.5">{task.note}</p>
-                        )}
+                        {task.note && <p className="text-xs text-gray-400 mt-0.5">{task.note}</p>}
                       </div>
                       <div className="flex items-center gap-1.5 flex-shrink-0">
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${sl.cls}`}>
+                        <span
+                          className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${sl.cls}`}
+                        >
                           {sl.text}
                         </span>
-                        <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${priorityBadge(task.priority)}`}>
+                        <span
+                          className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${priorityBadge(task.priority)}`}
+                        >
                           {task.priority}
                         </span>
                       </div>
@@ -384,10 +658,21 @@ export default function ChecklistProduction() {
           <div className="mt-8 p-4 bg-white border border-gray-200 rounded-xl">
             <p className="text-xs font-semibold text-gray-600 mb-3">Légende</p>
             <div className="flex flex-wrap gap-4 text-xs text-gray-600">
-              <span className="flex items-center gap-1.5"><CheckCircle className="w-3.5 h-3.5 text-green-500" /> Terminé — déployé en production</span>
-              <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-yellow-500" /> En cours — partiellement implémenté</span>
-              <span className="flex items-center gap-1.5"><Circle className="w-3.5 h-3.5 text-gray-400" /> À faire — planifié ou non démarré</span>
-              <span className="flex items-center gap-1.5"><AlertTriangle className="w-3.5 h-3.5 text-red-500" /> Critique — bloquant pour la production</span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle className="w-3.5 h-3.5 text-green-500" /> Terminé — déployé en
+                production
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-yellow-500" /> En cours — partiellement
+                implémenté
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Circle className="w-3.5 h-3.5 text-gray-400" /> À faire — planifié ou non démarré
+              </span>
+              <span className="flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-red-500" /> Critique — bloquant pour la
+                production
+              </span>
             </div>
           </div>
         </div>

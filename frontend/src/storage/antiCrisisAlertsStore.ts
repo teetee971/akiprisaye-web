@@ -1,15 +1,15 @@
 import { safeLocalStorage } from '../utils/safeLocalStorage';
 /**
  * antiCrisisAlertsStore.ts — Local storage for Anti-Crisis alert states
- * 
+ *
  * Purpose: Track alert states to prevent spam and duplicate notifications
  * Storage: safeLocalStorage (RGPD compliant - all data stored locally)
- * 
+ *
  * Anti-spam mechanism:
  * - Tracks last score for each basket/product
  * - Tracks when last alert was sent
  * - Prevents duplicate alerts for same state
- * 
+ *
  * @module antiCrisisAlertsStore
  */
 
@@ -22,10 +22,10 @@ const ALERT_VERSION = 1;
 export interface AlertState {
   /** Last recorded Anti-Crisis score (0-3) */
   lastScore?: number;
-  
+
   /** Timestamp of last alert sent (milliseconds) */
   lastAlertAt?: number;
-  
+
   /** Number of times this item has triggered an alert */
   alertCount?: number;
 }
@@ -59,7 +59,7 @@ function getStoredAlerts(): AlertStorageData {
     }
 
     const data: AlertStorageData = JSON.parse(stored);
-    
+
     // Version migration if needed
     if (data.version !== ALERT_VERSION) {
       console.warn('Alert storage version mismatch, resetting states');
@@ -101,7 +101,7 @@ function cleanupOldStates(data: AlertStorageData): void {
 
   // Remove states with alerts older than retention period
   const cleanedStates: Record<string, AlertState> = {};
-  
+
   for (const [id, state] of Object.entries(data.states)) {
     if (state.lastAlertAt && state.lastAlertAt > cutoffTime) {
       cleanedStates[id] = state;
@@ -117,10 +117,10 @@ function cleanupOldStates(data: AlertStorageData): void {
 
 /**
  * Get alert state for a specific item
- * 
+ *
  * @param id - Unique identifier (basketId, productId, or "territory_basket")
  * @returns Current alert state or empty object
- * 
+ *
  * @example
  * const state = getAlertState('GP_basket-familial');
  * console.log(state.lastScore); // 2
@@ -132,10 +132,10 @@ export function getAlertState(id: string): AlertState {
 
 /**
  * Set/update alert state for a specific item
- * 
+ *
  * @param id - Unique identifier
  * @param state - New alert state
- * 
+ *
  * @example
  * setAlertState('GP_basket-familial', {
  *   lastScore: 2,
@@ -158,7 +158,7 @@ export function setAlertState(id: string, state: AlertState): void {
 
 /**
  * Clear alert state for a specific item
- * 
+ *
  * @param id - Unique identifier
  */
 export function clearAlertState(id: string): void {
@@ -189,22 +189,19 @@ export function getAlertStorageStats(): {
 } {
   const data = getStoredAlerts();
   const states = Object.values(data.states);
-  
-  const itemsWithAlerts = states.filter(s => s.lastAlertAt !== undefined);
+
+  const itemsWithAlerts = states.filter((s) => s.lastAlertAt !== undefined);
   const alertTimes = itemsWithAlerts
-    .map(s => s.lastAlertAt)
+    .map((s) => s.lastAlertAt)
     .filter((time): time is number => time !== undefined)
     .sort((a, b) => a - b);
 
   return {
     totalItems: states.length,
     itemsWithAlerts: itemsWithAlerts.length,
-    oldestAlert: alertTimes.length > 0 
-      ? new Date(alertTimes[0]).toISOString() 
-      : null,
-    newestAlert: alertTimes.length > 0 
-      ? new Date(alertTimes[alertTimes.length - 1]).toISOString() 
-      : null,
+    oldestAlert: alertTimes.length > 0 ? new Date(alertTimes[0]).toISOString() : null,
+    newestAlert:
+      alertTimes.length > 0 ? new Date(alertTimes[alertTimes.length - 1]).toISOString() : null,
   };
 }
 

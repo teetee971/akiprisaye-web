@@ -43,10 +43,10 @@ export interface LearningOutput extends LearningInput {
 
 // ── Signal weights ────────────────────────────────────────────────────────────
 
-const CLICK_WEIGHT      = 0.5;  // each click adds 0.5 to score
-const CONVERSION_WEIGHT = 2.0;  // each conversion adds 2.0 (high-value signal)
-const SHARE_WEIGHT      = 1.0;  // each share adds 1.0 (virality signal)
-const MAX_ADJUSTMENT    = 30;   // cap learning delta to avoid runaway scores
+const CLICK_WEIGHT = 0.5; // each click adds 0.5 to score
+const CONVERSION_WEIGHT = 2.0; // each conversion adds 2.0 (high-value signal)
+const SHARE_WEIGHT = 1.0; // each share adds 1.0 (virality signal)
+const MAX_ADJUSTMENT = 30; // cap learning delta to avoid runaway scores
 
 // ── Core API ──────────────────────────────────────────────────────────────────
 
@@ -61,22 +61,19 @@ const MAX_ADJUSTMENT    = 30;   // cap learning delta to avoid runaway scores
  * // adjustedScore = product.score + 12*0.5 + 2*2.0 = product.score + 10
  */
 export function adjustScore(product: LearningInput, events: ProductEvents): LearningOutput {
-  const clicks      = Math.max(0, Math.round(events.clicks      ?? 0));
+  const clicks = Math.max(0, Math.round(events.clicks ?? 0));
   const conversions = Math.max(0, Math.round(events.conversions ?? 0));
-  const shares      = Math.max(0, Math.round(events.shares      ?? 0));
+  const shares = Math.max(0, Math.round(events.shares ?? 0));
 
-  const rawDelta =
-    clicks      * CLICK_WEIGHT +
-    conversions * CONVERSION_WEIGHT +
-    shares      * SHARE_WEIGHT;
+  const rawDelta = clicks * CLICK_WEIGHT + conversions * CONVERSION_WEIGHT + shares * SHARE_WEIGHT;
 
   const learningDelta = Math.min(MAX_ADJUSTMENT, rawDelta);
   const adjustedScore = Math.min(100, product.score + learningDelta);
 
   return {
     ...product,
-    baseScore:     product.score,
-    score:         adjustedScore,
+    baseScore: product.score,
+    score: adjustedScore,
     adjustedScore,
     learningDelta,
   };
@@ -93,10 +90,10 @@ export function adjustScore(product: LearningInput, events: ProductEvents): Lear
  */
 export function applyLearning(
   products: LearningInput[],
-  eventMap: Map<string, ProductEvents>,
+  eventMap: Map<string, ProductEvents>
 ): LearningOutput[] {
   return products.map((p) => {
-    const key    = String(p.name).toLowerCase().trim();
+    const key = String(p.name).toLowerCase().trim();
     const events = eventMap.get(key) ?? {};
     return adjustScore(p, events);
   });
@@ -108,7 +105,7 @@ export function applyLearning(
  * @param events  Raw event log: { type: 'click'|'conversion'|'share', product: string }[]
  */
 export function buildEventMap(
-  events: { type: string; product: string }[],
+  events: { type: string; product: string }[]
 ): Map<string, ProductEvents> {
   const map = new Map<string, ProductEvents>();
 
@@ -118,9 +115,9 @@ export function buildEventMap(
     if (!map.has(key)) map.set(key, { clicks: 0, conversions: 0, shares: 0 });
     const entry = map.get(key)!;
 
-    if (e.type === 'click')      entry.clicks      = (entry.clicks      ?? 0) + 1;
+    if (e.type === 'click') entry.clicks = (entry.clicks ?? 0) + 1;
     if (e.type === 'conversion') entry.conversions = (entry.conversions ?? 0) + 1;
-    if (e.type === 'share')      entry.shares      = (entry.shares      ?? 0) + 1;
+    if (e.type === 'share') entry.shares = (entry.shares ?? 0) + 1;
   }
 
   return map;

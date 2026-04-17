@@ -14,7 +14,8 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Dataset',
   name: 'Inflation alimentaire DOM-TOM 2024-2026',
-  description: 'Données et analyse de l\'inflation alimentaire dans les territoires d\'outre-mer français : Guadeloupe, Martinique, Guyane, La Réunion et Mayotte.',
+  description:
+    "Données et analyse de l'inflation alimentaire dans les territoires d'outre-mer français : Guadeloupe, Martinique, Guyane, La Réunion et Mayotte.",
   creator: { '@type': 'Organization', name: 'A KI PRI SA YÉ' },
   temporalCoverage: '2024/2026',
   url: `${SITE_URL}/inflation-alimentaire-dom`,
@@ -55,12 +56,17 @@ export default function InflationAlimentaireDOMAnalyse() {
       />
 
       <div className="mx-auto max-w-2xl space-y-6">
-
         {/* Breadcrumb */}
         <nav aria-label="Fil d'Ariane" className="text-xs text-zinc-500">
           <ol className="flex flex-wrap items-center gap-1.5">
-            <li><Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
+            <li>
+              <Link to="/" className="hover:text-emerald-400 transition-colors">
+                Accueil
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
             <li className="text-zinc-300">Inflation alimentaire DOM</li>
           </ol>
         </nav>
@@ -74,9 +80,9 @@ export default function InflationAlimentaireDOMAnalyse() {
             Inflation alimentaire dans les DOM
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            L'inflation alimentaire dans les DOM-TOM touche particulièrement les ménages
-            aux revenus modestes. Découvrez les données mensuelles, les tendances et l'impact
-            sur le pouvoir d'achat des familles ultramarines.
+            L'inflation alimentaire dans les DOM-TOM touche particulièrement les ménages aux revenus
+            modestes. Découvrez les données mensuelles, les tendances et l'impact sur le pouvoir
+            d'achat des familles ultramarines.
           </p>
         </div>
 
@@ -88,15 +94,27 @@ export default function InflationAlimentaireDOMAnalyse() {
             { label: 'Guyane', value: `+${latestData.GF}%`, color: 'amber' },
             { label: 'Mayotte', value: `+${latestData.YT}%`, color: 'rose' },
           ].map(({ label, value, color }) => (
-            <div key={label} className={`rounded-xl border p-3 text-center ${
-              color === 'emerald' ? 'border-emerald-400/20 bg-emerald-400/5' :
-              color === 'amber' ? 'border-amber-400/20 bg-amber-400/5' :
-              'border-rose-400/20 bg-rose-400/5'
-            }`}>
-              <div className={`text-2xl font-extrabold tabular-nums ${
-                color === 'emerald' ? 'text-emerald-400' :
-                color === 'amber' ? 'text-amber-400' : 'text-rose-400'
-              }`}>{value}</div>
+            <div
+              key={label}
+              className={`rounded-xl border p-3 text-center ${
+                color === 'emerald'
+                  ? 'border-emerald-400/20 bg-emerald-400/5'
+                  : color === 'amber'
+                    ? 'border-amber-400/20 bg-amber-400/5'
+                    : 'border-rose-400/20 bg-rose-400/5'
+              }`}
+            >
+              <div
+                className={`text-2xl font-extrabold tabular-nums ${
+                  color === 'emerald'
+                    ? 'text-emerald-400'
+                    : color === 'amber'
+                      ? 'text-amber-400'
+                      : 'text-rose-400'
+                }`}
+              >
+                {value}
+              </div>
               <div className="mt-1 text-[10px] text-zinc-500">{label}</div>
               <div className="text-[10px] text-zinc-600">Juin 2025</div>
             </div>
@@ -135,7 +153,8 @@ export default function InflationAlimentaireDOMAnalyse() {
             </table>
           </div>
           <p className="mt-2 text-[10px] text-zinc-600">
-            * Données indicatives basées sur les indices des prix à la consommation. Sources : INSEE, IEDOM.
+            * Données indicatives basées sur les indices des prix à la consommation. Sources :
+            INSEE, IEDOM.
           </p>
         </div>
 
@@ -144,23 +163,29 @@ export default function InflationAlimentaireDOMAnalyse() {
           <h2 className="mb-3 text-sm font-bold text-white">Analyse et contexte</h2>
           <div className="space-y-3 text-sm leading-relaxed text-zinc-400">
             <p>
-              Après un pic d'inflation en début 2024, les territoires ultramarins connaissent
-              une décélération progressive, mais les prix restent structurellement plus élevés
-              qu'en métropole. Mayotte demeure le territoire le plus touché avec des taux
-              d'inflation systématiquement supérieurs aux autres DOM.
+              Après un pic d'inflation en début 2024, les territoires ultramarins connaissent une
+              décélération progressive, mais les prix restent structurellement plus élevés qu'en
+              métropole. Mayotte demeure le territoire le plus touché avec des taux d'inflation
+              systématiquement supérieurs aux autres DOM.
             </p>
-            <p>
-              Les produits les plus touchés par l'inflation dans les DOM sont :
-            </p>
+            <p>Les produits les plus touchés par l'inflation dans les DOM sont :</p>
             <ul className="space-y-1 pl-4 text-zinc-500">
-              {['Huiles alimentaires (+18% à +25%)', 'Pâtes et riz (+12% à +18%)', 'Produits laitiers (+8% à +15%)', 'Viandes et poissons (+6% à +12%)'].map((item) => (
-                <li key={item} className="text-xs">• {item}</li>
+              {[
+                'Huiles alimentaires (+18% à +25%)',
+                'Pâtes et riz (+12% à +18%)',
+                'Produits laitiers (+8% à +15%)',
+                'Viandes et poissons (+6% à +12%)',
+              ].map((item) => (
+                <li key={item} className="text-xs">
+                  • {item}
+                </li>
               ))}
             </ul>
             <p>
-              L'impact sur les familles modestes est significatif : un ménage de 4 personnes
-              dans les DOM dépense en moyenne <strong className="text-white">150 à 300€ de plus par mois</strong> que
-              son équivalent métropolitain pour un panier alimentaire identique.
+              L'impact sur les familles modestes est significatif : un ménage de 4 personnes dans
+              les DOM dépense en moyenne{' '}
+              <strong className="text-white">150 à 300€ de plus par mois</strong> que son équivalent
+              métropolitain pour un panier alimentaire identique.
             </p>
           </div>
         </div>
@@ -191,7 +216,6 @@ export default function InflationAlimentaireDOMAnalyse() {
             ))}
           </div>
         </div>
-
       </div>
 
       <ConversionStickyBar

@@ -1,4 +1,3 @@
- 
 /**
  * ⑭ RÉSUMÉ DES HAUSSES DU JOUR
  * Hook pour analyser les hausses récentes de prix
@@ -37,7 +36,7 @@ export function useDailyPriceShock(territory: string = 'GP') {
         // Charger les données
         const [productsRes, servicesRes] = await Promise.all([
           fetch(`${import.meta.env.BASE_URL}data/expanded-prices.json`),
-          fetch(`${import.meta.env.BASE_URL}data/services-prices.json`)
+          fetch(`${import.meta.env.BASE_URL}data/services-prices.json`),
         ]);
 
         if (!productsRes.ok || !servicesRes.ok) {
@@ -53,7 +52,7 @@ export function useDailyPriceShock(territory: string = 'GP') {
         setData({
           shocks: shocks.slice(0, 5), // Top 5
           lastUpdate: new Date().toISOString(),
-          territoryAnalyzed: territory
+          territoryAnalyzed: territory,
         });
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erreur inconnue');
@@ -83,13 +82,13 @@ function analyzeRecentShocks(
   if (productsData?.products) {
     productsData.products.forEach((product: any) => {
       if (product.territory !== territory) return;
-      
+
       const priceHistory = product.priceHistory || [];
       if (priceHistory.length < 2) return;
 
       // Trier par date décroissante
-      const sorted = [...priceHistory].sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
+      const sorted = [...priceHistory].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
 
       const latest = sorted[0];
@@ -101,7 +100,7 @@ function analyzeRecentShocks(
 
       const currentPrice = latest.price;
       const previousPrice = previous.price;
-      
+
       if (currentPrice > previousPrice) {
         const increase = currentPrice - previousPrice;
         const percentIncrease = (increase / previousPrice) * 100;
@@ -109,7 +108,7 @@ function analyzeRecentShocks(
         // Fiabilité basée sur nombre d'observations
         const observations = latest.observations || 1;
         const stores = latest.stores || 1;
-        const isConfirmed = (observations >= 3 && stores >= 2);
+        const isConfirmed = observations >= 3 && stores >= 2;
 
         shocks.push({
           productName: product.name || 'Produit inconnu',
@@ -119,7 +118,7 @@ function analyzeRecentShocks(
           isConfirmed,
           currentPrice,
           previousPrice,
-          category: product.category
+          category: product.category,
         });
       }
     });
@@ -129,12 +128,12 @@ function analyzeRecentShocks(
   if (servicesData?.services) {
     servicesData.services.forEach((service: any) => {
       if (service.territory !== territory) return;
-      
+
       const priceHistory = service.priceHistory || [];
       if (priceHistory.length < 2) return;
 
-      const sorted = [...priceHistory].sort((a, b) => 
-        new Date(b.date).getTime() - new Date(a.date).getTime()
+      const sorted = [...priceHistory].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
 
       const latest = sorted[0];
@@ -145,7 +144,7 @@ function analyzeRecentShocks(
 
       const currentPrice = latest.price;
       const previousPrice = previous.price;
-      
+
       if (currentPrice > previousPrice) {
         const increase = currentPrice - previousPrice;
         const percentIncrease = (increase / previousPrice) * 100;
@@ -158,7 +157,7 @@ function analyzeRecentShocks(
           isConfirmed: true, // Services = données officielles
           currentPrice,
           previousPrice,
-          category: 'Services'
+          category: 'Services',
         });
       }
     });

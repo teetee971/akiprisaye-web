@@ -27,9 +27,7 @@ export default function CivicNewsCard({
   };
 
   return (
-    <article
-      className="relative bg-white/[0.05] backdrop-blur-[14px] border border-white/[0.12] rounded-xl overflow-hidden hover:bg-white/[0.08] hover:border-white/[0.18] transition-all duration-300 shadow-lg hover:shadow-xl"
-    >
+    <article className="relative bg-white/[0.05] backdrop-blur-[14px] border border-white/[0.12] rounded-xl overflow-hidden hover:bg-white/[0.08] hover:border-white/[0.18] transition-all duration-300 shadow-lg hover:shadow-xl">
       {/* Category Badge */}
       <div className="flex items-center gap-2 p-4 pb-3">
         <span
@@ -44,12 +42,8 @@ export default function CivicNewsCard({
 
       {/* Content */}
       <div className="px-4 pb-4">
-        <h3 className="text-lg font-semibold text-white mb-2 leading-tight">
-          {title}
-        </h3>
-        <p className="text-gray-300 text-sm leading-relaxed mb-4">
-          {summary}
-        </p>
+        <h3 className="text-lg font-semibold text-white mb-2 leading-tight">{title}</h3>
+        <p className="text-gray-300 text-sm leading-relaxed mb-4">{summary}</p>
 
         {/* Divider */}
         <div className="border-t border-white/[0.08] my-4"></div>
@@ -75,12 +69,7 @@ export default function CivicNewsCard({
           >
             <span>🌐</span>
             <span>Voir la source officielle</span>
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -95,8 +84,8 @@ export default function CivicNewsCard({
       {/* Civic Disclaimer */}
       <div className="bg-blue-500/5 border-t border-blue-500/20 px-4 py-3">
         <p className="text-xs text-gray-400 leading-relaxed">
-          ℹ️ Cette information provient d&apos;une source publique officielle.
-          A KI PRI SA YÉ ne modifie pas les données et n&apos;effectue aucune interprétation commerciale.
+          ℹ️ Cette information provient d&apos;une source publique officielle. A KI PRI SA YÉ ne
+          modifie pas les données et n&apos;effectue aucune interprétation commerciale.
         </p>
       </div>
     </article>

@@ -1,14 +1,13 @@
- 
 /**
  * AntiCrisisReadingPanel Component
- * 
+ *
  * Displays Anti-Crisis reading for a selected territory
  * - Territory name and ILPP score
  * - Comparison to national average
  * - Stable categories (if qualifies)
  * - Descriptive explanation
  * - Legal disclaimer (mandatory)
- * 
+ *
  * Legal Compliance:
  * - No purchase recommendations
  * - No specific products or stores
@@ -55,17 +54,17 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
 
   const pressureLevel = getPressureLevel(reading.ilpp);
   const colorClass = getILPPColorClass(reading.ilpp);
-  
+
   const timeRangeLabel = timeRange === '30d' ? '30 jours' : '90 jours';
 
   return (
-    <div className={`bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden ${className}`}>
+    <div
+      className={`bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden ${className}`}
+    >
       {/* Header */}
       <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">
-            {reading.territoryName}
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900">{reading.territoryName}</h3>
           {onClose && (
             <button
               onClick={onClose}
@@ -73,7 +72,12 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
               aria-label="Fermer"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           )}
@@ -92,20 +96,30 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
             <span className="text-sm text-gray-500">/ 100</span>
           </div>
         </div>
-        
-        <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium`}
-             style={{
-               backgroundColor: colorClass.includes('green') ? 'rgb(220 252 231)' :
-                              colorClass.includes('blue') ? 'rgb(219 234 254)' :
-                              colorClass.includes('yellow') ? 'rgb(254 249 195)' :
-                              colorClass.includes('orange') ? 'rgb(255 237 213)' :
-                              'rgb(254 226 226)',
-               color: colorClass.includes('green') ? 'rgb(22 101 52)' :
-                     colorClass.includes('blue') ? 'rgb(30 64 175)' :
-                     colorClass.includes('yellow') ? 'rgb(133 77 14)' :
-                     colorClass.includes('orange') ? 'rgb(154 52 18)' :
-                     'rgb(153 27 27)'
-             }}>
+
+        <div
+          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium`}
+          style={{
+            backgroundColor: colorClass.includes('green')
+              ? 'rgb(220 252 231)'
+              : colorClass.includes('blue')
+                ? 'rgb(219 234 254)'
+                : colorClass.includes('yellow')
+                  ? 'rgb(254 249 195)'
+                  : colorClass.includes('orange')
+                    ? 'rgb(255 237 213)'
+                    : 'rgb(254 226 226)',
+            color: colorClass.includes('green')
+              ? 'rgb(22 101 52)'
+              : colorClass.includes('blue')
+                ? 'rgb(30 64 175)'
+                : colorClass.includes('yellow')
+                  ? 'rgb(133 77 14)'
+                  : colorClass.includes('orange')
+                    ? 'rgb(154 52 18)'
+                    : 'rgb(153 27 27)',
+          }}
+        >
           Pression {pressureLevel.toLowerCase()}
         </div>
 
@@ -117,11 +131,15 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
           </div>
           <div className="mt-1 flex items-center justify-between text-sm">
             <span className="text-gray-600">Écart :</span>
-            <span className={`font-medium ${
-              reading.comparisonToNational === 'below' ? 'text-green-600' :
-              reading.comparisonToNational === 'above' ? 'text-red-600' :
-              'text-gray-600'
-            }`}>
+            <span
+              className={`font-medium ${
+                reading.comparisonToNational === 'below'
+                  ? 'text-green-600'
+                  : reading.comparisonToNational === 'above'
+                    ? 'text-red-600'
+                    : 'text-gray-600'
+              }`}
+            >
               {reading.differenceFromNational > 0 ? '+' : ''}
               {reading.differenceFromNational.toFixed(0)} points
             </span>
@@ -133,7 +151,9 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
       <div className="px-6 py-4">
         <div className="flex items-center gap-2 mb-3">
           <span className="text-lg">📊</span>
-          <h4 className="text-md font-semibold text-gray-900">Lecture "Anti-Crise" (descriptive)</h4>
+          <h4 className="text-md font-semibold text-gray-900">
+            Lecture "Anti-Crise" (descriptive)
+          </h4>
         </div>
 
         {reading.qualifiesForReading ? (
@@ -163,8 +183,9 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
         ) : (
           <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
             <p className="text-sm text-gray-600">
-              Ce territoire présente une pression de prix supérieure ou égale à la moyenne nationale.
-              Aucune catégorie ne présente actuellement de stabilité particulière identifiée.
+              Ce territoire présente une pression de prix supérieure ou égale à la moyenne
+              nationale. Aucune catégorie ne présente actuellement de stabilité particulière
+              identifiée.
             </p>
           </div>
         )}
@@ -175,10 +196,13 @@ const AntiCrisisReadingPanel: React.FC<AntiCrisisReadingPanelProps> = ({
         <div className="flex items-start gap-2">
           <span className="text-blue-600 text-sm mt-0.5">ℹ️</span>
           <div className="flex-1">
-            <p className="text-xs font-medium text-blue-900 mb-1">Qu'est-ce que la "Lecture Anti-Crise" ?</p>
+            <p className="text-xs font-medium text-blue-900 mb-1">
+              Qu'est-ce que la "Lecture Anti-Crise" ?
+            </p>
             <p className="text-xs text-blue-800 leading-relaxed">
-              Identification descriptive des territoires où la pression des prix observée est inférieure 
-              à la moyenne nationale, ainsi que des catégories de produits y présentant une stabilité relative.
+              Identification descriptive des territoires où la pression des prix observée est
+              inférieure à la moyenne nationale, ainsi que des catégories de produits y présentant
+              une stabilité relative.
               <span className="block mt-1">Période analysée : {timeRangeLabel}.</span>
             </p>
           </div>

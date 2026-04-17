@@ -23,18 +23,17 @@ export default function TiPanie() {
       // Convert selectedTerritories to legacy territory format for service compatibility
       const serviceFilters = {
         ...filters,
-        territory: filters.selectedTerritories?.length === 1 
-          ? filters.selectedTerritories[0] 
-          : 'all',
+        territory:
+          filters.selectedTerritories?.length === 1 ? filters.selectedTerritories[0] : 'all',
       };
       const data = await getBaskets(serviceFilters);
-      
+
       // Validate data format
       if (!Array.isArray(data)) {
         console.error('Invalid data format received:', typeof data, data);
         throw new Error('Les données reçues ne sont pas au format attendu');
       }
-      
+
       setBaskets(data);
       setError(null);
     } catch (error) {
@@ -61,8 +60,14 @@ export default function TiPanie() {
           gradient="from-slate-950 to-green-900"
           height="h-40 sm:h-52"
         >
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🛒 Ti Panie</h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Gérez votre panier avec les prix locaux</p>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🛒 Ti Panie
+          </h1>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Gérez votre panier avec les prix locaux
+          </p>
         </HeroImage>
 
         {/* Stats Banner */}
@@ -72,14 +77,12 @@ export default function TiPanie() {
             <div className="text-slate-400 text-sm">Paniers disponibles</div>
           </div>
           <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4 text-center">
-            <div className="text-3xl font-bold text-green-400">
-              {totalSavings.toFixed(2)}€
-            </div>
+            <div className="text-3xl font-bold text-green-400">{totalSavings.toFixed(2)}€</div>
             <div className="text-slate-400 text-sm">Économies totales</div>
           </div>
           <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-4 text-center">
             <div className="text-3xl font-bold text-orange-400">
-              {baskets.filter(b => b.stock).length}
+              {baskets.filter((b) => b.stock).length}
             </div>
             <div className="text-slate-400 text-sm">En stock maintenant</div>
           </div>
@@ -119,9 +122,9 @@ export default function TiPanie() {
         {!loading && baskets.length > 0 && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {baskets.map((basket) => (
-              <BasketCard 
-                key={basket.id} 
-                basket={basket} 
+              <BasketCard
+                key={basket.id}
+                basket={basket}
                 selectedTerritories={filters.selectedTerritories}
               />
             ))}
@@ -132,9 +135,7 @@ export default function TiPanie() {
         {!loading && baskets.length === 0 && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🧺</div>
-            <h3 className="text-xl font-semibold mb-2 text-slate-300">
-              Aucun panier trouvé
-            </h3>
+            <h3 className="text-xl font-semibold mb-2 text-slate-300">Aucun panier trouvé</h3>
             <p className="text-slate-400">
               Essayez de modifier vos filtres pour voir plus de résultats
             </p>
@@ -179,8 +180,8 @@ export default function TiPanie() {
             Impact écologique
           </h3>
           <p className="text-slate-300 text-sm">
-            En choisissant Ti-Panié Solidaire, vous contribuez à réduire le gaspillage alimentaire 
-            et soutenez les circuits courts locaux. Ensemble, luttons contre la vie chère tout en 
+            En choisissant Ti-Panié Solidaire, vous contribuez à réduire le gaspillage alimentaire
+            et soutenez les circuits courts locaux. Ensemble, luttons contre la vie chère tout en
             préservant notre environnement ! 💚
           </p>
         </div>

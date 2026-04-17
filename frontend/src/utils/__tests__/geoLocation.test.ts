@@ -1,4 +1,3 @@
- 
 /**
  * Tests for GPS/Geolocation Utilities
  * Validates caching, batch calculations, and performance optimizations
@@ -47,17 +46,17 @@ describe('geoLocation utilities', () => {
     it('should cache distance calculations', () => {
       // First calculation
       const distance1 = calculateDistance(48.8566, 2.3522, 43.2965, 5.3698);
-      
+
       // Check cache has one entry
       const stats1 = getCacheStats();
       expect(stats1.distanceCacheSize).toBe(1);
-      
+
       // Second calculation (should use cache)
       const distance2 = calculateDistance(48.8566, 2.3522, 43.2965, 5.3698);
-      
+
       // Should return same result
       expect(distance2).toBe(distance1);
-      
+
       // Cache size should still be 1
       const stats2 = getCacheStats();
       expect(stats2.distanceCacheSize).toBe(1);
@@ -69,17 +68,17 @@ describe('geoLocation utilities', () => {
       for (let i = 0; i < 500; i++) {
         calculateDistance(48.0 + i * 0.01, 2.0, 43.0, 5.0);
       }
-      
+
       // Verify cache is working
       const stats = getCacheStats();
       expect(stats.distanceCacheSize).toBeGreaterThan(0);
       expect(stats.distanceCacheSize).toBeLessThanOrEqual(1000);
-      
+
       // Add more to exceed limit
       for (let i = 500; i < 1100; i++) {
         calculateDistance(48.0 + i * 0.01, 2.0, 43.0, 5.0);
       }
-      
+
       // Cache should be limited to 1000
       const finalStats = getCacheStats();
       expect(finalStats.distanceCacheSize).toBeLessThanOrEqual(1000);
@@ -89,7 +88,7 @@ describe('geoLocation utilities', () => {
   describe('calculateDistancesBatch', () => {
     it('should calculate distances for multiple stores', () => {
       const userPos: GeoPosition = { lat: 16.2415, lon: -61.5331 };
-      
+
       const stores: StoreLocation[] = [
         { id: '1', lat: 16.271, lon: -61.588 },
         { id: '2', lat: 16.224, lon: -61.493 },
@@ -108,10 +107,8 @@ describe('geoLocation utilities', () => {
 
     it('should preserve store properties', () => {
       const userPos: GeoPosition = { lat: 16.2415, lon: -61.5331 };
-      
-      const stores = [
-        { id: '1', lat: 16.271, lon: -61.588, name: 'Store A', type: 'supermarket' },
-      ];
+
+      const stores = [{ id: '1', lat: 16.271, lon: -61.588, name: 'Store A', type: 'supermarket' }];
 
       const results = calculateDistancesBatch(userPos, stores);
 
@@ -122,7 +119,7 @@ describe('geoLocation utilities', () => {
 
     it('should be more efficient than individual calls', () => {
       const userPos: GeoPosition = { lat: 16.2415, lon: -61.5331 };
-      
+
       const stores: StoreLocation[] = Array.from({ length: 100 }, (_, i) => ({
         id: `store-${i}`,
         lat: 16.0 + i * 0.01,
@@ -137,14 +134,14 @@ describe('geoLocation utilities', () => {
       // Individual calculations
       clearDistanceCache(); // Clear cache to ensure fair comparison
       const individualStart = performance.now();
-      const individualResults = stores.map(store =>
+      const individualResults = stores.map((store) =>
         calculateDistance(userPos.lat, userPos.lon, store.lat, store.lon)
       );
       const individualTime = performance.now() - individualStart;
 
       expect(batchResults).toHaveLength(stores.length);
       expect(individualResults).toHaveLength(stores.length);
-      
+
       // Batch should be at least as fast (usually faster due to pre-computed values)
       // Note: This is a rough performance test and may vary
       expect(batchTime).toBeLessThanOrEqual(individualTime * 1.5);
@@ -190,12 +187,12 @@ describe('geoLocation utilities', () => {
       // Add some cached distances
       calculateDistance(48.8566, 2.3522, 43.2965, 5.3698);
       calculateDistance(48.0, 2.0, 43.0, 5.0);
-      
+
       let stats = getCacheStats();
       expect(stats.distanceCacheSize).toBeGreaterThan(0);
-      
+
       clearDistanceCache();
-      
+
       stats = getCacheStats();
       expect(stats.distanceCacheSize).toBe(0);
     });
@@ -216,7 +213,7 @@ describe('geoLocation utilities', () => {
       const lon1 = -61.5331;
       const lat2 = 16.2425; // ~1.1 km north
       const lon2 = -61.5331;
-      
+
       const distance = calculateDistance(lat1, lon1, lat2, lon2);
       // Actual distance should be around 0.1 km (100m) for 0.001 degree difference
       expect(distance).toBeGreaterThan(0.05);
@@ -254,7 +251,7 @@ describe('geoLocation utilities', () => {
 
       // Clear cache and measure again
       clearDistanceCache();
-      
+
       // Repeated calculations with same coordinates (cache hits after first)
       const start2 = performance.now();
       const dist1 = calculateDistance(lat1, lon1, lat2, lon2);

@@ -1,4 +1,3 @@
- 
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Share2, Download, Copy, Check, TrendingUp } from 'lucide-react';
@@ -13,12 +12,12 @@ interface VictoryData {
 
 /**
  * Component ㉑: Share Victory (Social Proof)
- * 
+ *
  * Celebrate and share savings achievements
  * Generates shareable image: "I saved X€ this month"
  * Anonymized sharing (no personal data)
  * Aggregated territory stats for social proof
- * 
+ *
  * Psychological effect: Virality + organic recruitment
  * Retention impact: High (word-of-mouth growth)
  */
@@ -28,13 +27,16 @@ export const ShareVictory: React.FC = () => {
 
   React.useEffect(() => {
     // Get user's victory data
-    const data = safeLocalStorage.getJSON<{ currentMonth?: number } | null>('monthlySavings:v1', null);
+    const data = safeLocalStorage.getJSON<{ currentMonth?: number } | null>(
+      'monthlySavings:v1',
+      null
+    );
     if (data && data.currentMonth) {
       setVictoryData({
         monthlySavings: data.currentMonth,
         percentVsAverage: 23, // Example
         topProduct: 'Produits laitiers',
-        territory: 'Guadeloupe'
+        territory: 'Guadeloupe',
       });
     }
   }, []);
@@ -42,7 +44,8 @@ export const ShareVictory: React.FC = () => {
   const handleShare = async () => {
     if (!victoryData) return;
 
-    const shareText = `🎉 J'ai économisé ${victoryData.monthlySavings.toFixed(2)}€ ce mois avec A KI PRI SA YÉ !\n\n` +
+    const shareText =
+      `🎉 J'ai économisé ${victoryData.monthlySavings.toFixed(2)}€ ce mois avec A KI PRI SA YÉ !\n\n` +
       `💰 ${victoryData.percentVsAverage}% de plus que la moyenne\n` +
       `📍 Territoire : ${victoryData.territory}\n\n` +
       `🔍 Comparateur de prix pour les Outre-mer\n` +
@@ -54,7 +57,7 @@ export const ShareVictory: React.FC = () => {
         await navigator.share({
           title: 'Mes économies du mois',
           text: shareText,
-          url: 'https://akiprisaye.fr'
+          url: 'https://akiprisaye.fr',
         });
       } catch {
         // Share was cancelled by user — no action needed
@@ -72,7 +75,10 @@ export const ShareVictory: React.FC = () => {
   };
 
   const handleDownloadImage = () => {
-    toast('Fonctionnalité de téléchargement d\'image à venir — une belle image sera générée avec vos économies.', { icon: '🖼️' });
+    toast(
+      "Fonctionnalité de téléchargement d'image à venir — une belle image sera générée avec vos économies.",
+      { icon: '🖼️' }
+    );
   };
 
   if (!victoryData || victoryData.monthlySavings < 5) {
@@ -88,12 +94,8 @@ export const ShareVictory: React.FC = () => {
           <Share2 className="w-5 h-5" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-white">
-            📸 Partagez Votre Victoire !
-          </h3>
-          <p className="text-sm text-gray-400">
-            Célébrez vos économies avec la communauté
-          </p>
+          <h3 className="text-lg font-semibold text-white">📸 Partagez Votre Victoire !</h3>
+          <p className="text-sm text-gray-400">Célébrez vos économies avec la communauté</p>
         </div>
       </div>
 
@@ -101,13 +103,13 @@ export const ShareVictory: React.FC = () => {
       <div className="mb-6 p-6 rounded-xl bg-gradient-to-br from-green-500/20 via-blue-500/20 to-purple-500/20 border border-white/10 relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 text-6xl opacity-10">🎉</div>
-        
+
         <div className="relative z-10">
           <p className="text-sm text-gray-300 mb-2">Mes économies ce mois</p>
           <div className="text-5xl font-bold text-white mb-4">
             {victoryData.monthlySavings.toFixed(2)} €
           </div>
-          
+
           <div className="flex items-center gap-2 mb-3">
             <TrendingUp className="w-5 h-5 text-green-400" />
             <span className="text-green-400 font-semibold">
@@ -166,17 +168,16 @@ export const ShareVictory: React.FC = () => {
           💡 <strong>Le saviez-vous ?</strong>
         </p>
         <p className="text-xs text-gray-400">
-          Les utilisateurs qui partagent leurs économies motivent en moyenne 
-          <strong className="text-white"> 3 personnes</strong> à rejoindre la communauté.
-          Ensemble, nous créons plus de transparence sur les prix !
+          Les utilisateurs qui partagent leurs économies motivent en moyenne
+          <strong className="text-white"> 3 personnes</strong> à rejoindre la communauté. Ensemble,
+          nous créons plus de transparence sur les prix !
         </p>
       </div>
 
       {/* Disclaimer */}
       <div className="mt-4 text-xs text-gray-500 text-center">
         <p>
-          🔒 Partage 100% anonyme • Aucune donnée personnelle exposée • 
-          Stats agrégées uniquement
+          🔒 Partage 100% anonyme • Aucune donnée personnelle exposée • Stats agrégées uniquement
         </p>
       </div>
     </div>

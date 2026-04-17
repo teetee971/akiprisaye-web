@@ -27,9 +27,11 @@ export function KpiCards({ kpis = [], healthScore }: KpiCardsProps) {
         {healthScore != null && (
           <span
             className={`text-sm font-bold px-2 py-0.5 rounded ${
-              healthScore >= 70 ? 'bg-green-900 text-green-300' :
-              healthScore >= 40 ? 'bg-yellow-900 text-yellow-300' :
-              'bg-red-900 text-red-300'
+              healthScore >= 70
+                ? 'bg-green-900 text-green-300'
+                : healthScore >= 40
+                  ? 'bg-yellow-900 text-yellow-300'
+                  : 'bg-red-900 text-red-300'
             }`}
           >
             Santé {healthScore}/100
@@ -38,14 +40,17 @@ export function KpiCards({ kpis = [], healthScore }: KpiCardsProps) {
       </div>
 
       {kpis.length === 0 ? (
-        <p className="text-gray-400 text-sm">Aucun KPI disponible. Lancez le workflow Executive OS pour générer les données.</p>
+        <p className="text-gray-400 text-sm">
+          Aucun KPI disponible. Lancez le workflow Executive OS pour générer les données.
+        </p>
       ) : (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {kpis.map((kpi) => (
             <div key={kpi.name} className="bg-gray-800 rounded-lg p-3">
               <p className="text-xs text-gray-400 truncate">{kpi.name}</p>
               <p className="text-lg font-bold text-white mt-0.5">
-                {kpi.value}{kpi.unit ? <span className="text-xs text-gray-400 ml-0.5">{kpi.unit}</span> : null}
+                {kpi.value}
+                {kpi.unit ? <span className="text-xs text-gray-400 ml-0.5">{kpi.unit}</span> : null}
                 {trendIcon(kpi.trend)}
               </p>
             </div>

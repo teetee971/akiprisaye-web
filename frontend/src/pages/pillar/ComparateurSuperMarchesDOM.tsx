@@ -14,8 +14,10 @@ import { SITE_URL } from '../../utils/seoHelpers';
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: 'Comparateur supermarchés DOM-TOM 2026 : Carrefour, Leclerc, Super U, Leader Price, Intermarché',
-  description: 'Comparatif complet des 5 grandes enseignes de supermarché dans les DOM-TOM. Prix moyens, philosophie tarifaire, conseils par territoire.',
+  headline:
+    'Comparateur supermarchés DOM-TOM 2026 : Carrefour, Leclerc, Super U, Leader Price, Intermarché',
+  description:
+    'Comparatif complet des 5 grandes enseignes de supermarché dans les DOM-TOM. Prix moyens, philosophie tarifaire, conseils par territoire.',
   author: { '@type': 'Organization', name: 'A KI PRI SA YÉ' },
   url: `${SITE_URL}/comparateur-supermarches-dom`,
 };
@@ -26,7 +28,7 @@ const RETAILER_DATA = [
     name: 'E.Leclerc',
     icon: '🏅',
     rank: 1,
-    avgBasket: 87.40,
+    avgBasket: 87.4,
     strengths: ['Meilleur prix global', 'Cartes de fidélité avantageuses', 'Large choix'],
     weaknesses: ['Moins présent à Mayotte', 'Peu de produits locaux'],
     territories: ['GP', 'MQ', 'GF', 'RE'],
@@ -36,7 +38,7 @@ const RETAILER_DATA = [
     name: 'Leader Price',
     icon: '💰',
     rank: 2,
-    avgBasket: 89.20,
+    avgBasket: 89.2,
     strengths: ['Hard-discount', 'Prix plancher sur les basiques', 'Marques propres'],
     weaknesses: ['Gamme limitée', 'Moins de produits frais'],
     territories: ['GP', 'MQ', 'RE'],
@@ -46,7 +48,7 @@ const RETAILER_DATA = [
     name: 'Carrefour',
     icon: '🛒',
     rank: 3,
-    avgBasket: 93.60,
+    avgBasket: 93.6,
     strengths: ['Large gamme', 'Produits bio', 'Click & Collect'],
     weaknesses: ['Prix moyens plus élevés', 'Promos moins fréquentes'],
     territories: ['GP', 'MQ', 'GF', 'RE', 'YT'],
@@ -56,7 +58,7 @@ const RETAILER_DATA = [
     name: 'Super U',
     icon: '🏪',
     rank: 4,
-    avgBasket: 95.10,
+    avgBasket: 95.1,
     strengths: ['Qualité MDD', 'Produits locaux', 'Programmes fidélité'],
     weaknesses: ['Prix légèrement plus élevés', 'Réseau moins dense'],
     territories: ['GP', 'MQ', 'RE'],
@@ -66,7 +68,7 @@ const RETAILER_DATA = [
     name: 'Intermarché',
     icon: '🥩',
     rank: 5,
-    avgBasket: 97.80,
+    avgBasket: 97.8,
     strengths: ['Excellence boucherie', 'Poissonnerie qualité', 'Produits de terroir'],
     weaknesses: ['Prix globalement plus élevés', 'Moins de discount alimentaire'],
     territories: ['GP', 'MQ', 'GF', 'RE'],
@@ -74,12 +76,48 @@ const RETAILER_DATA = [
   },
 ];
 
-const TERRITORY_ADVICE: Array<{ code: string; name: string; slug: string; best: string; note: string }> = [
-  { code: 'GP', name: 'Guadeloupe', slug: 'guadeloupe', best: 'E.Leclerc', note: 'Leclerc Guadeloupe reste le leader sur les prix PGC. Leader Price excellent pour les produits secs.' },
-  { code: 'MQ', name: 'Martinique', slug: 'martinique', best: 'E.Leclerc', note: 'Leclerc Martinique très compétitif. Carrefour Fort-de-France bien implanté.' },
-  { code: 'GF', name: 'Guyane', slug: 'guyane', best: 'Carrefour', note: 'Offre plus limitée en Guyane. Carrefour Cayenne est souvent l\'option la plus accessible.' },
-  { code: 'RE', name: 'La Réunion', slug: 'reunion', best: 'E.Leclerc', note: 'Marché très concurrentiel à La Réunion. Leclerc et Leader Price se disputent le leadership.' },
-  { code: 'YT', name: 'Mayotte', slug: 'mayotte', best: 'Carrefour', note: 'Offre très limitée à Mayotte. Carrefour Mamoudzou est la principale grande surface.' },
+const TERRITORY_ADVICE: Array<{
+  code: string;
+  name: string;
+  slug: string;
+  best: string;
+  note: string;
+}> = [
+  {
+    code: 'GP',
+    name: 'Guadeloupe',
+    slug: 'guadeloupe',
+    best: 'E.Leclerc',
+    note: 'Leclerc Guadeloupe reste le leader sur les prix PGC. Leader Price excellent pour les produits secs.',
+  },
+  {
+    code: 'MQ',
+    name: 'Martinique',
+    slug: 'martinique',
+    best: 'E.Leclerc',
+    note: 'Leclerc Martinique très compétitif. Carrefour Fort-de-France bien implanté.',
+  },
+  {
+    code: 'GF',
+    name: 'Guyane',
+    slug: 'guyane',
+    best: 'Carrefour',
+    note: "Offre plus limitée en Guyane. Carrefour Cayenne est souvent l'option la plus accessible.",
+  },
+  {
+    code: 'RE',
+    name: 'La Réunion',
+    slug: 'reunion',
+    best: 'E.Leclerc',
+    note: 'Marché très concurrentiel à La Réunion. Leclerc et Leader Price se disputent le leadership.',
+  },
+  {
+    code: 'YT',
+    name: 'Mayotte',
+    slug: 'mayotte',
+    best: 'Carrefour',
+    note: 'Offre très limitée à Mayotte. Carrefour Mamoudzou est la principale grande surface.',
+  },
 ];
 
 export default function ComparateurSuperMarchesDOM() {
@@ -93,12 +131,17 @@ export default function ComparateurSuperMarchesDOM() {
       />
 
       <div className="mx-auto max-w-2xl space-y-6">
-
         {/* Breadcrumb */}
         <nav aria-label="Fil d'Ariane" className="text-xs text-zinc-500">
           <ol className="flex flex-wrap items-center gap-1.5">
-            <li><Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
+            <li>
+              <Link to="/" className="hover:text-emerald-400 transition-colors">
+                Accueil
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
             <li className="text-zinc-300">Comparateur supermarchés DOM</li>
           </ol>
         </nav>
@@ -112,9 +155,9 @@ export default function ComparateurSuperMarchesDOM() {
             Comparateur supermarchés dans les DOM
           </h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-400">
-            Carrefour, E.Leclerc, Super U, Leader Price ou Intermarché : quel supermarché
-            choisir dans les DOM-TOM pour payer le moins cher ? Notre analyse compare les 5
-            grandes enseignes sur l'ensemble des territoires.
+            Carrefour, E.Leclerc, Super U, Leader Price ou Intermarché : quel supermarché choisir
+            dans les DOM-TOM pour payer le moins cher ? Notre analyse compare les 5 grandes
+            enseignes sur l'ensemble des territoires.
           </p>
         </div>
 
@@ -144,7 +187,9 @@ export default function ComparateurSuperMarchesDOM() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className={`text-lg font-extrabold tabular-nums ${r.rank === 1 ? 'text-emerald-400' : 'text-white'}`}>
+                    <div
+                      className={`text-lg font-extrabold tabular-nums ${r.rank === 1 ? 'text-emerald-400' : 'text-white'}`}
+                    >
                       {formatEur(r.avgBasket)}
                     </div>
                     <div className="text-[11px] text-zinc-500">Indice : {r.priceIndex}</div>
@@ -152,18 +197,26 @@ export default function ComparateurSuperMarchesDOM() {
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2">
                   <div>
-                    <p className="mb-1 text-[10px] font-bold uppercase text-emerald-500">✅ Points forts</p>
+                    <p className="mb-1 text-[10px] font-bold uppercase text-emerald-500">
+                      ✅ Points forts
+                    </p>
                     <ul className="space-y-0.5">
                       {r.strengths.map((s) => (
-                        <li key={s} className="text-[11px] text-zinc-500">• {s}</li>
+                        <li key={s} className="text-[11px] text-zinc-500">
+                          • {s}
+                        </li>
                       ))}
                     </ul>
                   </div>
                   <div>
-                    <p className="mb-1 text-[10px] font-bold uppercase text-rose-500">⚠️ Points faibles</p>
+                    <p className="mb-1 text-[10px] font-bold uppercase text-rose-500">
+                      ⚠️ Points faibles
+                    </p>
                     <ul className="space-y-0.5">
                       {r.weaknesses.map((w) => (
-                        <li key={w} className="text-[11px] text-zinc-500">• {w}</li>
+                        <li key={w} className="text-[11px] text-zinc-500">
+                          • {w}
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -172,15 +225,14 @@ export default function ComparateurSuperMarchesDOM() {
             ))}
           </div>
           <p className="mt-3 text-[10px] text-zinc-600">
-            * Panier de référence : 40 produits courants. Indice de prix basé sur Leclerc = 100. Données indicatives.
+            * Panier de référence : 40 produits courants. Indice de prix basé sur Leclerc = 100.
+            Données indicatives.
           </p>
         </div>
 
         {/* By territory */}
         <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-          <h2 className="mb-4 text-sm font-bold text-white">
-            Recommandation par territoire
-          </h2>
+          <h2 className="mb-4 text-sm font-bold text-white">Recommandation par territoire</h2>
           <div className="space-y-3">
             {TERRITORY_ADVICE.map(({ name, slug, best, note }) => (
               <div key={slug} className="rounded-lg border border-white/8 bg-white/[0.02] p-3">
@@ -211,7 +263,10 @@ export default function ComparateurSuperMarchesDOM() {
               { to: '/comparer/carrefour-vs-leclerc-guadeloupe', label: 'Carrefour vs Leclerc GP' },
               { to: '/comparer/leclerc-vs-super-u-martinique', label: 'Leclerc vs Super U MQ' },
               { to: '/comparer/carrefour-vs-super-u-reunion', label: 'Carrefour vs Super U RE' },
-              { to: '/comparer/leclerc-vs-intermarche-guadeloupe', label: 'Leclerc vs Intermarché GP' },
+              {
+                to: '/comparer/leclerc-vs-intermarche-guadeloupe',
+                label: 'Leclerc vs Intermarché GP',
+              },
               { to: '/prix-enseigne/carrefour/guadeloupe', label: '🏪 Carrefour Guadeloupe' },
               { to: '/prix-enseigne/leclerc/martinique', label: '🏪 Leclerc Martinique' },
               { to: '/guide-prix-alimentaire-dom', label: '📖 Guide prix alimentaires' },
@@ -228,12 +283,11 @@ export default function ComparateurSuperMarchesDOM() {
             ))}
           </div>
         </div>
-
       </div>
 
       <ConversionStickyBar
-        bestPrice={87.40}
-        savings={10.40}
+        bestPrice={87.4}
+        savings={10.4}
         retailer="E.Leclerc"
         retailerUrl="https://www.e.leclerc/"
         productName="panier alimentaire DOM"

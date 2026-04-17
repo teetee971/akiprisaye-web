@@ -1,4 +1,3 @@
- 
 /**
  * Route Optimization Utilities
  * Implements TSP (Traveling Salesman Problem) solver for multi-store shopping trips
@@ -44,17 +43,17 @@ function estimateTravelTime(distanceKm: number): number {
 function calculateImpact(distanceKm: number) {
   const FUEL_CONSUMPTION_L_PER_100KM = 6;
   const CO2_PER_LITER = 2.3; // kg CO2 per liter of fuel
-  
+
   const fuelLiters = (distanceKm * FUEL_CONSUMPTION_L_PER_100KM) / 100;
   const co2Kg = fuelLiters * CO2_PER_LITER;
-  
+
   return { fuelLiters, co2Kg };
 }
 
 /**
  * Solve TSP using Nearest Neighbor algorithm (Greedy approach)
  * Simple but efficient for small number of stores (< 20)
- * 
+ *
  * @param userPos User's starting position
  * @param stores Array of stores to visit
  * @returns Optimal route with metrics
@@ -69,7 +68,7 @@ export function solveShoppingRoute(
       totalDistance: 0,
       totalTime: 0,
       order: [],
-      savings: { distance: 0, fuel: 0, co2: 0 }
+      savings: { distance: 0, fuel: 0, co2: 0 },
     };
   }
 
@@ -81,7 +80,7 @@ export function solveShoppingRoute(
       totalDistance: distance,
       totalTime: estimateTravelTime(distance),
       order: [0],
-      savings: { distance: 0, fuel: 0, co2: 0 }
+      savings: { distance: 0, fuel: 0, co2: 0 },
     };
   }
 
@@ -97,12 +96,7 @@ export function solveShoppingRoute(
 
     for (const store of stores) {
       if (!visited.has(store.id)) {
-        const dist = calculateDistance(
-          current.lat,
-          current.lon,
-          store.lat,
-          store.lon
-        );
+        const dist = calculateDistance(current.lat, current.lon, store.lat, store.lon);
         if (dist < minDist) {
           minDist = dist;
           nearest = store;
@@ -121,16 +115,11 @@ export function solveShoppingRoute(
   }
 
   // Add return distance
-  const returnDist = calculateDistance(
-    current.lat,
-    current.lon,
-    userPos.lat,
-    userPos.lon
-  );
+  const returnDist = calculateDistance(current.lat, current.lon, userPos.lat, userPos.lon);
   totalDistance += returnDist;
 
   // Calculate unoptimized distance (each store round trip individually)
-  const unoptimizedDistance = stores.reduce((sum, store) => sum + (store.distance * 2), 0);
+  const unoptimizedDistance = stores.reduce((sum, store) => sum + store.distance * 2, 0);
   const distanceSaved = unoptimizedDistance - totalDistance;
   const impact = calculateImpact(distanceSaved);
 
@@ -142,8 +131,8 @@ export function solveShoppingRoute(
     savings: {
       distance: Math.round(distanceSaved * 10) / 10,
       fuel: Math.round(impact.fuelLiters * 10) / 10,
-      co2: Math.round(impact.co2Kg * 10) / 10
-    }
+      co2: Math.round(impact.co2Kg * 10) / 10,
+    },
   };
 }
 
@@ -152,15 +141,15 @@ export function solveShoppingRoute(
  */
 export function getRouteInstructions(route: OptimalRoute, userPos: GeoPosition): string[] {
   const instructions: string[] = [];
-  
+
   instructions.push(`🏠 Départ de votre position`);
-  
+
   route.stores.forEach((store, index) => {
     const storeName = store.enseigne || store.name || `Magasin ${index + 1}`;
     instructions.push(`${index + 1}. ${storeName} (${store.distance.toFixed(1)} km)`);
   });
-  
+
   instructions.push(`🏠 Retour à votre position`);
-  
+
   return instructions;
 }

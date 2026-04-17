@@ -37,13 +37,13 @@ export type RetentionTier = 'loyal' | 'engaged' | 'at-risk' | 'cold';
 
 export interface RetentionResult {
   score: number;
-  tier:  RetentionTier;
+  tier: RetentionTier;
 }
 
 // ── Normalisation caps ────────────────────────────────────────────────────────
 
-const MAX_VISITS     = 30;   // 30 days = full score
-const MAX_CLICKS     = 50;   // 50 clicks = full score
+const MAX_VISITS = 30; // 30 days = full score
+const MAX_CLICKS = 50; // 50 clicks = full score
 const MAX_RECENCY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 // ── Core scoring ──────────────────────────────────────────────────────────────
@@ -54,23 +54,23 @@ const MAX_RECENCY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
  * @param input  Aggregated user signals
  */
 export function computeRetentionScore(input: RetentionInput): number {
-  const visitScore    = Math.min(100, (input.repeatVisits / MAX_VISITS) * 100);
+  const visitScore = Math.min(100, (input.repeatVisits / MAX_VISITS) * 100);
   const favoriteScore = input.hasFavorites ? 100 : 0;
-  const clickScore    = Math.min(100, (input.clickCount   / MAX_CLICKS)  * 100);
+  const clickScore = Math.min(100, (input.clickCount / MAX_CLICKS) * 100);
 
-  const ageMs         = Date.now() - (input.lastSeenAt || 0);
-  const recencyScore  = input.lastSeenAt
+  const ageMs = Date.now() - (input.lastSeenAt || 0);
+  const recencyScore = input.lastSeenAt
     ? Math.max(0, Math.round((1 - ageMs / MAX_RECENCY_MS) * 100))
     : 0;
 
-  const pushScore     = input.pushEngaged ? 100 : 0;
+  const pushScore = input.pushEngaged ? 100 : 0;
 
   const raw =
-    visitScore    * 0.35 +
+    visitScore * 0.35 +
     favoriteScore * 0.25 +
-    clickScore    * 0.20 +
-    recencyScore  * 0.15 +
-    pushScore     * 0.05;
+    clickScore * 0.2 +
+    recencyScore * 0.15 +
+    pushScore * 0.05;
 
   return Math.min(100, Math.max(0, Math.round(raw)));
 }

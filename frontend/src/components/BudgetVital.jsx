@@ -1,10 +1,10 @@
 /**
  * BudgetVital Component
- * 
+ *
  * Calculates and displays the minimum vital monthly budget based on:
  * - User profile (single adult, couple, family, senior)
  * - Territory
- * 
+ *
  * Compares budget with reference incomes (SMIC, RSA) and shows
  * either deficit or money left to live.
  */
@@ -34,8 +34,8 @@ export function BudgetVital() {
   // Get active territories with France for comparison
   const territories = [
     ...getActiveTerritories()
-      .filter(t => ['GP', 'MQ', 'GF', 'RE'].includes(t.code))
-      .map(t => ({ code: t.code, name: t.name, flag: t.flag })),
+      .filter((t) => ['GP', 'MQ', 'GF', 'RE'].includes(t.code))
+      .map((t) => ({ code: t.code, name: t.name, flag: t.flag })),
     { code: 'FR', name: 'France métropolitaine', flag: '🇫🇷' },
   ];
 

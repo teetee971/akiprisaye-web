@@ -1,9 +1,8 @@
- 
 /**
  * Public Observatory Types - v4.3.0
- * 
+ *
  * Types for official public observatory
- * 
+ *
  * @module publicObservatoryTypes
  */
 

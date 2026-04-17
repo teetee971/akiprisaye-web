@@ -1,4 +1,3 @@
- 
 /**
  * International Comparison Service - v4.2.0
  *
@@ -38,7 +37,7 @@ import type {
   TimeSeriesComparison,
   ComparisonValidation,
   RegionalComparison,
-  RegionCode
+  RegionCode,
 } from '../types/internationalComparison';
 import type { TerritoryCode } from '../types/extensions';
 
@@ -88,16 +87,24 @@ async function loadCostProfiles(): Promise<CostProfilesData> {
     _profilesCache = {
       countries: {
         FRA: {
-          name: 'France', currency: 'EUR',
-          overallCostIndex: 107, foodCostIndex: 107, housingCostIndex: 120,
-          transportCostIndex: 104, healthcareCostIndex: 100, educationCostIndex: 102,
-          averageMonthlyIncome: 2700, averageRent: 980, basicGroceriesCost: 380,
-          dataQuality: 'high', sourcesCount: 15
-        }
+          name: 'France',
+          currency: 'EUR',
+          overallCostIndex: 107,
+          foodCostIndex: 107,
+          housingCostIndex: 120,
+          transportCostIndex: 104,
+          healthcareCostIndex: 100,
+          educationCostIndex: 102,
+          averageMonthlyIncome: 2700,
+          averageRent: 980,
+          basicGroceriesCost: 380,
+          dataQuality: 'high',
+          sourcesCount: 15,
+        },
       },
       pppAdjustments: {
-        EUR_EUR: { exchangeRate: 1, pppRate: 1, adjustmentFactor: 1 }
-      }
+        EUR_EUR: { exchangeRate: 1, pppRate: 1, adjustmentFactor: 1 },
+      },
     };
     return _profilesCache;
   }
@@ -224,12 +231,12 @@ export async function normalizeToEUR(
       normalizedCurrency: 'EUR',
       exchangeRate: 1,
       date: new Date().toISOString(),
-      source: 'fixed'
+      source: 'fixed',
     };
   }
-  
+
   const exchangeRate = getExchangeRate(currency, 'EUR');
-  
+
   return {
     originalValue: value,
     originalCurrency: currency,
@@ -237,7 +244,7 @@ export async function normalizeToEUR(
     normalizedCurrency: 'EUR',
     exchangeRate,
     date: new Date().toISOString(),
-    source: 'ECB'
+    source: 'ECB',
   };
 }
 
@@ -250,17 +257,25 @@ export async function compareDOMToMetropole(
 ): Promise<DOMMetropoleComparison> {
   const profiles = await loadCostProfiles();
   // domTerritories uses short codes (GP, MQ, GF, RE, YT, MF, BL, PM)
-  const raw = (profiles as unknown as Record<string, Record<string, {
-    name: string;
-    foodBasket: number;
-    housing: number;
-    transport: number;
-    energy: number;
-    overall: number;
-    octroisDeMerEffect: number;
-    shippingCostsEffect: number;
-    localProductionRate: number;
-  }>>)['domTerritories']?.[domTerritory as string];
+  const raw = (
+    profiles as unknown as Record<
+      string,
+      Record<
+        string,
+        {
+          name: string;
+          foodBasket: number;
+          housing: number;
+          transport: number;
+          energy: number;
+          overall: number;
+          octroisDeMerEffect: number;
+          shippingCostsEffect: number;
+          localProductionRate: number;
+        }
+      >
+    >
+  )['domTerritories']?.[domTerritory as string];
 
   const foodBasket = raw?.foodBasket ?? 138;
   const housing = raw?.housing ?? 124;
@@ -321,9 +336,33 @@ export async function compareFranceToEU(
   indicator: string = 'overall-cost'
 ): Promise<FranceEUComparison> {
   const euCountries: CountryCode[] = [
-    'FRA', 'DEU', 'ESP', 'ITA', 'NLD', 'BEL', 'AUT', 'PRT', 'GRC', 'IRL',
-    'FIN', 'DNK', 'SWE', 'POL', 'CZE', 'HUN', 'ROU', 'BGR', 'HRV', 'SVK',
-    'SVN', 'LTU', 'LVA', 'EST', 'LUX', 'CYP', 'MLT'
+    'FRA',
+    'DEU',
+    'ESP',
+    'ITA',
+    'NLD',
+    'BEL',
+    'AUT',
+    'PRT',
+    'GRC',
+    'IRL',
+    'FIN',
+    'DNK',
+    'SWE',
+    'POL',
+    'CZE',
+    'HUN',
+    'ROU',
+    'BGR',
+    'HRV',
+    'SVK',
+    'SVN',
+    'LTU',
+    'LVA',
+    'EST',
+    'LUX',
+    'CYP',
+    'MLT',
   ];
 
   const pppEurEur = await getPPPAdjustment('EUR', 'EUR');
@@ -331,9 +370,9 @@ export async function compareFranceToEU(
   const frIndex = franceProfile.data.overallCostIndex; // 107
 
   // Compute real EU average and median from known data
-  const allProfiles = await Promise.all(euCountries.map(c => getCountryCostProfile(c)));
-  const indices = allProfiles.map(p => p.data.overallCostIndex);
-  const euAvgVal = Math.round(indices.reduce((a, b) => a + b, 0) / indices.length * 10) / 10;
+  const allProfiles = await Promise.all(euCountries.map((c) => getCountryCostProfile(c)));
+  const indices = allProfiles.map((p) => p.data.overallCostIndex);
+  const euAvgVal = Math.round((indices.reduce((a, b) => a + b, 0) / indices.length) * 10) / 10;
   const sortedIdx = [...indices].sort((a, b) => a - b);
   const euMedVal = sortedIdx[Math.floor(sortedIdx.length / 2)];
 
@@ -458,7 +497,12 @@ export async function compareEUToInternational(
       pppAdjustment,
       differenceFromReference: pppAdjustedValue - 100,
       percentageDifference: Math.round(((pppAdjustedValue - 100) / 100) * 1000) / 10,
-      confidence: profile.dataQuality === 'high' ? 'high' : profile.dataQuality === 'medium' ? 'medium' : 'low',
+      confidence:
+        profile.dataQuality === 'high'
+          ? 'high'
+          : profile.dataQuality === 'medium'
+            ? 'medium'
+            : 'low',
     });
   }
 
@@ -486,24 +530,24 @@ export async function getInternationalComparison(
 ): Promise<InternationalComparisonResult> {
   const referenceProfile = await getCountryCostProfile(referenceCountry);
   const comparedResults: ComparedCountryResult[] = [];
-  
+
   for (const country of comparedCountries) {
     const profile = await getCountryCostProfile(country);
     const currency = profile.currency;
-    
+
     // Get indicator value
     const rawValue = profile.data.overallCostIndex; // Simplified
-    
+
     // Normalize to EUR
     const normalization = await normalizeToEUR(rawValue, currency);
-    
+
     // Apply PPP adjustment
     const pppAdjustment = await getPPPAdjustment(currency, 'EUR');
     const pppAdjustedValue = normalization.normalizedValue * pppAdjustment.adjustmentFactor;
-    
+
     // Compare to reference
     const referenceValue = referenceProfile.data.overallCostIndex;
-    
+
     comparedResults.push({
       country,
       countryName: getCountryName(country),
@@ -515,18 +559,23 @@ export async function getInternationalComparison(
       pppAdjustment,
       differenceFromReference: pppAdjustedValue - referenceValue,
       percentageDifference: ((pppAdjustedValue - referenceValue) / referenceValue) * 100,
-      confidence: profile.dataQuality === 'high' ? 'high' : profile.dataQuality === 'medium' ? 'medium' : 'low'
+      confidence:
+        profile.dataQuality === 'high'
+          ? 'high'
+          : profile.dataQuality === 'medium'
+            ? 'medium'
+            : 'low',
     });
   }
-  
+
   // Sort by PPP adjusted value
   comparedResults.sort((a, b) => a.pppAdjustedValue - b.pppAdjustedValue);
-  
+
   // Assign rankings
   comparedResults.forEach((result, index) => {
     result.ranking = index + 1;
   });
-  
+
   return {
     comparisonId: `comp-${Date.now()}`,
     comparisonType: 'custom',
@@ -540,8 +589,8 @@ export async function getInternationalComparison(
       'Rankings are purely factual and do not represent quality of life judgments.',
       'PPP adjustments are based on OECD data and may not reflect local purchasing power perfectly.',
       'Data quality varies by country. Check confidence scores.',
-      'Comparisons are for statistical reference only, not recommendations.'
-    ]
+      'Comparisons are for statistical reference only, not recommendations.',
+    ],
   };
 }
 
@@ -554,11 +603,11 @@ export async function getRegionalComparison(
 ): Promise<RegionalComparison> {
   const countries = getCountriesInRegion(region);
   const results: ComparedCountryResult[] = [];
-  
+
   for (const country of countries) {
     const profile = await getCountryCostProfile(country);
     const value = profile.data.overallCostIndex;
-    
+
     results.push({
       country,
       countryName: getCountryName(country),
@@ -570,15 +619,15 @@ export async function getRegionalComparison(
       pppAdjustment: await getPPPAdjustment(profile.currency, 'EUR'),
       differenceFromReference: 0,
       percentageDifference: 0,
-      confidence: 'medium'
+      confidence: 'medium',
     });
   }
-  
-  const values = results.map(r => r.pppAdjustedValue);
+
+  const values = results.map((r) => r.pppAdjustedValue);
   const average = values.reduce((sum, v) => sum + v, 0) / values.length;
   const sorted = [...values].sort((a, b) => a - b);
   const median = sorted[Math.floor(sorted.length / 2)];
-  
+
   return {
     region,
     regionName: getRegionName(region),
@@ -590,7 +639,7 @@ export async function getRegionalComparison(
     regionalMax: Math.max(...values),
     countryResults: results,
     date: new Date().toISOString(),
-    methodology: 'https://akiprisaye.fr/docs/methodologie-comparaisons-regionales-v4.1.0'
+    methodology: 'https://akiprisaye.fr/docs/methodologie-comparaisons-regionales-v4.1.0',
   };
 }
 
@@ -603,17 +652,17 @@ export async function validateComparison(
 ): Promise<ComparisonValidation> {
   const warnings: string[] = [];
   const errors: string[] = [];
-  
+
   // Check for missing data
   if (comparedCountries.length === 0) {
     errors.push('No countries to compare');
   }
-  
+
   // Check for same country comparison
   if (comparedCountries.includes(referenceCountry)) {
     warnings.push('Reference country is also in compared countries');
   }
-  
+
   // Check data quality
   let qualityScore = 100;
   for (const country of [referenceCountry, ...comparedCountries]) {
@@ -623,12 +672,12 @@ export async function validateComparison(
       qualityScore -= 10;
     }
   }
-  
+
   return {
     isValid: errors.length === 0,
     warnings,
     errors,
-    dataQualityScore: Math.max(0, qualityScore)
+    dataQualityScore: Math.max(0, qualityScore),
   };
 }
 
@@ -636,44 +685,44 @@ export async function validateComparison(
 
 function getCountryName(code: CountryCode): string {
   const names: Record<string, string> = {
-    'FRA': 'France',
-    'DEU': 'Germany',
-    'ESP': 'Spain',
-    'ITA': 'Italy',
-    'GBR': 'United Kingdom',
-    'USA': 'United States',
-    'JPN': 'Japan',
-    'CHN': 'China',
-    'CAN': 'Canada',
-    'AUS': 'Australia'
+    FRA: 'France',
+    DEU: 'Germany',
+    ESP: 'Spain',
+    ITA: 'Italy',
+    GBR: 'United Kingdom',
+    USA: 'United States',
+    JPN: 'Japan',
+    CHN: 'China',
+    CAN: 'Canada',
+    AUS: 'Australia',
   };
   return names[code] || code;
 }
 
 function getTerritoryName(code: TerritoryCode): string {
   const names: Record<string, string> = {
-    'GLP': 'Guadeloupe',
-    'MTQ': 'Martinique',
-    'GUF': 'Guyane',
-    'REU': 'La Réunion',
-    'MYT': 'Mayotte',
-    'FRA': 'France Métropolitaine'
+    GLP: 'Guadeloupe',
+    MTQ: 'Martinique',
+    GUF: 'Guyane',
+    REU: 'La Réunion',
+    MYT: 'Mayotte',
+    FRA: 'France Métropolitaine',
   };
   return names[code] || code;
 }
 
 function getCurrency(code: CountryCode): CurrencyCode {
   const currencies: Record<string, CurrencyCode> = {
-    'FRA': 'EUR',
-    'DEU': 'EUR',
-    'ESP': 'EUR',
-    'ITA': 'EUR',
-    'GBR': 'GBP',
-    'USA': 'USD',
-    'JPN': 'JPY',
-    'CHN': 'CNY',
-    'CAN': 'CAD',
-    'AUS': 'AUD'
+    FRA: 'EUR',
+    DEU: 'EUR',
+    ESP: 'EUR',
+    ITA: 'EUR',
+    GBR: 'GBP',
+    USA: 'USD',
+    JPN: 'JPY',
+    CHN: 'CNY',
+    CAN: 'CAD',
+    AUS: 'AUD',
   };
   return currencies[code] || 'EUR';
 }
@@ -689,11 +738,14 @@ const LIVE_RATES_TTL_MS = 3_600_000; // 1h
  */
 export async function prefetchExchangeRates(): Promise<void> {
   try {
-    const res = await fetch('/api/exchange-rates?base=EUR&symbols=USD,GBP,JPY,CHF,CAD,AUD,XOF,XAF', {
-      signal: AbortSignal.timeout(8_000),
-    });
+    const res = await fetch(
+      '/api/exchange-rates?base=EUR&symbols=USD,GBP,JPY,CHF,CAD,AUD,XOF,XAF',
+      {
+        signal: AbortSignal.timeout(8_000),
+      }
+    );
     if (!res.ok) return;
-    const data = await res.json() as { base: string; rates: Record<string, number> };
+    const data = (await res.json()) as { base: string; rates: Record<string, number> };
     if (data?.rates) {
       _liveRatesCache = { rates: data.rates, fetchedAt: Date.now() };
     }
@@ -707,13 +759,12 @@ function getExchangeRate(from: CurrencyCode, to: CurrencyCode): number {
 
   // Use live rates if available and fresh
   const useLive =
-    _liveRatesCache !== null &&
-    Date.now() - _liveRatesCache.fetchedAt < LIVE_RATES_TTL_MS;
+    _liveRatesCache !== null && Date.now() - _liveRatesCache.fetchedAt < LIVE_RATES_TTL_MS;
 
   // Rates vs EUR from live cache or static fallback
   const toEUR: Record<string, number> = useLive
     ? Object.fromEntries(
-        Object.entries(_liveRatesCache!.rates).map(([k, v]) => [k, v === 0 ? 1 : 1 / v]),
+        Object.entries(_liveRatesCache!.rates).map(([k, v]) => [k, v === 0 ? 1 : 1 / v])
       )
     : {
         EUR: 1,
@@ -742,30 +793,30 @@ function getExchangeRate(from: CurrencyCode, to: CurrencyCode): number {
 
 function getRegionName(region: RegionCode): string {
   const names: Record<RegionCode, string> = {
-    'DOM': 'Départements d\'Outre-Mer',
-    'ROM': 'Régions d\'Outre-Mer',
-    'EU': 'Union Européenne',
-    'EU27': 'Union Européenne (27)',
-    'NAFTA': 'Amérique du Nord',
-    'ASIA': 'Asie',
-    'OCEANIA': 'Océanie',
-    'AFRICA': 'Afrique',
-    'SOUTH_AMERICA': 'Amérique du Sud'
+    DOM: "Départements d'Outre-Mer",
+    ROM: "Régions d'Outre-Mer",
+    EU: 'Union Européenne',
+    EU27: 'Union Européenne (27)',
+    NAFTA: 'Amérique du Nord',
+    ASIA: 'Asie',
+    OCEANIA: 'Océanie',
+    AFRICA: 'Afrique',
+    SOUTH_AMERICA: 'Amérique du Sud',
   };
   return names[region] || region;
 }
 
 function getCountriesInRegion(region: RegionCode): CountryCode[] {
   const regions: Record<RegionCode, CountryCode[]> = {
-    'DOM': ['GLP', 'MTQ', 'GUF', 'REU', 'MYT'],
-    'ROM': ['GLP', 'MTQ', 'GUF', 'REU', 'MYT'],
-    'EU': ['FRA', 'DEU', 'ESP', 'ITA', 'NLD', 'BEL', 'AUT', 'PRT'],
-    'EU27': ['FRA', 'DEU', 'ESP', 'ITA', 'NLD', 'BEL', 'AUT', 'PRT'],
-    'NAFTA': ['USA', 'CAN', 'MEX'],
-    'ASIA': ['JPN', 'CHN', 'KOR', 'IND', 'THA'],
-    'OCEANIA': ['AUS', 'NZL'],
-    'AFRICA': ['ZAF', 'EGY', 'NGA', 'KEN'],
-    'SOUTH_AMERICA': ['BRA', 'ARG', 'CHL', 'COL']
+    DOM: ['GLP', 'MTQ', 'GUF', 'REU', 'MYT'],
+    ROM: ['GLP', 'MTQ', 'GUF', 'REU', 'MYT'],
+    EU: ['FRA', 'DEU', 'ESP', 'ITA', 'NLD', 'BEL', 'AUT', 'PRT'],
+    EU27: ['FRA', 'DEU', 'ESP', 'ITA', 'NLD', 'BEL', 'AUT', 'PRT'],
+    NAFTA: ['USA', 'CAN', 'MEX'],
+    ASIA: ['JPN', 'CHN', 'KOR', 'IND', 'THA'],
+    OCEANIA: ['AUS', 'NZL'],
+    AFRICA: ['ZAF', 'EGY', 'NGA', 'KEN'],
+    SOUTH_AMERICA: ['BRA', 'ARG', 'CHL', 'COL'],
   };
   return regions[region] || [];
 }

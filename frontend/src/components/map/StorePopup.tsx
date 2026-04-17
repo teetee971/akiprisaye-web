@@ -9,11 +9,7 @@ interface StorePopupProps {
   onViewDetails?: (store: StoreMarker) => void;
 }
 
-export default function StorePopup({
-  store,
-  onGetDirections,
-  onViewDetails,
-}: StorePopupProps) {
+export default function StorePopup({ store, onGetDirections, onViewDetails }: StorePopupProps) {
   const category = getPriceCategory(store.priceIndex);
   const priceConfig = PRICE_COLORS[category];
 
@@ -46,10 +42,7 @@ export default function StorePopup({
           )}
           {store.phone && (
             <p className="mt-1">
-              <a
-                href={`tel:${store.phone}`}
-                className="text-blue-600 hover:underline"
-              >
+              <a href={`tel:${store.phone}`} className="text-blue-600 hover:underline">
                 📞 {store.phone}
               </a>
             </p>
@@ -59,9 +52,7 @@ export default function StorePopup({
         {/* Price Index */}
         <div className="mb-3 p-2 bg-slate-50 rounded">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-sm font-medium text-slate-700">
-              Indice de prix
-            </span>
+            <span className="text-sm font-medium text-slate-700">Indice de prix</span>
             <span className="text-lg" role="img" aria-label={priceConfig.label}>
               {priceConfig.icon}
             </span>
@@ -71,9 +62,7 @@ export default function StorePopup({
               {store.priceIndex}
             </span>
             <span className="text-sm text-slate-600">/100</span>
-            <span className="text-xs text-slate-500 ml-auto">
-              {priceConfig.label}
-            </span>
+            <span className="text-xs text-slate-500 ml-auto">{priceConfig.label}</span>
           </div>
           <div className="mt-1 text-sm text-slate-600">
             Panier moyen: <strong>{store.averageBasketPrice.toFixed(2)} €</strong>
@@ -83,9 +72,7 @@ export default function StorePopup({
         {/* Distance */}
         {store.distance !== undefined && (
           <div className="mb-3 text-sm">
-            <span className="text-blue-600 font-medium">
-              📍 {formatDistance(store.distance)}
-            </span>
+            <span className="text-blue-600 font-medium">📍 {formatDistance(store.distance)}</span>
             <span className="text-slate-500 ml-1">(depuis votre position)</span>
           </div>
         )}
@@ -96,10 +83,7 @@ export default function StorePopup({
             <p className="text-xs text-slate-600 mb-1">Services:</p>
             <div className="flex flex-wrap gap-1">
               {store.services.map((service) => (
-                <span
-                  key={service}
-                  className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded"
-                >
+                <span key={service} className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded">
                   {service}
                 </span>
               ))}
@@ -112,9 +96,7 @@ export default function StorePopup({
           <div className="mb-3">
             <span
               className={`text-xs px-2 py-1 rounded ${
-                store.isOpen
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-red-100 text-red-800'
+                store.isOpen ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
               }`}
             >
               {store.isOpen ? '🟢 Ouvert' : '🔴 Fermé'}

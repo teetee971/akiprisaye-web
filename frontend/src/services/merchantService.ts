@@ -30,11 +30,11 @@ import type {
 
 // ─── Clés localStorage ───────────────────────────────────────────────────────
 
-const KEY_MERCHANTS  = 'akiprisaye_marketplace_merchants';
-const KEY_STORES     = 'akiprisaye_marketplace_stores';
-const KEY_PRODUCTS   = 'akiprisaye_marketplace_products';
-const KEY_PRICES     = 'akiprisaye_marketplace_price_history';
-const KEY_AUDIT      = 'akiprisaye_marketplace_audit_log';
+const KEY_MERCHANTS = 'akiprisaye_marketplace_merchants';
+const KEY_STORES = 'akiprisaye_marketplace_stores';
+const KEY_PRODUCTS = 'akiprisaye_marketplace_products';
+const KEY_PRICES = 'akiprisaye_marketplace_price_history';
+const KEY_AUDIT = 'akiprisaye_marketplace_audit_log';
 
 // ─── Validation SIRET (algorithme de Luhn) ───────────────────────────────────
 
@@ -166,7 +166,12 @@ export function createMerchant(form: MerchantOnboardingForm): MerchantProfile {
 /** Met à jour le profil d'une enseigne (ne peut modifier QUE ses propres données). */
 export function updateMerchant(
   id: string,
-  updates: Partial<Omit<MerchantProfile, 'id' | 'siret' | 'siren' | 'createdAt' | 'status' | 'validatedAt' | 'validatedBy'>>
+  updates: Partial<
+    Omit<
+      MerchantProfile,
+      'id' | 'siret' | 'siren' | 'createdAt' | 'status' | 'validatedAt' | 'validatedBy'
+    >
+  >
 ): MerchantProfile | null {
   const list = loadMerchants();
   const idx = list.findIndex((m) => m.id === id);
@@ -201,12 +206,12 @@ export function adminChangeMerchantStatus(
   if (idx === -1) return null;
 
   const statusMap: Record<AdminActionType, MerchantStatus> = {
-    APPROVE:          'APPROVED',
-    REJECT:           'REJECTED',
-    SUSPEND:          'SUSPENDED',
-    REACTIVATE:       'APPROVED',
-    PRICE_FLAG:       list[idx].status,  // Pas de changement de statut
-    DATA_CORRECTION:  list[idx].status,  // Pas de changement de statut
+    APPROVE: 'APPROVED',
+    REJECT: 'REJECTED',
+    SUSPEND: 'SUSPENDED',
+    REACTIVATE: 'APPROVED',
+    PRICE_FLAG: list[idx].status, // Pas de changement de statut
+    DATA_CORRECTION: list[idx].status, // Pas de changement de statut
   };
 
   const previousStatus = list[idx].status;
@@ -263,7 +268,12 @@ export function getMerchantStores(merchantId: string): MerchantStore[] {
 }
 
 /** Crée un nouveau magasin. */
-export function createStore(data: Omit<MerchantStore, 'id' | 'visible' | 'boostActif' | 'horaires' | 'createdAt' | 'updatedAt'>): MerchantStore {
+export function createStore(
+  data: Omit<
+    MerchantStore,
+    'id' | 'visible' | 'boostActif' | 'horaires' | 'createdAt' | 'updatedAt'
+  >
+): MerchantStore {
   const now = new Date().toISOString();
   const store: MerchantStore = {
     id: `store_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
@@ -290,7 +300,13 @@ export function updateStore(
   const idx = list.findIndex((s) => s.id === storeId && s.merchantId === merchantId);
   if (idx === -1) return null;
 
-  list[idx] = { ...list[idx], ...updates, id: list[idx].id, merchantId, updatedAt: new Date().toISOString() };
+  list[idx] = {
+    ...list[idx],
+    ...updates,
+    id: list[idx].id,
+    merchantId,
+    updatedAt: new Date().toISOString(),
+  };
   saveStores(list);
   return list[idx];
 }
@@ -419,7 +435,7 @@ export const MARKETPLACE_PLANS: MarketplacePlanDetails[] = [
     id: 'essentiel',
     label: 'Essentiel',
     priceMonthly: 29.99,
-    priceAnnual: 299.99,        // ~2 mois offerts
+    priceAnnual: 299.99, // ~2 mois offerts
     storesMax: 1,
     productsMax: 100,
     analytics: false,
@@ -441,7 +457,7 @@ export const MARKETPLACE_PLANS: MarketplacePlanDetails[] = [
     id: 'pro',
     label: 'Pro',
     priceMonthly: 79.99,
-    priceAnnual: 799.99,        // ~2 mois offerts
+    priceAnnual: 799.99, // ~2 mois offerts
     storesMax: 5,
     productsMax: 1000,
     analytics: true,
@@ -451,7 +467,7 @@ export const MARKETPLACE_PLANS: MarketplacePlanDetails[] = [
     prioritySearch: false,
     description: 'Pour les commerces avec plusieurs points de vente ou une gamme étendue.',
     features: [
-      'Jusqu\'à 5 magasins référencés',
+      "Jusqu'à 5 magasins référencés",
       '1 000 produits avec prix',
       'Statistiques avancées (vues, clics, comparaisons)',
       'Export CSV / PDF',
@@ -464,9 +480,9 @@ export const MARKETPLACE_PLANS: MarketplacePlanDetails[] = [
     id: 'groupe',
     label: 'Groupe / Franchise',
     priceMonthly: 199.99,
-    priceAnnual: 1999.99,       // ~2 mois offerts
-    storesMax: null,            // Illimité
-    productsMax: null,          // Illimité
+    priceAnnual: 1999.99, // ~2 mois offerts
+    storesMax: null, // Illimité
+    productsMax: null, // Illimité
     analytics: true,
     exportCsv: true,
     boostVisibility: true,
@@ -482,7 +498,7 @@ export const MARKETPLACE_PLANS: MarketplacePlanDetails[] = [
       'Boost carte pour tous les sites',
       'Badge "Enseigne Partenaire" premium',
       'Manager dédié',
-      'API d\'intégration disponible',
+      "API d'intégration disponible",
     ],
   },
 ];

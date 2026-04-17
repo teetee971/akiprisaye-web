@@ -5,13 +5,7 @@ import { cn } from '../../lib/utils';
  * Clean, readable, institutional
  * Used for shopping lists, stores, etc.
  */
-export function ListItem({
-  title,
-  right,
-  subtitle,
-  className,
-  ...props
-}) {
+export function ListItem({ title, right, subtitle, className, ...props }) {
   return (
     <div
       className={cn(
@@ -21,7 +15,7 @@ export function ListItem({
         'p-3',
         'transition-all duration-200',
         'hover:border-glass-border-hover hover:bg-glass-hover',
-        className,
+        className
       )}
       {...props}
     >
@@ -29,9 +23,7 @@ export function ListItem({
         <span className="text-sm font-medium text-foreground">{title}</span>
         {subtitle && <span className="text-xs text-muted mt-0.5">{subtitle}</span>}
       </div>
-      {right && (
-        <span className="text-xs text-muted font-mono">{right}</span>
-      )}
+      {right && <span className="text-xs text-muted font-mono">{right}</span>}
     </div>
   );
 }
@@ -40,13 +32,7 @@ export function ListItem({
  * ListItemStatic - Non-interactive list item
  * No hover effects
  */
-export function ListItemStatic({
-  title,
-  right,
-  subtitle,
-  className,
-  ...props
-}) {
+export function ListItemStatic({ title, right, subtitle, className, ...props }) {
   return (
     <div
       className={cn(
@@ -54,7 +40,7 @@ export function ListItemStatic({
         'rounded-xl border border-glass-border',
         'bg-glass backdrop-blur-glass',
         'p-3',
-        className,
+        className
       )}
       {...props}
     >
@@ -62,9 +48,7 @@ export function ListItemStatic({
         <span className="text-sm font-medium text-foreground">{title}</span>
         {subtitle && <span className="text-xs text-muted mt-0.5">{subtitle}</span>}
       </div>
-      {right && (
-        <span className="text-xs text-muted font-mono">{right}</span>
-      )}
+      {right && <span className="text-xs text-muted font-mono">{right}</span>}
     </div>
   );
 }

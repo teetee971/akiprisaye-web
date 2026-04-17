@@ -54,7 +54,7 @@ const BESOINS: { value: TypeBesoin; label: string; description: string }[] = [
   {
     value: 'etude_territoriale',
     label: 'Étude territoriale',
-    description: 'Panorama complet vie chère / pouvoir d\'achat sur un territoire',
+    description: "Panorama complet vie chère / pouvoir d'achat sur un territoire",
   },
   {
     value: 'audit_vie_chere',
@@ -64,7 +64,7 @@ const BESOINS: { value: TypeBesoin; label: string; description: string }[] = [
   {
     value: 'rapport_institutionnel',
     label: 'Rapport institutionnel',
-    description: 'Document officiel à destination d\'une assemblée ou d\'une presse',
+    description: "Document officiel à destination d'une assemblée ou d'une presse",
   },
   {
     value: 'acces_donnees',
@@ -126,7 +126,7 @@ export default function DevisIA() {
   // ── Validation per step ──────────────────────────────────────────────────────
 
   function validateStep0(): string | null {
-    if (!form.organisation.trim()) return 'Le nom de l\'organisation est requis.';
+    if (!form.organisation.trim()) return "Le nom de l'organisation est requis.";
     if (!form.siret.trim()) return 'Le SIRET / SIREN est requis.';
     if (!/^\d{9}(\d{5})?$/.test(form.siret.replace(/\s/g, '')))
       return 'Le SIRET doit contenir 9 (SIREN) ou 14 chiffres.';
@@ -148,11 +148,17 @@ export default function DevisIA() {
     setError(null);
     if (step === 0) {
       const err = validateStep0();
-      if (err) { setError(err); return; }
+      if (err) {
+        setError(err);
+        return;
+      }
     }
     if (step === 1) {
       const err = validateStep1();
-      if (err) { setError(err); return; }
+      if (err) {
+        setError(err);
+        return;
+      }
       // Compute estimation before showing step 2
       try {
         const est = computeEstimation({
@@ -163,7 +169,7 @@ export default function DevisIA() {
         });
         setEstimation(est);
       } catch {
-        setError('Erreur lors du calcul de l\'estimation.');
+        setError("Erreur lors du calcul de l'estimation.");
         return;
       }
     }
@@ -229,14 +235,13 @@ export default function DevisIA() {
             Votre demande de devis a été enregistrée avec succès.
           </p>
           <p className="text-sm text-gray-500 mb-6">
-            Notre équipe la traitera dans les meilleurs délais.
-            Vous serez notifié par email à{' '}
+            Notre équipe la traitera dans les meilleurs délais. Vous serez notifié par email à{' '}
             <strong>{form.contactEmail}</strong> dès validation.
           </p>
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs text-yellow-800 mb-6 text-left">
             <AlertTriangle className="w-4 h-4 inline mr-1" />
-            L'estimation IA fournie est indicative et non contractuelle.
-            Seul le devis signé par un responsable habilité aura valeur d'engagement.
+            L'estimation IA fournie est indicative et non contractuelle. Seul le devis signé par un
+            responsable habilité aura valeur d'engagement.
           </div>
           <div className="flex flex-col gap-2">
             <button
@@ -245,10 +250,7 @@ export default function DevisIA() {
             >
               Suivre mon devis
             </button>
-            <button
-              onClick={() => navigate('/')}
-              className="text-gray-500 text-sm underline"
-            >
+            <button onClick={() => navigate('/')} className="text-gray-500 text-sm underline">
               Retour à l'accueil
             </button>
           </div>
@@ -265,9 +267,17 @@ export default function DevisIA() {
           name="description"
           content="Obtenez une estimation tarifaire pour nos services institutionnels : analyse des prix, études territoriales, audits vie chère."
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/devis-ia" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/devis-ia" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/devis-ia" />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/devis-ia" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/devis-ia"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/devis-ia"
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
@@ -282,7 +292,13 @@ export default function DevisIA() {
             <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
               📋 Devis IA
             </h1>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            <p
+              style={{
+                margin: '0.25rem 0 0',
+                fontSize: '0.85rem',
+                color: 'rgba(255,255,255,0.75)',
+              }}
+            >
               Obtenez un devis estimatif intelligent pour vos projets
             </p>
           </HeroImage>
@@ -300,12 +316,16 @@ export default function DevisIA() {
                   >
                     {idx < step ? <CheckCircle className="w-4 h-4" /> : idx + 1}
                   </div>
-                  <span className={`text-xs mt-1 ${idx === step ? 'text-indigo-700 font-semibold' : 'text-gray-400'}`}>
+                  <span
+                    className={`text-xs mt-1 ${idx === step ? 'text-indigo-700 font-semibold' : 'text-gray-400'}`}
+                  >
                     {label}
                   </span>
                 </div>
                 {idx < STEPS.length - 1 && (
-                  <div className={`flex-1 h-0.5 mx-1 ${idx < step ? 'bg-indigo-600' : 'bg-gray-200'}`} />
+                  <div
+                    className={`flex-1 h-0.5 mx-1 ${idx < step ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                  />
                 )}
               </div>
             ))}
@@ -331,26 +351,38 @@ export default function DevisIA() {
 
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <label htmlFor="devis-type-organisation" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="devis-type-organisation"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Type d'organisation *
                   </label>
                   <select
-                    id="devis-type-organisation" value={form.clientType}
-                    onChange={(e) => setForm((f) => ({ ...f, clientType: e.target.value as ClientType }))}
+                    id="devis-type-organisation"
+                    value={form.clientType}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, clientType: e.target.value as ClientType }))
+                    }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     {CLIENT_TYPES.map((ct) => (
-                      <option key={ct.value} value={ct.value}>{ct.label}</option>
+                      <option key={ct.value} value={ct.value}>
+                        {ct.label}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label htmlFor="devis-nom-organisation" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="devis-nom-organisation"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Nom de l'organisation *
                   </label>
                   <input
-                    id="devis-nom-organisation" type="text"
+                    id="devis-nom-organisation"
+                    type="text"
                     value={form.organisation}
                     onChange={(e) => setForm((f) => ({ ...f, organisation: e.target.value }))}
                     placeholder="Ex : Mairie de Pointe-à-Pitre"
@@ -359,11 +391,15 @@ export default function DevisIA() {
                 </div>
 
                 <div>
-                  <label htmlFor="devis-siret" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="devis-siret"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     SIRET / SIREN / TVA *
                   </label>
                   <input
-                    id="devis-siret" type="text"
+                    id="devis-siret"
+                    type="text"
                     value={form.siret}
                     onChange={(e) => setForm((f) => ({ ...f, siret: e.target.value }))}
                     placeholder="Ex : 123 456 789 00010"
@@ -373,11 +409,15 @@ export default function DevisIA() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label htmlFor="devis-nom-responsable" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="devis-nom-responsable"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Nom du responsable *
                     </label>
                     <input
-                      id="devis-nom-responsable" type="text"
+                      id="devis-nom-responsable"
+                      type="text"
                       value={form.contactNom}
                       onChange={(e) => setForm((f) => ({ ...f, contactNom: e.target.value }))}
                       placeholder="Prénom Nom"
@@ -385,11 +425,15 @@ export default function DevisIA() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="devis-telephone" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="devis-telephone"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Téléphone
                     </label>
                     <input
-                      id="devis-telephone" type="tel"
+                      id="devis-telephone"
+                      type="tel"
                       value={form.contactTel}
                       onChange={(e) => setForm((f) => ({ ...f, contactTel: e.target.value }))}
                       placeholder="+590 590 XX XX XX"
@@ -399,11 +443,15 @@ export default function DevisIA() {
                 </div>
 
                 <div>
-                  <label htmlFor="devis-email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="devis-email"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Email professionnel *
                   </label>
                   <input
-                    id="devis-email" type="email"
+                    id="devis-email"
+                    type="email"
                     value={form.contactEmail}
                     onChange={(e) => setForm((f) => ({ ...f, contactEmail: e.target.value }))}
                     placeholder="contact@organisation.fr"
@@ -417,21 +465,25 @@ export default function DevisIA() {
           {/* ── Step 1: Need & context ─────────────────────────────────────────── */}
           {step === 1 && (
             <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                2. Besoin & contexte
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">2. Besoin & contexte</h2>
 
               <div className="mb-5">
-                <label htmlFor="devis-territoire" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="devis-territoire"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Territoire concerné *
                 </label>
                 <select
-                  id="devis-territoire" value={form.territoire}
+                  id="devis-territoire"
+                  value={form.territoire}
                   onChange={(e) => setForm((f) => ({ ...f, territoire: e.target.value }))}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
                 >
                   {TERRITOIRES.map((t) => (
-                    <option key={t} value={t}>{t}</option>
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -446,9 +498,11 @@ export default function DevisIA() {
                       key={b.value}
                       aria-label={b.label}
                       className={`flex items-start gap-3 border rounded-xl px-4 py-3 cursor-pointer transition
-                        ${form.typesBesoin.includes(b.value)
-                          ? 'border-indigo-500 bg-indigo-50'
-                          : 'border-gray-200 hover:border-indigo-300'}`}
+                        ${
+                          form.typesBesoin.includes(b.value)
+                            ? 'border-indigo-500 bg-indigo-50'
+                            : 'border-gray-200 hover:border-indigo-300'
+                        }`}
                     >
                       <input
                         type="checkbox"
@@ -467,45 +521,68 @@ export default function DevisIA() {
 
               <div className="grid grid-cols-2 gap-4 mb-5">
                 <div>
-                  <label htmlFor="devis-delai" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="devis-delai"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Délai souhaité
                   </label>
                   <select
-                    id="devis-delai" value={form.delai}
-                    onChange={(e) => setForm((f) => ({ ...f, delai: e.target.value as DelaiSouhaite }))}
+                    id="devis-delai"
+                    value={form.delai}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, delai: e.target.value as DelaiSouhaite }))
+                    }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
                   >
-                    {(Object.entries(DELAI_LABELS) as [DelaiSouhaite, string][]).map(([val, lbl]) => (
-                      <option key={val} value={val}>{lbl}</option>
-                    ))}
+                    {(Object.entries(DELAI_LABELS) as [DelaiSouhaite, string][]).map(
+                      ([val, lbl]) => (
+                        <option key={val} value={val}>
+                          {lbl}
+                        </option>
+                      )
+                    )}
                   </select>
                 </div>
                 <div>
-                  <label htmlFor="devis-niveau-profondeur" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="devis-niveau-profondeur"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Niveau de profondeur
                   </label>
                   <select
-                    id="devis-niveau-profondeur" value={form.niveauProfondeur}
+                    id="devis-niveau-profondeur"
+                    value={form.niveauProfondeur}
                     onChange={(e) =>
-                      setForm((f) => ({ ...f, niveauProfondeur: e.target.value as NiveauProfondeur }))
+                      setForm((f) => ({
+                        ...f,
+                        niveauProfondeur: e.target.value as NiveauProfondeur,
+                      }))
                     }
                     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
                   >
                     {(Object.entries(PROFONDEUR_LABELS) as [NiveauProfondeur, string][]).map(
                       ([val, lbl]) => (
-                        <option key={val} value={val}>{lbl}</option>
-                      ),
+                        <option key={val} value={val}>
+                          {lbl}
+                        </option>
+                      )
                     )}
                   </select>
                 </div>
               </div>
 
               <div>
-                <label htmlFor="devis-description-libre" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="devis-description-libre"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Description libre de votre besoin
                 </label>
                 <textarea
-                  id="devis-description-libre" value={form.descriptionLibre}
+                  id="devis-description-libre"
+                  value={form.descriptionLibre}
                   onChange={(e) => setForm((f) => ({ ...f, descriptionLibre: e.target.value }))}
                   placeholder="Décrivez librement votre contexte, vos attentes et contraintes spécifiques…"
                   rows={4}
@@ -551,7 +628,9 @@ export default function DevisIA() {
                     <p className="text-2xl font-bold text-green-700">
                       {estimation.prixTTC.toLocaleString('fr-FR')} €
                     </p>
-                    <p className="text-xs text-green-400">TVA DOM {(estimation.tvaRate * 100).toFixed(1)} %</p>
+                    <p className="text-xs text-green-400">
+                      TVA DOM {(estimation.tvaRate * 100).toFixed(1)} %
+                    </p>
                   </div>
                 </div>
 
@@ -611,8 +690,8 @@ export default function DevisIA() {
               <div className="mt-5 bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
                 <Info className="w-4 h-4 inline mr-1" />
                 En soumettant cette demande, vous acceptez que nos équipes étudient votre dossier.
-                Aucun paiement n'est demandé à ce stade.
-                Le devis définitif sera validé par un responsable humain habilité avant envoi.
+                Aucun paiement n'est demandé à ce stade. Le devis définitif sera validé par un
+                responsable humain habilité avant envoi.
               </div>
             </div>
           )}
@@ -655,15 +734,7 @@ export default function DevisIA() {
 
 // ── Helper component ──────────────────────────────────────────────────────────
 
-function Row({
-  label,
-  value,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
+function Row({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex justify-between items-baseline gap-4">
       <span className="text-gray-500 flex-shrink-0">{label}</span>

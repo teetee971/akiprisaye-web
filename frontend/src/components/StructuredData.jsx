@@ -95,12 +95,14 @@ export default function StructuredData() {
 
     // Cleanup on unmount
     return () => {
-      ['organization-schema', 'website-schema', 'webapp-schema', 'localbusiness-schema'].forEach((id) => {
-        const script = document.getElementById(id);
-        if (script) {
-          script.remove();
+      ['organization-schema', 'website-schema', 'webapp-schema', 'localbusiness-schema'].forEach(
+        (id) => {
+          const script = document.getElementById(id);
+          if (script) {
+            script.remove();
+          }
         }
-      });
+      );
     };
   }, []);
 

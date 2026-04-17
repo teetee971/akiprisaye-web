@@ -1,11 +1,7 @@
 import type { PriceObservation } from '../services/priceSearch/price.types';
 
 export const normalizeText = (value?: string): string =>
-  (value ?? '')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .trim();
+  (value ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 
 const normalizeUnit = (value: PriceObservation['unit']): PriceObservation['unit'] => {
   if (value === 'kg' || value === 'l') {

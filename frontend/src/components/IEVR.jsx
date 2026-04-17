@@ -1,11 +1,10 @@
- 
 /**
  * IEVR (Indice d'Écart de Vie Réelle) Component
- * 
+ *
  * Displays the Real Life Cost Gap Index for DOM-COM territories.
  * This is a citizen indicator that measures how difficult it is to live
  * in a territory compared to a reference zone.
- * 
+ *
  * Features:
  * - Visual score gauge (0-100)
  * - Category breakdown
@@ -103,7 +102,7 @@ export function IEVR({ selectedTerritory = null }) {
     <div className="space-y-6">
       {/* Critical Data Warning */}
       {data.metadata.dataStatus !== 'OFFICIEL' && (
-        <DataSourceWarning 
+        <DataSourceWarning
           dataStatus={data.metadata.dataStatus}
           requiredSources={data.metadata.requiredSources}
         />
@@ -112,24 +111,24 @@ export function IEVR({ selectedTerritory = null }) {
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-6 text-white">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-2xl font-bold">
-            🧠 Indice d'Écart de Vie Réelle (IEVR)
-          </h2>
+          <h2 className="text-2xl font-bold">🧠 Indice d'Écart de Vie Réelle (IEVR)</h2>
           <span className="px-3 py-1 bg-white/20 rounded-lg text-sm font-mono">
             {data.metadata.officialId}
           </span>
         </div>
-        <p className="text-blue-50">
-          Ce que la vie coûte vraiment, là où vous vivez.
-        </p>
+        <p className="text-blue-50">Ce que la vie coûte vraiment, là où vous vivez.</p>
         <p className="text-blue-100 text-sm mt-2">
-          📋 Méthodologie {data.metadata.methodologyVersion} • Référence nationale : {data.metadata.reference}
+          📋 Méthodologie {data.metadata.methodologyVersion} • Référence nationale :{' '}
+          {data.metadata.reference}
         </p>
       </div>
 
       {/* Territory Selector */}
       <div>
-        <label htmlFor="territory-select" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label
+          htmlFor="territory-select"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+        >
           Sélectionner un territoire
         </label>
         <select
@@ -186,9 +185,7 @@ export function IEVR({ selectedTerritory = null }) {
               <div className="text-5xl font-bold" style={{ color: getScoreColor(currentScore) }}>
                 {currentScore}
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                sur 100
-              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">sur 100</div>
             </div>
           </div>
 
@@ -198,9 +195,9 @@ export function IEVR({ selectedTerritory = null }) {
           </p>
 
           {/* Territory Status Badge */}
-          <div 
+          <div
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-lg"
-            style={{ 
+            style={{
               backgroundColor: `${territoryStatus.color}20`,
               color: territoryStatus.color,
               border: `2px solid ${territoryStatus.color}`,
@@ -220,12 +217,15 @@ export function IEVR({ selectedTerritory = null }) {
             <span className="text-gray-600 dark:text-gray-400">
               Écart avec {data.metadata.reference}
             </span>
-            <span className={`text-xl font-bold ${
-              comparison.difference < 0 
-                ? 'text-red-600 dark:text-red-400' 
-                : 'text-green-600 dark:text-green-400'
-            }`}>
-              {comparison.difference > 0 ? '+' : ''}{comparison.difference} points
+            <span
+              className={`text-xl font-bold ${
+                comparison.difference < 0
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-green-600 dark:text-green-400'
+              }`}
+            >
+              {comparison.difference > 0 ? '+' : ''}
+              {comparison.difference} points
             </span>
           </div>
         </div>
@@ -233,19 +233,20 @@ export function IEVR({ selectedTerritory = null }) {
         {/* Temporal Evolution */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-              vs mois précédent
-            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">vs mois précédent</div>
             <div className="flex items-center gap-2">
               <span className="text-2xl">{getTrendIcon(monthEvolution.trend)}</span>
-              <span className={`text-lg font-semibold ${
-                monthEvolution.change > 0
-                  ? 'text-green-600 dark:text-green-400'
-                  : monthEvolution.change < 0
-                    ? 'text-red-600 dark:text-red-400'
-                    : 'text-gray-600 dark:text-gray-400'
-              }`}>
-                {monthEvolution.change > 0 ? '+' : ''}{monthEvolution.change}
+              <span
+                className={`text-lg font-semibold ${
+                  monthEvolution.change > 0
+                    ? 'text-green-600 dark:text-green-400'
+                    : monthEvolution.change < 0
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-gray-600 dark:text-gray-400'
+                }`}
+              >
+                {monthEvolution.change > 0 ? '+' : ''}
+                {monthEvolution.change}
               </span>
               <span className="text-sm text-gray-500 dark:text-gray-400">
                 ({monthEvolution.trend})
@@ -254,19 +255,20 @@ export function IEVR({ selectedTerritory = null }) {
           </div>
 
           <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4">
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-              vs année précédente
-            </div>
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">vs année précédente</div>
             <div className="flex items-center gap-2">
               <span className="text-2xl">{getTrendIcon(yearEvolution.trend)}</span>
-              <span className={`text-lg font-semibold ${
-                yearEvolution.change > 0
-                  ? 'text-green-600 dark:text-green-400'
-                  : yearEvolution.change < 0
-                    ? 'text-red-600 dark:text-red-400'
-                    : 'text-gray-600 dark:text-gray-400'
-              }`}>
-                {yearEvolution.change > 0 ? '+' : ''}{yearEvolution.change}
+              <span
+                className={`text-lg font-semibold ${
+                  yearEvolution.change > 0
+                    ? 'text-green-600 dark:text-green-400'
+                    : yearEvolution.change < 0
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-gray-600 dark:text-gray-400'
+                }`}
+              >
+                {yearEvolution.change > 0 ? '+' : ''}
+                {yearEvolution.change}
               </span>
               <span className="text-sm text-gray-500 dark:text-gray-400">
                 ({yearEvolution.trend})
@@ -284,14 +286,18 @@ export function IEVR({ selectedTerritory = null }) {
           </h3>
           <div className="space-y-3">
             {[
-              { date: territoryData.current.date, score: currentScore, status: territoryStatus.level },
+              {
+                date: territoryData.current.date,
+                score: currentScore,
+                status: territoryStatus.level,
+              },
               ...territoryData.history,
             ].map((entry, index) => {
               const entryStatus = index === 0 ? territoryStatus : getTerritoryStatus(entry.score);
               const date = new Date(entry.date);
-              
+
               return (
-                <div 
+                <div
                   key={`${entry.date}-${index}`}
                   className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-lg"
                 >
@@ -310,9 +316,7 @@ export function IEVR({ selectedTerritory = null }) {
                     <div className="text-lg font-bold" style={{ color: entryStatus.color }}>
                       {entry.score}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      IEVR
-                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">IEVR</div>
                   </div>
                 </div>
               );
@@ -330,7 +334,7 @@ export function IEVR({ selectedTerritory = null }) {
           {Object.entries(data.categories).map(([key, category]) => {
             const categoryScore = territoryData.current.categories[key];
             const percentage = (category.weight * 100).toFixed(0);
-            
+
             return (
               <div key={key}>
                 <div className="flex items-center justify-between mb-2">
@@ -342,11 +346,14 @@ export function IEVR({ selectedTerritory = null }) {
                       (pondération: {percentage}%)
                     </span>
                   </div>
-                  <span className="text-lg font-bold" style={{ color: getScoreColor(categoryScore) }}>
+                  <span
+                    className="text-lg font-bold"
+                    style={{ color: getScoreColor(categoryScore) }}
+                  >
                     {categoryScore}
                   </span>
                 </div>
-                
+
                 {/* Progress bar */}
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
@@ -357,7 +364,7 @@ export function IEVR({ selectedTerritory = null }) {
                     }}
                   />
                 </div>
-                
+
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {category.description}
                 </p>
@@ -377,27 +384,27 @@ export function IEVR({ selectedTerritory = null }) {
             <strong>Identifiant :</strong> {data.metadata.officialId}
           </p>
           <p>
-            L'IEVR est un indicateur synthétique calculé à partir de 5 catégories de coûts incompressibles,
-            avec des pondérations fixes et vérifiables.
+            L'IEVR est un indicateur synthétique calculé à partir de 5 catégories de coûts
+            incompressibles, avec des pondérations fixes et vérifiables.
           </p>
           <p>
             <strong>Score de référence :</strong> {data.metadata.reference} = {referenceScore}
           </p>
           <p>
-            <strong>Pondérations :</strong> Alimentation (40%), Hygiène (15%), Transport (15%), Énergie (15%), Autres (15%)
+            <strong>Pondérations :</strong> Alimentation (40%), Hygiène (15%), Transport (15%),
+            Énergie (15%), Autres (15%)
           </p>
           <p>
-            <strong>Principe :</strong> Plus le score est bas, plus la vie est difficile avec un revenu standard.
+            <strong>Principe :</strong> Plus le score est bas, plus la vie est difficile avec un
+            revenu standard.
           </p>
           <p className="text-xs pt-2 border-t border-gray-300 dark:border-gray-600">
             Version {data.metadata.version} • Dernière mise à jour : {data.metadata.lastUpdate}
             {data.metadata.methodologyLocked && ' • 🔒 Méthodologie verrouillée'}
           </p>
           <p className="text-xs">
-            📄 <Link 
-              to="/ievr"
-              className="text-blue-600 dark:text-blue-400 hover:underline"
-            >
+            📄{' '}
+            <Link to="/ievr" className="text-blue-600 dark:text-blue-400 hover:underline">
               Consulter la méthodologie complète (v{data.metadata.methodologyVersion})
             </Link>
           </p>
@@ -407,9 +414,9 @@ export function IEVR({ selectedTerritory = null }) {
       {/* Legal Disclaimer */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <p className="text-sm text-blue-800 dark:text-blue-200">
-          ℹ️ Cet indicateur fournit une mesure factuelle basée sur des données chiffrées.
-          Aucune enseigne n'est citée, aucune accusation n'est portée.
-          Les calculs sont transparents et vérifiables dans le code source.
+          ℹ️ Cet indicateur fournit une mesure factuelle basée sur des données chiffrées. Aucune
+          enseigne n'est citée, aucune accusation n'est portée. Les calculs sont transparents et
+          vérifiables dans le code source.
         </p>
       </div>
     </div>

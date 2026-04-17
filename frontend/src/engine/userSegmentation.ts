@@ -24,7 +24,7 @@ export type UserSegment =
   | 'visiteur-froid';
 
 export interface SegmentConfig {
-  label:       string;
+  label: string;
   description: string;
   /** Ordered list of homepage block IDs to display for this segment */
   homepageBlocks: string[];
@@ -36,31 +36,31 @@ export interface SegmentConfig {
 
 export const SEGMENT_CONFIGS: Record<UserSegment, SegmentConfig> = {
   'chasseur-promos': {
-    label:       'Chasseur de promos',
+    label: 'Chasseur de promos',
     description: 'Cherche activement les meilleures offres',
     homepageBlocks: ['topDeals', 'priceDrops', 'hotAlerts', 'viralDeals'],
     pushTone: 'urgency',
   },
-  'comparateur': {
-    label:       'Comparateur rapide',
-    description: 'Compare plusieurs enseignes avant d\'acheter',
+  comparateur: {
+    label: 'Comparateur rapide',
+    description: "Compare plusieurs enseignes avant d'acheter",
     homepageBlocks: ['priceComparison', 'topDeals', 'retailerRanking', 'priceDrops'],
     pushTone: 'discovery',
   },
   'fidele-enseigne': {
-    label:       'Fidèle enseigne',
+    label: 'Fidèle enseigne',
     description: 'Achète principalement dans une enseigne favorite',
     homepageBlocks: ['favoriteRetailerDeals', 'priceComparison', 'topDeals', 'alternatives'],
     pushTone: 'loyalty',
   },
   'panier-frequent': {
-    label:       'Panier fréquent',
+    label: 'Panier fréquent',
     description: 'Effectue des courses régulières avec un panier récurrent',
     homepageBlocks: ['basketOptimizer', 'recurringProducts', 'topDeals', 'priceDrops'],
     pushTone: 'neutral',
   },
   'visiteur-froid': {
-    label:       'Visiteur froid',
+    label: 'Visiteur froid',
     description: 'Nouveau visiteur ou visiteur peu actif',
     homepageBlocks: ['topDeals', 'priceDrops', 'howItWorks', 'socialProof'],
     pushTone: 'discovery',
@@ -77,13 +77,8 @@ export const SEGMENT_CONFIGS: Record<UserSegment, SegmentConfig> = {
  * @param profile  UserProfile built by userProfileEngine.buildUserProfile
  */
 export function classifyUser(profile: UserProfile): UserSegment {
-  const {
-    repeatVisits,
-    clickedProducts,
-    clickedRetailers,
-    viewedProducts,
-    avgSessionDepth,
-  } = profile;
+  const { repeatVisits, clickedProducts, clickedRetailers, viewedProducts, avgSessionDepth } =
+    profile;
 
   // Panier fréquent — loyal repeat user with many product clicks
   if (repeatVisits >= 3 && clickedProducts.length >= 5) {

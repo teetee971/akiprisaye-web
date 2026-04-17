@@ -73,19 +73,22 @@ export const HAZARD_CATEGORY_META: Record<
     label: 'Nanoparticule',
     emoji: '⚫',
     color: 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200',
-    description: 'Substance sous forme nanoparticulaire. Déclaration [nano] obligatoire sur l\'étiquette.',
+    description:
+      "Substance sous forme nanoparticulaire. Déclaration [nano] obligatoire sur l'étiquette.",
   },
   SILICONE: {
     label: 'Silicone non biodégradable',
     emoji: '🩶',
     color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200',
-    description: 'Silicone persistant dans l\'environnement aquatique. Certaines formes cycliques sont des PE.',
+    description:
+      "Silicone persistant dans l'environnement aquatique. Certaines formes cycliques sont des PE.",
   },
   PEG: {
     label: 'PEG / éthoxylé',
     emoji: '🟠',
     color: 'bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200',
-    description: 'Polyéthylène glycol ou dérivé éthoxylé. Risque de contamination au 1,4-dioxane (CMR).',
+    description:
+      'Polyéthylène glycol ou dérivé éthoxylé. Risque de contamination au 1,4-dioxane (CMR).',
   },
   IRRITANT: {
     label: 'Irritant',
@@ -143,7 +146,7 @@ export async function fetchOpenBeautyFacts(barcode: string): Promise<OpenBeautyP
       },
     });
     if (!res.ok) return null;
-    const data = await res.json() as {
+    const data = (await res.json()) as {
       status?: number;
       product?: {
         product_name?: string;
@@ -318,16 +321,25 @@ export function calculateScore(ingredients: CosmeticIngredient[]): ScoreResult {
   for (const ingredient of ingredients) {
     totalPoints += riskPoints[ingredient.riskLevel] ?? 0;
     switch (ingredient.riskLevel) {
-      case 'LOW':        breakdown.safeIngredients++;        break;
-      case 'MODERATE':   breakdown.moderateIngredients++;    break;
-      case 'HIGH':       breakdown.riskIngredients++;        break;
-      case 'RESTRICTED': breakdown.restrictedIngredients++;  break;
-      case 'PROHIBITED': breakdown.prohibitedIngredients++;  break;
+      case 'LOW':
+        breakdown.safeIngredients++;
+        break;
+      case 'MODERATE':
+        breakdown.moderateIngredients++;
+        break;
+      case 'HIGH':
+        breakdown.riskIngredients++;
+        break;
+      case 'RESTRICTED':
+        breakdown.restrictedIngredients++;
+        break;
+      case 'PROHIBITED':
+        breakdown.prohibitedIngredients++;
+        break;
     }
   }
 
-  const score =
-    maxPoints > 0 ? Math.max(0, Math.min(100, (totalPoints / maxPoints) * 100)) : 0;
+  const score = maxPoints > 0 ? Math.max(0, Math.min(100, (totalPoints / maxPoints) * 100)) : 0;
 
   return { score: Math.round(score), breakdown };
 }
@@ -342,11 +354,9 @@ export function generateWarnings(ingredients: CosmeticIngredient[]): IngredientW
   const prohibited = ingredients.filter((i) => i.riskLevel === 'PROHIBITED');
   const high = ingredients.filter((i) => i.riskLevel === 'HIGH');
   const moderateWithRestrictions = ingredients.filter(
-    (i) => i.riskLevel === 'MODERATE' && i.restrictions && i.restrictions.length > 0,
+    (i) => i.riskLevel === 'MODERATE' && i.restrictions && i.restrictions.length > 0
   );
-  const parfums = ingredients.filter(
-    (i) => i.inciName === 'PARFUM' || i.inciName === 'FRAGRANCE',
-  );
+  const parfums = ingredients.filter((i) => i.inciName === 'PARFUM' || i.inciName === 'FRAGRANCE');
 
   if (prohibited.length > 0) {
     warnings.push({
@@ -379,7 +389,8 @@ export function generateWarnings(ingredients: CosmeticIngredient[]): IngredientW
   if (parfums.length > 0) {
     warnings.push({
       level: 'info',
-      message: 'Contient du parfum. Vérifiez la présence des 26 allergènes réglementés dans la liste complète.',
+      message:
+        'Contient du parfum. Vérifiez la présence des 26 allergènes réglementés dans la liste complète.',
       ingredients: parfums.map((i) => i.inciName),
     });
   }
@@ -393,8 +404,17 @@ export function generateWarnings(ingredients: CosmeticIngredient[]): IngredientW
 export function collectSources(ingredients: CosmeticIngredient[]): IngredientSource[] {
   const seen = new Set<string>();
   const sources: IngredientSource[] = [
-    { name: (OFFICIAL_DATABASES as Record<string, { name: string; url: string }>).COSING.name, url: (OFFICIAL_DATABASES as Record<string, { name: string; url: string }>).COSING.url, type: 'COSING' },
-    { name: (OFFICIAL_DATABASES as Record<string, { name: string; url: string }>).EU_REGULATION.name, url: (OFFICIAL_DATABASES as Record<string, { name: string; url: string }>).EU_REGULATION.url, type: 'EU_REGULATION' },
+    {
+      name: (OFFICIAL_DATABASES as Record<string, { name: string; url: string }>).COSING.name,
+      url: (OFFICIAL_DATABASES as Record<string, { name: string; url: string }>).COSING.url,
+      type: 'COSING',
+    },
+    {
+      name: (OFFICIAL_DATABASES as Record<string, { name: string; url: string }>).EU_REGULATION
+        .name,
+      url: (OFFICIAL_DATABASES as Record<string, { name: string; url: string }>).EU_REGULATION.url,
+      type: 'EU_REGULATION',
+    },
   ];
 
   for (const ingredient of ingredients) {
@@ -416,7 +436,7 @@ export function collectSources(ingredients: CosmeticIngredient[]): IngredientSou
 export function evaluateProduct(
   productName: string,
   category: string,
-  inciList: string,
+  inciList: string
 ): ProductEvaluation {
   const { identified, unknown } = identifyIngredients(inciList);
   const allIngredients = [...identified, ...unknown];
@@ -464,7 +484,16 @@ export interface HazardSummary {
  * Returns one entry per category found, sorted by severity.
  */
 export function analyzeHazardCategories(ingredients: CosmeticIngredient[]): HazardSummary[] {
-  const order: HazardCategory[] = ['PE', 'CMR', 'PE_SUSPECTE', 'ALLERGEN', 'NANO', 'SILICONE', 'PEG', 'IRRITANT'];
+  const order: HazardCategory[] = [
+    'PE',
+    'CMR',
+    'PE_SUSPECTE',
+    'ALLERGEN',
+    'NANO',
+    'SILICONE',
+    'PEG',
+    'IRRITANT',
+  ];
   const map = new Map<HazardCategory, string[]>();
 
   for (const ing of ingredients) {

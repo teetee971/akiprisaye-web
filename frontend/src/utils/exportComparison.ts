@@ -58,12 +58,14 @@ export const exportFlightComparisonToCSV = (result: FlightComparisonResult): voi
     'Catégorie',
   ];
 
-  const rows = result.airlines.map(ranking => [
+  const rows = result.airlines.map((ranking) => [
     escapeCSV(ranking.rank),
     escapeCSV(ranking.flightPrice.airline),
     escapeCSV(ranking.flightPrice.price.toFixed(2)),
     escapeCSV(ranking.flightPrice.additionalFees?.total.toFixed(2) || '0.00'),
-    escapeCSV((ranking.flightPrice.price + (ranking.flightPrice.additionalFees?.total || 0)).toFixed(2)),
+    escapeCSV(
+      (ranking.flightPrice.price + (ranking.flightPrice.additionalFees?.total || 0)).toFixed(2)
+    ),
     escapeCSV(ranking.flightPrice.duration ?? ''),
     escapeCSV(ranking.flightPrice.stops),
     escapeCSV(ranking.flightPrice.fareConditions.baggageIncluded ? 'Oui' : 'Non'),
@@ -73,7 +75,7 @@ export const exportFlightComparisonToCSV = (result: FlightComparisonResult): voi
     escapeCSV(ranking.priceCategory),
   ]);
 
-  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
   downloadCSV(csvContent, `comparaison-vols-${Date.now()}.csv`);
 };
 
@@ -97,7 +99,7 @@ export const exportFlightComparisonToText = (result: FlightComparisonResult): vo
   text += `Observations: ${result.aggregation.totalObservations}\n\n`;
 
   text += `COMPARAISON PAR COMPAGNIE\n-------------------------\n`;
-  result.airlines.forEach(ranking => {
+  result.airlines.forEach((ranking) => {
     text += `\n#${ranking.rank} - ${ranking.flightPrice.airline}\n`;
     text += `  Prix: ${formatPrice(ranking.flightPrice.price)}\n`;
     text += `  Durée: ${ranking.flightPrice.duration}\n`;
@@ -129,7 +131,7 @@ export const exportBoatComparisonToCSV = (result: BoatComparisonResult): void =>
     'Catégorie',
   ];
 
-  const rows = result.operators.map(ranking => [
+  const rows = result.operators.map((ranking) => [
     escapeCSV(ranking.rank),
     escapeCSV(ranking.boatPrice.operator),
     escapeCSV(ranking.boatPrice.pricing.passengerPrice.toFixed(2)),
@@ -142,7 +144,7 @@ export const exportBoatComparisonToCSV = (result: BoatComparisonResult): void =>
     escapeCSV(ranking.priceCategory),
   ]);
 
-  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
   downloadCSV(csvContent, `comparaison-bateaux-${Date.now()}.csv`);
 };
 
@@ -159,7 +161,7 @@ export const exportBoatComparisonToText = (result: BoatComparisonResult): void =
   text += `Date d'export: ${new Date().toLocaleDateString('fr-FR')}\n\n`;
 
   text += `COMPARAISON PAR OPÉRATEUR\n-------------------------\n`;
-  result.operators.forEach(ranking => {
+  result.operators.forEach((ranking) => {
     text += `\n#${ranking.rank} - ${ranking.boatPrice.operator}\n`;
     text += `  Prix passager: ${formatPrice(ranking.boatPrice.pricing.passengerPrice)}\n`;
     text += `  Durée: ${ranking.boatPrice.schedule.duration}\n`;
@@ -188,7 +190,7 @@ export const exportFreightComparisonToCSV = (result: FreightComparisonResult): v
     'Catégorie',
   ];
 
-  const rows = result.quotes.map(r => [
+  const rows = result.quotes.map((r) => [
     escapeCSV(r.rank),
     escapeCSV(r.quote.carrier),
     escapeCSV(r.quote.pricing.totalTTC.toFixed(2)),
@@ -199,7 +201,7 @@ export const exportFreightComparisonToCSV = (result: FreightComparisonResult): v
     escapeCSV(r.priceCategory),
   ]);
 
-  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
   downloadCSV(csvContent, `comparaison-fret-${Date.now()}.csv`);
 };
 
@@ -210,7 +212,7 @@ export const exportFreightComparisonToText = (result: FreightComparisonResult): 
   text += `Poids: ${result.package.weight} kg\n`;
   text += `Date d'export: ${new Date().toLocaleDateString('fr-FR')}\n\n`;
 
-  result.quotes.forEach(r => {
+  result.quotes.forEach((r) => {
     text += `\n#${r.rank} - ${r.quote.carrier}\n`;
     text += `  Prix total TTC: ${formatPrice(r.quote.pricing.totalTTC)}\n`;
     text += `  Délai annoncé: ${r.quote.timing.announcedDays} jours\n`;
@@ -248,16 +250,9 @@ export const exportFuelComparisonToText = (result: FuelComparisonResult): void =
  */
 
 export const exportInsuranceComparisonToCSV = (result: InsuranceComparisonResult): void => {
-  const headers = [
-    'Rang',
-    'Assureur',
-    'Offre',
-    'Prix annuel (€)',
-    'Différence (%)',
-    'Catégorie',
-  ];
+  const headers = ['Rang', 'Assureur', 'Offre', 'Prix annuel (€)', 'Différence (%)', 'Catégorie'];
 
-  const rows = result.rankedOffers.map(r => [
+  const rows = result.rankedOffers.map((r) => [
     escapeCSV(r.rank),
     escapeCSV(r.insurance.providerName),
     escapeCSV(r.insurance.offerName),
@@ -266,7 +261,7 @@ export const exportInsuranceComparisonToCSV = (result: InsuranceComparisonResult
     escapeCSV(r.priceCategory),
   ]);
 
-  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
   downloadCSV(csvContent, `comparaison-assurances-${Date.now()}.csv`);
 };
 

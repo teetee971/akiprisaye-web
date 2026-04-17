@@ -49,10 +49,10 @@ export function generateProductSlug(name: string, territory: string): string {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9\s-]/g, '')    // Remove special chars
-    .replace(/\s+/g, '-')            // Replace spaces with hyphens
-    .replace(/-+/g, '-')             // Collapse multiple hyphens
-    .replace(/^-|-$/g, '');          // Trim leading/trailing hyphens
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Collapse multiple hyphens
+    .replace(/^-|-$/g, ''); // Trim leading/trailing hyphens
 
   return normalized.slice(0, 80); // Max 80 chars for URL readability
 }
@@ -80,7 +80,7 @@ export function generateCategorySlug(category: string): string {
 export function generateProductMetaDescription(
   product: CompareProduct,
   summary: CompareSummary | null,
-  territory: string,
+  territory: string
 ): string {
   const territoryName = getTerritoryName(territory);
   const brand = product.brand ? `${product.brand} ` : '';
@@ -104,11 +104,11 @@ export function generateProductMetaDescription(
 export function generateCategoryMetaDescription(
   categoryName: string,
   territory: string,
-  productCount?: number,
+  productCount?: number
 ): string {
   const territoryName = getTerritoryName(territory);
   const countText = productCount ? ` parmi ${productCount} produits` : '';
-  
+
   return `Comparez les prix des ${categoryName.toLowerCase()} en ${territoryName}${countText}. Trouvez les meilleures offres et économisez sur vos courses.`;
 }
 
@@ -120,16 +120,16 @@ export function generateCategoryMetaDescription(
 export function buildProductJsonLd(
   product: CompareProduct,
   observations: PriceObservationRow[],
-  territory: string,
+  territory: string
 ): Record<string, unknown> {
   const territoryName = getTerritoryName(territory);
   const slug = generateProductSlug(product.name, territory);
   const productUrl = `${SITE_URL}/produit/${slug}`;
-  
+
   // Find best (lowest) price offer
   const sortedPrices = [...observations].sort((a, b) => a.price - b.price);
   const bestOffer = sortedPrices[0];
-  
+
   const offers = sortedPrices.slice(0, 5).map((obs) => ({
     '@type': 'Offer',
     price: obs.price.toFixed(2),
@@ -163,17 +163,20 @@ export function buildProductJsonLd(
       : undefined,
     category: product.category,
     url: productUrl,
-    offers: offers.length > 1
-      ? {
-          '@type': 'AggregateOffer',
-          lowPrice: bestOffer?.price.toFixed(2),
-          highPrice: sortedPrices[sortedPrices.length - 1]?.price.toFixed(2),
-          priceCurrency: 'EUR',
-          offerCount: observations.length,
-          priceValidUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          offers,
-        }
-      : offers[0],
+    offers:
+      offers.length > 1
+        ? {
+            '@type': 'AggregateOffer',
+            lowPrice: bestOffer?.price.toFixed(2),
+            highPrice: sortedPrices[sortedPrices.length - 1]?.price.toFixed(2),
+            priceCurrency: 'EUR',
+            offerCount: observations.length,
+            priceValidUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split('T')[0],
+            offers,
+          }
+        : offers[0],
   };
 }
 
@@ -182,23 +185,23 @@ export function buildProductJsonLd(
  */
 export function buildProductBreadcrumbJsonLd(
   product: CompareProduct,
-  territory: string,
+  territory: string
 ): Record<string, unknown> {
   const territoryName = getTerritoryName(territory);
   const slug = generateProductSlug(product.name, territory);
-  
+
   const items = [
     { name: 'Accueil', url: SITE_URL },
     { name: 'Comparateur', url: `${SITE_URL}/comparateur` },
   ];
-  
+
   if (product.category) {
     items.push({
       name: product.category,
       url: `${SITE_URL}/categorie/${generateCategorySlug(product.category)}`,
     });
   }
-  
+
   items.push({
     name: product.name,
     url: `${SITE_URL}/produit/${slug}`,
@@ -223,11 +226,11 @@ export function buildCategoryJsonLd(
   categoryName: string,
   categorySlug: string,
   products: Array<{ name: string; slug: string; price?: number }>,
-  territory: string,
+  territory: string
 ): Record<string, unknown> {
   const territoryName = getTerritoryName(territory);
   const categoryUrl = `${SITE_URL}/categorie/${categorySlug}`;
-  
+
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -252,10 +255,7 @@ export function buildCategoryJsonLd(
  * Format: "Prix [Produit] en [Territoire] – Comparer et économiser"
  * Optimized for CTR with action-oriented suffix.
  */
-export function generateProductTitle(
-  product: CompareProduct,
-  territory: string,
-): string {
+export function generateProductTitle(product: CompareProduct, territory: string): string {
   const territoryName = getTerritoryName(territory);
   const brand = product.brand ? `${product.brand} ` : '';
 
@@ -265,12 +265,9 @@ export function generateProductTitle(
 /**
  * Generate SEO title for category page
  */
-export function generateCategoryTitle(
-  categoryName: string,
-  territory: string,
-): string {
+export function generateCategoryTitle(categoryName: string, territory: string): string {
   const territoryName = getTerritoryName(territory);
-  
+
   return `Prix ${categoryName} en ${territoryName} — Comparateur Outre-mer`;
 }
 
@@ -286,7 +283,7 @@ export function buildFaqJsonLd(
   bestPrice: number | null,
   savings: number | null,
   average: number | null,
-  bestRetailer?: string,
+  bestRetailer?: string
 ): Record<string, unknown> {
   const territoryName = getTerritoryName(territory);
   const brandLabel = product.brand ? `${product.brand} ` : '';
@@ -335,10 +332,7 @@ export function buildFaqJsonLd(
 /**
  * Generate canonical URL for product page
  */
-export function generateProductCanonical(
-  product: CompareProduct,
-  territory: string,
-): string {
+export function generateProductCanonical(product: CompareProduct, territory: string): string {
   const slug = generateProductSlug(product.name, territory);
   return `${SITE_URL}/produit/${slug}?territory=${territory}`;
 }
@@ -346,10 +340,7 @@ export function generateProductCanonical(
 /**
  * Generate canonical URL for category page
  */
-export function generateCategoryCanonical(
-  categorySlug: string,
-  territory: string,
-): string {
+export function generateCategoryCanonical(categorySlug: string, territory: string): string {
   return `${SITE_URL}/categorie/${categorySlug}?territory=${territory}`;
 }
 
@@ -358,11 +349,11 @@ export function generateCategoryCanonical(
 /** Map territory slug name → territory code */
 export const TERRITORY_SLUG_MAP: Record<string, string> = {
   guadeloupe: 'GP',
-  martinique:  'MQ',
-  guyane:      'GF',
-  reunion:     'RE',
+  martinique: 'MQ',
+  guyane: 'GF',
+  reunion: 'RE',
   'la-reunion': 'RE',
-  mayotte:     'YT',
+  mayotte: 'YT',
 };
 
 /**
@@ -371,7 +362,7 @@ export const TERRITORY_SLUG_MAP: Record<string, string> = {
 export function buildPrixLocalJsonLd(
   productName: string,
   territory: string,
-  prices: Array<{ retailer: string; price: number }>,
+  prices: Array<{ retailer: string; price: number }>
 ): Record<string, unknown> {
   const territoryName = getTerritoryName(territory);
   const bestPrice = prices.length > 0 ? Math.min(...prices.map((p) => p.price)) : undefined;
@@ -409,7 +400,7 @@ export function buildPrixLocalJsonLd(
 export function buildComparaisonJsonLd(
   retailer1: string,
   retailer2: string,
-  territory: string,
+  territory: string
 ): Record<string, unknown> {
   const territoryName = getTerritoryName(territory);
   const pageUrl = `${SITE_URL}/comparer/${retailer1.toLowerCase().replace(/\s/g, '-')}-vs-${retailer2.toLowerCase().replace(/\s/g, '-')}-${territory.toLowerCase()}`;
@@ -424,7 +415,12 @@ export function buildComparaisonJsonLd(
       '@type': 'BreadcrumbList',
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_URL },
-        { '@type': 'ListItem', position: 2, name: 'Comparaison enseignes', item: `${SITE_URL}/comparer` },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Comparaison enseignes',
+          item: `${SITE_URL}/comparer`,
+        },
         { '@type': 'ListItem', position: 3, name: `${retailer1} vs ${retailer2}`, item: pageUrl },
       ],
     },
@@ -437,7 +433,7 @@ export function buildComparaisonJsonLd(
 export function buildInflationJsonLd(
   categoryName: string,
   territory: string,
-  year: string,
+  year: string
 ): Record<string, unknown> {
   const territoryName = getTerritoryName(territory);
   const pageUrl = `${SITE_URL}/inflation/${categoryName.toLowerCase().replace(/\s/g, '-')}-${territory.toLowerCase()}-${year}`;
@@ -459,7 +455,7 @@ export function buildInflationJsonLd(
  */
 export function buildMoinsChersJsonLd(
   territory: string,
-  products: Array<{ name: string; price: number; retailer: string }>,
+  products: Array<{ name: string; price: number; retailer: string }>
 ): Record<string, unknown> {
   const territoryName = getTerritoryName(territory);
   const pageUrl = `${SITE_URL}/moins-cher/${territoryName.toLowerCase().replace(/\s/g, '-')}`;

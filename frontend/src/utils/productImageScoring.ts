@@ -20,7 +20,11 @@
  *  -10 image décorative / générique
  */
 
-import { extractBrandFromLabel, extractSizeFromLabel, removeAccents } from './productLabelNormalizer';
+import {
+  extractBrandFromLabel,
+  extractSizeFromLabel,
+  removeAccents,
+} from './productLabelNormalizer';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Thresholds
@@ -77,7 +81,11 @@ export interface ScoreBreakdown {
 
 /** Normalise un texte pour comparaison insensible aux accents et casse */
 function normalizeForComparison(str: string): string {
-  return removeAccents(str).toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+  return removeAccents(str)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Extrait les mots-clés significatifs d'un libellé (longueur ≥ 3) */
@@ -106,7 +114,7 @@ function extractSizeValue(size: string): string {
  */
 export function scoreImageCandidate(
   input: ScoringInput,
-  candidate: ScoringCandidate,
+  candidate: ScoringCandidate
 ): ScoredCandidate {
   const breakdown: ScoreBreakdown = {
     brandMatch: 0,
@@ -125,7 +133,7 @@ export function scoreImageCandidate(
   const titleWords = titleNorm.split(' ');
 
   const detectedBrand = input.brand ?? extractBrandFromLabel(input.rawLabel);
-  const detectedSize  = input.size  ?? extractSizeFromLabel(input.rawLabel);
+  const detectedSize = input.size ?? extractSizeFromLabel(input.rawLabel);
 
   // ── +35 marque exacte ─────────────────────────────────────────────────────
   if (detectedBrand) {
@@ -147,9 +155,9 @@ export function scoreImageCandidate(
   // ── +20 mots-clés principaux (≥2 mots en commun) ─────────────────────────
   const keywords = extractKeywords(input.normalizedLabel);
   const commonCount = keywords.filter((kw) =>
-    titleWords.some((tw) => tw.includes(kw) || kw.includes(tw)),
+    titleWords.some((tw) => tw.includes(kw) || kw.includes(tw))
   ).length;
-  if (commonCount >= 3)      breakdown.keywordsMatch = 20;
+  if (commonCount >= 3) breakdown.keywordsMatch = 20;
   else if (commonCount === 2) breakdown.keywordsMatch = 14;
   else if (commonCount === 1) breakdown.keywordsMatch = 6;
 
@@ -226,7 +234,7 @@ export function scoreImageCandidate(
  */
 export function scoreAllCandidates(
   input: ScoringInput,
-  candidates: ScoringCandidate[],
+  candidates: ScoringCandidate[]
 ): ScoredCandidate[] {
   return candidates
     .map((c) => scoreImageCandidate(input, c))
@@ -240,7 +248,7 @@ export function scoreAllCandidates(
  */
 export function chooseBestCandidate(
   input: ScoringInput,
-  candidates: ScoringCandidate[],
+  candidates: ScoringCandidate[]
 ): { candidate: ScoredCandidate; needsReview: boolean } | null {
   const scored = scoreAllCandidates(input, candidates);
   const best = scored[0];

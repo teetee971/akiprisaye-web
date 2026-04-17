@@ -17,14 +17,19 @@ describe('ListePage thumbnails', () => {
     window.localStorage.setItem(
       'akiprisaye_shopping_list_v1',
       JSON.stringify([
-        { id: '1', name: 'Banane', quantity: 1, imageThumbUrl: 'https://img.test/banana-thumb.jpg' },
-      ]),
+        {
+          id: '1',
+          name: 'Banane',
+          quantity: 1,
+          imageThumbUrl: 'https://img.test/banana-thumb.jpg',
+        },
+      ])
     );
 
     render(
       <MemoryRouter>
         <ListePage />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     const image = screen.getByTestId('item-thumb');
@@ -35,13 +40,13 @@ describe('ListePage thumbnails', () => {
   it('renders placeholder when imageThumbUrl is missing', () => {
     window.localStorage.setItem(
       'akiprisaye_shopping_list_v1',
-      JSON.stringify([{ id: '2', name: 'Riz', quantity: 2 }]),
+      JSON.stringify([{ id: '2', name: 'Riz', quantity: 2 }])
     );
 
     render(
       <MemoryRouter>
         <ListePage />
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     expect(screen.getByTestId('item-thumb-placeholder')).toBeTruthy();

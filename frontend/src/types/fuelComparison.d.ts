@@ -1,13 +1,6 @@
 export type Territory = 'FR' | 'GP' | 'MQ' | 'GF' | 'RE' | 'YT';
 
-export type FuelType =
-  | 'gazole'
-  | 'sp95'
-  | 'sp98'
-  | 'e10'
-  | 'gplc'
-  | 'e85'
-  | 'autre';
+export type FuelType = 'gazole' | 'sp95' | 'sp98' | 'e10' | 'gplc' | 'e85' | 'autre';
 
 export interface FuelStation {
   id: string;

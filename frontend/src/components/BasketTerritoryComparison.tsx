@@ -1,7 +1,6 @@
- 
 /**
  * BasketTerritoryComparison Component
- * 
+ *
  * Displays multi-territory basket price comparison with Anti-Crisis indicators
  * - Compares basket prices across territories
  * - Shows Anti-Crisis score for each territory
@@ -10,7 +9,10 @@
  */
 
 import React, { useMemo, useState } from 'react';
-import { compareBasketAcrossTerritories, type TerritoryBasketComparison } from '../utils/priceAnalysis';
+import {
+  compareBasketAcrossTerritories,
+  type TerritoryBasketComparison,
+} from '../utils/priceAnalysis';
 import { computeAntiCrisisScore, type AntiCrisisResult } from '../utils/antiCrisisScore';
 import { getAntiCrisisEmoji } from '../config/antiCrisisRules';
 import AntiCrisisBadge from './AntiCrisisBadge';
@@ -31,7 +33,7 @@ interface BasketTerritoryComparisonProps {
 
 type SortMode = 'price' | 'resilience';
 
-const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({ 
+const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
   basket,
   territoryIds,
   territoryNames = {},
@@ -46,9 +48,9 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
   // Compute comparison with Anti-Crisis data
   const territoriesWithAntiCrisis = useMemo((): TerritoryWithAntiCrisis[] => {
     const comparisons = compareBasketAcrossTerritories(basket, territoryIds, getPriceForTerritory);
-    
-    return comparisons.map(comp => {
-      const antiCrisisResult = showAntiCrisis 
+
+    return comparisons.map((comp) => {
+      const antiCrisisResult = showAntiCrisis
         ? computeAntiCrisisScore(comp.territoryId, basketId)
         : {
             score: 0 as const,
@@ -72,7 +74,7 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
   // Sort territories based on selected mode
   const sortedTerritories = useMemo(() => {
     const sorted = [...territoriesWithAntiCrisis];
-    
+
     if (sortMode === 'resilience') {
       // Sort by Anti-Crisis score (descending), then by price (ascending)
       sorted.sort((a, b) => {
@@ -83,7 +85,7 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
     } else {
       // Already sorted by price (default from compareBasketAcrossTerritories)
     }
-    
+
     return sorted;
   }, [territoriesWithAntiCrisis, sortMode]);
 
@@ -92,7 +94,7 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
   };
 
   const toggleExpanded = (territoryId: string) => {
-    setExpandedTerritory(prev => prev === territoryId ? null : territoryId);
+    setExpandedTerritory((prev) => (prev === territoryId ? null : territoryId));
   };
 
   if (sortedTerritories.length === 0) {
@@ -107,10 +109,8 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
     <div className={`space-y-4 ${className}`}>
       {/* Sort controls */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Comparaison territoriale
-        </h3>
-        
+        <h3 className="text-lg font-semibold text-gray-800">Comparaison territoriale</h3>
+
         {showAntiCrisis && (
           <div className="flex gap-2">
             <button
@@ -156,15 +156,13 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
                   Résilience
                 </th>
               )}
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">
-                Détails
-              </th>
+              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Détails</th>
             </tr>
           </thead>
           <tbody>
             {sortedTerritories.map((territory) => (
               <React.Fragment key={territory.territoryId}>
-                <tr 
+                <tr
                   className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
                     territory.isCheapest ? 'bg-green-50' : ''
                   }`}
@@ -181,17 +179,17 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
                       )}
                     </div>
                   </td>
-                  
+
                   <td className="px-4 py-3 text-right">
                     <span className="font-semibold text-gray-900">
                       {territory.totalPrice.toFixed(2)} €
                     </span>
                   </td>
-                  
+
                   <td className="px-4 py-3 text-right">
                     {territory.deltaFromMin > 0 ? (
                       <span className="text-red-600">
-                        +{territory.deltaFromMin.toFixed(2)} € 
+                        +{territory.deltaFromMin.toFixed(2)} €
                         <span className="text-xs ml-1">
                           (+{territory.deltaPercentage.toFixed(1)}%)
                         </span>
@@ -200,7 +198,7 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
                       <span className="text-green-600 font-medium">—</span>
                     )}
                   </td>
-                  
+
                   {showAntiCrisis && (
                     <td className="px-4 py-3 text-center">
                       {territory.antiCrisisResult.hasEnoughData ? (
@@ -217,7 +215,7 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
                       )}
                     </td>
                   )}
-                  
+
                   <td className="px-4 py-3 text-center">
                     <button
                       onClick={() => toggleExpanded(territory.territoryId)}
@@ -228,16 +226,13 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
                     </button>
                   </td>
                 </tr>
-                
+
                 {/* Expanded details row */}
                 {expandedTerritory === territory.territoryId && (
                   <tr className="bg-blue-50">
                     <td colSpan={showAntiCrisis ? 5 : 4} className="px-4 py-4">
                       {showAntiCrisis && territory.antiCrisisResult.hasEnoughData ? (
-                        <AntiCrisisBadge 
-                          result={territory.antiCrisisResult}
-                          showDetails={true}
-                        />
+                        <AntiCrisisBadge result={territory.antiCrisisResult} showDetails={true} />
                       ) : (
                         <div className="text-sm text-gray-600">
                           <p className="mb-2">
@@ -245,8 +240,8 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
                           </p>
                           {showAntiCrisis && (
                             <p className="text-xs text-gray-500 italic">
-                              Historique insuffisant pour analyse Anti-Crise 
-                              (minimum 5 observations requises)
+                              Historique insuffisant pour analyse Anti-Crise (minimum 5 observations
+                              requises)
                             </p>
                           )}
                         </div>
@@ -265,10 +260,18 @@ const BasketTerritoryComparison: React.FC<BasketTerritoryComparisonProps> = ({
         <div className="mt-4 p-3 bg-gray-50 rounded-lg text-xs text-gray-600">
           <p className="font-medium mb-2">Indicateur de résilience:</p>
           <div className="space-y-1">
-            <p>🟢 <strong>3/3:</strong> Anti-Crise Fort (tous les critères validés)</p>
-            <p>🟡 <strong>2/3:</strong> Anti-Crise (protection solide)</p>
-            <p>⚪ <strong>1/3:</strong> Neutre (protection limitée)</p>
-            <p>🔴 <strong>0/3:</strong> À risque (aucun critère validé)</p>
+            <p>
+              🟢 <strong>3/3:</strong> Anti-Crise Fort (tous les critères validés)
+            </p>
+            <p>
+              🟡 <strong>2/3:</strong> Anti-Crise (protection solide)
+            </p>
+            <p>
+              ⚪ <strong>1/3:</strong> Neutre (protection limitée)
+            </p>
+            <p>
+              🔴 <strong>0/3:</strong> À risque (aucun critère validé)
+            </p>
           </div>
         </div>
       )}

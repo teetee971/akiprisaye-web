@@ -28,9 +28,7 @@ const TERRITORY_NEXT: Record<string, string> = {
   YT: 'guadeloupe',
 };
 
-export function generateDuplicationSuggestions(
-  metrics: SeoLoopMetric[],
-): DuplicationSuggestion[] {
+export function generateDuplicationSuggestions(metrics: SeoLoopMetric[]): DuplicationSuggestion[] {
   const suggestions: DuplicationSuggestion[] = [];
   const seen = new Set<string>();
 

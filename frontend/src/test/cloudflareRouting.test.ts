@@ -26,8 +26,12 @@ describe('static hosting SPA routing config', () => {
 
   test('frontend build uses explicit BASE_PATH override and otherwise defaults to root', () => {
     expect(resolveBasePath({} as NodeJS.ProcessEnv)).toBe('/');
-    expect(resolveBasePath({ BASE_PATH: '/akiprisaye-web/' } as NodeJS.ProcessEnv)).toBe('/akiprisaye-web/');
-    expect(resolveBasePath({ BASE_PATH: 'akiprisaye-web' } as NodeJS.ProcessEnv)).toBe('/akiprisaye-web/');
+    expect(resolveBasePath({ BASE_PATH: '/akiprisaye-web/' } as NodeJS.ProcessEnv)).toBe(
+      '/akiprisaye-web/'
+    );
+    expect(resolveBasePath({ BASE_PATH: 'akiprisaye-web' } as NodeJS.ProcessEnv)).toBe(
+      '/akiprisaye-web/'
+    );
     expect(resolveBasePath({ GITHUB_PAGES: 'true' } as NodeJS.ProcessEnv)).toBe('/');
   });
 
@@ -67,18 +71,21 @@ describe('static hosting SPA routing config', () => {
     for (const [alias, canonicalPath] of expectedAliases) {
       // Important: le test cherche une ligne EXACTE avec ce format
       expect(appSource).toContain(
-        `<Route path="${alias}" element={<Navigate to="${canonicalPath}" replace />} />`,
+        `<Route path="${alias}" element={<Navigate to="${canonicalPath}" replace />} />`
       );
     }
   });
 
   test('building pro signup account link resolves to a live route', () => {
     const appSource = readFileSync(P('src/App.tsx'), 'utf8');
-    const inscriptionProBatimentSource = readFileSync(P('src/pages/InscriptionProBatiment.tsx'), 'utf8');
+    const inscriptionProBatimentSource = readFileSync(
+      P('src/pages/InscriptionProBatiment.tsx'),
+      'utf8'
+    );
 
     expect(inscriptionProBatimentSource).toContain('<Link to="/espace-pro-batiment"');
     expect(appSource).toContain(
-      '<Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />',
+      '<Route path="espace-pro-batiment" element={<Navigate to="/espace-pro" replace />} />'
     );
   });
 

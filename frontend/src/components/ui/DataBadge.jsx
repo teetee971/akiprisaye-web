@@ -5,12 +5,7 @@
  */
 import { cn } from '@/lib/utils';
 
-export function DataBadge({ 
-  source,
-  date = '',
-  className = '',
-  ...props 
-}) {
+export function DataBadge({ source, date = '', className = '', ...props }) {
   return (
     <div
       className={cn(
@@ -19,7 +14,7 @@ export function DataBadge({
         'bg-blue-600/10 border border-blue-500/30',
         'rounded-lg text-xs font-mono',
         'text-blue-200',
-        className,
+        className
       )}
       {...props}
     >

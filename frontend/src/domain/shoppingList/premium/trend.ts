@@ -23,7 +23,7 @@ export function computeTrend(history: PriceHistoryPoint[], windowDays: number): 
   const now = Date.now();
   const windowMs = windowDays * 24 * 60 * 60 * 1000;
   const recentStart = now - windowMs;
-  const previousStart = now - (windowMs * 2);
+  const previousStart = now - windowMs * 2;
 
   const recent: number[] = [];
   const previous: number[] = [];

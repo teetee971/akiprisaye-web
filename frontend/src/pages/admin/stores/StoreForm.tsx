@@ -40,33 +40,16 @@ const TERRITORIES: { code: TerritoryCode; name: string }[] = [
 // Validation schema
 const storeSchema = z.object({
   name: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
-  brandId: z.string().min(1, 'L\'ID de marque est requis'),
-  address: z.string().min(5, 'L\'adresse doit contenir au moins 5 caractères'),
-  postalCode: z
-    .string()
-    .regex(/^\d{5}$/, 'Le code postal doit contenir 5 chiffres'),
+  brandId: z.string().min(1, "L'ID de marque est requis"),
+  address: z.string().min(5, "L'adresse doit contenir au moins 5 caractères"),
+  postalCode: z.string().regex(/^\d{5}$/, 'Le code postal doit contenir 5 chiffres'),
   city: z.string().min(2, 'La ville est requise'),
-  territory: z.enum([
-    'GP',
-    'MQ',
-    'GF',
-    'RE',
-    'YT',
-    'PM',
-    'BL',
-    'MF',
-    'WF',
-    'PF',
-    'NC',
-  ]),
+  territory: z.enum(['GP', 'MQ', 'GF', 'RE', 'YT', 'PM', 'BL', 'MF', 'WF', 'PF', 'NC']),
   latitude: z.number().optional(),
   longitude: z.number().optional(),
   phone: z
     .string()
-    .regex(
-      /^(\+\d{1,3}[- ]?)?\d{10}$/,
-      'Format de téléphone invalide (ex: 0590123456)'
-    )
+    .regex(/^(\+\d{1,3}[- ]?)?\d{10}$/, 'Format de téléphone invalide (ex: 0590123456)')
     .optional()
     .or(z.literal('')),
   isActive: z.boolean().optional(),
@@ -116,22 +99,34 @@ export default function StoreForm() {
   const loadStore = async () => {
     try {
       setLoading(true);
-      const store = isStaticPreviewEnv()
-        ? await getStoreStatic(id!)
-        : await getStore(id!);
+      const store = isStaticPreviewEnv() ? await getStoreStatic(id!) : await getStore(id!);
       if (!store) throw new Error('Enseigne introuvable');
       setValue('name', store.name);
       setValue('brandId', store.brandId);
       setValue('address', store.address);
       setValue('postalCode', store.postalCode);
       setValue('city', store.city);
-      setValue('territory', store.territory as 'GP' | 'MQ' | 'RE' | 'GF' | 'YT' | 'BL' | 'MF' | 'NC' | 'PF' | 'WF' | 'PM');
+      setValue(
+        'territory',
+        store.territory as
+          | 'GP'
+          | 'MQ'
+          | 'RE'
+          | 'GF'
+          | 'YT'
+          | 'BL'
+          | 'MF'
+          | 'NC'
+          | 'PF'
+          | 'WF'
+          | 'PM'
+      );
       setValue('latitude', store.latitude);
       setValue('longitude', store.longitude);
       setValue('phone', store.phone || '');
       setValue('isActive', store.isActive);
     } catch (error) {
-      toast.error('Erreur lors du chargement de l\'enseigne');
+      toast.error("Erreur lors du chargement de l'enseigne");
       console.error('Error loading store:', error);
       navigate('/admin/stores');
     } finally {
@@ -141,7 +136,7 @@ export default function StoreForm() {
 
   const handleGeocode = async () => {
     if (!address || !city) {
-      toast.error('Veuillez renseigner l\'adresse et la ville');
+      toast.error("Veuillez renseigner l'adresse et la ville");
       return;
     }
 
@@ -200,11 +195,7 @@ export default function StoreForm() {
       }
       navigate('/admin/stores');
     } catch (error) {
-      toast.error(
-        isEditMode
-          ? 'Erreur lors de la mise à jour'
-          : 'Erreur lors de la création'
-      );
+      toast.error(isEditMode ? 'Erreur lors de la mise à jour' : 'Erreur lors de la création');
       console.error('Error saving store:', error);
     } finally {
       setLoading(false);
@@ -224,7 +215,7 @@ export default function StoreForm() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-white">
-          {isEditMode ? 'Modifier l\'enseigne' : 'Nouvelle enseigne'}
+          {isEditMode ? "Modifier l'enseigne" : 'Nouvelle enseigne'}
         </h1>
       </div>
 
@@ -237,16 +228,13 @@ export default function StoreForm() {
               Nom <span className="text-red-400">*</span>
             </label>
             <input
-              
               id="sf-nom"
               type="text"
               {...register('name')}
               className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               placeholder="Ex: Carrefour Market"
             />
-            {errors.name && (
-              <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
-            )}
+            {errors.name && <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>}
           </div>
 
           {/* Brand ID */}
@@ -255,7 +243,6 @@ export default function StoreForm() {
               ID de marque <span className="text-red-400">*</span>
             </label>
             <input
-              
               id="sf-id-marque"
               type="text"
               {...register('brandId')}
@@ -264,9 +251,7 @@ export default function StoreForm() {
               placeholder="Ex: carrefour"
             />
             {errors.brandId && (
-              <p className="mt-1 text-sm text-red-400">
-                {errors.brandId.message}
-              </p>
+              <p className="mt-1 text-sm text-red-400">{errors.brandId.message}</p>
             )}
           </div>
 
@@ -276,7 +261,6 @@ export default function StoreForm() {
               Territoire <span className="text-red-400">*</span>
             </label>
             <select
-              
               id="sf-territoire"
               {...register('territory')}
               disabled={isEditMode}
@@ -289,9 +273,7 @@ export default function StoreForm() {
               ))}
             </select>
             {errors.territory && (
-              <p className="mt-1 text-sm text-red-400">
-                {errors.territory.message}
-              </p>
+              <p className="mt-1 text-sm text-red-400">{errors.territory.message}</p>
             )}
           </div>
 
@@ -301,7 +283,6 @@ export default function StoreForm() {
               Adresse <span className="text-red-400">*</span>
             </label>
             <input
-              
               id="sf-adresse"
               type="text"
               {...register('address')}
@@ -309,20 +290,20 @@ export default function StoreForm() {
               placeholder="Ex: 12 Rue de la République"
             />
             {errors.address && (
-              <p className="mt-1 text-sm text-red-400">
-                {errors.address.message}
-              </p>
+              <p className="mt-1 text-sm text-red-400">{errors.address.message}</p>
             )}
           </div>
 
           {/* Postal Code & City */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="sf-code-postal" className="block text-sm font-medium text-white/90 mb-2">
+              <label
+                htmlFor="sf-code-postal"
+                className="block text-sm font-medium text-white/90 mb-2"
+              >
                 Code postal <span className="text-red-400">*</span>
               </label>
               <input
-                
                 id="sf-code-postal"
                 type="text"
                 {...register('postalCode')}
@@ -330,9 +311,7 @@ export default function StoreForm() {
                 placeholder="97100"
               />
               {errors.postalCode && (
-                <p className="mt-1 text-sm text-red-400">
-                  {errors.postalCode.message}
-                </p>
+                <p className="mt-1 text-sm text-red-400">{errors.postalCode.message}</p>
               )}
             </div>
 
@@ -341,47 +320,35 @@ export default function StoreForm() {
                 Ville <span className="text-red-400">*</span>
               </label>
               <input
-                
                 id="sf-ville"
                 type="text"
                 {...register('city')}
                 className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 placeholder="Pointe-à-Pitre"
               />
-              {errors.city && (
-                <p className="mt-1 text-sm text-red-400">
-                  {errors.city.message}
-                </p>
-              )}
+              {errors.city && <p className="mt-1 text-sm text-red-400">{errors.city.message}</p>}
             </div>
           </div>
 
           {/* Phone */}
           <div>
             <label htmlFor="sf-telephone" className="block text-sm font-medium text-white/90 mb-2">
-                Téléphone
+              Téléphone
             </label>
             <input
-              
-                id="sf-telephone"
-                type="tel"
+              id="sf-telephone"
+              type="tel"
               {...register('phone')}
               className="w-full px-4 py-2 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               placeholder="0590123456"
             />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-400">
-                {errors.phone.message}
-              </p>
-            )}
+            {errors.phone && <p className="mt-1 text-sm text-red-400">{errors.phone.message}</p>}
           </div>
 
           {/* Coordinates */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="block text-sm font-medium text-white/90">
-              Coordonnées GPS
-            </span>
+              <span className="block text-sm font-medium text-white/90">Coordonnées GPS</span>
               <button
                 type="button"
                 onClick={handleGeocode}
@@ -399,7 +366,6 @@ export default function StoreForm() {
                   Latitude
                 </label>
                 <input
-                  
                   id="sf-latitude"
                   type="number"
                   step="any"
@@ -414,7 +380,6 @@ export default function StoreForm() {
                   Longitude
                 </label>
                 <input
-                  
                   id="sf-longitude"
                   type="number"
                   step="any"
@@ -460,11 +425,7 @@ export default function StoreForm() {
               className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="h-5 w-5" />
-              {loading
-                ? 'Enregistrement...'
-                : isEditMode
-                ? 'Mettre à jour'
-                : 'Créer'}
+              {loading ? 'Enregistrement...' : isEditMode ? 'Mettre à jour' : 'Créer'}
             </button>
           </div>
         </form>

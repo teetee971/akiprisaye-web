@@ -1,14 +1,14 @@
 /**
  * Service des Délais & Tensions Logistiques - Observations historiques
- * 
+ *
  * Fournit des observations HISTORIQUES sur les délais et tensions
  * ayant affecté l'acheminement des marchandises vers les DOM.
- * 
+ *
  * AUCUNE PRÉVISION
  * AUCUN PRIX
  * AUCUNE RESPONSABILITÉ ATTRIBUÉE
  * AUCUNE ANALYSE ÉCONOMIQUE
- * 
+ *
  * Sources : Rapports publics, archives portuaires, presse professionnelle
  */
 
@@ -40,19 +40,20 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Crise sanitaire COVID-19',
       'Réduction capacités navires',
-      'Congestion portuaire mondiale'
+      'Congestion portuaire mondiale',
     ],
-    description: 'Ralentissement généralisé du fret maritime en raison de la pandémie. Réorganisation des rotations maritimes et réduction temporaire des capacités de transport.',
+    description:
+      'Ralentissement généralisé du fret maritime en raison de la pandémie. Réorganisation des rotations maritimes et réduction temporaire des capacités de transport.',
     impact_type: [
       'Allongement des délais de 2 à 4 semaines',
       'Reports de livraisons',
-      'Saturation temporaire des quais'
+      'Saturation temporaire des quais',
     ],
     sources_publiques: [
       'Port autonome de Guadeloupe - Rapport annuel 2020-2021',
-      'CCI Îles de Guadeloupe'
+      'CCI Îles de Guadeloupe',
     ],
-    date_publication: '2021-12-15'
+    date_publication: '2021-12-15',
   },
   {
     territory: 'GP',
@@ -60,22 +61,19 @@ const delayObservations: LogisticsDelayObservation[] = [
     period: 'Septembre 2022',
     transport_type: 'maritime',
     delay_level: 'élevé',
-    nature_tension: [
-      'Ouragan Fiona',
-      'Fermeture temporaire port',
-      'Météo défavorable'
-    ],
-    description: 'Passage de l\'ouragan Fiona entraînant la fermeture préventive du port et le report des navires programmés. Reprise progressive de l\'activité après inspection des infrastructures.',
+    nature_tension: ['Ouragan Fiona', 'Fermeture temporaire port', 'Météo défavorable'],
+    description:
+      "Passage de l'ouragan Fiona entraînant la fermeture préventive du port et le report des navires programmés. Reprise progressive de l'activité après inspection des infrastructures.",
     impact_type: [
       'Suspension activité portuaire 48h',
       'Reports de navires',
-      'Retard livraisons alimentaires et matériaux'
+      'Retard livraisons alimentaires et matériaux',
     ],
     sources_publiques: [
       'Port autonome de Guadeloupe - Communiqué septembre 2022',
-      'Préfecture de Guadeloupe'
+      'Préfecture de Guadeloupe',
     ],
-    date_publication: '2022-09-25'
+    date_publication: '2022-09-25',
   },
   {
     territory: 'GP',
@@ -86,19 +84,20 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Tensions canal de Suez',
       'Réorganisation routes maritimes',
-      'Coût du fret international'
+      'Coût du fret international',
     ],
-    description: 'Perturbations des routes maritimes internationales affectant les rotations Asie-Europe-Caraïbes. Adaptation des armateurs aux nouvelles contraintes logistiques mondiales.',
+    description:
+      'Perturbations des routes maritimes internationales affectant les rotations Asie-Europe-Caraïbes. Adaptation des armateurs aux nouvelles contraintes logistiques mondiales.',
     impact_type: [
       'Allongement ponctuel délais importations',
       'Modification fréquences navires',
-      'Réajustements rotations'
+      'Réajustements rotations',
     ],
     sources_publiques: [
       'Port autonome de Guadeloupe - Rapport 2023',
-      'CCI Îles de Guadeloupe - Observatoire économique'
+      'CCI Îles de Guadeloupe - Observatoire économique',
     ],
-    date_publication: '2023-11-01'
+    date_publication: '2023-11-01',
   },
 
   // Martinique
@@ -111,19 +110,17 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Crise sanitaire COVID-19',
       'Réduction capacités conteneurs',
-      'Difficultés logistiques mondiales'
+      'Difficultés logistiques mondiales',
     ],
-    description: 'Impact de la crise sanitaire sur les chaînes d\'approvisionnement maritimes. Congestion des ports européens et asiatiques affectant les délais vers les Antilles.',
+    description:
+      "Impact de la crise sanitaire sur les chaînes d'approvisionnement maritimes. Congestion des ports européens et asiatiques affectant les délais vers les Antilles.",
     impact_type: [
       'Délais allongés de plusieurs semaines',
       'Pénurie temporaire conteneurs',
-      'Congestion quais portuaires'
+      'Congestion quais portuaires',
     ],
-    sources_publiques: [
-      'Grand Port Maritime de Martinique - Rapport 2020-2021',
-      'CCI Martinique'
-    ],
-    date_publication: '2021-12-20'
+    sources_publiques: ['Grand Port Maritime de Martinique - Rapport 2020-2021', 'CCI Martinique'],
+    date_publication: '2021-12-20',
   },
   {
     territory: 'MQ',
@@ -131,22 +128,16 @@ const delayObservations: LogisticsDelayObservation[] = [
     period: 'Août-Septembre 2021',
     transport_type: 'mixte',
     delay_level: 'modéré',
-    nature_tension: [
-      'Saison cyclonique active',
-      'Météo défavorable',
-      'Reports préventifs'
-    ],
-    description: 'Saison cyclonique avec plusieurs systèmes tropicaux entraînant des reports préventifs de navires et de vols cargo. Surveillance renforcée et protocoles de sécurité appliqués.',
+    nature_tension: ['Saison cyclonique active', 'Météo défavorable', 'Reports préventifs'],
+    description:
+      'Saison cyclonique avec plusieurs systèmes tropicaux entraînant des reports préventifs de navires et de vols cargo. Surveillance renforcée et protocoles de sécurité appliqués.',
     impact_type: [
       'Reports préventifs navires',
       'Annulations vols cargo temporaires',
-      'Allongement délais produits frais'
+      'Allongement délais produits frais',
     ],
-    sources_publiques: [
-      'Grand Port Maritime de Martinique',
-      'Météo France Antilles'
-    ],
-    date_publication: '2021-10-05'
+    sources_publiques: ['Grand Port Maritime de Martinique', 'Météo France Antilles'],
+    date_publication: '2021-10-05',
   },
 
   // Guyane
@@ -159,19 +150,17 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Crise sanitaire COVID-19',
       'Capacité portuaire limitée',
-      'Éloignement géographique'
+      'Éloignement géographique',
     ],
-    description: 'Difficultés accrues par la combinaison de la crise sanitaire et de la capacité portuaire limitée du port de Dégrad des Cannes. Allongement significatif des délais d\'acheminement.',
+    description:
+      "Difficultés accrues par la combinaison de la crise sanitaire et de la capacité portuaire limitée du port de Dégrad des Cannes. Allongement significatif des délais d'acheminement.",
     impact_type: [
       'Délais fortement allongés',
       'Saturation capacité stockage',
-      'Difficultés distribution intérieure'
+      'Difficultés distribution intérieure',
     ],
-    sources_publiques: [
-      'Grand Port Maritime de Guyane - Rapport 2020-2021',
-      'CCI de Guyane'
-    ],
-    date_publication: '2021-12-10'
+    sources_publiques: ['Grand Port Maritime de Guyane - Rapport 2020-2021', 'CCI de Guyane'],
+    date_publication: '2021-12-10',
   },
   {
     territory: 'GF',
@@ -182,19 +171,17 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Saison des pluies intense',
       'Difficultés accès fluvial',
-      'Infrastructures routières affectées'
+      'Infrastructures routières affectées',
     ],
-    description: 'Saison des pluies particulièrement intense affectant les infrastructures de distribution intérieure. Difficultés d\'accès aux zones reculées, notamment via le fleuve Maroni.',
+    description:
+      "Saison des pluies particulièrement intense affectant les infrastructures de distribution intérieure. Difficultés d'accès aux zones reculées, notamment via le fleuve Maroni.",
     impact_type: [
       'Ralentissement distribution zones isolées',
       'Reports livraisons fluviales',
-      'Allongement délais zones intérieures'
+      'Allongement délais zones intérieures',
     ],
-    sources_publiques: [
-      'Préfecture de Guyane',
-      'Direction des territoires et de la mer'
-    ],
-    date_publication: '2023-07-15'
+    sources_publiques: ['Préfecture de Guyane', 'Direction des territoires et de la mer'],
+    date_publication: '2023-07-15',
   },
 
   // La Réunion
@@ -207,19 +194,17 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Crise sanitaire COVID-19',
       'Éloignement extrême (9 200 km)',
-      'Congestion ports asiatiques'
+      'Congestion ports asiatiques',
     ],
-    description: 'Impact majeur de la crise sanitaire sur les routes maritimes longue distance. Congestion des ports asiatiques et réorganisation complète des lignes maritimes affectant La Réunion.',
+    description:
+      'Impact majeur de la crise sanitaire sur les routes maritimes longue distance. Congestion des ports asiatiques et réorganisation complète des lignes maritimes affectant La Réunion.',
     impact_type: [
-      'Allongement délais jusqu\'à 6 semaines',
+      "Allongement délais jusqu'à 6 semaines",
       'Pénurie conteneurs',
-      'Ruptures temporaires produits importés'
+      'Ruptures temporaires produits importés',
     ],
-    sources_publiques: [
-      'Grand Port Maritime de La Réunion - Rapport 2020-2021',
-      'CCI Réunion'
-    ],
-    date_publication: '2021-12-01'
+    sources_publiques: ['Grand Port Maritime de La Réunion - Rapport 2020-2021', 'CCI Réunion'],
+    date_publication: '2021-12-01',
   },
   {
     territory: 'RE',
@@ -230,20 +215,21 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Cyclone Freddy',
       'Météo défavorable Océan Indien',
-      'Fermeture temporaire port'
+      'Fermeture temporaire port',
     ],
-    description: 'Passage du cyclone Freddy entraînant la fermeture préventive du port et l\'interruption temporaire des rotations maritimes. Impact également sur le fret aérien en raison des conditions météorologiques.',
+    description:
+      "Passage du cyclone Freddy entraînant la fermeture préventive du port et l'interruption temporaire des rotations maritimes. Impact également sur le fret aérien en raison des conditions météorologiques.",
     impact_type: [
       'Suspension activité portuaire',
       'Reports navires et vols',
-      'Allongement délais produits frais et périssables'
+      'Allongement délais produits frais et périssables',
     ],
     sources_publiques: [
       'Grand Port Maritime de La Réunion',
       'Météo France Réunion',
-      'Préfecture de La Réunion'
+      'Préfecture de La Réunion',
     ],
-    date_publication: '2023-03-10'
+    date_publication: '2023-03-10',
   },
   {
     territory: 'RE',
@@ -254,19 +240,20 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Tensions Mer Rouge',
       'Réorganisation routes maritimes',
-      'Allongement distances parcourues'
+      'Allongement distances parcourues',
     ],
-    description: 'Tensions géopolitiques en Mer Rouge entraînant le contournement de certaines routes maritimes via le Cap de Bonne-Espérance. Allongement des distances et des délais pour certains navires.',
+    description:
+      'Tensions géopolitiques en Mer Rouge entraînant le contournement de certaines routes maritimes via le Cap de Bonne-Espérance. Allongement des distances et des délais pour certains navires.',
     impact_type: [
       'Allongement délais certaines lignes',
       'Modification rotations',
-      'Réajustements plannings'
+      'Réajustements plannings',
     ],
     sources_publiques: [
       'Grand Port Maritime de La Réunion - Rapport 2023',
-      'Observatoire des prix et des revenus'
+      'Observatoire des prix et des revenus',
     ],
-    date_publication: '2023-10-20'
+    date_publication: '2023-10-20',
   },
 
   // Mayotte
@@ -279,20 +266,21 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Crise sanitaire COVID-19',
       'Capacité portuaire limitée',
-      'Infrastructure en développement'
+      'Infrastructure en développement',
     ],
-    description: 'Difficultés importantes liées à la combinaison de la crise sanitaire et des infrastructures portuaires en cours de développement. Capacité de traitement limitée affectant les délais d\'acheminement.',
+    description:
+      "Difficultés importantes liées à la combinaison de la crise sanitaire et des infrastructures portuaires en cours de développement. Capacité de traitement limitée affectant les délais d'acheminement.",
     impact_type: [
       'Délais fortement allongés',
       'Saturation port de Longoni',
-      'Difficultés approvisionnement continu'
+      'Difficultés approvisionnement continu',
     ],
     sources_publiques: [
-      'Port de Longoni - Rapports d\'activité',
+      "Port de Longoni - Rapports d'activité",
       'CCI de Mayotte',
-      'Préfecture de Mayotte'
+      'Préfecture de Mayotte',
     ],
-    date_publication: '2022-06-15'
+    date_publication: '2022-06-15',
   },
   {
     territory: 'YT',
@@ -303,21 +291,22 @@ const delayObservations: LogisticsDelayObservation[] = [
     nature_tension: [
       'Développement infrastructures portuaires',
       'Augmentation progressive capacités',
-      'Adaptation flux logistiques'
+      'Adaptation flux logistiques',
     ],
-    description: 'Amélioration progressive des infrastructures portuaires permettant une meilleure absorption des flux. Tensions logistiques en diminution mais persistance de contraintes structurelles liées à l\'insularité.',
+    description:
+      "Amélioration progressive des infrastructures portuaires permettant une meilleure absorption des flux. Tensions logistiques en diminution mais persistance de contraintes structurelles liées à l'insularité.",
     impact_type: [
       'Amélioration progressive délais',
       'Augmentation capacité traitement',
-      'Réduction congestion portuaire'
+      'Réduction congestion portuaire',
     ],
     sources_publiques: [
       'Port de Longoni - Rapport 2023',
       'CCI de Mayotte',
-      'Direction des finances publiques'
+      'Direction des finances publiques',
     ],
-    date_publication: '2023-11-15'
-  }
+    date_publication: '2023-11-15',
+  },
 ];
 
 /**
@@ -331,14 +320,14 @@ export function getAllObservations(): LogisticsDelayObservation[] {
  * Récupère les observations pour un territoire spécifique
  */
 export function getObservationsByTerritory(territory: string): LogisticsDelayObservation[] {
-  return delayObservations.filter(obs => obs.territory === territory);
+  return delayObservations.filter((obs) => obs.territory === territory);
 }
 
 /**
  * Récupère les observations par niveau de tension
  */
 export function getObservationsByDelayLevel(level: string): LogisticsDelayObservation[] {
-  return delayObservations.filter(obs => obs.delay_level === level);
+  return delayObservations.filter((obs) => obs.delay_level === level);
 }
 
 /**
@@ -350,6 +339,6 @@ export function getAvailableTerritories(): Array<{ code: string; name: string }>
     { code: 'MQ', name: 'Martinique' },
     { code: 'GF', name: 'Guyane' },
     { code: 'RE', name: 'La Réunion' },
-    { code: 'YT', name: 'Mayotte' }
+    { code: 'YT', name: 'Mayotte' },
   ];
 }

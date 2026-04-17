@@ -33,7 +33,7 @@ const TIMEZONE_TO_TERRITORY: Record<string, string> = Object.values(TERRITORIES)
     if (t.timezone) acc[t.timezone] = t.code;
     return acc;
   },
-  {} as Record<string, string>,
+  {} as Record<string, string>
 );
 
 function detectTerritory(): string {
@@ -67,37 +67,85 @@ function normalizeInterestKey(key: string): string {
  * Keep more specific prefixes before generic ones.
  */
 export const PAGE_CATEGORIES: PageCategory[] = [
-  { key: 'comparateur',    name: 'Comparateur de prix',      emoji: '🛒', description: 'Comparer les prix entre enseignes' },
-  { key: 'scanner',        name: 'Scanner / Codes-barres',   emoji: '📷', description: 'Scan EAN & OCR tickets' },
-  { key: 'observatoire',   name: 'Observatoire des prix',    emoji: '📊', description: 'Données & tendances prix' },
-  { key: 'actualites',     name: 'Actualités',               emoji: '📰', description: 'Info vie chère & territoires' },
-  { key: 'carte',          name: 'Carte & Magasins',         emoji: '🗺️', description: 'Trouver un magasin' },
-  { key: 'liste',          name: 'Liste de courses',         emoji: '📝', description: 'Gérer sa liste GPS' },
-  { key: 'alertes',        name: 'Alertes prix',             emoji: '🔔', description: 'Notifications baisse de prix' },
-  { key: 'assistant',      name: 'Assistant IA',             emoji: '🤖', description: 'Conseils IA personnalisés' },
-  { key: 'contribuer',     name: 'Contribuer',               emoji: '✍️', description: 'Partager des prix citoyens' },
-  { key: 'groupes-parole', name: 'Groupes de Parole',        emoji: '💬', description: 'Échanges citoyens' },
-  { key: 'messagerie',     name: 'Messagerie',               emoji: '✉️', description: 'Messages entre citoyens' },
-  { key: 'solidarite',     name: 'Solidarité & Entraide',   emoji: '🤝', description: 'Ti Panié & entraide' },
-  { key: 'ti-panie',       name: 'Ti Panié Solidaire',       emoji: '🧺', description: 'Paniers anti-gaspi' },
-  { key: 'vie-chere',      name: 'Lutte Vie Chère',          emoji: '✊', description: 'Mobilisation & actions' },
-  { key: 'devis',          name: 'Devis IA',                 emoji: '📋', description: 'Estimations travaux & services' },
-  { key: 'comparateurs',   name: 'Hub Comparateurs',         emoji: '🔍', description: 'Vols, carburants, télécoms…' },
-  { key: 'territoire',     name: 'Hub Territorial',          emoji: '🏝️', description: 'Pages par territoire' },
-  { key: 'espace-pro',     name: 'Espace Pro',               emoji: '🏪', description: 'Outils professionnels' },
-  { key: 'marketplace',    name: 'Marketplace Enseignes',    emoji: '🏬', description: 'Partenaires & enseignes' },
-  { key: 'budget',         name: 'Budget & Finances',        emoji: '💰', description: 'Budget familial & vital' },
-  { key: 'inscription',    name: 'Inscription',              emoji: '👤', description: 'Créer un compte' },
-  { key: 'connexion',      name: 'Connexion',                emoji: '🔑', description: 'Se connecter' },
-  { key: 'faq',            name: 'FAQ & Aide',               emoji: '❓', description: 'Questions fréquentes' },
-  { key: 'contact',        name: 'Contact',                  emoji: '📨', description: 'Nous contacter' },
-  { key: 'methodologie',   name: 'Méthodologie',             emoji: '📐', description: 'Comment on travaille' },
+  {
+    key: 'comparateur',
+    name: 'Comparateur de prix',
+    emoji: '🛒',
+    description: 'Comparer les prix entre enseignes',
+  },
+  {
+    key: 'scanner',
+    name: 'Scanner / Codes-barres',
+    emoji: '📷',
+    description: 'Scan EAN & OCR tickets',
+  },
+  {
+    key: 'observatoire',
+    name: 'Observatoire des prix',
+    emoji: '📊',
+    description: 'Données & tendances prix',
+  },
+  {
+    key: 'actualites',
+    name: 'Actualités',
+    emoji: '📰',
+    description: 'Info vie chère & territoires',
+  },
+  { key: 'carte', name: 'Carte & Magasins', emoji: '🗺️', description: 'Trouver un magasin' },
+  { key: 'liste', name: 'Liste de courses', emoji: '📝', description: 'Gérer sa liste GPS' },
+  {
+    key: 'alertes',
+    name: 'Alertes prix',
+    emoji: '🔔',
+    description: 'Notifications baisse de prix',
+  },
+  { key: 'assistant', name: 'Assistant IA', emoji: '🤖', description: 'Conseils IA personnalisés' },
+  { key: 'contribuer', name: 'Contribuer', emoji: '✍️', description: 'Partager des prix citoyens' },
+  {
+    key: 'groupes-parole',
+    name: 'Groupes de Parole',
+    emoji: '💬',
+    description: 'Échanges citoyens',
+  },
+  { key: 'messagerie', name: 'Messagerie', emoji: '✉️', description: 'Messages entre citoyens' },
+  {
+    key: 'solidarite',
+    name: 'Solidarité & Entraide',
+    emoji: '🤝',
+    description: 'Ti Panié & entraide',
+  },
+  { key: 'ti-panie', name: 'Ti Panié Solidaire', emoji: '🧺', description: 'Paniers anti-gaspi' },
+  { key: 'vie-chere', name: 'Lutte Vie Chère', emoji: '✊', description: 'Mobilisation & actions' },
+  { key: 'devis', name: 'Devis IA', emoji: '📋', description: 'Estimations travaux & services' },
+  {
+    key: 'comparateurs',
+    name: 'Hub Comparateurs',
+    emoji: '🔍',
+    description: 'Vols, carburants, télécoms…',
+  },
+  { key: 'territoire', name: 'Hub Territorial', emoji: '🏝️', description: 'Pages par territoire' },
+  { key: 'espace-pro', name: 'Espace Pro', emoji: '🏪', description: 'Outils professionnels' },
+  {
+    key: 'marketplace',
+    name: 'Marketplace Enseignes',
+    emoji: '🏬',
+    description: 'Partenaires & enseignes',
+  },
+  { key: 'budget', name: 'Budget & Finances', emoji: '💰', description: 'Budget familial & vital' },
+  { key: 'inscription', name: 'Inscription', emoji: '👤', description: 'Créer un compte' },
+  { key: 'connexion', name: 'Connexion', emoji: '🔑', description: 'Se connecter' },
+  { key: 'faq', name: 'FAQ & Aide', emoji: '❓', description: 'Questions fréquentes' },
+  { key: 'contact', name: 'Contact', emoji: '📨', description: 'Nous contacter' },
+  { key: 'methodologie', name: 'Méthodologie', emoji: '📐', description: 'Comment on travaille' },
 ];
 
 /** Returns the PageCategory for the given pathname, or null for home/unknown */
 export function getPageCategory(pathname: string): PageCategory | null {
   // Strip leading slash and base URL segment, lowercase
-  const cleaned = pathname.replace(/^\/akiprisaye-web\//, '/').replace(/^\/+/, '').toLowerCase();
+  const cleaned = pathname
+    .replace(/^\/akiprisaye-web\//, '/')
+    .replace(/^\/+/, '')
+    .toLowerCase();
   if (!cleaned || cleaned === '' || cleaned === 'home') return null; // home is not an "interest"
 
   if (cleaned === 'scan' || cleaned.startsWith('scan/') || cleaned.startsWith('scan-')) {
@@ -106,7 +154,11 @@ export function getPageCategory(pathname: string): PageCategory | null {
   }
 
   for (const cat of PAGE_CATEGORIES) {
-    if (cleaned === cat.key || cleaned.startsWith(`${cat.key}/`) || cleaned.startsWith(`${cat.key}-`)) {
+    if (
+      cleaned === cat.key ||
+      cleaned.startsWith(`${cat.key}/`) ||
+      cleaned.startsWith(`${cat.key}-`)
+    ) {
       return cat;
     }
   }
@@ -209,7 +261,7 @@ export function useVisitorStats(): VisitorStats {
 
   const myTerritory = useRef(detectTerritory());
   const myInterest = useRef<PageCategory | null>(
-    typeof window !== 'undefined' ? getPageCategory(window.location.pathname) : null,
+    typeof window !== 'undefined' ? getPageCategory(window.location.pathname) : null
   );
   const sessionId = useRef(getSessionId());
   const refreshRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -239,7 +291,7 @@ export function useVisitorStats(): VisitorStats {
           interest: currentInterest?.key ?? '_home',
           lastSeen: serverTimestamp(),
         },
-        { merge: true },
+        { merge: true }
       ).catch(() => {});
     };
 
@@ -252,7 +304,7 @@ export function useVisitorStats(): VisitorStats {
           setDoc(
             visitStatsRef,
             { totalVisits: increment(1), lastVisit: serverTimestamp() },
-            { merge: true },
+            { merge: true }
           ).catch(() => {});
         }
       } catch {
@@ -270,8 +322,13 @@ export function useVisitorStats(): VisitorStats {
           // Global interest counter
           setDoc(
             doc(db!, 'page_stats', interest.key),
-            { totalViews: increment(1), name: interest.name, emoji: interest.emoji, lastView: serverTimestamp() },
-            { merge: true },
+            {
+              totalViews: increment(1),
+              name: interest.name,
+              emoji: interest.emoji,
+              lastView: serverTimestamp(),
+            },
+            { merge: true }
           ).catch(() => {});
           // Per-territory interest counter (enables the territory × interest matrix)
           const tiKey = `${territory === 'other' ? '_other' : territory}_${interest.key}`;
@@ -285,7 +342,7 @@ export function useVisitorStats(): VisitorStats {
               totalViews: increment(1),
               lastView: serverTimestamp(),
             },
-            { merge: true },
+            { merge: true }
           ).catch(() => {});
         }
       } catch {
@@ -340,7 +397,7 @@ export function useVisitorStats(): VisitorStats {
         setLastPresenceAt(latestPresence);
         setLoading(false);
       },
-      () => setLoading(false),
+      () => setLoading(false)
     );
 
     // ── 5. Subscribe to visit_stats collection ────────────────────────────────
@@ -359,7 +416,7 @@ export function useVisitorStats(): VisitorStats {
         setVisitsByTerritory(visits);
         setLastVisitAt(latestVisit);
       },
-      () => {},
+      () => {}
     );
 
     // ── 6. Subscribe to page_stats collection ─────────────────────────────────
@@ -379,7 +436,7 @@ export function useVisitorStats(): VisitorStats {
         setViewsByInterest(views);
         setLastInterestViewAt(latestView);
       },
-      () => {},
+      () => {}
     );
 
     // ── 7. Subscribe to territory_interest_stats collection ───────────────────
@@ -413,7 +470,7 @@ export function useVisitorStats(): VisitorStats {
         }
         setInterestByTerritoryRaw(byTerritory);
       },
-      () => {},
+      () => {}
     );
 
     // ── Cleanup ───────────────────────────────────────────────────────────────
@@ -466,7 +523,16 @@ export function useVisitorStats(): VisitorStats {
 
   const otherEntry: TerritoryStats[] =
     otherOnline > 0 || otherVisits > 0
-      ? [{ code: '_other', name: 'Autre / Métropole', flag: '🌍', online: otherOnline, totalVisits: otherVisits, topInterests: otherTopInterests }]
+      ? [
+          {
+            code: '_other',
+            name: 'Autre / Métropole',
+            flag: '🌍',
+            online: otherOnline,
+            totalVisits: otherVisits,
+            topInterests: otherTopInterests,
+          },
+        ]
       : [];
 
   const byTerritory: TerritoryStats[] = [...knownTerritories, ...otherEntry]
@@ -517,7 +583,11 @@ export function useVisitorStats(): VisitorStats {
       if (existing) {
         // totalViews already set from Firestore — just keep it
       } else {
-        const cat = PAGE_CATEGORIES.find((c) => c.key === iKey) ?? { key: iKey, name: iKey, emoji: '📄' };
+        const cat = PAGE_CATEGORIES.find((c) => c.key === iKey) ?? {
+          key: iKey,
+          name: iKey,
+          emoji: '📄',
+        };
         interestByTerritory[t].push({
           territory: t,
           interest: iKey,

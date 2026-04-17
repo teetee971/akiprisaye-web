@@ -19,25 +19,25 @@ import {
 // ── Action color map ──────────────────────────────────────────────────────────
 
 const ACTION_COLOR: Record<IntentAction, string> = {
-  IMPROVE_TITLE:   'bg-amber-400/20 text-amber-300 border-amber-400/30',
-  DUPLICATE:       'bg-emerald-400/20 text-emerald-300 border-emerald-400/30',
-  BOOST_LINKING:   'bg-blue-400/20 text-blue-300 border-blue-400/30',
-  ENRICH_CONTENT:  'bg-violet-400/20 text-violet-300 border-violet-400/30',
-  MONITOR:         'bg-zinc-400/20 text-zinc-400 border-zinc-400/30',
+  IMPROVE_TITLE: 'bg-amber-400/20 text-amber-300 border-amber-400/30',
+  DUPLICATE: 'bg-emerald-400/20 text-emerald-300 border-emerald-400/30',
+  BOOST_LINKING: 'bg-blue-400/20 text-blue-300 border-blue-400/30',
+  ENRICH_CONTENT: 'bg-violet-400/20 text-violet-300 border-violet-400/30',
+  MONITOR: 'bg-zinc-400/20 text-zinc-400 border-zinc-400/30',
 };
 
 const ACTION_LABEL: Record<IntentAction, string> = {
-  IMPROVE_TITLE:   'Améliorer titre',
-  DUPLICATE:       'Dupliquer',
-  BOOST_LINKING:   'Renforcer liens',
-  ENRICH_CONTENT:  'Enrichir contenu',
-  MONITOR:         'Surveiller',
+  IMPROVE_TITLE: 'Améliorer titre',
+  DUPLICATE: 'Dupliquer',
+  BOOST_LINKING: 'Renforcer liens',
+  ENRICH_CONTENT: 'Enrichir contenu',
+  MONITOR: 'Surveiller',
 };
 
 const PRIORITY_COLOR: Record<PageRecommendation['priority'], string> = {
-  high:   'bg-rose-400/20 text-rose-300 border-rose-400/30',
+  high: 'bg-rose-400/20 text-rose-300 border-rose-400/30',
   medium: 'bg-amber-400/20 text-amber-300 border-amber-400/30',
-  low:    'bg-zinc-400/20 text-zinc-400 border-zinc-400/30',
+  low: 'bg-zinc-400/20 text-zinc-400 border-zinc-400/30',
 };
 
 const ALL_ACTIONS: Array<IntentAction | 'ALL'> = [
@@ -59,40 +59,33 @@ export default function SeoMonitoringPage() {
   const recommendations = metrics ? analyzeMetrics(metrics) : [];
   const grouped = groupByAction(recommendations);
 
-  const filtered: PageRecommendation[] =
-    activeTab === 'ALL' ? recommendations : grouped[activeTab];
+  const filtered: PageRecommendation[] = activeTab === 'ALL' ? recommendations : grouped[activeTab];
 
-  const totalImpressions = metrics
-    ? metrics.reduce((s, m) => s + m.impressions, 0)
-    : 0;
-  const avgCtr = metrics && metrics.length > 0
-    ? metrics.reduce((s, m) => s + m.ctr, 0) / metrics.length
-    : 0;
+  const totalImpressions = metrics ? metrics.reduce((s, m) => s + m.impressions, 0) : 0;
+  const avgCtr =
+    metrics && metrics.length > 0 ? metrics.reduce((s, m) => s + m.ctr, 0) / metrics.length : 0;
   const opportunities = recommendations.filter((r) => r.priority === 'high').length;
 
-  const handleFileImport = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        try {
-          const raw = JSON.parse(ev.target?.result as string);
-          const imported = importMetricsFromJSON(raw);
-          if (imported.length === 0) {
-            setError('Aucune donnée valide trouvée dans le fichier.');
-          } else {
-            setMetrics(imported);
-            setError(null);
-          }
-        } catch {
-          setError('Fichier JSON invalide.');
+  const handleFileImport = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const raw = JSON.parse(ev.target?.result as string);
+        const imported = importMetricsFromJSON(raw);
+        if (imported.length === 0) {
+          setError('Aucune donnée valide trouvée dans le fichier.');
+        } else {
+          setMetrics(imported);
+          setError(null);
         }
-      };
-      reader.readAsText(file);
-    },
-    []
-  );
+      } catch {
+        setError('Fichier JSON invalide.');
+      }
+    };
+    reader.readAsText(file);
+  }, []);
 
   const handleDemo = useCallback(() => {
     setMetrics(SAMPLE_METRICS);
@@ -121,12 +114,9 @@ export default function SeoMonitoringPage() {
 
       <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-5xl space-y-8">
-
           {/* Header */}
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-white">
-              📊 SEO Monitoring
-            </h1>
+            <h1 className="text-2xl font-extrabold tracking-tight text-white">📊 SEO Monitoring</h1>
             <p className="mt-1 text-sm text-zinc-400">
               Pilotage des performances par intention de recherche
             </p>
@@ -140,12 +130,7 @@ export default function SeoMonitoringPage() {
             <div className="flex flex-wrap items-center gap-3">
               <label className="cursor-pointer rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm text-zinc-300 transition hover:border-emerald-400/30 hover:text-emerald-300">
                 📂 Importer JSON
-                <input
-                  type="file"
-                  accept=".json"
-                  className="sr-only"
-                  onChange={handleFileImport}
-                />
+                <input type="file" accept=".json" className="sr-only" onChange={handleFileImport} />
               </label>
               <button
                 onClick={handleDemo}
@@ -162,9 +147,7 @@ export default function SeoMonitoringPage() {
                 </button>
               )}
             </div>
-            {error && (
-              <p className="mt-2 text-xs text-rose-400">{error}</p>
-            )}
+            {error && <p className="mt-2 text-xs text-rose-400">{error}</p>}
           </div>
 
           {/* Empty state */}
@@ -188,7 +171,10 @@ export default function SeoMonitoringPage() {
             <>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 <StatCard label="URLs analysées" value={metrics.length} />
-                <StatCard label="Total impressions" value={totalImpressions.toLocaleString('fr-FR')} />
+                <StatCard
+                  label="Total impressions"
+                  value={totalImpressions.toLocaleString('fr-FR')}
+                />
                 <StatCard label="CTR moyen" value={(avgCtr * 100).toFixed(2) + '%'} />
                 <StatCard label="Opportunités HIGH" value={opportunities} accent />
               </div>
@@ -209,7 +195,9 @@ export default function SeoMonitoringPage() {
                           : 'border-white/10 bg-transparent text-zinc-500 hover:text-zinc-300'
                       }`}
                     >
-                      {tab === 'ALL' ? `Toutes (${count})` : `${ACTION_LABEL[tab as IntentAction]} (${count})`}
+                      {tab === 'ALL'
+                        ? `Toutes (${count})`
+                        : `${ACTION_LABEL[tab as IntentAction]} (${count})`}
                     </button>
                   );
                 })}
@@ -246,12 +234,16 @@ export default function SeoMonitoringPage() {
                           {rec.url}
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold ${ACTION_COLOR[rec.action]}`}>
+                          <span
+                            className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold ${ACTION_COLOR[rec.action]}`}
+                          >
                             {ACTION_LABEL[rec.action]}
                           </span>
                         </td>
                         <td className="px-4 py-3">
-                          <span className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold ${PRIORITY_COLOR[rec.priority]}`}>
+                          <span
+                            className={`inline-block rounded-md border px-2 py-0.5 text-[10px] font-bold ${PRIORITY_COLOR[rec.priority]}`}
+                          >
                             {rec.priority}
                           </span>
                         </td>
@@ -294,7 +286,9 @@ function StatCard({
   return (
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
       <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">{label}</p>
-      <p className={`mt-1 text-2xl font-extrabold tabular-nums ${accent ? 'text-rose-400' : 'text-white'}`}>
+      <p
+        className={`mt-1 text-2xl font-extrabold tabular-nums ${accent ? 'text-rose-400' : 'text-white'}`}
+      >
         {value}
       </p>
     </div>

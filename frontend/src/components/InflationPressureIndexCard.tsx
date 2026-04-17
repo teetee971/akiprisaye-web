@@ -1,13 +1,13 @@
 /**
  * InflationPressureIndexCard Component
- * 
+ *
  * Displays Local Inflation Pressure Index (ILPP) in a clear, institutional manner
  * - Score visualization (0-100)
  * - Graduated bar
  * - Explanatory text
  * - Legal disclaimer (mandatory)
  * - Component breakdown (optional)
- * 
+ *
  * Legal Compliance:
  * - Always displays disclaimer
  * - Descriptive language only
@@ -59,25 +59,23 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
     return (
       <div className={`inline-flex items-center gap-3 ${className}`}>
         <div className="text-center">
-          <div className={`text-2xl font-bold ${textColorClass}`}>
-            {ilpp.score}
-          </div>
+          <div className={`text-2xl font-bold ${textColorClass}`}>{ilpp.score}</div>
           <div className="text-xs text-gray-500">ILPP</div>
         </div>
         <div className="flex-1">
           <div className="text-sm font-medium text-gray-700">
             Pression {ilpp.level.toLowerCase()}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">
-            {territoryName || 'Ce territoire'}
-          </div>
+          <div className="text-xs text-gray-500 mt-0.5">{territoryName || 'Ce territoire'}</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden ${className}`}>
+    <div
+      className={`bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden ${className}`}
+    >
       {/* Header */}
       <div className="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -86,14 +84,10 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
               <span className="text-2xl">📊</span>
               Indice Local de Pression des Prix
             </h3>
-            {territoryName && (
-              <p className="text-sm text-gray-600 mt-1">{territoryName}</p>
-            )}
+            {territoryName && <p className="text-sm text-gray-600 mt-1">{territoryName}</p>}
           </div>
           <div className="text-right">
-            <div className={`text-4xl font-bold ${textColorClass}`}>
-              {ilpp.score}
-            </div>
+            <div className={`text-4xl font-bold ${textColorClass}`}>{ilpp.score}</div>
             <div className="text-sm text-gray-500">/ 100</div>
           </div>
         </div>
@@ -103,19 +97,23 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
       <div className="px-6 py-4 space-y-4">
         {/* Pressure level badge */}
         <div className="flex items-center gap-3">
-          <span className={`px-4 py-2 rounded-full text-sm font-medium ${textColorClass}`}
-                style={{ 
-                  backgroundColor: barColorClass.includes('green') ? 'rgb(220 252 231)' :
-                                  barColorClass.includes('blue') ? 'rgb(219 234 254)' :
-                                  barColorClass.includes('yellow') ? 'rgb(254 249 195)' :
-                                  barColorClass.includes('orange') ? 'rgb(255 237 213)' :
-                                  'rgb(254 226 226)'
-                }}>
+          <span
+            className={`px-4 py-2 rounded-full text-sm font-medium ${textColorClass}`}
+            style={{
+              backgroundColor: barColorClass.includes('green')
+                ? 'rgb(220 252 231)'
+                : barColorClass.includes('blue')
+                  ? 'rgb(219 234 254)'
+                  : barColorClass.includes('yellow')
+                    ? 'rgb(254 249 195)'
+                    : barColorClass.includes('orange')
+                      ? 'rgb(255 237 213)'
+                      : 'rgb(254 226 226)',
+            }}
+          >
             Pression {ilpp.level.toLowerCase()}
           </span>
-          <span className="text-xs text-gray-500">
-            {ilpp.dataPoints} observations
-          </span>
+          <span className="text-xs text-gray-500">{ilpp.dataPoints} observations</span>
         </div>
 
         {/* Graduated bar */}
@@ -131,7 +129,7 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
               aria-label={`Indice de pression inflationniste : ${ilpp.score} sur 100`}
             />
           </div>
-          
+
           {/* Scale markers */}
           <div className="flex justify-between text-xs text-gray-400">
             <span>0</span>
@@ -145,9 +143,7 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
 
         {/* Explanation */}
         <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-gray-700 leading-relaxed">
-            {ilpp.explanation}
-          </p>
+          <p className="text-sm text-gray-700 leading-relaxed">{ilpp.explanation}</p>
         </div>
 
         {/* Component breakdown (optional) */}
@@ -194,9 +190,7 @@ const InflationPressureIndexCard: React.FC<InflationPressureIndexCardProps> = ({
       <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
         <div className="flex items-start gap-2">
           <span className="text-blue-600 text-sm mt-0.5">ℹ️</span>
-          <p className="text-xs text-gray-600 leading-relaxed">
-            {ILPP_LEGAL_DISCLAIMER}
-          </p>
+          <p className="text-xs text-gray-600 leading-relaxed">{ILPP_LEGAL_DISCLAIMER}</p>
         </div>
       </div>
     </div>

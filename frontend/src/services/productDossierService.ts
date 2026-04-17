@@ -1,9 +1,9 @@
 /**
  * Product Dossier Service - v1.6.0
- * 
+ *
  * Manages persistent product dossiers with historical tracking,
  * reformulation detection, and comparative analysis
- * 
+ *
  * @module productDossierService
  */
 
@@ -39,31 +39,31 @@ export async function getProductDossier(
   request: ProductDossierRequest
 ): Promise<ProductDossierResponse> {
   const startTime = Date.now();
-  
+
   try {
     // Try to load existing dossier
     let dossier = await loadDossierFromStorage(request.ean);
-    
+
     if (!dossier) {
       // Create new dossier stub
       dossier = createNewDossier(request.ean);
     }
-    
+
     // Filter by territory if requested
     if (request.territory) {
       dossier = filterDossierByTerritory(dossier, request.territory);
     }
-    
+
     // Limit history if requested
     if (request.maxHistoryItems && dossier.analysisHistory.length > request.maxHistoryItems) {
       dossier.analysisHistory = dossier.analysisHistory.slice(0, request.maxHistoryItems);
     }
-    
+
     // Don't include full history unless requested
     if (!request.includeHistory) {
       dossier.analysisHistory = [];
     }
-    
+
     return {
       success: true,
       data: dossier,
@@ -73,7 +73,6 @@ export async function getProductDossier(
         dataVersion: '1.6.0',
       },
     };
-    
   } catch (error) {
     return {
       success: false,
@@ -99,13 +98,13 @@ export async function addAnalysisToDossier(
   let dossier = await loadDossierFromStorage(ean);
   if (!dossier) {
     dossier = createNewDossier(ean);
-    
+
     // Set initial product info from first insight
     if (insight.name) dossier.canonicalName = insight.name;
     if (insight.brand) dossier.brand = insight.brand;
     if (insight.category) dossier.category = insight.category;
   }
-  
+
   // Create snapshot from insight
   const snapshot: ProductAnalysisSnapshot = {
     id: generateSnapshotId(),
@@ -118,57 +117,55 @@ export async function addAnalysisToDossier(
     additives: insight.additives,
     sources: insight.sources,
   };
-  
+
   // Calculate delta from previous snapshot
   const previousSnapshot = findPreviousSnapshot(dossier, insight.territory);
   if (previousSnapshot) {
     snapshot.differencesFromPrevious = calculateProductDelta(previousSnapshot, snapshot);
-    
+
     // Detect reformulation
     if (isSignificantReformulation(snapshot.differencesFromPrevious)) {
       const reformulation = createReformulationEvent(snapshot, snapshot.differencesFromPrevious);
       dossier.reformulations.push(reformulation);
     }
   }
-  
+
   // Add snapshot to history
   dossier.analysisHistory.unshift(snapshot);
   dossier.totalAnalyses++;
   dossier.lastUpdated = new Date().toISOString();
-  
+
   // Update or create territory snapshot
   updateTerritorySnapshot(dossier, insight);
-  
+
   // Recalculate transformation insight
   dossier.transformation = calculateTransformationInsight(insight);
-  
+
   // Recalculate data quality
   dossier.dataQuality = calculateDataQuality(dossier);
-  
+
   // Save updated dossier
   await saveDossierToStorage(dossier);
-  
+
   return dossier;
 }
 
 /**
  * Calculate transformation insight from product data
  */
-export function calculateTransformationInsight(
-  insight: ProductInsight
-): TransformationInsight {
+export function calculateTransformationInsight(insight: ProductInsight): TransformationInsight {
   const ingredientCount = insight.ingredients.length;
   const additiveCount = insight.additives.length;
-  
+
   // Calculate synthetic ratio
   const syntheticIngredients = insight.ingredients.filter(
-    ing => ing.origin === 'synthetic'
+    (ing) => ing.origin === 'synthetic'
   ).length;
   const syntheticRatio = ingredientCount > 0 ? syntheticIngredients / ingredientCount : 0;
-  
+
   // Count ultra-processed markers
   const ultraMarkers = countUltraProcessedMarkers(insight);
-  
+
   // Determine processing level
   const processingLevel = classifyProcessingLevel(
     ingredientCount,
@@ -176,7 +173,7 @@ export function calculateTransformationInsight(
     syntheticRatio,
     ultraMarkers
   );
-  
+
   // Generate explanation
   const explanation = generateProcessingExplanation(
     processingLevel,
@@ -184,7 +181,7 @@ export function calculateTransformationInsight(
     additiveCount,
     ultraMarkers
   );
-  
+
   // Identify criteria matched
   const criteriaMatched = identifyProcessingCriteria(
     processingLevel,
@@ -193,7 +190,7 @@ export function calculateTransformationInsight(
     syntheticRatio,
     ultraMarkers
   );
-  
+
   return {
     processingLevel,
     indicators: {
@@ -227,7 +224,7 @@ export async function calculateCategoryComparison(
         body: JSON.stringify({ category, nutrition, additiveCount, territory }),
         incidentReason: 'category_comparison_api_unavailable',
         timeoutMs: 10000,
-      },
+      }
     );
     return payload?.comparison;
   } catch {
@@ -240,26 +237,28 @@ export async function calculateCategoryComparison(
  */
 export function calculateDataQuality(dossier: ProductDossier): DataQualityInsight {
   const recentSnapshots = dossier.analysisHistory.slice(0, 10);
-  
+
   // Calculate average OCR reliability
-  const avgOcrReliability = recentSnapshots.length > 0
-    ? recentSnapshots.reduce((sum, s) => sum + s.confidenceScore, 0) / recentSnapshots.length
-    : 0;
-  
+  const avgOcrReliability =
+    recentSnapshots.length > 0
+      ? recentSnapshots.reduce((sum, s) => sum + s.confidenceScore, 0) / recentSnapshots.length
+      : 0;
+
   // Check cross-source consistency
   const crossSourceConsistency = checkCrossSourceConsistency(recentSnapshots);
-  
+
   // Calculate data completeness
   const dataCompleteness = calculateDossierCompleteness(dossier);
-  
+
   // Calculate age of last observation
-  const lastObservationAgeDays = dossier.analysisHistory.length > 0
-    ? Math.floor(
-        (Date.now() - new Date(dossier.analysisHistory[0].timestamp).getTime()) /
-        (1000 * 60 * 60 * 24)
-      )
-    : 999;
-  
+  const lastObservationAgeDays =
+    dossier.analysisHistory.length > 0
+      ? Math.floor(
+          (Date.now() - new Date(dossier.analysisHistory[0].timestamp).getTime()) /
+            (1000 * 60 * 60 * 24)
+        )
+      : 999;
+
   // Generate warnings
   const warnings: string[] = [];
   if (avgOcrReliability < 0.7) {
@@ -269,18 +268,18 @@ export function calculateDataQuality(dossier: ProductDossier): DataQualityInsigh
     warnings.push('Données anciennes - mise à jour recommandée');
   }
   if (dossier.analysisHistory.length < 3) {
-    warnings.push('Peu d\'observations - fiabilité limitée');
+    warnings.push("Peu d'observations - fiabilité limitée");
   }
-  
+
   // Generate quality notes (factual options, not prescriptive)
   const qualityNotes: string[] = [];
   if (dossier.analysisHistory.length < 5) {
-    qualityNotes.push('Plus d\'observations disponibles en scannant à nouveau');
+    qualityNotes.push("Plus d'observations disponibles en scannant à nouveau");
   }
   if (!crossSourceConsistency) {
     qualityNotes.push('Vérification par source alternative possible');
   }
-  
+
   return {
     ocrReliability: avgOcrReliability,
     crossSourceConsistency,
@@ -307,26 +306,26 @@ export function calculateProductDelta(
     significance: 'minor',
     description: '',
   };
-  
+
   // Compare ingredients
-  const prevIngredients = new Set(previous.ingredients.map(i => i.name.toLowerCase()));
-  const currIngredients = new Set(current.ingredients.map(i => i.name.toLowerCase()));
-  
+  const prevIngredients = new Set(previous.ingredients.map((i) => i.name.toLowerCase()));
+  const currIngredients = new Set(current.ingredients.map((i) => i.name.toLowerCase()));
+
   const addedIngredients: string[] = [];
   const removedIngredients: string[] = [];
-  
+
   for (const ing of current.ingredients) {
     if (!prevIngredients.has(ing.name.toLowerCase())) {
       addedIngredients.push(ing.name);
     }
   }
-  
+
   for (const ing of previous.ingredients) {
     if (!currIngredients.has(ing.name.toLowerCase())) {
       removedIngredients.push(ing.name);
     }
   }
-  
+
   if (addedIngredients.length > 0 || removedIngredients.length > 0) {
     delta.ingredientChanges = {
       added: addedIngredients,
@@ -334,85 +333,87 @@ export function calculateProductDelta(
       modified: [],
     };
   }
-  
+
   // Compare nutrition
   const nutritionalChanges: any = {};
   let significantNutritionalChange = false;
-  
+
   const nutritionKeys: (keyof NutritionPer100g)[] = [
-    'energyKcal', 'fats', 'saturatedFats', 'sugars', 'salt'
+    'energyKcal',
+    'fats',
+    'saturatedFats',
+    'sugars',
+    'salt',
   ];
-  
+
   for (const key of nutritionKeys) {
     const prevValue = previous.nutrition.per100g[key];
     const currValue = current.nutrition.per100g[key];
-    
+
     if (prevValue !== undefined && currValue !== undefined && prevValue !== currValue) {
-      const percentChange = prevValue !== 0 
-        ? ((currValue - prevValue) / prevValue) * 100 
-        : 0;
-      
+      const percentChange = prevValue !== 0 ? ((currValue - prevValue) / prevValue) * 100 : 0;
+
       nutritionalChanges[key] = {
         previous: prevValue,
         current: currValue,
         percentChange,
       };
-      
+
       // Significant if change > 10%
       if (Math.abs(percentChange) > 10) {
         significantNutritionalChange = true;
       }
     }
   }
-  
+
   if (Object.keys(nutritionalChanges).length > 0) {
     delta.nutritionalChanges = nutritionalChanges;
   }
-  
+
   // Compare additives
-  const prevAdditives = new Set(previous.additives.map(a => a.code));
-  const currAdditives = new Set(current.additives.map(a => a.code));
-  
+  const prevAdditives = new Set(previous.additives.map((a) => a.code));
+  const currAdditives = new Set(current.additives.map((a) => a.code));
+
   const addedAdditives: string[] = [];
   const removedAdditives: string[] = [];
-  
+
   for (const add of current.additives) {
     if (!prevAdditives.has(add.code)) {
       addedAdditives.push(add.code);
     }
   }
-  
+
   for (const add of previous.additives) {
     if (!currAdditives.has(add.code)) {
       removedAdditives.push(add.code);
     }
   }
-  
+
   if (addedAdditives.length > 0 || removedAdditives.length > 0) {
     delta.additiveChanges = {
       added: addedAdditives,
       removed: removedAdditives,
     };
   }
-  
+
   // Determine significance
   if (
-    (addedIngredients.length + removedIngredients.length > 3) ||
+    addedIngredients.length + removedIngredients.length > 3 ||
     significantNutritionalChange ||
-    (addedAdditives.length + removedAdditives.length > 2)
+    addedAdditives.length + removedAdditives.length > 2
   ) {
     delta.significance = 'major';
   } else if (
-    (addedIngredients.length + removedIngredients.length > 0) ||
+    addedIngredients.length + removedIngredients.length > 0 ||
     Object.keys(nutritionalChanges).length > 0 ||
-    (addedAdditives.length + removedAdditives.length > 0)
+    addedAdditives.length + removedAdditives.length > 0
   ) {
     delta.significance = 'moderate';
   }
-  
+
   // Generate description
   delta.description = generateDeltaDescription(delta);
-  
+
   return delta;
 }
 
@@ -463,15 +464,12 @@ function findPreviousSnapshot(
   dossier: ProductDossier,
   territory: TerritoryCode
 ): ProductAnalysisSnapshot | undefined {
-  return dossier.analysisHistory.find(s => s.territory === territory);
+  return dossier.analysisHistory.find((s) => s.territory === territory);
 }
 
-function updateTerritorySnapshot(
-  dossier: ProductDossier,
-  insight: ProductInsight
-): void {
-  let territorySnapshot = dossier.territories.find(t => t.territory === insight.territory);
-  
+function updateTerritorySnapshot(dossier: ProductDossier, insight: ProductInsight): void {
+  let territorySnapshot = dossier.territories.find((t) => t.territory === insight.territory);
+
   if (!territorySnapshot) {
     territorySnapshot = {
       territory: insight.territory,
@@ -484,9 +482,10 @@ function updateTerritorySnapshot(
     dossier.territories.push(territorySnapshot);
   } else {
     // Update existing
-    const totalConfidence = territorySnapshot.averageConfidence * territorySnapshot.observationCount;
+    const totalConfidence =
+      territorySnapshot.averageConfidence * territorySnapshot.observationCount;
     territorySnapshot.observationCount++;
-    territorySnapshot.averageConfidence = 
+    territorySnapshot.averageConfidence =
       (totalConfidence + insight.confidence.ocrConfidence) / territorySnapshot.observationCount;
     territorySnapshot.current = insight;
     territorySnapshot.lastUpdated = new Date().toISOString();
@@ -495,21 +494,21 @@ function updateTerritorySnapshot(
 
 function countUltraProcessedMarkers(insight: ProductInsight): number {
   let markers = 0;
-  
+
   // High additive count
   if (insight.additives.length > 5) markers++;
-  
+
   // High ingredient count
   if (insight.ingredients.length > 15) markers++;
-  
+
   // Multiple synthetic ingredients
-  const syntheticCount = insight.ingredients.filter(i => i.origin === 'synthetic').length;
+  const syntheticCount = insight.ingredients.filter((i) => i.origin === 'synthetic').length;
   if (syntheticCount > 3) markers++;
-  
+
   // Multiple flavor enhancers
-  const flavorCount = insight.ingredients.filter(i => i.role === 'flavor').length;
+  const flavorCount = insight.ingredients.filter((i) => i.role === 'flavor').length;
   if (flavorCount > 2) markers++;
-  
+
   return markers;
 }
 
@@ -522,13 +521,13 @@ function classifyProcessingLevel(
   // Ultra-processed: multiple markers
   if (ultraMarkers >= 3) return 'ultra';
   if (additiveCount > 5 || ingredientCount > 15) return 'ultra';
-  
+
   // High processing
   if (ultraMarkers >= 2 || additiveCount > 3 || syntheticRatio > 0.3) return 'high';
-  
+
   // Moderate processing
   if (additiveCount > 0 || ingredientCount > 5) return 'moderate';
-  
+
   // Low processing
   return 'low';
 }
@@ -559,20 +558,20 @@ function identifyProcessingCriteria(
   ultraMarkers: number
 ): string[] {
   const criteria: string[] = [];
-  
+
   if (ingredientCount > 15) {
-    criteria.push('Nombre élevé d\'ingrédients (> 15)');
+    criteria.push("Nombre élevé d'ingrédients (> 15)");
   }
   if (additiveCount > 5) {
-    criteria.push('Nombre élevé d\'additifs (> 5)');
+    criteria.push("Nombre élevé d'additifs (> 5)");
   }
   if (syntheticRatio > 0.3) {
-    criteria.push('Proportion élevée d\'ingrédients synthétiques');
+    criteria.push("Proportion élevée d'ingrédients synthétiques");
   }
   if (ultraMarkers >= 3) {
-    criteria.push('Multiples marqueurs d\'ultra-transformation');
+    criteria.push("Multiples marqueurs d'ultra-transformation");
   }
-  
+
   return criteria;
 }
 
@@ -593,10 +592,10 @@ function createReformulationEvent(
   } else if (!delta.ingredientChanges && !delta.nutritionalChanges && delta.additiveChanges) {
     type = 'additive_change';
   }
-  
+
   // Describe observed changes (factual, no evaluation)
   const observedChanges = describeObservedChanges(delta);
-  
+
   return {
     detectedAt: new Date().toISOString(),
     territory: snapshot.territory,
@@ -609,28 +608,28 @@ function createReformulationEvent(
 
 function describeObservedChanges(delta: ProductDelta): ReformulationEvent['observedChanges'] {
   let nutritional: 'increase' | 'decrease' | 'stable' | 'mixed' = 'stable';
-  
+
   if (delta.nutritionalChanges) {
     let increases = 0;
     let decreases = 0;
-    
+
     // Check sugar change
     if (delta.nutritionalChanges.sugars) {
       if (delta.nutritionalChanges.sugars.percentChange < -5) decreases++;
       if (delta.nutritionalChanges.sugars.percentChange > 5) increases++;
     }
-    
+
     // Check salt change
     if (delta.nutritionalChanges.salt) {
       if (delta.nutritionalChanges.salt.percentChange < -5) decreases++;
       if (delta.nutritionalChanges.salt.percentChange > 5) increases++;
     }
-    
+
     if (increases > decreases) nutritional = 'increase';
     else if (decreases > increases) nutritional = 'decrease';
     else if (increases > 0 && decreases > 0) nutritional = 'mixed';
   }
-  
+
   return {
     nutritional,
     transparency: 'unchanged',
@@ -639,7 +638,7 @@ function describeObservedChanges(delta: ProductDelta): ReformulationEvent['obser
 
 function generateDeltaDescription(delta: ProductDelta): string {
   const parts: string[] = [];
-  
+
   if (delta.ingredientChanges) {
     if (delta.ingredientChanges.added.length > 0) {
       parts.push(`${delta.ingredientChanges.added.length} ingrédient(s) ajouté(s)`);
@@ -648,12 +647,12 @@ function generateDeltaDescription(delta: ProductDelta): string {
       parts.push(`${delta.ingredientChanges.removed.length} ingrédient(s) retiré(s)`);
     }
   }
-  
+
   if (delta.nutritionalChanges) {
     const changes = Object.keys(delta.nutritionalChanges).length;
     parts.push(`${changes} valeur(s) nutritionnelle(s) modifiée(s)`);
   }
-  
+
   if (delta.additiveChanges) {
     if (delta.additiveChanges.added.length > 0) {
       parts.push(`${delta.additiveChanges.added.length} additif(s) ajouté(s)`);
@@ -662,48 +661,48 @@ function generateDeltaDescription(delta: ProductDelta): string {
       parts.push(`${delta.additiveChanges.removed.length} additif(s) retiré(s)`);
     }
   }
-  
+
   return parts.length > 0 ? parts.join(', ') : 'Aucun changement détecté';
 }
 
 function checkCrossSourceConsistency(snapshots: ProductAnalysisSnapshot[]): boolean {
   // Check if we have multiple source types
-  const sourceTypes = new Set(snapshots.map(s => s.sourceType));
+  const sourceTypes = new Set(snapshots.map((s) => s.sourceType));
   return sourceTypes.size > 1;
 }
 
 function calculateDossierCompleteness(dossier: ProductDossier): number {
   let score = 0;
   let maxScore = 0;
-  
+
   // Has name (10%)
   maxScore += 10;
   if (dossier.canonicalName !== 'Produit inconnu') score += 10;
-  
+
   // Has brand (10%)
   maxScore += 10;
   if (dossier.brand !== 'Marque inconnue') score += 10;
-  
+
   // Has category (10%)
   maxScore += 10;
   if (dossier.category !== 'Non classifié') score += 10;
-  
+
   // Has multiple observations (20%)
   maxScore += 20;
   score += Math.min(dossier.totalAnalyses * 5, 20);
-  
+
   // Has territory data (20%)
   maxScore += 20;
   score += Math.min(dossier.territories.length * 10, 20);
-  
+
   // Has reformulation data (15%)
   maxScore += 15;
   score += Math.min(dossier.reformulations.length * 5, 15);
-  
+
   // Has category comparison (15%)
   maxScore += 15;
   if (dossier.categoryComparison) score += 15;
-  
+
   return maxScore > 0 ? score / maxScore : 0;
 }
 
@@ -726,9 +725,9 @@ function filterDossierByTerritory(
 ): ProductDossier {
   return {
     ...dossier,
-    territories: dossier.territories.filter(t => t.territory === territory),
-    analysisHistory: dossier.analysisHistory.filter(s => s.territory === territory),
-    reformulations: dossier.reformulations.filter(r => r.territory === territory),
+    territories: dossier.territories.filter((t) => t.territory === territory),
+    analysisHistory: dossier.analysisHistory.filter((s) => s.territory === territory),
+    reformulations: dossier.reformulations.filter((r) => r.territory === territory),
   };
 }
 
@@ -740,7 +739,7 @@ async function loadDossierFromStorage(ean: string): Promise<ProductDossier | nul
   try {
     const key = `product_dossier_${ean}`;
     const data = safeLocalStorage.getItem(key);
-    
+
     if (data) {
       return JSON.parse(data) as ProductDossier;
     }
@@ -749,7 +748,7 @@ async function loadDossierFromStorage(ean: string): Promise<ProductDossier | nul
       console.warn('Failed to load dossier:', error);
     }
   }
-  
+
   return null;
 }
 

@@ -49,12 +49,7 @@ export default function Contact() {
     }
 
     const subject = formData.subject.trim() || 'Demande via le site A KI PRI SA YÉ';
-    const body = [
-      `Nom : ${trimmedName}`,
-      `Email : ${trimmedEmail}`,
-      '',
-      trimmedMessage,
-    ].join('\n');
+    const body = [`Nom : ${trimmedName}`, `Email : ${trimmedEmail}`, '', trimmedMessage].join('\n');
 
     const mailtoUrl = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
@@ -87,8 +82,8 @@ export default function Contact() {
           >
             <h1 className="text-3xl font-bold text-white drop-shadow sm:text-4xl">✉️ Contact</h1>
             <p className="mt-2 max-w-2xl text-sm text-slate-200 drop-shadow sm:text-base">
-              Une question, une demande partenaire ou un besoin institutionnel ? Nous privilégions un contact simple,
-              clair et traçable.
+              Une question, une demande partenaire ou un besoin institutionnel ? Nous privilégions
+              un contact simple, clair et traçable.
             </p>
           </HeroImage>
         </div>
@@ -98,8 +93,8 @@ export default function Contact() {
             <div className="mb-6">
               <h2 className="text-xl font-semibold text-white">Envoyer un message</h2>
               <p className="mt-2 text-sm leading-6 text-slate-400">
-                Ce formulaire ouvre votre messagerie avec un email prérempli. Pas de faux envoi silencieux : vous voyez
-                exactement ce qui part.
+                Ce formulaire ouvre votre messagerie avec un email prérempli. Pas de faux envoi
+                silencieux : vous voyez exactement ce qui part.
               </p>
             </div>
 
@@ -212,7 +207,9 @@ export default function Contact() {
             </div>
 
             <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5">
-              <p className="text-sm font-semibold text-white">Vous préférez explorer avant d’écrire ?</p>
+              <p className="text-sm font-semibold text-white">
+                Vous préférez explorer avant d’écrire ?
+              </p>
               <div className="mt-4 grid gap-3">
                 <Link
                   to="/transparence"

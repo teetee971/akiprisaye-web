@@ -3,10 +3,7 @@
  * Manages citizen contributions on real insertion rates
  */
 
-import type {
-  TrainingFeedback,
-  TrainingDatabase,
-} from '../types/trainingComparison';
+import type { TrainingFeedback, TrainingDatabase } from '../types/trainingComparison';
 
 /**
  * Load training database
@@ -58,9 +55,7 @@ export async function submitFeedback(
 /**
  * Get all feedbacks for a training
  */
-export async function getFeedbackByTraining(
-  trainingId: string
-): Promise<TrainingFeedback[]> {
+export async function getFeedbackByTraining(trainingId: string): Promise<TrainingFeedback[]> {
   const data = await loadTrainingData();
   return data.feedbacks.filter((f) => f.trainingId === trainingId);
 }
@@ -113,14 +108,10 @@ export function calculateInsertionRate(feedbacks: TrainingFeedback[]): {
   const rate12M = (foundJobWithin12M / totalCompleted) * 100;
 
   // Calculate average salary
-  const salaries = completedFeedbacks
-    .filter((f) => f.jobFound && f.salary)
-    .map((f) => f.salary!);
+  const salaries = completedFeedbacks.filter((f) => f.jobFound && f.salary).map((f) => f.salary!);
 
   const averageSalary =
-    salaries.length > 0
-      ? salaries.reduce((sum, s) => sum + s, 0) / salaries.length
-      : 0;
+    salaries.length > 0 ? salaries.reduce((sum, s) => sum + s, 0) / salaries.length : 0;
 
   return {
     rate3M: Math.round(rate3M * 10) / 10,
@@ -144,11 +135,9 @@ export async function getOrganismeStatistics(organismeId: string): Promise<{
   verifiedFeedbacksCount: number;
 }> {
   const data = await loadTrainingData();
-  
+
   // Get all programs from this organisme
-  const programIds = data.programs
-    .filter((p) => p.organisme.id === organismeId)
-    .map((p) => p.id);
+  const programIds = data.programs.filter((p) => p.organisme.id === organismeId).map((p) => p.id);
 
   // Get all feedbacks for these programs
   const feedbacks = data.feedbacks.filter((f) => programIds.includes(f.trainingId));
@@ -166,8 +155,7 @@ export async function getOrganismeStatistics(organismeId: string): Promise<{
     };
   }
 
-  const averageRating =
-    feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length;
+  const averageRating = feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length;
 
   const insertionRates = calculateInsertionRate(feedbacks);
 
@@ -188,7 +176,7 @@ export async function getOrganismeStatistics(organismeId: string): Promise<{
  */
 export async function getSuccessStories(limit: number = 10): Promise<TrainingFeedback[]> {
   const data = await loadTrainingData();
-  
+
   return data.feedbacks
     .filter((f) => f.jobFound && f.rating >= 4 && f.comment)
     .sort((a, b) => b.rating - a.rating)

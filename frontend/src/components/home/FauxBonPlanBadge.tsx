@@ -5,7 +5,11 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { detectFakeDeal, type PriceHistory, type FakeDealResult } from '../../services/detectFakeDeal';
+import {
+  detectFakeDeal,
+  type PriceHistory,
+  type FakeDealResult,
+} from '../../services/detectFakeDeal';
 
 interface FauxBonPlanBadgeProps {
   currentPrice: number;
@@ -18,10 +22,10 @@ export function FauxBonPlanBadge({
   currentPrice,
   priceHistory,
   isPromotion = false,
-  className = ''
+  className = '',
 }: FauxBonPlanBadgeProps) {
   const [showTooltip, setShowTooltip] = useState(false);
-  
+
   const result = detectFakeDeal(currentPrice, priceHistory, isPromotion);
 
   // Ne rien afficher si pas de faux bon plan détecté
@@ -30,13 +34,13 @@ export function FauxBonPlanBadge({
   const confidenceColors = {
     high: 'bg-red-900/30 border-red-500/50 text-red-300',
     medium: 'bg-orange-900/30 border-orange-500/50 text-orange-300',
-    low: 'bg-yellow-900/30 border-yellow-500/50 text-yellow-300'
+    low: 'bg-yellow-900/30 border-yellow-500/50 text-yellow-300',
   };
 
   const confidenceIcons = {
     high: '⚠️',
     medium: '🤔',
-    low: 'ℹ️'
+    low: 'ℹ️',
   };
 
   return (
@@ -62,13 +66,13 @@ export function FauxBonPlanBadge({
               <span className="text-2xl">{confidenceIcons[result.confidence]}</span>
               <div className="flex-1">
                 <h4 className="font-bold text-white mb-1">
-                  {result.confidence === 'high' ? 'Alerte : Faux bon plan' : 
-                   result.confidence === 'medium' ? 'Prix suspect' : 
-                   'À vérifier'}
+                  {result.confidence === 'high'
+                    ? 'Alerte : Faux bon plan'
+                    : result.confidence === 'medium'
+                      ? 'Prix suspect'
+                      : 'À vérifier'}
                 </h4>
-                <p className="text-sm text-gray-300">
-                  {result.reason}
-                </p>
+                <p className="text-sm text-gray-300">{result.reason}</p>
               </div>
             </div>
 
@@ -84,7 +88,9 @@ export function FauxBonPlanBadge({
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Prix le + bas :</span>
-                <span className="font-semibold text-green-400">{result.lowestPrice.toFixed(2)} €</span>
+                <span className="font-semibold text-green-400">
+                  {result.lowestPrice.toFixed(2)} €
+                </span>
               </div>
             </div>
 
@@ -92,11 +98,13 @@ export function FauxBonPlanBadge({
             <div className="space-y-1">
               <div className="text-xs text-gray-400">Écart vs moyenne :</div>
               <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div 
+                <div
                   className={`h-full ${
-                    result.percentAboveAverage > 15 ? 'bg-red-500' :
-                    result.percentAboveAverage > 10 ? 'bg-orange-500' :
-                    'bg-yellow-500'
+                    result.percentAboveAverage > 15
+                      ? 'bg-red-500'
+                      : result.percentAboveAverage > 10
+                        ? 'bg-orange-500'
+                        : 'bg-yellow-500'
                   }`}
                   style={{ width: `${Math.min(100, result.percentAboveAverage * 2)}%` }}
                 />
@@ -109,14 +117,15 @@ export function FauxBonPlanBadge({
             {/* Explication méthodologie */}
             <div className="pt-2 border-t border-slate-700">
               <p className="text-xs text-gray-500">
-                <strong className="text-gray-400">🔍 Méthodologie :</strong><br />
-                Comparaison automatique avec l'historique des 30 derniers jours.
-                Basé uniquement sur les données observées localement.
+                <strong className="text-gray-400">🔍 Méthodologie :</strong>
+                <br />
+                Comparaison automatique avec l'historique des 30 derniers jours. Basé uniquement sur
+                les données observées localement.
               </p>
             </div>
 
             {/* CTA */}
-            <Link 
+            <Link
               to="/historique-prix"
               className="block w-full text-center px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors"
             >
@@ -137,7 +146,7 @@ export function FauxBonPlanBadge({
  */
 export function FauxBonPlanBadgeSimple({
   result,
-  className = ''
+  className = '',
 }: {
   result: FakeDealResult;
   className?: string;
@@ -145,7 +154,9 @@ export function FauxBonPlanBadgeSimple({
   if (!result.isFakeDeal) return null;
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-1 bg-red-900/30 border border-red-500/50 rounded text-xs text-red-300 ${className}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-2 py-1 bg-red-900/30 border border-red-500/50 rounded text-xs text-red-300 ${className}`}
+    >
       <span>⚠️</span>
       <span>Faux bon plan</span>
     </span>

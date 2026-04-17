@@ -38,8 +38,8 @@ const SPONSOR_BONUS = 10;
 const MAX_SPONSOR_OVERRIDE = 15;
 
 /** Mandatory display label for sponsored products */
-export const SPONSOR_LABEL      = 'Sponsorisé';
-export const SPONSOR_LABEL_ALT  = 'Mise en avant partenaire';
+export const SPONSOR_LABEL = 'Sponsorisé';
+export const SPONSOR_LABEL_ALT = 'Mise en avant partenaire';
 
 // ── Core functions ────────────────────────────────────────────────────────────
 
@@ -68,9 +68,7 @@ export function applySponsorBoost<T extends SponsorableProduct>(product: T): T {
  *
  * @param products  Products sorted by revenueOSScore descending (pre-sorted)
  */
-export function applyFairSponsorRanking<T extends SponsorableProduct>(
-  products: T[],
-): T[] {
+export function applyFairSponsorRanking<T extends SponsorableProduct>(products: T[]): T[] {
   // Find the best organic score
   const bestOrganicScore = products
     .filter((p) => !p.isSponsored)

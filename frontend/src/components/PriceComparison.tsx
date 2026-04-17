@@ -1,4 +1,3 @@
- 
 import { useState, type FormEvent } from 'react';
 import type {
   NormalizedPriceObservation,
@@ -109,8 +108,7 @@ export function PriceComparison() {
         <div>
           <p>
             Fourchette observée : {result.interval.min?.toFixed(2)}€ —
-            {result.interval.max?.toFixed(2)}€ (médiane{' '}
-            {result.interval.median?.toFixed(2)}€)
+            {result.interval.max?.toFixed(2)}€ (médiane {result.interval.median?.toFixed(2)}€)
           </p>
 
           <PriceInsightsPanel reliability={reliability} />

@@ -1,5 +1,3 @@
- 
- 
 import { computeMedian, normalizeObservation, normalizePriceValue } from './priceNormalizer';
 import { computePriceConfidence } from './priceConfidence';
 import { normalizeTerritoryCode } from './normalizeTerritoryCode';
@@ -92,16 +90,12 @@ async function fetchLiveResult(
   };
 
   const confidence = computePriceConfidence({
-    territoryMatch: observations.some(
-      (obs) => normalizeTerritoryCode(obs.territory) === territory
-    ),
+    territoryMatch: observations.some((obs) => normalizeTerritoryCode(obs.territory) === territory),
     observations,
   });
 
   const productName =
-    providerResults
-      .map((result) => result.productName)
-      .find(Boolean) ?? undefined;
+    providerResults.map((result) => result.productName).find(Boolean) ?? undefined;
 
   if (observations.length === 0) {
     warnings.push('Données insuffisantes pour établir une fourchette de prix fiable.');
@@ -141,7 +135,9 @@ export async function searchProductPrices(input: PriceSearchInput): Promise<Pric
   };
   const queryUsed = input.barcode || input.query || 'recherche libre';
   const cacheKey = buildSearchCacheKey(normalizedInput, territory);
-  const hasSearchTerm = Boolean((normalizedInput.barcode ?? '').trim() || (normalizedInput.query ?? '').trim());
+  const hasSearchTerm = Boolean(
+    (normalizedInput.barcode ?? '').trim() || (normalizedInput.query ?? '').trim()
+  );
   trackSearchStart({
     territory,
     hasBarcode: Boolean((normalizedInput.barcode ?? '').trim()),

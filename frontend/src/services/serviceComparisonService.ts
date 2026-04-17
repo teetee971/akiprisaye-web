@@ -1,4 +1,3 @@
- 
 // Service for handling services (transport, telecoms, utilities) comparison
 
 import type {
@@ -29,7 +28,7 @@ export async function loadServicesDatabase(): Promise<ServicesDatabase> {
     if (!response.ok) {
       throw new Error(`Failed to load services database: ${response.statusText}`);
     }
-    cachedDatabase = await response.json() as ServicesDatabase;
+    cachedDatabase = (await response.json()) as ServicesDatabase;
     return cachedDatabase;
   } catch (error) {
     console.error('Error loading services database:', error);
@@ -48,7 +47,9 @@ export async function getAllProviders(): Promise<ServiceProvider[]> {
 /**
  * Get providers by territory
  */
-export async function getProvidersByTerritory(territory: TerritoryCode): Promise<ServiceProvider[]> {
+export async function getProvidersByTerritory(
+  territory: TerritoryCode
+): Promise<ServiceProvider[]> {
   const db = await loadServicesDatabase();
   return db.providers.filter((p) => p.territory === territory);
 }
@@ -95,8 +96,7 @@ export async function searchFlights(params: {
     const toLower = params.to.toLowerCase();
     results = results.filter(
       (f) =>
-        f.route.to.toLowerCase().includes(toLower) ||
-        f.route.toCode.toLowerCase().includes(toLower)
+        f.route.to.toLowerCase().includes(toLower) || f.route.toCode.toLowerCase().includes(toLower)
     );
   }
 
@@ -115,10 +115,7 @@ export async function getAllBoats(): Promise<BoatPrice[]> {
 /**
  * Search boat routes
  */
-export async function searchBoats(params: {
-  from?: string;
-  to?: string;
-}): Promise<BoatPrice[]> {
+export async function searchBoats(params: { from?: string; to?: string }): Promise<BoatPrice[]> {
   const db = await loadServicesDatabase();
   let results = db.boats;
 

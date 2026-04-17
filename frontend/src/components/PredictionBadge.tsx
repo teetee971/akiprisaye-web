@@ -1,14 +1,14 @@
 // src/components/PredictionBadge.tsx
-import React, { useState } from 'react'
-import type { PredictionScore } from '../services/predictivePricingService'
+import React, { useState } from 'react';
+import type { PredictionScore } from '../services/predictivePricingService';
 
 type PredictionBadgeProps = {
-  prediction: PredictionScore
-  showTooltip?: boolean
-}
+  prediction: PredictionScore;
+  showTooltip?: boolean;
+};
 
 export default function PredictionBadge({ prediction, showTooltip = true }: PredictionBadgeProps) {
-  const [tooltipVisible, setTooltipVisible] = useState(false)
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const getStatusConfig = (status: PredictionScore['status']) => {
     switch (status) {
@@ -18,25 +18,25 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
           bgColor: 'bg-green-600',
           textColor: 'text-white',
           icon: '📉',
-        }
+        };
       case 'surveillance':
         return {
           label: 'Surveillance',
           bgColor: 'bg-orange-500',
           textColor: 'text-white',
           icon: '👁️',
-        }
+        };
       case 'stable':
         return {
           label: 'Stable',
           bgColor: 'bg-blue-500',
           textColor: 'text-white',
           icon: '➡️',
-        }
+        };
     }
-  }
+  };
 
-  const config = getStatusConfig(prediction.status)
+  const config = getStatusConfig(prediction.status);
 
   return (
     <div className="relative inline-block">
@@ -51,9 +51,7 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
       >
         <span aria-hidden="true">{config.icon}</span>
         {config.label}
-        <span className="ml-1 text-[10px] opacity-80">
-          {prediction.probability}%
-        </span>
+        <span className="ml-1 text-[10px] opacity-80">{prediction.probability}%</span>
       </button>
 
       {showTooltip && tooltipVisible && (
@@ -63,17 +61,21 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
           aria-label="Prédiction IA"
         >
           <div className="mb-2 font-semibold">
-            Prédiction IA ({prediction.confidence === 'high' ? 'Confiance élevée' : prediction.confidence === 'medium' ? 'Confiance moyenne' : 'Confiance faible'})
+            Prédiction IA (
+            {prediction.confidence === 'high'
+              ? 'Confiance élevée'
+              : prediction.confidence === 'medium'
+                ? 'Confiance moyenne'
+                : 'Confiance faible'}
+            )
           </div>
-          
+
           <p className="mb-2 text-gray-300">{prediction.justification}</p>
-          
+
           {prediction.estimatedTimeframe && (
-            <p className="mb-2 text-blue-300">
-              Fenêtre estimée: {prediction.estimatedTimeframe}
-            </p>
+            <p className="mb-2 text-blue-300">Fenêtre estimée: {prediction.estimatedTimeframe}</p>
           )}
-          
+
           <div className="mt-2 pt-2 border-t border-gray-700 text-[10px] text-gray-400">
             <div>Tendance: {prediction.metrics.trend.toFixed(2)}%/j</div>
             <div>Volatilité: {prediction.metrics.volatility.toFixed(1)}%</div>
@@ -85,5 +87,5 @@ export default function PredictionBadge({ prediction, showTooltip = true }: Pred
         </div>
       )}
     </div>
-  )
+  );
 }

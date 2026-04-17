@@ -49,13 +49,12 @@ const SortControl: React.FC<SortControlProps> = ({
             aria-label={`Trier par ${option.label} ${isActive ? (currentDirection === 'asc' ? 'croissant' : 'décroissant') : ''}`}
           >
             {option.label}
-            {isActive && (
-              currentDirection === 'asc' ? (
+            {isActive &&
+              (currentDirection === 'asc' ? (
                 <ArrowUp className="w-3 h-3" aria-hidden="true" />
               ) : (
                 <ArrowDown className="w-3 h-3" aria-hidden="true" />
-              )
-            )}
+              ))}
             {!isActive && <ArrowUpDown className="w-3 h-3 opacity-50" aria-hidden="true" />}
           </button>
         );

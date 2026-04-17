@@ -84,7 +84,7 @@ function buildForm(overrides?: Partial<MerchantOnboardingForm>): MerchantOnboard
     premierMagasinAdresse: '1 rue du Commerce',
     premierMagasinVille: 'Basse-Terre',
     premierMagasinLatitude: 15.9993,
-    premierMagasinLongitude: -61.7230,
+    premierMagasinLongitude: -61.723,
     ...overrides,
   };
 }
@@ -159,7 +159,7 @@ describe('createMerchant', () => {
     expect(merchant.siren).toBe('802957267');
   });
 
-  it('normalise l\'email en minuscules', () => {
+  it("normalise l'email en minuscules", () => {
     const merchant = createMerchant(buildForm({ emailContact: 'CONTACT@TEST.GP' }));
     expect(merchant.emailContact).toBe('contact@test.gp');
   });
@@ -214,7 +214,7 @@ describe('updateMerchant', () => {
     expect(updated?.siren).toBe(merchant.siren);
   });
 
-  it('retourne null si l\'ID est inconnu', () => {
+  it("retourne null si l'ID est inconnu", () => {
     const result = updateMerchant('unknown_id', { nomCommercial: 'X' });
     expect(result).toBeNull();
   });
@@ -295,30 +295,57 @@ describe('createStore / updateStore / deleteStore', () => {
       ville: 'Basse-Terre',
       territoire: 'gp',
       latitude: 15.9993,
-      longitude: -61.7230,
+      longitude: -61.723,
     });
     expect(store.id).toBeTruthy();
     expect(store.visible).toBe(true);
     expect(store.boostActif).toBe(false);
   });
 
-  it('met à jour le nom d\'un magasin', () => {
+  it("met à jour le nom d'un magasin", () => {
     const merchant = createMerchant(buildForm({ premierMagasinNom: '' }));
-    const store = createStore({ merchantId: merchant.id, nom: 'Ancien', adresse: '', codePostal: '', ville: '', territoire: 'gp', latitude: 0, longitude: 0 });
+    const store = createStore({
+      merchantId: merchant.id,
+      nom: 'Ancien',
+      adresse: '',
+      codePostal: '',
+      ville: '',
+      territoire: 'gp',
+      latitude: 0,
+      longitude: 0,
+    });
     const updated = updateStore(store.id, merchant.id, { nom: 'Nouveau' });
     expect(updated?.nom).toBe('Nouveau');
   });
 
   it('ne met pas à jour si merchantId ne correspond pas', () => {
     const merchant = createMerchant(buildForm({ premierMagasinNom: '' }));
-    const store = createStore({ merchantId: merchant.id, nom: 'Test', adresse: '', codePostal: '', ville: '', territoire: 'gp', latitude: 0, longitude: 0 });
+    const store = createStore({
+      merchantId: merchant.id,
+      nom: 'Test',
+      adresse: '',
+      codePostal: '',
+      ville: '',
+      territoire: 'gp',
+      latitude: 0,
+      longitude: 0,
+    });
     const result = updateStore(store.id, 'wrong_merchant', { nom: 'Autre' });
     expect(result).toBeNull();
   });
 
-  it('supprime un magasin appartenant à l\'enseigne', () => {
+  it("supprime un magasin appartenant à l'enseigne", () => {
     const merchant = createMerchant(buildForm({ premierMagasinNom: '' }));
-    const store = createStore({ merchantId: merchant.id, nom: 'Test', adresse: '', codePostal: '', ville: '', territoire: 'gp', latitude: 0, longitude: 0 });
+    const store = createStore({
+      merchantId: merchant.id,
+      nom: 'Test',
+      adresse: '',
+      codePostal: '',
+      ville: '',
+      territoire: 'gp',
+      latitude: 0,
+      longitude: 0,
+    });
     const ok = deleteStore(store.id, merchant.id);
     expect(ok).toBe(true);
     expect(getMerchantStores(merchant.id)).toHaveLength(0);
@@ -326,7 +353,16 @@ describe('createStore / updateStore / deleteStore', () => {
 
   it('retourne false si tentative de suppression sans droits', () => {
     const merchant = createMerchant(buildForm({ premierMagasinNom: '' }));
-    const s = createStore({ merchantId: merchant.id, nom: 'Test', adresse: '', codePostal: '', ville: '', territoire: 'gp', latitude: 0, longitude: 0 });
+    const s = createStore({
+      merchantId: merchant.id,
+      nom: 'Test',
+      adresse: '',
+      codePostal: '',
+      ville: '',
+      territoire: 'gp',
+      latitude: 0,
+      longitude: 0,
+    });
     const ok = deleteStore(s.id, 'other_merchant');
     expect(ok).toBe(false);
   });
@@ -337,7 +373,16 @@ describe('createStore / updateStore / deleteStore', () => {
 describe('createProduct / updateProductPrice / getProductPriceHistory', () => {
   it('crée un produit et historise le prix initial', () => {
     const merchant = createMerchant(buildForm({ premierMagasinNom: '' }));
-    const storeObj = createStore({ merchantId: merchant.id, nom: 'Test', adresse: '', codePostal: '', ville: '', territoire: 'gp', latitude: 0, longitude: 0 });
+    const storeObj = createStore({
+      merchantId: merchant.id,
+      nom: 'Test',
+      adresse: '',
+      codePostal: '',
+      ville: '',
+      territoire: 'gp',
+      latitude: 0,
+      longitude: 0,
+    });
 
     const product = createProduct(
       {
@@ -364,14 +409,32 @@ describe('createProduct / updateProductPrice / getProductPriceHistory', () => {
 
   it('historise chaque mise à jour de prix', () => {
     const merchant = createMerchant(buildForm({ premierMagasinNom: '' }));
-    const storeObj = createStore({ merchantId: merchant.id, nom: 'Test', adresse: '', codePostal: '', ville: '', territoire: 'gp', latitude: 0, longitude: 0 });
+    const storeObj = createStore({
+      merchantId: merchant.id,
+      nom: 'Test',
+      adresse: '',
+      codePostal: '',
+      ville: '',
+      territoire: 'gp',
+      latitude: 0,
+      longitude: 0,
+    });
 
     const product = createProduct(
-      { merchantId: merchant.id, storeId: storeObj.id, ean: '3068320114266', nomProduit: 'Test', categorie: 'autre', prix: 1.00, unite: 'pièce', disponible: true },
+      {
+        merchantId: merchant.id,
+        storeId: storeObj.id,
+        ean: '3068320114266',
+        nomProduit: 'Test',
+        categorie: 'autre',
+        prix: 1.0,
+        unite: 'pièce',
+        disponible: true,
+      },
       'Source test'
     );
 
-    updateProductPrice(product.id, merchant.id, 1.20, 'Source test');
+    updateProductPrice(product.id, merchant.id, 1.2, 'Source test');
     updateProductPrice(product.id, merchant.id, 1.35, 'Source test');
 
     const history = getProductPriceHistory(product.id);
@@ -379,26 +442,77 @@ describe('createProduct / updateProductPrice / getProductPriceHistory', () => {
     expect(history).toHaveLength(3);
     // Tous les prix enregistrés sont présents (ordre peut varier si même timestamp)
     const prices = history.map((h) => h.prix).sort();
-    expect(prices).toEqual([1.00, 1.20, 1.35]);
+    expect(prices).toEqual([1.0, 1.2, 1.35]);
   });
 
   it('refuse la mise à jour si merchantId ne correspond pas', () => {
     const merchant = createMerchant(buildForm({ premierMagasinNom: '' }));
-    const storeObj = createStore({ merchantId: merchant.id, nom: 'Test', adresse: '', codePostal: '', ville: '', territoire: 'gp', latitude: 0, longitude: 0 });
+    const storeObj = createStore({
+      merchantId: merchant.id,
+      nom: 'Test',
+      adresse: '',
+      codePostal: '',
+      ville: '',
+      territoire: 'gp',
+      latitude: 0,
+      longitude: 0,
+    });
     const product = createProduct(
-      { merchantId: merchant.id, storeId: storeObj.id, ean: '123', nomProduit: 'P', categorie: 'autre', prix: 1.00, unite: 'u', disponible: true },
+      {
+        merchantId: merchant.id,
+        storeId: storeObj.id,
+        ean: '123',
+        nomProduit: 'P',
+        categorie: 'autre',
+        prix: 1.0,
+        unite: 'u',
+        disponible: true,
+      },
       'src'
     );
-    const result = updateProductPrice(product.id, 'wrong_merchant', 2.00, 'src');
+    const result = updateProductPrice(product.id, 'wrong_merchant', 2.0, 'src');
     expect(result).toBeNull();
   });
 
   it('getStorePriceHistory retourne les prix de tous les produits du magasin', () => {
     const merchant = createMerchant(buildForm({ premierMagasinNom: '' }));
-    const storeObj = createStore({ merchantId: merchant.id, nom: 'Test', adresse: '', codePostal: '', ville: '', territoire: 'gp', latitude: 0, longitude: 0 });
+    const storeObj = createStore({
+      merchantId: merchant.id,
+      nom: 'Test',
+      adresse: '',
+      codePostal: '',
+      ville: '',
+      territoire: 'gp',
+      latitude: 0,
+      longitude: 0,
+    });
 
-    createProduct({ merchantId: merchant.id, storeId: storeObj.id, ean: '111', nomProduit: 'P1', categorie: 'autre', prix: 1.00, unite: 'u', disponible: true }, 'src');
-    createProduct({ merchantId: merchant.id, storeId: storeObj.id, ean: '222', nomProduit: 'P2', categorie: 'autre', prix: 2.00, unite: 'u', disponible: true }, 'src');
+    createProduct(
+      {
+        merchantId: merchant.id,
+        storeId: storeObj.id,
+        ean: '111',
+        nomProduit: 'P1',
+        categorie: 'autre',
+        prix: 1.0,
+        unite: 'u',
+        disponible: true,
+      },
+      'src'
+    );
+    createProduct(
+      {
+        merchantId: merchant.id,
+        storeId: storeObj.id,
+        ean: '222',
+        nomProduit: 'P2',
+        categorie: 'autre',
+        prix: 2.0,
+        unite: 'u',
+        disponible: true,
+      },
+      'src'
+    );
 
     const history = getStorePriceHistory(storeObj.id);
     expect(history.length).toBeGreaterThanOrEqual(2);

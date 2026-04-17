@@ -1,4 +1,3 @@
- 
 /**
  * CsvUploader Component
  * Drag & drop file upload component for CSV files
@@ -26,76 +25,87 @@ export function CsvUploader({
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const validateFile = useCallback((file: File): string | null => {
-    // Check file type
-    const fileName = file.name.toLowerCase();
-    const hasValidExtension = acceptedTypes.some(ext => fileName.endsWith(ext));
-    
-    if (!hasValidExtension) {
-      return `Type de fichier non supporté. Formats acceptés: ${acceptedTypes.join(', ')}`;
-    }
+  const validateFile = useCallback(
+    (file: File): string | null => {
+      // Check file type
+      const fileName = file.name.toLowerCase();
+      const hasValidExtension = acceptedTypes.some((ext) => fileName.endsWith(ext));
 
-    // Check file size
-    const sizeMB = file.size / (1024 * 1024);
-    if (sizeMB > maxSize) {
-      return `Fichier trop volumineux. Taille maximale: ${maxSize}MB`;
-    }
-
-    return null;
-  }, [acceptedTypes, maxSize]);
-
-  const parseFile = useCallback(async (file: File) => {
-    setIsLoading(true);
-    
-    try {
-      if (file.name.toLowerCase().endsWith('.csv')) {
-        // Parse CSV using PapaParse
-        Papa.parse(file, {
-          complete: (results) => {
-            setIsLoading(false);
-            if (results.errors.length > 0) {
-              onError(`Erreur de parsing: ${results.errors[0].message}`);
-              return;
-            }
-            
-            if (!results.data || results.data.length === 0) {
-              onError('Fichier CSV vide');
-              return;
-            }
-
-            onFileLoaded(results.data, file);
-          },
-          error: (error) => {
-            setIsLoading(false);
-            onError(`Erreur de parsing: ${error.message}`);
-          },
-          header: true,
-          skipEmptyLines: true,
-          transformHeader: (header) => header.trim(),
-        });
-      } else if (file.name.toLowerCase().endsWith('.xlsx')) {
-        // For now, show message that XLSX needs to be converted
-        setIsLoading(false);
-        onError('Les fichiers Excel (.xlsx) doivent être convertis en CSV. Veuillez sauvegarder votre fichier au format CSV.');
+      if (!hasValidExtension) {
+        return `Type de fichier non supporté. Formats acceptés: ${acceptedTypes.join(', ')}`;
       }
-    } catch (error) {
-      setIsLoading(false);
-      onError(error instanceof Error ? error.message : 'Erreur lors de la lecture du fichier');
-    }
-  }, [onFileLoaded, onError]);
 
-  const handleFileSelect = useCallback((file: File | null) => {
-    if (!file) return;
+      // Check file size
+      const sizeMB = file.size / (1024 * 1024);
+      if (sizeMB > maxSize) {
+        return `Fichier trop volumineux. Taille maximale: ${maxSize}MB`;
+      }
 
-    const error = validateFile(file);
-    if (error) {
-      onError(error);
-      return;
-    }
+      return null;
+    },
+    [acceptedTypes, maxSize]
+  );
 
-    setSelectedFile(file);
-    parseFile(file);
-  }, [validateFile, parseFile, onError]);
+  const parseFile = useCallback(
+    async (file: File) => {
+      setIsLoading(true);
+
+      try {
+        if (file.name.toLowerCase().endsWith('.csv')) {
+          // Parse CSV using PapaParse
+          Papa.parse(file, {
+            complete: (results) => {
+              setIsLoading(false);
+              if (results.errors.length > 0) {
+                onError(`Erreur de parsing: ${results.errors[0].message}`);
+                return;
+              }
+
+              if (!results.data || results.data.length === 0) {
+                onError('Fichier CSV vide');
+                return;
+              }
+
+              onFileLoaded(results.data, file);
+            },
+            error: (error) => {
+              setIsLoading(false);
+              onError(`Erreur de parsing: ${error.message}`);
+            },
+            header: true,
+            skipEmptyLines: true,
+            transformHeader: (header) => header.trim(),
+          });
+        } else if (file.name.toLowerCase().endsWith('.xlsx')) {
+          // For now, show message that XLSX needs to be converted
+          setIsLoading(false);
+          onError(
+            'Les fichiers Excel (.xlsx) doivent être convertis en CSV. Veuillez sauvegarder votre fichier au format CSV.'
+          );
+        }
+      } catch (error) {
+        setIsLoading(false);
+        onError(error instanceof Error ? error.message : 'Erreur lors de la lecture du fichier');
+      }
+    },
+    [onFileLoaded, onError]
+  );
+
+  const handleFileSelect = useCallback(
+    (file: File | null) => {
+      if (!file) return;
+
+      const error = validateFile(file);
+      if (error) {
+        onError(error);
+        return;
+      }
+
+      setSelectedFile(file);
+      parseFile(file);
+    },
+    [validateFile, parseFile, onError]
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -109,23 +119,29 @@ export function CsvUploader({
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
 
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFileSelect(files[0]);
-    }
-  }, [handleFileSelect]);
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) {
+        handleFileSelect(files[0]);
+      }
+    },
+    [handleFileSelect]
+  );
 
-  const handleFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFileSelect(files[0]);
-    }
-  }, [handleFileSelect]);
+  const handleFileInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        handleFileSelect(files[0]);
+      }
+    },
+    [handleFileSelect]
+  );
 
   const handleRemoveFile = useCallback(() => {
     setSelectedFile(null);
@@ -138,12 +154,15 @@ export function CsvUploader({
     fileInputRef.current?.click();
   }, []);
 
-  const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleClick();
-    }
-  }, [handleClick]);
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        handleClick();
+      }
+    },
+    [handleClick]
+  );
 
   return (
     <div className="space-y-4">
@@ -176,23 +195,25 @@ export function CsvUploader({
         />
 
         <div className="flex flex-col items-center justify-center space-y-4">
-          <div className={cn(
-            'p-4 rounded-full transition-colors',
-            isDragging ? 'bg-blue-500/20' : 'bg-slate-100'
-          )}>
-            <Upload className={cn(
-              'w-12 h-12 transition-colors',
-              isDragging ? 'text-blue-500' : 'text-slate-500'
-            )} />
+          <div
+            className={cn(
+              'p-4 rounded-full transition-colors',
+              isDragging ? 'bg-blue-500/20' : 'bg-slate-100'
+            )}
+          >
+            <Upload
+              className={cn(
+                'w-12 h-12 transition-colors',
+                isDragging ? 'text-blue-500' : 'text-slate-500'
+              )}
+            />
           </div>
 
           <div className="text-center">
             <p className="mb-1 text-lg font-medium text-slate-900">
               {isDragging ? 'Déposez le fichier ici' : 'Glissez-déposez votre fichier'}
             </p>
-            <p className="text-sm text-slate-600">
-              ou cliquez pour parcourir
-            </p>
+            <p className="text-sm text-slate-600">ou cliquez pour parcourir</p>
           </div>
 
           <div className="text-center text-xs text-slate-500">
@@ -220,9 +241,7 @@ export function CsvUploader({
             </div>
             <div>
               <p className="text-sm font-medium text-slate-900">{selectedFile.name}</p>
-              <p className="text-xs text-slate-600">
-                {(selectedFile.size / 1024).toFixed(1)} KB
-              </p>
+              <p className="text-xs text-slate-600">{(selectedFile.size / 1024).toFixed(1)} KB</p>
             </div>
           </div>
           <button

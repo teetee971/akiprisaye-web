@@ -83,22 +83,22 @@ export async function computeScoreEnseigne(): Promise<ScoreEnseigneResult> {
     const totalCost = entries.reduce((s, e) => s + e.price, 0);
 
     const withRef = entries.filter(
-      (e) => e.priceRef !== undefined && e.priceRef !== null && e.priceRef > 0,
+      (e) => e.priceRef !== undefined && e.priceRef !== null && e.priceRef > 0
     );
-    const totalRef = withRef.length > 0
-      ? withRef.reduce((s, e) => s + (e.priceRef as number), 0)
-      : undefined;
-    const avgEcart = withRef.length > 0
-      ? Math.round(
-          (withRef.reduce((s, e) => s + (e.ecartPercent ?? 0), 0) / withRef.length) * 10,
-        ) / 10
-      : undefined;
+    const totalRef =
+      withRef.length > 0 ? withRef.reduce((s, e) => s + (e.priceRef as number), 0) : undefined;
+    const avgEcart =
+      withRef.length > 0
+        ? Math.round(
+            (withRef.reduce((s, e) => s + (e.ecartPercent ?? 0), 0) / withRef.length) * 10
+          ) / 10
+        : undefined;
 
     scores.push({
       retailer,
       territory,
       productCount: entries.length,
-      basketCost:   Math.round(totalCost * 100) / 100,
+      basketCost: Math.round(totalCost * 100) / 100,
       basketCostRef: totalRef !== undefined ? Math.round(totalRef * 100) / 100 : undefined,
       avgEcartPercent: avgEcart,
     });
@@ -113,14 +113,14 @@ export async function computeScoreEnseigne(): Promise<ScoreEnseigneResult> {
   }
   for (const terr of Object.keys(byTerritory)) {
     byTerritory[terr].sort((a, b) => a.basketCost - b.basketCost);
-    byTerritory[terr].forEach((s, i) => { s.rank = i + 1; });
+    byTerritory[terr].forEach((s, i) => {
+      s.rank = i + 1;
+    });
   }
 
   // Global sort by avgEcartPercent then by basketCost
   const global = [...scores].sort(
-    (a, b) =>
-      (a.avgEcartPercent ?? a.basketCost) -
-      (b.avgEcartPercent ?? b.basketCost),
+    (a, b) => (a.avgEcartPercent ?? a.basketCost) - (b.avgEcartPercent ?? b.basketCost)
   );
 
   return {

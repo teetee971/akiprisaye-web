@@ -23,7 +23,10 @@ export interface GlobalPageMetric {
   recommendedAction: string;
 }
 
-const SAMPLE_DATA: Omit<GlobalPageMetric, 'globalScore' | 'recommendedAction' | 'duplicationPotential'>[] = [
+const SAMPLE_DATA: Omit<
+  GlobalPageMetric,
+  'globalScore' | 'recommendedAction' | 'duplicationPotential'
+>[] = [
   {
     url: '/prix/coca-cola-1-5l-guadeloupe',
     pageType: 'product',
@@ -187,7 +190,7 @@ function computeGlobalScore(
   ctr: number,
   pageViews: number,
   estimatedRevenue: number,
-  authorityScore: number,
+  authorityScore: number
 ): number {
   const seoScore = Math.min(ctr * 1000, 100);
   const uxScore = Math.min(pageViews, 100);
@@ -210,10 +213,26 @@ export function aggregateGlobalMetrics(): GlobalPageMetric[] {
   let _backlinkStats: ReturnType<typeof getBacklinkStats> | null = null;
   let _croStats: ReturnType<typeof getCROStats> | null = null;
 
-  try { _seoStats = getSEOPageStats(); } catch { /* ignore */ }
-  try { _convStats = getConversionStats(); } catch { /* ignore */ }
-  try { _backlinkStats = getBacklinkStats(); } catch { /* ignore */ }
-  try { _croStats = getCROStats(); } catch { /* ignore */ }
+  try {
+    _seoStats = getSEOPageStats();
+  } catch {
+    /* ignore */
+  }
+  try {
+    _convStats = getConversionStats();
+  } catch {
+    /* ignore */
+  }
+  try {
+    _backlinkStats = getBacklinkStats();
+  } catch {
+    /* ignore */
+  }
+  try {
+    _croStats = getCROStats();
+  } catch {
+    /* ignore */
+  }
 
   // Suppress unused variable warnings – these are available for future enrichment
   void _seoStats;
@@ -226,7 +245,7 @@ export function aggregateGlobalMetrics(): GlobalPageMetric[] {
       page.ctr,
       page.pageViews,
       page.estimatedRevenue,
-      page.authorityScore,
+      page.authorityScore
     );
     return {
       ...page,

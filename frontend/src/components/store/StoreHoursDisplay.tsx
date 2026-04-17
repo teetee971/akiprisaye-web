@@ -1,15 +1,15 @@
 /**
  * StoreHoursDisplay Component
- * 
+ *
  * Displays complete store opening hours with expandable view
  * Highlights current day and shows special hours
  */
 
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, Clock } from 'lucide-react';
-import { 
-  StoreHours, 
-  formatDayHours, 
+import {
+  StoreHours,
+  formatDayHours,
   getTodayHours,
   getStoreLocalTime,
 } from '../../utils/storeHoursUtils';
@@ -44,11 +44,9 @@ export function StoreHoursDisplay({ hours, className = '' }: StoreHoursDisplayPr
   // Get current day in store's timezone
   const storeTime = getStoreLocalTime(hours.timezone);
   const currentDayIndex = storeTime.getDay(); // 0 = Sunday, 1 = Monday, etc.
-  
+
   // Convert to our day keys (lundi = 1, dimanche = 0)
-  const currentDayKey = currentDayIndex === 0 
-    ? 'dimanche' 
-    : DAYS_OF_WEEK[currentDayIndex - 1].key;
+  const currentDayKey = currentDayIndex === 0 ? 'dimanche' : DAYS_OF_WEEK[currentDayIndex - 1].key;
 
   const todayHours = getTodayHours(hours);
   const todayFormatted = todayHours ? formatDayHours(todayHours) : 'Fermé';
@@ -59,12 +57,8 @@ export function StoreHoursDisplay({ hours, className = '' }: StoreHoursDisplayPr
       <div className="flex items-start gap-2 mb-2">
         <Clock className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
         <div className="flex-1">
-          <div className="text-sm font-semibold text-gray-900">
-            Horaires aujourd'hui
-          </div>
-          <div className="text-base font-medium text-gray-700">
-            {todayFormatted}
-          </div>
+          <div className="text-sm font-semibold text-gray-900">Horaires aujourd'hui</div>
+          <div className="text-base font-medium text-gray-700">{todayFormatted}</div>
         </div>
       </div>
 
@@ -85,7 +79,7 @@ export function StoreHoursDisplay({ hours, className = '' }: StoreHoursDisplayPr
 
       {/* Full Week Hours - Expandable */}
       {isExpanded && (
-        <div 
+        <div
           id="full-hours-display"
           className="mt-3 space-y-2 border-t pt-3"
           role="region"
@@ -104,12 +98,8 @@ export function StoreHoursDisplay({ hours, className = '' }: StoreHoursDisplayPr
                 }`}
                 aria-current={isToday ? 'true' : undefined}
               >
-                <span className={isToday ? 'text-blue-900' : 'text-gray-700'}>
-                  {day.label}
-                </span>
-                <span className={isToday ? 'text-blue-800' : 'text-gray-600'}>
-                  {formatted}
-                </span>
+                <span className={isToday ? 'text-blue-900' : 'text-gray-700'}>{day.label}</span>
+                <span className={isToday ? 'text-blue-800' : 'text-gray-600'}>{formatted}</span>
               </div>
             );
           })}
@@ -121,7 +111,7 @@ export function StoreHoursDisplay({ hours, className = '' }: StoreHoursDisplayPr
               <ul className="space-y-1">
                 {hours.specialHours.slice(0, 3).map((special) => (
                   <li key={special.date}>
-                    {new Date(special.date).toLocaleDateString('fr-FR', { 
+                    {new Date(special.date).toLocaleDateString('fr-FR', {
                       day: 'numeric',
                       month: 'long',
                     })}

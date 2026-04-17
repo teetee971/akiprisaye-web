@@ -1,4 +1,3 @@
- 
 /**
  * Language Selector Component
  * Allows users to select their preferred language
@@ -14,45 +13,45 @@ interface LanguageSelectorProps {
   onChange?: (language: Language) => void;
 }
 
-export function LanguageSelector({ 
+export function LanguageSelector({
   variant = 'dropdown',
   showNative = true,
-  onChange 
+  onChange,
 }: LanguageSelectorProps) {
   const { i18n, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
-  const currentLang = LANGUAGES.find(l => l.code === i18n.language) || LANGUAGES[0];
-  
+
+  const currentLang = LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-  
+
   const changeLanguage = async (lang: Language) => {
     await i18n.changeLanguage(lang.code);
     localStorage.setItem('akiprisaye-language', lang.code);
     setIsOpen(false);
     onChange?.(lang);
   };
-  
+
   if (variant === 'list') {
     return (
       <div className="language-list space-y-2">
         <h3 className="font-semibold mb-4">{t('language.select')}</h3>
-        {LANGUAGES.map(lang => (
+        {LANGUAGES.map((lang) => (
           <button
             key={lang.code}
             className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
-              lang.code === i18n.language 
-                ? 'bg-blue-100 dark:bg-blue-900 border-2 border-blue-500' 
+              lang.code === i18n.language
+                ? 'bg-blue-100 dark:bg-blue-900 border-2 border-blue-500'
                 : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}
             onClick={() => changeLanguage(lang)}
@@ -66,18 +65,16 @@ export function LanguageSelector({
                 )}
               </div>
             </div>
-            {lang.code === i18n.language && (
-              <span className="text-blue-500 text-xl">✓</span>
-            )}
+            {lang.code === i18n.language && <span className="text-blue-500 text-xl">✓</span>}
           </button>
         ))}
       </div>
     );
   }
-  
+
   if (variant === 'compact') {
     return (
-      <button 
+      <button
         className="language-compact p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
         aria-label={t('language.select')}
@@ -86,10 +83,10 @@ export function LanguageSelector({
       </button>
     );
   }
-  
+
   return (
     <div className="language-selector relative" ref={dropdownRef}>
-      <button 
+      <button
         className="language-trigger flex items-center gap-2 px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
@@ -99,21 +96,21 @@ export function LanguageSelector({
         <span className="font-medium">{currentLang.code.toUpperCase()}</span>
         <span className="text-sm">{isOpen ? '▲' : '▼'}</span>
       </button>
-      
+
       {isOpen && (
-        <div 
+        <div
           className="language-dropdown absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
           role="listbox"
           aria-label="Sélectionner une langue"
         >
-          {LANGUAGES.map(lang => (
+          {LANGUAGES.map((lang) => (
             <button
               key={lang.code}
               role="option"
               aria-selected={lang.code === i18n.language}
               className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${
-                lang.code === i18n.language 
-                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+                lang.code === i18n.language
+                  ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
                   : 'hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
               onClick={() => changeLanguage(lang)}

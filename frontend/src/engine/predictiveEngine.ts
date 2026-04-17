@@ -50,10 +50,10 @@ export interface PredictiveProduct {
 
 // ── Weights ───────────────────────────────────────────────────────────────────
 
-const W_DELTA      = 0.35;
-const W_TREND      = 0.30;
-const W_RECENCY    = 0.20;
-const W_REPEAT     = 0.15;
+const W_DELTA = 0.35;
+const W_TREND = 0.3;
+const W_RECENCY = 0.2;
+const W_REPEAT = 0.15;
 
 // ── Core scoring ──────────────────────────────────────────────────────────────
 
@@ -70,17 +70,14 @@ const W_REPEAT     = 0.15;
  * );
  * // → 0.36×0.35 + 80×0.30 + 90×0.20 + 60×0.15 = ~51.1 (before cap)
  */
-export function computePredictiveScore(
-  product: { delta: number },
-  stats: PredictiveStats,
-): number {
+export function computePredictiveScore(product: { delta: number }, stats: PredictiveStats): number {
   // delta is in EUR (e.g. 0.36); we scale it to 0–100 assuming max useful delta = 5 €
   const deltaScore = Math.min(100, (product.delta / 5) * 100);
 
   const raw =
-    deltaScore              * W_DELTA  +
-    stats.clickTrend        * W_TREND  +
-    stats.recency           * W_RECENCY +
+    deltaScore * W_DELTA +
+    stats.clickTrend * W_TREND +
+    stats.recency * W_RECENCY +
     stats.repeatUserInterest * W_REPEAT;
 
   return Math.min(100, Math.max(0, Math.round(raw)));
@@ -94,11 +91,11 @@ export function computePredictiveScore(
  *   0 → older than 7 days
  */
 export function computeRecencyScore(lastUpdatedAt: string | number): number {
-  const ts  = typeof lastUpdatedAt === 'string' ? Date.parse(lastUpdatedAt) : lastUpdatedAt;
+  const ts = typeof lastUpdatedAt === 'string' ? Date.parse(lastUpdatedAt) : lastUpdatedAt;
   if (!ts || Number.isNaN(ts)) return 0;
 
-  const ageMs      = Date.now() - ts;
-  const maxAgeMs   = 7 * 24 * 60 * 60 * 1000; // 7 days
+  const ageMs = Date.now() - ts;
+  const maxAgeMs = 7 * 24 * 60 * 60 * 1000; // 7 days
   const normalized = Math.max(0, 1 - ageMs / maxAgeMs);
 
   return Math.round(normalized * 100);
@@ -112,11 +109,11 @@ export function computeRecencyScore(lastUpdatedAt: string | number): number {
  */
 export function rankPredictively(
   products: { name: string; delta: number; score?: number; [k: string]: unknown }[],
-  statsMap: Map<string, PredictiveStats>,
+  statsMap: Map<string, PredictiveStats>
 ): PredictiveProduct[] {
   return products
     .map((p) => {
-      const key   = p.name.toLowerCase().trim();
+      const key = p.name.toLowerCase().trim();
       const stats = statsMap.get(key) ?? { clickTrend: 50, recency: 50, repeatUserInterest: 0 };
 
       return {
@@ -142,18 +139,17 @@ export function buildStatsMap(
   products: { name: string; lastUpdatedAt?: string | number }[],
   clickTrendMap: Map<string, number> = new Map(),
   repeatUserMap: Map<string, number> = new Map(),
-  maxRepeatUsers = 1,
+  maxRepeatUsers = 1
 ): Map<string, PredictiveStats> {
   const map = new Map<string, PredictiveStats>();
 
   for (const p of products) {
-    const key      = p.name.toLowerCase().trim();
-    const trend    = clickTrendMap.get(key) ?? 50;
-    const recency  = p.lastUpdatedAt ? computeRecencyScore(p.lastUpdatedAt) : 50;
+    const key = p.name.toLowerCase().trim();
+    const trend = clickTrendMap.get(key) ?? 50;
+    const recency = p.lastUpdatedAt ? computeRecencyScore(p.lastUpdatedAt) : 50;
     const rawRepeat = repeatUserMap.get(key) ?? 0;
-    const repeatUserInterest = maxRepeatUsers > 0
-      ? Math.round((rawRepeat / maxRepeatUsers) * 100)
-      : 0;
+    const repeatUserInterest =
+      maxRepeatUsers > 0 ? Math.round((rawRepeat / maxRepeatUsers) * 100) : 0;
 
     map.set(key, { clickTrend: trend, recency, repeatUserInterest });
   }

@@ -1,8 +1,6 @@
- 
- 
 /**
  * Haptic Feedback Service - v1.0.0
- * 
+ *
  * Gère les retours haptiques (vibrations) et audio pour les scans
  * Améliore l'expérience utilisateur avec des feedbacks sensoriels
  */
@@ -16,19 +14,19 @@ import { safeLocalStorage } from '../utils/safeLocalStorage';
 export const HAPTIC_PATTERNS = {
   // Vibration courte pour détection
   detection: [50] as number[],
-  
+
   // Double vibration pour succès
   success: [100, 50, 50] as number[],
-  
+
   // Vibration longue pour erreur
   error: [200] as number[],
-  
+
   // Vibration légère pour feedback général
   light: [25] as number[],
-  
+
   // Vibration moyenne
   medium: [50] as number[],
-  
+
   // Vibration forte
   strong: [100] as number[],
 } as const;
@@ -53,7 +51,7 @@ export interface FeedbackConfig {
 class FeedbackService {
   private config: FeedbackConfig;
   private audioContext: AudioContext | null = null;
-  
+
   constructor() {
     // Charger config depuis safeLocalStorage ou utiliser valeurs par défaut
     this.config = safeLocalStorage.getJSON<FeedbackConfig>('feedbackConfig', {
@@ -99,7 +97,7 @@ class FeedbackService {
     }
 
     const vibrationPattern = typeof pattern === 'string' ? HAPTIC_PATTERNS[pattern] : pattern;
-    
+
     try {
       navigator.vibrate(vibrationPattern);
       if (import.meta.env.DEV) {
@@ -126,7 +124,7 @@ class FeedbackService {
    */
   playBeep(frequency: number = 1000, duration: number = 100): void {
     if (!this.config.audioEnabled) return;
-    
+
     try {
       this.initAudioContext();
       if (!this.audioContext) return;
@@ -162,7 +160,7 @@ class FeedbackService {
    */
   playSuccess(): void {
     if (!this.config.audioEnabled) return;
-    
+
     this.playBeep(800, 80);
     setTimeout(() => this.playBeep(1200, 120), 100);
   }
@@ -172,7 +170,7 @@ class FeedbackService {
    */
   playError(): void {
     if (!this.config.audioEnabled) return;
-    
+
     this.playBeep(400, 200);
   }
 
@@ -181,7 +179,7 @@ class FeedbackService {
    */
   playClick(): void {
     if (!this.config.audioEnabled) return;
-    
+
     this.playBeep(600, 30);
   }
 

@@ -1,351 +1,362 @@
- 
 // src/pages/ScanEAN.tsx
-import React, { useState, useCallback, useEffect } from 'react'
-import { useSearchParams, useNavigate, Link } from 'react-router-dom'
-import { useEANScanner } from '../hooks/useEANScanner'
-import { useEANResolver } from '../hooks/useEANResolver'
-import { useScanHistory } from '../hooks/useScanHistory'
-import { useOptionalScanFlow } from '../context/ScanFlowContext'
-import { validateEAN, getAllProducts } from '../services/eanPublicCatalog'
-import { runOCR, GENERIC_OCR_ERROR } from '../services/ocrService'
-import { extractProductHints, fuzzySearchProducts } from '../services/textProductRecognition'
-import ScanCamera from '../components/ScanCamera'
-import ScanResultCard from '../components/ScanResultCard'
-import ScanErrorState from '../components/ScanErrorState'
-import AddToTiPanierButton from '../components/AddToTiPanierButton'
-import { ProductTextReviewModal } from '../components/ProductTextReviewModal'
-import { GlassCard } from '../components/ui/glass-card'
-import { getShoppingListCount } from '../store/useShoppingListStore'
-import type { ScannedProductContext } from '../types/scanFlow'
+import React, { useState, useCallback, useEffect } from 'react';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useEANScanner } from '../hooks/useEANScanner';
+import { useEANResolver } from '../hooks/useEANResolver';
+import { useScanHistory } from '../hooks/useScanHistory';
+import { useOptionalScanFlow } from '../context/ScanFlowContext';
+import { validateEAN, getAllProducts } from '../services/eanPublicCatalog';
+import { runOCR, GENERIC_OCR_ERROR } from '../services/ocrService';
+import { extractProductHints, fuzzySearchProducts } from '../services/textProductRecognition';
+import ScanCamera from '../components/ScanCamera';
+import ScanResultCard from '../components/ScanResultCard';
+import ScanErrorState from '../components/ScanErrorState';
+import AddToTiPanierButton from '../components/AddToTiPanierButton';
+import { ProductTextReviewModal } from '../components/ProductTextReviewModal';
+import { GlassCard } from '../components/ui/glass-card';
+import { getShoppingListCount } from '../store/useShoppingListStore';
+import type { ScannedProductContext } from '../types/scanFlow';
 
 export default function ScanEAN() {
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
-  const isUnifiedFlow = searchParams.get('flow') === 'unified'
-  const isPhotoMode = searchParams.get('mode') === 'photo'
-  
-  const [manualEAN, setManualEAN] = useState('')
-  const [manualError, setManualError] = useState<string | null>(null)
-  const [isPastingEAN, setIsPastingEAN] = useState(false)
-  const [offlineQueue, setOfflineQueue] = useState<Array<{ ean: string; queuedAt: string }>>([])
-  const [offlineQueueMessage, setOfflineQueueMessage] = useState<string | null>(null)
-  const [showHistory, setShowHistory] = useState(false)
-  const [imageUploadStatus, setImageUploadStatus] = useState<string | null>(null)
-  const [isProcessingImage, setIsProcessingImage] = useState(false)
-  const [textProductSuggestions, setTextProductSuggestions] = useState<Array<{ label: string; score: number }>>([])
-  const [showTextProductModal, setShowTextProductModal] = useState(false)
-  const [shoppingListCount, setShoppingListCount] = useState(() => getShoppingListCount())
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const isUnifiedFlow = searchParams.get('flow') === 'unified';
+  const isPhotoMode = searchParams.get('mode') === 'photo';
 
-  const scanner = useEANScanner()
-  const resolver = useEANResolver()
-  const { history, addToHistory, removeFromHistory, clearHistory } = useScanHistory()
-  const scanFlow = useOptionalScanFlow()
-  
+  const [manualEAN, setManualEAN] = useState('');
+  const [manualError, setManualError] = useState<string | null>(null);
+  const [isPastingEAN, setIsPastingEAN] = useState(false);
+  const [offlineQueue, setOfflineQueue] = useState<Array<{ ean: string; queuedAt: string }>>([]);
+  const [offlineQueueMessage, setOfflineQueueMessage] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [imageUploadStatus, setImageUploadStatus] = useState<string | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const [textProductSuggestions, setTextProductSuggestions] = useState<
+    Array<{ label: string; score: number }>
+  >([]);
+  const [showTextProductModal, setShowTextProductModal] = useState(false);
+  const [shoppingListCount, setShoppingListCount] = useState(() => getShoppingListCount());
+
+  const scanner = useEANScanner();
+  const resolver = useEANResolver();
+  const { history, addToHistory, removeFromHistory, clearHistory } = useScanHistory();
+  const scanFlow = useOptionalScanFlow();
+
   // Cache product catalog to avoid repeated calls
-  const productCatalog = React.useMemo(() => getAllProducts().map(p => ({ label: p.name, ean: p.ean })), [])
+  const productCatalog = React.useMemo(
+    () => getAllProducts().map((p) => ({ label: p.name, ean: p.ean })),
+    []
+  );
 
   useEffect(() => {
-    const syncCount = () => setShoppingListCount(getShoppingListCount())
-    window.addEventListener('storage', syncCount)
-    window.addEventListener('focus', syncCount)
-    window.addEventListener('akiprisaye:shopping-list-updated', syncCount as EventListener)
+    const syncCount = () => setShoppingListCount(getShoppingListCount());
+    window.addEventListener('storage', syncCount);
+    window.addEventListener('focus', syncCount);
+    window.addEventListener('akiprisaye:shopping-list-updated', syncCount as EventListener);
     return () => {
-      window.removeEventListener('storage', syncCount)
-      window.removeEventListener('focus', syncCount)
-      window.removeEventListener('akiprisaye:shopping-list-updated', syncCount as EventListener)
-    }
-  }, [])
+      window.removeEventListener('storage', syncCount);
+      window.removeEventListener('focus', syncCount);
+      window.removeEventListener('akiprisaye:shopping-list-updated', syncCount as EventListener);
+    };
+  }, []);
 
   /**
    * Unified EAN handler - Single source of truth
    * Handles EAN from: camera, image upload, manual input
    * Note: Validation errors should be handled by the caller before calling this function
-   * 
+   *
    * If in unified flow, updates the scan context and redirects to comparator
    */
-  const handleEAN = useCallback(async (ean: string) => {
-    // Validate EAN (already validated by caller for manual input)
-    if (!validateEAN(ean)) {
-      return
-    }
-
-    // Resolve EAN - fetch product and prices
-    await resolver.resolveEAN(ean)
-    
-    // Add to history if product found
-    if (resolver.product) {
-      addToHistory({
-        ean,
-        productName: resolver.product.name,
-      })
-    }
-
-    // If in unified flow, update scan context and redirect to comparator
-    if (isUnifiedFlow && scanFlow && resolver.product) {
-      const scannedContext: ScannedProductContext = {
-        source: isPhotoMode ? 'photo' : 'ean',
-        ean,
-        productName: resolver.product.name,
-        confidenceScore: isPhotoMode ? 75 : 95, // Photo mode has lower confidence
-        timestamp: new Date(),
+  const handleEAN = useCallback(
+    async (ean: string) => {
+      // Validate EAN (already validated by caller for manual input)
+      if (!validateEAN(ean)) {
+        return;
       }
 
-      scanFlow.updateScannedProduct(scannedContext)
-      scanFlow.nextStep() // Move to understanding
-      
-      // Short delay before moving to comparison (for UX)
-      setTimeout(() => {
-        scanFlow.nextStep() // Move to comparison (will auto-redirect)
-      }, 500)
-    }
-  }, [resolver, addToHistory, isUnifiedFlow, isPhotoMode, scanFlow])
+      // Resolve EAN - fetch product and prices
+      await resolver.resolveEAN(ean);
+
+      // Add to history if product found
+      if (resolver.product) {
+        addToHistory({
+          ean,
+          productName: resolver.product.name,
+        });
+      }
+
+      // If in unified flow, update scan context and redirect to comparator
+      if (isUnifiedFlow && scanFlow && resolver.product) {
+        const scannedContext: ScannedProductContext = {
+          source: isPhotoMode ? 'photo' : 'ean',
+          ean,
+          productName: resolver.product.name,
+          confidenceScore: isPhotoMode ? 75 : 95, // Photo mode has lower confidence
+          timestamp: new Date(),
+        };
+
+        scanFlow.updateScannedProduct(scannedContext);
+        scanFlow.nextStep(); // Move to understanding
+
+        // Short delay before moving to comparison (for UX)
+        setTimeout(() => {
+          scanFlow.nextStep(); // Move to comparison (will auto-redirect)
+        }, 500);
+      }
+    },
+    [resolver, addToHistory, isUnifiedFlow, isPhotoMode, scanFlow]
+  );
 
   useEffect(() => {
     try {
-      const storedQueue = JSON.parse(localStorage.getItem('offlineEANQueue') || '[]')
-      setOfflineQueue(Array.isArray(storedQueue) ? storedQueue : [])
+      const storedQueue = JSON.parse(localStorage.getItem('offlineEANQueue') || '[]');
+      setOfflineQueue(Array.isArray(storedQueue) ? storedQueue : []);
     } catch (error) {
-      console.error('Failed to read offline EAN queue:', error)
+      console.error('Failed to read offline EAN queue:', error);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem('offlineEANQueue', JSON.stringify(offlineQueue))
-  }, [offlineQueue])
+    localStorage.setItem('offlineEANQueue', JSON.stringify(offlineQueue));
+  }, [offlineQueue]);
 
   // Handle manual EAN search
   const handleManualSearch = async () => {
-    setManualError(null)
-    setOfflineQueueMessage(null)
+    setManualError(null);
+    setOfflineQueueMessage(null);
 
     if (!manualEAN.trim()) {
-      setManualError('Veuillez saisir un code EAN')
-      return
+      setManualError('Veuillez saisir un code EAN');
+      return;
     }
 
     // Validate before calling handleEAN
     if (!validateEAN(manualEAN.trim())) {
-      setManualError('Code EAN invalide (vérifiez la longueur et le checksum)')
-      return
+      setManualError('Code EAN invalide (vérifiez la longueur et le checksum)');
+      return;
     }
 
     if (!navigator.onLine) {
-      const queuedItem = { ean: manualEAN.trim(), queuedAt: new Date().toISOString() }
-      setOfflineQueue((prev) => [...prev, queuedItem])
-      setOfflineQueueMessage('📥 Vous êtes hors ligne. Recherche ajoutée à la file d’attente.')
-      return
+      const queuedItem = { ean: manualEAN.trim(), queuedAt: new Date().toISOString() };
+      setOfflineQueue((prev) => [...prev, queuedItem]);
+      setOfflineQueueMessage('📥 Vous êtes hors ligne. Recherche ajoutée à la file d’attente.');
+      return;
     }
 
-    await handleEAN(manualEAN.trim())
-  }
+    await handleEAN(manualEAN.trim());
+  };
 
   const handleProcessOfflineQueue = async () => {
-    if (!navigator.onLine || offlineQueue.length === 0) return
-    setOfflineQueueMessage('🔄 Traitement des recherches en attente...')
+    if (!navigator.onLine || offlineQueue.length === 0) return;
+    setOfflineQueueMessage('🔄 Traitement des recherches en attente...');
     for (const item of offlineQueue) {
-      await handleEAN(item.ean)
+      await handleEAN(item.ean);
     }
-    setOfflineQueue([])
-    setOfflineQueueMessage('✅ Recherches en attente traitées.')
-    setTimeout(() => setOfflineQueueMessage(null), 3000)
-  }
+    setOfflineQueue([]);
+    setOfflineQueueMessage('✅ Recherches en attente traitées.');
+    setTimeout(() => setOfflineQueueMessage(null), 3000);
+  };
 
   const handlePasteFromClipboard = async () => {
-    setManualError(null)
-    setIsPastingEAN(true)
+    setManualError(null);
+    setIsPastingEAN(true);
 
     try {
-      const clipboardText = await navigator.clipboard.readText()
-      const digits = clipboardText.replace(/\D/g, '').slice(0, 13)
+      const clipboardText = await navigator.clipboard.readText();
+      const digits = clipboardText.replace(/\D/g, '').slice(0, 13);
 
       if (!digits) {
-        setManualError('Aucun code EAN trouvé dans le presse-papiers')
-        return
+        setManualError('Aucun code EAN trouvé dans le presse-papiers');
+        return;
       }
 
-      setManualEAN(digits)
+      setManualEAN(digits);
     } catch (error) {
-      console.error('Clipboard read error:', error)
-      setManualError('Accès au presse-papiers refusé ou indisponible')
+      console.error('Clipboard read error:', error);
+      setManualError('Accès au presse-papiers refusé ou indisponible');
     } finally {
-      setIsPastingEAN(false)
+      setIsPastingEAN(false);
     }
-  }
+  };
 
-  const manualEANLength = manualEAN.trim().length
-  const isManualEANLengthValid = manualEANLength === 8 || manualEANLength === 13
-  const isManualEANValid = isManualEANLengthValid && validateEAN(manualEAN.trim())
-  const canSubmitManual = manualEAN.trim().length > 0 && isManualEANValid && !resolver.loading
-  const recentHistory = history.slice(0, 2)
-  const lastHistoryEntry = history[0]
+  const manualEANLength = manualEAN.trim().length;
+  const isManualEANLengthValid = manualEANLength === 8 || manualEANLength === 13;
+  const isManualEANValid = isManualEANLengthValid && validateEAN(manualEAN.trim());
+  const canSubmitManual = manualEAN.trim().length > 0 && isManualEANValid && !resolver.loading;
+  const recentHistory = history.slice(0, 2);
+  const lastHistoryEntry = history[0];
   const matchedCatalogProduct = manualEAN.trim()
     ? productCatalog.find((product) => product.ean === manualEAN.trim())
-    : null
+    : null;
 
   // Handle camera detection
   const handleCameraDetection = async (ean: string) => {
-    scanner.setDetectedEAN(ean)
-    await handleEAN(ean)
-  }
+    scanner.setDetectedEAN(ean);
+    await handleEAN(ean);
+  };
 
   /**
    * Separate image pipeline - independent from camera
    * Includes OCR fallback with unified runOCR API
    */
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    setImageUploadStatus('🔍 Analyse de l\'image en cours...')
-    setIsProcessingImage(true)
+    setImageUploadStatus("🔍 Analyse de l'image en cours...");
+    setIsProcessingImage(true);
 
-    let objectUrl: string | null = null
+    let objectUrl: string | null = null;
 
     try {
-      objectUrl = URL.createObjectURL(file)
+      objectUrl = URL.createObjectURL(file);
 
       // Step 1: Load image properly
-      const img = new Image()
-      img.src = objectUrl
+      const img = new Image();
+      img.src = objectUrl;
 
       await new Promise<void>((resolve, reject) => {
-        img.onload = () => resolve()
-        img.onerror = () => reject(new Error('Failed to load image'))
-      })
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error('Failed to load image'));
+      });
 
-      await img.decode()
+      await img.decode();
 
-      let ean: string | null = null
+      let ean: string | null = null;
 
       // Step 2: Try native BarcodeDetector (if available)
       if ('BarcodeDetector' in window) {
         try {
           const detector = new (window as any).BarcodeDetector({
-            formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e']
-          })
-          const codes = await detector.detect(img)
+            formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'],
+          });
+          const codes = await detector.detect(img);
 
           if (codes.length > 0) {
-            ean = codes[0].rawValue
-            if (import.meta.env.DEV) console.log('✅ Barcode detected with BarcodeDetector:', ean)
+            ean = codes[0].rawValue;
+            if (import.meta.env.DEV) console.log('✅ Barcode detected with BarcodeDetector:', ean);
           }
         } catch (err) {
-          if (import.meta.env.DEV) console.log('BarcodeDetector failed, trying other methods')
+          if (import.meta.env.DEV) console.log('BarcodeDetector failed, trying other methods');
         }
       }
 
       // Step 3: OCR Fallback with unified runOCR API (INDISPENSABLE)
       let ocrText = '';
       if (!ean) {
-        setImageUploadStatus('📝 Détection OCR en cours...')
-        
+        setImageUploadStatus('📝 Détection OCR en cours...');
+
         const ocrResult = await runOCR(objectUrl);
         if (!ocrResult.success) {
           const ocrError = ocrResult.error ?? GENERIC_OCR_ERROR;
           throw new Error(ocrError);
         }
         ocrText = ocrResult.rawText;
-        if (import.meta.env.DEV) console.log('OCR raw text:', ocrText)
+        if (import.meta.env.DEV) console.log('OCR raw text:', ocrText);
 
         // Look for EAN-13 (13 digits) or EAN-8 (8 digits)
-        const match = ocrText.match(/\b\d{13}\b|\b\d{8}\b/)
+        const match = ocrText.match(/\b\d{13}\b|\b\d{8}\b/);
         if (match) {
-          ean = match[0]
-          if (import.meta.env.DEV) console.log('✅ EAN detected via OCR:', ean)
+          ean = match[0];
+          if (import.meta.env.DEV) console.log('✅ EAN detected via OCR:', ean);
         }
       }
 
       // Step 4: Handle result
       if (ean) {
         // SUCCESS CASE - EAN found
-        setImageUploadStatus(`✅ Code détecté automatiquement: ${ean}`)
-        setTimeout(() => setImageUploadStatus(null), 3000)
-        
+        setImageUploadStatus(`✅ Code détecté automatiquement: ${ean}`);
+        setTimeout(() => setImageUploadStatus(null), 3000);
+
         try {
-          await handleEAN(ean)
+          await handleEAN(ean);
         } finally {
-          setIsProcessingImage(false)
+          setIsProcessingImage(false);
         }
       } else {
         // FAILURE CASE - No EAN found, try text-based product recognition (PR D)
-        setImageUploadStatus('🔍 Code EAN non trouvé, recherche par texte...')
-        
+        setImageUploadStatus('🔍 Code EAN non trouvé, recherche par texte...');
+
         try {
           // Extract product hints from OCR text
-          const hints = extractProductHints(ocrText)
-          
+          const hints = extractProductHints(ocrText);
+
           // Fuzzy search for suggestions using cached catalog
-          const suggestions = fuzzySearchProducts(hints.keywords, productCatalog)
-          
+          const suggestions = fuzzySearchProducts(hints.keywords, productCatalog);
+
           if (suggestions.length > 0) {
             // Show modal for user validation
-            setTextProductSuggestions(suggestions)
-            setShowTextProductModal(true)
-            setImageUploadStatus('✅ Produits suggérés - Veuillez confirmer')
+            setTextProductSuggestions(suggestions);
+            setShowTextProductModal(true);
+            setImageUploadStatus('✅ Produits suggérés - Veuillez confirmer');
           } else {
-            setImageUploadStatus('❌ Aucun code détecté automatiquement. 👉 Vous pouvez saisir le code manuellement.')
+            setImageUploadStatus(
+              '❌ Aucun code détecté automatiquement. 👉 Vous pouvez saisir le code manuellement.'
+            );
           }
         } catch (textError) {
-          console.error('Text product recognition error:', textError)
-          setImageUploadStatus('❌ Aucun code détecté automatiquement. 👉 Vous pouvez saisir le code manuellement.')
+          console.error('Text product recognition error:', textError);
+          setImageUploadStatus(
+            '❌ Aucun code détecté automatiquement. 👉 Vous pouvez saisir le code manuellement.'
+          );
         }
-        
-        setIsProcessingImage(false)
+
+        setIsProcessingImage(false);
       }
     } catch (err) {
-      console.error('Image processing error:', err)
-      setImageUploadStatus('❌ Erreur lors du traitement de l\'image')
-      setIsProcessingImage(false)
+      console.error('Image processing error:', err);
+      setImageUploadStatus("❌ Erreur lors du traitement de l'image");
+      setIsProcessingImage(false);
     } finally {
       // ✅ Nettoyage mémoire garanti
       if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
+        URL.revokeObjectURL(objectUrl);
       }
     }
-  }
+  };
 
   /**
    * Handle text product confirmation from modal
    * User has validated a suggested product
    */
   const handleTextProductConfirm = async (productLabel: string) => {
-    setShowTextProductModal(false)
-    setImageUploadStatus(`✅ Recherche de "${productLabel}"...`)
-    
+    setShowTextProductModal(false);
+    setImageUploadStatus(`✅ Recherche de "${productLabel}"...`);
+
     // Find the product by name in cached catalog
-    const product = productCatalog.find(p => p.label === productLabel)
-    
+    const product = productCatalog.find((p) => p.label === productLabel);
+
     if (product && product.ean) {
       // Launch comparator with the confirmed product's EAN
-      await handleEAN(product.ean)
-      setImageUploadStatus(null)
+      await handleEAN(product.ean);
+      setImageUploadStatus(null);
     } else {
-      setImageUploadStatus('❌ Produit non trouvé dans le catalogue')
-      setTimeout(() => setImageUploadStatus(null), 3000)
+      setImageUploadStatus('❌ Produit non trouvé dans le catalogue');
+      setTimeout(() => setImageUploadStatus(null), 3000);
     }
-  }
+  };
 
   /**
    * Handle text product modal cancellation
    */
   const handleTextProductCancel = () => {
-    setShowTextProductModal(false)
-    setTextProductSuggestions([])
-    setImageUploadStatus('❌ Recherche annulée - Utilisez la saisie manuelle')
-    setTimeout(() => setImageUploadStatus(null), 3000)
-  }
+    setShowTextProductModal(false);
+    setTextProductSuggestions([]);
+    setImageUploadStatus('❌ Recherche annulée - Utilisez la saisie manuelle');
+    setTimeout(() => setImageUploadStatus(null), 3000);
+  };
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-4xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-4">Scanner EAN</h1>
-        
+
         {/* Avertissement obligatoire */}
         <div className="p-4 bg-blue-500/20 border border-blue-500/50 rounded-lg text-sm text-blue-200 mb-6">
           <strong>ℹ️ Information</strong>
           <p className="mt-2">
-            Le scan permet d'identifier un produit à partir de son code EAN.
-            Les informations affichées reposent uniquement sur des données observées ou publiques disponibles.
+            Le scan permet d'identifier un produit à partir de son code EAN. Les informations
+            affichées reposent uniquement sur des données observées ou publiques disponibles.
           </p>
         </div>
       </div>
@@ -393,13 +404,15 @@ export default function ScanEAN() {
             </div>
 
             {imageUploadStatus && (
-              <div className={`p-3 rounded-lg text-sm ${
-                imageUploadStatus.includes('✅') 
-                  ? 'bg-green-500/20 border border-green-500/50 text-green-300'
-                  : imageUploadStatus.includes('❌')
-                  ? 'bg-yellow-500/20 border border-yellow-500/50 text-yellow-300'
-                  : 'bg-blue-500/20 border border-blue-500/50 text-blue-300'
-              }`}>
+              <div
+                className={`p-3 rounded-lg text-sm ${
+                  imageUploadStatus.includes('✅')
+                    ? 'bg-green-500/20 border border-green-500/50 text-green-300'
+                    : imageUploadStatus.includes('❌')
+                      ? 'bg-yellow-500/20 border border-yellow-500/50 text-yellow-300'
+                      : 'bg-blue-500/20 border border-blue-500/50 text-blue-300'
+                }`}
+              >
                 {imageUploadStatus}
               </div>
             )}
@@ -424,17 +437,17 @@ export default function ScanEAN() {
                 pattern="[0-9]*"
                 value={manualEAN}
                 onChange={(e) => {
-                  setManualEAN(e.target.value.replace(/\D/g, ''))
-                  setManualError(null)
+                  setManualEAN(e.target.value.replace(/\D/g, ''));
+                  setManualError(null);
                 }}
                 onBlur={() => {
                   if (manualEAN.trim() && !isManualEANValid) {
-                    setManualError('Code EAN invalide (vérifiez la longueur et le checksum)')
+                    setManualError('Code EAN invalide (vérifiez la longueur et le checksum)');
                   }
                 }}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
-                    handleManualSearch()
+                    handleManualSearch();
                   }
                 }}
                 placeholder="3017620422003"
@@ -452,15 +465,15 @@ export default function ScanEAN() {
                       isManualEANValid
                         ? 'bg-green-500/20 text-green-300 border border-green-500/40'
                         : isManualEANLengthValid
-                        ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'
-                        : 'bg-white/10 text-white/60 border border-white/20'
+                          ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'
+                          : 'bg-white/10 text-white/60 border border-white/20'
                     }`}
                   >
                     {isManualEANValid
                       ? 'EAN valide'
                       : isManualEANLengthValid
-                      ? 'Vérifiez le checksum'
-                      : 'Saisissez 8 ou 13 chiffres'}
+                        ? 'Vérifiez le checksum'
+                        : 'Saisissez 8 ou 13 chiffres'}
                   </span>
                 )}
               </div>
@@ -484,8 +497,8 @@ export default function ScanEAN() {
               <button
                 type="button"
                 onClick={() => {
-                  setManualEAN('')
-                  setManualError(null)
+                  setManualEAN('');
+                  setManualError(null);
                 }}
                 disabled={!manualEAN}
                 className="w-full px-4 py-2 text-sm bg-white/[0.08] hover:bg-white/[0.12] disabled:bg-white/[0.06] disabled:cursor-not-allowed text-white rounded-lg transition-colors"
@@ -498,8 +511,8 @@ export default function ScanEAN() {
               <button
                 type="button"
                 onClick={() => {
-                  setManualEAN(lastHistoryEntry.ean)
-                  setManualError(null)
+                  setManualEAN(lastHistoryEntry.ean);
+                  setManualError(null);
                 }}
                 className="w-full px-4 py-2 text-xs bg-white/[0.08] hover:bg-white/[0.12] text-white/90 rounded-lg transition-colors"
                 aria-label="Pré-remplir avec le dernier EAN scanné"
@@ -516,8 +529,8 @@ export default function ScanEAN() {
                       key={entry.ean}
                       type="button"
                       onClick={() => {
-                        setManualEAN(entry.ean)
-                        setManualError(null)
+                        setManualEAN(entry.ean);
+                        setManualError(null);
                       }}
                       className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/80 hover:border-white/30 hover:bg-white/10 transition-colors"
                       aria-label={`Réutiliser le code ${entry.ean}`}
@@ -532,10 +545,13 @@ export default function ScanEAN() {
               <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3 text-xs text-white/70">
                 {matchedCatalogProduct ? (
                   <div>
-                    ✅ Produit reconnu : <span className="text-white">{matchedCatalogProduct.label}</span>
+                    ✅ Produit reconnu :{' '}
+                    <span className="text-white">{matchedCatalogProduct.label}</span>
                   </div>
                 ) : (
-                  <div>🔎 Aucun produit connu trouvé pour cet EAN (vous pouvez tenter la recherche).</div>
+                  <div>
+                    🔎 Aucun produit connu trouvé pour cet EAN (vous pouvez tenter la recherche).
+                  </div>
                 )}
               </div>
             )}
@@ -568,7 +584,8 @@ export default function ScanEAN() {
               {resolver.loading ? '🔍 Recherche...' : '🔍 Rechercher'}
             </button>
             <div className="text-xs text-white/60">
-              💡 Astuce : vous pouvez coller un code EAN depuis votre presse-papiers pour gagner du temps.
+              💡 Astuce : vous pouvez coller un code EAN depuis votre presse-papiers pour gagner du
+              temps.
             </div>
             <div className="text-xs text-white/50">
               Le bouton de recherche s'active dès que le code est valide.
@@ -621,7 +638,10 @@ export default function ScanEAN() {
           <h2 className="text-2xl font-bold text-white mb-4">Résultat</h2>
           <ScanErrorState message={resolver.error} />
           <div className="mt-3 rounded-lg border border-blue-500/40 bg-blue-500/10 p-3 text-sm text-blue-200">
-            Données indisponibles pour ce code (statut NO_DATA). <Link to="/transparence" className="underline font-semibold">Pourquoi ?</Link>
+            Données indisponibles pour ce code (statut NO_DATA).{' '}
+            <Link to="/transparence" className="underline font-semibold">
+              Pourquoi ?
+            </Link>
           </div>
         </div>
       )}
@@ -653,9 +673,7 @@ export default function ScanEAN() {
                       <div className="text-sm font-medium text-white truncate">
                         {entry.productName || 'Produit inconnu'}
                       </div>
-                      <div className="text-xs text-white/50 font-mono">
-                        EAN: {entry.ean}
-                      </div>
+                      <div className="text-xs text-white/50 font-mono">EAN: {entry.ean}</div>
                       <div className="text-xs text-white/40">
                         {new Date(entry.scannedAt).toLocaleString('fr-FR')}
                       </div>
@@ -692,5 +710,5 @@ export default function ScanEAN() {
         />
       )}
     </div>
-  )
+  );
 }

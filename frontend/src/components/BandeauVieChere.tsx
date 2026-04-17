@@ -33,10 +33,7 @@ export function BandeauVieChere() {
     const fetchMessages = async () => {
       if (!db) return;
       try {
-        const q = query(
-          collection(db, 'bandeau_messages'),
-          where('active', '==', true)
-        );
+        const q = query(collection(db, 'bandeau_messages'), where('active', '==', true));
         const snapshot = await getDocs(q);
         const firestoreMessages: BandeauMessage[] = snapshot.docs.map((d) => ({
           id: d.id,
@@ -58,13 +55,13 @@ export function BandeauVieChere() {
     safeLocalStorage.setItem('dismissed_bandeaux', JSON.stringify([...newDismissed]));
   };
 
-  const activMessages = messages.filter(m => !dismissed.has(m.id));
+  const activMessages = messages.filter((m) => !dismissed.has(m.id));
 
   if (activMessages.length === 0) return null;
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
-      {activMessages.map(msg => (
+      {activMessages.map((msg) => (
         <div
           key={msg.id}
           className={`
@@ -83,15 +80,15 @@ export function BandeauVieChere() {
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {msg.link && (
-              <a 
-                href={msg.link} 
+              <a
+                href={msg.link}
                 className="underline flex items-center gap-1 hover:opacity-80 transition-opacity"
                 aria-label="En savoir plus sur cette alerte"
               >
                 En savoir plus <ExternalLink className="w-4 h-4" />
               </a>
             )}
-            <button 
+            <button
               onClick={() => handleDismiss(msg.id)}
               aria-label="Fermer cette alerte"
               className="hover:opacity-80 transition-opacity"

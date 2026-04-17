@@ -1,9 +1,8 @@
- 
 /**
  * ProductDetails Component
  * Mobile-first product information display with citizen data badges
  * Part of PR #2 - Product Enrichment UI
- * 
+ *
  * Consumes: ProductResult from eanProductService (PR #1)
  * Does NOT include: Scanning, OCR, camera features (reserved for PR #3)
  */
@@ -11,7 +10,11 @@
 import { useState, useEffect } from 'react';
 import { useFavorites } from '../../hooks/useFavorites';
 import type { ProductViewModel, UserPhoto } from '../../types/productViewModel';
-import { getProductSubtitle, getTraceabilityText, hasCompleteInfo } from '../../services/productViewModelService';
+import {
+  getProductSubtitle,
+  getTraceabilityText,
+  hasCompleteInfo,
+} from '../../services/productViewModelService';
 import { getProductImageOrFallback } from '../../utils/productImageFallback';
 
 interface ProductDetailsProps {
@@ -32,17 +35,19 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
   useEffect(() => {
     const imageUrl = getProductImageOrFallback(product.imageUrl, {
       category: product.categorie,
-      productName: product.nom
+      productName: product.nom,
     });
     setDisplayImageUrl(imageUrl);
     setImageFallbackAttempted(false); // Reset fallback flag when product changes
   }, [product.imageUrl, product.categorie, product.nom]);
 
   // Status badge styling
-  const statusBadgeClass = 
-    product.statusColor === 'green' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-    product.statusColor === 'yellow' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
-    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+  const statusBadgeClass =
+    product.statusColor === 'green'
+      ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+      : product.statusColor === 'yellow'
+        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
 
   const isComplete = hasCompleteInfo(product);
   const favoriteId = `product:barcode:${product.ean}`;
@@ -64,9 +69,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
       {/* Header with close button */}
       {onClose && (
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-            Fiche Produit
-          </h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Fiche Produit</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl leading-none"
@@ -81,22 +84,37 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
         {/* Disclaimer Banner */}
         <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-4">
           <div className="flex items-start gap-3">
-            <svg className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <div className="flex-1">
               <p className="font-bold text-blue-900 dark:text-blue-200 mb-1">
                 Données observées et agrégées
               </p>
               <p className="text-sm text-blue-800 dark:text-blue-300">
-                Ces informations sont issues de données publiques et contributions citoyennes. Aucune interprétation, recommandation ou conseil n'est fourni. Vérifiez toujours les informations sur l'emballage du produit.
+                Ces informations sont issues de données publiques et contributions citoyennes.
+                Aucune interprétation, recommandation ou conseil n'est fourni. Vérifiez toujours les
+                informations sur l'emballage du produit.
               </p>
             </div>
           </div>
         </div>
 
         {/* Product Image or Placeholder */}
-        <div className="relative bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
+        <div
+          className="relative bg-gray-100 dark:bg-gray-900 rounded-xl overflow-hidden"
+          style={{ aspectRatio: '16/9' }}
+        >
           {displayImageUrl ? (
             <img
               src={displayImageUrl}
@@ -109,7 +127,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                   setImageFallbackAttempted(true);
                   const fallbackUrl = getProductImageOrFallback(null, {
                     category: product.categorie,
-                    productName: product.nom
+                    productName: product.nom,
                   });
                   e.currentTarget.src = fallbackUrl;
                 }
@@ -118,8 +136,18 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600">
               <div className="text-center">
-                <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                <svg
+                  className="w-16 h-16 mx-auto mb-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  />
                 </svg>
                 <p className="text-sm font-medium">Aucune image disponible</p>
               </div>
@@ -132,9 +160,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
           {/* Product Name */}
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {product.nom}
-              </h3>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{product.nom}</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 {getProductSubtitle(product)}
               </p>
@@ -176,13 +202,15 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
 
           {/* Status Badge */}
           <div className="flex items-center gap-2 flex-wrap">
-            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold ${statusBadgeClass}`}>
+            <span
+              className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold ${statusBadgeClass}`}
+            >
               {product.statusColor === 'green' && '✓'}
               {product.statusColor === 'yellow' && '⚠'}
               {product.statusColor === 'gray' && '○'}
               {product.statusLabel}
             </span>
-            
+
             {/* Citizen Data Badge */}
             {product.isCitizenData && (
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
@@ -203,13 +231,11 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                 <p className="text-xs uppercase font-semibold text-gray-500 dark:text-gray-400 mb-1">
                   Prix
                 </p>
-                <p className="text-lg font-bold text-gray-900 dark:text-white">
-                  {product.prix}
-                </p>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">{product.prix}</p>
                 <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   {isObservationValid
                     ? `Prix observé le ${observationDate.toLocaleDateString('fr-FR')}`
-                    : "Date d’observation non disponible"}
+                    : 'Date d’observation non disponible'}
                 </div>
                 {freshnessLabel && (
                   <span
@@ -224,7 +250,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                 )}
               </div>
             )}
-            
+
             <div>
               <p className="text-xs uppercase font-semibold text-gray-500 dark:text-gray-400 mb-1">
                 Marque
@@ -233,24 +259,20 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                 {product.marque}
               </p>
             </div>
-            
+
             <div>
               <p className="text-xs uppercase font-semibold text-gray-500 dark:text-gray-400 mb-1">
                 Catégorie
               </p>
-              <p className="text-base text-gray-900 dark:text-white">
-                {product.categorie}
-              </p>
+              <p className="text-base text-gray-900 dark:text-white">{product.categorie}</p>
             </div>
-            
+
             {product.contenance && (
               <div>
                 <p className="text-xs uppercase font-semibold text-gray-500 dark:text-gray-400 mb-1">
                   Contenance
                 </p>
-                <p className="text-base text-gray-900 dark:text-white">
-                  {product.contenance}
-                </p>
+                <p className="text-base text-gray-900 dark:text-white">{product.contenance}</p>
               </div>
             )}
           </div>
@@ -261,11 +283,16 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
           <div className="space-y-3">
             <h4 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
               </svg>
               Photos ajoutées par les utilisateurs
             </h4>
-            
+
             <div className="grid grid-cols-3 gap-2">
               {product.userPhotos.slice(0, 6).map((photo, index) => (
                 <button
@@ -285,7 +312,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
                 </button>
               ))}
             </div>
-            
+
             {product.userPhotos.length > 6 && (
               <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                 +{product.userPhotos.length - 6} autres photos
@@ -301,8 +328,18 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
           </h4>
           <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
             <p className="flex items-start gap-2">
-              <svg className="w-5 h-5 flex-shrink-0 mt-0.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-5 h-5 flex-shrink-0 mt-0.5 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               <span>{getTraceabilityText(product)}</span>
             </p>
@@ -317,7 +354,12 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
               className="text-sm text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
               Signaler une erreur
             </button>
@@ -331,9 +373,7 @@ export default function ProductDetails({ product, onClose, onReportError }: Prod
 
       {/* Photo Gallery Modal (simple implementation) */}
       {showPhotoGallery && product.userPhotos.length > 0 && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        >
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <button
             type="button"
             className="absolute inset-0 bg-black/90 cursor-default"

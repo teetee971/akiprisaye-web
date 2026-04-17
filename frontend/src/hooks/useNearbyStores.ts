@@ -44,17 +44,8 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
  * @param options Search options
  * @returns Nearby stores state and controls
  */
-export function useNearbyStores(
-  options: UseNearbyStoresOptions = {}
-): UseNearbyStoresReturn {
-  const {
-    lat,
-    lon,
-    radius = 10,
-    chains,
-    maxResults,
-    autoFetch = true,
-  } = options;
+export function useNearbyStores(options: UseNearbyStoresOptions = {}): UseNearbyStoresReturn {
+  const { lat, lon, radius = 10, chains, maxResults, autoFetch = true } = options;
 
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(false);
@@ -87,9 +78,7 @@ export function useNearbyStores(
         params.append('maxResults', maxResults.toString());
       }
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/map/nearby?${params.toString()}`
-      );
+      const response = await fetch(`${API_BASE_URL}/api/map/nearby?${params.toString()}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -104,8 +93,7 @@ export function useNearbyStores(
         throw new Error(data.error || 'Failed to fetch stores');
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to fetch nearby stores';
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch nearby stores';
       setError(errorMessage);
       setStores([]);
     } finally {

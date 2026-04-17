@@ -1,6 +1,6 @@
 /**
  * useAlerts Hook
- * 
+ *
  * Custom hook for managing user alerts.
  * Provides functions to create, update, delete, and retrieve alerts.
  */
@@ -34,7 +34,7 @@ interface UseAlertsReturn {
 
 /**
  * Hook for managing user alerts
- * 
+ *
  * @param userId - User ID to fetch alerts for
  * @returns Alert management functions and state
  */
@@ -66,8 +66,7 @@ export function useAlerts(userId: string): UseAlertsReturn {
       setAlerts(userAlerts);
       setStatistics(stats);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : 'Erreur lors du chargement des alertes';
+      const message = err instanceof Error ? err.message : 'Erreur lors du chargement des alertes';
       setError(message);
       console.error('Error fetching alerts:', err);
     } finally {
@@ -93,7 +92,7 @@ export function useAlerts(userId: string): UseAlertsReturn {
         return newAlert;
       } catch (err) {
         const message =
-          err instanceof Error ? err.message : 'Erreur lors de la création de l\'alerte';
+          err instanceof Error ? err.message : "Erreur lors de la création de l'alerte";
         setError(message);
         throw err;
       }
@@ -110,13 +109,11 @@ export function useAlerts(userId: string): UseAlertsReturn {
 
       try {
         const updatedAlert = await updateAlertService(alertId, updates);
-        setAlerts((prev) =>
-          prev.map((alert) => (alert.id === alertId ? updatedAlert : alert))
-        );
+        setAlerts((prev) => prev.map((alert) => (alert.id === alertId ? updatedAlert : alert)));
         return updatedAlert;
       } catch (err) {
         const message =
-          err instanceof Error ? err.message : 'Erreur lors de la mise à jour de l\'alerte';
+          err instanceof Error ? err.message : "Erreur lors de la mise à jour de l'alerte";
         setError(message);
         throw err;
       }
@@ -145,7 +142,7 @@ export function useAlerts(userId: string): UseAlertsReturn {
       });
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : 'Erreur lors de la suppression de l\'alerte';
+        err instanceof Error ? err.message : "Erreur lors de la suppression de l'alerte";
       setError(message);
       throw err;
     }
@@ -160,9 +157,7 @@ export function useAlerts(userId: string): UseAlertsReturn {
 
       try {
         const updatedAlert = await toggleAlert(alertId, active);
-        setAlerts((prev) =>
-          prev.map((alert) => (alert.id === alertId ? updatedAlert : alert))
-        );
+        setAlerts((prev) => prev.map((alert) => (alert.id === alertId ? updatedAlert : alert)));
         setStatistics((prev) => ({
           ...prev,
           active: active ? prev.active + 1 : prev.active - 1,
@@ -170,9 +165,7 @@ export function useAlerts(userId: string): UseAlertsReturn {
         return updatedAlert;
       } catch (err) {
         const message =
-          err instanceof Error
-            ? err.message
-            : 'Erreur lors du changement de statut de l\'alerte';
+          err instanceof Error ? err.message : "Erreur lors du changement de statut de l'alerte";
         setError(message);
         throw err;
       }

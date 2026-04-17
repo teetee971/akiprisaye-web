@@ -150,7 +150,7 @@ describe('filterCarRentals', () => {
   it('filters by territory', () => {
     const filtered = filterCarRentals(
       [...mockPrices, { ...mockPrices[0], id: 'r4', territory: 'MQ' as const }],
-      { territory: 'MQ' },
+      { territory: 'MQ' }
     );
     expect(filtered).toHaveLength(1);
     expect(filtered[0].territory).toBe('MQ');
@@ -159,7 +159,7 @@ describe('filterCarRentals', () => {
   it('filters by category', () => {
     const filtered = filterCarRentals(
       [...mockPrices, { ...mockPrices[0], id: 'r5', category: 'suv' as const }],
-      { category: 'suv' },
+      { category: 'suv' }
     );
     expect(filtered).toHaveLength(1);
     expect(filtered[0].category).toBe('suv');

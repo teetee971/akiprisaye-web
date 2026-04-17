@@ -12,12 +12,7 @@ const accessLevels = [
     title: '📖 Gratuit',
     price: '0 €',
     subtitle: 'Accès libre aux comparaisons',
-    features: [
-      'Scan EAN illimité',
-      'Comparaisons basiques',
-      'Lecture seule',
-      'Sans publicité',
-    ],
+    features: ['Scan EAN illimité', 'Comparaisons basiques', 'Lecture seule', 'Sans publicité'],
     note: 'Inscription optionnelle pour alertes, panier et historique.',
   },
   {
@@ -33,7 +28,7 @@ const accessLevels = [
       'Historique personnel',
       'Signalement citoyen',
     ],
-    note: 'Valeur immédiate. Le scan n\'est jamais bloqué.',
+    note: "Valeur immédiate. Le scan n'est jamais bloqué.",
   },
   {
     id: 'PROFESSIONAL',
@@ -47,7 +42,7 @@ const accessLevels = [
       'Agrégation territoriale',
       'Recherche EAN + historique',
     ],
-    note: 'Pour artisans, associations, journalistes. Outil d\'observation, pas de conseil.',
+    note: "Pour artisans, associations, journalistes. Outil d'observation, pas de conseil.",
   },
   {
     id: 'INSTITUTIONAL',
@@ -77,11 +72,10 @@ export default function PricingDetailed() {
           </h1>
           <div className="space-y-4 text-gray-200 text-lg max-w-3xl mx-auto">
             <p>
-              <strong className="text-blue-300">A KI PRI SA YÉ</strong> — Observatoire citoyen des prix et du coût de la vie
+              <strong className="text-blue-300">A KI PRI SA YÉ</strong> — Observatoire citoyen des
+              prix et du coût de la vie
             </p>
-            <p className="text-xl font-semibold text-green-300">
-              DOM · ROM · COM
-            </p>
+            <p className="text-xl font-semibold text-green-300">DOM · ROM · COM</p>
           </div>
         </div>
 
@@ -91,9 +85,9 @@ export default function PricingDetailed() {
             Pourquoi un abonnement ?
           </h2>
           <p className="text-gray-200 text-base max-w-3xl mx-auto text-center leading-relaxed">
-            A KI PRI SA YÉ est un outil citoyen, indépendant et sans publicité.
-            L'abonnement permet de maintenir des données fiables, auditées, mises à jour,
-            sans revente ni influence commerciale.
+            A KI PRI SA YÉ est un outil citoyen, indépendant et sans publicité. L'abonnement permet
+            de maintenir des données fiables, auditées, mises à jour, sans revente ni influence
+            commerciale.
           </p>
           <div className="mt-6 flex justify-center gap-4 flex-wrap">
             <span className="px-4 py-2 bg-red-900/30 border border-red-500/30 rounded-lg text-red-200 text-sm">
@@ -177,10 +171,7 @@ export default function PricingDetailed() {
 
         {/* Gratification System - Visual with Counters */}
         <div className="mb-12">
-          <GratificationDisplay 
-            accessLevel="CITIZEN"
-            showStats={true}
-          />
+          <GratificationDisplay accessLevel="CITIZEN" showStats={true} />
         </div>
 
         {/* FAQ - Limited to 5 */}
@@ -192,7 +183,8 @@ export default function PricingDetailed() {
                 Quand l'inscription est-elle nécessaire ?
               </h3>
               <p className="text-gray-300 text-sm">
-                L'inscription est nécessaire pour les alertes prix, le panier et l'historique. Les comparaisons et recherches restent accessibles librement.
+                L'inscription est nécessaire pour les alertes prix, le panier et l'historique. Les
+                comparaisons et recherches restent accessibles librement.
               </p>
             </GlassCard>
 
@@ -201,7 +193,8 @@ export default function PricingDetailed() {
                 Mes données personnelles sont-elles exploitées ?
               </h3>
               <p className="text-gray-300 text-sm">
-                Non. Aucune donnée n'est revendue, utilisée à des fins publicitaires ou commerciales.
+                Non. Aucune donnée n'est revendue, utilisée à des fins publicitaires ou
+                commerciales.
               </p>
             </GlassCard>
 
@@ -219,7 +212,8 @@ export default function PricingDetailed() {
                 Pourquoi certains accès sont payants ?
               </h3>
               <p className="text-gray-300 text-sm">
-                Les contributions financent l'infrastructure, la maintenance et l'ouverture des données à long terme.
+                Les contributions financent l'infrastructure, la maintenance et l'ouverture des
+                données à long terme.
               </p>
             </GlassCard>
 
@@ -228,7 +222,8 @@ export default function PricingDetailed() {
                 Les institutions ont-elles accès à des données différentes ?
               </h3>
               <p className="text-gray-300 text-sm">
-                Non. Les données sont identiques. Les licences donnent accès à des formats, outils et exports supplémentaires, jamais à des données exclusives.
+                Non. Les données sont identiques. Les licences donnent accès à des formats, outils
+                et exports supplémentaires, jamais à des données exclusives.
               </p>
             </GlassCard>
           </div>

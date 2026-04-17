@@ -14,8 +14,15 @@ interface SearchCardProps {
 }
 
 export function SearchCard({
-  query, setQuery, territory, setTerritory, retailer, setRetailer,
-  loading, onScan, onSubmit,
+  query,
+  setQuery,
+  territory,
+  setTerritory,
+  retailer,
+  setRetailer,
+  loading,
+  onScan,
+  onSubmit,
 }: SearchCardProps) {
   return (
     <div className="min-h-[420px] rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03))] backdrop-blur-xl p-6">

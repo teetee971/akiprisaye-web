@@ -1,9 +1,9 @@
 /**
  * Mobile Plan Price Service
- * 
+ *
  * Service de comparaison des prix des abonnements mobiles
  * Données simulées structurées pour démonstration
- * 
+ *
  * IMPORTANT:
  * - Données publiques uniquement
  * - Aucun tracking utilisateur
@@ -14,11 +14,11 @@
 export interface MobilePlanPrice {
   operateur: string;
   prixMensuel: number;
-  donnees: string;          // e.g., "50 Go", "Illimité"
-  appelsSMS: string;        // e.g., "Illimités", "2h"
+  donnees: string; // e.g., "50 Go", "Illimité"
+  appelsSMS: string; // e.g., "Illimités", "2h"
   dateReleve: string;
   territoire: string;
-  typeOffre: string;        // "Forfait seul" ou "Avec engagement"
+  typeOffre: string; // "Forfait seul" ou "Avec engagement"
   source: string;
 }
 
@@ -194,9 +194,7 @@ const SIMULATED_DATA: MobilePlanPrice[] = [
  * Tri par: 1. Prix, 2. Date de relevé
  */
 export function searchMobilePlanPrices(params: MobilePlanSearchParams): MobilePlanPrice[] {
-  let results = SIMULATED_DATA.filter(
-    (plan) => plan.territoire === params.territoire
-  );
+  let results = SIMULATED_DATA.filter((plan) => plan.territoire === params.territoire);
 
   // Filtrer par type d'offre si spécifié
   if (params.typeOffre) {

@@ -28,7 +28,7 @@ interface ChocEntry {
   maxTerritory: string;
   minFlag: string;
   maxFlag: string;
-  chocRatio: number;   // (max - min) / min × 100
+  chocRatio: number; // (max - min) / min × 100
   vsHex: number | null; // (max - hex) / hex × 100, null if hex not available
 }
 
@@ -50,22 +50,24 @@ async function fetchSnapshot(stem: string, base: string): Promise<Snapshot | nul
     const url = `${base}data/observatoire/${stem}_${date}.json`;
     try {
       const resp = await fetch(url);
-      if (resp.ok) return await resp.json() as Snapshot;
-    } catch { /* try next */ }
+      if (resp.ok) return (await resp.json()) as Snapshot;
+    } catch {
+      /* try next */
+    }
   }
   return null;
 }
 
 const TERRITORIES = [
-  { stem: 'hexagone',                   flag: '🇫🇷', label: 'Hexagone' },
-  { stem: 'guadeloupe',                 flag: '🇬🇵', label: 'Guadeloupe' },
-  { stem: 'martinique',                 flag: '🇲🇶', label: 'Martinique' },
-  { stem: 'guyane',                     flag: '🇬🇫', label: 'Guyane' },
-  { stem: 'la_réunion',                 flag: '🇷🇪', label: 'La Réunion' },
-  { stem: 'mayotte',                    flag: '🇾🇹', label: 'Mayotte' },
-  { stem: 'saint_barthelemy',           flag: '🇧🇱', label: 'St-Barthélemy' },
-  { stem: 'saint_martin',               flag: '🇲🇫', label: 'Saint-Martin' },
-  { stem: 'saint_pierre_et_miquelon',   flag: '🇵🇲', label: 'St-Pierre-et-Miq.' },
+  { stem: 'hexagone', flag: '🇫🇷', label: 'Hexagone' },
+  { stem: 'guadeloupe', flag: '🇬🇵', label: 'Guadeloupe' },
+  { stem: 'martinique', flag: '🇲🇶', label: 'Martinique' },
+  { stem: 'guyane', flag: '🇬🇫', label: 'Guyane' },
+  { stem: 'la_réunion', flag: '🇷🇪', label: 'La Réunion' },
+  { stem: 'mayotte', flag: '🇾🇹', label: 'Mayotte' },
+  { stem: 'saint_barthelemy', flag: '🇧🇱', label: 'St-Barthélemy' },
+  { stem: 'saint_martin', flag: '🇲🇫', label: 'Saint-Martin' },
+  { stem: 'saint_pierre_et_miquelon', flag: '🇵🇲', label: 'St-Pierre-et-Miq.' },
 ];
 
 const PRODUCT_ICONS: Record<string, string> = {
@@ -87,29 +89,39 @@ const PRODUCT_ICONS: Record<string, string> = {
 };
 
 const PRODUCT_CONTEXT: Record<string, string> = {
-  'Eau minérale 1.5L': 'Produit 100 % importé. Transport et stockage réfrigéré pèsent fortement sur le coût final. À Saint-Barthélemy, l\'eau provient quasi exclusivement de conteneurs maritimes.',
-  'Pâtes spaghetti 500g': 'Malgré un prix d\'achat identique en entrepôt, les marges de distribution et l\'octroi de mer (≈15 %) expliquent l\'écart. Produit classique du panier de base.',
-  'Tomates rondes 1kg': 'Fruits et légumes frais soumis aux aléas du fret et aux ruptures de chaîne du froid. Absence de production locale suffisante dans plusieurs territoires.',
-  'Huile de tournesol 1L': 'Produit de grande consommation importé d\'Europe. L\'octroi de mer et les marges intermédiaires doublent quasi le prix dans les territoires les plus éloignés.',
-  'Liquide vaisselle 500ml': 'Produit d\'entretien dont le coût de transport (volume/poids) est amplifié. Les monopoles d\'import de produits ménagers maintiennent des marges élevées.',
-  'Lait demi-écrémé UHT 1L': 'Produit laitier quasi exclusivement importé. Les BQP négociés couvrent le lait mais n\'empêchent pas des surcoûts significatifs hors liste négociée.',
-  'Riz long blanc 1kg': 'Aliment de base dont le prix suit les cours mondiaux, mais auquel s\'ajoutent fret, manutention portuaire et marge de distribution locale.',
-  'Sucre blanc 1kg': 'Paradoxalement cher malgré la production locale de canne à sucre (Martinique, Réunion). La transformation et l\'export-reimport valorisent le produit loin du consommateur.',
-  'Café moulu 250g': 'Importé majoritairement de métropole ou d\'Amérique du Sud. Double traversée maritime pour certains territoires = coûts cumulés.',
-  'Paracétamol 500mg x16': 'Médicament de base soumis aux circuits de distribution pharmaceutique insulaires. Prix réglementé en métropole mais plus variable outre-mer.',
+  'Eau minérale 1.5L':
+    "Produit 100 % importé. Transport et stockage réfrigéré pèsent fortement sur le coût final. À Saint-Barthélemy, l'eau provient quasi exclusivement de conteneurs maritimes.",
+  'Pâtes spaghetti 500g':
+    "Malgré un prix d'achat identique en entrepôt, les marges de distribution et l'octroi de mer (≈15 %) expliquent l'écart. Produit classique du panier de base.",
+  'Tomates rondes 1kg':
+    'Fruits et légumes frais soumis aux aléas du fret et aux ruptures de chaîne du froid. Absence de production locale suffisante dans plusieurs territoires.',
+  'Huile de tournesol 1L':
+    "Produit de grande consommation importé d'Europe. L'octroi de mer et les marges intermédiaires doublent quasi le prix dans les territoires les plus éloignés.",
+  'Liquide vaisselle 500ml':
+    "Produit d'entretien dont le coût de transport (volume/poids) est amplifié. Les monopoles d'import de produits ménagers maintiennent des marges élevées.",
+  'Lait demi-écrémé UHT 1L':
+    "Produit laitier quasi exclusivement importé. Les BQP négociés couvrent le lait mais n'empêchent pas des surcoûts significatifs hors liste négociée.",
+  'Riz long blanc 1kg':
+    "Aliment de base dont le prix suit les cours mondiaux, mais auquel s'ajoutent fret, manutention portuaire et marge de distribution locale.",
+  'Sucre blanc 1kg':
+    "Paradoxalement cher malgré la production locale de canne à sucre (Martinique, Réunion). La transformation et l'export-reimport valorisent le produit loin du consommateur.",
+  'Café moulu 250g':
+    "Importé majoritairement de métropole ou d'Amérique du Sud. Double traversée maritime pour certains territoires = coûts cumulés.",
+  'Paracétamol 500mg x16':
+    'Médicament de base soumis aux circuits de distribution pharmaceutique insulaires. Prix réglementé en métropole mais plus variable outre-mer.',
 };
 
 function chocColor(ratio: number): string {
   if (ratio >= 150) return '#ef4444';
   if (ratio >= 100) return '#f97316';
-  if (ratio >= 60)  return '#f59e0b';
+  if (ratio >= 60) return '#f59e0b';
   return '#22c55e';
 }
 
 function chocLabel(ratio: number): string {
   if (ratio >= 150) return '🚨 EXTRÊME';
   if (ratio >= 100) return '⚠️ CRITIQUE';
-  if (ratio >= 60)  return '⛔ ÉLEVÉ';
+  if (ratio >= 60) return '⛔ ÉLEVÉ';
   return '📊 MODÉRÉ';
 }
 
@@ -126,7 +138,7 @@ export default function ProduitChocWidget() {
       await Promise.all(
         TERRITORIES.map(async (t) => {
           snapshotMap[t.stem] = await fetchSnapshot(t.stem, import.meta.env.BASE_URL as string);
-        }),
+        })
       );
 
       if (cancelled) return;
@@ -208,7 +220,9 @@ export default function ProduitChocWidget() {
     }
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   if (loading) {
@@ -238,16 +252,24 @@ export default function ProduitChocWidget() {
         />
         <div className="section-context-banner-overlay" aria-hidden="true" />
         <div className="section-context-banner-caption">
-          <span className="section-context-banner-title" aria-hidden="true">🔥 Chocs de Prix DOM</span>
+          <span className="section-context-banner-title" aria-hidden="true">
+            🔥 Chocs de Prix DOM
+          </span>
           <span className="section-context-banner-badge">Temps réel — mars 2026</span>
         </div>
       </div>
-      <h2 id="choc-heading" className="section-title slide-up" style={{ textAlign: 'center', marginBottom: '0.5rem' }}>🔥 Chocs de Prix DOM</h2>
+      <h2
+        id="choc-heading"
+        className="section-title slide-up"
+        style={{ textAlign: 'center', marginBottom: '0.5rem' }}
+      >
+        🔥 Chocs de Prix DOM
+      </h2>
 
       <div className="choc-header">
         <p className="choc-subtitle slide-up">
-          Les <strong>5 produits</strong> avec les plus grands écarts de prix entre territoires
-          — calculés en temps réel depuis les relevés citoyens
+          Les <strong>5 produits</strong> avec les plus grands écarts de prix entre territoires —
+          calculés en temps réel depuis les relevés citoyens
         </p>
       </div>
 
@@ -269,7 +291,9 @@ export default function ProduitChocWidget() {
 
               <div className="choc-content">
                 <div className="choc-product-row">
-                  <span className="choc-icon" aria-hidden="true">{entry.icon}</span>
+                  <span className="choc-icon" aria-hidden="true">
+                    {entry.icon}
+                  </span>
                   <span className="choc-product-name">{entry.product}</span>
                   <span className="choc-severity-badge" style={{ color, borderColor: color }}>
                     {label}
@@ -285,9 +309,13 @@ export default function ProduitChocWidget() {
 
                 <div className="choc-compare-row">
                   <div className="choc-cheapest">
-                    <span className="choc-flag" aria-hidden="true">{entry.minFlag}</span>
+                    <span className="choc-flag" aria-hidden="true">
+                      {entry.minFlag}
+                    </span>
                     <span className="choc-territory-name">{entry.minTerritory}</span>
-                    <span className="choc-price choc-price--low">{entry.minPrice.toFixed(2)}&nbsp;€</span>
+                    <span className="choc-price choc-price--low">
+                      {entry.minPrice.toFixed(2)}&nbsp;€
+                    </span>
                   </div>
 
                   <div className="choc-ratio-pill" style={{ background: `${color}18`, color }}>
@@ -295,9 +323,13 @@ export default function ProduitChocWidget() {
                   </div>
 
                   <div className="choc-most-expensive">
-                    <span className="choc-price choc-price--high">{entry.maxPrice.toFixed(2)}&nbsp;€</span>
+                    <span className="choc-price choc-price--high">
+                      {entry.maxPrice.toFixed(2)}&nbsp;€
+                    </span>
                     <span className="choc-territory-name">{entry.maxTerritory}</span>
-                    <span className="choc-flag" aria-hidden="true">{entry.maxFlag}</span>
+                    <span className="choc-flag" aria-hidden="true">
+                      {entry.maxFlag}
+                    </span>
                   </div>
                 </div>
 
@@ -308,9 +340,7 @@ export default function ProduitChocWidget() {
                 )}
 
                 {PRODUCT_CONTEXT[entry.product] && (
-                  <p className="choc-product-context">
-                    💬 {PRODUCT_CONTEXT[entry.product]}
-                  </p>
+                  <p className="choc-product-context">💬 {PRODUCT_CONTEXT[entry.product]}</p>
                 )}
               </div>
             </li>

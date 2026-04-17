@@ -42,13 +42,13 @@ export function SilansLokalMode() {
     // Disable analytics
     if (window.gtag) {
       window.gtag('consent', 'update', {
-        'analytics_storage': 'denied',
-        'ad_storage': 'denied'
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
       });
     }
 
     // Clear any tracking cookies
-    document.cookie.split(';').forEach(cookie => {
+    document.cookie.split(';').forEach((cookie) => {
       const name = cookie.split('=')[0].trim();
       if (name.startsWith('_ga') || name.startsWith('_gid')) {
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
@@ -64,8 +64,8 @@ export function SilansLokalMode() {
     const consent = safeLocalStorage.getItem('cookie_consent');
     if (consent === 'accepted' && window.gtag) {
       window.gtag('consent', 'update', {
-        'analytics_storage': 'granted',
-        'ad_storage': 'denied'
+        analytics_storage: 'granted',
+        ad_storage: 'denied',
       });
     }
 
@@ -76,8 +76,12 @@ export function SilansLokalMode() {
     <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
-          <div className={`p-3 rounded-lg ${isEnabled ? 'bg-purple-100 dark:bg-purple-900/30' : 'bg-slate-100 dark:bg-slate-700'}`}>
-            <EyeOff className={`w-6 h-6 ${isEnabled ? 'text-purple-600 dark:text-purple-400' : 'text-slate-600 dark:text-slate-400'}`} />
+          <div
+            className={`p-3 rounded-lg ${isEnabled ? 'bg-purple-100 dark:bg-purple-900/30' : 'bg-slate-100 dark:bg-slate-700'}`}
+          >
+            <EyeOff
+              className={`w-6 h-6 ${isEnabled ? 'text-purple-600 dark:text-purple-400' : 'text-slate-600 dark:text-slate-400'}`}
+            />
           </div>
         </div>
 
@@ -100,7 +104,9 @@ export function SilansLokalMode() {
           {/* Features */}
           <div className="space-y-3 mb-4">
             <div className="flex items-start gap-3">
-              <Database className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isEnabled ? 'text-green-600 dark:text-green-400' : 'text-slate-400'}`} />
+              <Database
+                className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isEnabled ? 'text-green-600 dark:text-green-400' : 'text-slate-400'}`}
+              />
               <div>
                 <div className="font-medium text-slate-900 dark:text-white text-sm">
                   Données stockées localement
@@ -112,19 +118,25 @@ export function SilansLokalMode() {
             </div>
 
             <div className="flex items-start gap-3">
-              <WifiOff className={`w-5 h-5 flex-shrink-0 mt-0.5 ${offlineReady ? 'text-green-600 dark:text-green-400' : 'text-slate-400'}`} />
+              <WifiOff
+                className={`w-5 h-5 flex-shrink-0 mt-0.5 ${offlineReady ? 'text-green-600 dark:text-green-400' : 'text-slate-400'}`}
+              />
               <div>
                 <div className="font-medium text-slate-900 dark:text-white text-sm">
                   Fonctionnement hors ligne
                 </div>
                 <div className="text-xs text-slate-600 dark:text-slate-400">
-                  {offlineReady ? 'Prêt à fonctionner sans connexion' : 'En cours de préparation...'}
+                  {offlineReady
+                    ? 'Prêt à fonctionner sans connexion'
+                    : 'En cours de préparation...'}
                 </div>
               </div>
             </div>
 
             <div className="flex items-start gap-3">
-              <EyeOff className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isEnabled ? 'text-green-600 dark:text-green-400' : 'text-slate-400'}`} />
+              <EyeOff
+                className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isEnabled ? 'text-green-600 dark:text-green-400' : 'text-slate-400'}`}
+              />
               <div>
                 <div className="font-medium text-slate-900 dark:text-white text-sm">
                   Aucun tracking
@@ -141,9 +153,10 @@ export function SilansLokalMode() {
             onClick={toggleMode}
             className={`
               w-full px-4 py-3 rounded-lg font-semibold transition-colors
-              ${isEnabled 
-                ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white hover:bg-slate-300 dark:hover:bg-slate-600' 
-                : 'bg-purple-600 text-white hover:bg-purple-700'
+              ${
+                isEnabled
+                  ? 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white hover:bg-slate-300 dark:hover:bg-slate-600'
+                  : 'bg-purple-600 text-white hover:bg-purple-700'
               }
             `}
           >
@@ -152,7 +165,8 @@ export function SilansLokalMode() {
 
           {/* Info */}
           <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-            En mode privé, certaines fonctionnalités nécessitant une connexion serveur seront limitées.
+            En mode privé, certaines fonctionnalités nécessitant une connexion serveur seront
+            limitées.
           </p>
         </div>
       </div>

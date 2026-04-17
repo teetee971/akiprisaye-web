@@ -16,8 +16,12 @@ const _store: Record<string, string> = {};
 vi.mock('../utils/safeLocalStorage', () => ({
   safeLocalStorage: {
     getItem: (k: string) => _store[k] ?? null,
-    setItem: (k: string, v: string) => { _store[k] = v; },
-    removeItem: (k: string) => { delete _store[k]; },
+    setItem: (k: string, v: string) => {
+      _store[k] = v;
+    },
+    removeItem: (k: string) => {
+      delete _store[k];
+    },
   },
 }));
 
@@ -44,7 +48,8 @@ describe('conversionTracker — behavior tracking', () => {
   });
 
   it('trackScrollDepth updates running average', async () => {
-    const { trackPageView, trackScrollDepth, getStoredBehaviorMetrics } = await import('../utils/conversionTracker');
+    const { trackPageView, trackScrollDepth, getStoredBehaviorMetrics } =
+      await import('../utils/conversionTracker');
     const url = '/produit/test';
     trackPageView(url); // pageViews = 1
     trackScrollDepth(url, 80);
@@ -54,7 +59,8 @@ describe('conversionTracker — behavior tracking', () => {
   });
 
   it('trackCtaClick increments ctaClicks', async () => {
-    const { trackPageView, trackCtaClick, getStoredBehaviorMetrics } = await import('../utils/conversionTracker');
+    const { trackPageView, trackCtaClick, getStoredBehaviorMetrics } =
+      await import('../utils/conversionTracker');
     const url = '/produit/test-cta';
     trackPageView(url);
     trackCtaClick(url, 'sticky-bar');
@@ -64,7 +70,8 @@ describe('conversionTracker — behavior tracking', () => {
   });
 
   it('trackRetailerClick increments retailerClicks', async () => {
-    const { trackPageView, trackRetailerClick, getStoredBehaviorMetrics } = await import('../utils/conversionTracker');
+    const { trackPageView, trackRetailerClick, getStoredBehaviorMetrics } =
+      await import('../utils/conversionTracker');
     const url = '/produit/test-retailer';
     trackPageView(url);
     trackRetailerClick(url, 'leclerc');
@@ -73,7 +80,8 @@ describe('conversionTracker — behavior tracking', () => {
   });
 
   it('trackCompareInteraction increments compareInteractions', async () => {
-    const { trackPageView, trackCompareInteraction, getStoredBehaviorMetrics } = await import('../utils/conversionTracker');
+    const { trackPageView, trackCompareInteraction, getStoredBehaviorMetrics } =
+      await import('../utils/conversionTracker');
     const url = '/comparer/carrefour-vs-leclerc';
     trackPageView(url);
     trackCompareInteraction(url, 'expand');
@@ -106,7 +114,15 @@ describe('conversionTracker — behavior tracking', () => {
 describe('croScore — determinism and formula', () => {
   it('identical inputs produce identical output', async () => {
     const { computeCroScore } = await import('../utils/croScore');
-    const m = { url: '/test', pageViews: 50, avgScrollDepth: 60, avgTimeOnPage: 90, ctaClicks: 5, retailerClicks: 3, compareInteractions: 2 };
+    const m = {
+      url: '/test',
+      pageViews: 50,
+      avgScrollDepth: 60,
+      avgTimeOnPage: 90,
+      ctaClicks: 5,
+      retailerClicks: 3,
+      compareInteractions: 2,
+    };
     const r1 = computeCroScore(m);
     const r2 = computeCroScore(m);
     expect(r1).toEqual(r2);
@@ -114,19 +130,41 @@ describe('croScore — determinism and formula', () => {
 
   it('globalScore = weighted sum of sub-scores', async () => {
     const { computeCroScore } = await import('../utils/croScore');
-    const m = { url: '/weighted', pageViews: 20, avgScrollDepth: 50, avgTimeOnPage: 60, ctaClicks: 4, retailerClicks: 2, compareInteractions: 0 };
+    const m = {
+      url: '/weighted',
+      pageViews: 20,
+      avgScrollDepth: 50,
+      avgTimeOnPage: 60,
+      ctaClicks: 4,
+      retailerClicks: 2,
+      compareInteractions: 0,
+    };
     const s = computeCroScore(m);
     const expected = Math.round(
-      s.seoScore * 0.25 + s.engagementScore * 0.25 + s.conversionScore * 0.30 + s.revenueScore * 0.20
+      s.seoScore * 0.25 + s.engagementScore * 0.25 + s.conversionScore * 0.3 + s.revenueScore * 0.2
     );
     expect(s.globalScore).toBe(expected);
   });
 
   it('all scores are in [0, 100]', async () => {
     const { computeCroScore } = await import('../utils/croScore');
-    const m = { url: '/x', pageViews: 0, avgScrollDepth: 0, avgTimeOnPage: 0, ctaClicks: 0, retailerClicks: 0, compareInteractions: 0 };
+    const m = {
+      url: '/x',
+      pageViews: 0,
+      avgScrollDepth: 0,
+      avgTimeOnPage: 0,
+      ctaClicks: 0,
+      retailerClicks: 0,
+      compareInteractions: 0,
+    };
     const s = computeCroScore(m);
-    for (const key of ['seoScore', 'engagementScore', 'conversionScore', 'revenueScore', 'globalScore'] as const) {
+    for (const key of [
+      'seoScore',
+      'engagementScore',
+      'conversionScore',
+      'revenueScore',
+      'globalScore',
+    ] as const) {
       expect(s[key]).toBeGreaterThanOrEqual(0);
       expect(s[key]).toBeLessThanOrEqual(100);
     }
@@ -134,14 +172,40 @@ describe('croScore — determinism and formula', () => {
 
   it('no crash on zero pageViews', async () => {
     const { computeCroScore } = await import('../utils/croScore');
-    expect(() => computeCroScore({ url: '/zero', pageViews: 0, avgScrollDepth: 0, avgTimeOnPage: 0, ctaClicks: 0, retailerClicks: 0, compareInteractions: 0 })).not.toThrow();
+    expect(() =>
+      computeCroScore({
+        url: '/zero',
+        pageViews: 0,
+        avgScrollDepth: 0,
+        avgTimeOnPage: 0,
+        ctaClicks: 0,
+        retailerClicks: 0,
+        compareInteractions: 0,
+      })
+    ).not.toThrow();
   });
 
   it('computeAllCroScores sorts by globalScore descending', async () => {
     const { computeAllCroScores } = await import('../utils/croScore');
     const metrics = [
-      { url: '/low',  pageViews: 1, avgScrollDepth: 0, avgTimeOnPage: 0, ctaClicks: 0, retailerClicks: 0, compareInteractions: 0 },
-      { url: '/high', pageViews: 100, avgScrollDepth: 80, avgTimeOnPage: 120, ctaClicks: 20, retailerClicks: 10, compareInteractions: 5 },
+      {
+        url: '/low',
+        pageViews: 1,
+        avgScrollDepth: 0,
+        avgTimeOnPage: 0,
+        ctaClicks: 0,
+        retailerClicks: 0,
+        compareInteractions: 0,
+      },
+      {
+        url: '/high',
+        pageViews: 100,
+        avgScrollDepth: 80,
+        avgTimeOnPage: 120,
+        ctaClicks: 20,
+        retailerClicks: 10,
+        compareInteractions: 5,
+      },
     ];
     const scores = computeAllCroScores(metrics);
     expect(scores[0].url).toBe('/high');
@@ -164,36 +228,86 @@ describe('croAnalyzer — recommendation generation', () => {
 
   it('emits BOOST_CTA when pageViews high and ctaClicks low', async () => {
     const { analyzeCro } = await import('../utils/croAnalyzer');
-    const metrics = [{ url: '/produit/test', pageViews: 50, avgScrollDepth: 60, avgTimeOnPage: 90, ctaClicks: 0, retailerClicks: 2, compareInteractions: 0 }];
+    const metrics = [
+      {
+        url: '/produit/test',
+        pageViews: 50,
+        avgScrollDepth: 60,
+        avgTimeOnPage: 90,
+        ctaClicks: 0,
+        retailerClicks: 2,
+        compareInteractions: 0,
+      },
+    ];
     const recs = analyzeCro(metrics);
     expect(recs.some((r) => r.type === 'BOOST_CTA')).toBe(true);
   });
 
   it('emits BOOST_PRICE_SIGNAL when retailerClicks very low', async () => {
     const { analyzeCro } = await import('../utils/croAnalyzer');
-    const metrics = [{ url: '/produit/test2', pageViews: 30, avgScrollDepth: 50, avgTimeOnPage: 60, ctaClicks: 3, retailerClicks: 0, compareInteractions: 0 }];
+    const metrics = [
+      {
+        url: '/produit/test2',
+        pageViews: 30,
+        avgScrollDepth: 50,
+        avgTimeOnPage: 60,
+        ctaClicks: 3,
+        retailerClicks: 0,
+        compareInteractions: 0,
+      },
+    ];
     const recs = analyzeCro(metrics);
     expect(recs.some((r) => r.type === 'BOOST_PRICE_SIGNAL')).toBe(true);
   });
 
   it('emits SIMPLIFY_HERO when SEO impressions high but scroll low', async () => {
     const { analyzeCro } = await import('../utils/croAnalyzer');
-    const metrics = [{ url: '/produit/hero', pageViews: 20, avgScrollDepth: 20, avgTimeOnPage: 30, ctaClicks: 5, retailerClicks: 2, compareInteractions: 0 }];
-    const seo = [{ url: '/produit/hero', impressions: 500, clicks: 50, ctr: 0.10 }];
+    const metrics = [
+      {
+        url: '/produit/hero',
+        pageViews: 20,
+        avgScrollDepth: 20,
+        avgTimeOnPage: 30,
+        ctaClicks: 5,
+        retailerClicks: 2,
+        compareInteractions: 0,
+      },
+    ];
+    const seo = [{ url: '/produit/hero', impressions: 500, clicks: 50, ctr: 0.1 }];
     const recs = analyzeCro(metrics, seo);
     expect(recs.some((r) => r.type === 'SIMPLIFY_HERO')).toBe(true);
   });
 
   it('emits REORDER_BLOCKS when compare interactions high but retailer clicks low', async () => {
     const { analyzeCro } = await import('../utils/croAnalyzer');
-    const metrics = [{ url: '/comparer/test', pageViews: 20, avgScrollDepth: 60, avgTimeOnPage: 90, ctaClicks: 2, retailerClicks: 0, compareInteractions: 10 }];
+    const metrics = [
+      {
+        url: '/comparer/test',
+        pageViews: 20,
+        avgScrollDepth: 60,
+        avgTimeOnPage: 90,
+        ctaClicks: 2,
+        retailerClicks: 0,
+        compareInteractions: 10,
+      },
+    ];
     const recs = analyzeCro(metrics);
     expect(recs.some((r) => r.type === 'REORDER_BLOCKS')).toBe(true);
   });
 
   it('emits DEPRIORITIZE_PAGE for very weak pages', async () => {
     const { analyzeCro } = await import('../utils/croAnalyzer');
-    const metrics = [{ url: '/dead-page', pageViews: 1, avgScrollDepth: 5, avgTimeOnPage: 5, ctaClicks: 0, retailerClicks: 0, compareInteractions: 0 }];
+    const metrics = [
+      {
+        url: '/dead-page',
+        pageViews: 1,
+        avgScrollDepth: 5,
+        avgTimeOnPage: 5,
+        ctaClicks: 0,
+        retailerClicks: 0,
+        compareInteractions: 0,
+      },
+    ];
     const recs = analyzeCro(metrics);
     expect(recs.some((r) => r.type === 'DEPRIORITIZE_PAGE')).toBe(true);
   });
@@ -201,8 +315,24 @@ describe('croAnalyzer — recommendation generation', () => {
   it('sorted by priority: high before medium before low', async () => {
     const { analyzeCro } = await import('../utils/croAnalyzer');
     const metrics = [
-      { url: '/a', pageViews: 50, avgScrollDepth: 60, avgTimeOnPage: 90, ctaClicks: 0, retailerClicks: 0, compareInteractions: 0 },
-      { url: '/b', pageViews: 1,  avgScrollDepth: 5,  avgTimeOnPage: 5,  ctaClicks: 0, retailerClicks: 0, compareInteractions: 0 },
+      {
+        url: '/a',
+        pageViews: 50,
+        avgScrollDepth: 60,
+        avgTimeOnPage: 90,
+        ctaClicks: 0,
+        retailerClicks: 0,
+        compareInteractions: 0,
+      },
+      {
+        url: '/b',
+        pageViews: 1,
+        avgScrollDepth: 5,
+        avgTimeOnPage: 5,
+        ctaClicks: 0,
+        retailerClicks: 0,
+        compareInteractions: 0,
+      },
     ];
     const recs = analyzeCro(metrics);
     const ORDER = { high: 0, medium: 1, low: 2 };
@@ -213,7 +343,17 @@ describe('croAnalyzer — recommendation generation', () => {
 
   it('no crash with null-like optional arguments', async () => {
     const { analyzeCro } = await import('../utils/croAnalyzer');
-    const metrics = [{ url: '/safe', pageViews: 5, avgScrollDepth: 30, avgTimeOnPage: 30, ctaClicks: 1, retailerClicks: 1, compareInteractions: 0 }];
+    const metrics = [
+      {
+        url: '/safe',
+        pageViews: 5,
+        avgScrollDepth: 30,
+        avgTimeOnPage: 30,
+        ctaClicks: 1,
+        retailerClicks: 1,
+        compareInteractions: 0,
+      },
+    ];
     expect(() => analyzeCro(metrics, undefined, undefined)).not.toThrow();
   });
 });

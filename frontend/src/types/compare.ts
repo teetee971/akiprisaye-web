@@ -11,11 +11,7 @@ import type { TerritoryCode } from './PriceObservation';
 
 export type { TerritoryCode };
 
-export type PriceSourceId =
-  | 'open_food_facts'
-  | 'open_prices'
-  | 'internal'
-  | 'mock';
+export type PriceSourceId = 'open_food_facts' | 'open_prices' | 'internal' | 'mock';
 
 // ── Product identity ──────────────────────────────────────────────────────────
 

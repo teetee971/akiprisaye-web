@@ -112,9 +112,7 @@ export function computeKpis(params: {
   }, 0);
 
   const stockAvg =
-    baskets.length > 0
-      ? baskets.reduce((a, b) => a + (b.stock ?? 0), 0) / baskets.length
-      : 0;
+    baskets.length > 0 ? baskets.reduce((a, b) => a + (b.stock ?? 0), 0) / baskets.length : 0;
 
   const alerts = forecast.filter((f) => (f.forecast ?? 0) < stockAvg * 0.3).length;
   const inStock = baskets.filter((b) => (b.stock ?? 0) > 0).length;
@@ -188,7 +186,8 @@ export function generateRecommendations(params: {
  * Prepare chart data for 7-day trend visualization.
  */
 export function prepareChartData(forecast: TiPanieBasketForecast[] = []): ChartData {
-  const byDate: Record<string, { stock: number; sales: number; forecast: number; count: number }> = {};
+  const byDate: Record<string, { stock: number; sales: number; forecast: number; count: number }> =
+    {};
 
   for (const f of forecast) {
     const date = f.date ?? new Date().toISOString().split('T')[0];
@@ -205,7 +204,7 @@ export function prepareChartData(forecast: TiPanieBasketForecast[] = []): ChartD
 
   return {
     labels: dates.map((d) =>
-      new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }),
+      new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
     ),
     datasets: [
       {

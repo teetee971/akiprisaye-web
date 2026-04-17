@@ -1,6 +1,6 @@
 /**
  * Territory Mapper
- * 
+ *
  * Utilities for managing French overseas territories (DROM-COM).
  * Provides territory information, lookups, and grouping functions.
  */
@@ -16,7 +16,7 @@ export const TERRITORIES: Record<Territory, TerritoryInfo> = {
     name: 'Guadeloupe',
     department: '971',
     region: 'Antilles',
-    coordinates: { latitude: 16.2650, longitude: -61.5510 },
+    coordinates: { latitude: 16.265, longitude: -61.551 },
   },
   MQ: {
     code: 'MQ',
@@ -58,7 +58,7 @@ export const TERRITORIES: Record<Territory, TerritoryInfo> = {
     name: 'Saint-Barthélemy',
     department: '977',
     region: 'Antilles',
-    coordinates: { latitude: 17.9000, longitude: -62.8333 },
+    coordinates: { latitude: 17.9, longitude: -62.8333 },
   },
   MF: {
     code: 'MF',
@@ -86,13 +86,13 @@ export const TERRITORIES: Record<Territory, TerritoryInfo> = {
     name: 'Nouvelle-Calédonie',
     department: '988',
     region: 'Pacifique',
-    coordinates: { latitude: -20.9043, longitude: 165.6180 },
+    coordinates: { latitude: -20.9043, longitude: 165.618 },
   },
 };
 
 /**
  * Get territory information by code
- * 
+ *
  * @param code - Territory code (e.g., 'GP', 'MQ')
  * @returns Territory information or undefined if not found
  */
@@ -102,7 +102,7 @@ export function getTerritoryByCode(code: string): TerritoryInfo | undefined {
 
 /**
  * Get territory information by department number
- * 
+ *
  * @param dept - Department number (e.g., '971', '972')
  * @returns Territory information or undefined if not found
  */
@@ -112,7 +112,7 @@ export function getTerritoryByDepartment(dept: string): TerritoryInfo | undefine
 
 /**
  * Get human-readable label for a territory
- * 
+ *
  * @param code - Territory code
  * @returns Territory name or the code if not found
  */
@@ -123,7 +123,7 @@ export function getTerritoryLabel(code: string): string {
 
 /**
  * Get all territories in a specific region
- * 
+ *
  * @param region - Region name (e.g., 'Antilles', 'Pacifique')
  * @returns Array of territory information
  */
@@ -133,7 +133,7 @@ export function getTerritoriesByRegion(region: string): TerritoryInfo[] {
 
 /**
  * Get all territories as an array
- * 
+ *
  * @returns Array of all territory information
  */
 export function getAllTerritories(): TerritoryInfo[] {
@@ -142,7 +142,7 @@ export function getAllTerritories(): TerritoryInfo[] {
 
 /**
  * Get all unique regions
- * 
+ *
  * @returns Array of region names
  */
 export function getAllRegions(): string[] {
@@ -152,7 +152,7 @@ export function getAllRegions(): string[] {
 
 /**
  * Check if a code is a valid territory
- * 
+ *
  * @param code - Code to validate
  * @returns true if valid territory code
  */
@@ -162,58 +162,52 @@ export function isValidTerritory(code: string): code is Territory {
 
 /**
  * Get territories grouped by region
- * 
+ *
  * @returns Object with regions as keys and territories as values
  */
 export function getTerritoriesGroupedByRegion(): Record<string, TerritoryInfo[]> {
   const grouped: Record<string, TerritoryInfo[]> = {};
-  
+
   for (const territory of Object.values(TERRITORIES)) {
     if (!grouped[territory.region]) {
       grouped[territory.region] = [];
     }
     grouped[territory.region].push(territory);
   }
-  
+
   return grouped;
 }
 
 /**
  * Calculate distance between two territories (approximate, using coordinates)
  * Uses the Haversine formula for great-circle distance
- * 
+ *
  * @param code1 - First territory code
  * @param code2 - Second territory code
  * @returns Distance in kilometers, or null if coordinates unavailable
  */
-export function calculateDistanceBetweenTerritories(
-  code1: string,
-  code2: string
-): number | null {
+export function calculateDistanceBetweenTerritories(code1: string, code2: string): number | null {
   const t1 = getTerritoryByCode(code1);
   const t2 = getTerritoryByCode(code2);
-  
+
   if (!t1?.coordinates || !t2?.coordinates) {
     return null;
   }
-  
+
   const { latitude: lat1, longitude: lon1 } = t1.coordinates;
   const { latitude: lat2, longitude: lon2 } = t2.coordinates;
-  
+
   const R = 6371; // Earth's radius in km
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  
+
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
-  
+
   return Math.round(distance);
 }
 

@@ -1,8 +1,7 @@
-
 export const Select = ({ onValueChange, defaultValue, children }) => (
   <select
     className="w-full p-2 border rounded border-gray-300"
-    onChange={e => onValueChange(e.target.value)}
+    onChange={(e) => onValueChange(e.target.value)}
     defaultValue={defaultValue}
   >
     {children}

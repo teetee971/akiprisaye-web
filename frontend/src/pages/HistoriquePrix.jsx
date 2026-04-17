@@ -34,19 +34,31 @@ export default function HistoriquePrixPage() {
         gradient="from-slate-950 to-blue-900"
         height="h-40 sm:h-52"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>📈 Historique des prix</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Évolution des prix dans le temps par territoire</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          📈 Historique des prix
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Évolution des prix dans le temps par territoire
+        </p>
       </HeroImage>
       {loading && <p>Chargement...</p>}
-      {!loading && items.length === 0 && <p className="text-slate-500">Aucune recherche enregistrée.</p>}
+      {!loading && items.length === 0 && (
+        <p className="text-slate-500">Aucune recherche enregistrée.</p>
+      )}
       <ul className="space-y-2">
         {items.map((item) => (
           <li key={item.id} className="border rounded p-3 flex justify-between">
             <div>
               <p className="font-medium">{item.query}</p>
-              <p className="text-sm text-slate-500">{new Date(item.createdAt).toLocaleString('fr-FR')} · {item.resultCount} résultats</p>
+              <p className="text-sm text-slate-500">
+                {new Date(item.createdAt).toLocaleString('fr-FR')} · {item.resultCount} résultats
+              </p>
             </div>
-            {item.topResult?.id ? <Link className="text-blue-600" to={`/p/${encodeURIComponent(item.topResult.id)}`}>Voir</Link> : null}
+            {item.topResult?.id ? (
+              <Link className="text-blue-600" to={`/p/${encodeURIComponent(item.topResult.id)}`}>
+                Voir
+              </Link>
+            ) : null}
           </li>
         ))}
       </ul>

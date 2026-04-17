@@ -14,11 +14,7 @@ import {
  * Helper: build a StoreHours object with a fixed local time
  * We override the timezone so getStoreLocalTime returns a predictable value.
  */
-function makeHours(
-  dayKey: string,
-  periods: DayHours[],
-  timezone = 'UTC'
-): StoreHours {
+function makeHours(dayKey: string, periods: DayHours[], timezone = 'UTC'): StoreHours {
   return {
     storeId: 'test-store',
     timezone,
@@ -105,7 +101,8 @@ describe('isStoreOpen', () => {
 
 describe('getStatusColor', () => {
   it('returns green for open', () => expect(getStatusColor('open')).toBe('green'));
-  it('returns orange for closing_soon', () => expect(getStatusColor('closing_soon')).toBe('orange'));
+  it('returns orange for closing_soon', () =>
+    expect(getStatusColor('closing_soon')).toBe('orange'));
   it('returns red for closed', () => expect(getStatusColor('closed')).toBe('red'));
   it('returns gray for unknown', () => expect(getStatusColor('unknown')).toBe('gray'));
 });

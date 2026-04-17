@@ -1,19 +1,10 @@
- 
 /**
  * Gamification Profile Page
  * Complete user profile page with all stats, badges, challenges, and progress
  */
 
 import React, { useEffect, useState } from 'react';
-import { 
-  User, 
-  Award, 
-  TrendingUp, 
-  Target,
-  Flame,
-  ArrowLeft,
-  RefreshCw
-} from 'lucide-react';
+import { User, Award, TrendingUp, Target, Flame, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGamification } from '../hooks/useGamification';
 import { useBadges } from '../hooks/useBadges';
@@ -28,7 +19,7 @@ import {
   StreakCounter,
   ChallengeList,
   StatsOverview,
-  LeaderboardCard
+  LeaderboardCard,
 } from '../components/gamification';
 import { useLeaderboard } from '../hooks/useLeaderboard';
 import type { UserBadge } from '../types/gamification';
@@ -38,13 +29,26 @@ export default function GamificationProfilePage() {
   const [searchParams] = useSearchParams();
   const userId = searchParams.get('userId') || 'demo-user'; // Get from auth in production
 
-  const { profile, dashboard, pointsSummary, loading: profileLoading, error: profileError, refresh: refreshProfile } = useGamification({ userId });
+  const {
+    profile,
+    dashboard,
+    pointsSummary,
+    loading: profileLoading,
+    error: profileError,
+    refresh: refreshProfile,
+  } = useGamification({ userId });
   const { badges, loading: badgesLoading, error: badgesError } = useBadges({ userId });
-  const { activeChallenges, loading: challengesLoading, error: challengesError } = useChallenges({ userId });
+  const {
+    activeChallenges,
+    loading: challengesLoading,
+    error: challengesError,
+  } = useChallenges({ userId });
   const { leaderboard, loading: leaderboardLoading } = useLeaderboard({ userId, limit: 10 });
 
   const [selectedBadge, setSelectedBadge] = useState<UserBadge | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'badges' | 'challenges' | 'stats'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'badges' | 'challenges' | 'stats'>(
+    'overview'
+  );
 
   const loading = profileLoading || badgesLoading || challengesLoading;
   const error = profileError || badgesError || challengesError;
@@ -124,7 +128,8 @@ export default function GamificationProfilePage() {
             🏆 {profile.username || `Utilisateur ${profile.userId.slice(0, 6)}`}
           </h1>
           <p className="text-slate-200 text-sm drop-shadow">
-            Niveau {profile.level} · {profile.totalPoints?.toLocaleString() ?? profile.totalXP?.toLocaleString() ?? 0} points
+            Niveau {profile.level} ·{' '}
+            {profile.totalPoints?.toLocaleString() ?? profile.totalXP?.toLocaleString() ?? 0} points
           </p>
         </HeroImage>
       </div>
@@ -135,11 +140,11 @@ export default function GamificationProfilePage() {
         <div className="bg-white rounded-lg shadow-md mb-6 p-2">
           <div className="flex gap-2 overflow-x-auto">
             {[
-              { id: 'overview', label: 'Vue d\'ensemble', icon: TrendingUp },
+              { id: 'overview', label: "Vue d'ensemble", icon: TrendingUp },
               { id: 'badges', label: 'Badges', icon: Award },
               { id: 'challenges', label: 'Défis', icon: Target },
-              { id: 'stats', label: 'Statistiques', icon: User }
-            ].map(tab => {
+              { id: 'stats', label: 'Statistiques', icon: User },
+            ].map((tab) => {
               const Icon = tab.icon;
               return (
                 <button
@@ -165,8 +170,8 @@ export default function GamificationProfilePage() {
             {/* Progress Section */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Progression</h2>
-              <LevelProgressBar 
-                currentXP={profile.totalXP} 
+              <LevelProgressBar
+                currentXP={profile.totalXP}
                 level={profile.level}
                 showDetails={true}
               />
@@ -181,7 +186,9 @@ export default function GamificationProfilePage() {
               <StreakCounter
                 currentStreak={profile.currentStreak}
                 longestStreak={profile.longestStreak}
-                todayCompleted={new Date(profile.lastActivityDate).toDateString() === new Date().toDateString()}
+                todayCompleted={
+                  new Date(profile.lastActivityDate).toDateString() === new Date().toDateString()
+                }
                 showLongest={true}
                 size="lg"
               />
@@ -211,20 +218,13 @@ export default function GamificationProfilePage() {
 
         {activeTab === 'badges' && (
           <div className="bg-white rounded-lg shadow-md p-6">
-            <BadgeGrid
-              badges={badges}
-              showProgress={true}
-              onBadgeClick={setSelectedBadge}
-            />
+            <BadgeGrid badges={badges} showProgress={true} onBadgeClick={setSelectedBadge} />
           </div>
         )}
 
         {activeTab === 'challenges' && (
           <div className="bg-white rounded-lg shadow-md p-6">
-            <ChallengeList
-              challenges={activeChallenges}
-              showFilters={true}
-            />
+            <ChallengeList challenges={activeChallenges} showFilters={true} />
           </div>
         )}
 

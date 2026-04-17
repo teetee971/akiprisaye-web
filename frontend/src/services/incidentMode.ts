@@ -23,4 +23,3 @@ export function onIncidentModeChange(handler: () => void): () => void {
   window.addEventListener(INCIDENT_EVENT, handler as EventListener);
   return () => window.removeEventListener(INCIDENT_EVENT, handler as EventListener);
 }
-

@@ -47,15 +47,21 @@ function dispatchTelemetry(event: PriceSearchTelemetryEvent): void {
   );
 }
 
-export function trackSearchStart(payload: Extract<PriceSearchTelemetryEvent, { type: 'search_start' }>['payload']): void {
+export function trackSearchStart(
+  payload: Extract<PriceSearchTelemetryEvent, { type: 'search_start' }>['payload']
+): void {
   dispatchTelemetry({ type: 'search_start', payload });
 }
 
-export function trackSearchResult(payload: Extract<PriceSearchTelemetryEvent, { type: 'search_result' }>['payload']): void {
+export function trackSearchResult(
+  payload: Extract<PriceSearchTelemetryEvent, { type: 'search_result' }>['payload']
+): void {
   dispatchTelemetry({ type: 'search_result', payload });
 }
 
-export function trackSearchError(payload: Extract<PriceSearchTelemetryEvent, { type: 'error' }>['payload']): void {
+export function trackSearchError(
+  payload: Extract<PriceSearchTelemetryEvent, { type: 'error' }>['payload']
+): void {
   dispatchTelemetry({ type: 'error', payload });
 }
 

@@ -25,7 +25,7 @@ interface UseGamificationReturn {
 
 export function useGamification(options: UseGamificationOptions = {}): UseGamificationReturn {
   const { userId, autoFetch = true } = options;
-  
+
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [dashboard, setDashboard] = useState<DashboardData | null>(null);
   const [pointsSummary, setPointsSummary] = useState<PointsSummary | null>(null);
@@ -34,7 +34,7 @@ export function useGamification(options: UseGamificationOptions = {}): UseGamifi
 
   const fetchProfile = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       const response = await fetch(`${API_BASE}/profile?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch profile');
@@ -48,7 +48,7 @@ export function useGamification(options: UseGamificationOptions = {}): UseGamifi
 
   const fetchDashboard = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       const response = await fetch(`${API_BASE}/dashboard?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch dashboard');
@@ -62,7 +62,7 @@ export function useGamification(options: UseGamificationOptions = {}): UseGamifi
 
   const fetchPointsSummary = useCallback(async () => {
     if (!userId) return;
-    
+
     try {
       const response = await fetch(`${API_BASE}/points/summary?userId=${userId}`);
       if (!response.ok) throw new Error('Failed to fetch points summary');
@@ -84,11 +84,7 @@ export function useGamification(options: UseGamificationOptions = {}): UseGamifi
     setError(null);
 
     try {
-      await Promise.all([
-        fetchProfile(),
-        fetchDashboard(),
-        fetchPointsSummary()
-      ]);
+      await Promise.all([fetchProfile(), fetchDashboard(), fetchPointsSummary()]);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch gamification data';
       setError(errorMessage);
@@ -110,11 +106,11 @@ export function useGamification(options: UseGamificationOptions = {}): UseGamifi
       const response = await fetch(`${API_BASE}/initialize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId })
+        body: JSON.stringify({ userId }),
       });
 
       if (!response.ok) throw new Error('Failed to initialize profile');
-      
+
       await refresh();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to initialize profile';
@@ -137,6 +133,6 @@ export function useGamification(options: UseGamificationOptions = {}): UseGamifi
     loading,
     error,
     refresh,
-    initialize
+    initialize,
   };
 }

@@ -24,13 +24,7 @@ interface UseLeaderboardReturn {
 }
 
 export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderboardReturn {
-  const {
-    userId,
-    period = 'all_time',
-    territory,
-    limit = 100,
-    autoFetch = true
-  } = options;
+  const { userId, period = 'all_time', territory, limit = 100, autoFetch = true } = options;
 
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [userRank, setUserRank] = useState<UserRank | null>(null);
@@ -40,7 +34,7 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
   const [filters, setFilters] = useState<LeaderboardFilters>({
     period,
     territory,
-    limit
+    limit,
   });
 
   const fetchLeaderboard = useCallback(async () => {
@@ -50,7 +44,7 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
     try {
       const params = new URLSearchParams({
         period: filters.period ?? 'all_time',
-        limit: filters.limit?.toString() || '100'
+        limit: filters.limit?.toString() || '100',
       });
 
       if (filters.territory) {
@@ -59,7 +53,7 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
 
       const response = await fetch(`${API_BASE}/leaderboard?${params}`);
       if (!response.ok) throw new Error('Failed to fetch leaderboard');
-      
+
       const data = await response.json();
       setLeaderboard(data);
     } catch (err) {
@@ -77,12 +71,12 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
     try {
       const params = new URLSearchParams({
         userId,
-        period: filters.period ?? 'all_time'
+        period: filters.period ?? 'all_time',
       });
 
       const response = await fetch(`${API_BASE}/leaderboard/rank?${params}`);
       if (!response.ok) throw new Error('Failed to fetch user rank');
-      
+
       const data = await response.json();
       setUserRank(data);
     } catch (err) {
@@ -96,12 +90,12 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
     try {
       const params = new URLSearchParams({
         userId,
-        range: '3'
+        range: '3',
       });
 
       const response = await fetch(`${API_BASE}/leaderboard/neighbors?${params}`);
       if (!response.ok) throw new Error('Failed to fetch neighbors');
-      
+
       const data = await response.json();
       setNeighbors(data);
     } catch (err) {
@@ -113,12 +107,12 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
     await Promise.all([
       fetchLeaderboard(),
       userId ? fetchUserRank() : Promise.resolve(),
-      userId ? fetchNeighbors() : Promise.resolve()
+      userId ? fetchNeighbors() : Promise.resolve(),
     ]);
   }, [fetchLeaderboard, fetchUserRank, fetchNeighbors, userId]);
 
   const updateFilters = useCallback((newFilters: Partial<LeaderboardFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
+    setFilters((prev) => ({ ...prev, ...newFilters }));
   }, []);
 
   useEffect(() => {
@@ -134,6 +128,6 @@ export function useLeaderboard(options: UseLeaderboardOptions = {}): UseLeaderbo
     loading,
     error,
     refresh,
-    updateFilters
+    updateFilters,
   };
 }

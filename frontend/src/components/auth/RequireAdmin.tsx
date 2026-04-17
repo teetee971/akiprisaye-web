@@ -4,9 +4,9 @@
  * Route guard for pages that require the "admin" role exclusively.
  */
 
-import type { ReactElement } from "react";
+import type { ReactElement } from 'react';
 
-import RequireRole from "./RequireRole";
+import RequireRole from './RequireRole';
 
 interface RequireAdminProps {
   children: ReactElement;

@@ -22,36 +22,60 @@ export interface BrandEntry {
 }
 
 export const KNOWN_BRANDS: BrandEntry[] = [
-  { pattern: /\bcoca[\s-]*cola\b/i,   name: 'Coca-Cola',   domain: 'coca-cola.fr',   officialSearchPrefix: 'Coca-Cola official' },
-  { pattern: /\bdamoiseau\b/i,        name: 'Damoiseau',   domain: 'damoiseau.com',  officialSearchPrefix: 'Damoiseau rhum official' },
-  { pattern: /\bpepsi\b/i,            name: 'Pepsi',       domain: 'pepsi.fr' },
-  { pattern: /\bnestl[eé]\b/i,        name: 'Nestlé',      domain: 'nestle.fr' },
-  { pattern: /\bdanone\b/i,           name: 'Danone',      domain: 'danone.fr' },
-  { pattern: /\byoplait\b/i,          name: 'Yoplait',     domain: 'yoplait.fr' },
-  { pattern: /\bpanzani\b/i,          name: 'Panzani',     domain: 'panzani.fr' },
-  { pattern: /\bheinz\b/i,            name: 'Heinz',       domain: 'heinz.fr' },
-  { pattern: /\bknorr\b/i,            name: 'Knorr',       domain: 'knorr.fr' },
-  { pattern: /\bmaggi\b/i,            name: 'Maggi',       domain: 'maggi.fr' },
+  {
+    pattern: /\bcoca[\s-]*cola\b/i,
+    name: 'Coca-Cola',
+    domain: 'coca-cola.fr',
+    officialSearchPrefix: 'Coca-Cola official',
+  },
+  {
+    pattern: /\bdamoiseau\b/i,
+    name: 'Damoiseau',
+    domain: 'damoiseau.com',
+    officialSearchPrefix: 'Damoiseau rhum official',
+  },
+  { pattern: /\bpepsi\b/i, name: 'Pepsi', domain: 'pepsi.fr' },
+  { pattern: /\bnestl[eé]\b/i, name: 'Nestlé', domain: 'nestle.fr' },
+  { pattern: /\bdanone\b/i, name: 'Danone', domain: 'danone.fr' },
+  { pattern: /\byoplait\b/i, name: 'Yoplait', domain: 'yoplait.fr' },
+  { pattern: /\bpanzani\b/i, name: 'Panzani', domain: 'panzani.fr' },
+  { pattern: /\bheinz\b/i, name: 'Heinz', domain: 'heinz.fr' },
+  { pattern: /\bknorr\b/i, name: 'Knorr', domain: 'knorr.fr' },
+  { pattern: /\bmaggi\b/i, name: 'Maggi', domain: 'maggi.fr' },
   { pattern: /\bb(?:on)?ne?\s*maman\b/i, name: 'Bonne Maman', domain: 'bonnemaman.fr' },
-  { pattern: /\blipton\b/i,           name: 'Lipton',      domain: 'lipton.fr' },
-  { pattern: /\bperrier\b/i,          name: 'Perrier',     domain: 'perrier.com' },
-  { pattern: /\beverell[eo]\b/i,      name: 'Evian',       domain: 'evian.fr' },
-  { pattern: /\bevian\b/i,            name: 'Evian',       domain: 'evian.fr' },
-  { pattern: /\bvolvic\b/i,           name: 'Volvic',      domain: 'volvic.fr' },
-  { pattern: /\bu\s+bio\b/i,          name: 'U Bio',       domain: 'magasins-u.com' },
+  { pattern: /\blipton\b/i, name: 'Lipton', domain: 'lipton.fr' },
+  { pattern: /\bperrier\b/i, name: 'Perrier', domain: 'perrier.com' },
+  { pattern: /\beverell[eo]\b/i, name: 'Evian', domain: 'evian.fr' },
+  { pattern: /\bevian\b/i, name: 'Evian', domain: 'evian.fr' },
+  { pattern: /\bvolvic\b/i, name: 'Volvic', domain: 'volvic.fr' },
+  { pattern: /\bu\s+bio\b/i, name: 'U Bio', domain: 'magasins-u.com' },
   { pattern: /\bcouronne\s*u\b|\bu\s+(?:express|casino)?\b/i, name: 'U', domain: 'magasins-u.com' },
-  { pattern: /\bcarrefour\b/i,        name: 'Carrefour',   domain: 'carrefour.fr' },
-  { pattern: /\bpringles\b/i,         name: 'Pringles',    domain: 'pringles.com' },
-  { pattern: /\blays\b/i,             name: "Lay's",       domain: 'lays.fr' },
-  { pattern: /\bbelin\b/i,            name: 'Belin',       domain: 'belin-snacks.fr' },
-  { pattern: /\bnorvège?\b/i,         name: 'Norvège',     domain: undefined },
-  { pattern: /\blu\b/i,               name: 'LU',          domain: 'lu.fr' },
+  { pattern: /\bcarrefour\b/i, name: 'Carrefour', domain: 'carrefour.fr' },
+  { pattern: /\bpringles\b/i, name: 'Pringles', domain: 'pringles.com' },
+  { pattern: /\blays\b/i, name: "Lay's", domain: 'lays.fr' },
+  { pattern: /\bbelin\b/i, name: 'Belin', domain: 'belin-snacks.fr' },
+  { pattern: /\bnorvège?\b/i, name: 'Norvège', domain: undefined },
+  { pattern: /\blu\b/i, name: 'LU', domain: 'lu.fr' },
 ];
 
 /** Tokens OCR parasites fréquents dans les tickets de caisse */
 const OCR_NOISE_TOKENS = new Set([
-  'ls', 'uc1', 'uc2', 'pxm', 'pqc', 'ux10', 'ux8', 'usau',
-  'lc', 'pet', 'bio', 'aop', 'igp', 'ab', 'fr', 'ean',
+  'ls',
+  'uc1',
+  'uc2',
+  'pxm',
+  'pqc',
+  'ux10',
+  'ux8',
+  'usau',
+  'lc',
+  'pet',
+  'bio',
+  'aop',
+  'igp',
+  'ab',
+  'fr',
+  'ean',
 ]);
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -127,11 +151,7 @@ export function removeOcrNoise(label: string): string {
  *  normalizeToProductKey("Lait UHT demi-écrémé U Bio 1L", "U Bio", "1l")
  *    → "lait-uht-demi-ecreme-u-bio-1l"
  */
-export function normalizeToProductKey(
-  label: string,
-  _brand?: string,
-  _size?: string,
-): string {
+export function normalizeToProductKey(label: string, _brand?: string, _size?: string): string {
   return removeAccents(label)
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, ' ')
@@ -162,13 +182,13 @@ export function normalizeToProductKey(
 export function generateSearchQueryVariants(
   label: string,
   brand?: string,
-  size?: string,
+  size?: string
 ): string[] {
   const queries = new Set<string>();
   const clean = label.trim();
 
   const detectedBrand = brand ?? extractBrandFromLabel(clean);
-  const detectedSize  = size  ?? extractSizeFromLabel(clean);
+  const detectedSize = size ?? extractSizeFromLabel(clean);
 
   // 1. Libellé complet
   queries.add(clean);

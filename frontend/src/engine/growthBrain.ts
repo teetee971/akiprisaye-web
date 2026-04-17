@@ -50,7 +50,7 @@ export interface FinalScoredProduct extends ScoredProduct {
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const DEFAULT_MIN_DELTA = 0.15;
-const DEFAULT_LIMIT     = 20;
+const DEFAULT_LIMIT = 20;
 const RECENCY_WINDOW_MS = 24 * 60 * 60 * 1000; // 1 day = maximum recency boost
 
 // ── Core functions ────────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ const RECENCY_WINDOW_MS = 24 * 60 * 60 * 1000; // 1 day = maximum recency boost
 export function selectViralProducts(
   products: ScoredProduct[],
   minDelta = DEFAULT_MIN_DELTA,
-  limit = DEFAULT_LIMIT,
+  limit = DEFAULT_LIMIT
 ): FinalScoredProduct[] {
   return products
     .filter((p) => typeof p.delta === 'number' && p.delta >= minDelta)
@@ -82,7 +82,7 @@ export function selectViralProducts(
  *   'low'         → delta ≤ 0.15 € — informational only
  */
 export function classifyProduct(p: Pick<ScoredProduct, 'delta'>): ViralTier {
-  if (p.delta > 0.30) return 'viral';
+  if (p.delta > 0.3) return 'viral';
   if (p.delta > 0.15) return 'opportunity';
   return 'low';
 }
@@ -125,6 +125,6 @@ function applyFinalScore(p: ScoredProduct): FinalScoredProduct {
   return {
     ...p,
     scoreFinal: computeFinalScore(p),
-    tier:       classifyProduct(p),
+    tier: classifyProduct(p),
   };
 }

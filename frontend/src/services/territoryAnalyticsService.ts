@@ -21,7 +21,9 @@ export interface TerritoryAnalytics {
 const cache = new Map<string, TerritoryAnalytics>();
 
 async function loadTerritoryData(territory: string): Promise<PriceObservation[]> {
-  const res = await fetch(`${import.meta.env.BASE_URL}data/territories/${territory}.json`, { cache: 'no-store' });
+  const res = await fetch(`${import.meta.env.BASE_URL}data/territories/${territory}.json`, {
+    cache: 'no-store',
+  });
   if (!res.ok) throw new Error(`Territory data not found: ${territory}`);
   return res.json();
 }
@@ -30,22 +32,17 @@ function average(values: number[]) {
   return values.reduce((a, b) => a + b, 0) / Math.max(values.length, 1);
 }
 
-export async function getTerritoryAnalytics(
-  territory: string
-): Promise<TerritoryAnalytics> {
+export async function getTerritoryAnalytics(territory: string): Promise<TerritoryAnalytics> {
   if (cache.has(territory)) {
     return cache.get(territory)!;
   }
 
   const data = await loadTerritoryData(territory);
 
-  const prices = data.map(p => p.pricePerUnit ?? p.price).filter(Boolean);
+  const prices = data.map((p) => p.pricePerUnit ?? p.price).filter(Boolean);
   const avgPrice = average(prices);
 
-  const inflationIndex = Math.min(
-    100,
-    Math.round((avgPrice / 10) * 100)
-  );
+  const inflationIndex = Math.min(100, Math.round((avgPrice / 10) * 100));
 
   const sorted = [...data].sort(
     (a, b) => (b.pricePerUnit ?? b.price) - (a.pricePerUnit ?? a.price)
@@ -55,7 +52,7 @@ export async function getTerritoryAnalytics(
   const topDecreases = sorted.slice(-5).reverse();
 
   const storeMap: Record<string, number[]> = {};
-  data.forEach(p => {
+  data.forEach((p) => {
     if (!p.store) return;
     if (!storeMap[p.store]) storeMap[p.store] = [];
     storeMap[p.store].push(p.pricePerUnit ?? p.price);
@@ -66,13 +63,9 @@ export async function getTerritoryAnalytics(
     avgPrice: average(values),
   }));
 
-  const cheapestStores = [...storeStats]
-    .sort((a, b) => a.avgPrice - b.avgPrice)
-    .slice(0, 3);
+  const cheapestStores = [...storeStats].sort((a, b) => a.avgPrice - b.avgPrice).slice(0, 3);
 
-  const mostExpensiveStores = [...storeStats]
-    .sort((a, b) => b.avgPrice - a.avgPrice)
-    .slice(0, 3);
+  const mostExpensiveStores = [...storeStats].sort((a, b) => b.avgPrice - a.avgPrice).slice(0, 3);
 
   const result: TerritoryAnalytics = {
     averagePrice: avgPrice,

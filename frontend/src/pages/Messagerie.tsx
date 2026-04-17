@@ -35,7 +35,7 @@ function formatTime(ts: { toDate?: () => Date } | null): string {
   const now = new Date();
   const diffMs = now.getTime() - d.getTime();
   const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return 'À l\'instant';
+  if (diffMin < 1) return "À l'instant";
   if (diffMin < 60) return `${diffMin} min`;
   const diffH = Math.floor(diffMin / 60);
   if (diffH < 24) return `${diffH}h`;
@@ -150,7 +150,9 @@ export default function Messagerie() {
       }
       try {
         localStorage.setItem('akiprisaye_archived_convs', JSON.stringify([...next]));
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
       return next;
     });
   };
@@ -162,8 +164,8 @@ export default function Messagerie() {
       ['De', 'À', 'Message', 'Date'],
       ...messages.map((m) => {
         const isMe = m.from === user.uid;
-        const fromLabel = isMe ? (user.displayName || user.email || 'Moi') : name;
-        const toLabel = isMe ? name : (user.displayName || user.email || 'Moi');
+        const fromLabel = isMe ? user.displayName || user.email || 'Moi' : name;
+        const toLabel = isMe ? name : user.displayName || user.email || 'Moi';
         const date = m.at?.toDate ? m.at.toDate().toLocaleString('fr-FR') : '';
         return [fromLabel, toLabel, m.text.replace(/"/g, '""'), date];
       }),
@@ -198,7 +200,9 @@ export default function Messagerie() {
       }
       const found = await findUserByEmail(searchEmail.trim());
       if (!found) {
-        setSearchError('Aucun utilisateur trouvé avec cet e-mail. Il doit être inscrit sur A KI PRI SA YÉ.');
+        setSearchError(
+          'Aucun utilisateur trouvé avec cet e-mail. Il doit être inscrit sur A KI PRI SA YÉ.'
+        );
         return;
       }
       const myName = user.displayName || user.email || user.uid;
@@ -265,7 +269,13 @@ export default function Messagerie() {
             <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
               💬 Messagerie
             </h1>
-            <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+            <p
+              style={{
+                margin: '0.25rem 0 0',
+                fontSize: '0.85rem',
+                color: 'rgba(255,255,255,0.75)',
+              }}
+            >
               Vos messages et échanges avec la communauté
             </p>
           </HeroImage>
@@ -285,7 +295,11 @@ export default function Messagerie() {
             )}
           </h1>
           <button
-            onClick={() => { setShowNewConv(true); setSearchError(''); setSearchEmail(''); }}
+            onClick={() => {
+              setShowNewConv(true);
+              setSearchError('');
+              setSearchEmail('');
+            }}
             className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors"
             aria-label="Nouvelle conversation"
           >
@@ -307,7 +321,10 @@ export default function Messagerie() {
             <GlassCard className="relative z-10 w-full max-w-md p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-white">Nouvelle conversation</h2>
-                <button onClick={() => setShowNewConv(false)} className="text-slate-400 hover:text-white">
+                <button
+                  onClick={() => setShowNewConv(false)}
+                  className="text-slate-400 hover:text-white"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -328,12 +345,14 @@ export default function Messagerie() {
                   disabled={searchLoading || !searchEmail.trim()}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-colors flex items-center gap-1"
                 >
-                  {searchLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                  {searchLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Search className="w-4 h-4" />
+                  )}
                 </button>
               </div>
-              {searchError && (
-                <p className="text-red-400 text-sm">{searchError}</p>
-              )}
+              {searchError && <p className="text-red-400 text-sm">{searchError}</p>}
             </GlassCard>
           </div>
         )}
@@ -349,7 +368,8 @@ export default function Messagerie() {
                 <MessageCircle className="w-12 h-12 text-slate-600" />
                 <p className="text-slate-400 font-medium">Aucune conversation</p>
                 <p className="text-slate-500 text-sm">
-                  Cliquez sur <strong className="text-blue-400">Nouveau</strong> pour démarrer un échange.
+                  Cliquez sur <strong className="text-blue-400">Nouveau</strong> pour démarrer un
+                  échange.
                 </p>
               </div>
             ) : (
@@ -360,13 +380,22 @@ export default function Messagerie() {
                     onClick={() => setShowArchived((v) => !v)}
                     className="px-4 py-2 text-xs text-slate-500 hover:text-slate-300 border-b border-slate-800 text-left flex items-center gap-1 transition-colors"
                   >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8" /></svg>
-                    {showArchived ? 'Masquer les archivées' : `Voir les archivées (${archivedIds.size})`}
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8"
+                      />
+                    </svg>
+                    {showArchived
+                      ? 'Masquer les archivées'
+                      : `Voir les archivées (${archivedIds.size})`}
                   </button>
                 )}
                 <ul className="flex-1 overflow-y-auto divide-y divide-slate-800">
                   {conversations
-                    .filter((c) => showArchived ? archivedIds.has(c.id) : !archivedIds.has(c.id))
+                    .filter((c) => (showArchived ? archivedIds.has(c.id) : !archivedIds.has(c.id)))
                     .map((conv) => {
                       const name = displayName(conv, user.uid);
                       const unreadCount = conv.unread[user.uid] ?? 0;
@@ -374,7 +403,9 @@ export default function Messagerie() {
                       const isArchived = archivedIds.has(conv.id);
                       return (
                         <li key={conv.id}>
-                          <div className={`flex items-center pr-1 ${isActive ? 'bg-slate-800' : 'hover:bg-slate-800/60'}`}>
+                          <div
+                            className={`flex items-center pr-1 ${isActive ? 'bg-slate-800' : 'hover:bg-slate-800/60'}`}
+                          >
                             <button
                               className="flex-1 text-left px-4 py-3 flex items-start gap-3 transition-colors"
                               onClick={() => setActiveConvId(conv.id)}
@@ -385,16 +416,22 @@ export default function Messagerie() {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-1">
-                                  <span className={`font-semibold truncate text-sm ${unreadCount > 0 ? 'text-white' : 'text-slate-300'}`}>
+                                  <span
+                                    className={`font-semibold truncate text-sm ${unreadCount > 0 ? 'text-white' : 'text-slate-300'}`}
+                                  >
                                     {name}
-                                    {isArchived && <span className="ml-1 text-yellow-500 text-xs">📦</span>}
+                                    {isArchived && (
+                                      <span className="ml-1 text-yellow-500 text-xs">📦</span>
+                                    )}
                                   </span>
                                   <span className="text-xs text-slate-500 flex-shrink-0">
                                     {formatTime(conv.lastAt)}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between gap-1 mt-0.5">
-                                  <p className={`text-xs truncate ${unreadCount > 0 ? 'text-slate-300' : 'text-slate-500'}`}>
+                                  <p
+                                    className={`text-xs truncate ${unreadCount > 0 ? 'text-slate-300' : 'text-slate-500'}`}
+                                  >
                                     {conv.lastMessage || 'Démarrer la conversation…'}
                                   </p>
                                   {unreadCount > 0 && (
@@ -407,12 +444,31 @@ export default function Messagerie() {
                             </button>
                             {/* Archive quick button */}
                             <button
-                              onClick={(e) => { e.stopPropagation(); toggleArchive(conv.id); }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleArchive(conv.id);
+                              }}
                               title={isArchived ? 'Désarchiver' : 'Archiver'}
                               className="p-2 text-slate-600 hover:text-yellow-400 transition-colors"
-                              aria-label={isArchived ? 'Désarchiver la conversation' : 'Archiver la conversation'}
+                              aria-label={
+                                isArchived
+                                  ? 'Désarchiver la conversation'
+                                  : 'Archiver la conversation'
+                              }
                             >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8" /></svg>
+                              <svg
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8"
+                                />
+                              </svg>
                             </button>
                           </div>
                         </li>
@@ -440,7 +496,9 @@ export default function Messagerie() {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
                       {displayName(activeConv, user.uid).charAt(0).toUpperCase()}
                     </div>
-                    <span className="font-semibold text-white text-sm flex-1">{displayName(activeConv, user.uid)}</span>
+                    <span className="font-semibold text-white text-sm flex-1">
+                      {displayName(activeConv, user.uid)}
+                    </span>
                     <button
                       onClick={exportConversationCSV}
                       disabled={messages.length === 0}
@@ -448,15 +506,43 @@ export default function Messagerie() {
                       className="text-slate-400 hover:text-green-400 disabled:opacity-30 transition-colors p-1"
                       aria-label="Exporter la conversation"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                        />
+                      </svg>
                     </button>
                     <button
                       onClick={() => activeConvId && toggleArchive(activeConvId)}
-                      title={activeConvId && archivedIds.has(activeConvId) ? 'Désarchiver' : 'Archiver la conversation'}
+                      title={
+                        activeConvId && archivedIds.has(activeConvId)
+                          ? 'Désarchiver'
+                          : 'Archiver la conversation'
+                      }
                       className="text-slate-400 hover:text-yellow-400 transition-colors p-1"
                       aria-label="Archiver/désarchiver"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8" /></svg>
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8l1 12a2 2 0 002 2h8a2 2 0 002-2L19 8"
+                        />
+                      </svg>
                     </button>
                   </>
                 )}
@@ -472,10 +558,7 @@ export default function Messagerie() {
                 {messages.map((msg) => {
                   const isMe = msg.from === user.uid;
                   return (
-                    <div
-                      key={msg.id}
-                      className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}
-                    >
+                    <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                       <div
                         className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
                           isMe
@@ -525,7 +608,10 @@ export default function Messagerie() {
               <div>
                 <MessageCircle className="w-16 h-16 text-slate-700 mx-auto mb-4" />
                 <p className="text-slate-400 font-medium mb-1">Sélectionnez une conversation</p>
-                <p className="text-slate-500 text-sm">ou créez-en une nouvelle avec le bouton <strong className="text-blue-400">Nouveau</strong></p>
+                <p className="text-slate-500 text-sm">
+                  ou créez-en une nouvelle avec le bouton{' '}
+                  <strong className="text-blue-400">Nouveau</strong>
+                </p>
               </div>
             </div>
           )}

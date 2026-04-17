@@ -14,15 +14,7 @@
  *   }
  */
 
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-} from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
@@ -76,11 +68,7 @@ const COLLECTION = 'lettre_hebdo_ia';
 export async function getLatestLettre(): Promise<LettreHebdo | null> {
   if (!db) return null;
   try {
-    const q = query(
-      collection(db, COLLECTION),
-      orderBy('generatedAt', 'desc'),
-      limit(1),
-    );
+    const q = query(collection(db, COLLECTION), orderBy('generatedAt', 'desc'), limit(1));
     const snap = await getDocs(q);
     if (snap.empty) return null;
     return snap.docs[0].data() as LettreHebdo;
@@ -109,11 +97,7 @@ export async function getLettreByWeek(weekId: string): Promise<LettreHebdo | nul
 export async function getRecentLettres(count = 12): Promise<LettreHebdo[]> {
   if (!db) return [];
   try {
-    const q = query(
-      collection(db, COLLECTION),
-      orderBy('generatedAt', 'desc'),
-      limit(count),
-    );
+    const q = query(collection(db, COLLECTION), orderBy('generatedAt', 'desc'), limit(count));
     const snap = await getDocs(q);
     return snap.docs.map((d) => d.data() as LettreHebdo);
   } catch {

@@ -88,7 +88,7 @@ const FEATURE_CATEGORIES: FeatureCategory[] = [
       },
       {
         label: 'Saint-Martin, Saint-Barthélemy, Saint-Pierre-et-Miquelon…',
-        tooltip: 'Collectivités d\'Outre-mer (COM)',
+        tooltip: "Collectivités d'Outre-mer (COM)",
         values: {
           akiprisaye: true,
           quiestlemoinscher: false,
@@ -109,7 +109,7 @@ const FEATURE_CATEGORIES: FeatureCategory[] = [
       },
       {
         label: 'Comparaison DOM vs Hexagone',
-        tooltip: 'Indice d\'écart de prix entre territoires ultramarins et la métropole',
+        tooltip: "Indice d'écart de prix entre territoires ultramarins et la métropole",
         values: {
           akiprisaye: true,
           quiestlemoinscher: false,
@@ -268,7 +268,7 @@ const FEATURE_CATEGORIES: FeatureCategory[] = [
         },
       },
       {
-        label: 'Sans liens d\'affiliation commerciale',
+        label: "Sans liens d'affiliation commerciale",
         tooltip: 'Aucune commission perçue sur les achats dirigés',
         values: {
           akiprisaye: true,
@@ -375,7 +375,7 @@ const FEATURE_CATEGORIES: FeatureCategory[] = [
 interface GapItem {
   icon: string;
   feature: string;
-  who: string;       // which competitor(s) already do it
+  who: string; // which competitor(s) already do it
   status: 'roadmap' | 'considered' | 'out-of-scope';
   statusLabel: string;
   statusColor: string;
@@ -390,7 +390,7 @@ const COMPETITOR_GAPS: GapItem[] = [
     status: 'roadmap',
     statusLabel: '🗓️ Sur la roadmap',
     statusColor: 'text-blue-400 bg-blue-900/30 border-blue-700/40',
-    desc: 'Idealo et Quiestlemoinscher couvrent smartphones, TV, électroménager avec des dizaines de milliers de références. Nous couvrons aujourd\'hui principalement l\'alimentaire et les services.',
+    desc: "Idealo et Quiestlemoinscher couvrent smartphones, TV, électroménager avec des dizaines de milliers de références. Nous couvrons aujourd'hui principalement l'alimentaire et les services.",
   },
   {
     icon: '🌍',
@@ -399,7 +399,7 @@ const COMPETITOR_GAPS: GapItem[] = [
     status: 'roadmap',
     statusLabel: '🗓️ Sur la roadmap',
     statusColor: 'text-blue-400 bg-blue-900/30 border-blue-700/40',
-    desc: 'Idealo est disponible en 14 langues dont l\'espagnol et le portugais. Notre support multilingue est en cours (créole, anglais) mais pas encore complet.',
+    desc: "Idealo est disponible en 14 langues dont l'espagnol et le portugais. Notre support multilingue est en cours (créole, anglais) mais pas encore complet.",
   },
   {
     icon: '🤖',
@@ -417,7 +417,7 @@ const COMPETITOR_GAPS: GapItem[] = [
     status: 'out-of-scope',
     statusLabel: '❌ Hors périmètre',
     statusColor: 'text-slate-400 bg-slate-800/40 border-slate-700/30',
-    desc: 'Les apps enseignes proposent des coupons et cashback directement liés à leur réseau. Incompatible avec notre principe d\'indépendance : nous n\'avons pas de relation commerciale avec les distributeurs.',
+    desc: "Les apps enseignes proposent des coupons et cashback directement liés à leur réseau. Incompatible avec notre principe d'indépendance : nous n'avons pas de relation commerciale avec les distributeurs.",
   },
   {
     icon: '🔊',
@@ -457,8 +457,6 @@ const COMPETITOR_GAPS: GapItem[] = [
   },
 ];
 
-
-
 function FeatureCell({ value, isOurs }: { value: FeatureValue; isOurs: boolean }) {
   if (value === true) {
     return (
@@ -484,9 +482,7 @@ function FeatureCell({ value, isOurs }: { value: FeatureValue; isOurs: boolean }
       </td>
     );
   }
-  return (
-    <td className="px-3 py-3 text-center text-xs text-white/60">{value}</td>
-  );
+  return <td className="px-3 py-3 text-center text-xs text-white/60">{value}</td>;
 }
 
 /* ──────────────────────────────────────────────────────────────────────────── */
@@ -502,33 +498,34 @@ export default function ComparatifConcurrence() {
     setOpenCategories((prev) => ({ ...prev, [cat]: !prev[cat] }));
 
   // Compute score per competitor (count of `true` + 0.5 for `partial`)
-  const scores = useMemo(() => COMPETITORS.map((comp) => {
-    let yes = 0;
-    let total = 0;
-    FEATURE_CATEGORIES.forEach((cat) =>
-      cat.features.forEach((f) => {
-        const v = f.values[comp.id];
-        if (v === true) yes++;
-        if (v === 'partial') yes += 0.5;
-        total++;
-      })
-    );
-    return { ...comp, score: Math.round((yes / total) * 100) };
-  }), []);
-
-  // Ranking sorted by score descending
-  const ranked = useMemo(
-    () => [...scores].sort((a, b) => b.score - a.score),
-    [scores]
+  const scores = useMemo(
+    () =>
+      COMPETITORS.map((comp) => {
+        let yes = 0;
+        let total = 0;
+        FEATURE_CATEGORIES.forEach((cat) =>
+          cat.features.forEach((f) => {
+            const v = f.values[comp.id];
+            if (v === true) yes++;
+            if (v === 'partial') yes += 0.5;
+            total++;
+          })
+        );
+        return { ...comp, score: Math.round((yes / total) * 100) };
+      }),
+    []
   );
 
+  // Ranking sorted by score descending
+  const ranked = useMemo(() => [...scores].sort((a, b) => b.score - a.score), [scores]);
+
   const MEDAL = ['🥇', '🥈', '🥉'];
-  const PODIUM_BG    = [
+  const PODIUM_BG = [
     'bg-yellow-500/20 border-yellow-500/50',
     'bg-slate-500/20 border-slate-400/40',
     'bg-amber-700/20 border-amber-600/40',
   ];
-  const PODIUM_TEXT  = ['text-yellow-300', 'text-slate-300', 'text-amber-400'];
+  const PODIUM_TEXT = ['text-yellow-300', 'text-slate-300', 'text-amber-400'];
   const PODIUM_SCORE = ['text-yellow-400', 'text-slate-400', 'text-amber-500'];
 
   // Podium display: 2nd | 1st | 3rd (classic Olympic layout)
@@ -538,12 +535,11 @@ export default function ComparatifConcurrence() {
     if (pos === 0) return 'h-20 sm:h-24';
     return 'h-14 sm:h-16';
   };
-  const podiumRank = (comp: typeof ranked[0]) => ranked.findIndex((r) => r.id === comp.id);
+  const podiumRank = (comp: (typeof ranked)[0]) => ranked.findIndex((r) => r.id === comp.id);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-
         {/* Hero */}
         <div className="mb-8 animate-fade-in">
           <HeroImage
@@ -557,7 +553,8 @@ export default function ComparatifConcurrence() {
             </h1>
             <p className="text-slate-200 text-sm drop-shadow max-w-2xl">
               Fonctionnalités, indépendance, couverture territoriale — voyez pourquoi{' '}
-              <strong>A KI PRI SA YÉ</strong> est l'outil le plus adapté aux réalités de l'Outre-mer.
+              <strong>A KI PRI SA YÉ</strong> est l'outil le plus adapté aux réalités de
+              l'Outre-mer.
             </p>
           </HeroImage>
         </div>
@@ -571,24 +568,22 @@ export default function ComparatifConcurrence() {
           {/* Olympic podium */}
           <div className="flex items-end justify-center gap-3 sm:gap-6 mb-6">
             {podiumOrder.map((comp) => {
-              const rank = podiumRank(comp);         // 0-indexed
+              const rank = podiumRank(comp); // 0-indexed
               const medal = MEDAL[rank] ?? '';
-              const bg    = PODIUM_BG[rank]   ?? 'bg-slate-800/30 border-slate-700/30';
-              const tc    = PODIUM_TEXT[rank]  ?? 'text-white/60';
-              const sc    = PODIUM_SCORE[rank] ?? 'text-white/40';
+              const bg = PODIUM_BG[rank] ?? 'bg-slate-800/30 border-slate-700/30';
+              const tc = PODIUM_TEXT[rank] ?? 'text-white/60';
+              const sc = PODIUM_SCORE[rank] ?? 'text-white/40';
               const isFirst = rank === 0;
               return (
                 <div key={comp.id} className="flex flex-col items-center gap-2 min-w-0">
                   {/* Competitor card above bar */}
-                  <div className={`rounded-xl border p-3 sm:p-4 text-center w-32 sm:w-40 ${bg} ${isFirst ? 'shadow-lg shadow-yellow-500/10' : ''}`}>
+                  <div
+                    className={`rounded-xl border p-3 sm:p-4 text-center w-32 sm:w-40 ${bg} ${isFirst ? 'shadow-lg shadow-yellow-500/10' : ''}`}
+                  >
                     <p className="text-2xl sm:text-3xl mb-1">{medal}</p>
                     {comp.flag && <p className="text-lg sm:text-xl">{comp.flag}</p>}
-                    <p className={`text-xs font-bold mt-1 leading-tight ${tc}`}>
-                      {comp.name}
-                    </p>
-                    <p className={`text-lg sm:text-xl font-extrabold mt-1 ${sc}`}>
-                      {comp.score}%
-                    </p>
+                    <p className={`text-xs font-bold mt-1 leading-tight ${tc}`}>{comp.name}</p>
+                    <p className={`text-lg sm:text-xl font-extrabold mt-1 ${sc}`}>{comp.score}%</p>
                     <p className="text-[10px] text-white/30 mt-0.5">{comp.focus}</p>
                   </div>
 
@@ -628,10 +623,10 @@ export default function ComparatifConcurrence() {
         {/* Intro disclaimer */}
         <div className="bg-blue-900/20 border border-blue-700/30 rounded-xl p-4 mb-8 text-sm text-blue-200">
           <span className="font-semibold">📌 Note méthodologique : </span>
-          Ce comparatif est basé sur des fonctionnalités publiquement disponibles et vérifiables
-          au {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}. Les
-          mentions « Partiel » (—) indiquent une fonctionnalité présente mais limitée ou non
-          adaptée aux territoires d'Outre-mer.
+          Ce comparatif est basé sur des fonctionnalités publiquement disponibles et vérifiables au{' '}
+          {new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}. Les mentions
+          « Partiel » (—) indiquent une fonctionnalité présente mais limitée ou non adaptée aux
+          territoires d'Outre-mer.
         </div>
 
         {/* Legend */}
@@ -685,9 +680,7 @@ export default function ComparatifConcurrence() {
                             <th
                               key={comp.id}
                               className={`text-center px-3 py-2 text-xs font-semibold whitespace-nowrap ${
-                                comp.highlight
-                                  ? 'text-blue-300'
-                                  : 'text-white/40'
+                                comp.highlight ? 'text-blue-300' : 'text-white/40'
                               }`}
                             >
                               {comp.flag && <span className="mr-0.5">{comp.flag}</span>}
@@ -706,7 +699,10 @@ export default function ComparatifConcurrence() {
                             <td className="px-5 py-3 text-white/80 text-sm">
                               {feat.label}
                               {feat.tooltip && (
-                                <span className="ml-1 text-white/30 text-xs cursor-help" title={feat.tooltip}>
+                                <span
+                                  className="ml-1 text-white/30 text-xs cursor-help"
+                                  title={feat.tooltip}
+                                >
                                   ℹ️
                                 </span>
                               )}
@@ -730,7 +726,10 @@ export default function ComparatifConcurrence() {
         </div>
 
         {/* ── CE QUE FAIT LA CONCURRENCE, PAS NOUS ENCORE ─────────────────── */}
-        <section className="mt-10 bg-slate-900/60 border border-slate-800 rounded-xl p-6" aria-label="Analyse des écarts">
+        <section
+          className="mt-10 bg-slate-900/60 border border-slate-800 rounded-xl p-6"
+          aria-label="Analyse des écarts"
+        >
           <h2 className="text-lg font-bold text-white/90 mb-1">
             🚀 Ce que fait la concurrence — et notre feuille de route
           </h2>
@@ -750,7 +749,9 @@ export default function ComparatifConcurrence() {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-start gap-2 mb-1">
                       <h3 className="text-sm font-semibold text-white">{gap.feature}</h3>
-                      <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${gap.statusColor}`}>
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${gap.statusColor}`}
+                      >
                         {gap.statusLabel}
                       </span>
                     </div>
@@ -767,15 +768,21 @@ export default function ComparatifConcurrence() {
           {/* Legend for gap statuses */}
           <div className="flex flex-wrap gap-4 mt-5 text-xs text-white/40">
             <span className="flex items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-full border text-blue-400 bg-blue-900/30 border-blue-700/40">🗓️ Sur la roadmap</span>
+              <span className="px-2 py-0.5 rounded-full border text-blue-400 bg-blue-900/30 border-blue-700/40">
+                🗓️ Sur la roadmap
+              </span>
               Prévu dans une prochaine version
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-full border text-yellow-400 bg-yellow-900/20 border-yellow-700/30">🔍 Étudié</span>
+              <span className="px-2 py-0.5 rounded-full border text-yellow-400 bg-yellow-900/20 border-yellow-700/30">
+                🔍 Étudié
+              </span>
               En cours d'analyse
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="px-2 py-0.5 rounded-full border text-slate-400 bg-slate-800/40 border-slate-700/30">❌ Hors périmètre</span>
+              <span className="px-2 py-0.5 rounded-full border text-slate-400 bg-slate-800/40 border-slate-700/30">
+                ❌ Hors périmètre
+              </span>
               Incompatible avec nos valeurs
             </span>
           </div>
@@ -783,15 +790,13 @@ export default function ComparatifConcurrence() {
 
         {/* Unique selling points */}
         <section className="mt-10 bg-blue-900/20 border border-blue-700/30 rounded-xl p-6">
-          <h2 className="text-lg font-bold text-blue-300 mb-4">
-            🌟 Ce qui nous rend uniques
-          </h2>
+          <h2 className="text-lg font-bold text-blue-300 mb-4">🌟 Ce qui nous rend uniques</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               {
                 icon: '🗺️',
                 title: 'Spécialiste Outre-mer',
-                desc: 'Le seul outil conçu dès le départ pour les réalités économiques des DOM-COM. Aucun concurrent n\'offre cette profondeur pour les territoires ultramarins.',
+                desc: "Le seul outil conçu dès le départ pour les réalités économiques des DOM-COM. Aucun concurrent n'offre cette profondeur pour les territoires ultramarins.",
               },
               {
                 icon: '👁️',
@@ -806,12 +811,12 @@ export default function ComparatifConcurrence() {
               {
                 icon: '📱',
                 title: 'Scan + OCR ticket de caisse',
-                desc: 'Scannez un EAN ou photographiez votre ticket : l\'app extrait, analyse et compare vos achats automatiquement.',
+                desc: "Scannez un EAN ou photographiez votre ticket : l'app extrait, analyse et compare vos achats automatiquement.",
               },
               {
                 icon: '📈',
                 title: 'Indice DOM vs Hexagone',
-                desc: 'Mesurez l\'écart de pouvoir d\'achat réel entre les territoires. Une fonctionnalité unique, appuyée sur des données INSEE et Eurostat.',
+                desc: "Mesurez l'écart de pouvoir d'achat réel entre les territoires. Une fonctionnalité unique, appuyée sur des données INSEE et Eurostat.",
               },
               {
                 icon: '🔓',
@@ -819,7 +824,10 @@ export default function ComparatifConcurrence() {
                 desc: 'Vos données sont vôtres. Exportez tout en CSV ou JSON. Les données agrégées sont librement réutilisables.',
               },
             ].map((usp) => (
-              <div key={usp.title} className="bg-slate-900/60 rounded-lg p-4 border border-slate-800">
+              <div
+                key={usp.title}
+                className="bg-slate-900/60 rounded-lg p-4 border border-slate-800"
+              >
                 <p className="text-2xl mb-2">{usp.icon}</p>
                 <h3 className="text-sm font-semibold text-white mb-1">{usp.title}</h3>
                 <p className="text-xs text-white/60 leading-relaxed">{usp.desc}</p>
@@ -851,8 +859,14 @@ export default function ComparatifConcurrence() {
         </div>
 
         <p className="mt-6 text-center text-xs text-white/30">
-          Comparatif établi sur la base des fonctionnalités publiquement disponibles.
-          Dernière mise à jour : {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}.
+          Comparatif établi sur la base des fonctionnalités publiquement disponibles. Dernière mise
+          à jour :{' '}
+          {new Date().toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          })}
+          .
         </p>
       </div>
     </div>

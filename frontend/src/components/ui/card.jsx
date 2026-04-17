@@ -1,4 +1,3 @@
-
 /**
  * card.jsx — backward-compat shim
  * Delegates to GlassCard (Civic Glass design system).
@@ -6,7 +5,4 @@
  */
 export { GlassCard as Card } from './glass-card';
 
-export const CardContent = ({ children, className }) => (
-  <div className={className}>{children}</div>
-);
-
+export const CardContent = ({ children, className }) => <div className={className}>{children}</div>;

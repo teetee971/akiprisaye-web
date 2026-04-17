@@ -1,4 +1,3 @@
- 
 /**
  * Funding Service
  * Simulates training financing options
@@ -127,14 +126,14 @@ function getEligibility(training: TrainingProgram, profile: UserProfile) {
   if (poleEmploiEligible) {
     details.push('✓ Éligible aux aides Pôle Emploi (AIF, AFPR, POE)');
   } else if (profile.currentStatus !== 'unemployed') {
-    details.push('✗ Aides Pôle Emploi réservées aux demandeurs d\'emploi');
+    details.push("✗ Aides Pôle Emploi réservées aux demandeurs d'emploi");
   }
 
   const regionEligible = training.pricing.regionAidAvailable;
   if (regionEligible) {
     details.push('✓ Aides régionales disponibles');
   } else {
-    details.push('✗ Pas d\'aide régionale identifiée pour cette formation');
+    details.push("✗ Pas d'aide régionale identifiée pour cette formation");
   }
 
   return {
@@ -166,10 +165,7 @@ function getFundingSteps(
       step: 'Étape 1 : Mobiliser votre CPF',
       description:
         'Connectez-vous à votre compte CPF pour vérifier vos droits et créer votre dossier de formation.',
-      documents: [
-        'Identité (carte d\'identité ou passeport)',
-        'Numéro de sécurité sociale',
-      ],
+      documents: ["Identité (carte d'identité ou passeport)", 'Numéro de sécurité sociale'],
       link: 'https://www.moncompteformation.gouv.fr/',
     });
   }
@@ -177,15 +173,10 @@ function getFundingSteps(
   // Step 2: Pôle Emploi
   if (eligibility.poleEmploi) {
     steps.push({
-      step: 'Étape 2 : Demander l\'aide Pôle Emploi',
+      step: "Étape 2 : Demander l'aide Pôle Emploi",
       description:
         'Contactez votre conseiller Pôle Emploi pour constituer votre dossier AIF (Aide Individuelle à la Formation).',
-      documents: [
-        'Devis de formation',
-        'Programme détaillé',
-        'CV à jour',
-        'Projet professionnel',
-      ],
+      documents: ['Devis de formation', 'Programme détaillé', 'CV à jour', 'Projet professionnel'],
       link: 'https://www.pole-emploi.fr/',
     });
   }
@@ -195,10 +186,10 @@ function getFundingSteps(
     steps.push({
       step: 'Étape 3 : Solliciter les aides régionales',
       description:
-        'Renseignez-vous auprès de votre conseil régional sur les dispositifs d\'aide à la formation (chèque formation, bourses).',
+        "Renseignez-vous auprès de votre conseil régional sur les dispositifs d'aide à la formation (chèque formation, bourses).",
       documents: [
         'Justificatif de domicile',
-        'Avis d\'imposition',
+        "Avis d'imposition",
         'Devis de formation',
         'Attestation Pôle Emploi (si applicable)',
       ],
@@ -209,9 +200,9 @@ function getFundingSteps(
   steps.push({
     step: `Étape ${steps.length + 1} : Finaliser l'inscription`,
     description:
-      'Une fois les financements validés, inscrivez-vous définitivement auprès de l\'organisme de formation.',
+      "Une fois les financements validés, inscrivez-vous définitivement auprès de l'organisme de formation.",
     documents: [
-      'Dossier d\'inscription complet',
+      "Dossier d'inscription complet",
       'Accords de financement',
       'Règlement du reste à charge',
     ],

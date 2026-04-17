@@ -30,8 +30,14 @@ export default function Perimetre() {
           gradient="from-slate-950 to-blue-900"
           height="h-40 sm:h-52"
         >
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🗺️ Périmètre géographique</h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Territoires et zones couverts par la plateforme</p>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🗺️ Périmètre géographique
+          </h1>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Territoires et zones couverts par la plateforme
+          </p>
         </HeroImage>
 
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
@@ -45,8 +51,8 @@ export default function Perimetre() {
             ))}
           </ul>
           <p className="text-sm text-slate-400">
-            Données vérifiées manuellement, mises en ligne sur un périmètre défini pour garantir la fiabilité avant
-            extension.
+            Données vérifiées manuellement, mises en ligne sur un périmètre défini pour garantir la
+            fiabilité avant extension.
           </p>
         </section>
 
@@ -61,18 +67,29 @@ export default function Perimetre() {
             ))}
           </ul>
           <p className="text-sm text-slate-400">
-            Ces zones ne sont pas incluses dans les fichiers publics. Toute extension fera l&apos;objet d&apos;une
-            publication dédiée, sans engagement automatique.
+            Ces zones ne sont pas incluses dans les fichiers publics. Toute extension fera
+            l&apos;objet d&apos;une publication dédiée, sans engagement automatique.
           </p>
         </section>
 
         <section className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-3">
           <h2 className="text-xl font-semibold text-white">Justification méthodologique</h2>
           <ul className="list-disc list-inside text-slate-200 space-y-2">
-            <li>Priorité aux données publiques sourcées et aux relevés citoyens facilement vérifiables.</li>
-            <li>Périmètre volontairement limité pour éviter toute confusion sur la couverture réelle.</li>
-            <li>Pas d&apos;API ni de collecte automatique : chaque jeu de données est contrôlé avant diffusion.</li>
-            <li>Clarification systématique du territoire, de la date et de la source sur chaque publication.</li>
+            <li>
+              Priorité aux données publiques sourcées et aux relevés citoyens facilement
+              vérifiables.
+            </li>
+            <li>
+              Périmètre volontairement limité pour éviter toute confusion sur la couverture réelle.
+            </li>
+            <li>
+              Pas d&apos;API ni de collecte automatique : chaque jeu de données est contrôlé avant
+              diffusion.
+            </li>
+            <li>
+              Clarification systématique du territoire, de la date et de la source sur chaque
+              publication.
+            </li>
           </ul>
         </section>
 
@@ -95,9 +112,10 @@ export default function Perimetre() {
         >
           <h2 className="text-xl font-semibold text-white">Données non exhaustives</h2>
           <p className="text-slate-200">
-            Les fichiers publiés reflètent uniquement les relevés disponibles sur le périmètre ci-dessus. Ils ne couvrent
-            pas l&apos;ensemble des commerces ni des territoires et ne constituent pas une base officielle. Chaque jeu
-            de données indique clairement son champ exact et ses limites.
+            Les fichiers publiés reflètent uniquement les relevés disponibles sur le périmètre
+            ci-dessus. Ils ne couvrent pas l&apos;ensemble des commerces ni des territoires et ne
+            constituent pas une base officielle. Chaque jeu de données indique clairement son champ
+            exact et ses limites.
           </p>
         </section>
       </div>

@@ -25,7 +25,7 @@ import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const INFLATION_TERRITORIES = TERRITORIES.filter((t) =>
-  ['gp', 'mq', 'gf', 're', 'yt', 'fr'].includes(t.code),
+  ['gp', 'mq', 'gf', 're', 'yt', 'fr'].includes(t.code)
 );
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -45,7 +45,9 @@ interface CategoryInflation {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function r2(n: number) { return Math.round(n * 100) / 100; }
+function r2(n: number) {
+  return Math.round(n * 100) / 100;
+}
 
 function pctChange(oldVal: number, newVal: number): number {
   if (oldVal <= 0) return 0;
@@ -61,19 +63,24 @@ function trend(pct: number | null): 'up' | 'down' | 'stable' {
 
 function trendIcon(t: 'up' | 'down' | 'stable', pct: number | null) {
   const label = pct != null ? `${pct > 0 ? '+' : ''}${pct.toFixed(1)}%` : '—';
-  if (t === 'up') return (
-    <span className="inline-flex items-center gap-1 text-red-600 dark:text-red-400 font-semibold text-sm">
-      <TrendingUp className="w-4 h-4" />{label}
-    </span>
-  );
-  if (t === 'down') return (
-    <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold text-sm">
-      <TrendingDown className="w-4 h-4" />{label}
-    </span>
-  );
+  if (t === 'up')
+    return (
+      <span className="inline-flex items-center gap-1 text-red-600 dark:text-red-400 font-semibold text-sm">
+        <TrendingUp className="w-4 h-4" />
+        {label}
+      </span>
+    );
+  if (t === 'down')
+    return (
+      <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold text-sm">
+        <TrendingDown className="w-4 h-4" />
+        {label}
+      </span>
+    );
   return (
     <span className="inline-flex items-center gap-1 text-slate-500 dark:text-slate-400 text-sm">
-      <Minus className="w-4 h-4" />{label}
+      <Minus className="w-4 h-4" />
+      {label}
     </span>
   );
 }
@@ -82,7 +89,7 @@ function trendIcon(t: 'up' | 'down' | 'stable', pct: number | null) {
 
 function buildCategoryInflation(
   monthly: MonthlyAggregate[],
-  territoryFlag: string,
+  territoryFlag: string
 ): CategoryInflation[] {
   // Group by (territory, category)
   const map = new Map<string, { prices: Map<string, number[]>; territory: string }>();
@@ -114,12 +121,9 @@ function buildCategoryInflation(
         })
       : undefined;
 
-    const momPct =
-      last && secondLast ? pctChange(secondLast.avgPrice, last.avgPrice) : null;
+    const momPct = last && secondLast ? pctChange(secondLast.avgPrice, last.avgPrice) : null;
     const yoyPct =
-      last && sameMonthLastYear
-        ? pctChange(sameMonthLastYear.avgPrice, last.avgPrice)
-        : null;
+      last && sameMonthLastYear ? pctChange(sameMonthLastYear.avgPrice, last.avgPrice) : null;
 
     return {
       category,
@@ -153,7 +157,7 @@ export default function InflationRateTracker() {
         if (snaps.length === 0) return [];
         const monthly = buildMonthlyAggregates(snaps);
         return buildCategoryInflation(monthly, t.flag);
-      }),
+      })
     )
       .then((results) => {
         if (cancelled) return;
@@ -161,20 +165,22 @@ export default function InflationRateTracker() {
         setLoading(false);
       })
       .catch(() => {
-        if (!cancelled) { setError(true); setLoading(false); }
+        if (!cancelled) {
+          setError(true);
+          setLoading(false);
+        }
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const territories = useMemo(
     () => [...new Set(allData.map((d) => d.territory))].sort(),
-    [allData],
+    [allData]
   );
-  const categories = useMemo(
-    () => [...new Set(allData.map((d) => d.category))].sort(),
-    [allData],
-  );
+  const categories = useMemo(() => [...new Set(allData.map((d) => d.category))].sort(), [allData]);
 
   const filtered = useMemo(() => {
     let rows = allData;
@@ -197,8 +203,12 @@ export default function InflationRateTracker() {
   }, [filtered]);
 
   const hottest = useMemo(
-    () => filtered.filter((d) => d.momPct != null).sort((a, b) => b.momPct! - a.momPct!).slice(0, 3),
-    [filtered],
+    () =>
+      filtered
+        .filter((d) => d.momPct != null)
+        .sort((a, b) => b.momPct! - a.momPct!)
+        .slice(0, 3),
+    [filtered]
   );
 
   return (
@@ -209,14 +219,24 @@ export default function InflationRateTracker() {
           name="description"
           content="Taux d'inflation mensuel et annuel par catégorie de produit et par territoire DROM-COM, calculé sur les relevés de prix réels."
         />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/inflation-categories" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/inflation-categories" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/inflation-categories" />
+        <link
+          rel="canonical"
+          href="https://teetee971.github.io/akiprisaye-web/inflation-categories"
+        />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/inflation-categories"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/inflation-categories"
+        />
       </Helmet>
 
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8">
         <div className="container mx-auto px-4 max-w-5xl">
-
           {/* Hero */}
           <HeroImage
             src={PAGE_HERO_IMAGES.inflation}
@@ -238,9 +258,10 @@ export default function InflationRateTracker() {
             <div className="flex items-start gap-3">
               <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                <strong>MoM</strong> = variation mensuelle (mois précédent → dernier mois disponible).{' '}
-                <strong>YoY</strong> = variation annuelle (même mois l'an dernier → dernier mois).
-                Le YoY n'est affiché que lorsque les deux périodes sont couvertes par les données.
+                <strong>MoM</strong> = variation mensuelle (mois précédent → dernier mois
+                disponible). <strong>YoY</strong> = variation annuelle (même mois l'an dernier →
+                dernier mois). Le YoY n'est affiché que lorsque les deux périodes sont couvertes par
+                les données.
               </p>
             </div>
           </div>
@@ -250,17 +271,26 @@ export default function InflationRateTracker() {
             <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm">
                 <p className="text-xs text-slate-500 mb-1">Inflation MoM moyenne</p>
-                <p className={`text-2xl font-bold ${avgMoM != null && avgMoM > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                <p
+                  className={`text-2xl font-bold ${avgMoM != null && avgMoM > 0 ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}
+                >
                   {avgMoM != null ? `${avgMoM > 0 ? '+' : ''}${avgMoM.toFixed(2)}%` : '—'}
                 </p>
               </div>
               {hottest.slice(0, 2).map((d) => (
-                <div key={`${d.territory}-${d.category}`} className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-200 dark:border-red-800 shadow-sm">
+                <div
+                  key={`${d.territory}-${d.category}`}
+                  className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-200 dark:border-red-800 shadow-sm"
+                >
                   <p className="text-xs text-red-700 dark:text-red-300 mb-1 flex items-center gap-1">
                     <TrendingUp className="w-3 h-3" /> Hausse notable
                   </p>
-                  <p className="font-semibold text-slate-900 dark:text-white text-sm">{d.category}</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">{d.territoryFlag} {d.territory}</p>
+                  <p className="font-semibold text-slate-900 dark:text-white text-sm">
+                    {d.category}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    {d.territoryFlag} {d.territory}
+                  </p>
                   <p className="text-red-600 dark:text-red-400 font-bold text-sm mt-1">
                     +{d.momPct?.toFixed(1)}% MoM
                   </p>
@@ -272,34 +302,48 @@ export default function InflationRateTracker() {
           {/* Filters + sort */}
           <div className="mb-4 flex flex-wrap gap-3 items-end">
             <div>
-              <label htmlFor="inflation-territoire" className="block text-xs text-slate-500 mb-1">Territoire</label>
+              <label htmlFor="inflation-territoire" className="block text-xs text-slate-500 mb-1">
+                Territoire
+              </label>
               <select
-                  id="inflation-territoire"
-                  value={selectedTerritory}
+                id="inflation-territoire"
+                value={selectedTerritory}
                 onChange={(e) => setSelectedTerritory(e.target.value)}
                 className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
               >
                 <option value="">Tous</option>
-                {territories.map((t) => <option key={t} value={t}>{t}</option>)}
+                {territories.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
-              <label htmlFor="inflation-categorie" className="block text-xs text-slate-500 mb-1">Catégorie</label>
+              <label htmlFor="inflation-categorie" className="block text-xs text-slate-500 mb-1">
+                Catégorie
+              </label>
               <select
-                  id="inflation-categorie"
-                  value={selectedCategory}
+                id="inflation-categorie"
+                value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
               >
                 <option value="">Toutes</option>
-                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+                {categories.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
               </select>
             </div>
             <div>
-              <label htmlFor="inflation-trier-par" className="block text-xs text-slate-500 mb-1">Trier par</label>
+              <label htmlFor="inflation-trier-par" className="block text-xs text-slate-500 mb-1">
+                Trier par
+              </label>
               <select
-                  id="inflation-trier-par"
-                  value={sortBy}
+                id="inflation-trier-par"
+                value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
                 className="px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-sm text-slate-800 dark:text-slate-200"
               >
@@ -349,21 +393,37 @@ export default function InflationRateTracker() {
                         >
                           <td className="px-4 py-3 whitespace-nowrap">
                             <span className="mr-1">{row.territoryFlag}</span>
-                            <span className="text-slate-700 dark:text-slate-300">{row.territory}</span>
+                            <span className="text-slate-700 dark:text-slate-300">
+                              {row.territory}
+                            </span>
                           </td>
                           <td className="px-4 py-3 text-slate-700 dark:text-slate-300">
-                            <CategoryIcon category={row.category} size="sm" className="mr-2 inline-block align-middle" />
+                            <CategoryIcon
+                              category={row.category}
+                              size="sm"
+                              className="mr-2 inline-block align-middle"
+                            />
                             {row.category}
                           </td>
                           <td className="px-4 py-3 text-right font-semibold text-slate-900 dark:text-white">
                             {latest ? `${latest.avgPrice.toFixed(2)} €` : '—'}
-                            {latest && <span className="block text-xs font-normal text-slate-400">{latest.month}</span>}
+                            {latest && (
+                              <span className="block text-xs font-normal text-slate-400">
+                                {latest.month}
+                              </span>
+                            )}
                           </td>
-                          <td className="px-4 py-3 text-right">{trendIcon(row.trend, row.momPct)}</td>
                           <td className="px-4 py-3 text-right">
-                            {row.yoyPct != null
-                              ? trendIcon(trend(row.yoyPct), row.yoyPct)
-                              : <span className="text-slate-300 dark:text-slate-600 text-xs">Données insuffisantes</span>}
+                            {trendIcon(row.trend, row.momPct)}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            {row.yoyPct != null ? (
+                              trendIcon(trend(row.yoyPct), row.yoyPct)
+                            ) : (
+                              <span className="text-slate-300 dark:text-slate-600 text-xs">
+                                Données insuffisantes
+                              </span>
+                            )}
                           </td>
                           <td className="px-4 py-3 hidden sm:table-cell">
                             <MiniSparkline months={row.months} />
@@ -375,7 +435,8 @@ export default function InflationRateTracker() {
                 </table>
               </div>
               <div className="px-4 py-2 bg-slate-50 dark:bg-slate-900/30 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400">
-                Source : relevés citoyens · {filtered.length} lignes · Calculs sur prix moyens par catégorie/mois
+                Source : relevés citoyens · {filtered.length} lignes · Calculs sur prix moyens par
+                catégorie/mois
               </div>
             </div>
           )}

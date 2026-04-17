@@ -75,13 +75,13 @@ export interface ImportResult {
 // ── Correspondance code forme juridique INSEE → label ─────────────────────────
 
 const CODE_FORME_JURIDIQUE: Record<string, string> = {
-  '1000': 'ei',        // Entrepreneur individuel
+  '1000': 'ei', // Entrepreneur individuel
   '1010': 'ei',
-  '5710': 'sasu',      // SAS unipersonnelle
-  '5720': 'sas',       // SAS
-  '5498': 'sarl',      // SARL
-  '5499': 'eurl',      // EURL
-  '5308': 'sa',        // SA
+  '5710': 'sasu', // SAS unipersonnelle
+  '5720': 'sas', // SAS
+  '5498': 'sarl', // SARL
+  '5499': 'eurl', // EURL
+  '5308': 'sa', // SA
   '9220': 'association',
 };
 
@@ -111,7 +111,7 @@ const DEPT_TO_TERRITOIRE: Record<string, string> = {
  */
 export async function searchInseeProsBatiment(params: {
   territory: string;
-  naf?: string;        // codes NAF filtrés (séparés virgule)
+  naf?: string; // codes NAF filtrés (séparés virgule)
   page?: number;
   perPage?: number;
 }): Promise<InseeSearchResult> {
@@ -123,11 +123,18 @@ export async function searchInseeProsBatiment(params: {
 
   const resp = await fetch(url.toString());
   if (!resp.ok) {
-    const err = await resp.json().catch(() => ({ error: `HTTP ${resp.status}` })) as { error: string };
+    const err = (await resp.json().catch(() => ({ error: `HTTP ${resp.status}` }))) as {
+      error: string;
+    };
     return {
-      total: 0, page: params.page ?? 1, perPage: params.perPage ?? 20,
-      results: [], source: 'insee_sirene_v3',
-      territory: params.territory, deptCode: '', nafCodes: [],
+      total: 0,
+      page: params.page ?? 1,
+      perPage: params.perPage ?? 20,
+      results: [],
+      source: 'insee_sirene_v3',
+      territory: params.territory,
+      deptCode: '',
+      nafCodes: [],
       error: err.error ?? `HTTP ${resp.status}`,
     };
   }
@@ -143,7 +150,9 @@ export async function getExistingSirets(): Promise<Set<string>> {
   if (!db) return new Set();
   try {
     const snap = await getDocs(collection(db, 'pros_batiment'));
-    return new Set(snap.docs.map((d) => (d.data() as { siret?: string }).siret ?? '').filter(Boolean));
+    return new Set(
+      snap.docs.map((d) => (d.data() as { siret?: string }).siret ?? '').filter(Boolean)
+    );
   } catch {
     return new Set();
   }
@@ -172,34 +181,35 @@ export async function siretAlreadyExists(siret: string): Promise<boolean> {
  */
 export function mapInseeToProPayload(etab: InseeEtablissement): NewProPayload {
   const territoire = DEPT_TO_TERRITOIRE[etab.departement] ?? 'GP';
-  const metiers    = NAF_TO_METIERS[etab.nafCode] ?? NAF_TO_METIERS[etab.nafCode.replace('.', '')] ?? [];
-  const annee      = etab.dateCreation ? parseInt(etab.dateCreation.slice(0, 4), 10) : null;
+  const metiers =
+    NAF_TO_METIERS[etab.nafCode] ?? NAF_TO_METIERS[etab.nafCode.replace('.', '')] ?? [];
+  const annee = etab.dateCreation ? parseInt(etab.dateCreation.slice(0, 4), 10) : null;
 
   return {
-    uid:             'insee_import',       // sera mis à jour lors de l'inscription du pro
-    siret:           etab.siret,
-    siren:           etab.siren,
-    tva:             deriveTva(etab.siren),
-    raisonSociale:   etab.raisonSociale || etab.denomination || etab.nomUsuel || etab.siret,
-    formeJuridique:  mapFormeJuridique(etab.codeFormeJuridique),
-    gerantPrenom:    '',
-    gerantNom:       '',
-    email:           '',
-    telephone:       '',
-    adresse:         etab.adresse,
-    codePostal:      etab.codePostal,
-    ville:           etab.ville,
+    uid: 'insee_import', // sera mis à jour lors de l'inscription du pro
+    siret: etab.siret,
+    siren: etab.siren,
+    tva: deriveTva(etab.siren),
+    raisonSociale: etab.raisonSociale || etab.denomination || etab.nomUsuel || etab.siret,
+    formeJuridique: mapFormeJuridique(etab.codeFormeJuridique),
+    gerantPrenom: '',
+    gerantNom: '',
+    email: '',
+    telephone: '',
+    adresse: etab.adresse,
+    codePostal: etab.codePostal,
+    ville: etab.ville,
     territoire,
-    metiers:         metiers as MetierBatiment[],
-    specialites:     [etab.nafLibelle].filter(Boolean),
-    description:     `Profil pré-rempli depuis l'annuaire INSEE Sirene. Code NAF : ${etab.nafCode} — ${etab.nafLibelle}. Ce professionnel doit valider et compléter son profil.`,
+    metiers: metiers as MetierBatiment[],
+    specialites: [etab.nafLibelle].filter(Boolean),
+    description: `Profil pré-rempli depuis l'annuaire INSEE Sirene. Code NAF : ${etab.nafCode} — ${etab.nafLibelle}. Ce professionnel doit valider et compléter son profil.`,
     zoneIntervention: etab.ville,
-    tarifHoraire:    null,
-    certifications:  [],
-    assuranceDecen:  false,
-    anneeCreation:   isNaN(annee!) ? null : annee,
-    documents:       [],
-    plan:            'free' as ProBatPlan,
+    tarifHoraire: null,
+    certifications: [],
+    assuranceDecen: false,
+    anneeCreation: isNaN(annee!) ? null : annee,
+    documents: [],
+    plan: 'free' as ProBatPlan,
   };
 }
 
@@ -219,29 +229,48 @@ function deriveTva(siren: string): string {
  */
 export async function importInseeEtablissements(
   etabs: InseeEtablissement[],
-  existingSirets?: Set<string>,
+  existingSirets?: Set<string>
 ): Promise<ImportResult[]> {
-  const known = existingSirets ?? await getExistingSirets();
+  const known = existingSirets ?? (await getExistingSirets());
   const results: ImportResult[] = [];
 
   for (const etab of etabs) {
     if (!etab.siret) {
-      results.push({ siret: '', raisonSociale: etab.raisonSociale, status: 'error', errorMsg: 'SIRET manquant' });
+      results.push({
+        siret: '',
+        raisonSociale: etab.raisonSociale,
+        status: 'error',
+        errorMsg: 'SIRET manquant',
+      });
       continue;
     }
     if (known.has(etab.siret)) {
-      results.push({ siret: etab.siret, raisonSociale: etab.raisonSociale, status: 'already_exists' });
+      results.push({
+        siret: etab.siret,
+        raisonSociale: etab.raisonSociale,
+        status: 'already_exists',
+      });
       continue;
     }
 
     const payload = mapInseeToProPayload(etab);
-    const res     = await registerProBatiment(payload);
+    const res = await registerProBatiment(payload);
 
     if (res.success) {
       known.add(etab.siret);
-      results.push({ siret: etab.siret, raisonSociale: etab.raisonSociale, status: 'imported', firestoreId: res.id });
+      results.push({
+        siret: etab.siret,
+        raisonSociale: etab.raisonSociale,
+        status: 'imported',
+        firestoreId: res.id,
+      });
     } else {
-      results.push({ siret: etab.siret, raisonSociale: etab.raisonSociale, status: 'error', errorMsg: res.error });
+      results.push({
+        siret: etab.siret,
+        raisonSociale: etab.raisonSociale,
+        status: 'error',
+        errorMsg: res.error,
+      });
     }
   }
 

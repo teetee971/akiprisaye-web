@@ -13,9 +13,14 @@ interface LevelProgressBarProps {
   className?: string;
 }
 
-export function LevelProgressBar({ currentXP, level, showDetails = true, className = '' }: LevelProgressBarProps) {
-  const currentLevelData = LEVELS.find(l => l.level === level) || LEVELS[0];
-  const nextLevelIndex = LEVELS.findIndex(l => l.level === level) + 1;
+export function LevelProgressBar({
+  currentXP,
+  level,
+  showDetails = true,
+  className = '',
+}: LevelProgressBarProps) {
+  const currentLevelData = LEVELS.find((l) => l.level === level) || LEVELS[0];
+  const nextLevelIndex = LEVELS.findIndex((l) => l.level === level) + 1;
   const nextLevelData = nextLevelIndex < LEVELS.length ? LEVELS[nextLevelIndex] : null;
 
   const progressInLevel = currentXP - currentLevelData.minXP;
@@ -27,9 +32,7 @@ export function LevelProgressBar({ currentXP, level, showDetails = true, classNa
     <div className={`space-y-2 ${className}`}>
       {showDetails && (
         <div className="flex justify-between items-center text-sm">
-          <span className="font-semibold text-gray-700">
-            {currentLevelData.name}
-          </span>
+          <span className="font-semibold text-gray-700">{currentLevelData.name}</span>
           {nextLevelData && (
             <span className="text-gray-500">
               {xpToNext} XP jusqu'au niveau {nextLevelData.level}
@@ -37,20 +40,20 @@ export function LevelProgressBar({ currentXP, level, showDetails = true, classNa
           )}
         </div>
       )}
-      
+
       <div className="relative w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
-        <div 
+        <div
           className="h-full rounded-full transition-all duration-500 ease-out relative"
-          style={{ 
+          style={{
             width: `${percentage}%`,
-            backgroundColor: currentLevelData.color
+            backgroundColor: currentLevelData.color,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white opacity-30"></div>
           <div className="absolute inset-0 animate-pulse bg-white opacity-20"></div>
         </div>
       </div>
-      
+
       {showDetails && (
         <div className="flex justify-between items-center text-xs text-gray-500">
           <span>{progressInLevel.toLocaleString()} XP</span>

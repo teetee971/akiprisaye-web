@@ -1,5 +1,3 @@
- 
- 
 import { CatalogueItemRaw } from '../services/catalogueService';
 
 // Type principal
@@ -16,13 +14,13 @@ export type CatalogueItem = {
   imageUrl?: string;
   reliabilityScore?: 'ReliabilityScore';
   qualityLabel?: 'QualityLabel';
-}
+};
 
 // Types pour les comparateurs
 export type SortConfig = {
   sortBy: 'price' | 'station' | 'city';
   sortDirection: 'asc' | 'desc';
-}
+};
 
 export interface ShareProps {
   title: string;

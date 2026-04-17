@@ -1,12 +1,12 @@
 /**
  * Premium Features Hook
- * 
+ *
  * React hook to check premium subscription status and feature access
- * 
+ *
  * Usage:
  * ```tsx
  * const { isPremium, hasFeature, loading } = usePremium();
- * 
+ *
  * if (hasFeature('advancedHistory')) {
  *   // Show premium feature
  * }
@@ -77,7 +77,7 @@ export function usePremium(): UsePremiumReturn {
 
 /**
  * Hook to check a specific premium feature
- * 
+ *
  * Usage:
  * ```tsx
  * const hasAdvancedHistory = useFeature('advancedHistory');

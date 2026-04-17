@@ -19,7 +19,11 @@ import { liveApiFetchJson } from '../services/liveApiClient';
 // ── Territory slug names ──────────────────────────────────────────────────────
 
 const TERRITORY_SLUG_NAMES: Record<string, string> = {
-  GP: 'guadeloupe', MQ: 'martinique', GF: 'guyane', RE: 'reunion', YT: 'mayotte',
+  GP: 'guadeloupe',
+  MQ: 'martinique',
+  GF: 'guyane',
+  RE: 'reunion',
+  YT: 'mayotte',
 };
 
 const RETAILERS = ['E.Leclerc', 'Carrefour', 'Super U', 'Leader Price', 'Intermarché'];
@@ -28,14 +32,17 @@ const RETAILERS = ['E.Leclerc', 'Carrefour', 'Super U', 'Leader Price', 'Interma
 
 function parseBrandSlug(slug: string): { brandSlug: string; brandName: string; territory: string } {
   const territoryEntries = Object.entries(TERRITORY_SLUG_MAP).sort(
-    (a, b) => b[0].length - a[0].length,
+    (a, b) => b[0].length - a[0].length
   );
   for (const [tSlug, code] of territoryEntries) {
     if (slug.endsWith(`-${tSlug}`)) {
       const brandPart = slug.slice(0, -(tSlug.length + 1));
       return {
         brandSlug: brandPart,
-        brandName: brandPart.split('-').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        brandName: brandPart
+          .split('-')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' '),
         territory: code,
       };
     }
@@ -93,19 +100,24 @@ function BrandProductCard({
 
 export default function SEOBrandPage() {
   const { slug = '' } = useParams<{ slug: string }>();
-  const [products, setProducts] = useState<Array<{ slug: string; name: string; category: string; price: number; retailer?: string }>>([]);
+  const [products, setProducts] = useState<
+    Array<{ slug: string; name: string; category: string; price: number; retailer?: string }>
+  >([]);
 
   const { brandSlug, brandName, territory } = useMemo(() => parseBrandSlug(slug), [slug]);
   const territoryName = getTerritoryName(territory);
   const tSlug = TERRITORY_SLUG_NAMES[territory] ?? 'guadeloupe';
 
-  const cheapestProduct = products.reduce<{ price: number; retailer: string | null } | null>((best, product) => {
-    if (!Number.isFinite(product.price) || product.price <= 0) return best;
-    if (!best || product.price < best.price) {
-      return { price: product.price, retailer: product.retailer ?? null };
-    }
-    return best;
-  }, null);
+  const cheapestProduct = products.reduce<{ price: number; retailer: string | null } | null>(
+    (best, product) => {
+      if (!Number.isFinite(product.price) || product.price <= 0) return best;
+      if (!best || product.price < best.price) {
+        return { price: product.price, retailer: product.retailer ?? null };
+      }
+      return best;
+    },
+    null
+  );
 
   const bestPrice = cheapestProduct?.price ?? 0;
 
@@ -113,9 +125,17 @@ export default function SEOBrandPage() {
     let cancelled = false;
     const loadProducts = async () => {
       try {
-        const payload = await liveApiFetchJson<{ products?: Array<{ slug: string; name: string; category: string; price: number; retailer?: string }> }>(
+        const payload = await liveApiFetchJson<{
+          products?: Array<{
+            slug: string;
+            name: string;
+            category: string;
+            price: number;
+            retailer?: string;
+          }>;
+        }>(
           `/brands/${encodeURIComponent(brandSlug)}/products?territory=${encodeURIComponent(territory)}`,
-          { incidentReason: 'brand_products_api_unavailable', timeoutMs: 10000 },
+          { incidentReason: 'brand_products_api_unavailable', timeoutMs: 10000 }
         );
         if (cancelled) return;
         setProducts(Array.isArray(payload?.products) ? payload.products : []);
@@ -164,14 +184,25 @@ export default function SEOBrandPage() {
       />
 
       <div className="mx-auto max-w-2xl space-y-4">
-
         {/* Breadcrumb */}
         <nav aria-label="Fil d'Ariane" className="text-xs text-zinc-500">
           <ol className="flex flex-wrap items-center gap-1.5">
-            <li><Link to="/" className="hover:text-emerald-400 transition-colors">Accueil</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
-            <li><Link to="/comparateur" className="hover:text-emerald-400 transition-colors">Comparateur</Link></li>
-            <li aria-hidden className="text-zinc-700">›</li>
+            <li>
+              <Link to="/" className="hover:text-emerald-400 transition-colors">
+                Accueil
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
+            <li>
+              <Link to="/comparateur" className="hover:text-emerald-400 transition-colors">
+                Comparateur
+              </Link>
+            </li>
+            <li aria-hidden className="text-zinc-700">
+              ›
+            </li>
             <li className="text-zinc-300">{brandName}</li>
           </ol>
         </nav>
@@ -182,8 +213,8 @@ export default function SEOBrandPage() {
             Prix {brandName} en {territoryName}
           </h1>
           <p className="mt-2 text-sm text-zinc-400">
-            Comparez tous les produits {brandName} disponibles en {territoryName}.
-            Prix mis à jour quotidiennement dans {RETAILERS.length} enseignes.
+            Comparez tous les produits {brandName} disponibles en {territoryName}. Prix mis à jour
+            quotidiennement dans {RETAILERS.length} enseignes.
           </p>
           <div className="mt-3 flex items-baseline gap-2">
             <span className="text-xs text-zinc-500">Meilleur prix à partir de</span>
@@ -210,18 +241,22 @@ export default function SEOBrandPage() {
           territory={territory}
           category={products[0]?.category ?? 'epicerie'}
         />
-
       </div>
 
       <ConversionStickyBar
         bestPrice={bestPrice}
         savings={null}
         retailer={cheapestProduct?.retailer ?? null}
-        retailerUrl={cheapestProduct?.retailer ? buildRetailerUrl(cheapestProduct.retailer, '') ?? null : null}
+        retailerUrl={
+          cheapestProduct?.retailer
+            ? (buildRetailerUrl(cheapestProduct.retailer, '') ?? null)
+            : null
+        }
         productName={`${brandName} ${territoryName}`}
         territory={territory}
         onCTAClick={() => {
-          if (cheapestProduct?.retailer) trackRetailerClick('', cheapestProduct.retailer, territory, bestPrice);
+          if (cheapestProduct?.retailer)
+            trackRetailerClick('', cheapestProduct.retailer, territory, bestPrice);
         }}
       />
     </div>

@@ -16,26 +16,34 @@ export interface PriceAlert {
 export const DEFAULT_ALERT_PREFERENCES = {
   priceDrop: true,
   priceIncrease: false,
-  threshold: 0.05
+  threshold: 0.05,
 };
 
-export const detectPriceDrop = (oldPrice: number, newPrice: number, prefs = DEFAULT_ALERT_PREFERENCES) => {
+export const detectPriceDrop = (
+  oldPrice: number,
+  newPrice: number,
+  prefs = DEFAULT_ALERT_PREFERENCES
+) => {
   const ratio = (oldPrice - newPrice) / oldPrice;
   if (newPrice < oldPrice && ratio >= (prefs.threshold || 0.05)) {
     return {
       percentageChange: -(ratio * 100),
-      severity: (ratio > 0.15 ? 'high' : 'medium') as AlertSeverity
+      severity: (ratio > 0.15 ? 'high' : 'medium') as AlertSeverity,
     };
   }
   return null;
 };
 
-export const detectPriceIncrease = (oldPrice: number, newPrice: number, prefs = DEFAULT_ALERT_PREFERENCES) => {
+export const detectPriceIncrease = (
+  oldPrice: number,
+  newPrice: number,
+  prefs = DEFAULT_ALERT_PREFERENCES
+) => {
   const ratio = (newPrice - oldPrice) / oldPrice;
   if (newPrice > oldPrice && ratio >= (prefs.threshold || 0.05)) {
     return {
       percentageChange: ratio * 100,
-      severity: (ratio > 0.15 ? 'high' : 'medium') as AlertSeverity
+      severity: (ratio > 0.15 ? 'high' : 'medium') as AlertSeverity,
     };
   }
   return null;
@@ -47,18 +55,18 @@ export const priceAlertService = {
     return await addDoc(collection(db as any, 'price_alerts'), {
       ...alert,
       active: true,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     });
   },
 
   async checkIfFollowing(userId: string, productId: string): Promise<boolean> {
     const q = query(
-      collection(db as any, 'price_alerts'), 
+      collection(db as any, 'price_alerts'),
       where('userId', '==', userId),
       where('productId', '==', productId),
       where('active', '==', true)
     );
     const querySnapshot = await getDocs(q);
     return !querySnapshot.empty;
-  }
+  },
 };

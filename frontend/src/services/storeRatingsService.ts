@@ -50,13 +50,13 @@ function writeRatings(ratings: UserStoreRating[]): void {
 /** Récupère tous les avis soumis localement, du plus récent au plus ancien */
 export function getUserRatings(): UserStoreRating[] {
   return readRatings().sort(
-    (a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime(),
+    (a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()
   );
 }
 
 /** Sauvegarde un nouvel avis */
 export function saveUserRating(
-  rating: Omit<UserStoreRating, 'id' | 'submittedAt'>,
+  rating: Omit<UserStoreRating, 'id' | 'submittedAt'>
 ): UserStoreRating {
   const saved: UserStoreRating = {
     ...rating,
@@ -75,6 +75,10 @@ export function deleteUserRating(id: string): void {
 }
 
 /** Calcule la note moyenne d'un avis */
-export function avgRatingFrom(r: { service: number; proprete: number; disponibilite: number }): number {
+export function avgRatingFrom(r: {
+  service: number;
+  proprete: number;
+  disponibilite: number;
+}): number {
   return Math.round(((r.service + r.proprete + r.disponibilite) / 3) * 10) / 10;
 }

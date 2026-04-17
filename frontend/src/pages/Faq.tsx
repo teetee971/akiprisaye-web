@@ -13,7 +13,7 @@ const FAQ_CATEGORIES = [
   { id: 'abonnements', label: 'Abonnements', icon: '💳' },
   { id: 'donnees', label: 'Données', icon: '📊' },
   { id: 'technique', label: 'Technique', icon: '⚙️' },
-  { id: 'institutionnel', label: 'Institutionnel', icon: '🏛️' }
+  { id: 'institutionnel', label: 'Institutionnel', icon: '🏛️' },
 ] as const;
 
 export default function Faq() {
@@ -54,12 +54,22 @@ export default function Faq() {
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <Helmet>
         <title>FAQ – A KI PRI SA YÉ</title>
-        <meta name="description" content="Questions fréquentes sur A KI PRI SA YÉ : transparence des prix, données, abonnements, technique et conformité institutionnelle." />
+        <meta
+          name="description"
+          content="Questions fréquentes sur A KI PRI SA YÉ : transparence des prix, données, abonnements, technique et conformité institutionnelle."
+        />
         <meta property="og:title" content="FAQ – A KI PRI SA YÉ" />
-        <meta property="og:description" content="Tout ce que vous devez savoir sur A KI PRI SA YÉ, l'application citoyenne de transparence des prix Outre-mer." />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/faq" />
+        <meta
+          property="og:description"
+          content="Tout ce que vous devez savoir sur A KI PRI SA YÉ, l'application citoyenne de transparence des prix Outre-mer."
+        />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/faq" />
         <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/faq" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/faq" />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/faq"
+        />
       </Helmet>
       <div className="max-w-6xl mx-auto px-4 pb-4 animate-fade-in">
         <HeroImage
@@ -69,7 +79,9 @@ export default function Faq() {
           height="h-36 sm:h-48"
         >
           <h1 className="text-3xl font-bold text-white drop-shadow">Questions Fréquentes (FAQ)</h1>
-          <p className="text-slate-300 text-sm drop-shadow">Tout ce que vous devez savoir sur A KI PRI SA YÉ — du public aux institutions</p>
+          <p className="text-slate-300 text-sm drop-shadow">
+            Tout ce que vous devez savoir sur A KI PRI SA YÉ — du public aux institutions
+          </p>
         </HeroImage>
       </div>
       <GlassContainer className="max-w-6xl mx-auto p-8">
@@ -106,9 +118,7 @@ export default function Faq() {
         <div className="space-y-3">
           {displayedFAQ.length === 0 ? (
             <GlassCard className="text-center py-12">
-              <p className="text-gray-400">
-                Aucune question ne correspond à votre recherche.
-              </p>
+              <p className="text-gray-400">Aucune question ne correspond à votre recherche.</p>
               <button
                 onClick={() => {
                   setSearchQuery('');
@@ -122,7 +132,7 @@ export default function Faq() {
           ) : (
             displayedFAQ.map((item) => {
               const isExpanded = expandedFAQ.has(item.id);
-              
+
               return (
                 <GlassCard
                   key={item.id}
@@ -131,16 +141,14 @@ export default function Faq() {
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        {item.question}
-                      </h3>
-                      
+                      <h3 className="text-lg font-semibold text-white mb-2">{item.question}</h3>
+
                       {isExpanded && (
                         <div className="mt-3">
                           <p className="text-gray-300 leading-relaxed whitespace-pre-line">
                             {item.answer}
                           </p>
-                          
+
                           {/* Tags */}
                           <div className="mt-4 flex flex-wrap gap-2">
                             {item.tags.map((tag, idx) => (
@@ -155,11 +163,13 @@ export default function Faq() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="flex-shrink-0">
-                      <span className={`text-2xl transition-transform ${
-                        isExpanded ? 'rotate-180' : ''
-                      }`}>
+                      <span
+                        className={`text-2xl transition-transform ${
+                          isExpanded ? 'rotate-180' : ''
+                        }`}
+                      >
                         ▼
                       </span>
                     </div>
@@ -199,7 +209,8 @@ export default function Faq() {
         {/* Statistics */}
         <div className="mt-8 text-center text-sm text-gray-500">
           <p>
-            {displayedFAQ.length} question{displayedFAQ.length > 1 ? 's' : ''} affichée{displayedFAQ.length > 1 ? 's' : ''} 
+            {displayedFAQ.length} question{displayedFAQ.length > 1 ? 's' : ''} affichée
+            {displayedFAQ.length > 1 ? 's' : ''}
             {' • '}
             {FAQ_DATA.length} questions au total
           </p>

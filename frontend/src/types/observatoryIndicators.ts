@@ -1,9 +1,9 @@
 /**
  * Observatory Indicator Types - v3.0.0
- * 
+ *
  * Types for priority indicators and calculations
  * Indicateurs prioritaires médiatiquement exploitables
- * 
+ *
  * @module observatoryIndicators
  */
 

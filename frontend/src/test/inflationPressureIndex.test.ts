@@ -21,10 +21,10 @@ describe('Inflation Pressure Index (ILPP)', () => {
   describe('computeILPP', () => {
     it('should calculate ILPP score correctly with all components', () => {
       const data: ILPPInputData = {
-        avgChange: 10,          // 10% average increase
-        volatility: 15,         // 15% volatility
-        increaseFrequency: 60,  // 60% increases
-        dispersion: 20,         // 20% dispersion
+        avgChange: 10, // 10% average increase
+        volatility: 15, // 15% volatility
+        increaseFrequency: 60, // 60% increases
+        dispersion: 20, // 20% dispersion
       };
 
       const score = computeILPP(data);
@@ -62,7 +62,7 @@ describe('Inflation Pressure Index (ILPP)', () => {
 
     it('should handle negative values gracefully', () => {
       const data: ILPPInputData = {
-        avgChange: -5,  // Price decrease
+        avgChange: -5, // Price decrease
         volatility: 10,
         increaseFrequency: 30,
         dispersion: 15,
@@ -125,9 +125,9 @@ describe('Inflation Pressure Index (ILPP)', () => {
     });
 
     it('should never mention predictions or advice', () => {
-      const allExplanations = [0, 20, 40, 60, 80, 100].map(score => explainILPP(score));
-      
-      allExplanations.forEach(explanation => {
+      const allExplanations = [0, 20, 40, 60, 80, 100].map((score) => explainILPP(score));
+
+      allExplanations.forEach((explanation) => {
         expect(explanation.toLowerCase()).not.toContain('va');
         expect(explanation.toLowerCase()).not.toContain('sera');
         expect(explanation.toLowerCase()).not.toContain('conseil');
@@ -140,13 +140,55 @@ describe('Inflation Pressure Index (ILPP)', () => {
   describe('calculateILPPComponents', () => {
     it('should calculate components from price snapshots', () => {
       const snapshots: BasketPriceSnapshot[] = [
-        { basketId: 'b1', territoryId: 't1', totalPrice: 100, timestamp: Date.now() - 6 * 24 * 60 * 60 * 1000, date: '2024-01-01' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 105, timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000, date: '2024-01-02' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 103, timestamp: Date.now() - 4 * 24 * 60 * 60 * 1000, date: '2024-01-03' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 108, timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000, date: '2024-01-04' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 107, timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000, date: '2024-01-05' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 110, timestamp: Date.now() - 1 * 24 * 60 * 60 * 1000, date: '2024-01-06' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 112, timestamp: Date.now(), date: '2024-01-07' },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 100,
+          timestamp: Date.now() - 6 * 24 * 60 * 60 * 1000,
+          date: '2024-01-01',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 105,
+          timestamp: Date.now() - 5 * 24 * 60 * 60 * 1000,
+          date: '2024-01-02',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 103,
+          timestamp: Date.now() - 4 * 24 * 60 * 60 * 1000,
+          date: '2024-01-03',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 108,
+          timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000,
+          date: '2024-01-04',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 107,
+          timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
+          date: '2024-01-05',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 110,
+          timestamp: Date.now() - 1 * 24 * 60 * 60 * 1000,
+          date: '2024-01-06',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 112,
+          timestamp: Date.now(),
+          date: '2024-01-07',
+        },
       ];
 
       const components = calculateILPPComponents(snapshots);
@@ -160,7 +202,13 @@ describe('Inflation Pressure Index (ILPP)', () => {
 
     it('should return null for insufficient data', () => {
       const snapshots: BasketPriceSnapshot[] = [
-        { basketId: 'b1', territoryId: 't1', totalPrice: 100, timestamp: Date.now(), date: '2024-01-01' },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 100,
+          timestamp: Date.now(),
+          date: '2024-01-01',
+        },
       ];
 
       const components = calculateILPPComponents(snapshots);
@@ -169,10 +217,34 @@ describe('Inflation Pressure Index (ILPP)', () => {
 
     it('should handle stable prices', () => {
       const snapshots: BasketPriceSnapshot[] = [
-        { basketId: 'b1', territoryId: 't1', totalPrice: 100, timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000, date: '2024-01-01' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 100, timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000, date: '2024-01-02' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 100, timestamp: Date.now() - 1 * 24 * 60 * 60 * 1000, date: '2024-01-03' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 100, timestamp: Date.now(), date: '2024-01-04' },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 100,
+          timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000,
+          date: '2024-01-01',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 100,
+          timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
+          date: '2024-01-02',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 100,
+          timestamp: Date.now() - 1 * 24 * 60 * 60 * 1000,
+          date: '2024-01-03',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 100,
+          timestamp: Date.now(),
+          date: '2024-01-04',
+        },
       ];
 
       const components = calculateILPPComponents(snapshots);
@@ -187,8 +259,20 @@ describe('Inflation Pressure Index (ILPP)', () => {
   describe('computeILPPFromSnapshots', () => {
     it('should return unreliable result for insufficient data', () => {
       const snapshots: BasketPriceSnapshot[] = [
-        { basketId: 'b1', territoryId: 't1', totalPrice: 100, timestamp: Date.now(), date: '2024-01-01' },
-        { basketId: 'b1', territoryId: 't1', totalPrice: 105, timestamp: Date.now(), date: '2024-01-02' },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 100,
+          timestamp: Date.now(),
+          date: '2024-01-01',
+        },
+        {
+          basketId: 'b1',
+          territoryId: 't1',
+          totalPrice: 105,
+          timestamp: Date.now(),
+          date: '2024-01-02',
+        },
       ];
 
       const result = computeILPPFromSnapshots(snapshots, 't1');

@@ -1,6 +1,6 @@
 /**
  * Type definitions for Food Basket Observatory Feature v2.5.0
- * 
+ *
  * Principles:
  * - Read-only observation (no data modification)
  * - Type basket analysis (basic, family, local)
@@ -22,7 +22,7 @@ export type FoodBasketType = 'BASIC' | 'FAMILY' | 'LOCAL';
 /**
  * Food category classification
  */
-export type FoodCategory = 
+export type FoodCategory =
   | 'FRUITS_VEGETABLES'
   | 'MEAT_FISH'
   | 'DAIRY'
@@ -36,14 +36,14 @@ export type FoodCategory =
  * Food basket item
  */
 export interface FoodBasketItem {
-  itemId?: string;                // Optional item identifier
-  name: string;                   // Item name (e.g., "Lait demi-écrémé")
+  itemId?: string; // Optional item identifier
+  name: string; // Item name (e.g., "Lait demi-écrémé")
   category: FoodCategory;
-  quantity: number;               // Quantity needed
-  unit: string;                   // Unit (kg, L, unit, etc.)
-  ean?: string;                   // Optional EAN code
-  brand?: string;                 // Optional brand
-  localProduct?: boolean;         // Is it a local product?
+  quantity: number; // Quantity needed
+  unit: string; // Unit (kg, L, unit, etc.)
+  ean?: string; // Optional EAN code
+  brand?: string; // Optional brand
+  localProduct?: boolean; // Is it a local product?
 }
 
 /**
@@ -54,12 +54,12 @@ export interface FoodBasketItemPrice {
   storeId?: string;
   storeName: string;
   storeChain?: string;
-  price: number;                  // Price for the quantity needed
-  pricePerUnit: number;           // Price per kg/L/unit
+  price: number; // Price for the quantity needed
+  pricePerUnit: number; // Price per kg/L/unit
   territory: Territory;
-  observationDate: string;        // ISO 8601
-  source: SourceReference;        // Mandatory source
-  volume: number;                 // Number of observations
+  observationDate: string; // ISO 8601
+  source: SourceReference; // Mandatory source
+  volume: number; // Number of observations
   confidence: 'high' | 'medium' | 'low';
   verified: boolean;
   availability?: 'in_stock' | 'out_of_stock' | 'seasonal';
@@ -75,13 +75,13 @@ export interface FoodBasket {
   description: string;
   items: FoodBasketItem[];
   period: 'daily' | 'weekly' | 'monthly';
-  targetHouseholdSize?: number;   // Number of people
-  territory?: Territory;          // Optional territory specification
+  targetHouseholdSize?: number; // Number of people
+  territory?: Territory; // Optional territory specification
   metadata: {
-    createdAt: string;            // ISO 8601
-    updatedAt: string;            // ISO 8601
-    version: string;              // Basket version
-    methodology: string;          // How items were selected
+    createdAt: string; // ISO 8601
+    updatedAt: string; // ISO 8601
+    version: string; // Basket version
+    methodology: string; // How items were selected
   };
 }
 
@@ -95,8 +95,8 @@ export interface FoodBasketObservation {
   storeName?: string;
   itemPrices: FoodBasketItemPrice[];
   totalCost: number;
-  completeness: number;           // Percentage of items found (0-100)
-  observationDate: string;        // ISO 8601
+  completeness: number; // Percentage of items found (0-100)
+  observationDate: string; // ISO 8601
   sources: SourceReference[];
 }
 
@@ -113,7 +113,7 @@ export interface FoodBasketAggregation {
     medianCost: number;
     minCost: number;
     maxCost: number;
-    averageCompleteness: number;  // Average % of items found
+    averageCompleteness: number; // Average % of items found
   };
   dispersion: {
     standardDeviation: number;
@@ -122,10 +122,10 @@ export interface FoodBasketAggregation {
   };
   itemBreakdown: FoodBasketItemBreakdown[];
   observationPeriod: {
-    from: string;                 // ISO 8601
-    to: string;                   // ISO 8601
+    from: string; // ISO 8601
+    to: string; // ISO 8601
   };
-  lastUpdate: string;             // ISO 8601
+  lastUpdate: string; // ISO 8601
 }
 
 /**
@@ -138,7 +138,7 @@ export interface FoodBasketItemBreakdown {
   maxPrice: number;
   priceRange: number;
   priceRangePercentage: number;
-  availabilityRate: number;       // % of stores where item is available
+  availabilityRate: number; // % of stores where item is available
   observationCount: number;
 }
 
@@ -151,7 +151,7 @@ export interface FoodBasketComparisonResult {
   observations: FoodBasketObservation[];
   aggregation: FoodBasketAggregation;
   ranking: FoodBasketStoreRanking[];
-  comparisonDate: string;         // ISO 8601
+  comparisonDate: string; // ISO 8601
   metadata: FoodBasketMetadata;
 }
 
@@ -166,22 +166,22 @@ export interface FoodBasketStoreRanking {
   absoluteDifferenceFromMedian: number;
   percentageDifferenceFromMedian: number;
   priceCategory: 'cheapest' | 'below_median' | 'median' | 'above_median' | 'most_expensive';
-  completenessScore: number;      // How complete the basket is
+  completenessScore: number; // How complete the basket is
 }
 
 /**
  * Metadata for food basket transparency
  */
 export interface FoodBasketMetadata {
-  methodology: string;            // Methodology version (e.g., "v2.5.0")
+  methodology: string; // Methodology version (e.g., "v2.5.0")
   aggregationMethod: 'mean' | 'median' | 'weighted';
   dataQuality: {
     totalObservations: number;
     observationsWithCompleteData: number;
     averageCompleteness: number;
     coveragePercentage: number;
-    oldestObservation: string;    // ISO 8601
-    newestObservation: string;    // ISO 8601
+    oldestObservation: string; // ISO 8601
+    newestObservation: string; // ISO 8601
   };
   sources: FoodBasketSourceSummary[];
   warnings?: string[];
@@ -205,9 +205,9 @@ export interface FoodBasketFilter {
   basketType?: FoodBasketType;
   territory?: Territory;
   storeChain?: string;
-  minCompleteness?: number;       // Minimum % of items found
-  maxPriceAge?: number;           // Max age in days
-  includeLocalOnly?: boolean;     // Only local products
+  minCompleteness?: number; // Minimum % of items found
+  maxPriceAge?: number; // Max age in days
+  includeLocalOnly?: boolean; // Only local products
   verifiedOnly?: boolean;
 }
 
@@ -215,7 +215,7 @@ export interface FoodBasketFilter {
  * Food basket history point
  */
 export interface FoodBasketHistoryPoint {
-  date: string;                   // ISO 8601 (week or month level)
+  date: string; // ISO 8601 (week or month level)
   basket: FoodBasket;
   territory: Territory;
   averageCost: number;
@@ -234,8 +234,8 @@ export interface FoodBasketVariation {
   basket: FoodBasket;
   territory: Territory;
   period: {
-    from: string;                 // ISO 8601
-    to: string;                   // ISO 8601
+    from: string; // ISO 8601
+    to: string; // ISO 8601
   };
   variation: {
     absoluteChange: number;
@@ -265,7 +265,7 @@ export interface MultiTerritoryFoodBasketComparison {
   basket: FoodBasket;
   territories: TerritoryFoodBasketComparison[];
   baseTerritory?: Territory;
-  comparisonDate: string;         // ISO 8601
+  comparisonDate: string; // ISO 8601
 }
 
 /**
@@ -293,7 +293,7 @@ export interface FoodBasketConfig {
   maxPriceAgeDays: number;
   minCompletenessPercent: number;
   defaultBasketType: FoodBasketType;
-  cacheTimeout: number;           // Cache timeout in seconds
+  cacheTimeout: number; // Cache timeout in seconds
 }
 
 /**
@@ -301,7 +301,7 @@ export interface FoodBasketConfig {
  */
 export interface FoodBasketOpenDataExport {
   version: string;
-  exportDate: string;             // ISO 8601
+  exportDate: string; // ISO 8601
   basket: FoodBasket;
   observations: FoodBasketObservation[];
   aggregations: FoodBasketAggregation[];

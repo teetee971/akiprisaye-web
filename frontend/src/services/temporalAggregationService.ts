@@ -83,9 +83,7 @@ function computeTrend(prices: number[]): Trend {
  * Build monthly aggregates from a list of observatoire snapshots.
  * Snapshots from the same month are merged together.
  */
-export function buildMonthlyAggregates(
-  snapshots: ObservatoireSnapshot[],
-): MonthlyAggregate[] {
+export function buildMonthlyAggregates(snapshots: ObservatoireSnapshot[]): MonthlyAggregate[] {
   // key: `${territory}|${productKey}|${month}`
   const map = new Map<
     string,
@@ -142,9 +140,7 @@ export function buildMonthlyAggregates(
 /**
  * Build annual aggregates from monthly aggregates.
  */
-export function buildAnnualAggregates(
-  monthly: MonthlyAggregate[],
-): AnnualAggregate[] {
+export function buildAnnualAggregates(monthly: MonthlyAggregate[]): AnnualAggregate[] {
   const map = new Map<
     string,
     {
@@ -198,9 +194,7 @@ export function buildAnnualAggregates(
 /**
  * Build complete price trend series per (territory, productKey).
  */
-export function buildPriceTrendSeries(
-  snapshots: ObservatoireSnapshot[],
-): PriceTrendSeries[] {
+export function buildPriceTrendSeries(snapshots: ObservatoireSnapshot[]): PriceTrendSeries[] {
   const monthly = buildMonthlyAggregates(snapshots);
   const annual = buildAnnualAggregates(monthly);
 
@@ -225,9 +219,7 @@ export function buildPriceTrendSeries(
         ? r2(((prices[prices.length - 1] - prices[0]) / prices[0]) * 100)
         : null;
 
-    const ann = annual.filter(
-      (a) => `${a.territory}|${a.productKey}` === key,
-    );
+    const ann = annual.filter((a) => `${a.territory}|${a.productKey}` === key);
 
     result.push({
       productKey: first.productKey,
@@ -252,18 +244,23 @@ export interface AggregationFilter {
   enseigne?: string;
   productKey?: string;
   fromMonth?: string; // "YYYY-MM"
-  toMonth?: string;   // "YYYY-MM"
+  toMonth?: string; // "YYYY-MM"
 }
 
 /** Filter monthly aggregates by the given criteria */
 export function filterMonthly(
   monthly: MonthlyAggregate[],
-  filter: AggregationFilter,
+  filter: AggregationFilter
 ): MonthlyAggregate[] {
   return monthly.filter((m) => {
-    if (filter.territory && m.territory.toLowerCase() !== filter.territory.toLowerCase()) return false;
+    if (filter.territory && m.territory.toLowerCase() !== filter.territory.toLowerCase())
+      return false;
     if (filter.category && m.category.toLowerCase() !== filter.category.toLowerCase()) return false;
-    if (filter.enseigne && !m.enseignes.map((e) => e.toLowerCase()).includes(filter.enseigne.toLowerCase())) return false;
+    if (
+      filter.enseigne &&
+      !m.enseignes.map((e) => e.toLowerCase()).includes(filter.enseigne.toLowerCase())
+    )
+      return false;
     if (filter.productKey && m.productKey !== filter.productKey) return false;
     if (filter.fromMonth && m.month < filter.fromMonth) return false;
     if (filter.toMonth && m.month > filter.toMonth) return false;
@@ -298,7 +295,7 @@ export function getEnseignes(snapshots: ObservatoireSnapshot[]): string[] {
 /** Filter observations by category (case-insensitive) */
 export function filterObservationsByCategory(
   obs: ObservatoireObservation[],
-  category: string,
+  category: string
 ): ObservatoireObservation[] {
   const lc = category.toLowerCase();
   return obs.filter((o) => o.categorie.toLowerCase() === lc);
@@ -325,10 +322,7 @@ export interface PriceAnomaly {
  * Only products with at least 3 data-points (months) are evaluated —
  * fewer points cannot produce a meaningful σ.
  */
-export function detectPriceAnomalies(
-  monthly: MonthlyAggregate[],
-  threshold = 1.5,
-): PriceAnomaly[] {
+export function detectPriceAnomalies(monthly: MonthlyAggregate[], threshold = 1.5): PriceAnomaly[] {
   // Group by territory + productKey
   const groups = new Map<string, MonthlyAggregate[]>();
   for (const m of monthly) {

@@ -1,9 +1,9 @@
 // src/components/ScanErrorState.tsx
-import React from 'react'
+import React from 'react';
 
 type ScanErrorStateProps = {
-  message: string
-}
+  message: string;
+};
 
 export default function ScanErrorState({ message }: ScanErrorStateProps) {
   return (
@@ -12,5 +12,5 @@ export default function ScanErrorState({ message }: ScanErrorStateProps) {
       <h3 className="text-lg font-semibold text-white mb-2">Produit non trouvé</h3>
       <p className="text-white/70">{message}</p>
     </div>
-  )
+  );
 }

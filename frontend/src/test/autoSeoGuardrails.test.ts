@@ -64,11 +64,7 @@ describe('autoSeoGuardrails', () => {
     });
 
     it('keeps non-duplication items untouched', () => {
-      const items = [
-        { type: 'BOOST_CTA' },
-        { type: 'DUPLICATE_PAGE' },
-        { type: 'IMPROVE_TITLE' },
-      ];
+      const items = [{ type: 'BOOST_CTA' }, { type: 'DUPLICATE_PAGE' }, { type: 'IMPROVE_TITLE' }];
       const result = capDuplications(items);
       expect(result.filter((r) => r.type !== 'DUPLICATE_PAGE')).toHaveLength(2);
     });

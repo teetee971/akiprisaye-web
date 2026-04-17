@@ -1,6 +1,13 @@
- 
 import React, { useState, useEffect } from 'react';
-import { Ticket as TicketIcon, Search, Filter, Clock, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import {
+  Ticket as TicketIcon,
+  Search,
+  Filter,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+} from 'lucide-react';
 import type { Ticket, TicketStatus } from '../types/ticket';
 import { TICKET_STATUS_LABELS, TICKET_TYPE_LABELS } from '../types/ticket';
 import ticketService from '../services/ticketService';
@@ -9,7 +16,7 @@ import { PAGE_HERO_IMAGES } from '../config/imageAssets';
 
 /**
  * Page de suivi des demandes utilisateur
- * 
+ *
  * Permet de:
  * - Rechercher un ticket par numéro
  * - Afficher l'historique des tickets (si email fourni)
@@ -31,7 +38,7 @@ export default function MesDemandes() {
 
     setIsLoading(true);
     setError('');
-    
+
     try {
       const ticket = await ticketService.getTicket(searchTicketNumber.trim());
       if (ticket) {
@@ -58,12 +65,12 @@ export default function MesDemandes() {
 
     setIsLoading(true);
     setError('');
-    
+
     try {
       const userTickets = await ticketService.getUserTickets(searchEmail.trim());
       setTickets(userTickets);
       setSelectedTicket(null);
-      
+
       if (userTickets.length === 0) {
         setError('Aucun ticket trouvé pour cet email');
       }
@@ -127,8 +134,12 @@ export default function MesDemandes() {
         gradient="from-slate-950 to-slate-800"
         height="h-40 sm:h-52"
       >
-        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>📬 Mes demandes</h1>
-        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Vos demandes en cours et leur statut</p>
+        <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+          📬 Mes demandes
+        </h1>
+        <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>
+          Vos demandes en cours et leur statut
+        </p>
       </HeroImage>
 
       {/* Main Content */}
@@ -207,7 +218,9 @@ export default function MesDemandes() {
                     <span className="text-sm font-mono text-blue-400">
                       {selectedTicket.ticketNumber}
                     </span>
-                    <span className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium border ${getStatusColor(selectedTicket.status)}`}>
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium border ${getStatusColor(selectedTicket.status)}`}
+                    >
                       {TICKET_STATUS_LABELS[selectedTicket.status]}
                     </span>
                     <span className="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-slate-700 text-gray-300">
@@ -242,7 +255,10 @@ export default function MesDemandes() {
                   <h3 className="text-sm font-semibold text-gray-400 mb-3">Historique</h3>
                   <div className="space-y-2">
                     {selectedTicket.statusHistory.map((change, index) => (
-                      <div key={`${String(change.changedAt)}-${change.to}-${index}`} className="flex items-start gap-3 text-sm">
+                      <div
+                        key={`${String(change.changedAt)}-${change.to}-${index}`}
+                        className="flex items-start gap-3 text-sm"
+                      >
                         <div className="w-2 h-2 rounded-full bg-blue-400 mt-2"></div>
                         <div>
                           <p className="text-gray-300">
@@ -279,19 +295,17 @@ export default function MesDemandes() {
                       {getStatusIcon(ticket.status)}
                     </div>
                     <div className="flex flex-wrap gap-2 mb-2">
-                      <span className="text-xs font-mono text-blue-400">
-                        {ticket.ticketNumber}
-                      </span>
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${getStatusColor(ticket.status)}`}>
+                      <span className="text-xs font-mono text-blue-400">{ticket.ticketNumber}</span>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border ${getStatusColor(ticket.status)}`}
+                      >
                         {TICKET_STATUS_LABELS[ticket.status]}
                       </span>
                       <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-700 text-gray-300">
                         {TICKET_TYPE_LABELS[ticket.type]}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-400">
-                      Créé le {formatDate(ticket.createdAt)}
-                    </p>
+                    <p className="text-sm text-gray-400">Créé le {formatDate(ticket.createdAt)}</p>
                   </button>
                 ))}
               </div>
@@ -300,13 +314,13 @@ export default function MesDemandes() {
 
           {/* Info section */}
           <section className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-5">
-            <h3 className="text-base font-semibold text-blue-300 mb-3">
-              💡 Comment ça marche ?
-            </h3>
+            <h3 className="text-base font-semibold text-blue-300 mb-3">💡 Comment ça marche ?</h3>
             <ul className="space-y-2 text-sm text-gray-300">
               <li className="flex items-start gap-2">
                 <span className="text-blue-400 mt-0.5">1.</span>
-                <span>Recherchez votre ticket par numéro ou affichez tous vos tickets via email</span>
+                <span>
+                  Recherchez votre ticket par numéro ou affichez tous vos tickets via email
+                </span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-400 mt-0.5">2.</span>
@@ -314,7 +328,9 @@ export default function MesDemandes() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-400 mt-0.5">3.</span>
-                <span>Recevez une notification par email en cas de mise à jour (si email fourni)</span>
+                <span>
+                  Recevez une notification par email en cas de mise à jour (si email fourni)
+                </span>
               </li>
             </ul>
           </section>

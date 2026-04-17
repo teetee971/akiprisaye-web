@@ -1,7 +1,18 @@
 import { useCallback, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { Camera, Upload, Search, RefreshCw, ShoppingCart, Globe, Store, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
+import {
+  Camera,
+  Upload,
+  Search,
+  RefreshCw,
+  ShoppingCart,
+  Globe,
+  Store,
+  AlertCircle,
+  CheckCircle2,
+  Zap,
+} from 'lucide-react';
 import {
   searchProductFromPhoto,
   type PhotoSearchResult,
@@ -22,7 +33,11 @@ function formatPrice(price: number, currency = 'EUR'): string {
 function formatDate(dateStr: string): string {
   if (!dateStr) return '';
   try {
-    return new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(dateStr));
+    return new Intl.DateTimeFormat('fr-FR', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).format(new Date(dateStr));
   } catch {
     return dateStr;
   }
@@ -30,10 +45,14 @@ function formatDate(dateStr: string): string {
 
 function methodLabel(method: PhotoSearchResult['detectionMethod']): string {
   switch (method) {
-    case 'barcode_detector': return 'BarcodeDetector (natif)';
-    case 'zxing': return 'ZXing (bibliothèque)';
-    case 'ocr': return 'OCR (Tesseract)';
-    default: return 'inconnu';
+    case 'barcode_detector':
+      return 'BarcodeDetector (natif)';
+    case 'zxing':
+      return 'ZXing (bibliothèque)';
+    case 'ocr':
+      return 'OCR (Tesseract)';
+    default:
+      return 'inconnu';
   }
 }
 
@@ -41,8 +60,11 @@ function methodLabel(method: PhotoSearchResult['detectionMethod']): string {
 
 function NutriBadge({ label, value }: { label: string; value: string }) {
   const colors: Record<string, string> = {
-    a: 'bg-green-600', b: 'bg-lime-500', c: 'bg-yellow-500',
-    d: 'bg-orange-500', e: 'bg-red-600',
+    a: 'bg-green-600',
+    b: 'bg-lime-500',
+    c: 'bg-yellow-500',
+    d: 'bg-orange-500',
+    e: 'bg-red-600',
   };
   const cls = colors[value.toLowerCase()] ?? 'bg-slate-600';
   return (
@@ -52,20 +74,41 @@ function NutriBadge({ label, value }: { label: string; value: string }) {
   );
 }
 
-function PriceCard({ listing, isBest }: { listing: { price: number; currency: string; date: string; locationName?: string; locationCity?: string; locationCountry?: string }; isBest: boolean }) {
+function PriceCard({
+  listing,
+  isBest,
+}: {
+  listing: {
+    price: number;
+    currency: string;
+    date: string;
+    locationName?: string;
+    locationCity?: string;
+    locationCountry?: string;
+  };
+  isBest: boolean;
+}) {
   return (
-    <div className={`rounded-xl border p-3 flex items-start justify-between gap-3 ${isBest ? 'border-green-500 bg-green-500/10' : 'border-slate-700 bg-slate-800/50'}`}>
+    <div
+      className={`rounded-xl border p-3 flex items-start justify-between gap-3 ${isBest ? 'border-green-500 bg-green-500/10' : 'border-slate-700 bg-slate-800/50'}`}
+    >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="font-bold text-lg text-white">{formatPrice(listing.price, listing.currency)}</span>
+          <span className="font-bold text-lg text-white">
+            {formatPrice(listing.price, listing.currency)}
+          </span>
           {isBest && (
-            <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">Meilleur prix</span>
+            <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full font-semibold">
+              Meilleur prix
+            </span>
           )}
         </div>
         {(listing.locationName || listing.locationCity) && (
           <p className="text-xs text-slate-400 mt-0.5 truncate">
             <Store className="inline w-3 h-3 mr-1" />
-            {[listing.locationName, listing.locationCity, listing.locationCountry].filter(Boolean).join(' · ')}
+            {[listing.locationName, listing.locationCity, listing.locationCountry]
+              .filter(Boolean)
+              .join(' · ')}
           </p>
         )}
         {listing.date && (
@@ -90,28 +133,31 @@ export default function ProductPhotoSearch() {
   const [result, setResult] = useState<PhotoSearchResult | null>(null);
   const [processingLabel, setProcessingLabel] = useState('');
 
-  const handleFile = useCallback(async (file: File) => {
-    if (!ACCEPTED_TYPES.includes(file.type)) {
-      toast.error('Format non supporté. Utilisez JPEG, PNG ou WebP.');
-      return;
-    }
-    if (file.size > MAX_FILE_BYTES) {
-      toast.error('Image trop grande (max 15 Mo).');
-      return;
-    }
+  const handleFile = useCallback(
+    async (file: File) => {
+      if (!ACCEPTED_TYPES.includes(file.type)) {
+        toast.error('Format non supporté. Utilisez JPEG, PNG ou WebP.');
+        return;
+      }
+      if (file.size > MAX_FILE_BYTES) {
+        toast.error('Image trop grande (max 15 Mo).');
+        return;
+      }
 
-    // Revoke old preview
-    if (preview) URL.revokeObjectURL(preview);
-    const objectUrl = URL.createObjectURL(file);
-    setPreview(objectUrl);
-    setStep('processing');
-    setResult(null);
+      // Revoke old preview
+      if (preview) URL.revokeObjectURL(preview);
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+      setStep('processing');
+      setResult(null);
 
-    setProcessingLabel('Extraction du code-barres…');
-    const res = await searchProductFromPhoto(file);
-    setResult(res);
-    setStep('result');
-  }, [preview]);
+      setProcessingLabel('Extraction du code-barres…');
+      const res = await searchProductFromPhoto(file);
+      setResult(res);
+      setStep('result');
+    },
+    [preview]
+  );
 
   const reset = useCallback(() => {
     if (preview) URL.revokeObjectURL(preview);
@@ -135,13 +181,13 @@ export default function ProductPhotoSearch() {
             <h1 className="text-2xl font-bold">Recherche par photo</h1>
           </div>
           <p className="text-slate-300 text-sm">
-            Prenez une photo d'un produit → identifiez-le instantanément → comparez les prix partout.
+            Prenez une photo d'un produit → identifiez-le instantanément → comparez les prix
+            partout.
           </p>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-
         {/* ── IDLE: capture/upload ── */}
         {step === 'idle' && (
           <div className="space-y-4">
@@ -231,7 +277,9 @@ export default function ProductPhotoSearch() {
             )}
             <div className="flex flex-col items-center gap-3">
               <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-slate-300 text-sm font-medium">{processingLabel || 'Analyse en cours…'}</p>
+              <p className="text-slate-300 text-sm font-medium">
+                {processingLabel || 'Analyse en cours…'}
+              </p>
               <p className="text-xs text-slate-500">
                 Détection du code-barres → Open Food Facts → Open Prices
               </p>
@@ -245,7 +293,14 @@ export default function ProductPhotoSearch() {
             {/* Photo preview + detection badge */}
             {preview && (
               <div className="relative rounded-xl overflow-hidden">
-                <img src={preview} alt="Résultat analysé" width={400} height={208} loading="lazy" className="w-full max-h-52 object-contain bg-slate-800" />
+                <img
+                  src={preview}
+                  alt="Résultat analysé"
+                  width={400}
+                  height={208}
+                  loading="lazy"
+                  className="w-full max-h-52 object-contain bg-slate-800"
+                />
                 {result.barcode ? (
                   <div className="absolute bottom-2 left-2 flex items-center gap-1.5 bg-green-600/90 text-white text-xs px-3 py-1.5 rounded-full font-semibold backdrop-blur">
                     <CheckCircle2 className="w-3.5 h-3.5" />
@@ -268,7 +323,8 @@ export default function ProductPhotoSearch() {
                   {result.error}
                 </p>
                 <p className="text-sm text-slate-300">
-                  Essayez de photographier directement le code-barres, ou utilisez la saisie manuelle.
+                  Essayez de photographier directement le code-barres, ou utilisez la saisie
+                  manuelle.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <button
@@ -306,13 +362,17 @@ export default function ProductPhotoSearch() {
                     </div>
                   )}
                   <div className="min-w-0">
-                    <h2 className="font-bold text-lg leading-tight">{product.name ?? 'Produit sans nom'}</h2>
+                    <h2 className="font-bold text-lg leading-tight">
+                      {product.name ?? 'Produit sans nom'}
+                    </h2>
                     <p className="text-slate-300 text-sm mt-0.5">
                       {product.brand ?? 'Marque inconnue'}
                       {product.quantity ? ` · ${product.quantity}` : ''}
                     </p>
                     <div className="flex flex-wrap gap-1.5 mt-2">
-                      {product.nutriScore && <NutriBadge label="Nutri" value={product.nutriScore} />}
+                      {product.nutriScore && (
+                        <NutriBadge label="Nutri" value={product.nutriScore} />
+                      )}
                       {product.nova !== undefined && (
                         <span className="bg-purple-700 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                           NOVA {product.nova}
@@ -355,11 +415,7 @@ export default function ProductPhotoSearch() {
 
             {/* Price trend prediction from real observatoire data */}
             {product && (
-              <PriceTrendWidget
-                productName={product.name}
-                territory="mq"
-                className="rounded-2xl"
-              />
+              <PriceTrendWidget productName={product.name} territory="mq" className="rounded-2xl" />
             )}
 
             {/* Price comparison */}
@@ -371,7 +427,10 @@ export default function ProductPhotoSearch() {
                     Prix observés
                   </h3>
                   {result.prices.length > 0 && (
-                    <span className="text-xs text-slate-400">{result.prices.length} relevé{result.prices.length > 1 ? 's' : ''} citoyen{result.prices.length > 1 ? 's' : ''}</span>
+                    <span className="text-xs text-slate-400">
+                      {result.prices.length} relevé{result.prices.length > 1 ? 's' : ''} citoyen
+                      {result.prices.length > 1 ? 's' : ''}
+                    </span>
                   )}
                 </div>
 
@@ -395,13 +454,17 @@ export default function ProductPhotoSearch() {
                       {result.bestPrice !== null && (
                         <div className="rounded-lg bg-green-500/10 border border-green-600/40 p-2.5 text-center">
                           <p className="text-xs text-green-300 font-medium">Meilleur prix</p>
-                          <p className="text-xl font-bold text-green-400">{formatPrice(result.bestPrice)}</p>
+                          <p className="text-xl font-bold text-green-400">
+                            {formatPrice(result.bestPrice)}
+                          </p>
                         </div>
                       )}
                       {result.latestPrice !== null && (
                         <div className="rounded-lg bg-blue-500/10 border border-blue-600/40 p-2.5 text-center">
                           <p className="text-xs text-blue-300 font-medium">Dernier relevé</p>
-                          <p className="text-xl font-bold text-blue-400">{formatPrice(result.latestPrice)}</p>
+                          <p className="text-xl font-bold text-blue-400">
+                            {formatPrice(result.latestPrice)}
+                          </p>
                         </div>
                       )}
                     </div>
@@ -422,7 +485,9 @@ export default function ProductPhotoSearch() {
                         rel="noreferrer"
                         className="block text-center text-xs text-slate-400 hover:text-blue-400 py-1"
                       >
-                        Voir {result.prices.length - 5} relevé{result.prices.length - 5 > 1 ? 's' : ''} supplémentaire{result.prices.length - 5 > 1 ? 's' : ''} sur Open Prices →
+                        Voir {result.prices.length - 5} relevé
+                        {result.prices.length - 5 > 1 ? 's' : ''} supplémentaire
+                        {result.prices.length - 5 > 1 ? 's' : ''} sur Open Prices →
                       </a>
                     )}
                   </div>
@@ -500,8 +565,25 @@ export default function ProductPhotoSearch() {
 
             {/* Data attribution */}
             <p className="text-xs text-slate-500 text-center">
-              Données produit : <a href="https://world.openfoodfacts.org" target="_blank" rel="noreferrer" className="underline hover:text-slate-300">Open Food Facts</a> (ODbL) · 
-              Prix : <a href="https://prices.openfoodfacts.org" target="_blank" rel="noreferrer" className="underline hover:text-slate-300">Open Prices</a> (contributions citoyennes)
+              Données produit :{' '}
+              <a
+                href="https://world.openfoodfacts.org"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-slate-300"
+              >
+                Open Food Facts
+              </a>{' '}
+              (ODbL) · Prix :{' '}
+              <a
+                href="https://prices.openfoodfacts.org"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-slate-300"
+              >
+                Open Prices
+              </a>{' '}
+              (contributions citoyennes)
             </p>
           </div>
         )}

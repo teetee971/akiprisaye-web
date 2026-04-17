@@ -1,4 +1,3 @@
- 
 /**
  * Unit Tests for Price Comparison Service v1.4.0
  */
@@ -76,7 +75,7 @@ describe('Price Comparison Service v1.4.0', () => {
 
     it('should return valid comparison result', () => {
       const result = comparePricesByEAN('3228857000906', mockStorePrices, 'MQ');
-      
+
       expect(result).not.toBeNull();
       expect(result!.territory).toBe('MQ');
       expect(result!.storePrices).toHaveLength(3);
@@ -86,7 +85,7 @@ describe('Price Comparison Service v1.4.0', () => {
 
     it('should rank stores from cheapest to most expensive', () => {
       const result = comparePricesByEAN('3228857000906', mockStorePrices, 'MQ');
-      
+
       expect(result!.storePrices[0].rank).toBe(1);
       expect(result!.storePrices[0].storePrice.price).toBe(1.79);
       expect(result!.storePrices[2].rank).toBe(3);
@@ -109,13 +108,13 @@ describe('Price Comparison Service v1.4.0', () => {
       expect(aggregation.minPrice).toBe(1.79);
       expect(aggregation.maxPrice).toBe(1.95);
       expect(aggregation.priceRange).toBe(0.16);
-      
+
       // Average: (1.79 + 1.89 + 1.95) / 3 = 1.88 (rounded)
       expect(aggregation.averagePrice).toBe(1.88);
-      
+
       // Range percentage: (0.16 / 1.79) * 100 ≈ 8.94%
       expect(aggregation.priceRangePercentage).toBeCloseTo(8.94, 1);
-      
+
       // Total observations: 45 + 30 + 52 = 127
       expect(aggregation.totalObservations).toBe(127);
     });
@@ -139,10 +138,7 @@ describe('Price Comparison Service v1.4.0', () => {
     });
 
     it('should avoid infinite range percentage when minimum price is zero', () => {
-      const zeroMinPrices = [
-        { ...mockStorePrices[0], price: 0 },
-        mockStorePrices[1],
-      ];
+      const zeroMinPrices = [{ ...mockStorePrices[0], price: 0 }, mockStorePrices[1]];
 
       const aggregation = calculateTerritoryAggregation(zeroMinPrices, 'MQ');
 
@@ -191,7 +187,7 @@ describe('Price Comparison Service v1.4.0', () => {
       expect(rankings[0].percentageDifferenceFromCheapest).toBe(0);
 
       // Second store: 1.89 - 1.79 = 0.10
-      expect(rankings[1].absoluteDifferenceFromCheapest).toBeCloseTo(0.10, 2);
+      expect(rankings[1].absoluteDifferenceFromCheapest).toBeCloseTo(0.1, 2);
       // (0.10 / 1.79) * 100 ≈ 5.59%
       expect(rankings[1].percentageDifferenceFromCheapest).toBeCloseTo(5.59, 1);
 
@@ -239,13 +235,13 @@ describe('Price Comparison Service v1.4.0', () => {
       const metadata = generateComparisonMetadata(mockStorePrices);
 
       expect(metadata.sources).toHaveLength(2);
-      
-      const userReportSource = metadata.sources.find(s => s.source === 'user_report');
+
+      const userReportSource = metadata.sources.find((s) => s.source === 'user_report');
       expect(userReportSource).toBeDefined();
       expect(userReportSource!.observationCount).toBe(97); // 45 + 52
       expect(userReportSource!.storeCount).toBe(2);
 
-      const officialSiteSource = metadata.sources.find(s => s.source === 'official_site');
+      const officialSiteSource = metadata.sources.find((s) => s.source === 'official_site');
       expect(officialSiteSource).toBeDefined();
       expect(officialSiteSource!.observationCount).toBe(30);
       expect(officialSiteSource!.storeCount).toBe(1);
@@ -264,10 +260,10 @@ describe('Price Comparison Service v1.4.0', () => {
         { ...mockStorePrices[1], volume: 0 },
         { ...mockStorePrices[2], volume: 0 },
       ];
-      
+
       const metadata = generateComparisonMetadata(pricesWithLowCoverage);
       expect(metadata.warnings).toBeDefined();
-      expect(metadata.warnings!.some(w => w.includes('Limited data coverage'))).toBe(true);
+      expect(metadata.warnings!.some((w) => w.includes('Limited data coverage'))).toBe(true);
     });
   });
 
@@ -297,9 +293,7 @@ describe('Price Comparison Service v1.4.0', () => {
 
   describe('filterStorePrices', () => {
     it('should filter by territory', () => {
-      const gpPrices = [
-        { ...mockStorePrices[0], territory: 'GP' as const },
-      ];
+      const gpPrices = [{ ...mockStorePrices[0], territory: 'GP' as const }];
       const allPrices = [...mockStorePrices, ...gpPrices];
 
       const filtered = filterStorePrices(allPrices, { territory: 'GP' });
@@ -308,8 +302,8 @@ describe('Price Comparison Service v1.4.0', () => {
     });
 
     it('should filter by store chain', () => {
-      const filtered = filterStorePrices(mockStorePrices, { 
-        storeChain: 'Super U' 
+      const filtered = filterStorePrices(mockStorePrices, {
+        storeChain: 'Super U',
       });
       expect(filtered).toHaveLength(1);
       expect(filtered[0].storeChain).toBe('Super U');
@@ -327,19 +321,19 @@ describe('Price Comparison Service v1.4.0', () => {
     });
 
     it('should filter by confidence level', () => {
-      const filtered = filterStorePrices(mockStorePrices, { 
-        minConfidence: 'high' 
+      const filtered = filterStorePrices(mockStorePrices, {
+        minConfidence: 'high',
       });
       expect(filtered).toHaveLength(2);
-      expect(filtered.every(p => p.confidence === 'high')).toBe(true);
+      expect(filtered.every((p) => p.confidence === 'high')).toBe(true);
     });
 
     it('should filter by verified status', () => {
-      const filtered = filterStorePrices(mockStorePrices, { 
-        verifiedOnly: true 
+      const filtered = filterStorePrices(mockStorePrices, {
+        verifiedOnly: true,
       });
       expect(filtered).toHaveLength(2);
-      expect(filtered.every(p => p.verified)).toBe(true);
+      expect(filtered.every((p) => p.verified)).toBe(true);
     });
 
     it('should apply multiple filters', () => {
@@ -401,10 +395,10 @@ describe('Price Comparison Service v1.4.0', () => {
     it('should calculate correct savings', () => {
       const savings = calculatePotentialSavings(mockStorePrices);
       expect(savings).not.toBeNull();
-      
+
       // 1.95 - 1.79 = 0.16
       expect(savings!.absolute).toBe(0.16);
-      
+
       // (1.95 - 1.79) / 1.79 * 100 ≈ 8.94%
       expect(savings!.percentage).toBeCloseTo(8.94, 1);
     });
@@ -454,11 +448,11 @@ describe('Price Comparison Service v1.4.0', () => {
 
     it('should handle large price differences', () => {
       const largeDiffPrices = [
-        { ...mockStorePrices[0], price: 1.00 },
-        { ...mockStorePrices[1], price: 10.00 },
+        { ...mockStorePrices[0], price: 1.0 },
+        { ...mockStorePrices[1], price: 10.0 },
       ];
 
-      const diff = calculatePercentageDifference(10.00, 1.00);
+      const diff = calculatePercentageDifference(10.0, 1.0);
       expect(diff).toBe(900); // 900% increase
     });
   });

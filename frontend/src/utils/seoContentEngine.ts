@@ -35,50 +35,112 @@ const TERRITORY_DISPLAY: Record<string, string> = {
 
 const CATALOG_BY_CATEGORY: Record<string, string[]> = {
   boissons: [
-    'coca-cola-1-5l', 'eau-evian-1-5l', 'jus-orange-tropicana-1l',
-    'biere-heineken-33cl', 'orangina-1-5l', 'fanta-1-5l', 'sprite-1-5l',
-    'schweppes-1-5l', 'eau-gazeuse-perrier-75cl', 'redbull-25cl',
+    'coca-cola-1-5l',
+    'eau-evian-1-5l',
+    'jus-orange-tropicana-1l',
+    'biere-heineken-33cl',
+    'orangina-1-5l',
+    'fanta-1-5l',
+    'sprite-1-5l',
+    'schweppes-1-5l',
+    'eau-gazeuse-perrier-75cl',
+    'redbull-25cl',
   ],
   epicerie: [
-    'riz-basmati-1kg', 'pates-panzani-500g', 'nutella-400g',
-    'huile-tournesol-1l', 'sucre-blanc-1kg', 'farine-ble-1kg',
-    'cafe-nescafe-200g', 'chocolat-milka-100g', 'biscuits-lu-200g', 'miel-500g',
+    'riz-basmati-1kg',
+    'pates-panzani-500g',
+    'nutella-400g',
+    'huile-tournesol-1l',
+    'sucre-blanc-1kg',
+    'farine-ble-1kg',
+    'cafe-nescafe-200g',
+    'chocolat-milka-100g',
+    'biscuits-lu-200g',
+    'miel-500g',
   ],
   'produits-laitiers': [
-    'lait-entier-1l', 'beurre-president-250g', 'yaourt-nature-pack8',
-    'fromage-emmental-200g', 'creme-fraiche-20cl', 'fromage-blanc-500g',
-    'lait-demi-ecreme-1l', 'yaourt-fruits-pack4', 'creme-dessert-4pack', 'camembert-250g',
+    'lait-entier-1l',
+    'beurre-president-250g',
+    'yaourt-nature-pack8',
+    'fromage-emmental-200g',
+    'creme-fraiche-20cl',
+    'fromage-blanc-500g',
+    'lait-demi-ecreme-1l',
+    'yaourt-fruits-pack4',
+    'creme-dessert-4pack',
+    'camembert-250g',
   ],
   viande: [
-    'poulet-entier', 'steak-hache-5pc', 'jambon-blanc-4tr',
-    'saucisses-knacki-6pc', 'filet-poulet-500g', 'cotes-porc-2pc',
-    'boeuf-bourguignon-500g', 'lardons-fumes-200g', 'roti-porc-600g', 'viande-hachee-1kg',
+    'poulet-entier',
+    'steak-hache-5pc',
+    'jambon-blanc-4tr',
+    'saucisses-knacki-6pc',
+    'filet-poulet-500g',
+    'cotes-porc-2pc',
+    'boeuf-bourguignon-500g',
+    'lardons-fumes-200g',
+    'roti-porc-600g',
+    'viande-hachee-1kg',
   ],
   'fruits-legumes': [
-    'banane-kg', 'tomate-kg', 'ananas-piece',
-    'citron-vert-500g', 'avocat-piece', 'mangue-piece',
-    'pomme-kg', 'carotte-kg', 'courgette-kg', 'igname-kg',
+    'banane-kg',
+    'tomate-kg',
+    'ananas-piece',
+    'citron-vert-500g',
+    'avocat-piece',
+    'mangue-piece',
+    'pomme-kg',
+    'carotte-kg',
+    'courgette-kg',
+    'igname-kg',
   ],
   hygiene: [
-    'shampooing-elseve-250ml', 'gel-douche-sanex-500ml', 'dentifrice-colgate-75ml',
-    'deodorant-narta-200ml', 'savon-dove-100g', 'rasoir-gillette-4pc',
-    'coton-400g', 'coton-tiges-300pc', 'masque-hydratant-50ml', 'creme-solaire-spf50-200ml',
+    'shampooing-elseve-250ml',
+    'gel-douche-sanex-500ml',
+    'dentifrice-colgate-75ml',
+    'deodorant-narta-200ml',
+    'savon-dove-100g',
+    'rasoir-gillette-4pc',
+    'coton-400g',
+    'coton-tiges-300pc',
+    'masque-hydratant-50ml',
+    'creme-solaire-spf50-200ml',
   ],
   entretien: [
-    'lessive-ariel-30d', 'liquide-vaisselle-fairy-500ml', 'nettoyant-wc-500ml',
-    'essuie-tout-6rouleaux', 'papier-toilette-12rouleaux', 'desinfectant-surfaces-750ml',
-    'eponge-lavette-5pc', 'sac-poubelle-30l-30pc', 'nettoyant-sol-1l', 'assouplissant-lenor-1l',
+    'lessive-ariel-30d',
+    'liquide-vaisselle-fairy-500ml',
+    'nettoyant-wc-500ml',
+    'essuie-tout-6rouleaux',
+    'papier-toilette-12rouleaux',
+    'desinfectant-surfaces-750ml',
+    'eponge-lavette-5pc',
+    'sac-poubelle-30l-30pc',
+    'nettoyant-sol-1l',
+    'assouplissant-lenor-1l',
   ],
   surgeles: [
-    'glaces-magnum-pack4', 'pizza-reine-400g',
-    'frites-mc-cain-750g', 'legumes-surgeles-1kg',
-    'crevettes-surgeles-500g', 'poissons-pannes-400g',
-    'lasagnes-surgeles-400g', 'glaces-cornets-pack6', 'sorbet-fruits-500ml', 'brocolis-surgeles-750g',
+    'glaces-magnum-pack4',
+    'pizza-reine-400g',
+    'frites-mc-cain-750g',
+    'legumes-surgeles-1kg',
+    'crevettes-surgeles-500g',
+    'poissons-pannes-400g',
+    'lasagnes-surgeles-400g',
+    'glaces-cornets-pack6',
+    'sorbet-fruits-500ml',
+    'brocolis-surgeles-750g',
   ],
   bebe: [
-    'couches-pampers-t3', 'lait-infantile-800g',
-    'petits-pots-bebe-200g', 'lingettes-bebe-72pc',
-    'lait-2eme-age-900g', 'compote-bebe-4pack', 'couches-t4-40pc', 'couches-t5-38pc', 'lait-croissance-900g', 'gel-bebe-300ml',
+    'couches-pampers-t3',
+    'lait-infantile-800g',
+    'petits-pots-bebe-200g',
+    'lingettes-bebe-72pc',
+    'lait-2eme-age-900g',
+    'compote-bebe-4pack',
+    'couches-t4-40pc',
+    'couches-t5-38pc',
+    'lait-croissance-900g',
+    'gel-bebe-300ml',
   ],
 };
 
@@ -108,37 +170,33 @@ export function getPageAngle(slug: string): 0 | 1 | 2 | 3 | 4 {
 /**
  * Generates a 2-3 sentence introduction unique to the angle.
  */
-export function generatePageIntro(
-  productName: string,
-  territory: string,
-  angle: number,
-): string {
+export function generatePageIntro(productName: string, territory: string, angle: number): string {
   const tName = TERRITORY_DISPLAY[territory] ?? territory;
   const intros: string[] = [
     // 0: prix-bas
     `En ${tName}, trouver ${productName} au meilleur prix peut faire une vraie différence sur votre budget mensuel. ` +
-    `Notre comparateur analyse quotidiennement les tarifs dans toutes les grandes enseignes locales. ` +
-    `Ci-dessous, vous trouverez le prix le plus bas du moment ainsi que le classement complet des supermarchés.`,
+      `Notre comparateur analyse quotidiennement les tarifs dans toutes les grandes enseignes locales. ` +
+      `Ci-dessous, vous trouverez le prix le plus bas du moment ainsi que le classement complet des supermarchés.`,
 
     // 1: inflation
     `Le prix de ${productName} en ${tName} a évolué de manière significative ces derniers mois, sous l'effet de l'inflation et des coûts logistiques. ` +
-    `Comme dans l'ensemble des territoires d'outre-mer, les consommateurs font face à des prix structurellement plus élevés qu'en métropole. ` +
-    `Notre comparateur vous aide à trouver l'enseigne la moins touchée par ces hausses.`,
+      `Comme dans l'ensemble des territoires d'outre-mer, les consommateurs font face à des prix structurellement plus élevés qu'en métropole. ` +
+      `Notre comparateur vous aide à trouver l'enseigne la moins touchée par ces hausses.`,
 
     // 2: comparatif
     `Comparer le prix de ${productName} entre les différentes enseignes en ${tName} est essentiel pour faire des économies. ` +
-    `Selon notre analyse, l'écart de prix entre l'enseigne la moins chère et la plus chère peut dépasser 30% pour ce produit. ` +
-    `Découvrez ci-dessous le comparatif détaillé par supermarché.`,
+      `Selon notre analyse, l'écart de prix entre l'enseigne la moins chère et la plus chère peut dépasser 30% pour ce produit. ` +
+      `Découvrez ci-dessous le comparatif détaillé par supermarché.`,
 
     // 3: economie
     `Économiser sur ${productName} en ${tName} est possible si l'on sait où chercher. ` +
-    `Les ménages des DOM consacrent en moyenne 25 à 35% de leur revenu à l'alimentation — bien plus qu'en métropole. ` +
-    `Notre outil de comparaison vous permet d'identifier immédiatement l'offre la plus avantageuse.`,
+      `Les ménages des DOM consacrent en moyenne 25 à 35% de leur revenu à l'alimentation — bien plus qu'en métropole. ` +
+      `Notre outil de comparaison vous permet d'identifier immédiatement l'offre la plus avantageuse.`,
 
     // 4: guide
     `Tout ce que vous devez savoir sur le prix de ${productName} en ${tName} : où l'acheter, à quel prix, et comment éviter les mauvaises surprises. ` +
-    `Ce guide pratique compare les principaux supermarchés et vous donne des conseils concrets pour optimiser votre budget courses. ` +
-    `Les données sont mises à jour régulièrement pour refléter les prix actuels du marché.`,
+      `Ce guide pratique compare les principaux supermarchés et vous donne des conseils concrets pour optimiser votre budget courses. ` +
+      `Les données sont mises à jour régulièrement pour refléter les prix actuels du marché.`,
   ];
   return intros[angle % intros.length] ?? intros[0];
 }
@@ -146,11 +204,7 @@ export function generatePageIntro(
 /**
  * Generates 1-2 sentences of price tips for the given angle.
  */
-export function generatePriceTip(
-  productName: string,
-  territory: string,
-  angle: number,
-): string {
+export function generatePriceTip(productName: string, territory: string, angle: number): string {
   const tName = TERRITORY_DISPLAY[territory] ?? territory;
   const tips: string[] = [
     // 0: prix-bas
@@ -173,7 +227,7 @@ export function generatePriceTip(
 export function generateFaqItems(
   productName: string,
   territory: string,
-  angle: number,
+  angle: number
 ): Array<{ q: string; a: string }> {
   const tName = TERRITORY_DISPLAY[territory] ?? territory;
   const faqSets: Array<Array<{ q: string; a: string }>> = [
@@ -264,7 +318,7 @@ export function generateFaqItems(
 export function getSimilarProductSlugs(
   productSlug: string,
   category: string,
-  territory: string,
+  territory: string
 ): string[] {
   const tSlug = TERRITORY_SLUG_NAMES[territory] ?? 'guadeloupe';
 
@@ -280,9 +334,7 @@ export function getSimilarProductSlugs(
       ? candidates
       : [
           ...candidates,
-          ...ALL_PRODUCTS_FLAT.filter(
-            (p) => p !== productSlug && !candidates.includes(p),
-          ),
+          ...ALL_PRODUCTS_FLAT.filter((p) => p !== productSlug && !candidates.includes(p)),
         ];
 
   // Deterministic selection via hash
@@ -306,31 +358,31 @@ export type PageType = 'product' | 'category' | 'comparison' | 'inflation' | 'pi
 export type PriceTrend = 'down' | 'up' | 'stable';
 
 export interface ContentInput {
-  pageType:       PageType;
-  productName?:   string;
-  categoryName?:  string;
+  pageType: PageType;
+  productName?: string;
+  categoryName?: string;
   territoryName?: string;
-  retailerName?:  string;
-  trend?:         PriceTrend;
-  bestPrice?:     number | null;
-  averagePrice?:  number | null;
-  savings?:       number | null;
+  retailerName?: string;
+  trend?: PriceTrend;
+  bestPrice?: number | null;
+  averagePrice?: number | null;
+  savings?: number | null;
 }
 
 export interface FAQItem {
   question: string;
-  answer:   string;
+  answer: string;
 }
 
 export interface ContentSection {
   title: string;
-  body:  string;
+  body: string;
 }
 
 export interface GeneratedContent {
-  intro:    string;
-  summary:  string;
-  faq:      FAQItem[];
+  intro: string;
+  summary: string;
+  faq: FAQItem[];
   sections: ContentSection[];
 }
 
@@ -394,23 +446,21 @@ function fmt(price: number | null | undefined): string {
 
 export function generateSeoContent(input: ContentInput): GeneratedContent {
   const variantKey =
-    (input.pageType ?? '') +
-    (input.productName ?? '') +
-    (input.territoryName ?? '');
+    (input.pageType ?? '') + (input.productName ?? '') + (input.territoryName ?? '');
   const v = djb2Hash(variantKey) % 3;
 
-  const product  = input.productName  ?? 'ce produit';
+  const product = input.productName ?? 'ce produit';
   const category = input.categoryName ?? 'cette catégorie';
   const territory = input.territoryName ?? 'les DOM-COM';
   const retailer1 = input.retailerName ?? 'Carrefour';
   const retailer2 = 'E.Leclerc';
   const bestPriceFmt = fmt(input.bestPrice);
-  const avgPriceFmt  = fmt(input.averagePrice);
-  const savingsFmt   = fmt(input.savings);
-  const trendLabel   = input.trend === 'down' ? 'en baisse' : input.trend === 'up' ? 'en hausse' : 'stable';
+  const avgPriceFmt = fmt(input.averagePrice);
+  const savingsFmt = fmt(input.savings);
+  const trendLabel =
+    input.trend === 'down' ? 'en baisse' : input.trend === 'up' ? 'en hausse' : 'stable';
 
   switch (input.pageType) {
-
     case 'product': {
       const intro = pick(PRODUCT_INTROS, v)(product, territory, bestPriceFmt);
       return {

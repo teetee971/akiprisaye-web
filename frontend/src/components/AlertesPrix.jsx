@@ -1,6 +1,6 @@
 /**
  * AlertesPrix Component
- * 
+ *
  * Intelligent price alerts with user-defined thresholds.
  * Features:
  * - Threshold configuration by user
@@ -32,7 +32,8 @@ export function AlertesPrix() {
       <h2 className="text-2xl font-bold mb-4">Alertes Prix</h2>
       <div className="bg-yellow-50 border border-yellow-200 rounded p-4">
         <p className="text-yellow-800">
-          Module en développement. {alerts.length} alertes, {watchedProducts.length} produits surveillés.
+          Module en développement. {alerts.length} alertes, {watchedProducts.length} produits
+          surveillés.
         </p>
       </div>
     </div>

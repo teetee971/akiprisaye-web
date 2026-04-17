@@ -5,8 +5,15 @@
 
 import { useState } from 'react';
 import { SEOHead } from '../components/ui/SEOHead';
-import { generateExpansionSuggestions, type ExpansionCandidate, type ExpansionSuggestion } from '../utils/expansionPlanner';
-import { generateDuplicationSuggestions, type DuplicationSuggestion } from '../utils/seoDuplicationSuggestions';
+import {
+  generateExpansionSuggestions,
+  type ExpansionCandidate,
+  type ExpansionSuggestion,
+} from '../utils/expansionPlanner';
+import {
+  generateDuplicationSuggestions,
+  type DuplicationSuggestion,
+} from '../utils/seoDuplicationSuggestions';
 import { type SeoLoopMetric } from '../utils/seoLoopAnalyzer';
 import { SAMPLE_METRICS } from '../utils/seoIntentAnalyzer';
 
@@ -20,9 +27,8 @@ const expansionCandidates: ExpansionCandidate[] = SAMPLE_METRICS.map((m) => ({
 }));
 
 // Convert SearchMetric[] → SeoLoopMetric[] for duplication suggestions
-const seoLoopMetrics: SeoLoopMetric[] = SAMPLE_METRICS
-  .filter((m) => m.pageType !== 'other')
-  .map((m) => ({
+const seoLoopMetrics: SeoLoopMetric[] = SAMPLE_METRICS.filter((m) => m.pageType !== 'other').map(
+  (m) => ({
     url: m.url,
     title: m.title,
     pageType: m.pageType as SeoLoopMetric['pageType'],
@@ -33,7 +39,8 @@ const seoLoopMetrics: SeoLoopMetric[] = SAMPLE_METRICS
     affiliateClicks: Math.floor(m.clicks * 0.1),
     estimatedRevenue: 0,
     territory: 'GP',
-  }));
+  })
+);
 
 const allSuggestions: ExpansionSuggestion[] = generateExpansionSuggestions(expansionCandidates);
 const dupSuggestions: DuplicationSuggestion[] = generateDuplicationSuggestions(seoLoopMetrics);
@@ -50,34 +57,49 @@ export default function ExpansionDashboardPage() {
   const [territoryFilter, setTerritoryFilter] = useState<string>('all');
 
   const filtered = allSuggestions.filter((s) =>
-    territoryFilter === 'all' ? true : s.targetTerritory === territoryFilter,
+    territoryFilter === 'all' ? true : s.targetTerritory === territoryFilter
   );
 
   const highCount = allSuggestions.filter((s) => s.priority === 'high').length;
 
   return (
     <>
-      <SEOHead title="Expansion Dashboard" description="Suggestions d'expansion territoriale SEO." noIndex />
+      <SEOHead
+        title="Expansion Dashboard"
+        description="Suggestions d'expansion territoriale SEO."
+        noIndex
+      />
       <div className="min-h-screen bg-slate-950 px-4 py-8 text-zinc-100">
         <div className="mx-auto max-w-4xl space-y-8">
-
           <div>
             <h1 className="text-2xl font-extrabold text-white">🗺️ Expansion Dashboard</h1>
-            <p className="mt-1 text-sm text-zinc-400">Opportunités d'expansion territoriale et duplication</p>
+            <p className="mt-1 text-sm text-zinc-400">
+              Opportunités d'expansion territoriale et duplication
+            </p>
           </div>
 
           {/* Summary cards */}
           <div className="grid grid-cols-3 gap-3">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Candidats analysés</p>
-              <p className="mt-1 text-2xl font-extrabold text-white">{expansionCandidates.length}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Candidats analysés
+              </p>
+              <p className="mt-1 text-2xl font-extrabold text-white">
+                {expansionCandidates.length}
+              </p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Suggestions expansion</p>
-              <p className="mt-1 text-2xl font-extrabold text-emerald-400">{allSuggestions.length}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Suggestions expansion
+              </p>
+              <p className="mt-1 text-2xl font-extrabold text-emerald-400">
+                {allSuggestions.length}
+              </p>
             </div>
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">Haute priorité</p>
+              <p className="text-[10px] font-bold uppercase tracking-wide text-zinc-500">
+                Haute priorité
+              </p>
               <p className="mt-1 text-2xl font-extrabold text-rose-400">{highCount}</p>
             </div>
           </div>
@@ -101,7 +123,9 @@ export default function ExpansionDashboardPage() {
 
           {/* Expansion suggestions table */}
           <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-            <h2 className="mb-4 text-sm font-bold text-white">Suggestions d'expansion ({filtered.length})</h2>
+            <h2 className="mb-4 text-sm font-bold text-white">
+              Suggestions d'expansion ({filtered.length})
+            </h2>
             {filtered.length === 0 ? (
               <p className="text-sm text-zinc-500">Aucune suggestion pour ce territoire.</p>
             ) : (
@@ -123,7 +147,9 @@ export default function ExpansionDashboardPage() {
                           {s.sourceUrl.length > 30 ? `${s.sourceUrl.slice(0, 30)}…` : s.sourceUrl}
                         </td>
                         <td className="py-2 pr-4 font-mono text-emerald-400">
-                          {s.suggestedUrl.length > 30 ? `${s.suggestedUrl.slice(0, 30)}…` : s.suggestedUrl}
+                          {s.suggestedUrl.length > 30
+                            ? `${s.suggestedUrl.slice(0, 30)}…`
+                            : s.suggestedUrl}
                         </td>
                         <td className="py-2 pr-4">
                           <span className="rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 text-[10px] font-bold text-zinc-300">
@@ -131,7 +157,9 @@ export default function ExpansionDashboardPage() {
                           </span>
                         </td>
                         <td className="py-2 pr-4">
-                          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${PRIORITY_COLORS[s.priority]}`}>
+                          <span
+                            className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${PRIORITY_COLORS[s.priority]}`}
+                          >
                             {s.priority}
                           </span>
                         </td>
@@ -147,7 +175,9 @@ export default function ExpansionDashboardPage() {
           {/* Duplication suggestions */}
           {dupSuggestions.length > 0 && (
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
-              <h2 className="mb-4 text-sm font-bold text-white">Suggestions de duplication ({dupSuggestions.length})</h2>
+              <h2 className="mb-4 text-sm font-bold text-white">
+                Suggestions de duplication ({dupSuggestions.length})
+              </h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
@@ -165,10 +195,14 @@ export default function ExpansionDashboardPage() {
                           {s.sourceUrl.length > 30 ? `${s.sourceUrl.slice(0, 30)}…` : s.sourceUrl}
                         </td>
                         <td className="py-2 pr-4 font-mono text-emerald-400">
-                          {s.suggestedUrl.length > 30 ? `${s.suggestedUrl.slice(0, 30)}…` : s.suggestedUrl}
+                          {s.suggestedUrl.length > 30
+                            ? `${s.suggestedUrl.slice(0, 30)}…`
+                            : s.suggestedUrl}
                         </td>
                         <td className="py-2 pr-4">
-                          <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${PRIORITY_COLORS[s.priority]}`}>
+                          <span
+                            className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${PRIORITY_COLORS[s.priority]}`}
+                          >
                             {s.priority}
                           </span>
                         </td>
@@ -180,7 +214,6 @@ export default function ExpansionDashboardPage() {
               </div>
             </div>
           )}
-
         </div>
       </div>
     </>

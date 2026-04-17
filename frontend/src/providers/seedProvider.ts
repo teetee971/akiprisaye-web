@@ -1,5 +1,9 @@
 import { findProductByEan, searchProductsByName } from '../data/seedProducts';
-import type { PriceObservation, PriceSearchInput, TerritoryCode } from '../services/priceSearch/price.types';
+import type {
+  PriceObservation,
+  PriceSearchInput,
+  TerritoryCode,
+} from '../services/priceSearch/price.types';
 import { normalizePriceObservation, normalizeText } from './normalize';
 import type { PriceProvider, ProviderResult } from './types';
 
@@ -35,7 +39,10 @@ type SeedProduct = {
   prices?: SeedPriceItem[];
 };
 
-const matchesTerritory = (territoryLabel: string | undefined, territoryCode?: TerritoryCode): boolean => {
+const matchesTerritory = (
+  territoryLabel: string | undefined,
+  territoryCode?: TerritoryCode
+): boolean => {
   if (!territoryCode) {
     return true;
   }
@@ -50,7 +57,9 @@ function buildSeedObservations(product: SeedProduct, input: PriceSearchInput): P
   const prices = Array.isArray(product.prices) ? product.prices : [];
 
   return prices
-    .filter((item) => Number.isFinite(item.price) && matchesTerritory(item.territory, input.territory))
+    .filter(
+      (item) => Number.isFinite(item.price) && matchesTerritory(item.territory, input.territory)
+    )
     .map((item) =>
       normalizePriceObservation({
         source: 'open_prices',
@@ -71,7 +80,10 @@ function buildSeedObservations(product: SeedProduct, input: PriceSearchInput): P
     );
 }
 
-function buildResultFromSeedProduct(product: SeedProduct | null, input: PriceSearchInput): ProviderResult {
+function buildResultFromSeedProduct(
+  product: SeedProduct | null,
+  input: PriceSearchInput
+): ProviderResult {
   if (!product) {
     return {
       source: 'open_prices',

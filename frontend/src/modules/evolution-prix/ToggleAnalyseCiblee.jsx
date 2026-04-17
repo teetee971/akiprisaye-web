@@ -11,32 +11,27 @@ export function ToggleAnalyseCiblee({ enabled = false, onToggle }) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center space-x-3 mb-2">
-            <h3 className="text-lg font-semibold text-gray-900">
-              🔍 Mode Analyse Ciblée
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900">🔍 Mode Analyse Ciblée</h3>
             <span
               className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                enabled
-                  ? 'bg-blue-100 text-blue-800'
-                  : 'bg-gray-100 text-gray-600'
+                enabled ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
               }`}
             >
               {enabled ? 'Actif' : 'Inactif'}
             </span>
           </div>
           <p className="text-sm text-gray-600 mb-3">
-            Permet d'analyser des observations spécifiques par magasin ou produit.
-            Les données restent contextuelles et non exhaustives.
+            Permet d'analyser des observations spécifiques par magasin ou produit. Les données
+            restent contextuelles et non exhaustives.
           </p>
-          
+
           {enabled && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-3">
-              <p className="text-xs text-yellow-900 font-medium mb-1">
-                ⚠️ Mode exploratoire
-              </p>
+              <p className="text-xs text-yellow-900 font-medium mb-1">⚠️ Mode exploratoire</p>
               <p className="text-xs text-yellow-800">
-                Les données affichées reposent sur des <strong>observations citoyennes ponctuelles</strong> et 
-                ne constituent pas une représentation exhaustive ou contractuelle des pratiques commerciales.
+                Les données affichées reposent sur des{' '}
+                <strong>observations citoyennes ponctuelles</strong> et ne constituent pas une
+                représentation exhaustive ou contractuelle des pratiques commerciales.
               </p>
             </div>
           )}
@@ -63,8 +58,9 @@ export function ToggleAnalyseCiblee({ enabled = false, onToggle }) {
       {!enabled && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <p className="text-xs text-gray-500">
-            <strong>Mode par défaut :</strong> Vue agrégée compatible avec un usage institutionnel et presse.
-            Les données présentées sont globales et ne ciblent aucune enseigne spécifique.
+            <strong>Mode par défaut :</strong> Vue agrégée compatible avec un usage institutionnel
+            et presse. Les données présentées sont globales et ne ciblent aucune enseigne
+            spécifique.
           </p>
         </div>
       )}

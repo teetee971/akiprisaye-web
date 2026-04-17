@@ -4,7 +4,15 @@
  */
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { FileText, TrendingUp, MapPin, Receipt, CheckCircle, Euro, ChevronRight } from 'lucide-react';
+import {
+  FileText,
+  TrendingUp,
+  MapPin,
+  Receipt,
+  CheckCircle,
+  Euro,
+  ChevronRight,
+} from 'lucide-react';
 
 const PREMIUM_REPORTS = [
   {
@@ -12,13 +20,14 @@ const PREMIUM_REPORTS = [
     icon: Euro,
     emoji: '💰',
     title: 'Mon Budget Courses',
-    description: 'Analyse de vos dépenses par catégorie, comparaison avec la moyenne française, conseils d\'optimisation.',
+    description:
+      "Analyse de vos dépenses par catégorie, comparaison avec la moyenne française, conseils d'optimisation.",
     price: 2,
     popular: false,
     features: [
       'Répartition par catégorie',
       'Vs moyenne France',
-      'Conseils d\'économies personnalisés',
+      "Conseils d'économies personnalisés",
       'Format PDF téléchargeable',
     ],
   },
@@ -27,12 +36,13 @@ const PREMIUM_REPORTS = [
     icon: TrendingUp,
     emoji: '🔮',
     title: 'Prédiction des Prix',
-    description: 'Modèle ML : évolution des prix sur 30 jours, meilleurs jours pour faire ses courses, économies estimées.',
+    description:
+      'Modèle ML : évolution des prix sur 30 jours, meilleurs jours pour faire ses courses, économies estimées.',
     price: 5,
     popular: true,
     features: [
       'Prédiction 30 jours (ML)',
-      'Meilleurs jours d\'achat',
+      "Meilleurs jours d'achat",
       'Économies estimées',
       'Par produit et territoire',
     ],
@@ -42,7 +52,8 @@ const PREMIUM_REPORTS = [
     icon: MapPin,
     emoji: '🗺️',
     title: 'Comparaison Territoriale',
-    description: 'Même produit, différents magasins : distances, temps et meilleur itinéraire optimisé.',
+    description:
+      'Même produit, différents magasins : distances, temps et meilleur itinéraire optimisé.',
     price: 1,
     popular: false,
     features: [
@@ -57,7 +68,8 @@ const PREMIUM_REPORTS = [
     icon: Receipt,
     emoji: '📋',
     title: 'Rapport Fiscal Annuel',
-    description: 'Pour les utilisateurs professionnels : export catégorisé TVA, XML/PDF conformes, déductibilité.',
+    description:
+      'Pour les utilisateurs professionnels : export catégorisé TVA, XML/PDF conformes, déductibilité.',
     price: 3,
     popular: false,
     features: [
@@ -83,7 +95,10 @@ export default function PremiumReports() {
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <Helmet>
         <title>Rapports Premium — A KI PRI SA YÉ</title>
-        <meta name="description" content="Rapports analytiques personnalisés : budget courses, prédiction de prix, comparaison territoriale, rapport fiscal." />
+        <meta
+          name="description"
+          content="Rapports analytiques personnalisés : budget courses, prédiction de prix, comparaison territoriale, rapport fiscal."
+        />
       </Helmet>
 
       {/* Hero */}
@@ -93,12 +108,13 @@ export default function PremiumReports() {
           <span className="text-amber-400 text-sm">Rapports Premium</span>
         </div>
         <h1 className="text-4xl font-bold text-white mb-4">
-          Analyses personnalisées<br />
+          Analyses personnalisées
+          <br />
           <span className="text-amber-400">à partir de 1€</span>
         </h1>
         <p className="text-gray-400 text-lg">
-          Des rapports générés en temps réel à partir de vos données de courses.
-          Payez uniquement ce dont vous avez besoin.
+          Des rapports générés en temps réel à partir de vos données de courses. Payez uniquement ce
+          dont vous avez besoin.
         </p>
       </div>
 
@@ -119,7 +135,9 @@ export default function PremiumReports() {
             >
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl" aria-hidden="true">{report.emoji}</span>
+                  <span className="text-2xl" aria-hidden="true">
+                    {report.emoji}
+                  </span>
                   <div>
                     <h3 className="font-bold text-white">{report.title}</h3>
                     {report.popular && (
@@ -154,7 +172,9 @@ export default function PremiumReports() {
         {!ordered ? (
           <form onSubmit={handleOrder} className="space-y-4">
             <div>
-              <label htmlFor="premium-report-select" className="block text-sm text-gray-400 mb-1">Rapport</label>
+              <label htmlFor="premium-report-select" className="block text-sm text-gray-400 mb-1">
+                Rapport
+              </label>
               <select
                 id="premium-report-select"
                 value={selectedReport ?? ''}
@@ -162,14 +182,20 @@ export default function PremiumReports() {
                 required
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500"
               >
-                <option value="" disabled>Choisir un rapport...</option>
+                <option value="" disabled>
+                  Choisir un rapport...
+                </option>
                 {PREMIUM_REPORTS.map((r) => (
-                  <option key={r.id} value={r.id}>{r.title} — {r.price}€</option>
+                  <option key={r.id} value={r.id}>
+                    {r.title} — {r.price}€
+                  </option>
                 ))}
               </select>
             </div>
             <div>
-              <label htmlFor="premium-report-email" className="block text-sm text-gray-400 mb-1">Email de livraison</label>
+              <label htmlFor="premium-report-email" className="block text-sm text-gray-400 mb-1">
+                Email de livraison
+              </label>
               <input
                 id="premium-report-email"
                 type="email"
@@ -197,10 +223,15 @@ export default function PremiumReports() {
             <div className="text-4xl">✅</div>
             <div className="text-white font-bold">Rapport commandé !</div>
             <div className="text-sm text-gray-400">
-              Votre rapport sera envoyé à <strong className="text-white">{email}</strong> dans quelques minutes.
+              Votre rapport sera envoyé à <strong className="text-white">{email}</strong> dans
+              quelques minutes.
             </div>
             <button
-              onClick={() => { setOrdered(false); setSelectedReport(null); setEmail(''); }}
+              onClick={() => {
+                setOrdered(false);
+                setSelectedReport(null);
+                setEmail('');
+              }}
               className="text-sm text-amber-400 hover:text-amber-300"
             >
               ← Nouveau rapport

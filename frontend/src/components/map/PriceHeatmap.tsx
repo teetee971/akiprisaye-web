@@ -1,5 +1,3 @@
- 
- 
 /**
  * PriceHeatmap Component
  * Displays a heat map overlay showing price intensity across locations
@@ -72,7 +70,7 @@ export function PriceHeatmap({
     };
 
     // Create heatmap layer
-     
+
     const heatLayer = (L as any).heatLayer(heatData, heatmapOptions);
 
     // Add to map

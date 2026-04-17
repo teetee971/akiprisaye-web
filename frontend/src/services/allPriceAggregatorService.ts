@@ -13,23 +13,23 @@
  */
 
 export type PriceSource =
-  | 'web_merchant'   // Sites marchands (Google Shopping / SerpAPI)
-  | 'firestore'      // Base Firestore interne
-  | 'observation'    // Contribution citoyenne
-  | 'realtime'       // Prix temps-réel API interne
-  | 'retailer'       // Prix directs enseignes (Courses U, Leclerc, Carrefour, etc.)
-  | 'fallback';      // Données de secours locales
+  | 'web_merchant' // Sites marchands (Google Shopping / SerpAPI)
+  | 'firestore' // Base Firestore interne
+  | 'observation' // Contribution citoyenne
+  | 'realtime' // Prix temps-réel API interne
+  | 'retailer' // Prix directs enseignes (Courses U, Leclerc, Carrefour, etc.)
+  | 'fallback'; // Données de secours locales
 
 export interface AggregatedPrice {
   id: string;
-  merchant: string;       // Nom du magasin / site / enseigne
-  price: number;          // Prix en EUR
+  merchant: string; // Nom du magasin / site / enseigne
+  price: number; // Prix en EUR
   currency: 'EUR';
   isPromo: boolean;
-  url?: string;           // Lien direct (sites marchands uniquement)
-  observedAt: string;     // ISO date
+  url?: string; // Lien direct (sites marchands uniquement)
+  observedAt: string; // ISO date
   source: PriceSource;
-  reliability: number;    // 0-1, 1 = très fiable
+  reliability: number; // 0-1, 1 = très fiable
   territory?: string;
 }
 
@@ -79,13 +79,13 @@ async function fetchWithTimeout(url: string, signal?: AbortSignal): Promise<Resp
 async function fetchWebMerchantPrices(
   query: string,
   territory: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<AggregatedPrice[]> {
   try {
     const params = new URLSearchParams({ q: query, territory });
     const res = await fetchWithTimeout(`/api/web-price?${params.toString()}`, signal);
     if (!res.ok) return [];
-    const payload = await res.json() as {
+    const payload = (await res.json()) as {
       ok?: boolean;
       results?: Array<{ title?: string; merchant?: string; price?: number; url?: string }>;
       warning?: string;
@@ -116,13 +116,13 @@ async function fetchWebMerchantPrices(
 async function fetchFirestorePrices(
   barcode: string,
   territory: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<{ prices: AggregatedPrice[]; productName?: string }> {
   try {
     const params = new URLSearchParams({ barcode, territory, days: '30' });
     const res = await fetchWithTimeout(`/api/local-price?${params.toString()}`, signal);
     if (!res.ok) return { prices: [] };
-    const payload = await res.json() as {
+    const payload = (await res.json()) as {
       ok?: boolean;
       product?: { name?: string; imageUrl?: string };
       aggregate?: {
@@ -140,7 +140,9 @@ async function fetchFirestorePrices(
     const agg = payload.aggregate;
 
     if (agg?.median != null) {
-      const observedAt = agg.lastObservedAt ? new Date(agg.lastObservedAt).toISOString() : new Date().toISOString();
+      const observedAt = agg.lastObservedAt
+        ? new Date(agg.lastObservedAt).toISOString()
+        : new Date().toISOString();
       prices.push({
         id: 'firestore-median',
         merchant: 'Prix médian local (base interne)',
@@ -178,13 +180,13 @@ async function fetchFirestorePrices(
 async function fetchObservationPrices(
   barcode: string,
   territory: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<AggregatedPrice[]> {
   try {
     const params = new URLSearchParams({ barcode, territory });
     const res = await fetchWithTimeout(`/api/observations?${params.toString()}`, signal);
     if (!res.ok) return [];
-    const payload = await res.json() as {
+    const payload = (await res.json()) as {
       observations?: Array<{
         id: string;
         storeName?: string | null;
@@ -227,14 +229,14 @@ async function fetchObservationPrices(
 async function fetchRealtimePrices(
   ean: string,
   territory: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<AggregatedPrice[]> {
   try {
     // Pass ean + territory so the endpoint filters server-side on OpenPrices
     const params = new URLSearchParams({ ean, territory });
     const res = await fetchWithTimeout(`/api/prices/realtime?${params.toString()}`, signal);
     if (!res.ok) return [];
-    const payload = await res.json() as {
+    const payload = (await res.json()) as {
       items?: Array<{
         productId?: string;
         productLabel?: string;
@@ -250,12 +252,15 @@ async function fetchRealtimePrices(
     return payload.items
       .filter((item) => {
         const matchesEan = !item.productId || item.productId === ean;
-        const matchesTerritory = !territory || !item.territory || item.territory.toLowerCase() === territory.toLowerCase();
+        const matchesTerritory =
+          !territory || !item.territory || item.territory.toLowerCase() === territory.toLowerCase();
         return matchesEan && matchesTerritory && typeof item.price === 'number' && item.price > 0;
       })
       .map((item, i) => ({
         id: `rt-${i}`,
-        merchant: item.locationId ? `Magasin #${item.locationId}` : (item.source ?? 'Prix temps réel'),
+        merchant: item.locationId
+          ? `Magasin #${item.locationId}`
+          : (item.source ?? 'Prix temps réel'),
         price: item.price as number,
         currency: 'EUR',
         isPromo: item.isDiscounted === true,
@@ -275,7 +280,7 @@ async function fetchRealtimePrices(
 async function fetchRetailerSearchPrices(
   query: string,
   territory: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<AggregatedPrice[]> {
   try {
     const params = new URLSearchParams({
@@ -287,7 +292,7 @@ async function fetchRetailerSearchPrices(
     });
     const res = await fetchWithTimeout(`/api/retailer-search?${params.toString()}`, signal);
     if (!res.ok) return [];
-    const payload = await res.json() as {
+    const payload = (await res.json()) as {
       status?: string;
       results?: Array<{
         title?: string;
@@ -325,10 +330,10 @@ async function fetchProductInfo(barcode: string): Promise<ProductInfo | null> {
   try {
     const res = await fetch(
       `https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json`,
-      { headers: { Accept: 'application/json' } },
+      { headers: { Accept: 'application/json' } }
     );
     if (!res.ok) return null;
-    const payload = await res.json() as {
+    const payload = (await res.json()) as {
       status?: number;
       product?: {
         product_name_fr?: string;
@@ -378,34 +383,49 @@ export async function aggregateAllPrices(
   ean: string,
   query: string,
   territory = 'gp',
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<AggregationResult> {
   const warnings: string[] = [];
 
   // Fire all sources in parallel
-  const [webPrices, { prices: firestorePrices, productName: firestoreProductName }, observationPrices, realtimePrices, retailerPrices, productInfo] =
-    await Promise.all([
-      fetchWebMerchantPrices(query || ean, territory, signal),
-      fetchFirestorePrices(ean, territory, signal),
-      fetchObservationPrices(ean, territory, signal),
-      fetchRealtimePrices(ean, territory, signal),
-      fetchRetailerSearchPrices(query || ean, territory, signal),
-      fetchProductInfo(ean),
-    ]);
+  const [
+    webPrices,
+    { prices: firestorePrices, productName: firestoreProductName },
+    observationPrices,
+    realtimePrices,
+    retailerPrices,
+    productInfo,
+  ] = await Promise.all([
+    fetchWebMerchantPrices(query || ean, territory, signal),
+    fetchFirestorePrices(ean, territory, signal),
+    fetchObservationPrices(ean, territory, signal),
+    fetchRealtimePrices(ean, territory, signal),
+    fetchRetailerSearchPrices(query || ean, territory, signal),
+    fetchProductInfo(ean),
+  ]);
 
-  if (webPrices.length === 0) warnings.push('Prix marchands web indisponibles (clé SerpAPI non configurée ou hors ligne)');
+  if (webPrices.length === 0)
+    warnings.push('Prix marchands web indisponibles (clé SerpAPI non configurée ou hors ligne)');
   if (firestorePrices.length === 0) warnings.push('Base Firestore indisponible pour ce produit');
-  if (observationPrices.length === 0) warnings.push('Aucune observation citoyenne enregistrée pour ce produit');
+  if (observationPrices.length === 0)
+    warnings.push('Aucune observation citoyenne enregistrée pour ce produit');
 
   // Merge all prices
-  let allPrices = [...webPrices, ...firestorePrices, ...observationPrices, ...realtimePrices, ...retailerPrices];
+  let allPrices = [
+    ...webPrices,
+    ...firestorePrices,
+    ...observationPrices,
+    ...realtimePrices,
+    ...retailerPrices,
+  ];
 
   // Fallback: if no local prices found, use observatoire JSON data (citizen price snapshots)
-  const hasLocalData = firestorePrices.length > 0 || observationPrices.length > 0 || realtimePrices.length > 0;
+  const hasLocalData =
+    firestorePrices.length > 0 || observationPrices.length > 0 || realtimePrices.length > 0;
   if (!hasLocalData) {
     try {
       const { getObservatoirePricesForEan } = await import('./realDataService');
-      const productNameForMatch = (productInfo?.name) ?? undefined;
+      const productNameForMatch = productInfo?.name ?? undefined;
       const obsPrices = await getObservatoirePricesForEan(ean, productNameForMatch);
       if (obsPrices.length > 0) {
         const fallbackPrices: AggregatedPrice[] = obsPrices.map((obs, i) => ({
@@ -441,7 +461,8 @@ export async function aggregateAllPrices(
 
   const prices = Array.from(deduped.values()).sort((a, b) => a.price - b.price);
 
-  const product: ProductInfo | null = productInfo ?? (firestoreProductName ? { name: firestoreProductName } : null);
+  const product: ProductInfo | null =
+    productInfo ?? (firestoreProductName ? { name: firestoreProductName } : null);
   const bestPrice = prices.length > 0 ? prices[0] : null;
   const sources = [...new Set(prices.map((p) => p.source))];
 

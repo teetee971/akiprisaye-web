@@ -158,15 +158,28 @@ const REVENUE_STREAMS: RevenueStream[] = [
 ];
 
 const STATUS_BADGE = {
-  active: { label: 'Actif', color: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20', Icon: CheckCircle },
-  beta: { label: 'Beta', color: 'text-amber-400 bg-amber-400/10 border-amber-400/20', Icon: Beaker },
-  planned: { label: 'Planifié', color: 'text-blue-400 bg-blue-400/10 border-blue-400/20', Icon: Clock },
+  active: {
+    label: 'Actif',
+    color: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20',
+    Icon: CheckCircle,
+  },
+  beta: {
+    label: 'Beta',
+    color: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
+    Icon: Beaker,
+  },
+  planned: {
+    label: 'Planifié',
+    color: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
+    Icon: Clock,
+  },
 };
 
 export default function MonetizationDashboard() {
   const [filter, setFilter] = useState<'all' | 'active' | 'beta' | 'planned'>('all');
 
-  const filtered = filter === 'all' ? REVENUE_STREAMS : REVENUE_STREAMS.filter((s) => s.status === filter);
+  const filtered =
+    filter === 'all' ? REVENUE_STREAMS : REVENUE_STREAMS.filter((s) => s.status === filter);
   const totalDaily = REVENUE_STREAMS.reduce((sum, s) => sum + s.dailyRevenue, 0);
   const totalMonthly = REVENUE_STREAMS.reduce((sum, s) => sum + s.monthlyRevenue, 0);
 
@@ -189,10 +202,30 @@ export default function MonetizationDashboard() {
       {/* KPI Cards */}
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Revenus/jour', value: `${totalDaily.toLocaleString('fr-FR')}€`, icon: TrendingUp, color: 'text-emerald-400' },
-          { label: 'Revenus/mois', value: `${(totalMonthly / 1000).toFixed(0)}k€`, icon: BarChart3, color: 'text-blue-400' },
-          { label: 'Revenus/an', value: `${(totalMonthly * 12 / 1000000).toFixed(1)}M€`, icon: Euro, color: 'text-purple-400' },
-          { label: 'Flux actifs', value: String(REVENUE_STREAMS.filter((s) => s.status === 'active').length), icon: CheckCircle, color: 'text-amber-400' },
+          {
+            label: 'Revenus/jour',
+            value: `${totalDaily.toLocaleString('fr-FR')}€`,
+            icon: TrendingUp,
+            color: 'text-emerald-400',
+          },
+          {
+            label: 'Revenus/mois',
+            value: `${(totalMonthly / 1000).toFixed(0)}k€`,
+            icon: BarChart3,
+            color: 'text-blue-400',
+          },
+          {
+            label: 'Revenus/an',
+            value: `${((totalMonthly * 12) / 1000000).toFixed(1)}M€`,
+            icon: Euro,
+            color: 'text-purple-400',
+          },
+          {
+            label: 'Flux actifs',
+            value: String(REVENUE_STREAMS.filter((s) => s.status === 'active').length),
+            icon: CheckCircle,
+            color: 'text-amber-400',
+          },
         ].map((kpi) => (
           <div key={kpi.label} className="bg-white/5 border border-white/10 rounded-xl p-4">
             <kpi.icon className={`w-5 h-5 ${kpi.color} mb-2`} />
@@ -241,8 +274,12 @@ export default function MonetizationDashboard() {
               <p className="text-gray-400 text-xs mb-3">{stream.description}</p>
               <div className="flex items-end justify-between">
                 <div>
-                  <div className="text-xl font-bold text-white">{stream.dailyRevenue.toLocaleString('fr-FR')}€/j</div>
-                  <div className="text-xs text-gray-500">{stream.monthlyRevenue.toLocaleString('fr-FR')}€/mois</div>
+                  <div className="text-xl font-bold text-white">
+                    {stream.dailyRevenue.toLocaleString('fr-FR')}€/j
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {stream.monthlyRevenue.toLocaleString('fr-FR')}€/mois
+                  </div>
                 </div>
                 <div className="text-right">
                   <div className="text-xs text-gray-400">{pct}% du total</div>
@@ -277,21 +314,27 @@ export default function MonetizationDashboard() {
           <div>
             <div className="text-sm text-gray-400 mb-1">Court terme (actuel)</div>
             <div className="text-3xl font-bold text-emerald-400">
-              {(REVENUE_STREAMS.filter((s) => s.status === 'active').reduce((sum, s) => sum + s.monthlyRevenue, 0)).toLocaleString('fr-FR')}€/mois
+              {REVENUE_STREAMS.filter((s) => s.status === 'active')
+                .reduce((sum, s) => sum + s.monthlyRevenue, 0)
+                .toLocaleString('fr-FR')}
+              €/mois
             </div>
             <div className="text-xs text-gray-500">Flux actifs uniquement</div>
           </div>
           <div>
             <div className="text-sm text-gray-400 mb-1">Moyen terme (3 mois)</div>
             <div className="text-3xl font-bold text-blue-400">
-              {(REVENUE_STREAMS.filter((s) => s.status !== 'planned').reduce((sum, s) => sum + s.monthlyRevenue, 0)).toLocaleString('fr-FR')}€/mois
+              {REVENUE_STREAMS.filter((s) => s.status !== 'planned')
+                .reduce((sum, s) => sum + s.monthlyRevenue, 0)
+                .toLocaleString('fr-FR')}
+              €/mois
             </div>
             <div className="text-xs text-gray-500">Actifs + Beta</div>
           </div>
           <div>
             <div className="text-sm text-gray-400 mb-1">Long terme (12 mois)</div>
             <div className="text-3xl font-bold text-purple-400">
-              {(totalMonthly).toLocaleString('fr-FR')}€/mois
+              {totalMonthly.toLocaleString('fr-FR')}€/mois
             </div>
             <div className="text-xs text-gray-500">Tous les flux déployés</div>
           </div>

@@ -1,8 +1,7 @@
- 
 /**
  * Territory Comparison Service
  * "A KI PRI SA YÉ" - Comparison based EXCLUSIVELY on real observed data
- * 
+ *
  * NO ESTIMATES, NO FICTITIOUS AVERAGES, NO EXTRAPOLATION
  * Only real prices from validated receipt tickets
  */
@@ -77,10 +76,10 @@ function calculateMedian(values: number[]): number | null {
   if (values.length < 3) {
     return null; // Not enough data for meaningful median
   }
-  
+
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  
+
   if (sorted.length % 2 === 0) {
     return (sorted[mid - 1] + sorted[mid]) / 2;
   } else {
@@ -115,7 +114,7 @@ function extractPrices(
         prices.push({
           prix: product.prix_total,
           date: obs.date,
-          enseigne: obs.enseigne
+          enseigne: obs.enseigne,
         });
       }
     }
@@ -132,7 +131,7 @@ function filterByDateRange(
   dateDebut?: string,
   dateFin?: string
 ): Observation[] {
-  return observations.filter(obs => {
+  return observations.filter((obs) => {
     if (dateDebut && obs.date < dateDebut) return false;
     if (dateFin && obs.date > dateFin) return false;
     return true;
@@ -142,29 +141,34 @@ function filterByDateRange(
 /**
  * Get unique enseignes from price data
  */
-function getUniqueEnseignes(prices: Array<{ prix: number; date: string; enseigne: string }>): string[] {
-  const enseignes = new Set(prices.map(p => p.enseigne));
+function getUniqueEnseignes(
+  prices: Array<{ prix: number; date: string; enseigne: string }>
+): string[] {
+  const enseignes = new Set(prices.map((p) => p.enseigne));
   return Array.from(enseignes).sort();
 }
 
 /**
  * Get date range from price data
  */
-function getDateRange(prices: Array<{ prix: number; date: string; enseigne: string }>): { debut: string | null; fin: string | null } {
+function getDateRange(prices: Array<{ prix: number; date: string; enseigne: string }>): {
+  debut: string | null;
+  fin: string | null;
+} {
   if (prices.length === 0) {
     return { debut: null, fin: null };
   }
 
-  const dates = prices.map(p => p.date).sort();
+  const dates = prices.map((p) => p.date).sort();
   return {
     debut: dates[0],
-    fin: dates[dates.length - 1]
+    fin: dates[dates.length - 1],
   };
 }
 
 /**
  * Compare prices across territories based on real observed data only
- * 
+ *
  * @param observations - All observations from index.json
  * @param filter - Comparison criteria
  * @returns Comparison results with statistics per territory
@@ -183,7 +187,7 @@ export function compareTerritoriesPrices(
 
   // Group observations by territory
   const territoireGroups: Record<string, Observation[]> = {};
-  
+
   for (const obs of filteredObs) {
     // Filter by territory if specified
     if (filter.territoires && filter.territoires.length > 0) {
@@ -204,11 +208,11 @@ export function compareTerritoriesPrices(
 
   for (const [territoire, territoireObs] of Object.entries(territoireGroups)) {
     const prices = extractPrices(territoireObs, filter);
-    const priceValues = prices.map(p => p.prix);
+    const priceValues = prices.map((p) => p.prix);
 
     if (priceValues.length > 0) {
       const dateRange = getDateRange(prices);
-      
+
       territoireStats.push({
         territoire,
         observation_count: priceValues.length,
@@ -218,7 +222,7 @@ export function compareTerritoriesPrices(
         prix_observes: priceValues,
         date_debut: dateRange.debut,
         date_fin: dateRange.fin,
-        enseignes: getUniqueEnseignes(prices)
+        enseignes: getUniqueEnseignes(prices),
       });
 
       totalObservations += priceValues.length;
@@ -233,7 +237,7 @@ export function compareTerritoriesPrices(
         prix_observes: [],
         date_debut: null,
         date_fin: null,
-        enseignes: []
+        enseignes: [],
       });
     }
   }
@@ -247,7 +251,7 @@ export function compareTerritoriesPrices(
 
   if (!periodeDebut || !periodeFin) {
     // Calculate from all observations
-    const allDates = filteredObs.map(obs => obs.date).sort();
+    const allDates = filteredObs.map((obs) => obs.date).sort();
     if (allDates.length > 0) {
       periodeDebut = periodeDebut || allDates[0];
       periodeFin = periodeFin || allDates[allDates.length - 1];
@@ -259,15 +263,16 @@ export function compareTerritoriesPrices(
     type: filter.produit ? 'produit' : 'categorie',
     periode: {
       debut: periodeDebut,
-      fin: periodeFin
+      fin: periodeFin,
     },
     territoires: territoireStats,
     total_observations: totalObservations,
     metadata: {
       source: 'observatoire_citoyen',
       methode: 'prix_reels_uniquement',
-      avertissement: 'Ces données sont basées exclusivement sur des prix réels observés. Les territoires sans données ne sont pas estimés.'
-    }
+      avertissement:
+        'Ces données sont basées exclusivement sur des prix réels observés. Les territoires sans données ne sont pas estimés.',
+    },
   };
 }
 
@@ -276,7 +281,7 @@ export function compareTerritoriesPrices(
  */
 export function getAvailableProducts(observations: Observation[]): string[] {
   const products = new Set<string>();
-  
+
   for (const obs of observations) {
     for (const product of obs.produits) {
       products.add(product.nom);
@@ -291,7 +296,7 @@ export function getAvailableProducts(observations: Observation[]): string[] {
  */
 export function getAvailableCategories(observations: Observation[]): string[] {
   const categories = new Set<string>();
-  
+
   for (const obs of observations) {
     for (const product of obs.produits) {
       if (product.categorie) {
@@ -307,6 +312,6 @@ export function getAvailableCategories(observations: Observation[]): string[] {
  * Get list of territories with observations
  */
 export function getAvailableTerritories(observations: Observation[]): string[] {
-  const territories = new Set(observations.map(obs => obs.territoire));
+  const territories = new Set(observations.map((obs) => obs.territoire));
   return Array.from(territories).sort();
 }

@@ -1,10 +1,10 @@
 /**
  * TimeRangeSelector Component
- * 
+ *
  * Allows users to select a time period for ILPP and Anti-Crisis analysis
  * - 30 days
  * - 90 days
- * 
+ *
  * Design: Discreet, institutional, non-marketing
  * Purpose: Observe price stability evolution over time (descriptive only)
  */
@@ -40,9 +40,10 @@ const TimeRangeSelector: React.FC<TimeRangeSelectorProps> = ({
             onClick={() => onChange(range)}
             className={`
               px-4 py-2 text-sm font-medium transition-colors
-              ${value === range
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-700 hover:bg-gray-50'
+              ${
+                value === range
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
               }
               ${range !== ranges[ranges.length - 1] ? 'border-r border-gray-300' : ''}
             `}

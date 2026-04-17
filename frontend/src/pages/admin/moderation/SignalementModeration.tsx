@@ -7,7 +7,16 @@
  */
 import { useState, useEffect } from 'react';
 import { CheckCircle, XCircle, Flag, Search, RefreshCw, AlertTriangle } from 'lucide-react';
-import { collection, query, orderBy, limit, getDocs, doc, updateDoc, Timestamp } from 'firebase/firestore';
+import {
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  doc,
+  updateDoc,
+  Timestamp,
+} from 'firebase/firestore';
 import { db } from '../../../lib/firebase';
 import { logError } from '../../../utils/logger';
 import type { ContributionStatus } from '../../../types/contribution';
@@ -27,17 +36,17 @@ interface SignalementDoc {
 type Row = SignalementDoc;
 
 const STATUS_LABELS: Record<ContributionStatus, string> = {
-  pending:   '⏳ En attente',
+  pending: '⏳ En attente',
   validated: '✅ Validé',
-  rejected:  '❌ Rejeté',
-  flagged:   '�� Signalé',
+  rejected: '❌ Rejeté',
+  flagged: '�� Signalé',
 };
 
 const STATUS_COLORS: Record<ContributionStatus, string> = {
-  pending:   'bg-yellow-100 text-yellow-800',
+  pending: 'bg-yellow-100 text-yellow-800',
   validated: 'bg-emerald-100 text-emerald-800',
-  rejected:  'bg-red-100 text-red-800',
-  flagged:   'bg-orange-100 text-orange-800',
+  rejected: 'bg-red-100 text-red-800',
+  flagged: 'bg-orange-100 text-orange-800',
 };
 
 export default function SignalementModeration() {
@@ -50,20 +59,16 @@ export default function SignalementModeration() {
 
   const fetchRows = async () => {
     if (!db) {
-      setError('Firebase non configuré. Vérifiez les variables d\'environnement.');
+      setError("Firebase non configuré. Vérifiez les variables d'environnement.");
       setLoading(false);
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      const q = query(
-        collection(db, 'contributions'),
-        orderBy('submittedAt', 'desc'),
-        limit(200),
-      );
+      const q = query(collection(db, 'contributions'), orderBy('submittedAt', 'desc'), limit(200));
       const snap = await getDocs(q);
-      const data: Row[] = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Row));
+      const data: Row[] = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Row);
       setRows(data);
     } catch (err) {
       logError('SignalementModeration: fetch failed', err);
@@ -73,7 +78,9 @@ export default function SignalementModeration() {
     }
   };
 
-  useEffect(() => { fetchRows(); }, []);
+  useEffect(() => {
+    fetchRows();
+  }, []);
 
   const updateStatus = async (id: string, status: ContributionStatus) => {
     if (!db) return;
@@ -83,7 +90,7 @@ export default function SignalementModeration() {
         status,
         moderatedAt: Timestamp.now(),
       });
-      setRows((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
+      setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
     } catch (err) {
       logError('SignalementModeration: update failed', err);
     } finally {
@@ -94,7 +101,8 @@ export default function SignalementModeration() {
   const filtered = rows.filter((r) => {
     const matchStatus = statusFilter === 'all' || r.status === statusFilter;
     const q = search.toLowerCase();
-    const matchSearch = !q ||
+    const matchSearch =
+      !q ||
       r.productName?.toLowerCase().includes(q) ||
       r.storeName?.toLowerCase().includes(q) ||
       r.territory?.toLowerCase().includes(q) ||
@@ -126,7 +134,10 @@ export default function SignalementModeration() {
       {/* Filters */}
       <div className="mb-6 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+            aria-hidden="true"
+          />
           <input
             type="search"
             placeholder="Rechercher par produit, enseigne, territoire…"
@@ -144,14 +155,19 @@ export default function SignalementModeration() {
         >
           <option value="all">Tous les statuts</option>
           {(Object.keys(STATUS_LABELS) as ContributionStatus[]).map((s) => (
-            <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+            <option key={s} value={s}>
+              {STATUS_LABELS[s]}
+            </option>
           ))}
         </select>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+        <div
+          className="mb-4 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+          role="alert"
+        >
           <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
           {error}
         </div>
@@ -159,39 +175,68 @@ export default function SignalementModeration() {
 
       {/* Table */}
       {loading ? (
-        <div className="py-20 text-center text-gray-500" aria-live="polite">Chargement…</div>
+        <div className="py-20 text-center text-gray-500" aria-live="polite">
+          Chargement…
+        </div>
       ) : filtered.length === 0 ? (
-        <div className="py-20 text-center text-gray-500" aria-live="polite">Aucun signalement correspondant.</div>
+        <div className="py-20 text-center text-gray-500" aria-live="polite">
+          Aucun signalement correspondant.
+        </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm">
           <table className="min-w-full divide-y divide-gray-100 text-sm">
             <caption className="sr-only">Liste des signalements citoyens</caption>
             <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">Produit</th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">Enseigne</th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">Territoire</th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">Description</th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">Statut</th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">Date</th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">Actions</th>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Produit
+                </th>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Enseigne
+                </th>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Territoire
+                </th>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Description
+                </th>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Statut
+                </th>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Date
+                </th>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-gray-600">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {filtered.map((row) => (
                 <tr key={row.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-900 max-w-[160px] truncate" title={row.productName}>
+                  <td
+                    className="px-4 py-3 font-medium text-gray-900 max-w-[160px] truncate"
+                    title={row.productName}
+                  >
                     {row.productName ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-gray-600 max-w-[120px] truncate" title={row.storeName}>
+                  <td
+                    className="px-4 py-3 text-gray-600 max-w-[120px] truncate"
+                    title={row.storeName}
+                  >
                     {row.storeName ?? '—'}
                   </td>
                   <td className="px-4 py-3 text-gray-600">{row.territory ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600 max-w-[140px] truncate" title={row.description}>
+                  <td
+                    className="px-4 py-3 text-gray-600 max-w-[140px] truncate"
+                    title={row.description}
+                  >
                     {row.description ? row.description.slice(0, 60) : '—'}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[row.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                    <span
+                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[row.status] ?? 'bg-gray-100 text-gray-600'}`}
+                    >
                       {STATUS_LABELS[row.status] ?? row.status}
                     </span>
                   </td>

@@ -1,4 +1,3 @@
- 
 /**
  * Data Validation Service Tests
  */
@@ -171,9 +170,9 @@ describe('Data Validation Service', () => {
     it('should calculate statistics correctly', () => {
       const result1 = validateObservation(validObservation);
       const result2 = validateObservation({ ...validObservation, price: -1 });
-      
+
       const stats = getValidationStatistics([result1, result2]);
-      
+
       expect(stats.totalObservations).toBe(2);
       expect(stats.validObservations).toBe(1);
       expect(stats.invalidObservations).toBe(1);
@@ -201,7 +200,6 @@ describe('Data Validation Service', () => {
       };
       expect(meetsQualityThreshold(noScore, 50)).toBe(false);
     });
-
   });
 
   describe('filterByQuality', () => {
@@ -211,10 +209,10 @@ describe('Data Validation Service', () => {
         ...validObservation,
         confidenceScore: 10,
       };
-      
+
       const observations = [highQuality, lowQuality];
       const filtered = filterByQuality(observations, 50);
-      
+
       expect(filtered).toHaveLength(1);
       expect(filtered[0]).toEqual(highQuality);
     });

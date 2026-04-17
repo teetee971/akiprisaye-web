@@ -5,7 +5,14 @@
 
 import type { Territory } from './priceAlerts';
 
-export type TrainingLevel = 'CAP' | 'BAC_PRO' | 'BTS' | 'LICENCE' | 'MASTER' | 'CERTIFICAT' | 'AUTRE';
+export type TrainingLevel =
+  | 'CAP'
+  | 'BAC_PRO'
+  | 'BTS'
+  | 'LICENCE'
+  | 'MASTER'
+  | 'CERTIFICAT'
+  | 'AUTRE';
 export type TrainingType = 'initiale' | 'continue' | 'alternance' | 'VAE' | 'remise_a_niveau';
 export type TrainingMode = 'presentiel' | 'distanciel' | 'hybride';
 export type FundingSource = 'CPF' | 'pole_emploi' | 'region' | 'OPCO' | 'autofinancement' | 'autre';
@@ -20,34 +27,34 @@ export interface TrainingProgram {
   organisme: {
     id: string;
     name: string;
-    certifications: string[];  // Qualiopi, etc.
-    rating: number;  // 0-5
+    certifications: string[]; // Qualiopi, etc.
+    rating: number; // 0-5
   };
-  
+
   territory: Territory;
   location: {
     commune: string;
     address: string;
     coordinates?: [number, number];
   };
-  
+
   details: {
-    domain: string;  // Santé, BTP, Commerce, etc.
+    domain: string; // Santé, BTP, Commerce, etc.
     level: TrainingLevel;
     type: TrainingType;
     mode: TrainingMode;
-    duration: number;  // hours
+    duration: number; // hours
     durationWeeks: number;
-    program: string[];  // Modules
+    program: string[]; // Modules
     prerequisites: string[];
   };
-  
+
   schedule: {
     nextSessions: Array<{ startDate: string; endDate: string }>;
     fullTime: boolean;
     partTime: boolean;
   };
-  
+
   pricing: {
     catalogPrice: number;
     fundingSources: FundingSource[];
@@ -55,24 +62,24 @@ export interface TrainingProgram {
     poleEmploiEligible: boolean;
     regionAidAvailable: boolean;
   };
-  
+
   outcomes: {
     diploma?: string;
     certification?: string;
-    jobs: string[];  // Métiers visés
-    successRate?: number;  // % réussite examen
-    insertionRate3M?: number;  // % emploi 3 mois
+    jobs: string[]; // Métiers visés
+    successRate?: number; // % réussite examen
+    insertionRate3M?: number; // % emploi 3 mois
     insertionRate6M?: number;
     insertionRate12M?: number;
     averageSalary?: number;
   };
-  
+
   contact: {
     phone: string;
     email: string;
     website?: string;
   };
-  
+
   source: {
     type: 'official' | 'user_report';
     lastUpdated: string;
@@ -86,22 +93,22 @@ export interface JobMarket {
   id: string;
   jobTitle: string;
   territory: Territory;
-  
+
   demand: {
     openPositions: number;
-    shortage: boolean;  // Métier en tension
+    shortage: boolean; // Métier en tension
     trend: 'increasing' | 'stable' | 'decreasing';
   };
-  
+
   salary: {
     min: number;
     max: number;
     average: number;
     currency: string;
   };
-  
-  requiredTraining: string[];  // IDs formations
-  
+
+  requiredTraining: string[]; // IDs formations
+
   source: {
     type: 'pole_emploi' | 'other';
     lastUpdated: string;
@@ -118,7 +125,7 @@ export interface UserProfile {
   education: TrainingLevel;
   experience: Array<{ domain: string; years: number }>;
   cpfBalance?: number;
-  mobility: boolean;  // Accepte déplacements
+  mobility: boolean; // Accepte déplacements
 }
 
 /**
@@ -126,9 +133,9 @@ export interface UserProfile {
  */
 export interface JobMatch {
   job: JobMarket;
-  matchScore: number;  // 0-100
+  matchScore: number; // 0-100
   requiredTrainings: TrainingProgram[];
-  timeToJob: number;  // months
+  timeToJob: number; // months
   totalCost: number;
   fundingAvailable: number;
   remainingCost: number;
@@ -145,20 +152,20 @@ export interface TrainingFeedback {
   id: string;
   trainingId: string;
   userId?: string;
-  
+
   completed: boolean;
   completionDate: string;
-  
+
   jobFound: boolean;
-  jobFoundDelay?: number;  // months
+  jobFoundDelay?: number; // months
   contractType?: ContractType;
   salary?: number;
-  jobRelated: boolean;  // Emploi lié formation ?
-  
-  rating: number;  // 1-5
+  jobRelated: boolean; // Emploi lié formation ?
+
+  rating: number; // 1-5
   comment?: string;
-  
-  verified: boolean;  // Avec preuve
+
+  verified: boolean; // Avec preuve
   createdAt: string;
 }
 
@@ -168,7 +175,7 @@ export interface TrainingFeedback {
 export interface FundingSimulation {
   training: TrainingProgram;
   userProfile: UserProfile;
-  
+
   breakdown: {
     catalogPrice: number;
     cpf: number;
@@ -177,14 +184,14 @@ export interface FundingSimulation {
     other: number;
     remainingCost: number;
   };
-  
+
   eligibility: {
     cpf: boolean;
     poleEmploi: boolean;
     region: boolean;
     details: string[];
   };
-  
+
   steps: Array<{
     step: string;
     description: string;

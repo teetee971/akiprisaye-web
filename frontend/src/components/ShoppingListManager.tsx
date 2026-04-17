@@ -1,4 +1,3 @@
- 
 /**
  * Shopping List Manager Component
  * Main component for managing shopping lists
@@ -29,7 +28,7 @@ export function ShoppingListManager() {
 
   const handleCreateList = async () => {
     if (!newListName.trim()) return;
-    
+
     await shoppingListService.createList(newListName, 'GP');
     setNewListName('');
     setIsCreating(false);
@@ -48,11 +47,11 @@ export function ShoppingListManager() {
 
   const handleOptimize = async () => {
     if (!selectedList) return;
-    
+
     const optimization = await shoppingListService.optimizeBudget(selectedList);
     setSelectedList({
       ...selectedList,
-      optimization
+      optimization,
     });
   };
 
@@ -73,9 +72,7 @@ export function ShoppingListManager() {
           <div className="lg:col-span-1">
             <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
-                  Mes listes
-                </h2>
+                <h2 className="text-xl font-semibold text-slate-900 dark:text-white">Mes listes</h2>
                 <button
                   onClick={() => setIsCreating(true)}
                   className="p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
@@ -114,15 +111,16 @@ export function ShoppingListManager() {
 
               {/* List Items */}
               <div className="space-y-2">
-                {lists.map(list => (
+                {lists.map((list) => (
                   <button
                     key={list.id}
                     type="button"
                     className={`
                       w-full text-left p-3 rounded-lg cursor-pointer transition-colors
-                      ${selectedList?.id === list.id 
-                        ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500' 
-                        : 'bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600'
+                      ${
+                        selectedList?.id === list.id
+                          ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-500'
+                          : 'bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600'
                       }
                     `}
                     onClick={() => setSelectedList(list)}
@@ -173,7 +171,8 @@ export function ShoppingListManager() {
                     </h2>
                     <button
                       aria-label={`Renommer la liste "${selectedList.name}"`}
-                      className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+                      className="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg"
+                    >
                       <Edit2 className="w-5 h-5" />
                     </button>
                   </div>
@@ -201,7 +200,7 @@ export function ShoppingListManager() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      {selectedList.items.map(item => (
+                      {selectedList.items.map((item) => (
                         <div
                           key={item.id}
                           className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
@@ -284,7 +283,7 @@ export function ShoppingListManager() {
                             {store.storeName}
                           </div>
                           <div className="text-sm text-slate-600 dark:text-slate-400">
-                            {store.items.length} article{store.items.length !== 1 ? 's' : ''} • 
+                            {store.items.length} article{store.items.length !== 1 ? 's' : ''} •
                             Sous-total: {store.subtotal.toFixed(2)}€
                           </div>
                         </div>

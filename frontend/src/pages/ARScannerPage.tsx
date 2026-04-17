@@ -52,12 +52,13 @@ export default function ARScannerPage() {
         </div>
 
         <div className="max-w-3xl mx-auto px-4 py-6 pb-12 space-y-6">
-
           {/* Avertissement prototype */}
           <div className="flex gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
             <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-amber-800">Fonctionnalité en cours de développement</p>
+              <p className="text-sm font-semibold text-amber-800">
+                Fonctionnalité en cours de développement
+              </p>
               <p className="text-sm text-amber-700 mt-0.5">
                 La détection des produits est actuellement simulée. L'intégration avec TensorFlow.js
                 ou l'API Google Vision est prévue en V3.
@@ -68,11 +69,26 @@ export default function ARScannerPage() {
           {/* Points clés */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { icon: Camera, title: 'Caméra en direct', desc: 'Flux vidéo temps réel depuis votre appareil photo' },
-              { icon: Eye, title: 'Détection produits', desc: 'Bounding boxes sur les produits détectés dans le rayon' },
-              { icon: ShoppingCart, title: 'Comparaison prix', desc: 'Meilleur prix du réseau affiché en overlay' },
+              {
+                icon: Camera,
+                title: 'Caméra en direct',
+                desc: 'Flux vidéo temps réel depuis votre appareil photo',
+              },
+              {
+                icon: Eye,
+                title: 'Détection produits',
+                desc: 'Bounding boxes sur les produits détectés dans le rayon',
+              },
+              {
+                icon: ShoppingCart,
+                title: 'Comparaison prix',
+                desc: 'Meilleur prix du réseau affiché en overlay',
+              },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="bg-white border border-gray-200 rounded-xl p-4 text-center">
+              <div
+                key={title}
+                className="bg-white border border-gray-200 rounded-xl p-4 text-center"
+              >
                 <Icon className="w-6 h-6 text-emerald-600 mx-auto mb-2" />
                 <p className="font-semibold text-gray-900 text-sm">{title}</p>
                 <p className="text-xs text-gray-500 mt-1">{desc}</p>
@@ -83,8 +99,8 @@ export default function ARScannerPage() {
           {/* Bouton de lancement */}
           <div className="bg-white border border-gray-200 rounded-xl p-6 text-center">
             <p className="text-gray-600 text-sm mb-4">
-              Autorisez l'accès à votre caméra pour démarrer le scanner AR.
-              Les images ne sont jamais stockées ni transmises.
+              Autorisez l'accès à votre caméra pour démarrer le scanner AR. Les images ne sont
+              jamais stockées ni transmises.
             </p>
             <button
               onClick={() => setScannerOpen(true)}

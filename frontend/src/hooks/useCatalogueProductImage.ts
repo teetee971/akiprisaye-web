@@ -15,21 +15,21 @@ import { useEffect, useState } from 'react';
 // ─── Category emoji map ───────────────────────────────────────────────────────
 
 const CATEGORY_EMOJI: Record<string, string> = {
-  'ÉPICERIE':          '🛒',
-  'BOISSONS':          '🥤',
-  'HYGIÈNE':           '🧴',
-  'BÉBÉ':              '👶',
-  'BOUCHERIE':         '🥩',
-  'POISSONNERIE':      '🐟',
+  ÉPICERIE: '🛒',
+  BOISSONS: '🥤',
+  HYGIÈNE: '🧴',
+  BÉBÉ: '👶',
+  BOUCHERIE: '🥩',
+  POISSONNERIE: '🐟',
   'FRUITS ET LÉGUMES': '🥗',
-  'BOULANGERIE':       '🥖',
-  'CRÈMERIE':          '🥛',
-  'SURGELÉS':          '❄️',
-  'CHARCUTERIE':       '🍖',
-  'PLATS CUISINÉS':    '🍽️',
-  'CONFISERIE':        '🍬',
-  'BAZAR':             '🏪',
-  'ULTRA FRAIS':       '🥗',
+  BOULANGERIE: '🥖',
+  CRÈMERIE: '🥛',
+  SURGELÉS: '❄️',
+  CHARCUTERIE: '🍖',
+  'PLATS CUISINÉS': '🍽️',
+  CONFISERIE: '🍬',
+  BAZAR: '🏪',
+  'ULTRA FRAIS': '🥗',
 };
 
 export function getCategoryEmoji(category?: string): string {
@@ -40,19 +40,19 @@ export function getCategoryEmoji(category?: string): string {
 // ─── OFF text-search cache ────────────────────────────────────────────────────
 
 const IMAGE_CACHE = new Map<string, string | null>();
-const PENDING     = new Map<string, Promise<string | null>>();
+const PENDING = new Map<string, Promise<string | null>>();
 
 const OFF_SEARCH_URL = 'https://world.openfoodfacts.org/cgi/search.pl';
-const TIMEOUT_MS     = 8_000;
+const TIMEOUT_MS = 8_000;
 
 async function fetchOFFImageByName(productName: string): Promise<string | null> {
   const params = new URLSearchParams({
     search_terms: productName,
     search_simple: '1',
-    action:        'process',
-    json:          '1',
-    page_size:     '3',
-    fields:        'image_front_small_url,image_front_url,image_url',
+    action: 'process',
+    json: '1',
+    page_size: '3',
+    fields: 'image_front_small_url,image_front_url,image_url',
   });
 
   const controller = new AbortController();
@@ -60,7 +60,7 @@ async function fetchOFFImageByName(productName: string): Promise<string | null> 
 
   try {
     const res = await fetch(`${OFF_SEARCH_URL}?${params}`, {
-      signal:  controller.signal,
+      signal: controller.signal,
       headers: { 'User-Agent': 'AKiPriSaYe/1.0 (contact@akiprisaye.fr)' },
     });
     if (!res.ok) return null;
@@ -71,8 +71,8 @@ async function fetchOFFImageByName(productName: string): Promise<string | null> 
     for (const p of data.products) {
       const url =
         (p['image_front_small_url'] as string | undefined) ??
-        (p['image_front_url']       as string | undefined) ??
-        (p['image_url']             as string | undefined);
+        (p['image_front_url'] as string | undefined) ??
+        (p['image_url'] as string | undefined);
       if (url && typeof url === 'string' && url.startsWith('https://')) return url;
     }
     return null;
@@ -86,7 +86,7 @@ async function fetchOFFImageByName(productName: string): Promise<string | null> 
 function resolveImage(productName: string): Promise<string | null> {
   const key = productName.trim().toLowerCase();
   if (IMAGE_CACHE.has(key)) return Promise.resolve(IMAGE_CACHE.get(key) ?? null);
-  if (PENDING.has(key))     return PENDING.get(key)!;
+  if (PENDING.has(key)) return PENDING.get(key)!;
 
   const promise = fetchOFFImageByName(productName).then((url) => {
     IMAGE_CACHE.set(key, url);
@@ -109,13 +109,13 @@ export interface CatalogueProductImageResult {
 
 export function useCatalogueProductImage(
   productName: string,
-  category?: string,
+  category?: string
 ): CatalogueProductImageResult {
   const emoji = getCategoryEmoji(category);
   const cacheKey = productName.trim().toLowerCase();
 
   const [imageUrl, setImageUrl] = useState<string | null>(
-    IMAGE_CACHE.has(cacheKey) ? IMAGE_CACHE.get(cacheKey) ?? null : null,
+    IMAGE_CACHE.has(cacheKey) ? (IMAGE_CACHE.get(cacheKey) ?? null) : null
   );
   const [loading, setLoading] = useState(!IMAGE_CACHE.has(cacheKey));
 
@@ -135,7 +135,9 @@ export function useCatalogueProductImage(
       }
     });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [cacheKey, productName]);
 
   return { imageUrl, emoji, loading };

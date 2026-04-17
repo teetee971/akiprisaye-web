@@ -21,15 +21,15 @@ import {
 // Real values computed from observatoire/*/2026-03.json snapshots.
 // Surcoût = (avg_DOM - avg_Hexagone) / avg_Hexagone * 100
 const OVERCOST_DATA = [
-  { category: 'Boissons',              pct: 100.8, icon: '🥤', hexAvg: 0.40, domAvg: 0.81 },
-  { category: 'Fruits & légumes',      pct: 42.5,  icon: '🥦', hexAvg: 2.33, domAvg: 3.32 },
-  { category: 'Épicerie',              pct: 39.5,  icon: '🛒', hexAvg: 1.64, domAvg: 2.29 },
-  { category: 'Produits laitiers',     pct: 31.6,  icon: '🥛', hexAvg: 1.27, domAvg: 1.68 },
-  { category: 'Entretien / Nettoyage', pct: 31.4,  icon: '🧹', hexAvg: 1.40, domAvg: 1.84 },
-  { category: 'Pharmacie',             pct: 30.6,  icon: '💊', hexAvg: 1.96, domAvg: 2.56 },
-  { category: 'Lessive',               pct: 25.0,  icon: '🧺', hexAvg: 3.41, domAvg: 4.26 },
-  { category: 'Hygiène',               pct: 23.8,  icon: '🧴', hexAvg: 1.95, domAvg: 2.42 },
-  { category: 'Cosmétiques',           pct: 22.7,  icon: '💄', hexAvg: 4.76, domAvg: 5.84 },
+  { category: 'Boissons', pct: 100.8, icon: '🥤', hexAvg: 0.4, domAvg: 0.81 },
+  { category: 'Fruits & légumes', pct: 42.5, icon: '🥦', hexAvg: 2.33, domAvg: 3.32 },
+  { category: 'Épicerie', pct: 39.5, icon: '🛒', hexAvg: 1.64, domAvg: 2.29 },
+  { category: 'Produits laitiers', pct: 31.6, icon: '🥛', hexAvg: 1.27, domAvg: 1.68 },
+  { category: 'Entretien / Nettoyage', pct: 31.4, icon: '🧹', hexAvg: 1.4, domAvg: 1.84 },
+  { category: 'Pharmacie', pct: 30.6, icon: '💊', hexAvg: 1.96, domAvg: 2.56 },
+  { category: 'Lessive', pct: 25.0, icon: '🧺', hexAvg: 3.41, domAvg: 4.26 },
+  { category: 'Hygiène', pct: 23.8, icon: '🧴', hexAvg: 1.95, domAvg: 2.42 },
+  { category: 'Cosmétiques', pct: 22.7, icon: '💄', hexAvg: 4.76, domAvg: 5.84 },
 ];
 
 // Four structural reasons why prices are systematically higher in DOM-TOM
@@ -37,25 +37,25 @@ const WHY_REASONS = [
   {
     icon: '⚓',
     heading: 'Fret maritime & aérien',
-    text: 'Tous les produits importés subissent des coûts de transport élevés. Un conteneur standard vers la Guadeloupe coûte 2× plus cher qu\'un envoi métropolitain.',
+    text: "Tous les produits importés subissent des coûts de transport élevés. Un conteneur standard vers la Guadeloupe coûte 2× plus cher qu'un envoi métropolitain.",
     stat: '+12 à +18 % sur le prix final',
   },
   {
     icon: '🏦',
     heading: 'Octroi de mer',
-    text: 'Taxe d\'importation spécifique aux DOM, variable selon le produit (5 à 30 %). Destinée à protéger la production locale, elle s\'applique à la quasi-totalité des produits de grande consommation importés.',
+    text: "Taxe d'importation spécifique aux DOM, variable selon le produit (5 à 30 %). Destinée à protéger la production locale, elle s'applique à la quasi-totalité des produits de grande consommation importés.",
     stat: '+5 à +30 % par produit',
   },
   {
     icon: '🏢',
     heading: 'Oligopoles de distribution',
-    text: 'Quelques groupes (Boulogne, GBH, Hayot…) contrôlent l\'import, la distribution et le détail. Cette concentration verticale limite la concurrence et maintient les marges élevées.',
+    text: "Quelques groupes (Boulogne, GBH, Hayot…) contrôlent l'import, la distribution et le détail. Cette concentration verticale limite la concurrence et maintient les marges élevées.",
     stat: 'Taux de marge ×1.8 vs métropole',
   },
   {
     icon: '🏝️',
     heading: 'Éloignement & insularité',
-    text: 'Les coûts de stockage, de rupture, et de logistique de dernier kilomètre sont amplifiés par l\'insularité. Les îles dépendent à 80–90 % de produits importés.',
+    text: "Les coûts de stockage, de rupture, et de logistique de dernier kilomètre sont amplifiés par l'insularité. Les îles dépendent à 80–90 % de produits importés.",
     stat: '80–90 % de dépendance import',
   },
 ];
@@ -114,7 +114,10 @@ export default function CategoryOvercostChart() {
   const chartHeight = isMobile ? 270 : 310;
 
   return (
-    <section className="price-chart-section section-reveal" aria-label="Surcoût par catégorie DOM vs Hexagone">
+    <section
+      className="price-chart-section section-reveal"
+      aria-label="Surcoût par catégorie DOM vs Hexagone"
+    >
       {/* Section banner image */}
       <div className="section-context-banner">
         <img
@@ -134,19 +137,14 @@ export default function CategoryOvercostChart() {
 
       <div className="price-chart-header">
         <p className="price-chart-sub">
-          Surcoût moyen des DOM (Guadeloupe, Martinique, Guyane, La Réunion, Mayotte)
-          par rapport à l'Hexagone —{' '}
-          <span className="price-chart-source">données observatoire mars 2026</span>
+          Surcoût moyen des DOM (Guadeloupe, Martinique, Guyane, La Réunion, Mayotte) par rapport à
+          l'Hexagone — <span className="price-chart-source">données observatoire mars 2026</span>
         </p>
       </div>
 
       <div className="price-chart-wrap" style={{ maxWidth: 760 }}>
         <ResponsiveContainer width="100%" height={chartHeight}>
-          <BarChart
-            layout="vertical"
-            data={OVERCOST_DATA}
-            margin={chartMargin}
-          >
+          <BarChart layout="vertical" data={OVERCOST_DATA} margin={chartMargin}>
             <XAxis
               type="number"
               tickFormatter={(v: number) => `+${v}%`}
@@ -203,7 +201,9 @@ export default function CategoryOvercostChart() {
         <div className="why-reasons-grid">
           {WHY_REASONS.map((r) => (
             <div key={r.heading} className="why-reason-card">
-              <span className="why-reason-icon" aria-hidden="true">{r.icon}</span>
+              <span className="why-reason-icon" aria-hidden="true">
+                {r.icon}
+              </span>
               <div className="why-reason-body">
                 <p className="why-reason-heading">{r.heading}</p>
                 <p className="why-reason-text">{r.text}</p>

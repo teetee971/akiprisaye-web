@@ -1,14 +1,13 @@
- 
 // src/components/ScanCamera.tsx
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 
 type ScanCameraProps = {
-  videoRef: React.RefObject<HTMLVideoElement | null>
-  isScanning: boolean
-  error: string | null
-  onStartScan: () => void
-  onStopScan: () => void
-}
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+  isScanning: boolean;
+  error: string | null;
+  onStartScan: () => void;
+  onStopScan: () => void;
+};
 
 export default function ScanCamera({
   videoRef,
@@ -29,7 +28,7 @@ export default function ScanCamera({
         >
           <track kind="captions" src="" srcLang="fr" label="Captions" default />
         </video>
-        
+
         {isScanning && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-3/4 h-1/3 border-2 border-green-500 rounded-lg">
@@ -69,5 +68,5 @@ export default function ScanCamera({
         Positionnez le code-barres EAN dans le cadre vert
       </div>
     </div>
-  )
+  );
 }

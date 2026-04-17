@@ -40,9 +40,7 @@ export const getMarketInsights = async (): Promise<MarketInsights | null> => {
 /**
  * Get historical market insights.
  */
-export const getInsightsHistory = async (
-  days = 30,
-): Promise<MarketInsightsHistoryEntry[]> => {
+export const getInsightsHistory = async (days = 30): Promise<MarketInsightsHistoryEntry[]> => {
   if (!db) return [];
   try {
     const ref = collection(db, 'market_insights');

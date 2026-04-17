@@ -15,11 +15,11 @@ export function BestPriceHighlight({ territoryPrices }: BestPriceHighlightProps)
     return null;
   }
 
-  const bestDeal = territoryPrices.reduce((best, current) => 
+  const bestDeal = territoryPrices.reduce((best, current) =>
     current.price < best.price ? current : best
   );
 
-  const savings = Math.max(...territoryPrices.map(tp => tp.price)) - bestDeal.price;
+  const savings = Math.max(...territoryPrices.map((tp) => tp.price)) - bestDeal.price;
   const savingsPercent = savings > 0 ? ((savings / bestDeal.price) * 100).toFixed(1) : '0.0';
 
   return (
@@ -31,12 +31,12 @@ export function BestPriceHighlight({ territoryPrices }: BestPriceHighlightProps)
           <p className="text-2xl font-bold text-green-400 mb-1">
             {getTerritoryLabel(bestDeal.territory)}
           </p>
-          <p className="text-3xl font-bold text-white mb-3">
-            {bestDeal.price.toFixed(2)}€
-          </p>
+          <p className="text-3xl font-bold text-white mb-3">{bestDeal.price.toFixed(2)}€</p>
           {savings > 0 && (
             <p className="text-lg text-slate-300">
-              💰 Économisez jusqu'à <span className="font-semibold text-green-400">{savings.toFixed(2)}€</span> ({savingsPercent}%)
+              💰 Économisez jusqu'à{' '}
+              <span className="font-semibold text-green-400">{savings.toFixed(2)}€</span> (
+              {savingsPercent}%)
             </p>
           )}
           <p className="text-sm text-slate-400 mt-2">

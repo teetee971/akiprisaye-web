@@ -19,10 +19,10 @@ export default function DomVsMetropoleEvolution() {
       if (!alive) return;
 
       setSeries({
-        Guadeloupe: gp.map(p => p.index),
-        Martinique: mq.map(p => p.index),
-        Guyane: gf.map(p => p.index),
-        Réunion: re.map(p => p.index),
+        Guadeloupe: gp.map((p) => p.index),
+        Martinique: mq.map((p) => p.index),
+        Guyane: gf.map((p) => p.index),
+        Réunion: re.map((p) => p.index),
       });
     });
 
@@ -33,14 +33,10 @@ export default function DomVsMetropoleEvolution() {
 
   return (
     <div className="rounded-xl bg-black/30 border border-white/10 p-4">
-      <h2 className="text-lg font-semibold mb-4">
-        Évolution du surcoût — DOM vs Métropole
-      </h2>
+      <h2 className="text-lg font-semibold mb-4">Évolution du surcoût — DOM vs Métropole</h2>
 
       <div className="space-y-3 text-sm">
-        <div className="text-white/60">
-          Base Métropole = 100
-        </div>
+        <div className="text-white/60">Base Métropole = 100</div>
 
         {Object.entries(series).map(([territory, values]) => {
           const delta = values.at(-1)! - METROPOLE;
@@ -49,10 +45,7 @@ export default function DomVsMetropoleEvolution() {
             <div key={territory}>
               <div className="flex justify-between">
                 <span>{territory}</span>
-                <span
-                  className="font-mono"
-                  style={{ color: deltaColor(delta) }}
-                >
+                <span className="font-mono" style={{ color: deltaColor(delta) }}>
                   +{delta.toFixed(1)} %
                 </span>
               </div>

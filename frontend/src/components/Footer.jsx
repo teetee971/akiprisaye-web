@@ -13,8 +13,8 @@ export default function Footer() {
     const base = import.meta.env.BASE_URL ?? '/';
     const url = base.endsWith('/') ? `${base}version.json` : `${base}/version.json`;
     fetch(url)
-      .then(res => res.json())
-      .then(data => setVersion(data))
+      .then((res) => res.json())
+      .then((data) => setVersion(data))
       .catch(() => {
         // Silently fail — version badge is optional
         setVersion(null);
@@ -73,9 +73,7 @@ export default function Footer() {
         {/* Global Disclaimer */}
         <div className="mb-8">
           <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-4">
-            <p className="text-blue-300 text-sm">
-              Transparence civique et données officielles
-            </p>
+            <p className="text-blue-300 text-sm">Transparence civique et données officielles</p>
           </div>
         </div>
 
@@ -84,28 +82,16 @@ export default function Footer() {
           className="flex flex-wrap justify-center gap-6 mb-6 text-sm"
           aria-label="Navigation du pied de page"
         >
-          <Link
-            to="/a-propos"
-            className="text-slate-300 hover:text-blue-400 transition-colors"
-          >
+          <Link to="/a-propos" className="text-slate-300 hover:text-blue-400 transition-colors">
             À propos
           </Link>
-          <Link
-            to="/methodologie"
-            className="text-slate-300 hover:text-blue-400 transition-colors"
-          >
+          <Link to="/methodologie" className="text-slate-300 hover:text-blue-400 transition-colors">
             Méthodologie
           </Link>
-          <Link
-            to="/actualites"
-            className="text-slate-300 hover:text-blue-400 transition-colors"
-          >
+          <Link to="/actualites" className="text-slate-300 hover:text-blue-400 transition-colors">
             Actualités
           </Link>
-          <Link
-            to="/contact"
-            className="text-slate-300 hover:text-blue-400 transition-colors"
-          >
+          <Link to="/contact" className="text-slate-300 hover:text-blue-400 transition-colors">
             Contact
           </Link>
           <Link
@@ -137,14 +123,16 @@ export default function Footer() {
           >
             © {new Date().getFullYear()} A KI PRI SA YÉ - Tous droits réservés
             {debugActive && (
-              <span className="ml-2 text-xs text-orange-400" aria-label="Auth debug activé">🔒</span>
+              <span className="ml-2 text-xs text-orange-400" aria-label="Auth debug activé">
+                🔒
+              </span>
             )}
           </button>
           <p className="mt-2 text-xs text-slate-500">
             Plateforme citoyenne de transparence des prix en Outre-mer
           </p>
-          {version && (
-            version.buildUrl ? (
+          {version &&
+            (version.buildUrl ? (
               <a
                 href={version.buildUrl}
                 target="_blank"
@@ -152,17 +140,20 @@ export default function Footer() {
                 className="mt-1 text-xs text-slate-600 hover:text-slate-500 transition-colors"
                 title={`Commit complet : ${version.commit || 'inconnu'} — branche : ${version.branch || '?'}`}
               >
-                {version.shortCommit ?? version.commit?.slice(0, 7) ?? '?'} · {version.branch ?? '?'} · {version.builtAt ? new Date(version.builtAt).toLocaleDateString('fr-FR') : '?'}
+                {version.shortCommit ?? version.commit?.slice(0, 7) ?? '?'} ·{' '}
+                {version.branch ?? '?'} ·{' '}
+                {version.builtAt ? new Date(version.builtAt).toLocaleDateString('fr-FR') : '?'}
               </a>
             ) : (
               <p
                 className="mt-1 text-xs text-slate-600"
                 title={`Commit : ${version.commit || 'inconnu'} — branche : ${version.branch || '?'}`}
               >
-                {version.shortCommit ?? version.commit?.slice(0, 7) ?? '?'} · {version.branch ?? '?'} · {version.builtAt ? new Date(version.builtAt).toLocaleDateString('fr-FR') : '?'}
+                {version.shortCommit ?? version.commit?.slice(0, 7) ?? '?'} ·{' '}
+                {version.branch ?? '?'} ·{' '}
+                {version.builtAt ? new Date(version.builtAt).toLocaleDateString('fr-FR') : '?'}
               </p>
-            )
-          )}
+            ))}
         </div>
       </div>
     </footer>

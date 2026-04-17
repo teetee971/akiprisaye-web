@@ -1,14 +1,13 @@
- 
 // src/pages/ResetPassword.tsx
-import { useState, useEffect } from "react";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth, firebaseError } from "@/lib/firebase";
-import { Link } from "react-router-dom";
-import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from "@/lib/authMessages";
-import { SITE_URL } from "@/utils/seoHelpers";
+import { useState, useEffect } from 'react';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth, firebaseError } from '@/lib/firebase';
+import { Link } from 'react-router-dom';
+import { FIREBASE_UNAVAILABLE_MESSAGE, getAuthErrorMessage } from '@/lib/authMessages';
+import { SITE_URL } from '@/utils/seoHelpers';
 
 export default function ResetPassword() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,7 +29,7 @@ export default function ResetPassword() {
     }
 
     if (!email) {
-      setError("Veuillez saisir votre adresse email.");
+      setError('Veuillez saisir votre adresse email.');
       return;
     }
 
@@ -66,13 +65,13 @@ export default function ResetPassword() {
                 <div>
                   <p className="font-medium mb-1">Email envoyé !</p>
                   <p className="text-sm">
-                    Un email de réinitialisation a été envoyé à <strong>{email}</strong>.
-                    Vérifiez votre boîte de réception et suivez les instructions.
+                    Un email de réinitialisation a été envoyé à <strong>{email}</strong>. Vérifiez
+                    votre boîte de réception et suivez les instructions.
                   </p>
                   <p className="text-sm mt-2 text-yellow-300">
-                    ⚠️ Si vous ne voyez pas l'email dans votre boîte de réception,
-                    vérifiez votre dossier <strong>Spam / Courrier indésirable</strong>
-                    {" "}et marquez-le comme « non spam ».
+                    ⚠️ Si vous ne voyez pas l'email dans votre boîte de réception, vérifiez votre
+                    dossier <strong>Spam / Courrier indésirable</strong> et marquez-le comme « non
+                    spam ».
                   </p>
                 </div>
               </div>
@@ -97,8 +96,8 @@ export default function ResetPassword() {
             )}
 
             <p className="text-gray-300 text-sm mb-6 text-center">
-              Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre
-              mot de passe.
+              Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot
+              de passe.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -122,7 +121,7 @@ export default function ResetPassword() {
                 className="w-full p-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed text-white"
                 disabled={loading}
               >
-                {loading ? "Envoi en cours…" : "Envoyer le lien de réinitialisation"}
+                {loading ? 'Envoi en cours…' : 'Envoyer le lien de réinitialisation'}
               </button>
             </form>
 

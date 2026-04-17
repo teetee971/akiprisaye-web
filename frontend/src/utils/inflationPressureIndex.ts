@@ -1,22 +1,21 @@
- 
 /**
  * inflationPressureIndex.ts — Local Inflation Pressure Index (ILPP)
- * 
+ *
  * Purpose: Descriptive index of local price pressure based on observed data
- * 
+ *
  * LEGAL NOTICE:
  * This is a DESCRIPTIVE tool, not a predictive or advisory tool.
  * It observes and describes what has happened, not what will happen.
  * Does not constitute financial or economic advice.
- * 
+ *
  * Methodology:
  * - 40% Average price change
  * - 30% Volatility (price instability)
  * - 20% Frequency of increases
  * - 10% Store dispersion
- * 
+ *
  * Result: Score from 0 to 100
- * 
+ *
  * @module inflationPressureIndex
  */
 
@@ -28,13 +27,13 @@ import type { BasketPriceSnapshot } from './priceHistory';
 export interface ILPPInputData {
   /** Average percentage price change over period */
   avgChange: number;
-  
+
   /** Volatility (standard deviation or range) as percentage */
   volatility: number;
-  
+
   /** Frequency of increases (0-100, percentage of observations with increases) */
   increaseFrequency: number;
-  
+
   /** Price dispersion across stores (0-100, coefficient of variation) */
   dispersion: number;
 }
@@ -45,13 +44,13 @@ export interface ILPPInputData {
 export interface ILPPResult {
   /** Score from 0 to 100 */
   score: number;
-  
+
   /** Human-readable pressure level */
   level: 'Très faible' | 'Modérée' | 'Notable' | 'Forte' | 'Très élevée';
-  
+
   /** Explanatory text */
   explanation: string;
-  
+
   /** Component breakdown */
   components: {
     avgChange: number;
@@ -59,10 +58,10 @@ export interface ILPPResult {
     increaseFrequency: number;
     dispersion: number;
   };
-  
+
   /** Number of observations used */
   dataPoints: number;
-  
+
   /** Whether enough data for reliable index */
   isReliable: boolean;
 }
@@ -84,15 +83,15 @@ function normalize(value: number, max: number): number {
 
 /**
  * Compute Local Inflation Pressure Index (ILPP)
- * 
+ *
  * Formula:
  * ILPP = (avgChange × 0.4) + (volatility × 0.3) + (increaseFreq × 0.2) + (dispersion × 0.1)
- * 
+ *
  * All components are normalized to 0-100 scale before weighting
- * 
+ *
  * @param data - Input data with all components
  * @returns ILPP score (0-100)
- * 
+ *
  * @example
  * const score = computeILPP({
  *   avgChange: 15,      // 15% average increase
@@ -106,21 +105,19 @@ export function computeILPP(data: ILPPInputData): number {
   // Each component is already expected to be 0-100 or needs normalization
   // avgChange: normalize to 0-100 (max 50% change = 100)
   // Only positive changes contribute to inflation pressure
-  const normalizedAvgChange = data.avgChange > 0 
-    ? normalize(data.avgChange, 50)
-    : 0;
-  
+  const normalizedAvgChange = data.avgChange > 0 ? normalize(data.avgChange, 50) : 0;
+
   // volatility: already 0-100 percentage
   const normalizedVolatility = Math.min(100, Math.max(0, data.volatility));
-  
+
   // increaseFrequency: already 0-100 percentage
   const normalizedFrequency = Math.min(100, Math.max(0, data.increaseFrequency));
-  
+
   // dispersion: already 0-100 percentage
   const normalizedDispersion = Math.min(100, Math.max(0, data.dispersion));
 
   // Weighted sum
-  const score = 
+  const score =
     normalizedAvgChange * 0.4 +
     normalizedVolatility * 0.3 +
     normalizedFrequency * 0.2 +
@@ -131,7 +128,7 @@ export function computeILPP(data: ILPPInputData): number {
 
 /**
  * Get human-readable pressure level for a score
- * 
+ *
  * @param score - ILPP score (0-100)
  * @returns Pressure level label
  */
@@ -148,7 +145,7 @@ export function getPressureLevel(
 /**
  * Get explanatory text for ILPP score
  * Play Store compliant: descriptive, factual, no predictions
- * 
+ *
  * @param score - ILPP score (0-100)
  * @returns Human-readable explanation
  */
@@ -170,19 +167,17 @@ export function explainILPP(score: number): string {
 
 /**
  * Calculate ILPP components from price snapshots
- * 
+ *
  * @param snapshots - Array of price observations (must be time-ordered)
  * @returns Input data for ILPP calculation
  */
-export function calculateILPPComponents(
-  snapshots: BasketPriceSnapshot[]
-): ILPPInputData | null {
+export function calculateILPPComponents(snapshots: BasketPriceSnapshot[]): ILPPInputData | null {
   if (snapshots.length < 2) {
     return null;
   }
 
-  const prices = snapshots.map(s => s.totalPrice);
-  
+  const prices = snapshots.map((s) => s.totalPrice);
+
   // 1. Average price change
   const firstPrice = prices[0];
   const lastPrice = prices[prices.length - 1];
@@ -221,11 +216,11 @@ export function calculateILPPComponents(
 
 /**
  * Compute full ILPP result from price snapshots
- * 
+ *
  * @param snapshots - Price observations
  * @param territoryId - Territory identifier (for context)
  * @returns Complete ILPP result with score and explanation
- * 
+ *
  * @example
  * const history = getHistoryByTerritory('GP');
  * const ilpp = computeILPPFromSnapshots(history, 'GP');
@@ -255,12 +250,12 @@ export function computeILPPFromSnapshots(
 
   // Calculate components
   const components = calculateILPPComponents(snapshots);
-  
+
   if (!components) {
     return {
       score: 0,
       level: 'Très faible',
-      explanation: 'Impossible de calculer l\'indice avec les données disponibles.',
+      explanation: "Impossible de calculer l'indice avec les données disponibles.",
       components: {
         avgChange: 0,
         volatility: 0,
@@ -289,7 +284,7 @@ export function computeILPPFromSnapshots(
 
 /**
  * Get color class for ILPP score visualization
- * 
+ *
  * @param score - ILPP score (0-100)
  * @returns Tailwind CSS color class
  */
@@ -303,7 +298,7 @@ export function getILPPColorClass(score: number): string {
 
 /**
  * Get text color class for ILPP score
- * 
+ *
  * @param score - ILPP score (0-100)
  * @returns Tailwind CSS text color class
  */
@@ -318,25 +313,25 @@ export function getILPPTextColorClass(score: number): string {
 /**
  * Legal disclaimer text (must be displayed with ILPP)
  */
-export const ILPP_LEGAL_DISCLAIMER = 
+export const ILPP_LEGAL_DISCLAIMER =
   'Indice descriptif basé sur les prix observés. Ne constitue ni une prévision, ni un conseil économique ou financier.';
 
 /**
  * Compare ILPP between two territories
- * 
+ *
  * @param ilpp1 - First territory ILPP
  * @param ilpp2 - Second territory ILPP
  * @returns Comparison text
  */
 export function compareILPP(ilpp1: ILPPResult, ilpp2: ILPPResult): string {
   const diff = Math.abs(ilpp1.score - ilpp2.score);
-  
+
   if (diff < 5) {
     return 'Les deux territoires présentent une pression similaire.';
   }
-  
+
   const higher = ilpp1.score > ilpp2.score ? 'premier' : 'second';
   const percentage = ((diff / Math.min(ilpp1.score, ilpp2.score)) * 100).toFixed(0);
-  
+
   return `Le ${higher} territoire montre une pression plus élevée de ${diff} points (${percentage}% de différence).`;
 }

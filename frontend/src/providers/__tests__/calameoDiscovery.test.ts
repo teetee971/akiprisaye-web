@@ -184,7 +184,7 @@ describe('calameoDynamicProvider', () => {
     vi.stubEnv('VITE_PRICE_PROVIDER_CALAMEO_DYNAMIC', 'true');
     const result = await calameoDynamicProvider.search(
       { query: 'huit a 8' },
-      makeController().signal,
+      makeController().signal
     );
 
     expect(result.source).toBe('calameo_catalog');
@@ -195,14 +195,11 @@ describe('calameoDynamicProvider', () => {
       result.warnings.some((w) => {
         try {
           const url = new URL(w);
-          return (
-            url.hostname === 'calameo.com' ||
-            url.hostname.endsWith('.calameo.com')
-          );
+          return url.hostname === 'calameo.com' || url.hostname.endsWith('.calameo.com');
         } catch {
           return false;
         }
-      }),
+      })
     ).toBe(true);
   });
 
@@ -222,10 +219,7 @@ describe('calameoDynamicProvider', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
     vi.stubEnv('VITE_PRICE_PROVIDER_CALAMEO_DYNAMIC', 'true');
 
-    const result = await calameoDynamicProvider.search(
-      { query: 'rhum' },
-      makeController().signal,
-    );
+    const result = await calameoDynamicProvider.search({ query: 'rhum' }, makeController().signal);
 
     // The discovery service absorbs network errors and returns [] gracefully.
     // The provider maps that to NO_DATA (not a hard UNAVAILABLE).

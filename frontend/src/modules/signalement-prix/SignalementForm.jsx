@@ -1,4 +1,3 @@
- 
 import { useState } from 'react';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
 import { SignalementConfirmation } from './SignalementConfirmation.jsx';
@@ -59,7 +58,7 @@ export default function SignalementForm({ onSubmit = null }) {
     }
 
     if (!hasAccepted) {
-      newErrors.acceptance = 'Vous devez confirmer l\'exactitude de vos informations';
+      newErrors.acceptance = "Vous devez confirmer l'exactitude de vos informations";
     }
 
     setErrors(newErrors);
@@ -91,7 +90,7 @@ export default function SignalementForm({ onSubmit = null }) {
   const handleSaveLocally = () => {
     // Generate unique ID
     const signalementId = `sig-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-    
+
     const signalement = {
       id: signalementId,
       date: formData.date,
@@ -138,9 +137,9 @@ export default function SignalementForm({ onSubmit = null }) {
         // User acknowledged
       }
     } catch (error) {
-      console.error('Erreur lors de l\'enregistrement:', error);
+      console.error("Erreur lors de l'enregistrement:", error);
       // Show error message (consider upgrading to toast notification in future)
-      if (window.confirm('❌ Erreur lors de l\'enregistrement. Veuillez réessayer.')) {
+      if (window.confirm("❌ Erreur lors de l'enregistrement. Veuillez réessayer.")) {
         // User acknowledged
       }
     }
@@ -162,23 +161,18 @@ export default function SignalementForm({ onSubmit = null }) {
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          📝 Signaler un prix observé
-        </h2>
-        <p className="text-sm text-gray-600">
-          Contribution citoyenne encadrée
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">📝 Signaler un prix observé</h2>
+        <p className="text-sm text-gray-600">Contribution citoyenne encadrée</p>
       </div>
 
       {/* Legal Warning */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-900 font-medium mb-2">
-          ℹ️ Information importante
-        </p>
+        <p className="text-sm text-blue-900 font-medium mb-2">ℹ️ Information importante</p>
         <p className="text-sm text-blue-800">
-          Ce signalement correspond à une <strong>observation ponctuelle</strong> effectuée par un citoyen.
-          Il ne constitue ni une accusation, ni une preuve juridique, ni une analyse économique.
-          Les données ne seront <strong>pas publiées automatiquement</strong> et feront l'objet d'une vérification.
+          Ce signalement correspond à une <strong>observation ponctuelle</strong> effectuée par un
+          citoyen. Il ne constitue ni une accusation, ni une preuve juridique, ni une analyse
+          économique. Les données ne seront <strong>pas publiées automatiquement</strong> et feront
+          l'objet d'une vérification.
         </p>
       </div>
 
@@ -186,7 +180,10 @@ export default function SignalementForm({ onSubmit = null }) {
       <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
         {/* Territory Selection */}
         <div>
-          <label htmlFor="signalement-territoire" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-territoire"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Territoire *
           </label>
           <select
@@ -205,7 +202,10 @@ export default function SignalementForm({ onSubmit = null }) {
 
         {/* Store Name */}
         <div>
-          <label htmlFor="signalement-magasin" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-magasin"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Nom du magasin *
           </label>
           <input
@@ -218,14 +218,15 @@ export default function SignalementForm({ onSubmit = null }) {
               errors.store ? 'border-red-300' : 'border-gray-300'
             }`}
           />
-          {errors.store && (
-            <p className="mt-1 text-sm text-red-600">{errors.store}</p>
-          )}
+          {errors.store && <p className="mt-1 text-sm text-red-600">{errors.store}</p>}
         </div>
 
         {/* Product */}
         <div>
-          <label htmlFor="signalement-produit" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-produit"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Produit *
           </label>
           <select
@@ -243,14 +244,15 @@ export default function SignalementForm({ onSubmit = null }) {
               </option>
             ))}
           </select>
-          {errors.product && (
-            <p className="mt-1 text-sm text-red-600">{errors.product}</p>
-          )}
+          {errors.product && <p className="mt-1 text-sm text-red-600">{errors.product}</p>}
         </div>
 
         {/* Price */}
         <div>
-          <label htmlFor="signalement-prix" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-prix"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Prix observé (€) *
           </label>
           <input
@@ -265,14 +267,15 @@ export default function SignalementForm({ onSubmit = null }) {
               errors.price ? 'border-red-300' : 'border-gray-300'
             }`}
           />
-          {errors.price && (
-            <p className="mt-1 text-sm text-red-600">{errors.price}</p>
-          )}
+          {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price}</p>}
         </div>
 
         {/* Date */}
         <div>
-          <label htmlFor="signalement-date" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="signalement-date"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Date d'observation *
           </label>
           <input
@@ -298,13 +301,11 @@ export default function SignalementForm({ onSubmit = null }) {
               className="mt-1 w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
             />
             <span className="text-sm text-gray-700">
-              <strong>☑ Je confirme</strong> que ces informations correspondent à une observation personnelle 
-              et que je comprends qu'elles ne seront pas publiées automatiquement.
+              <strong>☑ Je confirme</strong> que ces informations correspondent à une observation
+              personnelle et que je comprends qu'elles ne seront pas publiées automatiquement.
             </span>
           </label>
-          {errors.acceptance && (
-            <p className="mt-2 text-sm text-red-600">{errors.acceptance}</p>
-          )}
+          {errors.acceptance && <p className="mt-2 text-sm text-red-600">{errors.acceptance}</p>}
         </div>
 
         {/* Navigation Buttons */}

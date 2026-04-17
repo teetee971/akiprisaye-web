@@ -13,7 +13,12 @@ import {
 } from '@tanstack/react-table';
 import { Package, Edit, Trash2, Plus, Search, Image as ImageIcon } from 'lucide-react';
 import { GlassCard } from '@/components/ui/glass-card';
-import { getProducts, deleteProduct, getProductsStatic, type Product } from '@/services/admin/productAdminService';
+import {
+  getProducts,
+  deleteProduct,
+  getProductsStatic,
+  type Product,
+} from '@/services/admin/productAdminService';
 import type { ProductCategory } from '@/types/product';
 import toast from 'react-hot-toast';
 import { getAdminDegradedModeReason, isStaticPreviewEnv } from '@/services/admin/runtimeEnv';
@@ -65,7 +70,10 @@ export function ProductList() {
         if (searchQuery) {
           const q = searchQuery.toLowerCase();
           filtered = filtered.filter(
-            (p) => p.name.toLowerCase().includes(q) || p.ean?.includes(q) || p.brand?.toLowerCase().includes(q),
+            (p) =>
+              p.name.toLowerCase().includes(q) ||
+              p.ean?.includes(q) ||
+              p.brand?.toLowerCase().includes(q)
           );
         }
         if (categoryFilter) {
@@ -103,20 +111,23 @@ export function ProductList() {
     }
   }, [currentPage, searchQuery, categoryFilter, brandFilter, hasEanFilter, isDegradedMode]);
 
-  const handleDelete = useCallback(async (id: string, name: string) => {
-    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer "${name}" ?`)) {
-      return;
-    }
+  const handleDelete = useCallback(
+    async (id: string, name: string) => {
+      if (!window.confirm(`Êtes-vous sûr de vouloir supprimer "${name}" ?`)) {
+        return;
+      }
 
-    try {
-      await deleteProduct(id);
-      toast.success('Produit supprimé avec succès');
-      // Force refresh by calling fetchProducts directly
-      await fetchProducts();
-    } catch {
-      toast.error('Erreur lors de la suppression du produit');
-    }
-  }, [fetchProducts]);
+      try {
+        await deleteProduct(id);
+        toast.success('Produit supprimé avec succès');
+        // Force refresh by calling fetchProducts directly
+        await fetchProducts();
+      } catch {
+        toast.error('Erreur lors de la suppression du produit');
+      }
+    },
+    [fetchProducts]
+  );
 
   const columns = useMemo<ColumnDef<Product>[]>(
     () => [
@@ -141,16 +152,12 @@ export function ProductList() {
       {
         accessorKey: 'name',
         header: 'Nom',
-        cell: ({ row }) => (
-          <div className="font-medium text-white/90">{row.original.name}</div>
-        ),
+        cell: ({ row }) => <div className="font-medium text-white/90">{row.original.name}</div>,
       },
       {
         accessorKey: 'brand',
         header: 'Marque',
-        cell: ({ row }) => (
-          <div className="text-white/70">{row.original.brand || '-'}</div>
-        ),
+        cell: ({ row }) => <div className="text-white/70">{row.original.brand || '-'}</div>,
       },
       {
         accessorKey: 'category',
@@ -165,9 +172,7 @@ export function ProductList() {
         accessorKey: 'ean',
         header: 'EAN',
         cell: ({ row }) => (
-          <div className="text-white/70 font-mono text-sm">
-            {row.original.ean || '-'}
-          </div>
+          <div className="text-white/70 font-mono text-sm">{row.original.ean || '-'}</div>
         ),
       },
       {
@@ -270,12 +275,14 @@ export function ProductList() {
           {/* Filters */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label htmlFor="pl-categorie" className="block text-sm font-medium text-white/70 mb-2">
-              Catégorie
+              <label
+                htmlFor="pl-categorie"
+                className="block text-sm font-medium text-white/70 mb-2"
+              >
+                Catégorie
               </label>
               <select
-              id="pl-categorie"
-              
+                id="pl-categorie"
                 value={categoryFilter}
                 onChange={(e) => {
                   setCategoryFilter(e.target.value as ProductCategory | '');
@@ -372,18 +379,14 @@ export function ProductList() {
                               className="cursor-pointer select-none flex items-center gap-2 bg-transparent border-0 p-0 font-semibold text-white/70"
                               onClick={header.column.getToggleSortingHandler()}
                             >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
+                              {flexRender(header.column.columnDef.header, header.getContext())}
                               {{
                                 asc: ' 🔼',
                                 desc: ' 🔽',
                               }[header.column.getIsSorted() as string] ?? null}
                             </button>
-                          ) : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
+                          ) : (
+                            flexRender(header.column.columnDef.header, header.getContext())
                           )}
                         </th>
                       ))}
@@ -398,10 +401,7 @@ export function ProductList() {
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-4 py-3">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
                     </tr>

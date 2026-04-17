@@ -1,8 +1,7 @@
- 
 /**
  * Online/Offline Detection Hook
  * Phase 2 - Offline OCR Support
- * 
+ *
  * Detects network connectivity and provides offline mode indicator
  */
 
@@ -51,7 +50,7 @@ export function useNetworkQuality() {
     // Check connection type if available (Chrome, Edge)
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
-      
+
       const updateQuality = () => {
         if (!navigator.onLine) {
           setQuality('offline');
@@ -59,7 +58,7 @@ export function useNetworkQuality() {
         }
 
         const effectiveType = connection?.effectiveType;
-        
+
         // 2g or slow-2g = slow
         if (effectiveType === '2g' || effectiveType === 'slow-2g') {
           setQuality('slow');

@@ -25,24 +25,27 @@ export default function BadgesPage() {
     unlocked: unlockedBadges.length,
     locked: lockedBadges.length,
     percentage: badges.length > 0 ? (unlockedBadges.length / badges.length) * 100 : 0,
-    totalXP: unlockedBadges.reduce((sum, badge) => sum + badge.xpReward, 0)
+    totalXP: unlockedBadges.reduce((sum, badge) => sum + badge.xpReward, 0),
   };
 
   // Group badges by category
-  const badgesByCategory = badges.reduce((acc, badge) => {
-    if (!acc[badge.category]) {
-      acc[badge.category] = [];
-    }
-    acc[badge.category].push(badge);
-    return acc;
-  }, {} as Record<string, UserBadge[]>);
+  const badgesByCategory = badges.reduce(
+    (acc, badge) => {
+      if (!acc[badge.category]) {
+        acc[badge.category] = [];
+      }
+      acc[badge.category].push(badge);
+      return acc;
+    },
+    {} as Record<string, UserBadge[]>
+  );
 
   const categoryLabels: Record<string, { label: string; icon: string; color: string }> = {
     scan: { label: 'Scanner', icon: '📱', color: 'from-blue-500 to-blue-600' },
     contribution: { label: 'Contribution', icon: '✍️', color: 'from-green-500 to-green-600' },
     social: { label: 'Social', icon: '👥', color: 'from-purple-500 to-purple-600' },
     streak: { label: 'Séries', icon: '🔥', color: 'from-orange-500 to-orange-600' },
-    special: { label: 'Spécial', icon: '⭐', color: 'from-yellow-500 to-yellow-600' }
+    special: { label: 'Spécial', icon: '⭐', color: 'from-yellow-500 to-yellow-600' },
   };
 
   return (
@@ -75,10 +78,13 @@ export default function BadgesPage() {
           <div className="flex items-center gap-3">
             <Award size={32} />
             <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow">🏆 Mes Badges</h1>
-            <p className="text-slate-200 text-sm drop-shadow">Vos récompenses pour votre contribution à la communauté</p>
+            <p className="text-slate-200 text-sm drop-shadow">
+              Vos récompenses pour votre contribution à la communauté
+            </p>
           </div>
           <p className="text-slate-200 text-sm drop-shadow">
-            {stats.unlocked}/{stats.unlocked + stats.locked} débloqués · {stats.percentage.toFixed(0)}% de progression
+            {stats.unlocked}/{stats.unlocked + stats.locked} débloqués ·{' '}
+            {stats.percentage.toFixed(0)}% de progression
           </p>
         </HeroImage>
       </div>
@@ -91,9 +97,9 @@ export default function BadgesPage() {
           <div className="text-sm text-blue-900">
             <p className="font-semibold mb-1">Comment débloquer des badges ?</p>
             <p>
-              Chaque badge représente un accomplissement spécifique. Scannez des produits, 
-              contribuez des prix, comparez des offres et maintenez votre série de connexion 
-              pour débloquer de nouveaux badges et gagner des points XP !
+              Chaque badge représente un accomplissement spécifique. Scannez des produits,
+              contribuez des prix, comparez des offres et maintenez votre série de connexion pour
+              débloquer de nouveaux badges et gagner des points XP !
             </p>
           </div>
         </div>
@@ -121,31 +127,30 @@ export default function BadgesPage() {
             {/* All Badges */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Tous les badges</h2>
-              <BadgeGrid
-                badges={badges}
-                showProgress={true}
-                onBadgeClick={setSelectedBadge}
-              />
+              <BadgeGrid badges={badges} showProgress={true} onBadgeClick={setSelectedBadge} />
             </div>
 
             {/* Badges by Category */}
             {Object.entries(badgesByCategory).map(([category, categoryBadges]) => {
-              const categoryInfo = categoryLabels[category] || { 
-                label: category, 
-                icon: '🏅', 
-                color: 'from-gray-500 to-gray-600' 
+              const categoryInfo = categoryLabels[category] || {
+                label: category,
+                icon: '🏅',
+                color: 'from-gray-500 to-gray-600',
               };
-              
+
               return (
                 <div key={category} className="bg-white rounded-lg shadow-md p-6">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-12 h-12 bg-gradient-to-br ${categoryInfo.color} rounded-lg flex items-center justify-center text-2xl shadow-md`}>
+                    <div
+                      className={`w-12 h-12 bg-gradient-to-br ${categoryInfo.color} rounded-lg flex items-center justify-center text-2xl shadow-md`}
+                    >
                       {categoryInfo.icon}
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-gray-900">{categoryInfo.label}</h2>
                       <p className="text-sm text-gray-600">
-                        {categoryBadges.filter(b => b.isUnlocked).length} / {categoryBadges.length} débloqués
+                        {categoryBadges.filter((b) => b.isUnlocked).length} /{' '}
+                        {categoryBadges.length} débloqués
                       </p>
                     </div>
                   </div>
@@ -165,9 +170,7 @@ export default function BadgesPage() {
           <div className="bg-white rounded-lg shadow-md p-12">
             <div className="text-center">
               <Award size={64} className="text-gray-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Aucun badge disponible
-              </h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Aucun badge disponible</h3>
               <p className="text-gray-600">
                 Les badges apparaîtront ici une fois que vous commencerez à utiliser la plateforme
               </p>

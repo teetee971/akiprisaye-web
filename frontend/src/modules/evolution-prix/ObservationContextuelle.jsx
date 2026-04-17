@@ -7,19 +7,21 @@
  * @param {Object} productData - Selected product data
  * @param {string} currency - Currency symbol
  */
-export function ObservationContextuelle({ storeData = null, productData = null, currency = 'EUR' }) {
+export function ObservationContextuelle({
+  storeData = null,
+  productData = null,
+  currency = 'EUR',
+}) {
   // If nothing is selected, show reminder about aggregated view
   if (!storeData && !productData) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="text-center py-8">
           <div className="text-5xl mb-4">📊</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Vue agrégée active
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Vue agrégée active</h3>
           <p className="text-sm text-gray-600 max-w-md mx-auto">
-            Sélectionnez un magasin ou un produit pour afficher une analyse contextuelle.
-            Les données agrégées restent la vue principale.
+            Sélectionnez un magasin ou un produit pour afficher une analyse contextuelle. Les
+            données agrégées restent la vue principale.
           </p>
         </div>
       </div>
@@ -34,25 +36,22 @@ export function ObservationContextuelle({ storeData = null, productData = null, 
           ⚠️ Données contextuelles et non exhaustives
         </p>
         <p className="text-sm text-yellow-800">
-          Les informations affichées ci-dessous reposent sur des <strong>observations citoyennes ponctuelles</strong>.
-          Elles ne constituent pas une représentation exhaustive ou contractuelle et 
-          ne permettent pas de tirer des conclusions définitives sur les pratiques commerciales.
+          Les informations affichées ci-dessous reposent sur des{' '}
+          <strong>observations citoyennes ponctuelles</strong>. Elles ne constituent pas une
+          représentation exhaustive ou contractuelle et ne permettent pas de tirer des conclusions
+          définitives sur les pratiques commerciales.
         </p>
       </div>
 
       {/* Contextualized Data Card */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          📌 Observation contextualisée
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">📌 Observation contextualisée</h3>
 
         {/* Store Context */}
         {storeData && (
           <div className="mb-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="text-sm font-semibold text-blue-900 mb-3">
-                Magasin sélectionné
-              </h4>
+              <h4 className="text-sm font-semibold text-blue-900 mb-3">Magasin sélectionné</h4>
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
                   <p className="text-blue-700 text-xs">Enseigne</p>
@@ -79,9 +78,7 @@ export function ObservationContextuelle({ storeData = null, productData = null, 
         {productData && (
           <div className="mb-6">
             <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h4 className="text-sm font-semibold text-green-900 mb-3">
-                Produit sélectionné
-              </h4>
+              <h4 className="text-sm font-semibold text-green-900 mb-3">Produit sélectionné</h4>
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-green-700 text-xs">Désignation</p>
@@ -127,13 +124,12 @@ export function ObservationContextuelle({ storeData = null, productData = null, 
         {/* Combined Context Notice */}
         {storeData && productData && (
           <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-            <p className="text-sm text-purple-900 font-medium mb-2">
-              🔄 Analyse croisée
-            </p>
+            <p className="text-sm text-purple-900 font-medium mb-2">🔄 Analyse croisée</p>
             <p className="text-sm text-purple-800">
-              Vous visualisez des observations pour le produit <strong>{productData.product_name}</strong> 
-              {' '}dans l'enseigne <strong>{storeData.store_name}</strong>.
-              Cette combinaison peut réduire le nombre d'observations disponibles.
+              Vous visualisez des observations pour le produit{' '}
+              <strong>{productData.product_name}</strong> dans l'enseigne{' '}
+              <strong>{storeData.store_name}</strong>. Cette combinaison peut réduire le nombre
+              d'observations disponibles.
             </p>
           </div>
         )}
@@ -167,9 +163,9 @@ export function ObservationContextuelle({ storeData = null, productData = null, 
       {/* Footer Reminder */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
         <p className="text-xs text-gray-700">
-          <strong>Rappel :</strong> Le graphique principal présente des données agrégées.
-          Cette analyse ciblée est une couche informative complémentaire,
-          jamais une vérité absolue ni un classement d'enseignes.
+          <strong>Rappel :</strong> Le graphique principal présente des données agrégées. Cette
+          analyse ciblée est une couche informative complémentaire, jamais une vérité absolue ni un
+          classement d'enseignes.
         </p>
       </div>
     </div>

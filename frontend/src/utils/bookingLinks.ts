@@ -99,8 +99,7 @@ export function getCommissionStatus(): {
   return {
     active: false,
     label: 'Lien direct',
-    detail:
-      "Lien direct vers le site officiel de l'opérateur.",
+    detail: "Lien direct vers le site officiel de l'opérateur.",
     color: 'green',
   };
 }

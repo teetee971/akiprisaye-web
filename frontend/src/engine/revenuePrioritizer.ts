@@ -12,19 +12,19 @@ import { type RevenueOSScoredProduct, classifyRevenueTier } from './revenueOS';
 export type RevenuePriority = 'cash-max' | 'growth' | 'background';
 
 export interface DistributionPlan {
-  product:    string;
-  score:      number;
-  priority:   RevenuePriority;
+  product: string;
+  score: number;
+  priority: RevenuePriority;
   /** Ordered list of channels to activate for this product */
-  channels:   DistributionChannel[];
+  channels: DistributionChannel[];
   /** Whether to include in push notifications */
-  push:       boolean;
+  push: boolean;
   /** Whether to feature on homepage */
-  homepage:   boolean;
+  homepage: boolean;
   /** Whether to boost in SEO pipeline */
-  seo:        boolean;
+  seo: boolean;
   /** Whether to include in social content */
-  social:     boolean;
+  social: boolean;
 }
 
 export type DistributionChannel =
@@ -40,9 +40,9 @@ export type DistributionChannel =
 // ── Channel config per priority ───────────────────────────────────────────────
 
 const CHANNEL_MAP: Record<RevenuePriority, DistributionChannel[]> = {
-  'cash-max':   ['homepage-top', 'push-notification', 'social-content', 'seo-boost', 'alert-primary'],
-  'growth':     ['seo-boost', 'comparator', 'alert-secondary'],
-  'background': ['archive'],
+  'cash-max': ['homepage-top', 'push-notification', 'social-content', 'seo-boost', 'alert-primary'],
+  growth: ['seo-boost', 'comparator', 'alert-secondary'],
+  background: ['archive'],
 };
 
 // ── Core classifier ───────────────────────────────────────────────────────────
@@ -59,21 +59,19 @@ export function classifyRevenuePriority(score: number): RevenuePriority {
 /**
  * Build a distribution plan for a single product.
  */
-export function buildDistributionPlan(
-  product: RevenueOSScoredProduct,
-): DistributionPlan {
+export function buildDistributionPlan(product: RevenueOSScoredProduct): DistributionPlan {
   const priority = product.revenueTier;
   const channels = CHANNEL_MAP[priority];
 
   return {
-    product:  product.name,
-    score:    product.revenueOSScore,
+    product: product.name,
+    score: product.revenueOSScore,
     priority,
     channels,
-    push:     channels.includes('push-notification'),
+    push: channels.includes('push-notification'),
     homepage: channels.includes('homepage-top'),
-    seo:      channels.includes('seo-boost'),
-    social:   channels.includes('social-content'),
+    seo: channels.includes('seo-boost'),
+    social: channels.includes('social-content'),
   };
 }
 
@@ -81,17 +79,15 @@ export function buildDistributionPlan(
  * Build distribution plans for a full scored product list.
  * Returns plans grouped by priority tier.
  */
-export function buildAllPlans(
-  products: RevenueOSScoredProduct[],
-): {
-  cashMax:    DistributionPlan[];
-  growth:     DistributionPlan[];
+export function buildAllPlans(products: RevenueOSScoredProduct[]): {
+  cashMax: DistributionPlan[];
+  growth: DistributionPlan[];
   background: DistributionPlan[];
 } {
   const plans = products.map(buildDistributionPlan);
   return {
-    cashMax:    plans.filter((p) => p.priority === 'cash-max'),
-    growth:     plans.filter((p) => p.priority === 'growth'),
+    cashMax: plans.filter((p) => p.priority === 'cash-max'),
+    growth: plans.filter((p) => p.priority === 'growth'),
     background: plans.filter((p) => p.priority === 'background'),
   };
 }
@@ -102,10 +98,7 @@ export function buildAllPlans(
  * @param products  Revenue-scored product list
  * @param userSegment  Optional — 'visiteur-froid' users skip push
  */
-export function shouldPushRevenue(
-  product: RevenueOSScoredProduct,
-  userSegment?: string,
-): boolean {
+export function shouldPushRevenue(product: RevenueOSScoredProduct, userSegment?: string): boolean {
   if (userSegment === 'visiteur-froid') return false;
   return product.revenueOSScore > 70;
 }

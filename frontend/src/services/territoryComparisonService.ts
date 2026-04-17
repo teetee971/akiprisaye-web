@@ -18,7 +18,9 @@ export interface TerritoryComparisonResult {
 }
 
 async function loadTerritory(territory: string): Promise<PriceObservation[]> {
-  const res = await fetch(`${import.meta.env.BASE_URL}data/territories/${territory}.json`, { cache: 'no-store' });
+  const res = await fetch(`${import.meta.env.BASE_URL}data/territories/${territory}.json`, {
+    cache: 'no-store',
+  });
   if (!res.ok) throw new Error(`Territory not found: ${territory}`);
   return res.json();
 }
@@ -31,13 +33,10 @@ export async function compareTerritories(
   territoryA: string,
   territoryB: string
 ): Promise<TerritoryComparisonResult> {
-  const [dataA, dataB] = await Promise.all([
-    loadTerritory(territoryA),
-    loadTerritory(territoryB),
-  ]);
+  const [dataA, dataB] = await Promise.all([loadTerritory(territoryA), loadTerritory(territoryB)]);
 
-  const pricesA = dataA.map(p => p.pricePerUnit ?? p.price).filter(Boolean);
-  const pricesB = dataB.map(p => p.pricePerUnit ?? p.price).filter(Boolean);
+  const pricesA = dataA.map((p) => p.pricePerUnit ?? p.price).filter(Boolean);
+  const pricesB = dataB.map((p) => p.pricePerUnit ?? p.price).filter(Boolean);
 
   const avgA = average(pricesA);
   const avgB = average(pricesB);

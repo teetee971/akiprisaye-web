@@ -47,7 +47,7 @@ export interface RecommendationResult {
 export function recommendForUser(
   products: PredictiveProduct[],
   profile: UserProfile,
-  limit = 10,
+  limit = 10
 ): RecommendationResult {
   const hasProfile =
     profile.favoriteCategories.length > 0 ||
@@ -58,15 +58,15 @@ export function recommendForUser(
     // Cold start — return top predictive products
     return {
       products: products.slice(0, limit),
-      reason:   'top-scored',
+      reason: 'top-scored',
       blockTitle: '🔥 Meilleures opportunités du moment',
     };
   }
 
   const categorySet = new Set(profile.favoriteCategories.map((c) => c.toLowerCase()));
   const retailerSet = new Set(profile.clickedRetailers.map((r) => r.toLowerCase()));
-  const viewedSet   = new Set(profile.viewedProducts.map((v) => v.toLowerCase()));
-  const clickedSet  = new Set(profile.clickedProducts.map((c) => c.toLowerCase()));
+  const viewedSet = new Set(profile.viewedProducts.map((v) => v.toLowerCase()));
+  const clickedSet = new Set(profile.clickedProducts.map((c) => c.toLowerCase()));
 
   // Score each product for personalisation fit
   const scored = products.map((p) => {
@@ -74,7 +74,7 @@ export function recommendForUser(
     const key = p.name.toLowerCase();
     const cat = String(p.category ?? '').toLowerCase();
 
-    if (categorySet.has(cat))     bonus += 30; // strong category match
+    if (categorySet.has(cat)) bonus += 30; // strong category match
     if (retailerSet.has(String(p.bestRetailer ?? '').toLowerCase())) bonus += 15;
     if (viewedSet.has(key) && !clickedSet.has(key)) bonus += 20; // re-engagement
     if (p.territory && profile.territory === p.territory) bonus += 10; // territory match
@@ -87,15 +87,16 @@ export function recommendForUser(
     .slice(0, limit)
     .map(({ _personalScore: _, ...rest }) => rest as PredictiveProduct);
 
-  const blockTitle = profile.favoriteCategories.length > 0
-    ? '⭐ Recommandé pour vous'
-    : profile.clickedRetailers.length > 0
-      ? '📍 Deals proches de vos habitudes'
-      : '🔥 En hausse aujourd\'hui';
+  const blockTitle =
+    profile.favoriteCategories.length > 0
+      ? '⭐ Recommandé pour vous'
+      : profile.clickedRetailers.length > 0
+        ? '📍 Deals proches de vos habitudes'
+        : "🔥 En hausse aujourd'hui";
 
   return {
     products: ranked,
-    reason:   'personalised',
+    reason: 'personalised',
     blockTitle,
   };
 }
@@ -107,7 +108,7 @@ export function recommendForUser(
  */
 export function getRisingProducts(
   products: (PredictiveProduct & { trendScore?: number })[],
-  limit = 6,
+  limit = 6
 ): PredictiveProduct[] {
   return products
     .filter((p) => (p.trendScore ?? 0) > 60)
@@ -121,9 +122,9 @@ export function getRisingProducts(
 export function getReEngagementProducts(
   products: PredictiveProduct[],
   profile: UserProfile,
-  limit = 5,
+  limit = 5
 ): PredictiveProduct[] {
-  const viewed  = new Set(profile.viewedProducts.map((v) => v.toLowerCase()));
+  const viewed = new Set(profile.viewedProducts.map((v) => v.toLowerCase()));
   const clicked = new Set(profile.clickedProducts.map((c) => c.toLowerCase()));
 
   return products

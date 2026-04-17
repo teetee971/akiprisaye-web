@@ -2,9 +2,22 @@ export const isProduction = import.meta.env.PROD;
 
 /** Sensitive field names that must never appear in logs */
 const SENSITIVE_KEYS = new Set([
-  'password', 'passwd', 'token', 'accessToken', 'refreshToken',
-  'secret', 'apiKey', 'api_key', 'authorization', 'cookie',
-  'email', 'phone', 'tel', 'ssn', 'credit_card', 'cardNumber',
+  'password',
+  'passwd',
+  'token',
+  'accessToken',
+  'refreshToken',
+  'secret',
+  'apiKey',
+  'api_key',
+  'authorization',
+  'cookie',
+  'email',
+  'phone',
+  'tel',
+  'ssn',
+  'credit_card',
+  'cardNumber',
 ]);
 
 /** Recursively mask sensitive fields in an object clone */
@@ -43,10 +56,13 @@ function emit(level: LogLevel, message: string, context?: unknown): void {
     }
   } else {
     const method =
-      level === 'error' ? console.error :
-      level === 'warn'  ? console.warn :
-      level === 'info'  ? console.info :
-      console.log;
+      level === 'error'
+        ? console.error
+        : level === 'warn'
+          ? console.warn
+          : level === 'info'
+            ? console.info
+            : console.log;
     method(`[${entry.timestamp}] [${level.toUpperCase()}] ${message}`, context ?? '');
   }
 }

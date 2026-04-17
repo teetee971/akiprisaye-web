@@ -21,11 +21,11 @@ export function useTilt3D<T extends HTMLElement = HTMLDivElement>(): React.RefCa
     if (!el) return;
 
     const { left, top, width, height } = el.getBoundingClientRect();
-    const x = (e.clientX - left) / width;   // 0–1
-    const y = (e.clientY - top)  / height;  // 0–1
+    const x = (e.clientX - left) / width; // 0–1
+    const y = (e.clientY - top) / height; // 0–1
 
-    const tiltX = (y - 0.5) * -MAX_TILT;   // top edge tilts toward viewer
-    const tiltY = (x - 0.5) *  MAX_TILT;   // right edge tilts toward viewer
+    const tiltX = (y - 0.5) * -MAX_TILT; // top edge tilts toward viewer
+    const tiltY = (x - 0.5) * MAX_TILT; // right edge tilts toward viewer
 
     el.style.setProperty('--tilt-x', `${tiltX.toFixed(2)}deg`);
     el.style.setProperty('--tilt-y', `${tiltY.toFixed(2)}deg`);
@@ -49,9 +49,11 @@ export function useTilt3D<T extends HTMLElement = HTMLDivElement>(): React.RefCa
       }
       elementRef.current = node;
       // Attach listeners to new node (only on pointer devices, non-reduced-motion)
-      if (node &&
-          window.matchMedia('(hover: hover)').matches &&
-          !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (
+        node &&
+        window.matchMedia('(hover: hover)').matches &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
         node.addEventListener('mousemove', onMouseMove, { passive: true });
         node.addEventListener('mouseleave', onMouseLeave, { passive: true });
       }

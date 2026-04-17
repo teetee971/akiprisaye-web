@@ -21,7 +21,7 @@ export default function IaConseiller() {
       const response = await generateBudgetAdvice(context);
       setAdvice(response);
     } catch (error) {
-      console.error('Erreur lors de l\'analyse:', error);
+      console.error("Erreur lors de l'analyse:", error);
       setAdvice("Une erreur est survenue lors de l'analyse. Veuillez réessayer.");
     } finally {
       setLoading(false);
@@ -37,8 +37,14 @@ export default function IaConseiller() {
           gradient="from-slate-950 to-violet-900"
           height="h-40 sm:h-52"
         >
-          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>🤖 Conseiller IA</h1>
-          <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}>Votre assistant IA pour optimiser votre budget</p>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, color: '#fff' }}>
+            🤖 Conseiller IA
+          </h1>
+          <p
+            style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: 'rgba(255,255,255,0.75)' }}
+          >
+            Votre assistant IA pour optimiser votre budget
+          </p>
         </HeroImage>
 
         {/* Analyze Button */}
@@ -66,9 +72,7 @@ export default function IaConseiller() {
               <span className="mr-2">💡</span>
               Recommandations personnalisées
             </h2>
-            <p className="text-slate-200 leading-relaxed whitespace-pre-line">
-              {advice}
-            </p>
+            <p className="text-slate-200 leading-relaxed whitespace-pre-line">{advice}</p>
           </div>
         )}
 
@@ -76,9 +80,7 @@ export default function IaConseiller() {
         <div className="grid md:grid-cols-3 gap-6 mt-12">
           <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
             <div className="text-4xl mb-3">📊</div>
-            <h3 className="font-semibold text-lg mb-2 text-slate-100">
-              Analyse d'historique
-            </h3>
+            <h3 className="font-semibold text-lg mb-2 text-slate-100">Analyse d'historique</h3>
             <p className="text-slate-400 text-sm">
               Basée sur vos recherches et achats passés dans l'application
             </p>
@@ -86,9 +88,7 @@ export default function IaConseiller() {
 
           <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
             <div className="text-4xl mb-3">🏪</div>
-            <h3 className="font-semibold text-lg mb-2 text-slate-100">
-              Prix territoriaux
-            </h3>
+            <h3 className="font-semibold text-lg mb-2 text-slate-100">Prix territoriaux</h3>
             <p className="text-slate-400 text-sm">
               Comparaison avec les prix moyens de votre territoire DOM-COM
             </p>
@@ -96,9 +96,7 @@ export default function IaConseiller() {
 
           <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-6">
             <div className="text-4xl mb-3">💰</div>
-            <h3 className="font-semibold text-lg mb-2 text-slate-100">
-              Économies estimées
-            </h3>
+            <h3 className="font-semibold text-lg mb-2 text-slate-100">Économies estimées</h3>
             <p className="text-slate-400 text-sm">
               Suggestions pour réduire vos dépenses de 8 à 12%
             </p>

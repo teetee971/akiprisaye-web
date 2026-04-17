@@ -1,6 +1,6 @@
 /**
  * PriceTrendBadge Component
- * 
+ *
  * Displays price trend prediction with visual indicators
  * - Color-coded badges (green/yellow/red)
  * - Trend arrows (↗/→/↘)
@@ -17,15 +17,15 @@ interface PriceTrendBadgeProps {
   showDetails?: boolean;
 }
 
-const PriceTrendBadge: React.FC<PriceTrendBadgeProps> = ({ 
-  prediction, 
+const PriceTrendBadge: React.FC<PriceTrendBadgeProps> = ({
+  prediction,
   compact = false,
-  showDetails = false 
+  showDetails = false,
 }) => {
   // Color mapping for trend types
   const getBadgeClasses = (label: PredictionResult['label']): string => {
     const baseClasses = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium';
-    
+
     switch (label) {
       case 'Baisse probable':
         return `${baseClasses} bg-green-100 text-green-800 border border-green-300`;
@@ -64,10 +64,7 @@ const PriceTrendBadge: React.FC<PriceTrendBadgeProps> = ({
 
   if (compact) {
     return (
-      <span 
-        className={getBadgeClasses(prediction.label)}
-        title={prediction.explanation}
-      >
+      <span className={getBadgeClasses(prediction.label)} title={prediction.explanation}>
         {getTrendArrow(prediction.label)} {prediction.label}
       </span>
     );
@@ -80,9 +77,9 @@ const PriceTrendBadge: React.FC<PriceTrendBadgeProps> = ({
           <span className="mr-1 text-base">{getTrendArrow(prediction.label)}</span>
           <span>{prediction.label}</span>
         </span>
-        
+
         {prediction.volatility !== null && (
-          <span 
+          <span
             className="text-xs text-gray-500"
             title={`Volatilité: ${(prediction.volatility * 100).toFixed(1)}%`}
           >
@@ -94,7 +91,7 @@ const PriceTrendBadge: React.FC<PriceTrendBadgeProps> = ({
       {showDetails && (
         <div className="text-xs text-gray-600 space-y-1">
           <p className="italic">{prediction.explanation}</p>
-          
+
           {prediction.slopePerDay !== null && (
             <div className="flex items-center gap-4 mt-2 text-[11px]">
               <div>
@@ -102,17 +99,16 @@ const PriceTrendBadge: React.FC<PriceTrendBadgeProps> = ({
                 {prediction.slopePerDay > 0 ? '+' : ''}
                 {prediction.slopePerDay.toFixed(4)} €/jour
               </div>
-              
+
               {prediction.volatility !== null && (
                 <div>
                   <span className="font-medium">Volatilité:</span>{' '}
                   {(prediction.volatility * 100).toFixed(1)}%
                 </div>
               )}
-              
+
               <div>
-                <span className="font-medium">Échantillon:</span>{' '}
-                {prediction.usedCount} obs.
+                <span className="font-medium">Échantillon:</span> {prediction.usedCount} obs.
               </div>
             </div>
           )}

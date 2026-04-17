@@ -1,4 +1,3 @@
- 
 /**
  * StoreDetail - Store Detail View
  * Features: full store info, map display, edit/delete actions
@@ -65,13 +64,11 @@ export default function StoreDetail() {
   const loadStore = async () => {
     try {
       setLoading(true);
-      const data = isStaticPreviewEnv()
-        ? await getStoreStatic(id!)
-        : await getStore(id!);
+      const data = isStaticPreviewEnv() ? await getStoreStatic(id!) : await getStore(id!);
       if (!data) throw new Error('Enseigne introuvable');
       setStore(data);
     } catch (error) {
-      toast.error('Erreur lors du chargement de l\'enseigne');
+      toast.error("Erreur lors du chargement de l'enseigne");
       console.error('Error loading store:', error);
       navigate('/admin/stores');
     } finally {
@@ -82,11 +79,7 @@ export default function StoreDetail() {
   const handleDelete = async () => {
     if (!store) return;
 
-    if (
-      !window.confirm(
-        `Êtes-vous sûr de vouloir supprimer l'enseigne "${store.name}" ?`
-      )
-    ) {
+    if (!window.confirm(`Êtes-vous sûr de vouloir supprimer l'enseigne "${store.name}" ?`)) {
       return;
     }
 
@@ -109,11 +102,7 @@ export default function StoreDetail() {
   }
 
   if (!store) {
-    return (
-      <div className="text-center py-12 text-white/60">
-        Enseigne introuvable
-      </div>
-    );
+    return <div className="text-center py-12 text-white/60">Enseigne introuvable</div>;
   }
 
   const territory = TERRITORIES.find((t) => t.code === store.territory);
@@ -124,9 +113,7 @@ export default function StoreDetail() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white">{store.name}</h1>
-          <p className="text-white/60 mt-1">
-            {territory ? territory.name : store.territory}
-          </p>
+          <p className="text-white/60 mt-1">{territory ? territory.name : store.territory}</p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -154,22 +141,14 @@ export default function StoreDetail() {
             {/* Open Status */}
             <div>
               <div className="text-sm text-white/60 mb-1">Statut d'ouverture</div>
-              <StoreOpenStatus
-                hours={getStoreHours(store.id, store.territory?.toLowerCase())}
-              />
+              <StoreOpenStatus hours={getStoreHours(store.id, store.territory?.toLowerCase())} />
             </div>
             <div className="flex items-start gap-3">
               <Building className="h-5 w-5 text-white/60 mt-0.5" />
               <div>
                 <div className="text-sm text-white/60">ID de marque</div>
-                <div className="text-white/90 font-medium">
-                  {store.brandId}
-                </div>
-                {store.brandName && (
-                  <div className="text-sm text-white/60">
-                    {store.brandName}
-                  </div>
-                )}
+                <div className="text-white/90 font-medium">{store.brandId}</div>
+                {store.brandName && <div className="text-sm text-white/60">{store.brandName}</div>}
               </div>
             </div>
 
@@ -200,17 +179,13 @@ export default function StoreDetail() {
             {/* Status */}
             <div className="flex items-start gap-3">
               <div className="mt-0.5">
-                <span
-                  className={store.isActive ? 'text-green-400' : 'text-red-400'}
-                >
+                <span className={store.isActive ? 'text-green-400' : 'text-red-400'}>
                   {store.isActive ? '🟢' : '🔴'}
                 </span>
               </div>
               <div>
                 <div className="text-sm text-white/60">Statut</div>
-                <div className="text-white/90">
-                  {store.isActive ? 'Actif' : 'Inactif'}
-                </div>
+                <div className="text-white/90">{store.isActive ? 'Actif' : 'Inactif'}</div>
               </div>
             </div>
 

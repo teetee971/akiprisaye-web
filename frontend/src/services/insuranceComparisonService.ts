@@ -1,6 +1,6 @@
 /**
  * Insurance Comparison Service v1.0.0
- * 
+ *
  * Implements citizen insurance price comparison with:
  * - Read-only data access
  * - Territory-based insurance matching
@@ -72,9 +72,7 @@ export function compareInsuranceByType(
 
   // Filter insurances for the specified type and territory
   const filteredInsurances = insurances.filter(
-    (insurance) =>
-      insurance.insuranceType === insuranceType &&
-      insurance.territory === territory
+    (insurance) => insurance.insuranceType === insuranceType && insurance.territory === territory
   );
 
   if (filteredInsurances.length === 0) {
@@ -88,9 +86,7 @@ export function compareInsuranceByType(
   const rankedOffers = rankInsurances(filteredInsurances, aggregation);
 
   // Extract unique providers
-  const providers = Array.from(
-    new Set(filteredInsurances.map((i) => i.providerName))
-  );
+  const providers = Array.from(new Set(filteredInsurances.map((i) => i.providerName)));
 
   // Generate metadata
   const metadata = generateInsuranceMetadata(filteredInsurances, providers);
@@ -111,9 +107,7 @@ export function compareInsuranceByType(
 export function calculateInsuranceAggregation(
   insurances: InsurancePricePoint[]
 ): InsuranceAggregation {
-  const priceValues = insurances
-    .map((i) => i.annualPriceTTC)
-    .sort((a, b) => a - b);
+  const priceValues = insurances.map((i) => i.annualPriceTTC).sort((a, b) => a - b);
 
   const min = Math.min(...priceValues);
   const max = Math.max(...priceValues);
@@ -123,15 +117,12 @@ export function calculateInsuranceAggregation(
   // Calculate median
   const median =
     priceValues.length % 2 === 0
-      ? (priceValues[priceValues.length / 2 - 1] +
-          priceValues[priceValues.length / 2]) /
-        2
+      ? (priceValues[priceValues.length / 2 - 1] + priceValues[priceValues.length / 2]) / 2
       : priceValues[Math.floor(priceValues.length / 2)];
 
   // Calculate standard deviation
   const variance =
-    priceValues.reduce((acc, price) => acc + Math.pow(price - average, 2), 0) /
-    priceValues.length;
+    priceValues.reduce((acc, price) => acc + Math.pow(price - average, 2), 0) / priceValues.length;
   const standardDeviation = Math.sqrt(variance);
 
   const priceRange = max - min;
@@ -163,9 +154,7 @@ function rankInsurances(
   insurances: InsurancePricePoint[],
   aggregation: InsuranceAggregation
 ): InsuranceRanking[] {
-  const sortedInsurances = [...insurances].sort(
-    (a, b) => a.annualPriceTTC - b.annualPriceTTC
-  );
+  const sortedInsurances = [...insurances].sort((a, b) => a.annualPriceTTC - b.annualPriceTTC);
 
   const cheapestPrice = aggregation.minPrice;
   const averagePrice = aggregation.averagePrice;
@@ -197,14 +186,10 @@ function rankInsurances(
     return {
       rank: index + 1,
       insurance: insurance,
-      absoluteDifferenceFromCheapest:
-        Math.round(differenceFromCheapest * 100) / 100,
-      percentageDifferenceFromCheapest:
-        Math.round(percentageFromCheapest * 100) / 100,
-      absoluteDifferenceFromAverage:
-        Math.round(differenceFromAverage * 100) / 100,
-      percentageDifferenceFromAverage:
-        Math.round(percentageFromAverage * 100) / 100,
+      absoluteDifferenceFromCheapest: Math.round(differenceFromCheapest * 100) / 100,
+      percentageDifferenceFromCheapest: Math.round(percentageFromCheapest * 100) / 100,
+      absoluteDifferenceFromAverage: Math.round(differenceFromAverage * 100) / 100,
+      percentageDifferenceFromAverage: Math.round(percentageFromAverage * 100) / 100,
       priceCategory: category,
     };
   });
@@ -241,9 +226,7 @@ export function filterInsurances(
 
   if (filter.provider) {
     filtered = filtered.filter(
-      (i) =>
-        i.providerName &&
-        i.providerName.toLowerCase().includes(filter.provider!.toLowerCase())
+      (i) => i.providerName && i.providerName.toLowerCase().includes(filter.provider!.toLowerCase())
     );
   }
 
@@ -261,10 +244,7 @@ export function filterInsurances(
 /**
  * Generate comparison metadata
  */
-function generateInsuranceMetadata(
-  insurances: InsurancePricePoint[],
-  providers: string[]
-) {
+function generateInsuranceMetadata(insurances: InsurancePricePoint[], providers: string[]) {
   const coverageLevels = Array.from(
     new Set(insurances.map((i) => i.coverageLevel))
   ) as CoverageLevel[];
@@ -282,9 +262,7 @@ function generateInsuranceMetadata(
   const coveragePercentage = (insurances.length / totalPossibleOffers) * 100;
 
   if (coveragePercentage < INSURANCE_COMPARISON_CONFIG.MIN_COVERAGE_WARNING_PERCENT) {
-    warnings.push(
-      'Couverture partielle des offres - Données en cours de collecte'
-    );
+    warnings.push('Couverture partielle des offres - Données en cours de collecte');
   }
 
   return {
@@ -314,9 +292,7 @@ export function getInsurancePriceHistory(
   );
 
   if (coverageLevel) {
-    filteredInsurances = filteredInsurances.filter(
-      (i) => i.coverageLevel === coverageLevel
-    );
+    filteredInsurances = filteredInsurances.filter((i) => i.coverageLevel === coverageLevel);
   }
 
   if (filteredInsurances.length === 0) {
@@ -334,17 +310,13 @@ export function getInsurancePriceHistory(
   }
 
   // Create time series
-  const timeSeries: InsuranceHistoricalDataPoint[] = Array.from(
-    groupedByDate.entries()
-  )
+  const timeSeries: InsuranceHistoricalDataPoint[] = Array.from(groupedByDate.entries())
     .map(([date, dateInsurances]) => {
       const priceValues = dateInsurances.map((i) => i.annualPriceTTC);
       return {
         date: date,
         averagePrice:
-          Math.round(
-            (priceValues.reduce((a, b) => a + b, 0) / priceValues.length) * 100
-          ) / 100,
+          Math.round((priceValues.reduce((a, b) => a + b, 0) / priceValues.length) * 100) / 100,
         minPrice: Math.round(Math.min(...priceValues) * 100) / 100,
         maxPrice: Math.round(Math.max(...priceValues) * 100) / 100,
         observationCount: dateInsurances.length,
@@ -359,8 +331,7 @@ export function getInsurancePriceHistory(
     timeSeries,
     period: {
       startDate: timeSeries[0]?.date || new Date().toISOString(),
-      endDate:
-        timeSeries[timeSeries.length - 1]?.date || new Date().toISOString(),
+      endDate: timeSeries[timeSeries.length - 1]?.date || new Date().toISOString(),
     },
   };
 }
@@ -368,9 +339,7 @@ export function getInsurancePriceHistory(
 /**
  * Get providers information
  */
-export function getProvidersInfo(
-  insurances: InsurancePricePoint[]
-): InsuranceProvider[] {
+export function getProvidersInfo(insurances: InsurancePricePoint[]): InsuranceProvider[] {
   const providerMap = new Map<string, InsurancePricePoint[]>();
 
   for (const insurance of insurances) {
@@ -383,9 +352,7 @@ export function getProvidersInfo(
   return Array.from(providerMap.entries()).map(([name, offers]) => {
     const prices = offers.map((o) => o.annualPriceTTC);
     const averagePrice =
-      Math.round(
-        (prices.reduce((a, b) => a + b, 0) / prices.length) * 100
-      ) / 100;
+      Math.round((prices.reduce((a, b) => a + b, 0) / prices.length) * 100) / 100;
     const territories = Array.from(new Set(offers.map((o) => o.territory)));
 
     return {

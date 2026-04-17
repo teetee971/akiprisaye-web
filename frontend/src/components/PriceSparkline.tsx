@@ -27,7 +27,9 @@ export function PriceSparkline({
   if (values.length < 2) return <div className="text-sm opacity-70">Pas assez de données</div>;
 
   const coords = normalize(values, width, height);
-  const d = coords.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+  const d = coords
+    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+    .join(' ');
 
   const last = values[values.length - 1];
   const first = values[0];

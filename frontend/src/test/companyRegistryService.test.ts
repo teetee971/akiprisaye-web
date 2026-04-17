@@ -86,8 +86,8 @@ describe('Company Registry Service', () => {
       country: 'France',
     },
     geoLocation: {
-      latitude: 4.9380,
-      longitude: -52.3300,
+      latitude: 4.938,
+      longitude: -52.33,
     },
     lastUpdate: '2024-01-01T00:00:00Z',
     source: 'VALIDATION_INTERNE',
@@ -139,7 +139,7 @@ describe('Company Registry Service', () => {
       registerCompany(testCompany1);
       const updated = { ...testCompany1, legalName: 'Updated Name' };
       registerCompany(updated);
-      
+
       const company = getCompanyById(testCompany1.id);
       expect(company?.legalName).toBe('Updated Name');
       expect(getCompanyCount()).toBe(1);
@@ -186,8 +186,8 @@ describe('Company Registry Service', () => {
     it('should find all companies with same SIREN', () => {
       const companies = getCompaniesBySiren('732829320');
       expect(companies).toHaveLength(2);
-      expect(companies.map(c => c.id)).toContain('company-001');
-      expect(companies.map(c => c.id)).toContain('company-004');
+      expect(companies.map((c) => c.id)).toContain('company-001');
+      expect(companies.map((c) => c.id)).toContain('company-004');
     });
 
     it('should find single company by SIREN', () => {
@@ -341,7 +341,7 @@ describe('Company Registry Service', () => {
       registerCompany(testCompany1);
       registerCompany(testCompany2);
       registerCompany(testCompany3Ceased);
-      
+
       const companies = getAllCompanies();
       expect(companies).toHaveLength(3);
     });
@@ -397,7 +397,7 @@ describe('Company Registry Service', () => {
       registerCompany(testCompany1);
       registerCompany(testCompany2);
       expect(getCompanyCount()).toBe(2);
-      
+
       clearCompanyRegistry();
       expect(getCompanyCount()).toBe(0);
       expect(getAllCompanies()).toHaveLength(0);

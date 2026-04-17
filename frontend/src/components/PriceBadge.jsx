@@ -12,11 +12,9 @@ export default function PriceBadge({ price, aiAdjustedAt, originalPrice, showSav
         <span className="text-2xl font-bold text-blue-400">
           {typeof price === 'number' ? price.toFixed(2) : price}€
         </span>
-        
+
         {originalPrice && originalPrice > price && (
-          <span className="text-sm text-slate-500 line-through">
-            {originalPrice.toFixed(2)}€
-          </span>
+          <span className="text-sm text-slate-500 line-through">{originalPrice.toFixed(2)}€</span>
         )}
       </div>
 
@@ -27,7 +25,7 @@ export default function PriceBadge({ price, aiAdjustedAt, originalPrice, showSav
             IA ajusté {new Date(aiAdjustedAt).toLocaleDateString('fr-FR')}
           </span>
         )}
-        
+
         {showSavings && savings > 0 && (
           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-green-600 text-white">
             -{savings.toFixed(0)}%

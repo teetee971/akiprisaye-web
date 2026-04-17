@@ -22,9 +22,10 @@ export function ShareTikTok({ differential }: ShareTikTokProps) {
   const [copied, setCopied] = useState(false);
 
   const generateShareText = (): string => {
-    const emoji = differential.percentageDiff > 30 ? '😱' : differential.percentageDiff > 20 ? '😮' : '😐';
+    const emoji =
+      differential.percentageDiff > 30 ? '😱' : differential.percentageDiff > 20 ? '😮' : '😐';
     return `${emoji} Prix ${differential.productName} en ${differential.territory}:
-${differential.priceDom.toFixed(2)}€ 
+${differential.priceDom.toFixed(2)}€
 vs Métropole: ${differential.priceMetropole.toFixed(2)}€
 Soit +${differential.percentageDiff.toFixed(1)}% plus cher!
 #VieChère #Outremer #${differential.territory} #AkiPriSaYe`;
@@ -122,7 +123,7 @@ Soit +${differential.percentageDiff.toFixed(1)}% plus cher!
         await navigator.share({
           title: 'Prix comparés DOM-Métropole',
           text: text,
-          files: [file]
+          files: [file],
         });
       } else {
         // Fallback: just copy text
@@ -164,9 +165,7 @@ Soit +${differential.percentageDiff.toFixed(1)}% plus cher!
 
       {/* Text to Share */}
       <div className="mb-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-        <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-          Texte à partager:
-        </div>
+        <div className="text-sm text-slate-600 dark:text-slate-400 mb-2">Texte à partager:</div>
         <div className="text-sm text-slate-900 dark:text-white whitespace-pre-wrap">
           {generateShareText()}
         </div>
@@ -181,7 +180,7 @@ Soit +${differential.percentageDiff.toFixed(1)}% plus cher!
           <Share2 className="w-5 h-5" />
           <span className="text-xs">Partager</span>
         </button>
-        
+
         <button
           onClick={handleDownloadImage}
           className="flex flex-col items-center gap-2 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
@@ -189,7 +188,7 @@ Soit +${differential.percentageDiff.toFixed(1)}% plus cher!
           <Download className="w-5 h-5" />
           <span className="text-xs">Image</span>
         </button>
-        
+
         <button
           onClick={handleCopyText}
           className="flex flex-col items-center gap-2 px-4 py-3 bg-slate-500 hover:bg-slate-600 text-white rounded-lg transition-colors"

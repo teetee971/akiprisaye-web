@@ -1,7 +1,4 @@
-export type PriceObservationSource =
-  | 'open_food_facts'
-  | 'open_prices'
-  | 'user_report';
+export type PriceObservationSource = 'open_food_facts' | 'open_prices' | 'user_report';
 
 export interface PriceObservation {
   observedAt?: string;
@@ -101,10 +98,7 @@ export function computeReliability(observations: PriceObservation[]): Reliabilit
   const stabilityScore = computeStabilityScore(observations);
   const sourceScore = computeSourceScore(observations);
 
-  const baseScore =
-    freshnessScore * 0.4 +
-    volumeScore * 0.3 +
-    stabilityScore * 0.3;
+  const baseScore = freshnessScore * 0.4 + volumeScore * 0.3 + stabilityScore * 0.3;
 
   const score = clampScore(baseScore * sourceScore);
 

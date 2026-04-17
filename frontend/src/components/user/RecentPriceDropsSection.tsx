@@ -37,8 +37,12 @@ export function RecentPriceDropsSection({ drops = [] }: RecentPriceDropsSectionP
               </span>
             </div>
             <div className="flex items-center gap-3 mt-1">
-              <span className="text-sm font-bold text-green-400">{drop.currentPrice.toFixed(2)} €</span>
-              <span className="text-xs text-gray-500 line-through">{drop.previousPrice.toFixed(2)} €</span>
+              <span className="text-sm font-bold text-green-400">
+                {drop.currentPrice.toFixed(2)} €
+              </span>
+              <span className="text-xs text-gray-500 line-through">
+                {drop.previousPrice.toFixed(2)} €
+              </span>
               {drop.retailer && <span className="text-xs text-gray-500">{drop.retailer}</span>}
             </div>
           </li>

@@ -1,6 +1,6 @@
 /**
  * Transport History Service v2.2.1
- * 
+ *
  * Implements temporal analysis of transport prices with:
  * - Read-only data access (no data modification)
  * - Time series analysis by route
@@ -24,10 +24,10 @@ import type {
  */
 const HISTORY_CONFIG = {
   SIGNIFICANT_VARIATION_THRESHOLD_PERCENT: 15, // 15% variation considered significant
-  MIN_DATA_POINTS_FOR_SEASONALITY: 12,         // Minimum 12 months of data
-  SEASONALITY_CONFIDENCE_THRESHOLD: 0.7,       // 70% confidence threshold
-  HIGH_SEASON_THRESHOLD_PERCENT: 10,           // 10% above average
-  LOW_SEASON_THRESHOLD_PERCENT: 10,            // 10% below average
+  MIN_DATA_POINTS_FOR_SEASONALITY: 12, // Minimum 12 months of data
+  SEASONALITY_CONFIDENCE_THRESHOLD: 0.7, // 70% confidence threshold
+  HIGH_SEASON_THRESHOLD_PERCENT: 10, // 10% above average
+  LOW_SEASON_THRESHOLD_PERCENT: 10, // 10% below average
 } as const;
 
 /**
@@ -69,7 +69,8 @@ export function buildTimeSeries(
     historyPoints.push({
       date: dateKey,
       route,
-      averagePrice: Math.round((priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length) * 100) / 100,
+      averagePrice:
+        Math.round((priceValues.reduce((sum, p) => sum + p, 0) / priceValues.length) * 100) / 100,
       minPrice: Math.round(Math.min(...priceValues) * 100) / 100,
       maxPrice: Math.round(Math.max(...priceValues) * 100) / 100,
       observationCount: dayPrices.reduce((sum, p) => sum + p.volume, 0),
@@ -103,9 +104,7 @@ export function buildOperatorTimeSeries(
  * Detect significant price variations in time series
  * Returns periods where price changed more than threshold
  */
-export function detectSignificantVariations(
-  timeSeries: TransportPriceHistoryPoint[]
-): Array<{
+export function detectSignificantVariations(timeSeries: TransportPriceHistoryPoint[]): Array<{
   fromDate: string;
   toDate: string;
   fromPrice: number;
@@ -134,9 +133,7 @@ export function detectSignificantVariations(
     const current = timeSeries[i];
 
     const absoluteChange = current.averagePrice - prev.averagePrice;
-    const percentageChange = prev.averagePrice > 0 
-      ? (absoluteChange / prev.averagePrice) * 100 
-      : 0;
+    const percentageChange = prev.averagePrice > 0 ? (absoluteChange / prev.averagePrice) * 100 : 0;
 
     if (Math.abs(percentageChange) >= HISTORY_CONFIG.SIGNIFICANT_VARIATION_THRESHOLD_PERCENT) {
       variations.push({
@@ -187,8 +184,7 @@ export function analyzeSeasonality(
 
   // Calculate overall average
   const overallAverage =
-    Array.from(monthlyAverages.values()).reduce((sum, p) => sum + p, 0) /
-    monthlyAverages.size;
+    Array.from(monthlyAverages.values()).reduce((sum, p) => sum + p, 0) / monthlyAverages.size;
 
   // Identify high and low season months
   const highSeasonMonths: number[] = [];
@@ -212,8 +208,7 @@ export function analyzeSeasonality(
     overallAverage > 0 ? ((maxMonthlyPrice - minMonthlyPrice) / overallAverage) * 100 : 0;
 
   // Determine if seasonality is detected
-  const seasonalityDetected =
-    highSeasonMonths.length > 0 || lowSeasonMonths.length > 0;
+  const seasonalityDetected = highSeasonMonths.length > 0 || lowSeasonMonths.length > 0;
 
   // Determine confidence based on data consistency
   let confidence: 'high' | 'medium' | 'low' = 'low';
@@ -291,12 +286,8 @@ export function comparePeriods(
   percentageDifference: number;
   trend: 'increasing' | 'decreasing' | 'stable';
 } | null {
-  const period1Prices = timeSeries.filter(
-    (p) => p.date >= period1Start && p.date <= period1End
-  );
-  const period2Prices = timeSeries.filter(
-    (p) => p.date >= period2Start && p.date <= period2End
-  );
+  const period1Prices = timeSeries.filter((p) => p.date >= period1Start && p.date <= period1End);
+  const period2Prices = timeSeries.filter((p) => p.date >= period2Start && p.date <= period2End);
 
   if (period1Prices.length === 0 || period2Prices.length === 0) {
     return null;
@@ -308,8 +299,7 @@ export function comparePeriods(
     period2Prices.reduce((sum, p) => sum + p.averagePrice, 0) / period2Prices.length;
 
   const absoluteDifference = period2Average - period1Average;
-  const percentageDifference =
-    period1Average > 0 ? (absoluteDifference / period1Average) * 100 : 0;
+  const percentageDifference = period1Average > 0 ? (absoluteDifference / period1Average) * 100 : 0;
 
   let trend: 'increasing' | 'decreasing' | 'stable' = 'stable';
   if (Math.abs(percentageDifference) >= 5) {

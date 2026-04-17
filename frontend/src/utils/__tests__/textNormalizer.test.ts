@@ -1,7 +1,7 @@
 /**
  * Text Normalizer Tests
  * Part of PR D - Text-based Product Recognition
- * 
+ *
  * Node-safe tests only (no browser APIs)
  */
 

@@ -33,14 +33,15 @@ export function FiltresCarte({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">
-        🔍 Filtres
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">🔍 Filtres</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Territory Filter */}
         <div>
-          <label htmlFor="filtre-territoire" className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="filtre-territoire"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
             Territoire
           </label>
           <select
@@ -159,8 +160,8 @@ export function FiltresCarte({
       {/* Filter Info */}
       <div className="mt-3 bg-gray-50 rounded-lg p-3">
         <p className="text-xs text-gray-600">
-          <strong>Note :</strong> Les filtres permettent d'affiner la visualisation des observations.
-          Aucun classement ou notation d'enseignes n'est disponible.
+          <strong>Note :</strong> Les filtres permettent d'affiner la visualisation des
+          observations. Aucun classement ou notation d'enseignes n'est disponible.
         </p>
       </div>
     </div>

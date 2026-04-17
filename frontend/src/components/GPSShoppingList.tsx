@@ -10,7 +10,7 @@ const DEFAULT_UPDATE_TIME = new Date();
 // Create time formatter once at module level for performance
 const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
   hour: '2-digit',
-  minute: '2-digit'
+  minute: '2-digit',
 });
 
 const API_BASE_URL = (import.meta as { env: Record<string, string> }).env.VITE_API_URL || '';
@@ -46,7 +46,11 @@ interface GPSShoppingListProps {
   className?: string;
 }
 
-export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIME, className }: GPSShoppingListProps) {
+export default function GPSShoppingList({
+  items,
+  lastUpdate = DEFAULT_UPDATE_TIME,
+  className,
+}: GPSShoppingListProps) {
   const [position, setPosition] = useState<GeoPosition | null>(null);
   const [loading, setLoading] = useState(false);
   const [storeOptions, setStoreOptions] = useState<StoreOption[]>([]);
@@ -60,10 +64,10 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
   const requestLocation = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const pos = await getUserPosition();
-      
+
       if (pos) {
         setPosition(pos);
         // Calculate store options with real GPS data
@@ -98,7 +102,7 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
       });
       const res = await fetch(`${API_BASE_URL}/api/map/nearby?${params.toString()}`);
       if (res.ok) {
-        const json = await res.json() as { success?: boolean; data?: { stores?: ApiStore[] } };
+        const json = (await res.json()) as { success?: boolean; data?: { stores?: ApiStore[] } };
         if (json.success && json.data?.stores) {
           apiStores = json.data.stores;
         }
@@ -108,7 +112,9 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
     }
 
     if (apiStores.length === 0) {
-      setError('Aucun magasin trouvé à proximité. Vérifiez votre connexion ou élargissez le rayon de recherche.');
+      setError(
+        'Aucun magasin trouvé à proximité. Vérifiez votre connexion ou élargissez le rayon de recherche.'
+      );
       setStoreOptions([]);
       return;
     }
@@ -123,9 +129,11 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
       lat: s.lat,
       lon: s.lon,
       address: s.address ?? '',
-      totalCost: s.priceIndex != null
-        ? Math.round(BASKET_BASE_COST * (s.priceIndex / 100) * CENTS_MULTIPLIER) / CENTS_MULTIPLIER
-        : BASKET_BASE_COST,
+      totalCost:
+        s.priceIndex != null
+          ? Math.round(BASKET_BASE_COST * (s.priceIndex / 100) * CENTS_MULTIPLIER) /
+            CENTS_MULTIPLIER
+          : BASKET_BASE_COST,
     }));
 
     // Use batch distance calculation for efficiency
@@ -138,13 +146,15 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
       distance: store.distance,
       totalCost: store.totalCost,
       // Travel cost: distance * round trip * cost per km, rounded to cents
-      travelCost: Math.round(store.distance * ROUND_TRIP_MULTIPLIER * COST_PER_KM * CENTS_MULTIPLIER) / CENTS_MULTIPLIER,
+      travelCost:
+        Math.round(store.distance * ROUND_TRIP_MULTIPLIER * COST_PER_KM * CENTS_MULTIPLIER) /
+        CENTS_MULTIPLIER,
       address: store.address,
     }));
 
     // Sort by total cost (products + travel) — greedy optimum
     optionsWithRealDistance.sort(
-      (a, b) => (a.totalCost + a.travelCost) - (b.totalCost + b.travelCost),
+      (a, b) => a.totalCost + a.travelCost - (b.totalCost + b.travelCost)
     );
 
     setStoreOptions(optionsWithRealDistance);
@@ -153,7 +163,7 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
   // Use useMemo to avoid recalculating on every render
   const bestOption = useMemo(() => {
     if (storeOptions.length === 0) return null;
-    
+
     // Best option is lowest total (products + travel)
     return storeOptions.reduce((best, current) => {
       const bestTotal = best.totalCost + best.travelCost;
@@ -163,12 +173,12 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
   }, [storeOptions]);
 
   return (
-    <div className={`bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 ${className || ''}`}>
+    <div
+      className={`bg-slate-900/50 backdrop-blur-md rounded-xl border border-slate-700/50 p-5 ${className || ''}`}
+    >
       <div className="flex items-center gap-3 mb-4">
         <ShoppingCart className="w-5 h-5 text-blue-400" />
-        <h2 className="text-lg font-semibold text-gray-100">
-          Liste de courses optimisée GPS
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-100">Liste de courses optimisée GPS</h2>
       </div>
 
       {/* Methodology Explanation */}
@@ -252,15 +262,21 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
                 <div className="grid grid-cols-3 gap-2 pt-2 border-t border-emerald-700/30">
                   <div>
                     <p className="text-xs text-gray-400">Distance</p>
-                    <p className="text-sm font-semibold text-emerald-300">{bestOption.distance} km</p>
+                    <p className="text-sm font-semibold text-emerald-300">
+                      {bestOption.distance} km
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400">Total courses</p>
-                    <p className="text-sm font-semibold text-emerald-300">{bestOption.totalCost.toFixed(2)} €</p>
+                    <p className="text-sm font-semibold text-emerald-300">
+                      {bestOption.totalCost.toFixed(2)} €
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-400">Trajet estimé</p>
-                    <p className="text-sm font-semibold text-emerald-300">{bestOption.travelCost.toFixed(2)} €</p>
+                    <p className="text-sm font-semibold text-emerald-300">
+                      {bestOption.travelCost.toFixed(2)} €
+                    </p>
                   </div>
                 </div>
                 <div className="pt-2 border-t border-emerald-700/30">
@@ -276,26 +292,35 @@ export default function GPSShoppingList({ items, lastUpdate = DEFAULT_UPDATE_TIM
           {/* Other Options */}
           <div className="space-y-2">
             <p className="text-sm font-medium text-gray-300">Autres options :</p>
-            {storeOptions.filter(s => s.id !== bestOption?.id).map((store) => (
-              <div key={store.id} className="bg-slate-800/30 rounded-lg p-3 border border-slate-700/30">
-                <div className="flex items-center justify-between mb-2">
-                  <p className="font-medium text-gray-200">{store.name}</p>
-                  <p className="text-sm text-gray-400">{store.distance} km</p>
+            {storeOptions
+              .filter((s) => s.id !== bestOption?.id)
+              .map((store) => (
+                <div
+                  key={store.id}
+                  className="bg-slate-800/30 rounded-lg p-3 border border-slate-700/30"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-medium text-gray-200">{store.name}</p>
+                    <p className="text-sm text-gray-400">{store.distance} km</p>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-gray-400">
+                      Total : {store.totalCost.toFixed(2)} € + {store.travelCost.toFixed(2)} €
+                      trajet
+                    </span>
+                    <span className="font-semibold text-gray-300">
+                      {(store.totalCost + store.travelCost).toFixed(2)} €
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400">Total : {store.totalCost.toFixed(2)} € + {store.travelCost.toFixed(2)} € trajet</span>
-                  <span className="font-semibold text-gray-300">
-                    {(store.totalCost + store.travelCost).toFixed(2)} €
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       )}
 
       <p className="text-[10px] text-gray-500 mt-4 italic">
-        ℹ️ Calculs basés sur les prix réels des magasins et l'estimation de consommation moyenne (6L/100km).
+        ℹ️ Calculs basés sur les prix réels des magasins et l'estimation de consommation moyenne
+        (6L/100km).
       </p>
 
       {/* Route Optimizer panel */}

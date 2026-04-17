@@ -1,7 +1,7 @@
 /**
  * Citizen Alerts Service
  * "A KI PRI SA YÉ" - User-controlled alerts based ONLY on real observed data
- * 
+ *
  * NO PURCHASE INCENTIVES, NO MARKETING PUSH, NO OPAQUE NOTIFICATIONS
  * Explicit opt-in, total user control, factual and neutral alerts
  */
@@ -12,7 +12,7 @@ import type { PriceAnomaly } from './anomaly-detection';
 /**
  * Alert types
  */
-export type AlertType = 
+export type AlertType =
   | 'hausse_anormale' // Abnormal price increase
   | 'variation_rapide' // Rapid variation
   | 'nouvelle_donnee'; // New data available
@@ -111,7 +111,7 @@ export const DEFAULT_RULE_CONFIG: Partial<AlertRule> = {
   seuil_pourcent: 20,
   periode_jours: 30,
   frequence_max_heures: 24,
-  statut: 'active'
+  statut: 'active',
 };
 
 /**
@@ -127,7 +127,7 @@ function generateId(): string {
 function formatPrice(price: number): string {
   return new Intl.NumberFormat('fr-FR', {
     style: 'currency',
-    currency: 'EUR'
+    currency: 'EUR',
   }).format(price);
 }
 
@@ -136,34 +136,34 @@ function formatPrice(price: number): string {
  */
 function canSendAlert(rule: AlertRule): boolean {
   if (!rule.derniere_alerte) return true;
-  
+
   const lastAlert = new Date(rule.derniere_alerte);
   const now = new Date();
   const hoursPassed = (now.getTime() - lastAlert.getTime()) / (1000 * 60 * 60);
-  
+
   return hoursPassed >= rule.frequence_max_heures;
 }
 
 /**
  * Check if product matches rule
  */
-function productMatchesRule(productName: string, productCategory: string | undefined, rule: AlertRule): boolean {
+function productMatchesRule(
+  productName: string,
+  productCategory: string | undefined,
+  rule: AlertRule
+): boolean {
   // Check products
   if (rule.produits && rule.produits.length > 0) {
-    const matches = rule.produits.some(p => 
-      productName.toLowerCase().includes(p.toLowerCase())
-    );
+    const matches = rule.produits.some((p) => productName.toLowerCase().includes(p.toLowerCase()));
     if (matches) return true;
   }
-  
+
   // Check categories
   if (rule.categories && rule.categories.length > 0 && productCategory) {
-    const matches = rule.categories.some(c => 
-      productCategory.toLowerCase() === c.toLowerCase()
-    );
+    const matches = rule.categories.some((c) => productCategory.toLowerCase() === c.toLowerCase());
     if (matches) return true;
   }
-  
+
   return false;
 }
 
@@ -176,33 +176,35 @@ function evaluateHausseAnormale(
   anomalies: PriceAnomaly[]
 ): Alert[] {
   const alerts: Alert[] = [];
-  
+
   if (!canSendAlert(rule)) return alerts;
-  
+
   for (const anomaly of anomalies) {
     // Check territory
     if (!rule.territoires.includes(anomaly.territoire)) continue;
-    
+
     // Check product/category
-    const matchesProduct = rule.produits?.some(p => 
+    const matchesProduct = rule.produits?.some((p) =>
       anomaly.produit.toLowerCase().includes(p.toLowerCase())
     );
-    
+
     if (!matchesProduct && rule.produits && rule.produits.length > 0) continue;
-    
+
     // Check threshold
     if (Math.abs(anomaly.ecart_pourcent) < rule.seuil_pourcent) continue;
-    
+
     // Generate alert
-    const message = `${anomaly.territoire} — ${anomaly.produit} :\n` +
+    const message =
+      `${anomaly.territoire} — ${anomaly.produit} :\n` +
       `Prix observé : ${formatPrice(anomaly.prix_observe)}\n` +
       `Variation : ${anomaly.ecart_pourcent > 0 ? '+' : ''}${anomaly.ecart_pourcent.toFixed(1)}%\n` +
       `Source : observatoire citoyen`;
-    
-    const explication = `Hausse anormale détectée. Écart de ${anomaly.ecart_pourcent.toFixed(1)}% ` +
+
+    const explication =
+      `Hausse anormale détectée. Écart de ${anomaly.ecart_pourcent.toFixed(1)}% ` +
       `par rapport à la référence (${formatPrice(anomaly.prix_reference)}). ` +
       `Seuil configuré : ${rule.seuil_pourcent}%.`;
-    
+
     alerts.push({
       id: generateId(),
       regle_id: rule.id,
@@ -220,49 +222,46 @@ function evaluateHausseAnormale(
       message,
       explication,
       observation_id: anomaly.observation_id,
-      statut: 'non_lu'
+      statut: 'non_lu',
     });
   }
-  
+
   return alerts;
 }
 
 /**
  * Evaluate alert rule for rapid variation
  */
-function evaluateVariationRapide(
-  rule: AlertRule,
-  observations: Observation[]
-): Alert[] {
+function evaluateVariationRapide(rule: AlertRule, observations: Observation[]): Alert[] {
   const alerts: Alert[] = [];
-  
+
   if (!canSendAlert(rule)) return alerts;
-  
+
   // Group observations by product and territory
   const groups: Record<string, Observation[]> = {};
-  
+
   for (const obs of observations) {
     if (!rule.territoires.includes(obs.territoire)) continue;
-    
+
     for (const product of obs.produits) {
       if (!productMatchesRule(product.nom, product.categorie, rule)) continue;
-      
+
       const key = `${obs.territoire}:${product.nom}`;
       if (!groups[key]) groups[key] = [];
       groups[key].push(obs);
     }
   }
-  
+
   // Calculate variations
   const now = new Date();
   const cutoff = new Date(now.getTime() - rule.periode_jours * 24 * 60 * 60 * 1000);
-  
+
   for (const [key, groupObs] of Object.entries(groups)) {
-    const recentObs = groupObs.filter(obs => new Date(obs.date) >= cutoff);
+    const recentObs = groupObs.filter((obs) => new Date(obs.date) >= cutoff);
     if (recentObs.length < 2) continue;
-    
+
     const [territoire, produit] = key.split(':');
-    
+
     // Get prices
     const prices: number[] = [];
     for (const obs of recentObs) {
@@ -272,13 +271,13 @@ function evaluateVariationRapide(
         }
       }
     }
-    
+
     if (prices.length < 2) continue;
-    
+
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
     const variation = ((maxPrice - minPrice) / minPrice) * 100;
-    
+
     if (variation >= rule.seuil_pourcent) {
       const latestObs = recentObs.sort((a, b) => b.date.localeCompare(a.date))[0];
       let latestPrice = 0;
@@ -288,16 +287,18 @@ function evaluateVariationRapide(
           break;
         }
       }
-      
-      const message = `${territoire} — ${produit} :\n` +
+
+      const message =
+        `${territoire} — ${produit} :\n` +
         `Variation détectée : ${variation.toFixed(1)}% sur ${rule.periode_jours} jours\n` +
         `Prix actuel : ${formatPrice(latestPrice)}\n` +
         `Source : observatoire citoyen`;
-      
-      const explication = `Variation rapide détectée. Écart de ${variation.toFixed(1)}% ` +
+
+      const explication =
+        `Variation rapide détectée. Écart de ${variation.toFixed(1)}% ` +
         `entre le prix minimum (${formatPrice(minPrice)}) et maximum (${formatPrice(maxPrice)}) ` +
         `sur ${rule.periode_jours} jours. Seuil configuré : ${rule.seuil_pourcent}%.`;
-      
+
       alerts.push({
         id: generateId(),
         regle_id: rule.id,
@@ -313,45 +314,43 @@ function evaluateVariationRapide(
         message,
         explication,
         observation_id: latestObs.id,
-        statut: 'non_lu'
+        statut: 'non_lu',
       });
     }
   }
-  
+
   return alerts;
 }
 
 /**
  * Evaluate alert rule for new data
  */
-function evaluateNouvelleDonnee(
-  rule: AlertRule,
-  observations: Observation[]
-): Alert[] {
+function evaluateNouvelleDonnee(rule: AlertRule, observations: Observation[]): Alert[] {
   const alerts: Alert[] = [];
-  
+
   if (!canSendAlert(rule)) return alerts;
-  
+
   // Get last alert date or 24h ago
-  const lastCheck = rule.derniere_alerte 
+  const lastCheck = rule.derniere_alerte
     ? new Date(rule.derniere_alerte)
     : new Date(Date.now() - 24 * 60 * 60 * 1000);
-  
+
   // Find new observations
   for (const obs of observations) {
     if (new Date(obs.created_at) <= lastCheck) continue;
     if (!rule.territoires.includes(obs.territoire)) continue;
-    
+
     for (const product of obs.produits) {
       if (!productMatchesRule(product.nom, product.categorie, rule)) continue;
-      
-      const message = `${obs.territoire} — Nouvelle donnée disponible :\n` +
+
+      const message =
+        `${obs.territoire} — Nouvelle donnée disponible :\n` +
         `${product.nom} : ${formatPrice(product.prix_total)}\n` +
         `Commune : ${obs.commune}\n` +
         `Source : observatoire citoyen`;
-      
+
       const explication = `Nouvelle observation disponible pour ${product.nom} dans ${obs.territoire}.`;
-      
+
       alerts.push({
         id: generateId(),
         regle_id: rule.id,
@@ -369,13 +368,13 @@ function evaluateNouvelleDonnee(
         message,
         explication,
         observation_id: obs.id,
-        statut: 'non_lu'
+        statut: 'non_lu',
       });
-      
+
       break; // One alert per observation
     }
   }
-  
+
   return alerts;
 }
 
@@ -388,12 +387,12 @@ export function evaluateAlertRules(
   anomalies: PriceAnomaly[]
 ): Alert[] {
   const allAlerts: Alert[] = [];
-  
+
   for (const rule of rules) {
     if (rule.statut !== 'active') continue;
-    
+
     let ruleAlerts: Alert[] = [];
-    
+
     switch (rule.type) {
       case 'hausse_anormale':
         ruleAlerts = evaluateHausseAnormale(rule, observations, anomalies);
@@ -405,10 +404,10 @@ export function evaluateAlertRules(
         ruleAlerts = evaluateNouvelleDonnee(rule, observations);
         break;
     }
-    
+
     allAlerts.push(...ruleAlerts);
   }
-  
+
   return allAlerts;
 }
 
@@ -418,24 +417,24 @@ export function evaluateAlertRules(
 export function getAlertStats(alerts: Alert[]): AlertStats {
   const stats: AlertStats = {
     total: alerts.length,
-    non_lus: alerts.filter(a => a.statut === 'non_lu').length,
+    non_lus: alerts.filter((a) => a.statut === 'non_lu').length,
     par_type: {
       hausse_anormale: 0,
       variation_rapide: 0,
-      nouvelle_donnee: 0
+      nouvelle_donnee: 0,
     },
-    par_territoire: {}
+    par_territoire: {},
   };
-  
+
   for (const alert of alerts) {
     stats.par_type[alert.type]++;
-    
+
     if (!stats.par_territoire[alert.territoire]) {
       stats.par_territoire[alert.territoire] = 0;
     }
     stats.par_territoire[alert.territoire]++;
   }
-  
+
   return stats;
 }
 
@@ -455,7 +454,7 @@ export function createAlertRule(params: Partial<AlertRule>): AlertRule {
     frequence_max_heures: params.frequence_max_heures || DEFAULT_RULE_CONFIG.frequence_max_heures!,
     statut: params.statut || DEFAULT_RULE_CONFIG.statut!,
     date_creation: new Date().toISOString(),
-    date_modification: new Date().toISOString()
+    date_modification: new Date().toISOString(),
   };
 }
 
@@ -468,6 +467,6 @@ export function updateAlertRule(rule: AlertRule, updates: Partial<AlertRule>): A
     ...updates,
     id: rule.id, // Preserve ID
     date_creation: rule.date_creation, // Preserve creation date
-    date_modification: new Date().toISOString()
+    date_modification: new Date().toISOString(),
   };
 }

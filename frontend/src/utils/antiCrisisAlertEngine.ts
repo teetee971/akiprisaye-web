@@ -1,19 +1,19 @@
 /**
  * antiCrisisAlertEngine.ts — Alert decision logic for Anti-Crisis improvements
- * 
+ *
  * Purpose: Decide when to trigger alerts based on score changes
  * Pure function, testable, no side effects
- * 
+ *
  * Alert Policy:
  * - Only alert when score improves meaningfully
  * - Prevent spam with state tracking
  * - User must opt-in (checked externally)
- * 
+ *
  * Legal Compliance:
  * - No predictions or promises
  * - Descriptive only ("price became more stable")
  * - Factual observations of historical data
- * 
+ *
  * @module antiCrisisAlertEngine
  */
 
@@ -26,16 +26,16 @@ import type { AntiCrisisScore } from '../config/antiCrisisRules';
 export interface AlertTrigger {
   /** Whether to trigger an alert */
   shouldAlert: boolean;
-  
+
   /** Reason for the alert (or why not) */
   reason: string;
-  
+
   /** Type of improvement detected */
   improvementType?: 'became_anticrisis' | 'became_strong' | 'most_resilient';
-  
+
   /** Previous score */
   previousScore?: number;
-  
+
   /** New score */
   newScore: number;
 }
@@ -51,38 +51,35 @@ const MIN_ALERT_INTERVAL_MS = 24 * 60 * 60 * 1000;
  */
 function canAlertAgain(state: AlertState): boolean {
   if (!state.lastAlertAt) return true;
-  
+
   const timeSinceLastAlert = Date.now() - state.lastAlertAt;
   return timeSinceLastAlert >= MIN_ALERT_INTERVAL_MS;
 }
 
 /**
  * Determine if an Anti-Crisis alert should be triggered
- * 
+ *
  * Alert triggers:
  * 1. Score changes from <2 to ≥2 (becomes Anti-Crisis)
  * 2. Score changes from 2 to 3 (becomes Strong Anti-Crisis)
- * 
+ *
  * No alert if:
  * - Score decreases
  * - Score stays the same
  * - Minor fluctuations (e.g., 2 to 2)
  * - Alert was sent too recently (< 24h)
- * 
+ *
  * @param id - Unique identifier for the item (basket/product/territory combo)
  * @param newScore - New Anti-Crisis score (0-3)
  * @returns Alert trigger decision with reasoning
- * 
+ *
  * @example
  * const trigger = shouldTriggerAntiCrisisAlert('GP_basket-familial', 2);
  * if (trigger.shouldAlert) {
  *   showNotification(trigger.reason);
  * }
  */
-export function shouldTriggerAntiCrisisAlert(
-  id: string,
-  newScore: AntiCrisisScore
-): AlertTrigger {
+export function shouldTriggerAntiCrisisAlert(id: string, newScore: AntiCrisisScore): AlertTrigger {
   const state = getAlertState(id);
 
   // First time seeing this item - just record the score, no alert
@@ -121,9 +118,7 @@ export function shouldTriggerAntiCrisisAlert(
   // Check rate limiting
   if (!canAlertAgain(state)) {
     const timeSinceAlert = state.lastAlertAt ? Date.now() - state.lastAlertAt : 0;
-    const hoursUntilNext = Math.ceil(
-      (MIN_ALERT_INTERVAL_MS - timeSinceAlert) / (60 * 60 * 1000)
-    );
+    const hoursUntilNext = Math.ceil((MIN_ALERT_INTERVAL_MS - timeSinceAlert) / (60 * 60 * 1000));
     return {
       shouldAlert: false,
       reason: `Rate limited (alert sent recently, next available in ~${hoursUntilNext}h)`,
@@ -181,7 +176,7 @@ export function shouldTriggerAntiCrisisAlert(
 /**
  * Check if item has most resilient price among a group
  * Used for multi-territory comparisons
- * 
+ *
  * @param itemId - Item to check
  * @param itemScore - Score of the item
  * @param otherScores - Scores of other items to compare against
@@ -204,7 +199,7 @@ export function checkMostResilient(
   }
 
   // Check if this is the highest score
-  const isMostResilient = otherScores.every(score => itemScore >= score);
+  const isMostResilient = otherScores.every((score) => itemScore >= score);
 
   if (!isMostResilient) {
     return {
@@ -242,7 +237,7 @@ export function checkMostResilient(
 /**
  * Get human-readable notification message
  * Play Store compliant: factual, descriptive, no promises
- * 
+ *
  * @param trigger - Alert trigger result
  * @param itemName - Name of the item (basket, product)
  * @returns Notification message object
@@ -250,7 +245,7 @@ export function checkMostResilient(
 export function getNotificationMessage(
   trigger: AlertTrigger,
   itemName: string
-): { title: string; body: string; } {
+): { title: string; body: string } {
   switch (trigger.improvementType) {
     case 'became_anticrisis':
       return {
@@ -280,7 +275,7 @@ export function getNotificationMessage(
 
 /**
  * Reset alert state for testing or user request
- * 
+ *
  * @param id - Item identifier
  */
 export function resetAlertState(id: string): void {

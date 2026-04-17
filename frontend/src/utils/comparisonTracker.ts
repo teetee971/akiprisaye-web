@@ -24,8 +24,7 @@ export const COMPARISON_MILESTONE_EVENT = 'akp:comparison-milestone';
  */
 export function trackComparison(): void {
   try {
-    const count =
-      parseInt(safeLocalStorage.getItem(STORAGE_COUNT_KEY) ?? '0', 10) + 1;
+    const count = parseInt(safeLocalStorage.getItem(STORAGE_COUNT_KEY) ?? '0', 10) + 1;
     safeLocalStorage.setItem(STORAGE_COUNT_KEY, count.toString());
 
     if (count === 3 && !safeLocalStorage.getItem(STORAGE_SHOWN_KEY)) {

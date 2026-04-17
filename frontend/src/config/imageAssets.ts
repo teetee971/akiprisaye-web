@@ -83,7 +83,7 @@ export const TERRITORY_GRADIENTS: Record<string, string> = {
 };
 
 export const CATEGORY_IMAGES: Record<string, { url: string; alt: string; gradient: string }> = {
-  'Épicerie': {
+  Épicerie: {
     url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fm=webp&fit=crop&w=400&q=80',
     alt: 'Épicerie — produits alimentaires',
     gradient: 'from-amber-500 to-orange-600',
@@ -103,7 +103,7 @@ export const CATEGORY_IMAGES: Record<string, { url: string; alt: string; gradien
     alt: 'Boucherie',
     gradient: 'from-red-600 to-rose-800',
   },
-  'Hygiène': {
+  Hygiène: {
     url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fm=webp&fit=crop&w=400&q=80',
     alt: 'Produits hygiène',
     gradient: 'from-purple-500 to-violet-700',
@@ -113,27 +113,27 @@ export const CATEGORY_IMAGES: Record<string, { url: string; alt: string; gradien
     alt: 'Produits ménagers',
     gradient: 'from-cyan-500 to-teal-700',
   },
-  'Lessive': {
+  Lessive: {
     url: 'https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fm=webp&fit=crop&w=400&q=80',
     alt: 'Lessive',
     gradient: 'from-indigo-500 to-blue-700',
   },
-  'Cosmétiques': {
+  Cosmétiques: {
     url: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fm=webp&fit=crop&w=400&q=80',
     alt: 'Cosmétiques',
     gradient: 'from-pink-500 to-rose-700',
   },
-  'Pharmacie': {
+  Pharmacie: {
     url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fm=webp&fit=crop&w=400&q=80',
     alt: 'Pharmacie',
     gradient: 'from-emerald-500 to-green-700',
   },
-  'Boissons': {
+  Boissons: {
     url: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fm=webp&fit=crop&w=400&q=80',
     alt: 'Boissons',
     gradient: 'from-blue-500 to-cyan-700',
   },
-  'Surgelés': {
+  Surgelés: {
     url: 'https://images.unsplash.com/photo-1617347454431-f49d7ff5c3b1?auto=format&fm=webp&fit=crop&w=400&q=80',
     alt: 'Surgelés',
     gradient: 'from-sky-500 to-blue-800',
@@ -141,19 +141,23 @@ export const CATEGORY_IMAGES: Record<string, { url: string; alt: string; gradien
 };
 
 export function getCategoryAsset(category: string) {
-  return CATEGORY_IMAGES[category] ?? {
-    url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fm=webp&fit=crop&w=400&q=80',
-    alt: 'Produit',
-    gradient: 'from-slate-500 to-slate-700',
-  };
+  return (
+    CATEGORY_IMAGES[category] ?? {
+      url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fm=webp&fit=crop&w=400&q=80',
+      alt: 'Produit',
+      gradient: 'from-slate-500 to-slate-700',
+    }
+  );
 }
 
 export function getTerritoryAsset(code: string) {
-  return TERRITORY_IMAGES[code.toLowerCase()] ?? {
-    url: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
-    alt: 'Territoire',
-    credit: 'Unsplash',
-  };
+  return (
+    TERRITORY_IMAGES[code.toLowerCase()] ?? {
+      url: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=800&q=80',
+      alt: 'Territoire',
+      credit: 'Unsplash',
+    }
+  );
 }
 
 export function getTerritoryGradient(code: string): string {
@@ -168,240 +172,354 @@ export const PAGE_HERO_IMAGES = {
   articleDefault: '/media/images/article-default.webp',
   sectionProfessional3d: '/media/images/section-professional-3d.webp',
   // ── Pages already enriched ───────────────────────────────────────────────
-  priceHistory: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  crossTerritory: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  inflation: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  coverage: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
-  alerts: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  priceHistory:
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  crossTerritory:
+    'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  inflation:
+    'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  coverage:
+    'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  alerts:
+    'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── New page heroes ──────────────────────────────────────────────────────
   /** Recherche de prix — fresh market/search */
-  search: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  search:
+    'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Scanner EAN — barcode scan at checkout */
-  scanner: 'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  scanner:
+    'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Liste de courses intelligente — shopping cart */
-  shoppingList: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  shoppingList:
+    'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Lutte contre la vie chère — community solidarity */
-  lutteVieChere: 'https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  lutteVieChere:
+    'https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Contribuer — open data / teamwork */
-  contribuer: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  contribuer:
+    'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Solidarité — helping hands */
-  solidarite: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  solidarite:
+    'https://images.unsplash.com/photo-1559027615-cd4628902d4a?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** À Propos — French overseas territory sunset */
-  aPropos: 'https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  aPropos:
+    'https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Pricing — premium subscription */
-  pricing: 'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  pricing:
+    'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** FAQ — question marks / knowledge */
   faq: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Contact — friendly communication */
-  contact: 'https://images.unsplash.com/photo-1521791055366-0d553872952f?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  contact:
+    'https://images.unsplash.com/photo-1521791055366-0d553872952f?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Gamification profile — trophy/achievement */
-  gamification: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  gamification:
+    'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparaison enseignes — supermarket checkout aisle */
-  comparaisonEnseignes: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparaisonEnseignes:
+    'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** App demo — person scanning barcode in tropical supermarket */
-  appDemo: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  appDemo:
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Vie chère poster — grocery / food economy */
-  videoPoster: 'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fm=webp&fit=crop&w=1200&q=80',
+  videoPoster:
+    'https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fm=webp&fit=crop&w=1200&q=80',
   // ── Innovation Lab ───────────────────────────────────────────────────────
   /** Innovation Lab — futuristic tech lab / AI concept */
-  innovationLab: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  innovationLab:
+    'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── Civic & Education ────────────────────────────────────────────────────
   /** Conférence prix — classroom / presentation */
-  conferencePrix: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  conferencePrix:
+    'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Lettre hebdo IA — newspaper / newsletter */
-  lettreHebdo: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  lettreHebdo:
+    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Lettre journalière IA — morning coffee & editorial / tropical sunrise briefing */
-  lettreJour: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  lettreJour:
+    'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comprendre prix — magnifying glass / price tag */
-  comprendrePrix: 'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comprendrePrix:
+    'https://images.unsplash.com/photo-1580519542036-c47de6196ba5?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── New modules (this session) ───────────────────────────────────────────
   /** Calculateur octroi de mer — cargo ship at port */
-  calculateurOctroi: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  calculateurOctroi:
+    'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Enquête Octroi de Mer — customs / cargo containers at port */
-  enqueteOctroiMer: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  enqueteOctroiMer:
+    'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Conférence Octroi de Mer — parliament / institutional building */
-  conferenceOctroiMer: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  conferenceOctroiMer:
+    'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Enquête Eau — water infrastructure / pipes / treatment plant DOM */
-  enqueteEau: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  enqueteEau:
+    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Conférence Eau — institutional meeting / water management conference */
-  conferenceEau: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  conferenceEau:
+    'https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Simulateur budget familial — food & agricultural produce budget */
-  simulateurBudget: 'https://images.unsplash.com/photo-1452195100486-9cc805987862?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  simulateurBudget:
+    'https://images.unsplash.com/photo-1452195100486-9cc805987862?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Alertes rupture de stock — empty supermarket shelf */
-  alertesRupture: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  alertesRupture:
+    'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Réclamation IA — person writing legal letter */
-  reclamationIA: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  reclamationIA:
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Rapport citoyen — data / charts on screen */
-  rapportCitoyen: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  rapportCitoyen:
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Planificateur repas — beautiful Caribbean/tropical food spread */
-  planificateurRepas: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  planificateurRepas:
+    'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** DLC anti-gaspi — refrigerator / food storage */
-  dlcAntigaspi: 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  dlcAntigaspi:
+    'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Analyse nutrition — healthy food / nutrition label */
-  analyseNutri: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  analyseNutri:
+    'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Analyse concurrence — business strategy meeting */
-  analyseConcurrence: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  analyseConcurrence:
+    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── Account & social ─────────────────────────────────────────────────────
   /** Mon Compte — profile / personal data */
-  monCompte: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  monCompte:
+    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Messagerie — chat / messaging */
-  messagerie: 'https://images.unsplash.com/photo-1611606063065-ee7946f0787a?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  messagerie:
+    'https://images.unsplash.com/photo-1611606063065-ee7946f0787a?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Groupes de parole — community discussion circle */
-  groupesParole: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  groupesParole:
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Suggestions — idea / light bulb */
-  suggestions: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  suggestions:
+    'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── Data & analysis ──────────────────────────────────────────────────────
   /** Roadmap — planning / calendar */
-  roadmap: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  roadmap:
+    'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Checklist Production — to-do list / clipboard */
-  checklistProduction: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  checklistProduction:
+    'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Versions — software update / code */
-  versions: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  versions:
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Methodologie — research / methodology */
-  methodologie: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  methodologie:
+    'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Données publiques — open data */
-  donneesPubliques: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  donneesPubliques:
+    'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Transparence / Politique de confidentialité */
-  transparence: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  transparence:
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Presse — press / journalism */
-  presse: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  presse:
+    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Gouvernance */
-  gouvernance: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  gouvernance:
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Dossier investisseurs */
-  dossierInvestisseurs: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  dossierInvestisseurs:
+    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Espace Pro */
-  espacePro: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  espacePro:
+    'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Devis IA */
-  devisIA: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  devisIA:
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Observatoire hub */
-  observatoire: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  observatoire:
+    'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Carte interactive — map view */
-  carte: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  carte:
+    'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Predictions — crystal ball / AI prediction */
-  predictions: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  predictions:
+    'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Badges / Gamification */
-  badges: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  badges:
+    'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Leaderboard */
-  leaderboard: 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  leaderboard:
+    'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── Remaining pages ──────────────────────────────────────────────────────
   /** Alertes — alert bell, notifications */
-  alertes: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  alertes:
+    'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Panier comparé / BasketComparison — Caribbean / DOM food market */
-  basketComparison: 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  basketComparison:
+    'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Modules civiques */
-  civicModules: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  civicModules:
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Contact collectivités */
-  contactCollectivites: 'https://images.unsplash.com/photo-1521791055366-0d553872952f?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  contactCollectivites:
+    'https://images.unsplash.com/photo-1521791055366-0d553872952f?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Devis tracking */
-  devisTracking: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  devisTracking:
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Inscription */
-  inscription: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  inscription:
+    'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Inscription Pro */
-  inscriptionPro: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  inscriptionPro:
+    'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Licence institution */
-  licenceInstitution: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  licenceInstitution:
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Mentions légales */
-  mentionsLegales: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  mentionsLegales:
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Mes demandes */
-  mesDemandes: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  mesDemandes:
+    'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Mes listes */
-  mesListes: 'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  mesListes:
+    'https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Audience en direct — podium territoires connectés */
-  audience: 'https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  audience:
+    'https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Statut plateforme — horloges territoires & déploiement */
-  statut: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  statut:
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Module audit */
-  moduleAudit: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  moduleAudit:
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Périmètre */
-  perimetre: 'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  perimetre:
+    'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Produit — food market / product scene */
-  produit: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  produit:
+    'https://images.unsplash.com/photo-1498049794561-7780e7231661?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Recherche hub */
-  rechercheHub: 'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  rechercheHub:
+    'https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Recherche produits */
-  rechercheProduits: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  rechercheProduits:
+    'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Actualités */
-  actualites: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  actualites:
+    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Paramètres */
-  settings: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  settings:
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** S'abonner */
-  subscribe: 'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  subscribe:
+    'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Territory hub */
-  territoryHub: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  territoryHub:
+    'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Upgrade */
-  upgradePage: 'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  upgradePage:
+    'https://images.unsplash.com/photo-1620714223084-8fcacc2523dc?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Budget réel mensuel */
-  budgetReel: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  budgetReel:
+    'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Budget vital — supermarket / grocery promotion */
-  budgetVital: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  budgetVital:
+    'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Dossier médias */
-  dossierMedia: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  dossierMedia:
+    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Évaluation cosmétique */
-  evaluationCosmetique: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  evaluationCosmetique:
+    'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Historique prix */
-  historiquePrix: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  historiquePrix:
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** IA Conseiller */
-  iaConseiller: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  iaConseiller:
+    'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Ti Panie — colourful fresh-produce market */
-  tiPanie: 'https://images.unsplash.com/photo-1540189549336-e6e99d931b8a?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  tiPanie:
+    'https://images.unsplash.com/photo-1540189549336-e6e99d931b8a?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Assistant IA */
-  assistantIA: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  assistantIA:
+    'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── Specialized comparators ──────────────────────────────────────────────
   /** Comparateur Vols — airplane taking off over Caribbean sky */
-  comparateurVols: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurVols:
+    'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Bateaux — ferry crossing between islands */
-  comparateurBateaux: 'https://images.unsplash.com/photo-1570710891163-6d3b5c47248b?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurBateaux:
+    'https://images.unsplash.com/photo-1570710891163-6d3b5c47248b?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Fret — shipping containers at port */
-  comparateurFret: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurFret:
+    'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Carburants — fuel station, pumps */
-  comparateurCarburants: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurCarburants:
+    'https://images.unsplash.com/photo-1545558014-8692077e9b5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Enquête Carburants — oil refinery at sunset (investigation dossier) */
-  enqueteCarburants: 'https://images.unsplash.com/photo-1526243741027-444d633d7365?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  enqueteCarburants:
+    'https://images.unsplash.com/photo-1526243741027-444d633d7365?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Conférence Carburants — petroleum industry / oil tanks aerial view */
-  conferenceCarburants: 'https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  conferenceCarburants:
+    'https://images.unsplash.com/photo-1516937941344-00b4e0337589?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Assurances — insurance shield / contract */
-  comparateurAssurances: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurAssurances:
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Formations — classroom / training session */
-  comparateurFormations: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurFormations:
+    'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Services — telecom / wifi / internet */
-  comparateurServices: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurServices:
+    'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Location Voiture — rental car keys */
-  comparateurLocationVoiture: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurLocationVoiture:
+    'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Comparateur Matériaux BTP — construction site */
-  comparateurMateriauxBTP: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  comparateurMateriauxBTP:
+    'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fm=webp&fit=crop&w=1600&q=80',
   // ── Nouvelles pages V3 ───────────────────────────────────────────────────
   /** Guide intelligent des territoires — tropical map / DOM-COM islands */
-  guideTerritoire: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  guideTerritoire:
+    'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Scanner AR de rayon — augmented reality / camera overlay */
-  arScanner: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  arScanner:
+    'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Chaîne d'approvisionnement — cargo ship at sea */
-  chaineFourniture: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  chaineFourniture:
+    'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Commerce social — friends sharing phone / social shopping */
-  commerceSocial: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  commerceSocial:
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Analyse des factures — person checking receipts / bills */
-  analyseFactures: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  analyseFactures:
+    'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Détection de fraude — lock / security / shield */
-  detectionFraude: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  detectionFraude:
+    'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Évaluation des magasins — supermarket interior / customer service */
-  evaluationMagasins: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  evaluationMagasins:
+    'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Portail développeurs — code / terminal / API */
-  portailDeveloppeurs: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  portailDeveloppeurs:
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Marketplace enseignes — retail store / marketplace hall */
-  marketplacePortal: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  marketplacePortal:
+    'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Petits commerces — small local shop / boutique in Caribbean */
-  petitsCommerces: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  petitsCommerces:
+    'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Producteurs locaux — tropical farmers market / fresh local produce */
-  producteursLocaux: 'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  producteursLocaux:
+    'https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Marchés locaux — outdoor Caribbean market / colorful stalls */
-  marchesLocaux: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  marchesLocaux:
+    'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Chocs de prix — price spike / alarm / red alert */
-  chocsPrix: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  chocsPrix:
+    'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Newsletter hub — mailbox / newspaper / subscription */
-  newsletter: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  newsletter:
+    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Monitoring IA — server room / AI dashboard / futuristic tech */
-  monitoringIA: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  monitoringIA:
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fm=webp&fit=crop&w=1600&q=80',
   /** Organigramme GBH — corporate structure / business hierarchy (office building) */
-  organigrammeGBH: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fm=webp&fit=crop&w=1600&q=80',
+  organigrammeGBH:
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fm=webp&fit=crop&w=1600&q=80',
 };
 
 /**
@@ -419,7 +537,7 @@ export const PRODUCT_IMAGES: Record<string, { url: string; alt: string }> = {
   },
   'Eau minérale 1.5L': {
     url: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fm=webp&fit=crop&w=300&q=80',
-    alt: 'Bouteille d\'eau minérale 1,5 litre',
+    alt: "Bouteille d'eau minérale 1,5 litre",
   },
   'Pâtes spaghetti 500g': {
     url: 'https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fm=webp&fit=crop&w=300&q=80',
@@ -485,48 +603,86 @@ export function getProductImage(productName: string): { url: string; alt: string
  * All Unsplash photos, free to use.
  */
 export const RECIPE_IMAGES: Record<string, string> = {
-  'colombo-poulet':  'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'acras-morue':     'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'riz-haricots':    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'poisson-grillé':  'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'salade-lentilles':'https://images.unsplash.com/photo-1512058454905-6b841e7ad132?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'gratin-légumes':  'https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'soupe-legumes':   'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'blaff-poisson':   'https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'omelette-légumes':'https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'pain-beurre':     'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fm=webp&fit=crop&w=400&q=80',
-  'fruits-yaourt':   'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'colombo-poulet':
+    'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'acras-morue':
+    'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'riz-haricots':
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'poisson-grillé':
+    'https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'salade-lentilles':
+    'https://images.unsplash.com/photo-1512058454905-6b841e7ad132?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'gratin-légumes':
+    'https://images.unsplash.com/photo-1574484284002-952d92456975?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'soupe-legumes':
+    'https://images.unsplash.com/photo-1476718406336-bb5a9690ee2a?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'blaff-poisson':
+    'https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'omelette-légumes':
+    'https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'pain-beurre':
+    'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fm=webp&fit=crop&w=400&q=80',
+  'fruits-yaourt':
+    'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fm=webp&fit=crop&w=400&q=80',
 };
 
 /**
  * Innovation card concept images for InnovationLab.
  */
 export const INNOVATION_IMAGES: Record<string, string> = {
-  chatbot:           'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=300&q=80',
-  prediction:        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'ocr-ticket':      'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fm=webp&fit=crop&w=300&q=80',
-  heatmap:           'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'api-ouverte':     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=300&q=80',
-  extension:         'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'rapport-pdf':     'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'programme-fidelite': 'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'podcast-ia':      'https://images.unsplash.com/photo-1478737270239-2591ef84b836?auto=format&fm=webp&fit=crop&w=300&q=80',
-  gamification:      'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fm=webp&fit=crop&w=300&q=80',
-  medicaments:       'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fm=webp&fit=crop&w=300&q=80',
-  carburant:         'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'creole-ui':       'https://images.unsplash.com/photo-1486551937199-baf462c8af55?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'partenariats-opmr': 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'devis-ia':        'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'analyse-ticket':  'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'nutrition-score': 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'simulateur-budget': 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'alertes-rupture': 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'ia-plainte':      'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'dlc-antigaspi':   'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'conference-prix': 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'planificateur-repas': 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'analyse-nutri':   'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'analyse-concurrence': 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'rapport-citoyen': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=300&q=80',
-  'lettre-hebdo':    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=300&q=80',
+  chatbot:
+    'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fm=webp&fit=crop&w=300&q=80',
+  prediction:
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'ocr-ticket':
+    'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fm=webp&fit=crop&w=300&q=80',
+  heatmap:
+    'https://images.unsplash.com/photo-1526628953301-3cd8e16b67b1?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'api-ouverte':
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fm=webp&fit=crop&w=300&q=80',
+  extension:
+    'https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'rapport-pdf':
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'programme-fidelite':
+    'https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'podcast-ia':
+    'https://images.unsplash.com/photo-1478737270239-2591ef84b836?auto=format&fm=webp&fit=crop&w=300&q=80',
+  gamification:
+    'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fm=webp&fit=crop&w=300&q=80',
+  medicaments:
+    'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fm=webp&fit=crop&w=300&q=80',
+  carburant:
+    'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'creole-ui':
+    'https://images.unsplash.com/photo-1486551937199-baf462c8af55?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'partenariats-opmr':
+    'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'devis-ia':
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'analyse-ticket':
+    'https://images.unsplash.com/photo-1516594915697-87eb3b1c14ea?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'nutrition-score':
+    'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'simulateur-budget':
+    'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'alertes-rupture':
+    'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'ia-plainte':
+    'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'dlc-antigaspi':
+    'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'conference-prix':
+    'https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'planificateur-repas':
+    'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'analyse-nutri':
+    'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'analyse-concurrence':
+    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'rapport-citoyen':
+    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fm=webp&fit=crop&w=300&q=80',
+  'lettre-hebdo':
+    'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fm=webp&fit=crop&w=300&q=80',
 };

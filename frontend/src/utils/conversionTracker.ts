@@ -22,7 +22,7 @@ export interface ConversionEvent {
   retailer: string;
   productName: string;
   variant: 'A' | 'B' | 'C';
-  clickedAt: string;   // ISO date
+  clickedAt: string; // ISO date
   territory?: string;
   price?: number;
 }
@@ -43,9 +43,7 @@ function readEvents(): ConversionEvent[] {
     if (!raw) return [];
     const parsed = JSON.parse(raw) as ConversionEvent[];
     const cutoff = new Date(Date.now() - TTL_MS).toISOString();
-    return Array.isArray(parsed)
-      ? parsed.filter((e) => e.clickedAt >= cutoff)
-      : [];
+    return Array.isArray(parsed) ? parsed.filter((e) => e.clickedAt >= cutoff) : [];
   } catch {
     return [];
   }
@@ -122,8 +120,7 @@ export function getCROStats(): CROStats {
     totalViews = 0;
   }
 
-  const conversionRate =
-    totalViews > 0 ? events.length / totalViews : 0;
+  const conversionRate = totalViews > 0 ? events.length / totalViews : 0;
 
   return {
     totalClicks: events.length,
@@ -153,10 +150,7 @@ function readBehavior(): UserBehaviorMetric[] {
 
 function writeBehavior(entries: UserBehaviorMetric[]): void {
   try {
-    safeLocalStorage.setItem(
-      KEY_BEHAVIOR,
-      JSON.stringify(entries.slice(-MAX_BEHAVIOR_ENTRIES)),
-    );
+    safeLocalStorage.setItem(KEY_BEHAVIOR, JSON.stringify(entries.slice(-MAX_BEHAVIOR_ENTRIES)));
   } catch {
     // silent
   }
@@ -164,7 +158,7 @@ function writeBehavior(entries: UserBehaviorMetric[]): void {
 
 function upsertBehavior(
   url: string,
-  updater: (entry: UserBehaviorMetric) => UserBehaviorMetric,
+  updater: (entry: UserBehaviorMetric) => UserBehaviorMetric
 ): void {
   const entries = readBehavior();
   const idx = entries.findIndex((e) => e.url === url);
@@ -232,4 +226,3 @@ export function trackCompareInteraction(url: string, _action: string): void {
 export function getStoredBehaviorMetrics(): UserBehaviorMetric[] {
   return readBehavior();
 }
-

@@ -23,18 +23,78 @@ export interface TerritoryMeta {
 }
 
 export const TERRITORIES: TerritoryMeta[] = [
-  { code: 'gp', label: 'Guadeloupe', labelFull: 'Guadeloupe', flag: '🏝️', dataFileStem: 'guadeloupe' },
-  { code: 'mq', label: 'Martinique', labelFull: 'Martinique', flag: '🏝️', dataFileStem: 'martinique' },
-  { code: 'gf', label: 'Guyane', labelFull: 'Guyane française', flag: '🌴', dataFileStem: 'guyane' },
+  {
+    code: 'gp',
+    label: 'Guadeloupe',
+    labelFull: 'Guadeloupe',
+    flag: '🏝️',
+    dataFileStem: 'guadeloupe',
+  },
+  {
+    code: 'mq',
+    label: 'Martinique',
+    labelFull: 'Martinique',
+    flag: '🏝️',
+    dataFileStem: 'martinique',
+  },
+  {
+    code: 'gf',
+    label: 'Guyane',
+    labelFull: 'Guyane française',
+    flag: '🌴',
+    dataFileStem: 'guyane',
+  },
   { code: 're', label: 'Réunion', labelFull: 'La Réunion', flag: '🌋', dataFileStem: 'la_réunion' },
   { code: 'yt', label: 'Mayotte', labelFull: 'Mayotte', flag: '🏖️', dataFileStem: 'mayotte' },
-  { code: 'pm', label: 'St-Pierre-et-Miquelon', labelFull: 'Saint-Pierre-et-Miquelon', flag: '🐟', dataFileStem: 'saint_pierre_et_miquelon' },
-  { code: 'bl', label: 'St-Barthélemy', labelFull: 'Saint-Barthélemy', flag: '⛵', dataFileStem: 'saint_barthelemy' },
-  { code: 'mf', label: 'St-Martin', labelFull: 'Saint-Martin', flag: '🌺', dataFileStem: 'saint_martin' },
-  { code: 'wf', label: 'Wallis-et-Futuna', labelFull: 'Wallis-et-Futuna', flag: '🌊', dataFileStem: 'wallis_et_futuna' },
-  { code: 'pf', label: 'Polynésie française', labelFull: 'Polynésie française', flag: '🌸', dataFileStem: 'polynesie_francaise' },
-  { code: 'nc', label: 'Nouvelle-Calédonie', labelFull: 'Nouvelle-Calédonie', flag: '🦎', dataFileStem: 'nouvelle_caledonie' },
-  { code: 'fr', label: 'France métropolitaine', labelFull: 'France métropolitaine (Hexagone)', flag: '🇫🇷', dataFileStem: 'hexagone' },
+  {
+    code: 'pm',
+    label: 'St-Pierre-et-Miquelon',
+    labelFull: 'Saint-Pierre-et-Miquelon',
+    flag: '🐟',
+    dataFileStem: 'saint_pierre_et_miquelon',
+  },
+  {
+    code: 'bl',
+    label: 'St-Barthélemy',
+    labelFull: 'Saint-Barthélemy',
+    flag: '⛵',
+    dataFileStem: 'saint_barthelemy',
+  },
+  {
+    code: 'mf',
+    label: 'St-Martin',
+    labelFull: 'Saint-Martin',
+    flag: '🌺',
+    dataFileStem: 'saint_martin',
+  },
+  {
+    code: 'wf',
+    label: 'Wallis-et-Futuna',
+    labelFull: 'Wallis-et-Futuna',
+    flag: '🌊',
+    dataFileStem: 'wallis_et_futuna',
+  },
+  {
+    code: 'pf',
+    label: 'Polynésie française',
+    labelFull: 'Polynésie française',
+    flag: '🌸',
+    dataFileStem: 'polynesie_francaise',
+  },
+  {
+    code: 'nc',
+    label: 'Nouvelle-Calédonie',
+    labelFull: 'Nouvelle-Calédonie',
+    flag: '🦎',
+    dataFileStem: 'nouvelle_caledonie',
+  },
+  {
+    code: 'fr',
+    label: 'France métropolitaine',
+    labelFull: 'France métropolitaine (Hexagone)',
+    flag: '🇫🇷',
+    dataFileStem: 'hexagone',
+  },
 ];
 
 const BY_CODE = new Map<TerritoryCode, TerritoryMeta>(TERRITORIES.map((t) => [t.code, t]));
@@ -53,7 +113,9 @@ export function getTerritoryFlag(code: TerritoryCode): string {
 
 /** Convert a snapshot territoire string (e.g. "Guadeloupe") to TerritoryCode */
 export function snapshotTerritoryToCode(territoire: string): TerritoryCode {
-  const t = territoire.trim().toLowerCase()
+  const t = territoire
+    .trim()
+    .toLowerCase()
     .normalize('NFD')
     .replace(/\p{Diacritic}/gu, '')
     .replace(/[-_]/g, ' ')
@@ -61,9 +123,15 @@ export function snapshotTerritoryToCode(territoire: string): TerritoryCode {
 
   const match = TERRITORIES.find(
     (meta) =>
-      meta.label.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') === t ||
-      meta.labelFull.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '') === t ||
-      meta.dataFileStem.replace(/_/g, ' ') === t,
+      meta.label
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '') === t ||
+      meta.labelFull
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/\p{Diacritic}/gu, '') === t ||
+      meta.dataFileStem.replace(/_/g, ' ') === t
   );
   if (match) return match.code;
   return normalizeTerritoryCode(territoire);
@@ -95,29 +163,125 @@ export interface CategoryMeta {
 const CATEGORY_MAP: CategoryMeta[] = [
   // Alimentaire
   { label: 'Épicerie', group: 'alimentaire', groupLabel: 'Alimentaire', isFood: true, icon: '🛒' },
-  { label: 'Produits laitiers', group: 'alimentaire', groupLabel: 'Alimentaire', isFood: true, icon: '🥛' },
-  { label: 'Fruits et légumes', group: 'alimentaire', groupLabel: 'Alimentaire', isFood: true, icon: '🥦' },
-  { label: 'Boucherie / Charcuterie', group: 'alimentaire', groupLabel: 'Alimentaire', isFood: true, icon: '🥩' },
-  { label: 'Poissonnerie', group: 'alimentaire', groupLabel: 'Alimentaire', isFood: true, icon: '🐟' },
-  { label: 'Boulangerie / Pâtisserie', group: 'alimentaire', groupLabel: 'Alimentaire', isFood: true, icon: '🥖' },
+  {
+    label: 'Produits laitiers',
+    group: 'alimentaire',
+    groupLabel: 'Alimentaire',
+    isFood: true,
+    icon: '🥛',
+  },
+  {
+    label: 'Fruits et légumes',
+    group: 'alimentaire',
+    groupLabel: 'Alimentaire',
+    isFood: true,
+    icon: '🥦',
+  },
+  {
+    label: 'Boucherie / Charcuterie',
+    group: 'alimentaire',
+    groupLabel: 'Alimentaire',
+    isFood: true,
+    icon: '🥩',
+  },
+  {
+    label: 'Poissonnerie',
+    group: 'alimentaire',
+    groupLabel: 'Alimentaire',
+    isFood: true,
+    icon: '🐟',
+  },
+  {
+    label: 'Boulangerie / Pâtisserie',
+    group: 'alimentaire',
+    groupLabel: 'Alimentaire',
+    isFood: true,
+    icon: '🥖',
+  },
   { label: 'Boissons', group: 'alimentaire', groupLabel: 'Alimentaire', isFood: true, icon: '🧃' },
   { label: 'Surgelés', group: 'alimentaire', groupLabel: 'Alimentaire', isFood: true, icon: '🧊' },
   // Hygiène / Beauté
-  { label: 'Hygiène', group: 'hygiene_beaute', groupLabel: 'Hygiène & Beauté', isFood: false, icon: '🧴' },
-  { label: 'Cosmétiques', group: 'hygiene_beaute', groupLabel: 'Hygiène & Beauté', isFood: false, icon: '💄' },
-  { label: 'Soins personnels', group: 'hygiene_beaute', groupLabel: 'Hygiène & Beauté', isFood: false, icon: '🛁' },
+  {
+    label: 'Hygiène',
+    group: 'hygiene_beaute',
+    groupLabel: 'Hygiène & Beauté',
+    isFood: false,
+    icon: '🧴',
+  },
+  {
+    label: 'Cosmétiques',
+    group: 'hygiene_beaute',
+    groupLabel: 'Hygiène & Beauté',
+    isFood: false,
+    icon: '💄',
+  },
+  {
+    label: 'Soins personnels',
+    group: 'hygiene_beaute',
+    groupLabel: 'Hygiène & Beauté',
+    isFood: false,
+    icon: '🛁',
+  },
   // Entretien
-  { label: 'Entretien / Nettoyage', group: 'entretien', groupLabel: 'Entretien maison', isFood: false, icon: '🧹' },
-  { label: 'Lessive', group: 'entretien', groupLabel: 'Entretien maison', isFood: false, icon: '👕' },
+  {
+    label: 'Entretien / Nettoyage',
+    group: 'entretien',
+    groupLabel: 'Entretien maison',
+    isFood: false,
+    icon: '🧹',
+  },
+  {
+    label: 'Lessive',
+    group: 'entretien',
+    groupLabel: 'Entretien maison',
+    isFood: false,
+    icon: '👕',
+  },
   // Bricolage
-  { label: 'Bricolage', group: 'bricolage', groupLabel: 'Bricolage & jardinage', isFood: false, icon: '🔧' },
-  { label: 'Jardinage', group: 'bricolage', groupLabel: 'Bricolage & jardinage', isFood: false, icon: '🌱' },
+  {
+    label: 'Bricolage',
+    group: 'bricolage',
+    groupLabel: 'Bricolage & jardinage',
+    isFood: false,
+    icon: '🔧',
+  },
+  {
+    label: 'Jardinage',
+    group: 'bricolage',
+    groupLabel: 'Bricolage & jardinage',
+    isFood: false,
+    icon: '🌱',
+  },
   // Électronique
-  { label: 'Électronique', group: 'electronique', groupLabel: 'Électronique', isFood: false, icon: '📱' },
-  { label: 'Informatique', group: 'electronique', groupLabel: 'Électronique', isFood: false, icon: '💻' },
+  {
+    label: 'Électronique',
+    group: 'electronique',
+    groupLabel: 'Électronique',
+    isFood: false,
+    icon: '📱',
+  },
+  {
+    label: 'Informatique',
+    group: 'electronique',
+    groupLabel: 'Électronique',
+    isFood: false,
+    icon: '💻',
+  },
   // Vêtements
-  { label: 'Vêtements', group: 'vetements', groupLabel: 'Vêtements & accessoires', isFood: false, icon: '👗' },
-  { label: 'Chaussures', group: 'vetements', groupLabel: 'Vêtements & accessoires', isFood: false, icon: '👟' },
+  {
+    label: 'Vêtements',
+    group: 'vetements',
+    groupLabel: 'Vêtements & accessoires',
+    isFood: false,
+    icon: '👗',
+  },
+  {
+    label: 'Chaussures',
+    group: 'vetements',
+    groupLabel: 'Vêtements & accessoires',
+    isFood: false,
+    icon: '👟',
+  },
   // Santé
   { label: 'Pharmacie', group: 'sante', groupLabel: 'Santé', isFood: false, icon: '💊' },
   { label: 'Parapharmacie', group: 'sante', groupLabel: 'Santé', isFood: false, icon: '🩺' },
@@ -129,7 +293,7 @@ const CATEGORY_MAP: CategoryMeta[] = [
 ];
 
 const CATEGORY_INDEX = new Map<string, CategoryMeta>(
-  CATEGORY_MAP.map((c) => [c.label.toLowerCase(), c]),
+  CATEGORY_MAP.map((c) => [c.label.toLowerCase(), c])
 );
 
 export function getCategoryMeta(label: string): CategoryMeta | undefined {
@@ -170,9 +334,9 @@ const ENSEIGNE_ALIASES: Record<string, string> = {
   'hyper u': 'Super U',
   'super u': 'Super U',
   'u express': 'Super U',
-  'match': 'Intermarché',
-  'intermarche': 'Intermarché',
-  'leclerc': 'E.Leclerc',
+  match: 'Intermarché',
+  intermarche: 'Intermarché',
+  leclerc: 'E.Leclerc',
   'e.leclerc': 'E.Leclerc',
   'auchan supermarche': 'Auchan',
   'simply market': 'Auchan',

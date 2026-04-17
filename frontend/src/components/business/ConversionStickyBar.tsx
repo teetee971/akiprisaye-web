@@ -11,14 +11,14 @@ import { getVariantForPage, trackConversionEvent } from '../../utils/conversionT
 // ── Props ─────────────────────────────────────────────────────────────────────
 
 interface ConversionStickyBarProps {
-  bestPrice:    number | null;
-  savings:      number | null;
-  retailer:     string | null;
-  retailerUrl:  string | null;
-  productName:  string;
-  territory:    string;
-  barcode?:     string;
-  onCTAClick?:  () => void;
+  bestPrice: number | null;
+  savings: number | null;
+  retailer: string | null;
+  retailerUrl: string | null;
+  productName: string;
+  territory: string;
+  barcode?: string;
+  onCTAClick?: () => void;
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -42,8 +42,8 @@ export default function ConversionStickyBar({
     variant === 'B' && savings != null && savings > 0.01
       ? `ÉCONOMISEZ ${formatEur(savings)} →`
       : variant === 'C'
-      ? 'ACHETER AU MEILLEUR PRIX →'
-      : "VOIR L'OFFRE →";
+        ? 'ACHETER AU MEILLEUR PRIX →'
+        : "VOIR L'OFFRE →";
 
   const handleClick = () => {
     trackConversionEvent({
@@ -66,9 +66,7 @@ export default function ConversionStickyBar({
       {/* Blur backdrop */}
       <div className="border-t border-white/10 bg-slate-950/95 px-4 py-3 backdrop-blur-md">
         {/* Sub-label */}
-        <p className="mb-1.5 text-center text-[10px] text-zinc-600">
-          Prix mis à jour aujourd'hui
-        </p>
+        <p className="mb-1.5 text-center text-[10px] text-zinc-600">Prix mis à jour aujourd'hui</p>
 
         <div className="flex items-center justify-between gap-3">
           {/* Left: price info */}
@@ -79,9 +77,7 @@ export default function ConversionStickyBar({
                 {formatEur(bestPrice)}
               </span>
               {retailer && (
-                <span className="truncate text-[11px] text-zinc-400">
-                  chez {retailer}
-                </span>
+                <span className="truncate text-[11px] text-zinc-400">chez {retailer}</span>
               )}
             </div>
             {savings != null && savings > 0.01 && (

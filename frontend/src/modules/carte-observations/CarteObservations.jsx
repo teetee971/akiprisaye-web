@@ -92,11 +92,13 @@ export default function CarteObservations({ territory = null, productFilter = nu
   // Get unique values for filters
   const uniqueTerritories = [...new Set(observations.map((o) => o.territory))];
   const uniqueProducts = [...new Set(observations.map((o) => o.product))];
-  const uniqueCities = [...new Set(
-    observations
-      .filter((o) => filters.territory === 'all' || o.territory === filters.territory)
-      .map((o) => o.city)
-  )];
+  const uniqueCities = [
+    ...new Set(
+      observations
+        .filter((o) => filters.territory === 'all' || o.territory === filters.territory)
+        .map((o) => o.city)
+    ),
+  ];
 
   if (loading) {
     return (
@@ -119,24 +121,18 @@ export default function CarteObservations({ territory = null, productFilter = nu
     <div className="space-y-6">
       {/* Header */}
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          🗺️ Carte des Observations de Prix
-        </h2>
-        <p className="text-sm text-gray-600">
-          Visualisation des observations citoyennes validées
-        </p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">🗺️ Carte des Observations de Prix</h2>
+        <p className="text-sm text-gray-600">Visualisation des observations citoyennes validées</p>
       </div>
 
       {/* Legal Protection Text */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-blue-900 font-medium mb-2">
-          ℹ️ Information importante
-        </p>
+        <p className="text-sm text-blue-900 font-medium mb-2">ℹ️ Information importante</p>
         <p className="text-sm text-blue-800">
-          Les observations affichées sont issues de <strong>contributions citoyennes validées</strong>.
-          Elles visent à informer sur les niveaux de prix constatés à un instant donné,
-          sans qualifier ni juger les pratiques commerciales.
-          Ces données sont fournies à titre informatif uniquement.
+          Les observations affichées sont issues de{' '}
+          <strong>contributions citoyennes validées</strong>. Elles visent à informer sur les
+          niveaux de prix constatés à un instant donné, sans qualifier ni juger les pratiques
+          commerciales. Ces données sont fournies à titre informatif uniquement.
         </p>
       </div>
 
@@ -189,13 +185,15 @@ export default function CarteObservations({ territory = null, productFilter = nu
             <div className="text-center p-8">
               <p className="text-gray-500 mb-2">Aucune observation avec ces filtres</p>
               <button
-                onClick={() => setFilters({
-                  territory: 'all',
-                  product: 'all',
-                  city: 'all',
-                  startDate: null,
-                  endDate: null,
-                })}
+                onClick={() =>
+                  setFilters({
+                    territory: 'all',
+                    product: 'all',
+                    city: 'all',
+                    startDate: null,
+                    endDate: null,
+                  })
+                }
                 className="text-sm text-blue-600 hover:text-blue-700 font-medium"
               >
                 Réinitialiser les filtres
@@ -208,9 +206,10 @@ export default function CarteObservations({ territory = null, productFilter = nu
       {/* Footer Disclaimer */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
         <p className="text-xs text-gray-700">
-          <strong>📌 Lecture seule :</strong> Cette carte présente uniquement des observations validées.
-          Pour contribuer, utilisez le formulaire de signalement accessible depuis le menu "Contribuer".
-          Les données sont vérifiées avant publication et ne comportent aucun nom de contributeur.
+          <strong>📌 Lecture seule :</strong> Cette carte présente uniquement des observations
+          validées. Pour contribuer, utilisez le formulaire de signalement accessible depuis le menu
+          "Contribuer". Les données sont vérifiées avant publication et ne comportent aucun nom de
+          contributeur.
         </p>
       </div>
     </div>

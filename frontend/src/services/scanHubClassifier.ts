@@ -48,7 +48,15 @@ const TYPE_KEYWORDS: Record<ScanHubType, RegExp[]> = {
     /remise|fidélité/i,
   ],
   product: [/marque/i, /poids\s*net/i, /contient/i, /origine/i, /lot\s*n?°?/i, /dlc|dluo/i],
-  shelf_label: [/€\/kg/i, /€\/l/i, /prix\s*(au\s*)?(kg|litre|unit[ée])/i, /rayon/i, /promo/i, /lot\s*de/i, /gondole/i],
+  shelf_label: [
+    /€\/kg/i,
+    /€\/l/i,
+    /prix\s*(au\s*)?(kg|litre|unit[ée])/i,
+    /rayon/i,
+    /promo/i,
+    /lot\s*de/i,
+    /gondole/i,
+  ],
   nutrition: [
     /valeurs?\s*nutritionnelles?/i,
     /nutrition\s*facts?/i,
@@ -71,8 +79,22 @@ const TYPE_KEYWORDS: Record<ScanHubType, RegExp[]> = {
     /colorants?/i,
   ],
   barcode: [/\b\d{8,14}\b/],
-  legal: [/mention\s*l[ée]gale/i, /service\s*consommateurs/i, /ne\s*pas\s*jeter/i, /recyclage/i, /point\s*vert/i],
-  promotion: [/promo/i, /offre\s*(sp[ée]ciale|du\s*moment)?/i, /remise/i, /r[ée]duction/i, /2\+1/i, /gratuit/i, /économisez/i],
+  legal: [
+    /mention\s*l[ée]gale/i,
+    /service\s*consommateurs/i,
+    /ne\s*pas\s*jeter/i,
+    /recyclage/i,
+    /point\s*vert/i,
+  ],
+  promotion: [
+    /promo/i,
+    /offre\s*(sp[ée]ciale|du\s*moment)?/i,
+    /remise/i,
+    /r[ée]duction/i,
+    /2\+1/i,
+    /gratuit/i,
+    /économisez/i,
+  ],
   unknown: [],
 };
 
@@ -192,10 +214,10 @@ const DATE_REGEX = /\b(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})\b/;
 const TIME_REGEX = /\b(\d{1,2})[h:](\d{2})(?::(\d{2}))?\b/i;
 const TOTAL_REGEX =
   /(?:total\s*(?:ttc)?|montant\s*(?:ttc|à\s*payer|dû)?|à\s*payer)\s*[:-]?\s*(\d{1,4}[.,]\d{2})/i;
-const TVA_LINE_REGEX =
-  /t\.?v\.?a\.?\s*(?:\d{1,2}[.,]\d*\s*%\s*)?[:-]?\s*(\d{1,4}[.,]\d{2})/i;
+const TVA_LINE_REGEX = /t\.?v\.?a\.?\s*(?:\d{1,2}[.,]\d*\s*%\s*)?[:-]?\s*(\d{1,4}[.,]\d{2})/i;
 const TVA_RATE_REGEX = /(\d{1,2}[.,]\d*)\s*%/;
-const PAYMENT_REGEX = /\b(cb|carte\s*(bancaire|bleue)?|esp[eè]ces?|ch[eè]que|sans\s*contact|paylib|apple\s*pay|google\s*pay)\b/i;
+const PAYMENT_REGEX =
+  /\b(cb|carte\s*(bancaire|bleue)?|esp[eè]ces?|ch[eè]que|sans\s*contact|paylib|apple\s*pay|google\s*pay)\b/i;
 const ITEM_LINE_REGEX = /^(.{3,40}?)\s{2,}(\d{1,4}[.,]\d{2})\s*€?\s*$/;
 
 /**
@@ -205,7 +227,10 @@ const ITEM_LINE_REGEX = /^(.{3,40}?)\s{2,}(\d{1,4}[.,]\d{2})\s*€?\s*$/;
  * and a price checksum to verify OCR accuracy.
  */
 export function extractReceiptData(text: string): ReceiptData {
-  const lines = text.split('\n').map((l) => l.trim()).filter((l) => l.length > 0);
+  const lines = text
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
 
   // Store name: first non-trivial line at the top
   let storeName: string | undefined;

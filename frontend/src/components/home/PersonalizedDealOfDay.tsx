@@ -1,4 +1,3 @@
- 
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Clock, TrendingDown, ShoppingBag } from 'lucide-react';
 import { safeLocalStorage } from '../../utils/safeLocalStorage';
@@ -16,11 +15,11 @@ interface DealOfDay {
 
 /**
  * Component ⑳: Personalized "Deal of the Day"
- * 
+ *
  * 1 ultra-targeted recommendation per day based on user habits
  * Notification style with urgency timer
  * Analyzes purchase history + current best prices
- * 
+ *
  * Psychological effect: Urgency + relevance = immediate action
  * Retention impact: Very High (daily habit formation)
  */
@@ -33,11 +32,11 @@ export const PersonalizedDealOfDay: React.FC = () => {
     const generateDealOfDay = (): DealOfDay | null => {
       // Get user's shopping history
       const historyData = safeLocalStorage.getItem('shoppingHistory:v1');
-      
+
       // Check if deal was already shown today
       const lastDealDate = safeLocalStorage.getItem('dealOfDay:lastShown');
       const today = new Date().toDateString();
-      
+
       if (lastDealDate === today) {
         // Already shown today, retrieve stored deal
         const storedDeal = safeLocalStorage.getJSON<DealOfDay | null>('dealOfDay:current', null);
@@ -54,7 +53,7 @@ export const PersonalizedDealOfDay: React.FC = () => {
           discount: 24,
           storeName: 'Super U Jarry',
           expiresInHours: 6,
-          reasonPersonalized: 'Produit fréquemment acheté'
+          reasonPersonalized: 'Produit fréquemment acheté',
         },
         {
           productName: 'Pain de mie complet',
@@ -64,18 +63,18 @@ export const PersonalizedDealOfDay: React.FC = () => {
           discount: 34,
           storeName: 'Leader Price',
           expiresInHours: 4,
-          reasonPersonalized: 'Dans vos derniers scans'
+          reasonPersonalized: 'Dans vos derniers scans',
         },
         {
-          productName: 'Jus d\'orange 1L',
+          productName: "Jus d'orange 1L",
           productCategory: 'Boissons',
           currentPrice: 2.45,
-          normalPrice: 3.20,
+          normalPrice: 3.2,
           discount: 23,
           storeName: 'Carrefour Destreland',
           expiresInHours: 8,
-          reasonPersonalized: 'Produit préféré'
-        }
+          reasonPersonalized: 'Produit préféré',
+        },
       ];
 
       // Select random deal (in production, would use ML/algorithm)
@@ -116,21 +115,15 @@ export const PersonalizedDealOfDay: React.FC = () => {
             {deal.reasonPersonalized}
           </div>
         </div>
-        <h3 className="text-xl font-bold text-white">
-          🎁 {deal.productName}
-        </h3>
+        <h3 className="text-xl font-bold text-white">🎁 {deal.productName}</h3>
         <p className="text-sm text-gray-400">{deal.productCategory}</p>
       </div>
 
       {/* Price & Discount */}
       <div className="space-y-3 mb-4">
         <div className="flex items-baseline gap-3">
-          <div className="text-4xl font-bold text-green-400">
-            {deal.currentPrice.toFixed(2)} €
-          </div>
-          <div className="text-lg text-gray-400 line-through">
-            {deal.normalPrice.toFixed(2)} €
-          </div>
+          <div className="text-4xl font-bold text-green-400">{deal.currentPrice.toFixed(2)} €</div>
+          <div className="text-lg text-gray-400 line-through">{deal.normalPrice.toFixed(2)} €</div>
           <div className="px-2 py-1 rounded-full bg-red-500/20 text-red-400 text-sm font-semibold">
             -{deal.discount}%
           </div>
@@ -138,14 +131,14 @@ export const PersonalizedDealOfDay: React.FC = () => {
 
         <div className="flex items-center gap-2 text-green-400">
           <TrendingDown className="w-5 h-5" />
-          <span className="font-semibold">
-            Économisez {savings.toFixed(2)} € aujourd'hui !
-          </span>
+          <span className="font-semibold">Économisez {savings.toFixed(2)} € aujourd'hui !</span>
         </div>
 
         <div className="flex items-center gap-2 text-gray-300">
           <ShoppingBag className="w-4 h-4" />
-          <span className="text-sm">Disponible chez : <strong>{deal.storeName}</strong></span>
+          <span className="text-sm">
+            Disponible chez : <strong>{deal.storeName}</strong>
+          </span>
         </div>
       </div>
 

@@ -67,17 +67,17 @@ CARTE BANCAIRE               106,51 €
  * text only contains 23 of the 32 items from the original receipt.
  */
 export const EXPECTED_PARSED = {
-  storeName:     'SUPER U',
-  storeAddress:  '1 RUE DE BAZIN 97131 PETIT CANAL',
-  date:          '07/03/2026',
-  time:          '10:21',
-  receiptNumber: '38421200',   // RE_RECEIPT_NUM captures digits only
-  total:         106.51,
-  tvaAmount:     7.54,
-  tvaRate:       8.5,
+  storeName: 'SUPER U',
+  storeAddress: '1 RUE DE BAZIN 97131 PETIT CANAL',
+  date: '07/03/2026',
+  time: '10:21',
+  receiptNumber: '38421200', // RE_RECEIPT_NUM captures digits only
+  total: 106.51,
+  tvaAmount: 7.54,
+  tvaRate: 8.5,
   paymentMethod: 'CARTE BANCAIRE',
   itemsMinCount: 20,
-  checksumMatches: false,      // truncated receipt → sum < 106.51
+  checksumMatches: false, // truncated receipt → sum < 106.51
 };
 
 /**
@@ -90,40 +90,40 @@ export const EXPECTED_ITEMS: Array<{
   qty?: number;
   unitPrice?: number;
 }> = [
-  { nameFragment: 'CAFE',          price: 4.14 },
-  { nameFragment: 'CHOCOLAT',      price: 2.78 },
+  { nameFragment: 'CAFE', price: 4.14 },
+  { nameFragment: 'CHOCOLAT', price: 2.78 },
   { nameFragment: 'PATE TARTINER', price: 2.51 },
-  { nameFragment: 'SUCRE ROUX',    price: 3.00 },
-  { nameFragment: 'HARICOTS',      price: 3.41 },
-  { nameFragment: 'CORDON BLEU',   price: 7.72 },
-  { nameFragment: 'JAMBON CRU',    price: 5.82 },
-  { nameFragment: 'JAMBON DE PARIS', price: 7.70 },
-  { nameFragment: 'CROQUETTES',    price: 3.98 },
-  { nameFragment: 'YAOURT',        price: 2.19 },
-  { nameFragment: 'VIRIANNA',      price: 2.89 },
-  { nameFragment: 'CAMEMBERT',     price: 3.85 },
+  { nameFragment: 'SUCRE ROUX', price: 3.0 },
+  { nameFragment: 'HARICOTS', price: 3.41 },
+  { nameFragment: 'CORDON BLEU', price: 7.72 },
+  { nameFragment: 'JAMBON CRU', price: 5.82 },
+  { nameFragment: 'JAMBON DE PARIS', price: 7.7 },
+  { nameFragment: 'CROQUETTES', price: 3.98 },
+  { nameFragment: 'YAOURT', price: 2.19 },
+  { nameFragment: 'VIRIANNA', price: 2.89 },
+  { nameFragment: 'CAMEMBERT', price: 3.85 },
   { nameFragment: 'FROMAGE PASTEURISE', price: 2.06 },
-  { nameFragment: 'AUVERGNE',      price: 2.74 },
-  { nameFragment: 'EMMENTAL',      price: 5.98 },
-  { nameFragment: 'CITRONS',       price: 3.30 },
-  { nameFragment: 'POIRES',        price: 3.85 },
-  { nameFragment: 'CAROTTES',      price: 4.20 },
-  { nameFragment: 'TOMATES',       price: 2.95 },
-  { nameFragment: 'LAIT',          price: 1.44, qty: 2, unitPrice: 0.72 },
-  { nameFragment: 'MARGARINE',     price: 2.45 },
-  { nameFragment: 'PAIN MIE',      price: 2.20 },
-  { nameFragment: 'PATE CHOC',     price: 2.80 },
+  { nameFragment: 'AUVERGNE', price: 2.74 },
+  { nameFragment: 'EMMENTAL', price: 5.98 },
+  { nameFragment: 'CITRONS', price: 3.3 },
+  { nameFragment: 'POIRES', price: 3.85 },
+  { nameFragment: 'CAROTTES', price: 4.2 },
+  { nameFragment: 'TOMATES', price: 2.95 },
+  { nameFragment: 'LAIT', price: 1.44, qty: 2, unitPrice: 0.72 },
+  { nameFragment: 'MARGARINE', price: 2.45 },
+  { nameFragment: 'PAIN MIE', price: 2.2 },
+  { nameFragment: 'PATE CHOC', price: 2.8 },
 ];
 
 // ─── Expected normalized values ───────────────────────────────────────────────
 
 /** Fields that every normalized observation must carry */
 export const EXPECTED_NORMALIZED_COMMON = {
-  territory:   'GP'  as const,
-  storeLabel:  'SUPER U',
-  currency:    'EUR' as const,
-  sourceType:  'citizen' as const,
-  observedAt:  '2026-03-07T10:21:00',
+  territory: 'GP' as const,
+  storeLabel: 'SUPER U',
+  currency: 'EUR' as const,
+  sourceType: 'citizen' as const,
+  observedAt: '2026-03-07T10:21:00',
 };
 
 /**
@@ -131,18 +131,18 @@ export const EXPECTED_NORMALIZED_COMMON = {
  * category must match the PriceObservation productCategory.
  */
 export const EXPECTED_NORMALIZED_ITEMS: Array<{
-  labelFragment:  string;
-  price:          number;
-  category:       string;
+  labelFragment: string;
+  price: number;
+  category: string;
 }> = [
-  { labelFragment: 'CAFE',        price: 4.14, category: 'Épicerie' },
-  { labelFragment: 'CHOCOLAT',    price: 2.78, category: 'Épicerie' },
-  { labelFragment: 'JAMBON CRU',  price: 5.82, category: 'Viandes et poissons' },
-  { labelFragment: 'CROQUETTES',  price: 3.98, category: 'Autres' },    // pet food
-  { labelFragment: 'EMMENTAL',    price: 5.98, category: 'Produits laitiers' },
-  { labelFragment: 'CAROTTES',    price: 4.20, category: 'Fruits et légumes' },
-  { labelFragment: 'TOMATES',     price: 2.95, category: 'Fruits et légumes' },
-  { labelFragment: 'LAIT',        price: 1.44, category: 'Produits laitiers' },
-  { labelFragment: 'MARGARINE',   price: 2.45, category: 'Boissons' },  // fats ≈ Boissons heuristic
-  { labelFragment: 'PAIN MIE',    price: 2.20, category: 'Épicerie' },
+  { labelFragment: 'CAFE', price: 4.14, category: 'Épicerie' },
+  { labelFragment: 'CHOCOLAT', price: 2.78, category: 'Épicerie' },
+  { labelFragment: 'JAMBON CRU', price: 5.82, category: 'Viandes et poissons' },
+  { labelFragment: 'CROQUETTES', price: 3.98, category: 'Autres' }, // pet food
+  { labelFragment: 'EMMENTAL', price: 5.98, category: 'Produits laitiers' },
+  { labelFragment: 'CAROTTES', price: 4.2, category: 'Fruits et légumes' },
+  { labelFragment: 'TOMATES', price: 2.95, category: 'Fruits et légumes' },
+  { labelFragment: 'LAIT', price: 1.44, category: 'Produits laitiers' },
+  { labelFragment: 'MARGARINE', price: 2.45, category: 'Boissons' }, // fats ≈ Boissons heuristic
+  { labelFragment: 'PAIN MIE', price: 2.2, category: 'Épicerie' },
 ];

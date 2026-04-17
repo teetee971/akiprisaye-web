@@ -1,17 +1,16 @@
- 
 /**
  * Image Compression Utility
- * 
+ *
  * Provides client-side image compression and resizing for user uploads
  * without requiring any server-side processing.
- * 
+ *
  * Features:
  * - Browser-based compression (no server uploads needed)
  * - Multiple quality/size presets
  * - EXIF orientation handling
  * - Progressive JPEG support
  * - WebP format support (with fallback to JPEG)
- * 
+ *
  * @module imageCompression
  */
 
@@ -43,36 +42,36 @@ export const COMPRESSION_PRESETS = {
     maxHeight: 200,
     quality: 0.7,
     format: 'jpeg' as const,
-    maxSizeMB: 0.1
+    maxSizeMB: 0.1,
   },
   small: {
     maxWidth: 400,
     maxHeight: 400,
     quality: 0.8,
     format: 'jpeg' as const,
-    maxSizeMB: 0.3
+    maxSizeMB: 0.3,
   },
   medium: {
     maxWidth: 800,
     maxHeight: 800,
     quality: 0.85,
     format: 'jpeg' as const,
-    maxSizeMB: 0.5
+    maxSizeMB: 0.5,
   },
   large: {
     maxWidth: 1200,
     maxHeight: 1200,
     quality: 0.9,
     format: 'jpeg' as const,
-    maxSizeMB: 1
+    maxSizeMB: 1,
   },
   upload: {
     maxWidth: 1600,
     maxHeight: 1600,
     quality: 0.85,
     format: 'jpeg' as const,
-    maxSizeMB: 2
-  }
+    maxSizeMB: 2,
+  },
 };
 
 /**
@@ -82,17 +81,17 @@ function loadImage(file: File | Blob): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
-    
+
     img.onload = () => {
       URL.revokeObjectURL(url);
       resolve(img);
     };
-    
+
     img.onerror = () => {
       URL.revokeObjectURL(url);
       reject(new Error('Failed to load image'));
     };
-    
+
     img.src = url;
   });
 }
@@ -108,24 +107,24 @@ function calculateDimensions(
 ): { width: number; height: number } {
   let width = originalWidth;
   let height = originalHeight;
-  
+
   // Scale down if image is larger than max dimensions
   if (width > maxWidth) {
     height = (height * maxWidth) / width;
     width = maxWidth;
   }
-  
+
   if (height > maxHeight) {
     width = (width * maxHeight) / height;
     height = maxHeight;
   }
-  
+
   return { width: Math.round(width), height: Math.round(height) };
 }
 
 /**
  * Compress and resize image
- * 
+ *
  * @param file - Input image file
  * @param options - Compression options
  * @returns Compressed image data
@@ -139,42 +138,35 @@ export async function compressImage(
     maxHeight = 1600,
     quality = 0.85,
     format = 'jpeg',
-    maxSizeMB = 2
+    maxSizeMB = 2,
   } = options;
-  
+
   // Load the image
   const img = await loadImage(file);
-  
+
   // Calculate new dimensions
-  const dimensions = calculateDimensions(
-    img.width,
-    img.height,
-    maxWidth,
-    maxHeight
-  );
-  
+  const dimensions = calculateDimensions(img.width, img.height, maxWidth, maxHeight);
+
   // Create canvas and draw resized image
   const canvas = document.createElement('canvas');
   canvas.width = dimensions.width;
   canvas.height = dimensions.height;
-  
+
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     throw new Error('Failed to get canvas context');
   }
-  
+
   // Use better image smoothing
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = 'high';
-  
+
   // Draw image
   ctx.drawImage(img, 0, 0, dimensions.width, dimensions.height);
-  
+
   // Convert to blob
-  const mimeType = format === 'png' ? 'image/png' : 
-                   format === 'webp' ? 'image/webp' : 
-                   'image/jpeg';
-  
+  const mimeType = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
+
   const blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (blob) => {
@@ -188,7 +180,7 @@ export async function compressImage(
       quality
     );
   });
-  
+
   // Check if compressed size is within limits
   const compressedSizeMB = blob.size / (1024 * 1024);
   if (maxSizeMB && compressedSizeMB > maxSizeMB) {
@@ -198,13 +190,13 @@ export async function compressImage(
       return compressImage(file, { ...options, quality: lowerQuality });
     }
   }
-  
+
   // Convert blob to data URL
   const dataUrl = await blobToDataUrl(blob);
-  
+
   const originalSize = file.size;
   const compressedSize = blob.size;
-  
+
   return {
     blob,
     dataUrl,
@@ -213,7 +205,7 @@ export async function compressImage(
     compressionRatio: originalSize > 0 ? compressedSize / originalSize : 1,
     width: dimensions.width,
     height: dimensions.height,
-    format: mimeType
+    format: mimeType,
   };
 }
 
@@ -231,7 +223,7 @@ function blobToDataUrl(blob: Blob): Promise<string> {
 
 /**
  * Compress image with preset
- * 
+ *
  * @param file - Input image file
  * @param preset - Preset name
  * @returns Compressed image data
@@ -245,7 +237,7 @@ export async function compressWithPreset(
 
 /**
  * Validate image file
- * 
+ *
  * @param file - File to validate
  * @param maxSizeMB - Maximum file size in MB
  * @returns Validation result
@@ -258,31 +250,31 @@ export function validateImageFile(
   if (!file.type.startsWith('image/')) {
     return { valid: false, error: 'Le fichier doit être une image' };
   }
-  
+
   // Check file size
   const sizeMB = file.size / (1024 * 1024);
   if (sizeMB > maxSizeMB) {
-    return { 
-      valid: false, 
-      error: `La taille du fichier ne doit pas dépasser ${maxSizeMB} MB` 
+    return {
+      valid: false,
+      error: `La taille du fichier ne doit pas dépasser ${maxSizeMB} MB`,
     };
   }
-  
+
   // Check image type
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
   if (!allowedTypes.includes(file.type)) {
-    return { 
-      valid: false, 
-      error: 'Format non supporté. Utilisez JPEG, PNG ou WebP' 
+    return {
+      valid: false,
+      error: 'Format non supporté. Utilisez JPEG, PNG ou WebP',
     };
   }
-  
+
   return { valid: true };
 }
 
 /**
  * Format file size for display
- * 
+ *
  * @param bytes - File size in bytes
  * @returns Formatted string
  */
@@ -298,20 +290,20 @@ export function formatFileSize(bytes: number): string {
 
 /**
  * Get compression stats as human-readable string
- * 
+ *
  * @param result - Compression result
  * @returns Formatted stats string
  */
 export function getCompressionStats(result: CompressionResult): string {
   const savedBytes = result.originalSize - result.compressedSize;
   const savedPercent = Math.round((1 - result.compressionRatio) * 100);
-  
+
   return `Compression: ${formatFileSize(result.originalSize)} → ${formatFileSize(result.compressedSize)} (${savedPercent}% économisé)`;
 }
 
 /**
  * Create multiple sizes from one image
- * 
+ *
  * @param file - Input image file
  * @returns Object with multiple compressed sizes
  */
@@ -325,8 +317,8 @@ export async function createMultipleSizes(file: File | Blob): Promise<{
     compressWithPreset(file, 'thumbnail'),
     compressWithPreset(file, 'small'),
     compressWithPreset(file, 'medium'),
-    compressWithPreset(file, 'large')
+    compressWithPreset(file, 'large'),
   ]);
-  
+
   return { thumbnail, small, medium, large };
 }

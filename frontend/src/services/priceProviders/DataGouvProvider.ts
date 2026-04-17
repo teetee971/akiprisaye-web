@@ -1,4 +1,3 @@
- 
 import type { ProductPrice } from '../../types/ProductPrice';
 import type { PriceProvider } from './PriceProvider';
 
@@ -34,15 +33,13 @@ const REGION_MATCHERS: Array<{ region: 'DOM'; keywords: string[] }> = [
 ];
 
 const normalizeText = (value: string): string =>
-  value
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .trim();
+  value.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
 
 const detectRegion = (title?: string): 'FR' | 'DOM' => {
   const normalized = normalizeText(title ?? '');
-  if (REGION_MATCHERS.some(({ keywords }) => keywords.some((keyword) => normalized.includes(keyword)))) {
+  if (
+    REGION_MATCHERS.some(({ keywords }) => keywords.some((keyword) => normalized.includes(keyword)))
+  ) {
     return 'DOM';
   }
   return 'FR';
@@ -84,12 +81,16 @@ const extractNumber = (record: JsonRecord, keys: string[]): number | undefined =
 
 const extractRecords = (payload: unknown): JsonRecord[] => {
   if (Array.isArray(payload)) {
-    return payload.filter((entry): entry is JsonRecord => typeof entry === 'object' && entry !== null);
+    return payload.filter(
+      (entry): entry is JsonRecord => typeof entry === 'object' && entry !== null
+    );
   }
   if (payload && typeof payload === 'object') {
     const data = (payload as { data?: unknown }).data;
     if (Array.isArray(data)) {
-      return data.filter((entry): entry is JsonRecord => typeof entry === 'object' && entry !== null);
+      return data.filter(
+        (entry): entry is JsonRecord => typeof entry === 'object' && entry !== null
+      );
     }
   }
   return [];
@@ -119,13 +120,20 @@ const isJsonFormat = (format?: string): boolean => {
 const buildProductPrices = (
   records: JsonRecord[],
   datasetTitle: string | undefined,
-  region: 'FR' | 'DOM',
+  region: 'FR' | 'DOM'
 ): ProductPrice[] => {
   const updatedAt = new Date().toISOString();
 
   return records
     .map((record): ProductPrice | null => {
-      const name = extractString(record, ['produit', 'libelle', 'designation', 'nom', 'product', 'item']);
+      const name = extractString(record, [
+        'produit',
+        'libelle',
+        'designation',
+        'nom',
+        'product',
+        'item',
+      ]);
       if (!name) {
         return null;
       }
@@ -182,7 +190,9 @@ export class DataGouvProvider implements PriceProvider {
     const datasets = payload.data ?? [];
 
     for (const dataset of datasets) {
-      const resources = (dataset.resources ?? []).filter((resource) => isJsonFormat(resource.format));
+      const resources = (dataset.resources ?? []).filter((resource) =>
+        isJsonFormat(resource.format)
+      );
       for (const resource of resources) {
         const resourceUrl = resolveResourceUrl(resource);
         if (!resourceUrl) {

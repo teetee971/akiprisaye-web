@@ -1,11 +1,11 @@
 import { lazy, Suspense, useEffect, useMemo } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { useCompare }  from '../hooks/useCompare';
-import { useHistory }  from '../hooks/useHistory';
-import { useSignal }   from '../hooks/useSignal';
-import { Skeleton }    from '../components/ui/Skeleton';
-import { formatEur }   from '../utils/currency';
-import { formatDate }  from '../utils/format';
+import { useCompare } from '../hooks/useCompare';
+import { useHistory } from '../hooks/useHistory';
+import { useSignal } from '../hooks/useSignal';
+import { Skeleton } from '../components/ui/Skeleton';
+import { formatEur } from '../utils/currency';
+import { formatDate } from '../utils/format';
 import { buildRetailerUrl } from '../utils/retailerLinks';
 import { trackProductView, trackRetailerClick } from '../utils/priceClickTracker';
 import type { PriceObservationRow } from '../types/compare';
@@ -13,26 +13,26 @@ import type { SignalResult, HistoryPoint } from '../types/api';
 
 // ── Lazy chart + client-side signal ──────────────────────────────────────────
 const LazyPriceHistory = lazy(() =>
-  import('../components/insights/PriceHistory').then((m) => ({ default: m.PriceHistory })),
+  import('../components/insights/PriceHistory').then((m) => ({ default: m.PriceHistory }))
 );
 const LazySmartSignal = lazy(() =>
-  import('../components/insights/SmartSignal').then((m) => ({ default: m.SmartSignal })),
+  import('../components/insights/SmartSignal').then((m) => ({ default: m.SmartSignal }))
 );
 
 // ── Signal visual config ──────────────────────────────────────────────────────
 const SIGNAL_RING: Record<string, string> = {
-  buy:     'border-emerald-400/30 bg-emerald-400/10',
-  wait:    'border-amber-400/30   bg-amber-400/10',
+  buy: 'border-emerald-400/30 bg-emerald-400/10',
+  wait: 'border-amber-400/30   bg-amber-400/10',
   neutral: 'border-white/10       bg-white/[0.03]',
 };
 const SIGNAL_TEXT: Record<string, string> = {
-  buy:     'text-emerald-300',
-  wait:    'text-amber-300',
+  buy: 'text-emerald-300',
+  wait: 'text-amber-300',
   neutral: 'text-white',
 };
 const SIGNAL_ICON: Record<string, string> = {
-  buy:     '↓',
-  wait:    '↑',
+  buy: '↓',
+  wait: '↑',
   neutral: '→',
 };
 
@@ -51,12 +51,12 @@ function SourceBadge({ source }: { source: SourceId }) {
 
 // ── Price row ─────────────────────────────────────────────────────────────────
 interface PriceRowProps {
-  p:             PriceObservationRow;
-  rank:          number;
-  isBest:        boolean;
+  p: PriceObservationRow;
+  rank: number;
+  isBest: boolean;
   savingsVsBest: number | null;
-  barcode:       string;
-  territory:     string;
+  barcode: string;
+  territory: string;
 }
 function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceRowProps) {
   const retailerUrl = buildRetailerUrl(p.retailer, barcode);
@@ -68,9 +68,11 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
   return (
     <div
       className={`group relative flex items-center justify-between rounded-xl border px-4 py-4 transition-all duration-150
-        ${isBest
-          ? 'border-emerald-400/40 bg-emerald-400/[0.08] ring-1 ring-emerald-400/20 hover:bg-emerald-400/[0.12]'
-          : 'border-white/8 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04]'}`}
+        ${
+          isBest
+            ? 'border-emerald-400/40 bg-emerald-400/[0.08] ring-1 ring-emerald-400/20 hover:bg-emerald-400/[0.12]'
+            : 'border-white/8 bg-white/[0.02] hover:border-white/15 hover:bg-white/[0.04]'
+        }`}
     >
       <div className="flex min-w-0 items-center gap-3">
         {/* Rank bubble */}
@@ -98,7 +100,9 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
       {/* Price + CTA */}
       <div className="ml-4 flex flex-shrink-0 items-center gap-3">
         <div className="text-right">
-          <div className={`text-lg font-bold tabular-nums ${isBest ? 'text-emerald-400' : 'text-white'}`}>
+          <div
+            className={`text-lg font-bold tabular-nums ${isBest ? 'text-emerald-400' : 'text-white'}`}
+          >
             {formatEur(p.price)}
           </div>
           {!isBest && savingsVsBest != null && savingsVsBest > 0.005 && (
@@ -116,9 +120,11 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
             rel="noopener noreferrer"
             onClick={handleRetailerClick}
             className={`flex-shrink-0 rounded-lg border px-3 py-1.5 text-xs font-bold transition-all duration-150
-              ${isBest
-                ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300 hover:bg-emerald-400/30'
-                : 'border-white/15 bg-white/5 text-zinc-400 opacity-0 group-hover:opacity-100 hover:border-white/30 hover:bg-white/10 hover:text-white'}`}
+              ${
+                isBest
+                  ? 'border-emerald-400/50 bg-emerald-400/20 text-emerald-300 hover:bg-emerald-400/30'
+                  : 'border-white/15 bg-white/5 text-zinc-400 opacity-0 group-hover:opacity-100 hover:border-white/30 hover:bg-white/10 hover:text-white'
+              }`}
           >
             Voir →
           </a>
@@ -130,16 +136,22 @@ function PriceRow({ p, rank, isBest, savingsVsBest, barcode, territory }: PriceR
 
 // ── Best-price hero block ─────────────────────────────────────────────────────
 interface BestPriceHeroProps {
-  bestPrice:    number | null;
-  savings:      number | null;
-  retailer:     string | undefined;
-  retailerUrl:  string | null;
+  bestPrice: number | null;
+  savings: number | null;
+  retailer: string | undefined;
+  retailerUrl: string | null;
   signalStatus: string | undefined;
-  barcode:      string;
-  territory:    string;
+  barcode: string;
+  territory: string;
 }
 function BestPriceHero({
-  bestPrice, savings, retailer, retailerUrl, signalStatus, barcode, territory,
+  bestPrice,
+  savings,
+  retailer,
+  retailerUrl,
+  signalStatus,
+  barcode,
+  territory,
 }: BestPriceHeroProps) {
   if (bestPrice === null) return null;
 
@@ -148,14 +160,15 @@ function BestPriceHero({
   };
 
   const signalColor =
-    signalStatus === 'buy'  ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30' :
-    signalStatus === 'wait' ? 'text-amber-400   bg-amber-400/10   border-amber-400/30'   :
-                              'text-white        bg-white/5        border-white/10';
+    signalStatus === 'buy'
+      ? 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30'
+      : signalStatus === 'wait'
+        ? 'text-amber-400   bg-amber-400/10   border-amber-400/30'
+        : 'text-white        bg-white/5        border-white/10';
 
   return (
     <div className="rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-950/40 to-zinc-900/60 p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-
         {/* Left: best price */}
         <div>
           <div className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-500">
@@ -172,7 +185,8 @@ function BestPriceHero({
           {savings != null && savings > 0.01 && (
             <div className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-emerald-400/20 bg-emerald-400/10 px-3 py-1.5">
               <span className="text-xs font-semibold text-emerald-300">
-                Économie potentielle&nbsp;: <span className="text-base font-extrabold">{formatEur(savings)}</span>
+                Économie potentielle&nbsp;:{' '}
+                <span className="text-base font-extrabold">{formatEur(savings)}</span>
               </span>
             </div>
           )}
@@ -182,7 +196,7 @@ function BestPriceHero({
         <div className="flex flex-col items-start gap-2 sm:items-end">
           {signalStatus && signalStatus !== 'neutral' && (
             <div className={`rounded-xl border px-4 py-2 text-sm font-bold ${signalColor}`}>
-              {signalStatus === 'buy'  ? '↓ Bon moment pour acheter' : '↑ Attendre recommandé'}
+              {signalStatus === 'buy' ? '↓ Bon moment pour acheter' : '↑ Attendre recommandé'}
             </div>
           )}
           {retailerUrl && retailer && (
@@ -203,7 +217,9 @@ function BestPriceHero({
 }
 
 // ── API signal card ───────────────────────────────────────────────────────────
-interface SignalCardProps { signal: SignalResult; }
+interface SignalCardProps {
+  signal: SignalResult;
+}
 function SignalCard({ signal }: SignalCardProps) {
   const ring = SIGNAL_RING[signal.status] ?? SIGNAL_RING.neutral;
   const text = SIGNAL_TEXT[signal.status] ?? SIGNAL_TEXT.neutral;
@@ -224,9 +240,9 @@ function SignalCard({ signal }: SignalCardProps) {
 
 // ── Signal section ────────────────────────────────────────────────────────────
 interface SignalSectionProps {
-  signal:         SignalResult | null;
-  history:        HistoryPoint[];
-  signalLoading:  boolean;
+  signal: SignalResult | null;
+  history: HistoryPoint[];
+  signalLoading: boolean;
   historyLoading: boolean;
 }
 function SignalSection({ signal, history, signalLoading, historyLoading }: SignalSectionProps) {
@@ -246,31 +262,25 @@ export default function ProductPage() {
   const territory = searchParams.get('territory') ?? 'GP';
 
   const { data: compareData, loading: compareLoading } = useCompare(id, territory, '');
-  const { data: history,     loading: historyLoading  } = useHistory(id, territory, '30d');
-  const { data: signal,      loading: signalLoading   } = useSignal(id, territory);
+  const { data: history, loading: historyLoading } = useHistory(id, territory, '30d');
+  const { data: signal, loading: signalLoading } = useSignal(id, territory);
 
   // Cheapest first (already sorted server-side but re-sort for safety)
   const sorted = useMemo(
     () => [...(compareData?.observations ?? [])].sort((a, b) => a.price - b.price),
-    [compareData?.observations],
+    [compareData?.observations]
   );
 
   const maxSavings: number | null = useMemo(
     () =>
-      sorted.length > 1
-        ? +(sorted[sorted.length - 1].price - sorted[0].price).toFixed(2)
-        : null,
-    [sorted],
+      sorted.length > 1 ? +(sorted[sorted.length - 1].price - sorted[0].price).toFixed(2) : null,
+    [sorted]
   );
 
   // Track product view once data is loaded
   useEffect(() => {
     if (compareData?.product && !compareLoading) {
-      trackProductView(
-        compareData.product.barcode || id,
-        compareData.product.name,
-        territory,
-      );
+      trackProductView(compareData.product.barcode || id, compareData.product.name, territory);
     }
   }, [compareData, compareLoading, id, territory]);
 
@@ -297,15 +307,12 @@ export default function ProductPage() {
   }
 
   const { product, summary } = compareData;
-  const bestRetailer    = sorted[0]?.retailer;
-  const bestRetailerUrl = bestRetailer
-    ? buildRetailerUrl(bestRetailer, product.barcode)
-    : null;
+  const bestRetailer = sorted[0]?.retailer;
+  const bestRetailerUrl = bestRetailer ? buildRetailerUrl(bestRetailer, product.barcode) : null;
 
   return (
     <div className="min-h-screen bg-slate-950 px-4 py-8">
       <div className="mx-auto max-w-2xl space-y-4">
-
         {/* ── Product identity ──────────────────────────────────────────────── */}
         <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
           {product.image ? (
@@ -380,7 +387,6 @@ export default function ProductPage() {
         <Suspense fallback={<Skeleton className="h-56" />}>
           <LazyPriceHistory productId={id} territory={territory} />
         </Suspense>
-
       </div>
     </div>
   );

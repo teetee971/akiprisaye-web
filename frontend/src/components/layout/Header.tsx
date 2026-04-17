@@ -1,4 +1,16 @@
-import { Menu, Moon, Search, Sun, X, User, LogOut, Crown, Shield, ChevronDown, Bell } from 'lucide-react';
+import {
+  Menu,
+  Moon,
+  Search,
+  Sun,
+  X,
+  User,
+  LogOut,
+  Crown,
+  Shield,
+  ChevronDown,
+  Bell,
+} from 'lucide-react';
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { getShoppingListCount } from '../../store/useShoppingListStore';
@@ -74,7 +86,12 @@ export default function Header() {
 
   // Derive initials for avatar
   const initials = user?.displayName
-    ? user.displayName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    ? user.displayName
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
     : user?.email
       ? user.email[0].toUpperCase()
       : '?';
@@ -104,10 +121,20 @@ export default function Header() {
       <Suspense fallback={null}>
         <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       </Suspense>
-      <header id="main-nav" tabIndex={-1} className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
+      <header
+        id="main-nav"
+        tabIndex={-1}
+        className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur"
+      >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
           <Link to="/" className="flex items-center" aria-label="Accueil">
-            <img src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`} alt="A KI PRI SA YÉ" className="h-8 w-auto" width="32" height="32" />
+            <img
+              src={`${import.meta.env.BASE_URL}logo-akiprisaye.svg`}
+              alt="A KI PRI SA YÉ"
+              className="h-8 w-auto"
+              width="32"
+              height="32"
+            />
           </Link>
 
           {/* Search bar — compact trigger */}
@@ -119,7 +146,9 @@ export default function Header() {
           >
             <Search size={14} className="shrink-0" aria-hidden="true" />
             <span className="flex-1 text-left truncate">Rechercher…</span>
-            <kbd className="hidden lg:block text-xs px-1.5 py-0.5 rounded border border-slate-700 bg-slate-800 font-mono text-slate-300 group-hover:border-slate-600">⌘K</kbd>
+            <kbd className="hidden lg:block text-xs px-1.5 py-0.5 rounded border border-slate-700 bg-slate-800 font-mono text-slate-300 group-hover:border-slate-600">
+              ⌘K
+            </kbd>
           </button>
 
           <div className="flex items-center gap-1.5">
@@ -138,13 +167,26 @@ export default function Header() {
               className="hidden sm:flex items-center rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-100"
               aria-label={`Ma liste (${count} article${count !== 1 ? 's' : ''})`}
             >
-              Liste <span className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs" aria-hidden="true">{count}</span>
+              Liste{' '}
+              <span
+                className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs"
+                aria-hidden="true"
+              >
+                {count}
+              </span>
             </Link>
-            <Suspense fallback={
-              <button type="button" className="rounded-lg border border-slate-700 p-2 text-slate-100" aria-label="Notifications" disabled>
-                <Bell size={18} aria-hidden="true" />
-              </button>
-            }>
+            <Suspense
+              fallback={
+                <button
+                  type="button"
+                  className="rounded-lg border border-slate-700 p-2 text-slate-100"
+                  aria-label="Notifications"
+                  disabled
+                >
+                  <Bell size={18} aria-hidden="true" />
+                </button>
+              }
+            >
               <NotificationCenter />
             </Suspense>
 
@@ -177,21 +219,29 @@ export default function Header() {
               <div ref={accountRef} className="relative">
                 <button
                   type="button"
-                  onClick={() => setAccountOpen(v => !v)}
+                  onClick={() => setAccountOpen((v) => !v)}
                   className="flex items-center gap-1.5 rounded-lg border border-slate-700 px-2 py-1.5 text-slate-100 hover:bg-slate-800 transition-colors"
                   aria-label="Mon compte"
                   aria-expanded={accountOpen}
                   aria-haspopup="menu"
                 >
                   {/* Avatar circle */}
-                  <span className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold flex-shrink-0 ${
-                    isCreator ? 'bg-amber-500 text-slate-900' :
-                    isAdmin   ? 'bg-blue-600 text-white' :
-                                'bg-slate-600 text-white'
-                  }`}>
+                  <span
+                    className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold flex-shrink-0 ${
+                      isCreator
+                        ? 'bg-amber-500 text-slate-900'
+                        : isAdmin
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-slate-600 text-white'
+                    }`}
+                  >
                     {initials}
                   </span>
-                  <ChevronDown size={12} className={`transition-transform ${accountOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                  <ChevronDown
+                    size={12}
+                    className={`transition-transform ${accountOpen ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  />
                 </button>
 
                 {/* Dropdown */}
@@ -200,7 +250,9 @@ export default function Header() {
                     {/* User info */}
                     <div className="px-4 py-3 border-b border-slate-800">
                       {user.displayName && (
-                        <p className="text-sm font-medium text-slate-200 truncate">{user.displayName}</p>
+                        <p className="text-sm font-medium text-slate-200 truncate">
+                          {user.displayName}
+                        </p>
                       )}
                       <p className="text-xs text-slate-500 truncate">{user.email}</p>
                       {isCreator && (
@@ -231,7 +283,7 @@ export default function Header() {
                         onClick={() => setAccountOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-emerald-300 hover:bg-emerald-900/30 transition-colors"
                       >
-                          Mon espace
+                        Mon espace
                       </Link>
 
                       {isCreator && (
@@ -297,108 +349,151 @@ export default function Header() {
           </div>
         </div>
 
-      {/* Mobile full-width search bar */}
-      <div className="sm:hidden border-t border-slate-800 px-4 py-2 bg-slate-950/95">
-        <button
-          type="button"
-          onClick={() => setSearchOpen(true)}
-          className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-400 text-sm transition-colors"
-          aria-label="Ouvrir la recherche globale"
-        >
-          <Search size={14} className="shrink-0" aria-hidden="true" />
-          <span className="flex-1 text-left truncate">Rechercher un produit, un magasin…</span>
-        </button>
-      </div>
+        {/* Mobile full-width search bar */}
+        <div className="sm:hidden border-t border-slate-800 px-4 py-2 bg-slate-950/95">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-400 text-sm transition-colors"
+            aria-label="Ouvrir la recherche globale"
+          >
+            <Search size={14} className="shrink-0" aria-hidden="true" />
+            <span className="flex-1 text-left truncate">Rechercher un produit, un magasin…</span>
+          </button>
+        </div>
 
-      {open && (
-        <nav
-          ref={navRef}
-          aria-label="Navigation principale"
-          className="border-t border-slate-800 bg-slate-900 px-4 py-2"
-        >
-          <ul className="space-y-1">
-            {links.map((link) => (
-              <li key={link.to}>
-                <NavLink
-                  to={link.to}
-                  onClick={closeMenu}
-                  className={({ isActive }) =>
-                    `flex items-center justify-between rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-slate-800 text-white' : 'text-slate-200'}`
-                  }
-                >
-                  <span>{link.label}</span>
-                  {link.to === '/liste' ? (
-                    <span className="rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white" aria-hidden="true">{count}</span>
-                  ) : null}
-                </NavLink>
-              </li>
-            ))}
-
-            {/* Account links in mobile menu */}
-            <li className="border-t border-slate-800 mt-2 pt-2">
-              {loading ? (
-                /* Skeleton while auth is settling */
-                <div className="px-3 py-2 flex items-center gap-2">
-                  <div className="h-6 w-6 rounded-full bg-slate-700 animate-pulse" />
-                  <div className="h-4 w-24 rounded bg-slate-700 animate-pulse" />
-                </div>
-              ) : user ? (
-                <div className="space-y-1">
-                  {user.displayName && (
-                    <div className="px-3 py-1.5 text-sm font-medium text-slate-200 truncate">{user.displayName}</div>
-                  )}
-                  <div className="px-3 py-1.5 text-xs text-slate-500 truncate">{user.email}</div>
-                  <NavLink to="/mon-compte" onClick={closeMenu}
-                    className={({ isActive }) => `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-slate-800 text-white' : 'text-slate-200'}`}>
-                    <User size={14} /> Mon compte
+        {open && (
+          <nav
+            ref={navRef}
+            aria-label="Navigation principale"
+            className="border-t border-slate-800 bg-slate-900 px-4 py-2"
+          >
+            <ul className="space-y-1">
+              {links.map((link) => (
+                <li key={link.to}>
+                  <NavLink
+                    to={link.to}
+                    onClick={closeMenu}
+                    className={({ isActive }) =>
+                      `flex items-center justify-between rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-slate-800 text-white' : 'text-slate-200'}`
+                    }
+                  >
+                    <span>{link.label}</span>
+                    {link.to === '/liste' ? (
+                      <span
+                        className="rounded-full bg-blue-600 px-2 py-0.5 text-xs text-white"
+                        aria-hidden="true"
+                      >
+                        {count}
+                      </span>
+                    ) : null}
                   </NavLink>
-                  <NavLink to="/mon-espace" onClick={closeMenu}
-                    className={({ isActive }) => `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-emerald-900/40 text-emerald-300' : 'text-emerald-300'}`}>
-                    ❤️ Mon espace
-                  </NavLink>
-                  {isCreator && (
-                    <NavLink to="/espace-createur" onClick={closeMenu}
-                      className={({ isActive }) => `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-amber-900/40 text-amber-300' : 'text-amber-300'}`}>
-                      <Crown size={14} /> Espace Créateur
-                    </NavLink>
-                  )}
-                  {isAdmin && !isCreator && (
-                    <NavLink to="/admin" onClick={closeMenu}
-                      className={({ isActive }) => `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-blue-900/40 text-blue-300' : 'text-blue-300'}`}>
-                      <Shield size={14} /> Administration
-                    </NavLink>
-                  )}
-                  <button type="button" onClick={() => { closeMenu(); handleSignOut(); }}
-                    className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-red-400 hover:bg-red-900/20 transition-colors">
-                    <LogOut size={14} /> Se déconnecter
-                  </button>
-                </div>
-              ) : (
-                <Link to="/connexion" onClick={closeMenu}
-                  className="flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors">
-                  <User size={14} /> Se connecter / Créer un compte
-                </Link>
-              )}
-            </li>
+                </li>
+              ))}
 
-            {/* Theme toggle — always visible in mobile menu */}
-            <li className="border-t border-slate-800 mt-2 pt-2">
-              <button
-                type="button"
-                onClick={() => { closeMenu(); toggleTheme(); }}
-                className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800 transition-colors"
-                aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
-              >
-                {theme === 'dark' ? (
-                  <><Sun size={14} aria-hidden="true" /> Mode clair</>
+              {/* Account links in mobile menu */}
+              <li className="border-t border-slate-800 mt-2 pt-2">
+                {loading ? (
+                  /* Skeleton while auth is settling */
+                  <div className="px-3 py-2 flex items-center gap-2">
+                    <div className="h-6 w-6 rounded-full bg-slate-700 animate-pulse" />
+                    <div className="h-4 w-24 rounded bg-slate-700 animate-pulse" />
+                  </div>
+                ) : user ? (
+                  <div className="space-y-1">
+                    {user.displayName && (
+                      <div className="px-3 py-1.5 text-sm font-medium text-slate-200 truncate">
+                        {user.displayName}
+                      </div>
+                    )}
+                    <div className="px-3 py-1.5 text-xs text-slate-500 truncate">{user.email}</div>
+                    <NavLink
+                      to="/mon-compte"
+                      onClick={closeMenu}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-slate-800 text-white' : 'text-slate-200'}`
+                      }
+                    >
+                      <User size={14} /> Mon compte
+                    </NavLink>
+                    <NavLink
+                      to="/mon-espace"
+                      onClick={closeMenu}
+                      className={({ isActive }) =>
+                        `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-emerald-900/40 text-emerald-300' : 'text-emerald-300'}`
+                      }
+                    >
+                      ❤️ Mon espace
+                    </NavLink>
+                    {isCreator && (
+                      <NavLink
+                        to="/espace-createur"
+                        onClick={closeMenu}
+                        className={({ isActive }) =>
+                          `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-amber-900/40 text-amber-300' : 'text-amber-300'}`
+                        }
+                      >
+                        <Crown size={14} /> Espace Créateur
+                      </NavLink>
+                    )}
+                    {isAdmin && !isCreator && (
+                      <NavLink
+                        to="/admin"
+                        onClick={closeMenu}
+                        className={({ isActive }) =>
+                          `flex items-center gap-2 rounded-lg px-3 py-2 text-sm ${isActive ? 'bg-blue-900/40 text-blue-300' : 'text-blue-300'}`
+                        }
+                      >
+                        <Shield size={14} /> Administration
+                      </NavLink>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        closeMenu();
+                        handleSignOut();
+                      }}
+                      className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-red-400 hover:bg-red-900/20 transition-colors"
+                    >
+                      <LogOut size={14} /> Se déconnecter
+                    </button>
+                  </div>
                 ) : (
-                  <><Moon size={14} aria-hidden="true" /> Mode sombre</>
+                  <Link
+                    to="/connexion"
+                    onClick={closeMenu}
+                    className="flex items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white transition-colors"
+                  >
+                    <User size={14} /> Se connecter / Créer un compte
+                  </Link>
                 )}
-              </button>
-            </li>
-          </ul>
-        </nav>
-      )}
+              </li>
+
+              {/* Theme toggle — always visible in mobile menu */}
+              <li className="border-t border-slate-800 mt-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMenu();
+                    toggleTheme();
+                  }}
+                  className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-slate-200 hover:bg-slate-800 transition-colors"
+                  aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
+                >
+                  {theme === 'dark' ? (
+                    <>
+                      <Sun size={14} aria-hidden="true" /> Mode clair
+                    </>
+                  ) : (
+                    <>
+                      <Moon size={14} aria-hidden="true" /> Mode sombre
+                    </>
+                  )}
+                </button>
+              </li>
+            </ul>
+          </nav>
+        )}
       </header>
     </>
   );

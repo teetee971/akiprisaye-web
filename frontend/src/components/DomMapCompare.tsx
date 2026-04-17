@@ -21,31 +21,30 @@ export default function DomMapCompare() {
     let alive = true;
     setLoading(true);
 
-    Promise.all([
-      loadDomIndexesForMonth(before),
-      loadDomIndexesForMonth(after),
-    ]).then(([beforeData, afterData]) => {
-      if (!alive) return;
+    Promise.all([loadDomIndexesForMonth(before), loadDomIndexesForMonth(after)]).then(
+      ([beforeData, afterData]) => {
+        if (!alive) return;
 
-      const beforeMap: ValueMap = {};
-      const afterMap: ValueMap = {};
+        const beforeMap: ValueMap = {};
+        const afterMap: ValueMap = {};
 
-      beforeData.forEach((d) => (beforeMap[d.territory] = d.index));
-      afterData.forEach((d) => (afterMap[d.territory] = d.index));
+        beforeData.forEach((d) => (beforeMap[d.territory] = d.index));
+        afterData.forEach((d) => (afterMap[d.territory] = d.index));
 
-      const delta: ValueMap = {};
+        const delta: ValueMap = {};
 
-      Object.keys(afterMap).forEach((territory) => {
-        const a = afterMap[territory];
-        const b = beforeMap[territory];
-        if (b !== undefined && b !== 0) {
-          delta[territory] = Number((((a - b) / b) * 100).toFixed(1));
-        }
-      });
+        Object.keys(afterMap).forEach((territory) => {
+          const a = afterMap[territory];
+          const b = beforeMap[territory];
+          if (b !== undefined && b !== 0) {
+            delta[territory] = Number((((a - b) / b) * 100).toFixed(1));
+          }
+        });
 
-      setDeltaValues(delta);
-      setLoading(false);
-    });
+        setDeltaValues(delta);
+        setLoading(false);
+      }
+    );
 
     return () => {
       alive = false;
@@ -54,9 +53,7 @@ export default function DomMapCompare() {
 
   return (
     <div className="bg-black/30 border border-white/10 rounded-xl p-4 space-y-4">
-      <h2 className="font-semibold">
-        Comparaison Avant / Après
-      </h2>
+      <h2 className="font-semibold">Comparaison Avant / Après</h2>
 
       {/* Sélecteurs */}
       <div className="grid grid-cols-2 gap-2 text-sm">

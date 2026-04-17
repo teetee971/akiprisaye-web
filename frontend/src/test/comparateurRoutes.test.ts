@@ -15,24 +15,22 @@ const here = dirname(fileURLToPath(import.meta.url));
 const appSource = readFileSync(resolve(here, '../App.tsx'), 'utf-8');
 const hubSource = readFileSync(resolve(here, '../pages/ComparateursHub.tsx'), 'utf-8');
 
-const isComparatorPath = (path: string) => (
-  !path.includes(':') && (       // exclude dynamic route templates (e.g. /comparateur/:slug)
-    path.startsWith('/comparateur')
-    || path.startsWith('/comparaison')
-    || path === '/compare'
-    || path === '/comparatif-concurrence'
-    || path === '/recherche-prix'
-    || path.startsWith('/recherche-prix/')
-  )
-);
+const isComparatorPath = (path: string) =>
+  !path.includes(':') && // exclude dynamic route templates (e.g. /comparateur/:slug)
+  (path.startsWith('/comparateur') ||
+    path.startsWith('/comparaison') ||
+    path === '/compare' ||
+    path === '/comparatif-concurrence' ||
+    path === '/recherche-prix' ||
+    path.startsWith('/recherche-prix/'));
 
 const hubComparatorPaths = Array.from(
   new Set(
     [...hubSource.matchAll(/path:\s*'([^']+)'/g)]
       .map(([, path]) => path)
       .filter(isComparatorPath)
-      .filter((path) => !['/comparateurs', '/comparateurs-hub'].includes(path)),
-  ),
+      .filter((path) => !['/comparateurs', '/comparateurs-hub'].includes(path))
+  )
 ).sort();
 
 const appComparatorRoutes = Array.from(
@@ -40,8 +38,8 @@ const appComparatorRoutes = Array.from(
     [...appSource.matchAll(/<Route path="([^"]+)"/g)]
       .map(([, path]) => `/${path}`)
       .filter(isComparatorPath)
-      .filter((path) => !['/comparateurs', '/comparateurs-hub'].includes(path)),
-  ),
+      .filter((path) => !['/comparateurs', '/comparateurs-hub'].includes(path))
+  )
 ).sort();
 
 describe('ComparateursHub comparator links', () => {
@@ -80,7 +78,7 @@ describe('ComparateursHub comparator links', () => {
         '/recherche-prix/delais-logistiques',
         '/recherche-prix/indice-logistique',
         '/recherche-prix/pourquoi-delais-produit',
-      ]),
+      ])
     );
   });
 });

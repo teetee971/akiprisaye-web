@@ -17,14 +17,14 @@ const typeColors = {
   daily: 'from-blue-500 to-blue-600',
   weekly: 'from-purple-500 to-purple-600',
   monthly: 'from-pink-500 to-pink-600',
-  special: 'from-yellow-500 to-orange-600'
+  special: 'from-yellow-500 to-orange-600',
 };
 
 const typeLabels = {
   daily: 'Quotidien',
   weekly: 'Hebdomadaire',
   monthly: 'Mensuel',
-  special: 'Spécial'
+  special: 'Spécial',
 };
 
 export function ChallengeCard({ challenge, compact = false, className = '' }: ChallengeCardProps) {
@@ -37,10 +37,10 @@ export function ChallengeCard({ challenge, compact = false, className = '' }: Ch
   const daysLeft = Math.ceil(timeRemaining / (1000 * 60 * 60 * 24));
 
   return (
-    <div 
+    <div
       className={`relative p-4 rounded-xl border-2 transition-all duration-300 ${
-        isCompleted 
-          ? 'bg-green-50 border-green-200' 
+        isCompleted
+          ? 'bg-green-50 border-green-200'
           : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-lg'
       } ${className}`}
     >
@@ -48,23 +48,21 @@ export function ChallengeCard({ challenge, compact = false, className = '' }: Ch
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className={`px-2 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${gradient}`}>
+            <span
+              className={`px-2 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${gradient}`}
+            >
               {label}
             </span>
-            {isCompleted && (
-              <CheckCircle size={16} className="text-green-600" />
-            )}
+            {isCompleted && <CheckCircle size={16} className="text-green-600" />}
           </div>
-          <h3 className={`font-bold text-sm ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'}`}>
+          <h3
+            className={`font-bold text-sm ${isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'}`}
+          >
             {challenge.name}
           </h3>
-          {!compact && (
-            <p className="text-xs text-gray-600 mt-1">
-              {challenge.description}
-            </p>
-          )}
+          {!compact && <p className="text-xs text-gray-600 mt-1">{challenge.description}</p>}
         </div>
-        
+
         {!isCompleted && daysLeft > 0 && (
           <div className="flex items-center gap-1 text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
             <Clock size={12} />
@@ -83,13 +81,11 @@ export function ChallengeCard({ challenge, compact = false, className = '' }: Ch
             {progress.toFixed(0)}%
           </span>
         </div>
-        
+
         <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div 
+          <div
             className={`h-full transition-all duration-500 ${
-              isCompleted 
-                ? 'bg-green-500' 
-                : `bg-gradient-to-r ${gradient}`
+              isCompleted ? 'bg-green-500' : `bg-gradient-to-r ${gradient}`
             }`}
             style={{ width: `${progress}%` }}
           />
@@ -102,7 +98,7 @@ export function ChallengeCard({ challenge, compact = false, className = '' }: Ch
           <Zap size={16} className="text-yellow-500" />
           <span className="font-semibold text-gray-700">+{challenge.xpReward} XP</span>
         </div>
-        
+
         {challenge.badgeReward && (
           <div className="flex items-center gap-1 text-sm">
             <Trophy size={16} className="text-purple-500" />

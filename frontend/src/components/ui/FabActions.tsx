@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const actions = [
-  { to: '/search',          label: 'Rechercher',          icon: '🔍' },
-  { to: '/scanner?mode=ean', label: 'Scanner EAN',         icon: '📦' },
-  { to: '/scanner?mode=ticket', label: 'Scanner ticket',   icon: '🧾' },
-  { to: '/contribuer-prix', label: 'Signaler un prix',     icon: '📸' },
-  { to: '/faq',             label: 'Aide',                 icon: '❓' },
+  { to: '/search', label: 'Rechercher', icon: '🔍' },
+  { to: '/scanner?mode=ean', label: 'Scanner EAN', icon: '📦' },
+  { to: '/scanner?mode=ticket', label: 'Scanner ticket', icon: '🧾' },
+  { to: '/contribuer-prix', label: 'Signaler un prix', icon: '📸' },
+  { to: '/faq', label: 'Aide', icon: '❓' },
 ];
 
 export default function FabActions() {
@@ -77,7 +77,9 @@ export default function FabActions() {
         aria-label={open ? 'Fermer les actions rapides' : 'Ouvrir les actions rapides'}
       >
         {compact ? (
-          <span aria-hidden="true" className="text-base leading-none">⚡</span>
+          <span aria-hidden="true" className="text-base leading-none">
+            ⚡
+          </span>
         ) : (
           <span className="flex items-center gap-1.5">
             <span aria-hidden="true">⚡</span>

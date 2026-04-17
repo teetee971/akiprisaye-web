@@ -12,17 +12,17 @@
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const STORAGE_KEY  = 'akp:favorites:v1';
+const STORAGE_KEY = 'akp:favorites:v1';
 const MAX_PER_TYPE = 50;
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface FavoritesStore {
-  products:   string[];
-  retailers:  string[];
+  products: string[];
+  retailers: string[];
   categories: string[];
-  territory:  string | null;
-  updatedAt:  number;
+  territory: string | null;
+  updatedAt: number;
 }
 
 type FavoriteType = 'products' | 'retailers' | 'categories';
@@ -30,7 +30,13 @@ type FavoriteType = 'products' | 'retailers' | 'categories';
 // ── Storage helpers ───────────────────────────────────────────────────────────
 
 function readStore(): FavoritesStore {
-  const empty: FavoritesStore = { products: [], retailers: [], categories: [], territory: null, updatedAt: 0 };
+  const empty: FavoritesStore = {
+    products: [],
+    retailers: [],
+    categories: [],
+    territory: null,
+    updatedAt: 0,
+  };
   if (typeof window === 'undefined') return empty;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -39,11 +45,17 @@ function readStore(): FavoritesStore {
     // Validate shape
     if (typeof parsed !== 'object' || parsed === null) return empty;
     return {
-      products:   Array.isArray(parsed.products)   ? parsed.products.filter((x: unknown) => typeof x === 'string')   : [],
-      retailers:  Array.isArray(parsed.retailers)  ? parsed.retailers.filter((x: unknown) => typeof x === 'string')  : [],
-      categories: Array.isArray(parsed.categories) ? parsed.categories.filter((x: unknown) => typeof x === 'string') : [],
-      territory:  typeof parsed.territory === 'string' ? parsed.territory : null,
-      updatedAt:  typeof parsed.updatedAt === 'number'  ? parsed.updatedAt : 0,
+      products: Array.isArray(parsed.products)
+        ? parsed.products.filter((x: unknown) => typeof x === 'string')
+        : [],
+      retailers: Array.isArray(parsed.retailers)
+        ? parsed.retailers.filter((x: unknown) => typeof x === 'string')
+        : [],
+      categories: Array.isArray(parsed.categories)
+        ? parsed.categories.filter((x: unknown) => typeof x === 'string')
+        : [],
+      territory: typeof parsed.territory === 'string' ? parsed.territory : null,
+      updatedAt: typeof parsed.updatedAt === 'number' ? parsed.updatedAt : 0,
     };
   } catch {
     return empty;
@@ -73,7 +85,7 @@ export function getFavorites(): FavoritesStore {
 export function addFavorite(type: FavoriteType, value: string): void {
   if (!value || typeof value !== 'string') return;
   const store = readStore();
-  const list  = store[type];
+  const list = store[type];
   if (!list.includes(value)) {
     store[type] = [...list, value].slice(-MAX_PER_TYPE);
     writeStore(store);
@@ -124,7 +136,11 @@ export function setFavoriteTerritory(territory: string | null): void {
  */
 export function clearFavorites(): void {
   if (typeof window === 'undefined') return;
-  try { localStorage.removeItem(STORAGE_KEY); } catch { /* silent */ }
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* silent */
+  }
 }
 
 /** Return total favorite count across all types. */

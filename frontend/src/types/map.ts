@@ -1,4 +1,3 @@
- 
 /**
  * Map Types
  * Type definitions for the interactive map feature

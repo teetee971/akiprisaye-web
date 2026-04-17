@@ -66,7 +66,7 @@ export async function getOrCreateConversation(
   myUid: string,
   myName: string,
   otherUid: string,
-  otherName: string,
+  otherName: string
 ): Promise<string> {
   checkDb();
   const sorted = [myUid, otherUid].sort();
@@ -97,7 +97,7 @@ export async function sendMessage(
   convId: string,
   fromUid: string,
   text: string,
-  participants: string[],
+  participants: string[]
 ): Promise<void> {
   checkDb();
   const trimmed = text.trim();
@@ -139,7 +139,7 @@ export async function markAsRead(convId: string, uid: string): Promise<void> {
  */
 export function subscribeToConversations(
   uid: string,
-  onUpdate: (convs: Conversation[]) => void,
+  onUpdate: (convs: Conversation[]) => void
 ): Unsubscribe {
   if (!db) {
     onUpdate([]);
@@ -150,7 +150,7 @@ export function subscribeToConversations(
     collection(db, 'conversations'),
     where('participants', 'array-contains', uid),
     orderBy('lastAt', 'desc'),
-    limit(50),
+    limit(50)
   );
 
   return onSnapshot(q, (snap) => {
@@ -172,7 +172,7 @@ export function subscribeToConversations(
  */
 export function subscribeToMessages(
   convId: string,
-  onUpdate: (msgs: Message[]) => void,
+  onUpdate: (msgs: Message[]) => void
 ): Unsubscribe {
   if (!db) {
     onUpdate([]);
@@ -182,7 +182,7 @@ export function subscribeToMessages(
   const q = query(
     collection(db, 'conversations', convId, 'messages'),
     orderBy('at', 'asc'),
-    limit(200),
+    limit(200)
   );
 
   return onSnapshot(q, (snap) => {
@@ -201,13 +201,13 @@ export function subscribeToMessages(
  * Retourne { uid, displayName } ou null si non trouvé.
  */
 export async function findUserByEmail(
-  email: string,
+  email: string
 ): Promise<{ uid: string; displayName: string } | null> {
   if (!db) return null;
   const q = query(
     collection(db, 'users'),
     where('email', '==', email.toLowerCase().trim()),
-    limit(1),
+    limit(1)
   );
   const snap = await getDocs(q);
   if (snap.empty) return null;
@@ -217,4 +217,3 @@ export async function findUserByEmail(
     displayName: data.displayName || data.email || email,
   };
 }
-

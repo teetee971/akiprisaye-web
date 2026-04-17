@@ -1,6 +1,6 @@
 /**
  * Solidary Badge Component
- * 
+ *
  * Visual badge to identify solidarity-focused products and services:
  * - Local products
  * - Fair trade
@@ -44,7 +44,7 @@ const BADGE_CONFIG: Record<
     color: 'text-green-300',
     bgColor: 'bg-green-500/10',
     borderColor: 'border-green-500/30',
-    tooltip: 'Produit fabriqué ou cultivé localement, soutient l\'économie locale',
+    tooltip: "Produit fabriqué ou cultivé localement, soutient l'économie locale",
   },
   fair_trade: {
     label: 'Commerce équitable',
@@ -84,7 +84,7 @@ const BADGE_CONFIG: Record<
     color: 'text-emerald-300',
     bgColor: 'bg-emerald-500/10',
     borderColor: 'border-emerald-500/30',
-    tooltip: 'Produit respectueux de l\'environnement',
+    tooltip: "Produit respectueux de l'environnement",
   },
 };
 

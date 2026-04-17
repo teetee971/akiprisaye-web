@@ -27,14 +27,15 @@ const GEOLOC_FEATURES = [
   {
     id: 'route-optimization',
     emoji: '🗺️',
-    title: 'Optimisation d\'Itinéraire',
-    description: 'Visitez 3+ magasins dans l\'ordre optimal. Guidage GPS intégré. Économies calculées.',
+    title: "Optimisation d'Itinéraire",
+    description:
+      "Visitez 3+ magasins dans l'ordre optimal. Guidage GPS intégré. Économies calculées.",
     price: 'Inclus Premium',
     monthlyPrice: '',
     features: [
       'Optimisation multi-magasins',
       'Guidage GPS intégré',
-      'Calcul d\'économies en temps réel',
+      "Calcul d'économies en temps réel",
       'Export vers Google Maps / Waze',
     ],
     icon: Navigation,
@@ -61,9 +62,30 @@ const GEOLOC_FEATURES = [
 ];
 
 const EXAMPLE_ALERTS = [
-  { store: 'Carrefour GP', distance: '320m', discount: '-30%', product: 'Lait 1L Lactel', price: '0,89€', savingsVsBest: '0,31€' },
-  { store: 'Leader Price', distance: '450m', discount: '-25%', product: 'Pain complet 500g', price: '1,12€', savingsVsBest: '0,38€' },
-  { store: 'Géant Casino', distance: '780m', discount: '-40%', product: 'Poulet entier 1,5kg', price: '4,99€', savingsVsBest: '2,01€' },
+  {
+    store: 'Carrefour GP',
+    distance: '320m',
+    discount: '-30%',
+    product: 'Lait 1L Lactel',
+    price: '0,89€',
+    savingsVsBest: '0,31€',
+  },
+  {
+    store: 'Leader Price',
+    distance: '450m',
+    discount: '-25%',
+    product: 'Pain complet 500g',
+    price: '1,12€',
+    savingsVsBest: '0,38€',
+  },
+  {
+    store: 'Géant Casino',
+    distance: '780m',
+    discount: '-40%',
+    product: 'Poulet entier 1,5kg',
+    price: '4,99€',
+    savingsVsBest: '2,01€',
+  },
 ];
 
 export default function NearbyDeals() {
@@ -81,7 +103,10 @@ export default function NearbyDeals() {
     <div className="min-h-screen bg-slate-950 p-4 md:p-8">
       <Helmet>
         <title>Offres de Proximité — A KI PRI SA YÉ</title>
-        <meta name="description" content="Alertes géolocalisées sur les meilleures promotions proches de chez vous. Optimisation d'itinéraire et Click & Collect." />
+        <meta
+          name="description"
+          content="Alertes géolocalisées sur les meilleures promotions proches de chez vous. Optimisation d'itinéraire et Click & Collect."
+        />
       </Helmet>
 
       {/* Hero */}
@@ -91,12 +116,13 @@ export default function NearbyDeals() {
           <span className="text-rose-400 text-sm">Géolocalisation Premium</span>
         </div>
         <h1 className="text-4xl font-bold text-white mb-4">
-          Les meilleures promos<br />
+          Les meilleures promos
+          <br />
           <span className="text-rose-400">à moins de 500m</span>
         </h1>
         <p className="text-gray-400 text-lg">
-          Recevez des alertes en temps réel sur les promotions proches de chez vous.
-          Économisez en moyenne <strong className="text-white">47€/semaine</strong>.
+          Recevez des alertes en temps réel sur les promotions proches de chez vous. Économisez en
+          moyenne <strong className="text-white">47€/semaine</strong>.
         </p>
       </div>
 
@@ -108,7 +134,10 @@ export default function NearbyDeals() {
         </div>
         <div className="space-y-3">
           {EXAMPLE_ALERTS.map((alert, i) => (
-            <div key={i} className="flex items-center gap-4 p-3 bg-white/5 rounded-lg border border-white/5">
+            <div
+              key={i}
+              className="flex items-center gap-4 p-3 bg-white/5 rounded-lg border border-white/5"
+            >
               <div className="text-2xl">🔔</div>
               <div className="flex-1">
                 <div className="text-sm font-medium text-white">
@@ -119,7 +148,9 @@ export default function NearbyDeals() {
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-xs text-emerald-400 font-medium">Économie {alert.savingsVsBest}</div>
+                <div className="text-xs text-emerald-400 font-medium">
+                  Économie {alert.savingsVsBest}
+                </div>
                 <div className="text-xs text-gray-500">vs prix moyen</div>
               </div>
             </div>
@@ -171,7 +202,9 @@ export default function NearbyDeals() {
                 aria-label="Activer/désactiver les alertes"
                 className={`w-10 h-5 rounded-full transition-colors ${alertEnabled ? 'bg-rose-500' : 'bg-white/20'}`}
               >
-                <div className={`w-4 h-4 rounded-full bg-white transition-transform mx-0.5 ${alertEnabled ? 'translate-x-5' : ''}`} />
+                <div
+                  className={`w-4 h-4 rounded-full bg-white transition-transform mx-0.5 ${alertEnabled ? 'translate-x-5' : ''}`}
+                />
               </button>
             </div>
             <div>
@@ -195,7 +228,10 @@ export default function NearbyDeals() {
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Clock className="w-4 h-4 text-gray-400" />
-              <select aria-label="Fréquence des alertes" className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-sm flex-1">
+              <select
+                aria-label="Fréquence des alertes"
+                className="bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-white text-sm flex-1"
+              >
                 <option value="1/day">1 alerte/jour</option>
                 <option value="3/week">3 alertes/semaine</option>
                 <option value="realtime">Temps réel</option>
@@ -214,10 +250,14 @@ export default function NearbyDeals() {
             <form onSubmit={handleSubscribe} className="space-y-4">
               <div className="bg-rose-500/10 border border-rose-500/20 rounded-lg p-3">
                 <div className="text-rose-400 font-medium text-sm">1€/semaine ou 3€/mois</div>
-                <div className="text-xs text-gray-400 mt-1">Inclus : alertes push + SMS + optimisation itinéraire</div>
+                <div className="text-xs text-gray-400 mt-1">
+                  Inclus : alertes push + SMS + optimisation itinéraire
+                </div>
               </div>
               <div>
-                <label htmlFor="nearby-deals-email" className="block text-sm text-gray-400 mb-1">Email</label>
+                <label htmlFor="nearby-deals-email" className="block text-sm text-gray-400 mb-1">
+                  Email
+                </label>
                 <input
                   id="nearby-deals-email"
                   type="email"
@@ -239,7 +279,9 @@ export default function NearbyDeals() {
             <div className="text-center space-y-3">
               <div className="text-4xl">✅</div>
               <div className="text-white font-bold">Alertes activées !</div>
-              <div className="text-sm text-gray-400">Vous recevrez vos premières alertes sous 24h.</div>
+              <div className="text-sm text-gray-400">
+                Vous recevrez vos premières alertes sous 24h.
+              </div>
             </div>
           )}
         </div>

@@ -1,5 +1,3 @@
- 
- 
 /**
  * Test suite to verify CameraPermissionHandler handles missing navigator API correctly
  * This ensures CI builds don't fail when navigator is undefined (Node.js environment)
@@ -20,11 +18,11 @@ describe('CameraPermissionHandler - Navigator Guard', () => {
   it('should handle undefined navigator gracefully', () => {
     // Save original navigator
     const originalNavigator = global.navigator;
-    
+
     try {
       // Simulate missing navigator (SSR/Node environment)
       (global as any).navigator = undefined;
-      
+
       // Import should not throw
       expect(async () => {
         await import('../CameraPermissionHandler');
@@ -38,14 +36,14 @@ describe('CameraPermissionHandler - Navigator Guard', () => {
   it('should handle missing permissions API gracefully', () => {
     // Save original navigator
     const originalNavigator = global.navigator;
-    
+
     try {
       // Simulate navigator without permissions API (Safari/iOS)
       (global as any).navigator = {
         userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)',
         // permissions is missing - common in Safari
       };
-      
+
       // Import should not throw
       expect(async () => {
         await import('../CameraPermissionHandler');

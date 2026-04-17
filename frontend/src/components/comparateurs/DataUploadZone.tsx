@@ -1,9 +1,8 @@
- 
 /**
  * Data Upload Zone Component
- * 
+ *
  * Drag & drop file upload component for documents, images, and receipts.
- * 
+ *
  * Features:
  * - Drag and drop support
  * - Multiple file upload
@@ -166,13 +165,16 @@ export const DataUploadZone: React.FC<DataUploadZoneProps> = ({
   /**
    * Remove a selected file
    */
-  const removeFile = useCallback((index: number) => {
-    setSelectedFiles((prev) => {
-      const newFiles = prev.filter((_, i) => i !== index);
-      onFilesSelected(newFiles);
-      return newFiles;
-    });
-  }, [onFilesSelected]);
+  const removeFile = useCallback(
+    (index: number) => {
+      setSelectedFiles((prev) => {
+        const newFiles = prev.filter((_, i) => i !== index);
+        onFilesSelected(newFiles);
+        return newFiles;
+      });
+    },
+    [onFilesSelected]
+  );
 
   /**
    * Get status icon
@@ -202,12 +204,18 @@ export const DataUploadZone: React.FC<DataUploadZoneProps> = ({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={handleClick}
-        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(); } }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
         className={`
           relative border-2 border-dashed rounded-xl p-8 transition-all cursor-pointer
-          ${isDragOver
-            ? 'border-blue-500 bg-blue-500/10'
-            : 'border-slate-600 bg-slate-900/50 hover:border-slate-500 hover:bg-slate-900/70'
+          ${
+            isDragOver
+              ? 'border-blue-500 bg-blue-500/10'
+              : 'border-slate-600 bg-slate-900/50 hover:border-slate-500 hover:bg-slate-900/70'
           }
         `}
         role="button"
@@ -260,7 +268,8 @@ export const DataUploadZone: React.FC<DataUploadZoneProps> = ({
       {selectedFiles.length > 0 && (
         <div className="space-y-2">
           <p className="text-sm font-medium text-gray-300">
-            {selectedFiles.length} fichier{selectedFiles.length > 1 ? 's' : ''} sélectionné{selectedFiles.length > 1 ? 's' : ''}
+            {selectedFiles.length} fichier{selectedFiles.length > 1 ? 's' : ''} sélectionné
+            {selectedFiles.length > 1 ? 's' : ''}
           </p>
           {selectedFiles.map((file, index) => (
             <div
@@ -271,9 +280,7 @@ export const DataUploadZone: React.FC<DataUploadZoneProps> = ({
                 <File className="w-5 h-5 text-gray-400 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm text-gray-200 truncate">{file.name}</p>
-                  <p className="text-xs text-gray-500">
-                    {(file.size / 1024).toFixed(1)} Ko
-                  </p>
+                  <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(1)} Ko</p>
                 </div>
               </div>
               <button

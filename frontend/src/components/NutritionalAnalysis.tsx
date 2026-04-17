@@ -1,4 +1,3 @@
- 
 /**
  * Nutritional Analysis Component
  * Intelligent nutritional analysis with Nutri-Score and health warnings
@@ -33,27 +32,27 @@ interface NutritionalAnalysisProps {
   ingredients?: string[];
 }
 
-export function NutritionalAnalysis({ 
-  nutritionalData, 
+export function NutritionalAnalysis({
+  nutritionalData,
   additives = [],
-  ingredients = []
+  ingredients = [],
 }: NutritionalAnalysisProps) {
   const [expanded, setExpanded] = useState(false);
 
   const getNutriScoreColor = (score?: string): string => {
     const colors = {
-      'A': 'bg-green-600',
-      'B': 'bg-lime-500',
-      'C': 'bg-yellow-500',
-      'D': 'bg-orange-500',
-      'E': 'bg-red-600'
+      A: 'bg-green-600',
+      B: 'bg-lime-500',
+      C: 'bg-yellow-500',
+      D: 'bg-orange-500',
+      E: 'bg-red-600',
     };
     return score ? colors[score as keyof typeof colors] : 'bg-gray-400';
   };
 
   const getHealthWarnings = (): string[] => {
     const warnings: string[] = [];
-    
+
     if (nutritionalData.sugars > 15) {
       warnings.push('Forte teneur en sucres');
     }
@@ -63,12 +62,12 @@ export function NutritionalAnalysis({
     if (nutritionalData.salt > 1.5) {
       warnings.push('Forte teneur en sel');
     }
-    
-    const riskyAdditives = additives.filter(a => a.level === 'risky');
+
+    const riskyAdditives = additives.filter((a) => a.level === 'risky');
     if (riskyAdditives.length > 0) {
       warnings.push(`${riskyAdditives.length} additif(s) à risque`);
     }
-    
+
     return warnings;
   };
 
@@ -87,13 +86,15 @@ export function NutritionalAnalysis({
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
               Nutri-Score
             </span>
-            <div className={`${getNutriScoreColor(nutritionalData.nutriScore)} text-white px-4 py-2 rounded-lg text-2xl font-bold`}>
+            <div
+              className={`${getNutriScoreColor(nutritionalData.nutriScore)} text-white px-4 py-2 rounded-lg text-2xl font-bold`}
+            >
               {nutritionalData.nutriScore}
             </div>
           </div>
           <p className="text-xs text-slate-600 dark:text-slate-400">
-            {nutritionalData.nutriScore === 'A' || nutritionalData.nutriScore === 'B' 
-              ? 'Bonne qualité nutritionnelle' 
+            {nutritionalData.nutriScore === 'A' || nutritionalData.nutriScore === 'B'
+              ? 'Bonne qualité nutritionnelle'
               : 'Qualité nutritionnelle à améliorer'}
           </p>
         </div>
@@ -173,7 +174,11 @@ export function NutritionalAnalysis({
             onClick={() => setExpanded(!expanded)}
             aria-expanded={expanded}
             aria-controls="additives-list"
-            aria-label={expanded ? `Masquer les ${additives.length} additifs` : `Afficher les ${additives.length} additifs`}
+            aria-label={
+              expanded
+                ? `Masquer les ${additives.length} additifs`
+                : `Afficher les ${additives.length} additifs`
+            }
             className="w-full flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
           >
             <span className="font-semibold text-slate-900 dark:text-white">
@@ -185,7 +190,7 @@ export function NutritionalAnalysis({
           {expanded && (
             <div id="additives-list" className="mt-3 space-y-2">
               {additives.map((additive) => (
-                <div 
+                <div
                   key={additive.code}
                   className="flex items-start gap-3 p-3 bg-slate-50 dark:bg-slate-700 rounded-lg"
                 >
@@ -215,7 +220,10 @@ export function NutritionalAnalysis({
 
       {/* Comparison with Similar Products */}
       <div className="text-center">
-        <button type="button" className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
+        <button
+          type="button"
+          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+        >
           Comparer avec des produits similaires
         </button>
       </div>

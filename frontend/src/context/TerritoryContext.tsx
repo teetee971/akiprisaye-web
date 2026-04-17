@@ -39,7 +39,7 @@ export function TerritoryProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<TerritoryContextValue>(
     () => ({ territory, setTerritory }),
-    [territory, setTerritory],
+    [territory, setTerritory]
   );
 
   return <TerritoryContext.Provider value={value}>{children}</TerritoryContext.Provider>;

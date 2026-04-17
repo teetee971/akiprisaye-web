@@ -39,26 +39,26 @@ function extractPrices(text: string): number[] {
 
 /** DOM supermarket names used for normalization */
 const STORE_PATTERNS: Array<[RegExp, string]> = [
-  [/carrefour\s*market/i,   'Carrefour Market'],
-  [/carrefour\s*city/i,     'Carrefour City'],
-  [/carrefour/i,            'Carrefour'],
-  [/e\.?\s*leclerc/i,       'E.Leclerc'],
-  [/leclerc/i,              'E.Leclerc'],
-  [/leader\s*price/i,       'Leader Price'],
-  [/intermarche/i,          'Intermarché'],
-  [/intermarch/i,           'Intermarché'],
-  [/super\s*u/i,            'Super U'],
-  [/hyper\s*u/i,            'Hyper U'],
-  [/\bu\b/i,                'Super U'],
-  [/monoprix/i,             'Monoprix'],
-  [/casino/i,               'Casino'],
-  [/aldi/i,                 'Aldi'],
-  [/lidl/i,                 'Lidl'],
-  [/auchan/i,               'Auchan'],
-  [/score/i,                'Score'],
-  [/ecomax/i,               'Ecomax'],
-  [/cora/i,                 'Cora'],
-  [/lolo/i,                 'Lolo'],
+  [/carrefour\s*market/i, 'Carrefour Market'],
+  [/carrefour\s*city/i, 'Carrefour City'],
+  [/carrefour/i, 'Carrefour'],
+  [/e\.?\s*leclerc/i, 'E.Leclerc'],
+  [/leclerc/i, 'E.Leclerc'],
+  [/leader\s*price/i, 'Leader Price'],
+  [/intermarche/i, 'Intermarché'],
+  [/intermarch/i, 'Intermarché'],
+  [/super\s*u/i, 'Super U'],
+  [/hyper\s*u/i, 'Hyper U'],
+  [/\bu\b/i, 'Super U'],
+  [/monoprix/i, 'Monoprix'],
+  [/casino/i, 'Casino'],
+  [/aldi/i, 'Aldi'],
+  [/lidl/i, 'Lidl'],
+  [/auchan/i, 'Auchan'],
+  [/score/i, 'Score'],
+  [/ecomax/i, 'Ecomax'],
+  [/cora/i, 'Cora'],
+  [/lolo/i, 'Lolo'],
 ];
 
 function extractStore(text: string): string | undefined {
@@ -74,10 +74,7 @@ function extractStore(text: string): string | undefined {
  * @param dataUrl  JPEG data-URL (already resized, ≤80 KB recommended)
  * @param timeoutMs  Max OCR time in ms (default 20 s)
  */
-export async function extractFromPhoto(
-  dataUrl: string,
-  timeoutMs = 20000,
-): Promise<OcrExtracted> {
+export async function extractFromPhoto(dataUrl: string, timeoutMs = 20000): Promise<OcrExtracted> {
   const result = await runOCR(dataUrlToBlob(dataUrl), 'fra', {
     timeout: timeoutMs,
     receiptMode: true,
@@ -98,20 +95,14 @@ export async function extractFromPhoto(
   // Prices: from line items + total
   const itemPrices = parsed.items.map((it) => it.price).filter((p) => p > 0);
   const allPrices = extractPrices(rawText);
-  const detectedPrices = itemPrices.length > 0
-    ? itemPrices
-    : allPrices.length > 0
-      ? allPrices
-      : undefined;
+  const detectedPrices =
+    itemPrices.length > 0 ? itemPrices : allPrices.length > 0 ? allPrices : undefined;
 
   // Store
-  const detectedStore = parsed.storeName
-    ?? extractStore(rawText);
+  const detectedStore = parsed.storeName ?? extractStore(rawText);
 
   // Date
-  const detectedDate = parsed.date
-    ? parseDDMMYYYY(parsed.date)
-    : extractIsoDate(rawText);
+  const detectedDate = parsed.date ? parseDDMMYYYY(parsed.date) : extractIsoDate(rawText);
 
   // Product names from line items
   const detectedProducts = parsed.items

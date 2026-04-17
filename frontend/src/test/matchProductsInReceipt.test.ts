@@ -30,7 +30,9 @@ function makeItem(overrides: Partial<ReceiptItem> & { rawLabel: string }): Recei
   };
 }
 
-function makeReceipt(items: ReceiptItem[]): Omit<ReceiptRecord, 'id' | 'createdAt' | 'updatedAt' | 'checksum'> {
+function makeReceipt(
+  items: ReceiptItem[]
+): Omit<ReceiptRecord, 'id' | 'createdAt' | 'updatedAt' | 'checksum'> {
   return {
     source: 'ocr_ticket',
     territory: 'gp',

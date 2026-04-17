@@ -1,9 +1,6 @@
 import { lazy, Suspense, useMemo } from 'react';
 import type { ScanData } from '../../types/scanHubResult';
-import {
-  computeReliability,
-  type PriceObservationSource,
-} from '../../utils/priceReliability';
+import { computeReliability, type PriceObservationSource } from '../../utils/priceReliability';
 
 const Sparkline = lazy(() => import('../Sparkline'));
 
@@ -33,10 +30,7 @@ const RELIABILITY_LABELS = {
   },
 } as const;
 
-const SOURCE_BADGES: Record<
-  PriceObservationSource,
-  { label: string; tone: string }
-> = {
+const SOURCE_BADGES: Record<PriceObservationSource, { label: string; tone: string }> = {
   open_food_facts: {
     label: '📊 Donnée collaborative',
     tone: 'text-cyan-200 bg-cyan-500/10 border-cyan-500/30',
@@ -68,20 +62,19 @@ export default function PriceInsightsPanel({ result }: PriceInsightsPanelProps) 
   const reliabilityObs = sortedObservations.map((o) => ({
     ...o,
     source: ((['open_food_facts', 'open_prices', 'user_report'] as const).includes(
-      o.source as 'open_food_facts' | 'open_prices' | 'user_report',
+      o.source as 'open_food_facts' | 'open_prices' | 'user_report'
     )
       ? o.source
       : 'open_prices') as PriceObservationSource,
   }));
-  const reliability = useMemo(
-    () => computeReliability(reliabilityObs),
-    [reliabilityObs]
-  );
+  const reliability = useMemo(() => computeReliability(reliabilityObs), [reliabilityObs]);
   const reliabilityBadge = RELIABILITY_LABELS[reliability.level];
 
   return (
     <details className="bg-slate-900/70 border border-slate-700 rounded-2xl p-5" open>
-      <summary className="cursor-pointer text-white font-semibold">Détails des observations</summary>
+      <summary className="cursor-pointer text-white font-semibold">
+        Détails des observations
+      </summary>
       <div className="mt-4 space-y-4 text-sm">
         <div className="bg-slate-950 rounded-lg p-4 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
@@ -140,12 +133,15 @@ export default function PriceInsightsPanel({ result }: PriceInsightsPanelProps) 
                   : 'open_prices';
               const sourceBadge = SOURCE_BADGES[safeSource];
               return (
-                <li key={`${observation.source}-${observation.observedAt ?? index}`} className="bg-slate-950 rounded-lg p-3">
+                <li
+                  key={`${observation.source}-${observation.observedAt ?? index}`}
+                  className="bg-slate-950 rounded-lg p-3"
+                >
                   <p className="text-slate-200">{observation.price.toFixed(2)}€</p>
-                  <p className="text-xs text-slate-400">
-                    {formatDate(observation.observedAt)}
-                  </p>
-                  <span className={`inline-block mt-1 text-[11px] border rounded px-2 py-0.5 ${sourceBadge.tone}`}>
+                  <p className="text-xs text-slate-400">{formatDate(observation.observedAt)}</p>
+                  <span
+                    className={`inline-block mt-1 text-[11px] border rounded px-2 py-0.5 ${sourceBadge.tone}`}
+                  >
                     {sourceBadge.label}
                   </span>
                 </li>

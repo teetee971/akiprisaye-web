@@ -24,7 +24,7 @@ import type { AuthIncidentCode } from './authIncidents';
 export function shouldUseRedirectLogin(): boolean {
   if (typeof window === 'undefined') return false;
   return /android|iphone|ipad|ipod|mobile|samsungbrowser|opera mini/i.test(
-    window.navigator.userAgent.toLowerCase(),
+    window.navigator.userAgent.toLowerCase()
   );
 }
 
@@ -51,9 +51,7 @@ export function markAuthRecoveryAttempt(): number {
  *
  * Always returns an internal path starting with '/'.
  */
-export function resolvePostAuthNavigation(
-  fallbackPath = '/mon-compte',
-): string {
+export function resolvePostAuthNavigation(fallbackPath = '/mon-compte'): string {
   const pending = getRedirectPendingFlag();
   const next = pending?.next ?? getLastAuthNext() ?? fallbackPath;
 
@@ -75,10 +73,10 @@ export function classifyAuthFailure(params: {
   timedOut: boolean;
   retryExhausted: boolean;
 }): AuthIncidentCode {
-  if (params.timedOut)                                    return 'AUTH_REDIRECT_TIMEOUT';
-  if (params.retryExhausted)                              return 'AUTH_RECOVERY_RETRY_EXHAUSTED';
+  if (params.timedOut) return 'AUTH_REDIRECT_TIMEOUT';
+  if (params.retryExhausted) return 'AUTH_RECOVERY_RETRY_EXHAUSTED';
   if (params.hadPendingFlag && !params.redirectResultResolved) return 'AUTH_REDIRECT_RESULT_EMPTY';
-  if (!params.hasUser)                                    return 'AUTH_STATE_NO_USER';
+  if (!params.hasUser) return 'AUTH_STATE_NO_USER';
   return 'AUTH_UNKNOWN_ERROR';
 }
 
@@ -100,7 +98,7 @@ export function cleanupAfterTerminalAuthFailure(): void {
  *  - `attempted: true, succeeded: false` on callback failure
  */
 export async function attemptSingleRecovery(
-  callback: () => Promise<void>,
+  callback: () => Promise<void>
 ): Promise<{ attempted: boolean; succeeded: boolean }> {
   if (!shouldRetryAuthRecovery()) {
     return { attempted: false, succeeded: false };

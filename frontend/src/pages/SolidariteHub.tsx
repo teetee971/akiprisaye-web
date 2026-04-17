@@ -13,17 +13,28 @@ type SolidariteSection = 'panier' | 'entraide' | 'pret' | 'economie';
 
 export default function SolidariteHub() {
   const [activeSection, setActiveSection] = useState<SolidariteSection>('panier');
-  
+
   return (
     <>
       <Helmet>
         <title>Solidarité & Entraide - A KI PRI SA YÉ</title>
-        <meta name="description" content="Initiatives solidaires pour un accès équitable à l'alimentation" />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/solidarite" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/solidarite" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/solidarite" />
+        <meta
+          name="description"
+          content="Initiatives solidaires pour un accès équitable à l'alimentation"
+        />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/solidarite" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/solidarite"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/solidarite"
+        />
       </Helmet>
-      
+
       <div className="min-h-screen bg-slate-950 p-3 sm:p-4 pt-10 sm:pt-12">
         <div className="max-w-6xl mx-auto">
           {/* Hero banner */}
@@ -42,7 +53,7 @@ export default function SolidariteHub() {
               </p>
             </HeroImage>
           </div>
-          
+
           {/* Section Selector */}
           <GlassCard className="mb-4 sm:mb-6 p-2 sm:p-3">
             <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
@@ -100,7 +111,7 @@ export default function SolidariteHub() {
               </button>
             </div>
           </GlassCard>
-          
+
           {/* Dynamic Content */}
           <div>
             {activeSection === 'panier' && <TiPanie />}
@@ -118,7 +129,7 @@ export default function SolidariteHub() {
                 <p className="text-gray-400 mb-6">
                   Soutenez les producteurs locaux et l'économie de proximité
                 </p>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
                   <Link
                     to="/petits-commerces"
@@ -128,9 +139,7 @@ export default function SolidariteHub() {
                     <h3 className="font-semibold text-lg mb-2 text-white group-hover:text-orange-300 transition-colors">
                       Petits commerces
                     </h3>
-                    <p className="text-gray-400 text-sm">
-                      Trouvez les commerces de proximité
-                    </p>
+                    <p className="text-gray-400 text-sm">Trouvez les commerces de proximité</p>
                     <span className="mt-3 inline-block text-xs text-orange-400 font-semibold">
                       Accéder →
                     </span>
@@ -144,9 +153,7 @@ export default function SolidariteHub() {
                     <h3 className="font-semibold text-lg mb-2 text-white group-hover:text-green-300 transition-colors">
                       Producteurs locaux
                     </h3>
-                    <p className="text-gray-400 text-sm">
-                      Achetez directement aux producteurs
-                    </p>
+                    <p className="text-gray-400 text-sm">Achetez directement aux producteurs</p>
                     <span className="mt-3 inline-block text-xs text-green-400 font-semibold">
                       Accéder →
                     </span>
@@ -160,15 +167,13 @@ export default function SolidariteHub() {
                     <h3 className="font-semibold text-lg mb-2 text-white group-hover:text-blue-300 transition-colors">
                       Marchés locaux
                     </h3>
-                    <p className="text-gray-400 text-sm">
-                      Découvrez les marchés près de chez vous
-                    </p>
+                    <p className="text-gray-400 text-sm">Découvrez les marchés près de chez vous</p>
                     <span className="mt-3 inline-block text-xs text-blue-400 font-semibold">
                       Accéder →
                     </span>
                   </Link>
                 </div>
-                
+
                 <div className="bg-orange-900/20 border border-orange-700/30 rounded-xl p-6">
                   <h3 className="font-semibold text-orange-300 mb-3 flex items-center gap-2">
                     <span>💡</span>
@@ -196,7 +201,7 @@ export default function SolidariteHub() {
               </GlassCard>
             )}
           </div>
-          
+
           {/* Impact Section */}
           <div className="mt-6 sm:mt-8">
             <h2 className="text-lg sm:text-xl font-semibold text-white mb-3">

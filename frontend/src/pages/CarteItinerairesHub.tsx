@@ -7,17 +7,28 @@ type MapMode = 'carte' | 'itineraire' | 'optimisation';
 
 export default function CarteItinerairesHub() {
   const [mode, setMode] = useState<MapMode>('carte');
-  
+
   return (
     <>
       <Helmet>
         <title>Carte & Itinéraires - A KI PRI SA YÉ</title>
-        <meta name="description" content="Trouvez les magasins près de chez vous et optimisez vos trajets" />
-              <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/carte-itineraires" />
-        <link rel="alternate" hrefLang="fr" href="https://teetee971.github.io/akiprisaye-web/carte-itineraires" />
-        <link rel="alternate" hrefLang="x-default" href="https://teetee971.github.io/akiprisaye-web/carte-itineraires" />
+        <meta
+          name="description"
+          content="Trouvez les magasins près de chez vous et optimisez vos trajets"
+        />
+        <link rel="canonical" href="https://teetee971.github.io/akiprisaye-web/carte-itineraires" />
+        <link
+          rel="alternate"
+          hrefLang="fr"
+          href="https://teetee971.github.io/akiprisaye-web/carte-itineraires"
+        />
+        <link
+          rel="alternate"
+          hrefLang="x-default"
+          href="https://teetee971.github.io/akiprisaye-web/carte-itineraires"
+        />
       </Helmet>
-      
+
       <div className="min-h-screen bg-slate-950 p-4 pt-14">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
@@ -28,15 +39,15 @@ export default function CarteItinerairesHub() {
               Trouvez les meilleurs magasins et optimisez vos déplacements
             </p>
           </div>
-          
+
           {/* Mode Selector */}
           <GlassCard className="mb-6 p-3">
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={() => setMode('carte')}
                 className={`flex flex-col items-center gap-2 px-4 py-4 rounded-xl font-semibold transition-all ${
-                  mode === 'carte' 
-                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/30' 
+                  mode === 'carte'
+                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
                 aria-label="Sélectionner le mode carte"
@@ -48,8 +59,8 @@ export default function CarteItinerairesHub() {
               <button
                 onClick={() => setMode('itineraire')}
                 className={`flex flex-col items-center gap-2 px-4 py-4 rounded-xl font-semibold transition-all ${
-                  mode === 'itineraire' 
-                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/30' 
+                  mode === 'itineraire'
+                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
                 aria-label="Sélectionner le mode itinéraire"
@@ -61,8 +72,8 @@ export default function CarteItinerairesHub() {
               <button
                 onClick={() => setMode('optimisation')}
                 className={`flex flex-col items-center gap-2 px-4 py-4 rounded-xl font-semibold transition-all ${
-                  mode === 'optimisation' 
-                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/30' 
+                  mode === 'optimisation'
+                    ? 'bg-green-600 text-white shadow-lg shadow-green-600/30'
                     : 'bg-slate-800/50 text-gray-400 hover:bg-slate-700 hover:text-gray-300'
                 }`}
                 aria-label="Sélectionner le mode optimisation"
@@ -73,7 +84,7 @@ export default function CarteItinerairesHub() {
               </button>
             </div>
           </GlassCard>
-          
+
           {/* Dynamic Content */}
           <div>
             {mode === 'carte' && (
@@ -81,47 +92,39 @@ export default function CarteItinerairesHub() {
                 <Carte />
               </div>
             )}
-            
+
             {mode === 'itineraire' && (
               <GlassCard>
                 <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-3">
                   <Navigation className="w-7 h-7 text-green-400" />
                   Planificateur d'itinéraire
                 </h2>
-                <p className="text-gray-400 mb-6">
-                  Calculez le meilleur trajet pour vos courses
-                </p>
-                
+                <p className="text-gray-400 mb-6">Calculez le meilleur trajet pour vos courses</p>
+
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
                     <div className="text-3xl mb-3">📍</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Multi-destinations
-                    </h3>
+                    <h3 className="font-semibold text-lg mb-2 text-white">Multi-destinations</h3>
                     <p className="text-gray-400 text-sm">
                       Planifiez un trajet avec plusieurs arrêts magasins
                     </p>
                   </div>
-                  
+
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
                     <div className="text-3xl mb-3">⏱️</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Temps estimé
-                    </h3>
+                    <h3 className="font-semibold text-lg mb-2 text-white">Temps estimé</h3>
                     <p className="text-gray-400 text-sm">
                       Calculez la durée et la distance de votre parcours
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                  <p className="text-gray-500">Module en cours d'intégration</p>
                 </div>
               </GlassCard>
             )}
-            
+
             {mode === 'optimisation' && (
               <GlassCard>
                 <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-3">
@@ -131,48 +134,34 @@ export default function CarteItinerairesHub() {
                 <p className="text-gray-400 mb-6">
                   Trouvez le parcours le plus économique et rapide pour votre liste de courses
                 </p>
-                
+
                 <div className="grid md:grid-cols-3 gap-4 mb-6">
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
                     <div className="text-3xl mb-3">💰</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Économie maximale
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Privilégie les magasins les moins chers
-                    </p>
+                    <h3 className="font-semibold text-lg mb-2 text-white">Économie maximale</h3>
+                    <p className="text-gray-400 text-sm">Privilégie les magasins les moins chers</p>
                   </div>
-                  
+
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
                     <div className="text-3xl mb-3">🚗</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Distance minimale
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Réduit les kilomètres parcourus
-                    </p>
+                    <h3 className="font-semibold text-lg mb-2 text-white">Distance minimale</h3>
+                    <p className="text-gray-400 text-sm">Réduit les kilomètres parcourus</p>
                   </div>
-                  
+
                   <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-800">
                     <div className="text-3xl mb-3">⚖️</div>
-                    <h3 className="font-semibold text-lg mb-2 text-white">
-                      Équilibré
-                    </h3>
-                    <p className="text-gray-400 text-sm">
-                      Balance prix et distance
-                    </p>
+                    <h3 className="font-semibold text-lg mb-2 text-white">Équilibré</h3>
+                    <p className="text-gray-400 text-sm">Balance prix et distance</p>
                   </div>
                 </div>
-                
+
                 <div className="bg-slate-900/50 rounded-xl p-8 text-center">
-                  <p className="text-gray-500">
-                    Module en cours d'intégration
-                  </p>
+                  <p className="text-gray-500">Module en cours d'intégration</p>
                 </div>
               </GlassCard>
             )}
           </div>
-          
+
           {/* Info Section */}
           <div className="mt-8">
             <GlassCard className="bg-green-900/20 border-green-700/30">
@@ -187,11 +176,15 @@ export default function CarteItinerairesHub() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-400 mt-1">•</span>
-                  <span>Planifiez vos courses aux heures creuses pour éviter les files d'attente</span>
+                  <span>
+                    Planifiez vos courses aux heures creuses pour éviter les files d'attente
+                  </span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-green-400 mt-1">•</span>
-                  <span>Regroupez vos achats dans le même secteur pour économiser du carburant</span>
+                  <span>
+                    Regroupez vos achats dans le même secteur pour économiser du carburant
+                  </span>
                 </li>
               </ul>
             </GlassCard>

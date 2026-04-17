@@ -1,6 +1,6 @@
 /**
  * Price Alert Center Component
- * 
+ *
  * Main interface for the Real Price Alert System
  * Features:
  * - Alert dashboard with filters
@@ -26,31 +26,31 @@ import { Card } from './ui/card';
 import priceAlertService from '../services/priceAlertService';
 
 const TERRITORY_NAMES = {
-  'GP': 'Guadeloupe',
-  'MQ': 'Martinique',
-  'GF': 'Guyane',
-  'RE': 'La Réunion',
-  'YT': 'Mayotte',
-  'PM': 'Saint-Pierre-et-Miquelon',
-  'BL': 'Saint-Barthélemy',
-  'MF': 'Saint-Martin',
-  'WF': 'Wallis-et-Futuna',
-  'PF': 'Polynésie française',
-  'NC': 'Nouvelle-Calédonie',
-  'TF': 'Terres australes et antarctiques françaises',
+  GP: 'Guadeloupe',
+  MQ: 'Martinique',
+  GF: 'Guyane',
+  RE: 'La Réunion',
+  YT: 'Mayotte',
+  PM: 'Saint-Pierre-et-Miquelon',
+  BL: 'Saint-Barthélemy',
+  MF: 'Saint-Martin',
+  WF: 'Wallis-et-Futuna',
+  PF: 'Polynésie française',
+  NC: 'Nouvelle-Calédonie',
+  TF: 'Terres australes et antarctiques françaises',
 };
 
 const SOURCE_LABELS = {
-  'official_site': 'Site officiel',
-  'public_listing': 'Liste publique',
-  'user_report': 'Signalement citoyen',
-  'observateur': 'Observatoire des prix',
+  official_site: 'Site officiel',
+  public_listing: 'Liste publique',
+  user_report: 'Signalement citoyen',
+  observateur: 'Observatoire des prix',
 };
 
 const CONFIDENCE_LABELS = {
-  'high': 'Élevée',
-  'medium': 'Moyenne',
-  'low': 'Faible',
+  high: 'Élevée',
+  medium: 'Moyenne',
+  low: 'Faible',
 };
 
 export function PriceAlertCenter({ userId = 'demo-user' }) {
@@ -134,11 +134,11 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
 
   const getConfidenceBadge = (confidence) => {
     const colors = {
-      'high': 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200',
-      'medium': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200',
-      'low': 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200',
+      high: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200',
+      medium: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200',
+      low: 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-200',
     };
-    
+
     return (
       <span className={`px-2 py-1 text-xs rounded-full ${colors[confidence] || colors.low}`}>
         Confiance: {CONFIDENCE_LABELS[confidence] || confidence}
@@ -167,9 +167,7 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
               <Bell className="w-8 h-8" />
               Centre d'Alertes Prix
             </h1>
-            <p className="text-blue-100">
-              Système de surveillance des prix citoyens
-            </p>
+            <p className="text-blue-100">Système de surveillance des prix citoyens</p>
           </div>
           <button
             onClick={() => setShowSettings(!showSettings)}
@@ -188,9 +186,9 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           <div className="text-sm text-blue-900 dark:text-blue-100">
             <p className="font-medium mb-1">Information importante</p>
             <p>
-              Les alertes sont basées sur des données publiques disponibles et des informations 
-              signalées par les citoyens. Toutes les alertes affichent la source des données 
-              et la date d'observation. Ces informations sont fournies à titre indicatif.
+              Les alertes sont basées sur des données publiques disponibles et des informations
+              signalées par les citoyens. Toutes les alertes affichent la source des données et la
+              date d'observation. Ces informations sont fournies à titre indicatif.
             </p>
           </div>
         </div>
@@ -202,12 +200,8 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  Total alertes
-                </p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {summary.total}
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total alertes</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">{summary.total}</p>
               </div>
               <Bell className="w-8 h-8 text-blue-500" />
             </div>
@@ -216,9 +210,7 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  Non confirmées
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Non confirmées</p>
                 <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
                   {summary.unacknowledged}
                 </p>
@@ -230,9 +222,7 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  Critiques
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Critiques</p>
                 <p className="text-3xl font-bold text-red-600 dark:text-red-400">
                   {summary.bySeverity.high}
                 </p>
@@ -244,9 +234,7 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           <Card className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                  Shrinkflation
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Shrinkflation</p>
                 <p className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                   {summary.byType.shrinkflation}
                 </p>
@@ -259,12 +247,13 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
 
       {/* Filters */}
       <Card className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Filtres
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Filtres</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label htmlFor="filter-alert-type" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="filter-alert-type"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Type d'alerte
             </label>
             <select
@@ -281,7 +270,10 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           </div>
 
           <div>
-            <label htmlFor="filter-severity" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="filter-severity"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Sévérité
             </label>
             <select
@@ -298,7 +290,10 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
           </div>
 
           <div>
-            <label htmlFor="filter-territory" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label
+              htmlFor="filter-territory"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
               Territoire
             </label>
             <select
@@ -309,14 +304,18 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
             >
               <option value="">Tous</option>
               {Object.entries(TERRITORY_NAMES).map(([code, name]) => (
-                <option key={code} value={code}>{name}</option>
+                <option key={code} value={code}>
+                  {name}
+                </option>
               ))}
             </select>
           </div>
 
           <div className="flex items-end">
             <button
-              onClick={() => setFilter({ alertType: null, severity: null, territory: null, acknowledged: false })}
+              onClick={() =>
+                setFilter({ alertType: null, severity: null, territory: null, acknowledged: false })
+              }
               className="w-full px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
             >
               Réinitialiser
@@ -390,14 +389,20 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Variation</p>
-                  <p className={`text-lg font-semibold ${alert.absoluteChange > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                    {alert.absoluteChange > 0 ? '+' : ''}{alert.absoluteChange.toFixed(2)} €
+                  <p
+                    className={`text-lg font-semibold ${alert.absoluteChange > 0 ? 'text-red-600' : 'text-green-600'}`}
+                  >
+                    {alert.absoluteChange > 0 ? '+' : ''}
+                    {alert.absoluteChange.toFixed(2)} €
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Pourcentage</p>
-                  <p className={`text-lg font-semibold ${alert.percentageChange > 0 ? 'text-red-600' : 'text-green-600'}`}>
-                    {alert.percentageChange > 0 ? '+' : ''}{alert.percentageChange.toFixed(1)} %
+                  <p
+                    className={`text-lg font-semibold ${alert.percentageChange > 0 ? 'text-red-600' : 'text-green-600'}`}
+                  >
+                    {alert.percentageChange > 0 ? '+' : ''}
+                    {alert.percentageChange.toFixed(1)} %
                   </p>
                 </div>
               </div>
@@ -480,7 +485,8 @@ export function PriceAlertCenter({ userId = 'demo-user' }) {
 
                 {alert.confidence === 'low' && (
                   <div className="mt-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded text-xs text-yellow-800 dark:text-yellow-200">
-                    ⚠️ Attention: Confiance faible - Données issues de signalements citoyens non vérifiés
+                    ⚠️ Attention: Confiance faible - Données issues de signalements citoyens non
+                    vérifiés
                   </div>
                 )}
               </div>

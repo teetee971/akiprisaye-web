@@ -1,4 +1,3 @@
- 
 import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 // Leaflet styles are imported here on the map route to keep HOME's initial bundle lighter.
@@ -8,16 +7,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 // Leaflet UI overrides — kept alongside leaflet.css so they load together.
 import '../styles/leaflet-overrides.css';
 import { Link } from 'react-router-dom';
-import {
-  Bus,
-  Car,
-  Footprints,
-  History,
-  Loader2,
-  MapPin,
-  Share2,
-  WifiOff,
-} from 'lucide-react';
+import { Bus, Car, Footprints, History, Loader2, MapPin, Share2, WifiOff } from 'lucide-react';
 
 import { getStoresByTerritory } from '../services/mapService';
 import { getActiveTerritories, TERRITORIES } from '../constants/territories';
@@ -38,37 +28,45 @@ function MapUpdater({ map, position }) {
   return null;
 }
 
-function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDistance, markerRefs, territory }) {
+function MarkerClusterGroup({
+  map,
+  leaflet,
+  stores,
+  currentTerritory,
+  formatDistance,
+  markerRefs,
+  territory,
+}) {
   useEffect(() => {
     if (!map || !leaflet || typeof map.addLayer !== 'function') return;
 
     const canUseMarkerCluster = typeof leaflet.markerClusterGroup === 'function';
     const markerLayerGroup = canUseMarkerCluster
       ? leaflet.markerClusterGroup({
-        chunkedLoading: true,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: true,
-        zoomToBoundsOnClick: true,
-        maxClusterRadius: 60,
-        disableClusteringAtZoom: 15,
-        iconCreateFunction: function(cluster) {
-          const count = cluster.getChildCount();
-          let className = 'marker-cluster-';
-          if (count < 10) {
-            className += 'small';
-          } else if (count < 20) {
-            className += 'medium';
-          } else {
-            className += 'large';
-          }
+          chunkedLoading: true,
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: true,
+          zoomToBoundsOnClick: true,
+          maxClusterRadius: 60,
+          disableClusteringAtZoom: 15,
+          iconCreateFunction: function (cluster) {
+            const count = cluster.getChildCount();
+            let className = 'marker-cluster-';
+            if (count < 10) {
+              className += 'small';
+            } else if (count < 20) {
+              className += 'medium';
+            } else {
+              className += 'large';
+            }
 
-          return leaflet.divIcon({
-            html: `<div><span>${count}</span></div>`,
-            className: `marker-cluster ${className}`,
-            iconSize: leaflet.point(40, 40),
-          });
-        },
-      })
+            return leaflet.divIcon({
+              html: `<div><span>${count}</span></div>`,
+              className: `marker-cluster ${className}`,
+              iconSize: leaflet.point(40, 40),
+            });
+          },
+        })
       : leaflet.layerGroup();
 
     if (!markerLayerGroup || typeof markerLayerGroup.addLayer !== 'function') {
@@ -80,7 +78,7 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
       // Get store hours and status
       const storeHours = getStoreHours(store.id, territory);
       const statusInfo = storeHours ? isStoreOpen(storeHours) : null;
-      
+
       // Create custom icon with status indicator
       let markerIcon;
       if (statusInfo) {
@@ -90,9 +88,9 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
           closed: '#ef4444', // red
           unknown: '#9ca3af', // gray
         };
-        
+
         const color = statusColors[statusInfo.status] || statusColors.unknown;
-        
+
         // Create a custom divIcon with colored marker
         markerIcon = leaflet.divIcon({
           html: `
@@ -112,11 +110,11 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
           popupAnchor: [0, -41],
         });
       }
-      
-      const leafletMarker = markerIcon 
+
+      const leafletMarker = markerIcon
         ? leaflet.marker([store.lat, store.lon], { icon: markerIcon })
         : leaflet.marker([store.lat, store.lon]);
-      
+
       // Store marker ref for accessibility
       if (markerRefs && markerRefs.current) {
         markerRefs.current.set(store.id || `${store.lat},${store.lon}`, leafletMarker);
@@ -127,84 +125,85 @@ function MarkerClusterGroup({ map, leaflet, stores, currentTerritory, formatDist
       popupContent.className = 'text-slate-900';
       popupContent.setAttribute('role', 'dialog');
       popupContent.setAttribute('aria-labelledby', `store-${store.id || store.lat}`);
-      
+
       // Title
       const title = document.createElement('h3');
       title.className = 'font-semibold';
       title.id = `store-${store.id || store.lat}`;
       title.textContent = store.name;
       popupContent.appendChild(title);
-      
+
       // Category
       const category = document.createElement('p');
       category.className = 'text-sm text-slate-600';
       category.textContent = store.category;
       popupContent.appendChild(category);
-      
+
       // Territory
       const territoryEl = document.createElement('p');
       territoryEl.className = 'text-xs text-slate-500';
       territoryEl.textContent = currentTerritory?.name || '';
       popupContent.appendChild(territoryEl);
-      
+
       // Store Hours Status
       if (statusInfo) {
         const statusDiv = document.createElement('div');
         statusDiv.className = 'mt-2 mb-2 p-2 rounded-lg';
-        
+
         const statusColors = {
           open: 'background: #d1fae5; color: #065f46;',
           closing_soon: 'background: #fed7aa; color: #92400e;',
           closed: 'background: #fee2e2; color: #991b1b;',
           unknown: 'background: #f3f4f6; color: #374151;',
         };
-        
+
         const statusIcons = {
           open: '🟢',
           closing_soon: '🟠',
           closed: '🔴',
           unknown: '⚪',
         };
-        
+
         statusDiv.style.cssText = statusColors[statusInfo.status] || statusColors.unknown;
-        
+
         // Security: Use textContent for user-controlled message to prevent XSS
         const iconSpan = document.createElement('strong');
         iconSpan.textContent = `${statusIcons[statusInfo.status]} ${statusInfo.message}`;
         statusDiv.appendChild(iconSpan);
-        
+
         popupContent.appendChild(statusDiv);
       }
-      
+
       // Distance info
       if (store.distance) {
         const distanceDiv = document.createElement('div');
         distanceDiv.className = 'text-xs mt-1 space-y-1';
-        
+
         const distanceP = document.createElement('p');
         distanceP.className = 'text-blue-600 font-medium';
         distanceP.textContent = `Distance: ${formatDistance(store.distance)} `;
-        
+
         const estimated = document.createElement('span');
         estimated.className = 'text-slate-500';
         estimated.textContent = '(estimée)';
         distanceP.appendChild(estimated);
-        
+
         distanceDiv.appendChild(distanceP);
         popupContent.appendChild(distanceDiv);
       }
-      
+
       // Street View link
       const linkDiv = document.createElement('div');
       linkDiv.className = 'mt-2';
-      
+
       const streetViewLink = document.createElement('a');
       streetViewLink.href = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${store.lat},${store.lon}`;
       streetViewLink.target = '_blank';
       streetViewLink.rel = 'noopener noreferrer';
-      streetViewLink.className = 'inline-flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors';
+      streetViewLink.className =
+        'inline-flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors';
       streetViewLink.textContent = '📸 Street View';
-      
+
       linkDiv.appendChild(streetViewLink);
       popupContent.appendChild(linkDiv);
 
@@ -238,7 +237,7 @@ export default function Carte() {
   const [userPosition, setUserPosition] = useState(null);
   const [isNavigating, setIsNavigating] = useState({});
   const [isOnline, setIsOnline] = useState(
-    typeof navigator !== 'undefined' ? navigator.onLine : true,
+    typeof navigator !== 'undefined' ? navigator.onLine : true
   );
   const [recentDestinations, setRecentDestinations] = useState([]);
   const [showRecentDestinations, setShowRecentDestinations] = useState(false);
@@ -324,7 +323,13 @@ export default function Carte() {
   }, []);
 
   const saveToRecentDestinations = (store) => {
-    if (!store || !store.name || typeof store.lat !== 'number' || typeof store.lon !== 'number' || !store.category) {
+    if (
+      !store ||
+      !store.name ||
+      typeof store.lat !== 'number' ||
+      typeof store.lon !== 'number' ||
+      !store.category
+    ) {
       console.error('Invalid store object provided to saveToRecentDestinations');
       return;
     }
@@ -337,8 +342,8 @@ export default function Carte() {
       timestamp: Date.now(),
     };
 
-    setRecentDestinations(prev => {
-      const filtered = prev.filter(d => !(d.lat === store.lat && d.lon === store.lon));
+    setRecentDestinations((prev) => {
+      const filtered = prev.filter((d) => !(d.lat === store.lat && d.lon === store.lon));
       const updated = [newDestination, ...filtered].slice(0, MAX_RECENT_DESTINATIONS);
       try {
         safeLocalStorage.setItem(RECENT_DESTINATIONS_KEY, JSON.stringify(updated));
@@ -373,7 +378,13 @@ export default function Carte() {
   };
 
   const shareLocation = (store) => {
-    if (!store || !store.name || typeof store.lat !== 'number' || typeof store.lon !== 'number' || !store.category) {
+    if (
+      !store ||
+      !store.name ||
+      typeof store.lat !== 'number' ||
+      typeof store.lon !== 'number' ||
+      !store.category
+    ) {
       console.error('Invalid store object provided to shareLocation');
       return;
     }
@@ -385,7 +396,8 @@ export default function Carte() {
     };
 
     if (navigator.share) {
-      navigator.share(shareData)
+      navigator
+        .share(shareData)
         .then(() => {
           if (import.meta.env.DEV) {
             console.warn('Shared successfully');
@@ -395,7 +407,8 @@ export default function Carte() {
     } else {
       const text = `${store.name} - ${store.category}\nCoordonnées GPS: ${store.lat}, ${store.lon}\nLien: https://www.google.com/maps/search/?api=1&query=${store.lat},${store.lon}`;
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text)
+        navigator.clipboard
+          .writeText(text)
           .then(() => {
             if (import.meta.env.DEV) {
               console.warn('Coordonnées copiées dans le presse-papier !');
@@ -405,22 +418,22 @@ export default function Carte() {
             console.error('Erreur lors de la copie dans le presse-papier :', error);
             console.warn(
               `Impossible de copier automatiquement dans le presse-papier.\n\n` +
-              `Cela peut être dû aux restrictions de votre navigateur ` +
-              `(contexte non sécurisé HTTP ou autorisation refusée).\n\n` +
-              `Vous pouvez copier manuellement ces informations :\n\n` +
-              `${store.name}\n` +
-              `Coordonnées: ${store.lat}, ${store.lon}\n` +
-              `Lien: https://www.google.com/maps/search/?api=1&query=${store.lat},${store.lon}`,
+                `Cela peut être dû aux restrictions de votre navigateur ` +
+                `(contexte non sécurisé HTTP ou autorisation refusée).\n\n` +
+                `Vous pouvez copier manuellement ces informations :\n\n` +
+                `${store.name}\n` +
+                `Coordonnées: ${store.lat}, ${store.lon}\n` +
+                `Lien: https://www.google.com/maps/search/?api=1&query=${store.lat},${store.lon}`
             );
           });
       } else {
         console.warn(
           `Le partage automatique du lien n'est pas disponible dans ce navigateur ` +
-          `ou dans ce contexte (par exemple, page non sécurisée HTTP).\n\n` +
-          `Vous pouvez copier manuellement ces informations :\n\n` +
-          `${store.name}\n` +
-          `Coordonnées: ${store.lat}, ${store.lon}\n` +
-          `Lien: https://www.google.com/maps/search/?api=1&query=${store.lat},${store.lon}`,
+            `ou dans ce contexte (par exemple, page non sécurisée HTTP).\n\n` +
+            `Vous pouvez copier manuellement ces informations :\n\n` +
+            `${store.name}\n` +
+            `Coordonnées: ${store.lat}, ${store.lon}\n` +
+            `Lien: https://www.google.com/maps/search/?api=1&query=${store.lat},${store.lon}`
         );
       }
     }
@@ -428,13 +441,15 @@ export default function Carte() {
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c;
     return distance;
   };
@@ -456,9 +471,16 @@ export default function Carte() {
       saveToRecentDestinations(store);
     }
 
-    if (typeof lat !== 'number' || typeof lon !== 'number' ||
-        isNaN(lat) || isNaN(lon) ||
-        lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    if (
+      typeof lat !== 'number' ||
+      typeof lon !== 'number' ||
+      isNaN(lat) ||
+      isNaN(lon) ||
+      lat < -90 ||
+      lat > 90 ||
+      lon < -180 ||
+      lon > 180
+    ) {
       console.error('Invalid coordinates provided');
       return;
     }
@@ -469,7 +491,7 @@ export default function Carte() {
     }
 
     const storeKey = `${lat},${lon}`;
-    setIsNavigating(prev => ({ ...prev, [storeKey]: true }));
+    setIsNavigating((prev) => ({ ...prev, [storeKey]: true }));
 
     try {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -481,7 +503,9 @@ export default function Carte() {
       const origin = userPosition ? `${userPosition[0]},${userPosition[1]}` : 'current+location';
 
       if (isIOS) {
-        const useAppleMaps = confirm('Ouvrir dans Apple Maps ?\n\nOK = Apple Maps\nAnnuler = Google Maps');
+        const useAppleMaps = confirm(
+          'Ouvrir dans Apple Maps ?\n\nOK = Apple Maps\nAnnuler = Google Maps'
+        );
         if (useAppleMaps) {
           url = `https://maps.apple.com/?daddr=${lat},${lon}&dirflg=${mode === 'driving' ? 'd' : mode === 'walking' ? 'w' : 'r'}`;
         } else {
@@ -505,19 +529,19 @@ export default function Carte() {
       }
 
       setTimeout(() => {
-        setIsNavigating(prev => ({ ...prev, [storeKey]: false }));
+        setIsNavigating((prev) => ({ ...prev, [storeKey]: false }));
       }, NAVIGATION_TIMEOUT);
     } catch (error) {
       console.error('Error opening navigation:', error);
       const storeKey = `${lat},${lon}`;
-      setIsNavigating(prev => ({ ...prev, [storeKey]: false }));
+      setIsNavigating((prev) => ({ ...prev, [storeKey]: false }));
     }
   };
 
   const storesWithDistance = useMemo(() => {
-    if (!userPosition) return stores.map(store => ({ ...store, distance: null }));
+    if (!userPosition) return stores.map((store) => ({ ...store, distance: null }));
 
-    return stores.map(store => ({
+    return stores.map((store) => ({
       ...store,
       distance: calculateDistance(userPosition[0], userPosition[1], store.lat, store.lon),
     }));
@@ -526,29 +550,50 @@ export default function Carte() {
   const getStoreCategory = (store) => {
     if (!store || !store.chain) return 'Autre';
     const chain = store.chain.toLowerCase();
-    if (['système u', 'carrefour', 'casino', 'e.leclerc', 'leader price', 'auchan',
-         'ecomax', 'simply market', 'intermarché', '8 à huit', 'vival',
-         'super score', 'euromarché', 'match'].some(food => chain.includes(food) || food.includes(chain))) {
+    if (
+      [
+        'système u',
+        'carrefour',
+        'casino',
+        'e.leclerc',
+        'leader price',
+        'auchan',
+        'ecomax',
+        'simply market',
+        'intermarché',
+        '8 à huit',
+        'vival',
+        'super score',
+        'euromarché',
+        'match',
+      ].some((food) => chain.includes(food) || food.includes(chain))
+    ) {
       return 'Alimentation';
-    } else if (['mr. bricolage', 'bricopro', 'bricomarché'].some(hw => chain.includes(hw) || hw.includes(chain))) {
+    } else if (
+      ['mr. bricolage', 'bricopro', 'bricomarché'].some(
+        (hw) => chain.includes(hw) || hw.includes(chain)
+      )
+    ) {
       return 'Bricolage';
-    } else if (['darty', 'but'].some(elec => chain.includes(elec) || elec.includes(chain))) {
+    } else if (['darty', 'but'].some((elec) => chain.includes(elec) || elec.includes(chain))) {
       return 'Électronique';
-    } else if (['décathlon', 'intersport'].some(sport => chain.includes(sport) || sport.includes(chain))) {
+    } else if (
+      ['décathlon', 'intersport'].some((sport) => chain.includes(sport) || sport.includes(chain))
+    ) {
       return 'Sport';
     }
     return 'Autre';
   };
 
   const filteredStores = useMemo(() => {
-    let filtered = storesWithDistance.filter(store => {
+    let filtered = storesWithDistance.filter((store) => {
       if (selectedCategory !== 'Toutes' && getStoreCategory(store) !== selectedCategory) {
         return false;
       }
 
       if (selectedServices.length > 0) {
         const storeServices = store.services || [];
-        const hasAllServices = selectedServices.every(service => storeServices.includes(service));
+        const hasAllServices = selectedServices.every((service) => storeServices.includes(service));
         if (!hasAllServices) return false;
       }
 
@@ -560,7 +605,7 @@ export default function Carte() {
       if (showOpenOnly) {
         const storeHours = getStoreHours(store.id, territory);
         if (!storeHours) return false;
-        
+
         const statusInfo = isStoreOpen(storeHours);
         if (statusInfo.status !== 'open' && statusInfo.status !== 'closing_soon') {
           return false;
@@ -579,13 +624,23 @@ export default function Carte() {
     }
 
     return filtered;
-  }, [storesWithDistance, selectedCategory, selectedServices, showNearMeOnly, nearMeRadius, sortByDistance, userPosition, showOpenOnly, territory]);
+  }, [
+    storesWithDistance,
+    selectedCategory,
+    selectedServices,
+    showNearMeOnly,
+    nearMeRadius,
+    sortByDistance,
+    userPosition,
+    showOpenOnly,
+    territory,
+  ]);
 
   const storeStats = useMemo(() => {
     const categories = {};
     const chains = {};
 
-    stores.forEach(store => {
+    stores.forEach((store) => {
       const category = getStoreCategory(store);
       categories[category] = (categories[category] || 0) + 1;
       chains[store.chain] = (chains[store.chain] || 0) + 1;
@@ -596,7 +651,7 @@ export default function Carte() {
 
   const activeTerritories = getActiveTerritories();
   const territoryPositions = {};
-  activeTerritories.forEach(t => {
+  activeTerritories.forEach((t) => {
     territoryPositions[t.code] = [t.center.lat, t.center.lng];
   });
 
@@ -604,10 +659,10 @@ export default function Carte() {
     const territoryObj = TERRITORIES[territory];
     if (territoryObj) {
       getStoresByTerritory(territoryObj.name)
-        .then(stores => {
+        .then((stores) => {
           setStores(stores);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error loading stores:', error);
           setStores([]);
         });
@@ -618,7 +673,7 @@ export default function Carte() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => setUserPosition([pos.coords.latitude, pos.coords.longitude]),
-        (err) => console.warn('Géolocalisation refusée', err),
+        (err) => console.warn('Géolocalisation refusée', err)
       );
     }
   }, []);
@@ -629,7 +684,8 @@ export default function Carte() {
   const userIcon = useMemo(() => {
     if (!leaflet) return null;
     return leaflet.icon({
-      iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+      iconUrl:
+        'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
       shadowUrl: `${import.meta.env.BASE_URL}leaflet/marker-shadow.png`,
       iconSize: [25, 41],
       iconAnchor: [12, 41],
@@ -654,11 +710,11 @@ export default function Carte() {
       el.classList.add('map-marker-focus');
 
       // Find store data for aria-label
-      const store = filteredStores.find((s) => 
-        (s.id && s.id === storeId) || `${s.lat},${s.lon}` === storeId
+      const store = filteredStores.find(
+        (s) => (s.id && s.id === storeId) || `${s.lat},${s.lon}` === storeId
       );
-      const label = store 
-        ? `${store.name}${store.category ? `, ${store.category}` : ''}` 
+      const label = store
+        ? `${store.name}${store.category ? `, ${store.category}` : ''}`
         : 'Magasin';
       el.setAttribute('aria-label', label);
 
@@ -695,7 +751,8 @@ export default function Carte() {
             <div>
               <p className="font-semibold text-orange-400">Mode hors ligne</p>
               <p className="text-sm text-slate-300">
-                Vous êtes hors ligne. Les coordonnées GPS sont disponibles mais la navigation nécessite une connexion.
+                Vous êtes hors ligne. Les coordonnées GPS sont disponibles mais la navigation
+                nécessite une connexion.
               </p>
             </div>
           </div>
@@ -740,10 +797,18 @@ export default function Carte() {
                           onClick={() => handleGPS(dest.lat, dest.lon, 'driving', dest.name, dest)}
                           className="px-2 py-1 bg-blue-600/30 text-blue-300 rounded text-xs hover:bg-blue-600/40 disabled:opacity-50"
                           aria-label={`Naviguer vers ${dest.name}`}
-                          title={!isOnline ? "Navigation désactivée (hors ligne)" : "Naviguer vers ce magasin"}
+                          title={
+                            !isOnline
+                              ? 'Navigation désactivée (hors ligne)'
+                              : 'Naviguer vers ce magasin'
+                          }
                           disabled={isDestNavigating || !isOnline}
                         >
-                          {isDestNavigating ? <Loader2 size={14} className="animate-spin" /> : <Car size={14} />}
+                          {isDestNavigating ? (
+                            <Loader2 size={14} className="animate-spin" />
+                          ) : (
+                            <Car size={14} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -755,7 +820,10 @@ export default function Carte() {
         )}
 
         <div className="mb-6">
-          <label htmlFor="carte-territoire" className="block text-sm font-medium mb-2 text-slate-300">
+          <label
+            htmlFor="carte-territoire"
+            className="block text-sm font-medium mb-2 text-slate-300"
+          >
             Sélectionner un territoire
           </label>
           <select
@@ -781,29 +849,34 @@ export default function Carte() {
             <div>
               <h3 className="text-sm font-medium text-slate-300 mb-2">Par Catégorie</h3>
               <div className="space-y-1">
-                {Object.entries(storeStats.categories).sort((a, b) => b[1] - a[1]).map(([cat, count]) => (
-                  <div key={cat} className="flex justify-between text-sm">
-                    <span className="text-slate-400">
-                      {cat === 'Alimentation' && '🛒 '}
-                      {cat === 'Bricolage' && '🔨 '}
-                      {cat === 'Électronique' && '💻 '}
-                      {cat === 'Sport' && '⚽ '}
-                      {cat}
-                    </span>
-                    <span className="text-blue-400 font-medium">{count}</span>
-                  </div>
-                ))}
+                {Object.entries(storeStats.categories)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([cat, count]) => (
+                    <div key={cat} className="flex justify-between text-sm">
+                      <span className="text-slate-400">
+                        {cat === 'Alimentation' && '🛒 '}
+                        {cat === 'Bricolage' && '🔨 '}
+                        {cat === 'Électronique' && '💻 '}
+                        {cat === 'Sport' && '⚽ '}
+                        {cat}
+                      </span>
+                      <span className="text-blue-400 font-medium">{count}</span>
+                    </div>
+                  ))}
               </div>
             </div>
             <div>
               <h3 className="text-sm font-medium text-slate-300 mb-2">Top Enseignes</h3>
               <div className="space-y-1">
-                {Object.entries(storeStats.chains).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([chain, count]) => (
-                  <div key={chain} className="flex justify-between text-sm">
-                    <span className="text-slate-400">{chain}</span>
-                    <span className="text-blue-400 font-medium">{count}</span>
-                  </div>
-                ))}
+                {Object.entries(storeStats.chains)
+                  .sort((a, b) => b[1] - a[1])
+                  .slice(0, 5)
+                  .map(([chain, count]) => (
+                    <div key={chain} className="flex justify-between text-sm">
+                      <span className="text-slate-400">{chain}</span>
+                      <span className="text-blue-400 font-medium">{count}</span>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
@@ -823,7 +896,10 @@ export default function Carte() {
           {showFilters && (
             <div className="space-y-4">
               <div>
-                <label htmlFor="carte-categorie" className="block text-sm font-medium mb-2 text-slate-300">
+                <label
+                  htmlFor="carte-categorie"
+                  className="block text-sm font-medium mb-2 text-slate-300"
+                >
                   Catégorie
                 </label>
                 <select
@@ -833,9 +909,15 @@ export default function Carte() {
                   className="w-full px-4 py-2 rounded-lg bg-slate-700 text-slate-100 border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="Toutes">Toutes les catégories</option>
-                  <option value="Alimentation">🛒 Alimentation ({storeStats.categories['Alimentation'] || 0})</option>
-                  <option value="Bricolage">🔨 Bricolage ({storeStats.categories['Bricolage'] || 0})</option>
-                  <option value="Électronique">💻 Électronique ({storeStats.categories['Électronique'] || 0})</option>
+                  <option value="Alimentation">
+                    🛒 Alimentation ({storeStats.categories['Alimentation'] || 0})
+                  </option>
+                  <option value="Bricolage">
+                    🔨 Bricolage ({storeStats.categories['Bricolage'] || 0})
+                  </option>
+                  <option value="Électronique">
+                    💻 Électronique ({storeStats.categories['Électronique'] || 0})
+                  </option>
                   <option value="Sport">⚽ Sport ({storeStats.categories['Sport'] || 0})</option>
                 </select>
               </div>
@@ -845,8 +927,18 @@ export default function Carte() {
                   Services disponibles
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {['parking', 'livraison', 'carte_bancaire', 'SAV', 'essence', 'retrait_course'].map(service => (
-                    <label key={service} className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer hover:text-blue-400">
+                  {[
+                    'parking',
+                    'livraison',
+                    'carte_bancaire',
+                    'SAV',
+                    'essence',
+                    'retrait_course',
+                  ].map((service) => (
+                    <label
+                      key={service}
+                      className="flex items-center gap-2 text-sm text-slate-300 cursor-pointer hover:text-blue-400"
+                    >
                       <input
                         type="checkbox"
                         checked={selectedServices.includes(service)}
@@ -854,7 +946,7 @@ export default function Carte() {
                           if (e.target.checked) {
                             setSelectedServices([...selectedServices, service]);
                           } else {
-                            setSelectedServices(selectedServices.filter(s => s !== service));
+                            setSelectedServices(selectedServices.filter((s) => s !== service));
                           }
                         }}
                         className="rounded border-slate-600 bg-slate-700 text-blue-500 focus:ring-blue-500 focus:ring-offset-slate-800"
@@ -890,8 +982,11 @@ export default function Carte() {
                       {selectedCategory}
                     </span>
                   )}
-                  {selectedServices.map(service => (
-                    <span key={service} className="px-2 py-1 bg-green-600/20 text-green-300 rounded">
+                  {selectedServices.map((service) => (
+                    <span
+                      key={service}
+                      className="px-2 py-1 bg-green-600/20 text-green-300 rounded"
+                    >
                       {service}
                     </span>
                   ))}
@@ -950,8 +1045,12 @@ export default function Carte() {
 
               {showNearMeOnly && (
                 <div>
-                  <label htmlFor="carte-rayon" className="block text-sm font-medium mb-2 text-slate-300">
-                    Rayon de recherche: <span className="text-blue-400 font-bold">{nearMeRadius} km</span>
+                  <label
+                    htmlFor="carte-rayon"
+                    className="block text-sm font-medium mb-2 text-slate-300"
+                  >
+                    Rayon de recherche:{' '}
+                    <span className="text-blue-400 font-bold">{nearMeRadius} km</span>
                   </label>
                   <input
                     id="carte-rayon"
@@ -972,7 +1071,9 @@ export default function Carte() {
 
               {sortByDistance && filteredStores.length > 0 && (
                 <div className="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
-                  <h3 className="text-sm font-medium text-slate-300 mb-2">🎯 Les 3 plus proches :</h3>
+                  <h3 className="text-sm font-medium text-slate-300 mb-2">
+                    🎯 Les 3 plus proches :
+                  </h3>
                   <div className="space-y-2">
                     {filteredStores.slice(0, 3).map((store, idx) => (
                       <div key={idx} className="flex items-center justify-between text-sm">
@@ -982,7 +1083,7 @@ export default function Carte() {
                         </div>
                         {store.distance && (
                           <span className="text-green-400 font-medium">
-                            {(store.distance).toFixed(1)} km
+                            {store.distance.toFixed(1)} km
                           </span>
                         )}
                       </div>
@@ -1010,7 +1111,9 @@ export default function Carte() {
             </label>
           </div>
           <span className="text-xs text-slate-500">
-            {enableClustering ? 'Les marqueurs proches sont regroupés' : 'Tous les marqueurs sont visibles'}
+            {enableClustering
+              ? 'Les marqueurs proches sont regroupés'
+              : 'Tous les marqueurs sont visibles'}
           </span>
         </div>
 
@@ -1041,142 +1144,175 @@ export default function Carte() {
                     territory={territory}
                   />
                 ) : (
-                filteredStores.map((store, index) => {
-                  const storeKey = `${store.lat},${store.lon}`;
-                  const isStoreNavigating = isNavigating[storeKey] || false;
+                  filteredStores.map((store, index) => {
+                    const storeKey = `${store.lat},${store.lon}`;
+                    const isStoreNavigating = isNavigating[storeKey] || false;
 
-                  return (
-                    <Marker 
-                      key={store.id || storeKey}
-                      position={[store.lat, store.lon]}
-                      ref={(m) => {
-                        if (m) {
-                          const storeId = store.id || storeKey;
-                          markerRefs.current.set(storeId, m);
-                        }
-                      }}
-                    >
-                      <Popup>
-                        <div className="text-slate-900" role="dialog" aria-labelledby={`store-${store.id || store.lat}`}>
-                          <h3 className="font-semibold" id={`store-${store.id || store.lat}`}>{store.name}</h3>
-                          <p className="text-sm text-slate-600">{store.category}</p>
-                          <p className="text-xs text-slate-500">{currentTerritory?.name || territory}</p>
-                          {store.distance && (
-                            <div className="text-xs mt-1 space-y-1">
-                              <p className="text-blue-600 font-medium">
-                                <MapPin size={12} className="inline mr-1" />
-                                Distance: {formatDistance(store.distance)} <span className="text-slate-500">(estimée)</span>
-                              </p>
-                              <div className="flex gap-2 text-slate-600">
-                                <span title="Temps estimé en voiture">
-                                  <Car size={12} className="inline mr-1" />
-                                  {formatTravelTime(estimateTravelTime(store.distance, 'driving'))}
-                                </span>
-                                <span title="Temps estimé à pied">
-                                  <Footprints size={12} className="inline mr-1" />
-                                  {formatTravelTime(estimateTravelTime(store.distance, 'walking'))}
-                                </span>
-                                <span title="Temps estimé en transport">
-                                  <Bus size={12} className="inline mr-1" />
-                                  {formatTravelTime(estimateTravelTime(store.distance, 'transit'))}
-                                </span>
-                              </div>
-                              <p className="text-xs text-slate-400 italic">Temps estimés - ne tiennent pas compte du trafic</p>
-                            </div>
-                          )}
-
-                          {store.id && (
-                            <div className="mt-2 mb-2">
-                              <Link
-                                to={`/enseigne/${store.id}`}
-                                className="inline-block w-full text-center px-3 py-1.5 bg-slate-800 text-white rounded text-xs hover:bg-slate-700 transition-colors"
-                              >
-                                🏪 Voir la fiche magasin
-                              </Link>
-                            </div>
-                          )}
-
-                          <div className="mt-2 mb-2">
-                            <a
-                              href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${store.lat},${store.lon}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-block w-full text-center px-3 py-1.5 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors"
-                              title="Voir sur Google Street View"
-                            >
-                              📸 Street View
-                            </a>
-                          </div>
-
-                          <div className="flex gap-2 mt-2">
-                            <button
-                              onClick={() => handleGPS(store.lat, store.lon, 'driving', store.name, store)}
-                              className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 disabled:opacity-50"
-                              title="Naviguer en voiture"
-                              aria-label={`Naviguer en voiture vers ${store.name}`}
-                              disabled={isStoreNavigating || !isOnline}
-                            >
-                              {isStoreNavigating ? <Loader2 size={14} className="animate-spin" /> : <Car size={14} />}
-                            </button>
-                            <button
-                              onClick={() => handleGPS(store.lat, store.lon, 'walking', store.name, store)}
-                              className="flex items-center gap-1 px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 disabled:opacity-50"
-                              title="Naviguer à pied"
-                              aria-label={`Naviguer à pied vers ${store.name}`}
-                              disabled={isStoreNavigating || !isOnline}
-                            >
-                              {isStoreNavigating ? <Loader2 size={14} className="animate-spin" /> : <Footprints size={14} />}
-                            </button>
-                            <button
-                              onClick={() => handleGPS(store.lat, store.lon, 'transit', store.name, store)}
-                              className="flex items-center gap-1 px-2 py-1 bg-purple-600 text-white rounded text-xs hover:bg-purple-700 disabled:opacity-50"
-                              title="Transports en commun"
-                              aria-label={`Naviguer en transport en commun vers ${store.name}`}
-                              disabled={isStoreNavigating || !isOnline}
-                            >
-                              {isStoreNavigating ? <Loader2 size={14} className="animate-spin" /> : <Bus size={14} />}
-                            </button>
-                            <button
-                              onClick={() => shareLocation(store)}
-                              className="flex items-center gap-1 px-2 py-1 bg-slate-600 text-white rounded text-xs hover:bg-slate-700"
-                              title="Partager la localisation"
-                              aria-label={`Partager la localisation de ${store.name}`}
-                            >
-                              <Share2 size={14} />
-                            </button>
-                          </div>
-                          {!isOnline && (
-                            <p className="text-xs text-orange-600 mt-2">
-                              Navigation désactivée (hors ligne)
+                    return (
+                      <Marker
+                        key={store.id || storeKey}
+                        position={[store.lat, store.lon]}
+                        ref={(m) => {
+                          if (m) {
+                            const storeId = store.id || storeKey;
+                            markerRefs.current.set(storeId, m);
+                          }
+                        }}
+                      >
+                        <Popup>
+                          <div
+                            className="text-slate-900"
+                            role="dialog"
+                            aria-labelledby={`store-${store.id || store.lat}`}
+                          >
+                            <h3 className="font-semibold" id={`store-${store.id || store.lat}`}>
+                              {store.name}
+                            </h3>
+                            <p className="text-sm text-slate-600">{store.category}</p>
+                            <p className="text-xs text-slate-500">
+                              {currentTerritory?.name || territory}
                             </p>
-                          )}
-                        </div>
-                      </Popup>
-                    </Marker>
-                  );
-                })
-              )}
+                            {store.distance && (
+                              <div className="text-xs mt-1 space-y-1">
+                                <p className="text-blue-600 font-medium">
+                                  <MapPin size={12} className="inline mr-1" />
+                                  Distance: {formatDistance(store.distance)}{' '}
+                                  <span className="text-slate-500">(estimée)</span>
+                                </p>
+                                <div className="flex gap-2 text-slate-600">
+                                  <span title="Temps estimé en voiture">
+                                    <Car size={12} className="inline mr-1" />
+                                    {formatTravelTime(
+                                      estimateTravelTime(store.distance, 'driving')
+                                    )}
+                                  </span>
+                                  <span title="Temps estimé à pied">
+                                    <Footprints size={12} className="inline mr-1" />
+                                    {formatTravelTime(
+                                      estimateTravelTime(store.distance, 'walking')
+                                    )}
+                                  </span>
+                                  <span title="Temps estimé en transport">
+                                    <Bus size={12} className="inline mr-1" />
+                                    {formatTravelTime(
+                                      estimateTravelTime(store.distance, 'transit')
+                                    )}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-slate-400 italic">
+                                  Temps estimés - ne tiennent pas compte du trafic
+                                </p>
+                              </div>
+                            )}
 
-              {userPosition && userIcon && (
-                <Marker
-                  position={userPosition}
-                  icon={userIcon}
-                >
-                  <Popup>
-                    <div className="text-slate-900">
-                      <h3 className="font-semibold">Votre position</h3>
-                    </div>
-                  </Popup>
-                </Marker>
-              )}
-            </MapContainer>
-          )}
+                            {store.id && (
+                              <div className="mt-2 mb-2">
+                                <Link
+                                  to={`/enseigne/${store.id}`}
+                                  className="inline-block w-full text-center px-3 py-1.5 bg-slate-800 text-white rounded text-xs hover:bg-slate-700 transition-colors"
+                                >
+                                  🏪 Voir la fiche magasin
+                                </Link>
+                              </div>
+                            )}
+
+                            <div className="mt-2 mb-2">
+                              <a
+                                href={`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${store.lat},${store.lon}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block w-full text-center px-3 py-1.5 bg-blue-500 text-white rounded text-xs hover:bg-blue-600 transition-colors"
+                                title="Voir sur Google Street View"
+                              >
+                                📸 Street View
+                              </a>
+                            </div>
+
+                            <div className="flex gap-2 mt-2">
+                              <button
+                                onClick={() =>
+                                  handleGPS(store.lat, store.lon, 'driving', store.name, store)
+                                }
+                                className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 disabled:opacity-50"
+                                title="Naviguer en voiture"
+                                aria-label={`Naviguer en voiture vers ${store.name}`}
+                                disabled={isStoreNavigating || !isOnline}
+                              >
+                                {isStoreNavigating ? (
+                                  <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                  <Car size={14} />
+                                )}
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleGPS(store.lat, store.lon, 'walking', store.name, store)
+                                }
+                                className="flex items-center gap-1 px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-green-700 disabled:opacity-50"
+                                title="Naviguer à pied"
+                                aria-label={`Naviguer à pied vers ${store.name}`}
+                                disabled={isStoreNavigating || !isOnline}
+                              >
+                                {isStoreNavigating ? (
+                                  <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                  <Footprints size={14} />
+                                )}
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleGPS(store.lat, store.lon, 'transit', store.name, store)
+                                }
+                                className="flex items-center gap-1 px-2 py-1 bg-purple-600 text-white rounded text-xs hover:bg-purple-700 disabled:opacity-50"
+                                title="Transports en commun"
+                                aria-label={`Naviguer en transport en commun vers ${store.name}`}
+                                disabled={isStoreNavigating || !isOnline}
+                              >
+                                {isStoreNavigating ? (
+                                  <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                  <Bus size={14} />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => shareLocation(store)}
+                                className="flex items-center gap-1 px-2 py-1 bg-slate-600 text-white rounded text-xs hover:bg-slate-700"
+                                title="Partager la localisation"
+                                aria-label={`Partager la localisation de ${store.name}`}
+                              >
+                                <Share2 size={14} />
+                              </button>
+                            </div>
+                            {!isOnline && (
+                              <p className="text-xs text-orange-600 mt-2">
+                                Navigation désactivée (hors ligne)
+                              </p>
+                            )}
+                          </div>
+                        </Popup>
+                      </Marker>
+                    );
+                  })
+                )}
+
+                {userPosition && userIcon && (
+                  <Marker position={userPosition} icon={userIcon}>
+                    <Popup>
+                      <div className="text-slate-900">
+                        <h3 className="font-semibold">Votre position</h3>
+                      </div>
+                    </Popup>
+                  </Marker>
+                )}
+              </MapContainer>
+            )}
           </div>
         </div>
 
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-4 text-blue-400">
-            Magasins en {currentTerritory?.name || territory} ({filteredStores.length} / {stores.length})
+            Magasins en {currentTerritory?.name || territory} ({filteredStores.length} /{' '}
+            {stores.length})
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredStores.map((store, index) => {
@@ -1191,7 +1327,9 @@ export default function Carte() {
                   <h3 className="font-semibold text-slate-100 mb-1">{store.name}</h3>
                   <p className="text-slate-400 text-sm mb-2">{store.category}</p>
                   <div className="flex items-center justify-between text-slate-500 text-xs mb-2">
-                    <span>📍 {store.lat.toFixed(4)}°, {store.lon.toFixed(4)}°</span>
+                    <span>
+                      📍 {store.lat.toFixed(4)}°, {store.lon.toFixed(4)}°
+                    </span>
                     {store.distance && (
                       <span className="text-blue-400 font-medium">
                         {formatDistance(store.distance)}
@@ -1203,52 +1341,82 @@ export default function Carte() {
                       <div className="grid grid-cols-3 gap-2 text-xs text-slate-400 bg-slate-900/50 rounded p-2">
                         <div className="flex items-center gap-1" title="Temps estimé en voiture">
                           <Car size={12} />
-                          <span>{formatTravelTime(estimateTravelTime(store.distance, 'driving'))}</span>
+                          <span>
+                            {formatTravelTime(estimateTravelTime(store.distance, 'driving'))}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1" title="Temps estimé à pied">
                           <Footprints size={12} />
-                          <span>{formatTravelTime(estimateTravelTime(store.distance, 'walking'))}</span>
+                          <span>
+                            {formatTravelTime(estimateTravelTime(store.distance, 'walking'))}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1" title="Temps estimé en transport">
                           <Bus size={12} />
-                          <span>{formatTravelTime(estimateTravelTime(store.distance, 'transit'))}</span>
+                          <span>
+                            {formatTravelTime(estimateTravelTime(store.distance, 'transit'))}
+                          </span>
                         </div>
                       </div>
-                      <p className="text-xs text-slate-500 italic">Temps estimés - ne tiennent pas compte du trafic</p>
+                      <p className="text-xs text-slate-500 italic">
+                        Temps estimés - ne tiennent pas compte du trafic
+                      </p>
                     </div>
                   )}
                   <div className="space-y-2">
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleGPS(store.lat, store.lon, 'driving', store.name, store)}
+                        onClick={() =>
+                          handleGPS(store.lat, store.lon, 'driving', store.name, store)
+                        }
                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600/20 text-blue-400 rounded-lg text-sm hover:bg-blue-600/30 transition border border-blue-500/30 disabled:opacity-50"
                         aria-label={`Naviguer en voiture vers ${store.name}`}
-                        title={!isOnline ? "Navigation désactivée (hors ligne)" : "Naviguer en voiture"}
+                        title={
+                          !isOnline ? 'Navigation désactivée (hors ligne)' : 'Naviguer en voiture'
+                        }
                         disabled={isStoreNavigating || !isOnline}
                       >
-                        {isStoreNavigating ? <Loader2 size={16} className="animate-spin" /> : <Car size={16} />}
+                        {isStoreNavigating ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <Car size={16} />
+                        )}
                         <span>En voiture</span>
                       </button>
                       <button
-                        onClick={() => handleGPS(store.lat, store.lon, 'walking', store.name, store)}
+                        onClick={() =>
+                          handleGPS(store.lat, store.lon, 'walking', store.name, store)
+                        }
                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600/20 text-green-400 rounded-lg text-sm hover:bg-green-600/30 transition border border-green-500/30 disabled:opacity-50"
                         aria-label={`Naviguer à pied vers ${store.name}`}
-                        title={!isOnline ? "Navigation désactivée (hors ligne)" : "Naviguer à pied"}
+                        title={!isOnline ? 'Navigation désactivée (hors ligne)' : 'Naviguer à pied'}
                         disabled={isStoreNavigating || !isOnline}
                       >
-                        {isStoreNavigating ? <Loader2 size={16} className="animate-spin" /> : <Footprints size={16} />}
+                        {isStoreNavigating ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <Footprints size={16} />
+                        )}
                         <span>À pied</span>
                       </button>
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleGPS(store.lat, store.lon, 'transit', store.name, store)}
+                        onClick={() =>
+                          handleGPS(store.lat, store.lon, 'transit', store.name, store)
+                        }
                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-purple-600/20 text-purple-400 rounded-lg text-sm hover:bg-purple-600/30 transition border border-purple-500/30 disabled:opacity-50"
                         aria-label={`Naviguer en transport en commun vers ${store.name}`}
-                        title={!isOnline ? "Navigation désactivée (hors ligne)" : "Transports en commun"}
+                        title={
+                          !isOnline ? 'Navigation désactivée (hors ligne)' : 'Transports en commun'
+                        }
                         disabled={isStoreNavigating || !isOnline}
                       >
-                        {isStoreNavigating ? <Loader2 size={16} className="animate-spin" /> : <Bus size={16} />}
+                        {isStoreNavigating ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <Bus size={16} />
+                        )}
                         <span>Transports en commun</span>
                       </button>
                       <button

@@ -1,12 +1,11 @@
- 
 /**
  * Alert Service
- * 
+ *
  * Manages user alerts for comparators. Allows users to:
  * - Create alerts based on conditions (price thresholds, availability, etc.)
  * - Manage alerts (activate/deactivate/delete)
  * - Receive notifications when alerts are triggered
- * 
+ *
  * Features:
  * - Firebase Firestore integration
  * - Email and push notification support
@@ -59,7 +58,7 @@ async function sendBrowserPushNotification(label: string): Promise<void> {
 
 /**
  * Create a new alert
- * 
+ *
  * @param alert - Alert data (without id, createdAt, triggeredCount)
  * @returns Created alert with ID
  */
@@ -95,7 +94,7 @@ export async function createAlert(
 
 /**
  * Get all alerts for a user
- * 
+ *
  * @param userId - User ID
  * @returns Array of user alerts
  */
@@ -103,11 +102,7 @@ export async function getUserAlerts(userId: string): Promise<Alert[]> {
   const db = getFirestore();
   const alertsRef = collection(db, 'alerts');
 
-  const q = query(
-    alertsRef,
-    where('userId', '==', userId),
-    orderBy('createdAt', 'desc')
-  );
+  const q = query(alertsRef, where('userId', '==', userId), orderBy('createdAt', 'desc'));
 
   const snapshot = await getDocs(q);
   const alerts: Alert[] = [];
@@ -137,18 +132,18 @@ export async function getUserAlerts(userId: string): Promise<Alert[]> {
 
 /**
  * Get alerts by comparator type
- * 
+ *
  * @param comparatorType - Comparator type
  * @param territory - Optional territory filter
  * @returns Array of alerts
- * 
+ *
  * Note: This query requires Firestore composite indexes.
- * 
+ *
  * To create the required indexes:
  * 1. Via Firebase Console: Go to Firestore > Indexes and create composite indexes for:
  *    - Collection: alerts, Fields: comparatorType (Ascending), active (Ascending)
  *    - Collection: alerts, Fields: comparatorType (Ascending), active (Ascending), territory (Ascending)
- * 
+ *
  * 2. Via Firebase CLI (firestore.indexes.json):
  *    {
  *      "indexes": [
@@ -208,15 +203,12 @@ export async function getAlertsByComparator(
 
 /**
  * Update an alert
- * 
+ *
  * @param alertId - Alert ID
  * @param updates - Partial alert data to update
  * @returns Updated alert
  */
-export async function updateAlert(
-  alertId: string,
-  updates: Partial<Alert>
-): Promise<Alert> {
+export async function updateAlert(alertId: string, updates: Partial<Alert>): Promise<Alert> {
   const db = getFirestore();
   const alertRef = doc(db, 'alerts', alertId);
 
@@ -252,7 +244,7 @@ export async function updateAlert(
 
 /**
  * Delete an alert
- * 
+ *
  * @param alertId - Alert ID
  */
 export async function deleteAlert(alertId: string): Promise<void> {
@@ -264,7 +256,7 @@ export async function deleteAlert(alertId: string): Promise<void> {
 
 /**
  * Toggle alert active status
- * 
+ *
  * @param alertId - Alert ID
  * @param active - New active status
  * @returns Updated alert
@@ -275,7 +267,7 @@ export async function toggleAlert(alertId: string, active: boolean): Promise<Ale
 
 /**
  * Trigger an alert (mark as triggered and increment count)
- * 
+ *
  * @param alertId - Alert ID
  */
 export async function triggerAlert(alertId: string): Promise<void> {
@@ -308,15 +300,12 @@ export async function triggerAlert(alertId: string): Promise<void> {
 
 /**
  * Check if alert conditions are met
- * 
+ *
  * @param alert - Alert to check
  * @param data - Current data to compare against
  * @returns true if conditions are met
  */
-export function checkAlertConditions(
-  alert: Alert,
-  data: Record<string, unknown>
-): boolean {
+export function checkAlertConditions(alert: Alert, data: Record<string, unknown>): boolean {
   const { type, conditions } = alert;
 
   switch (type) {
@@ -362,13 +351,15 @@ export async function checkAlertsAndNotify(): Promise<void> {
   // Firestore writes. Client-side, we only expose this function as a no-op to
   // avoid duplicate notifications.
   if (import.meta.env.DEV) {
-    console.info('[alertService] checkAlertsAndNotify: server-side checking handled by Cloud Function.');
+    console.info(
+      '[alertService] checkAlertsAndNotify: server-side checking handled by Cloud Function.'
+    );
   }
 }
 
 /**
  * Get alert statistics for a user
- * 
+ *
  * @param userId - User ID
  * @returns Alert statistics
  */
