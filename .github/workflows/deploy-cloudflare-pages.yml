@@ -25,7 +25,7 @@ jobs:
         working-directory: frontend
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -107,7 +107,7 @@ jobs:
           echo "site_url=$SITE_URL" >> "$GITHUB_OUTPUT"
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -156,7 +156,7 @@ jobs:
         working-directory: frontend
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -211,7 +211,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
