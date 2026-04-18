@@ -38,7 +38,7 @@ jobs:
           echo "All user OS outputs present"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: user-os-outputs
           path: |

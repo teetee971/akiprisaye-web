@@ -117,7 +117,7 @@ jobs:
           echo "_All outputs are artifacts for human review — nothing is auto-posted._" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload alert artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: price-alerts-${{ github.run_id }}
           path: |

@@ -75,7 +75,7 @@ jobs:
         run: node scripts/auto-seo/export-pr-plan.mjs
 
       - name: Upload review artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: auto-seo-review-${{ github.run_number }}
