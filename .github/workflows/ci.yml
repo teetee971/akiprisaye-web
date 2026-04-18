@@ -400,7 +400,7 @@ jobs:
 
       - name: Upload Lighthouse reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-reports
           path: frontend/.lighthouseci/**
@@ -409,7 +409,7 @@ jobs:
 
       - name: Upload Lighthouse scores
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-scores
           path: frontend/.lighthouseci/lighthouse-scores.json
